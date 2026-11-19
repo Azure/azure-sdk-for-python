@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -13,7 +14,10 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
+    add_remove_header_sanitizer,
     add_uri_regex_sanitizer,
+    set_custom_default_matcher,
+    test_proxy,
 )
 
 
@@ -25,13 +29,21 @@ def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(regex=tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
+    add_header_regex_sanitizer(key="x-ms-session-token", value="Sanitized")
+    add_general_regex_sanitizer(
+        regex=r"<SessionToken>[^<]*</SessionToken>", value="<SessionToken>Sanitized</SessionToken>"
+    )
+    add_general_regex_sanitizer(regex=r"<SessionKey>[^<]*</SessionKey>", value="<SessionKey>U2FuaXRpemVk</SessionKey>")
     add_oauth_response_sanitizer()
 
     add_header_regex_sanitizer(key="x-ms-copy-source-authorization", value="Sanitized")
     add_header_regex_sanitizer(key="x-ms-encryption-key", value="Sanitized")
     add_general_regex_sanitizer(regex=r'"EncryptionLibrary": "Python .*?"', value='"EncryptionLibrary": "Python x.x.x"')
+    add_remove_header_sanitizer(headers="Accept")
 
     add_uri_regex_sanitizer(regex=r"\.preprod\.", value=".")
+
+    set_custom_default_matcher(ignore_query_ordering=True)
     add_uri_regex_sanitizer(
         regex=r"(?<=[?&]sktid=)[^&#]+",
         value="00000000-0000-0000-0000-000000000000",

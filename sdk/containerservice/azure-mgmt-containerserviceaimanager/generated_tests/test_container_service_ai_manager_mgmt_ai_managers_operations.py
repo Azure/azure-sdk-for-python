@@ -46,7 +46,12 @@ class TestContainerServiceAIManagerMgmtAIManagersOperations(AzureMgmtRecordedTes
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "name": "str",
-                "properties": {"deletePolicy": "str", "managedResourceGroupName": "str", "provisioningState": "str"},
+                "properties": {
+                    "clusterResourceId": "str",
+                    "deletePolicy": "str",
+                    "managedResourceGroupName": "str",
+                    "provisioningState": "str",
+                },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

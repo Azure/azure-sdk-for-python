@@ -49,7 +49,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -70,7 +70,7 @@ def build_database_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -99,7 +99,7 @@ def build_database_accounts_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -130,7 +130,7 @@ def build_database_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +159,7 @@ def build_database_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}"
     path_format_arguments = {
@@ -182,7 +182,7 @@ def build_database_accounts_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -207,7 +207,7 @@ def build_database_accounts_list_request(subscription_id: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -234,7 +234,7 @@ def build_database_accounts_failover_priority_change_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/failoverPriorityChange"
     path_format_arguments = {
@@ -261,7 +261,7 @@ def build_database_accounts_list_keys_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -289,7 +289,7 @@ def build_database_accounts_list_connection_strings_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -318,7 +318,7 @@ def build_database_accounts_offline_region_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/offlineRegion"
     path_format_arguments = {
@@ -346,7 +346,7 @@ def build_database_accounts_online_region_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/onlineRegion"
     path_format_arguments = {
@@ -373,7 +373,7 @@ def build_database_accounts_get_read_only_keys_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -401,7 +401,7 @@ def build_database_accounts_list_read_only_keys_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -430,7 +430,7 @@ def build_database_accounts_regenerate_key_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/regenerateKey"
     path_format_arguments = {
@@ -457,7 +457,7 @@ def build_database_accounts_list_metrics_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -486,7 +486,7 @@ def build_database_accounts_list_usages_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -516,7 +516,7 @@ def build_database_accounts_list_metric_definitions_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -543,7 +543,7 @@ def build_database_accounts_check_name_exists_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/providers/Microsoft.DocumentDB/databaseAccountNames/{accountName}"
     path_format_arguments = {
@@ -564,7 +564,7 @@ def build_sql_resources_get_sql_database_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -594,7 +594,7 @@ def build_sql_resources_create_update_sql_database_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -624,7 +624,7 @@ def build_sql_resources_delete_sql_database_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}"
     path_format_arguments = {
@@ -648,7 +648,7 @@ def build_sql_resources_list_sql_databases_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -676,7 +676,7 @@ def build_sql_resources_get_sql_database_throughput_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -706,7 +706,7 @@ def build_sql_resources_update_sql_database_throughput_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -737,7 +737,7 @@ def build_sql_resources_migrate_sql_database_to_autoscale_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -766,7 +766,7 @@ def build_sql_resources_migrate_sql_database_to_manual_throughput_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -800,7 +800,7 @@ def build_sql_resources_get_sql_container_throughput_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -836,7 +836,7 @@ def build_sql_resources_update_sql_container_throughput_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -873,7 +873,7 @@ def build_sql_resources_migrate_sql_container_to_autoscale_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -908,7 +908,7 @@ def build_sql_resources_migrate_sql_container_to_manual_throughput_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -943,7 +943,7 @@ def build_sql_resources_get_client_encryption_key_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -979,7 +979,7 @@ def build_sql_resources_create_update_client_encryption_key_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1011,7 +1011,7 @@ def build_sql_resources_list_client_encryption_keys_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1045,7 +1045,7 @@ def build_sql_resources_get_sql_container_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1081,7 +1081,7 @@ def build_sql_resources_create_update_sql_container_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1117,7 +1117,7 @@ def build_sql_resources_delete_sql_container_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}"
     path_format_arguments = {
@@ -1142,7 +1142,7 @@ def build_sql_resources_list_sql_containers_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1177,7 +1177,7 @@ def build_sql_resources_retrieve_continuous_backup_information_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1215,7 +1215,7 @@ def build_sql_resources_get_sql_stored_procedure_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1253,7 +1253,7 @@ def build_sql_resources_create_update_sql_stored_procedure_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1291,7 +1291,7 @@ def build_sql_resources_delete_sql_stored_procedure_request(  # pylint: disable=
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/storedProcedures/{storedProcedureName}"
     path_format_arguments = {
@@ -1322,7 +1322,7 @@ def build_sql_resources_list_sql_stored_procedures_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1358,7 +1358,7 @@ def build_sql_resources_get_sql_user_defined_function_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1396,7 +1396,7 @@ def build_sql_resources_create_update_sql_user_defined_function_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1434,7 +1434,7 @@ def build_sql_resources_delete_sql_user_defined_function_request(  # pylint: dis
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/userDefinedFunctions/{userDefinedFunctionName}"
     path_format_arguments = {
@@ -1465,7 +1465,7 @@ def build_sql_resources_list_sql_user_defined_functions_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1501,7 +1501,7 @@ def build_sql_resources_get_sql_trigger_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1539,7 +1539,7 @@ def build_sql_resources_create_update_sql_trigger_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1577,7 +1577,7 @@ def build_sql_resources_delete_sql_trigger_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlDatabases/{databaseName}/containers/{containerName}/triggers/{triggerName}"
     path_format_arguments = {
@@ -1608,7 +1608,7 @@ def build_sql_resources_list_sql_triggers_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1638,7 +1638,7 @@ def build_sql_resources_get_sql_role_definition_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1668,7 +1668,7 @@ def build_sql_resources_create_update_sql_role_definition_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1698,7 +1698,7 @@ def build_sql_resources_delete_sql_role_definition_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleDefinitions/{roleDefinitionId}"
     path_format_arguments = {
@@ -1722,7 +1722,7 @@ def build_sql_resources_list_sql_role_definitions_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1750,7 +1750,7 @@ def build_sql_resources_get_sql_role_assignment_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1780,7 +1780,7 @@ def build_sql_resources_create_update_sql_role_assignment_request(  # pylint: di
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1810,7 +1810,7 @@ def build_sql_resources_delete_sql_role_assignment_request(  # pylint: disable=n
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/sqlRoleAssignments/{roleAssignmentId}"
     path_format_arguments = {
@@ -1834,7 +1834,7 @@ def build_sql_resources_list_sql_role_assignments_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1862,7 +1862,7 @@ def build_mongo_db_resources_get_mongo_db_database_throughput_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1892,7 +1892,7 @@ def build_mongo_db_resources_update_mongo_db_database_throughput_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1923,7 +1923,7 @@ def build_mongo_db_resources_migrate_mongo_db_database_to_autoscale_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1952,7 +1952,7 @@ def build_mongo_db_resources_migrate_mongo_db_database_to_manual_throughput_requ
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1986,7 +1986,7 @@ def build_mongo_db_resources_get_mongo_db_collection_throughput_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2022,7 +2022,7 @@ def build_mongo_db_resources_update_mongo_db_collection_throughput_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2059,7 +2059,7 @@ def build_mongo_db_resources_migrate_mongo_db_collection_to_autoscale_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2094,7 +2094,7 @@ def build_mongo_db_resources_migrate_mongo_db_collection_to_manual_throughput_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2124,7 +2124,7 @@ def build_mongo_db_resources_get_mongo_db_database_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2154,7 +2154,7 @@ def build_mongo_db_resources_create_update_mongo_db_database_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2184,7 +2184,7 @@ def build_mongo_db_resources_delete_mongo_db_database_request(  # pylint: disabl
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}"
     path_format_arguments = {
@@ -2208,7 +2208,7 @@ def build_mongo_db_resources_list_mongo_db_databases_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2241,7 +2241,7 @@ def build_mongo_db_resources_get_mongo_db_collection_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2277,7 +2277,7 @@ def build_mongo_db_resources_create_update_mongo_db_collection_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2313,7 +2313,7 @@ def build_mongo_db_resources_delete_mongo_db_collection_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbDatabases/{databaseName}/collections/{collectionName}"
     path_format_arguments = {
@@ -2338,7 +2338,7 @@ def build_mongo_db_resources_list_mongo_db_collections_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2373,7 +2373,7 @@ def build_mongo_db_resources_retrieve_continuous_backup_information_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2405,7 +2405,7 @@ def build_mongo_db_resources_get_mongo_role_definition_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2435,7 +2435,7 @@ def build_mongo_db_resources_create_update_mongo_role_definition_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2465,7 +2465,7 @@ def build_mongo_db_resources_delete_mongo_role_definition_request(  # pylint: di
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbRoleDefinitions/{mongoRoleDefinitionId}"
     path_format_arguments = {
@@ -2489,7 +2489,7 @@ def build_mongo_db_resources_list_mongo_role_definitions_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2517,7 +2517,7 @@ def build_mongo_db_resources_get_mongo_user_definition_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2547,7 +2547,7 @@ def build_mongo_db_resources_create_update_mongo_user_definition_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2577,7 +2577,7 @@ def build_mongo_db_resources_delete_mongo_user_definition_request(  # pylint: di
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongodbUserDefinitions/{mongoUserDefinitionId}"
     path_format_arguments = {
@@ -2601,7 +2601,7 @@ def build_mongo_db_resources_list_mongo_user_definitions_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2629,7 +2629,7 @@ def build_table_resources_get_table_throughput_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2659,7 +2659,7 @@ def build_table_resources_update_table_throughput_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2690,7 +2690,7 @@ def build_table_resources_migrate_table_to_autoscale_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2719,7 +2719,7 @@ def build_table_resources_migrate_table_to_manual_throughput_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2748,7 +2748,7 @@ def build_table_resources_get_table_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2778,7 +2778,7 @@ def build_table_resources_create_update_table_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2808,7 +2808,7 @@ def build_table_resources_delete_table_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tables/{tableName}"
     path_format_arguments = {
@@ -2832,7 +2832,7 @@ def build_table_resources_list_tables_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2861,7 +2861,7 @@ def build_table_resources_retrieve_continuous_backup_information_request(  # pyl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2892,7 +2892,7 @@ def build_table_resources_get_table_role_definition_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2922,7 +2922,7 @@ def build_table_resources_create_update_table_role_definition_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2952,7 +2952,7 @@ def build_table_resources_delete_table_role_definition_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tableRoleDefinitions/{roleDefinitionId}"
     path_format_arguments = {
@@ -2976,7 +2976,7 @@ def build_table_resources_list_table_role_definitions_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3004,7 +3004,7 @@ def build_table_resources_get_table_role_assignment_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3034,7 +3034,7 @@ def build_table_resources_create_update_table_role_assignment_request(  # pylint
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3064,7 +3064,7 @@ def build_table_resources_delete_table_role_assignment_request(  # pylint: disab
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/tableRoleAssignments/{roleAssignmentId}"
     path_format_arguments = {
@@ -3088,7 +3088,7 @@ def build_table_resources_list_table_role_assignments_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3116,7 +3116,7 @@ def build_cassandra_resources_get_cassandra_keyspace_throughput_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3146,7 +3146,7 @@ def build_cassandra_resources_update_cassandra_keyspace_throughput_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3177,7 +3177,7 @@ def build_cassandra_resources_migrate_cassandra_keyspace_to_autoscale_request(  
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3206,7 +3206,7 @@ def build_cassandra_resources_migrate_cassandra_keyspace_to_manual_throughput_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3240,7 +3240,7 @@ def build_cassandra_resources_get_cassandra_table_throughput_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3276,7 +3276,7 @@ def build_cassandra_resources_update_cassandra_table_throughput_request(  # pyli
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3313,7 +3313,7 @@ def build_cassandra_resources_migrate_cassandra_table_to_autoscale_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3348,7 +3348,7 @@ def build_cassandra_resources_migrate_cassandra_table_to_manual_throughput_reque
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3378,7 +3378,7 @@ def build_cassandra_resources_get_cassandra_keyspace_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3408,7 +3408,7 @@ def build_cassandra_resources_create_update_cassandra_keyspace_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3438,7 +3438,7 @@ def build_cassandra_resources_delete_cassandra_keyspace_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}"
     path_format_arguments = {
@@ -3462,7 +3462,7 @@ def build_cassandra_resources_list_cassandra_keyspaces_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3495,7 +3495,7 @@ def build_cassandra_resources_get_cassandra_table_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3531,7 +3531,7 @@ def build_cassandra_resources_create_update_cassandra_table_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3567,7 +3567,7 @@ def build_cassandra_resources_delete_cassandra_table_request(  # pylint: disable
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraKeyspaces/{keyspaceName}/tables/{tableName}"
     path_format_arguments = {
@@ -3592,7 +3592,7 @@ def build_cassandra_resources_list_cassandra_tables_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3621,7 +3621,7 @@ def build_cassandra_resources_get_cassandra_role_definition_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3651,7 +3651,7 @@ def build_cassandra_resources_create_update_cassandra_role_definition_request(  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3681,7 +3681,7 @@ def build_cassandra_resources_delete_cassandra_role_definition_request(  # pylin
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraRoleDefinitions/{roleDefinitionId}"
     path_format_arguments = {
@@ -3705,7 +3705,7 @@ def build_cassandra_resources_list_cassandra_role_definitions_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3733,7 +3733,7 @@ def build_cassandra_resources_get_cassandra_role_assignment_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3763,7 +3763,7 @@ def build_cassandra_resources_create_update_cassandra_role_assignment_request(  
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3793,7 +3793,7 @@ def build_cassandra_resources_delete_cassandra_role_assignment_request(  # pylin
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/cassandraRoleAssignments/{roleAssignmentId}"
     path_format_arguments = {
@@ -3817,7 +3817,7 @@ def build_cassandra_resources_list_cassandra_role_assignments_request(  # pylint
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3845,7 +3845,7 @@ def build_gremlin_resources_get_gremlin_database_throughput_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3875,7 +3875,7 @@ def build_gremlin_resources_update_gremlin_database_throughput_request(  # pylin
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3906,7 +3906,7 @@ def build_gremlin_resources_migrate_gremlin_database_to_autoscale_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3935,7 +3935,7 @@ def build_gremlin_resources_migrate_gremlin_database_to_manual_throughput_reques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3969,7 +3969,7 @@ def build_gremlin_resources_get_gremlin_graph_throughput_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4005,7 +4005,7 @@ def build_gremlin_resources_update_gremlin_graph_throughput_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4042,7 +4042,7 @@ def build_gremlin_resources_migrate_gremlin_graph_to_autoscale_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4077,7 +4077,7 @@ def build_gremlin_resources_migrate_gremlin_graph_to_manual_throughput_request( 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4107,7 +4107,7 @@ def build_gremlin_resources_get_gremlin_database_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4137,7 +4137,7 @@ def build_gremlin_resources_create_update_gremlin_database_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4167,7 +4167,7 @@ def build_gremlin_resources_delete_gremlin_database_request(  # pylint: disable=
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}"
     path_format_arguments = {
@@ -4191,7 +4191,7 @@ def build_gremlin_resources_list_gremlin_databases_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4224,7 +4224,7 @@ def build_gremlin_resources_get_gremlin_graph_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4260,7 +4260,7 @@ def build_gremlin_resources_create_update_gremlin_graph_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4296,7 +4296,7 @@ def build_gremlin_resources_delete_gremlin_graph_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinDatabases/{databaseName}/graphs/{graphName}"
     path_format_arguments = {
@@ -4321,7 +4321,7 @@ def build_gremlin_resources_list_gremlin_graphs_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4356,7 +4356,7 @@ def build_gremlin_resources_retrieve_continuous_backup_information_request(  # p
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4388,7 +4388,7 @@ def build_gremlin_resources_get_gremlin_role_definition_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4418,7 +4418,7 @@ def build_gremlin_resources_create_update_gremlin_role_definition_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4448,7 +4448,7 @@ def build_gremlin_resources_delete_gremlin_role_definition_request(  # pylint: d
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinRoleDefinitions/{roleDefinitionId}"
     path_format_arguments = {
@@ -4472,7 +4472,7 @@ def build_gremlin_resources_list_gremlin_role_definitions_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4500,7 +4500,7 @@ def build_gremlin_resources_get_gremlin_role_assignment_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4530,7 +4530,7 @@ def build_gremlin_resources_create_update_gremlin_role_assignment_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4560,7 +4560,7 @@ def build_gremlin_resources_delete_gremlin_role_assignment_request(  # pylint: d
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/gremlinRoleAssignments/{roleAssignmentId}"
     path_format_arguments = {
@@ -4584,7 +4584,7 @@ def build_gremlin_resources_list_gremlin_role_assignments_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4616,7 +4616,7 @@ def build_notebook_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4650,7 +4650,7 @@ def build_notebook_workspaces_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4684,7 +4684,7 @@ def build_notebook_workspaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}"
     path_format_arguments = {
@@ -4708,7 +4708,7 @@ def build_notebook_workspaces_list_by_database_account_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4740,7 +4740,7 @@ def build_notebook_workspaces_list_connection_info_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4772,7 +4772,7 @@ def build_notebook_workspaces_regenerate_auth_token_request(  # pylint: disable=
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/regenerateAuthToken"
     path_format_arguments = {
@@ -4799,7 +4799,7 @@ def build_notebook_workspaces_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/notebookWorkspaces/{notebookWorkspaceName}/start"
     path_format_arguments = {
@@ -4827,7 +4827,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4863,7 +4863,7 @@ def build_private_endpoint_connections_create_or_update_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4899,7 +4899,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -4925,7 +4925,7 @@ def build_private_endpoint_connections_list_by_database_account_request(  # pyli
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4953,7 +4953,7 @@ def build_private_link_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4982,7 +4982,7 @@ def build_private_link_resources_list_by_database_account_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5010,7 +5010,7 @@ def build_database_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5046,7 +5046,7 @@ def build_database_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5077,7 +5077,7 @@ def build_database_list_metric_definitions_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5113,7 +5113,7 @@ def build_collection_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5151,7 +5151,7 @@ def build_collection_list_usages_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5188,7 +5188,7 @@ def build_collection_list_metric_definitions_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5226,7 +5226,7 @@ def build_collection_region_list_metrics_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5258,7 +5258,7 @@ def build_database_account_region_list_metrics_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5295,7 +5295,7 @@ def build_percentile_source_target_list_metrics_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5326,7 +5326,7 @@ def build_percentile_target_list_metrics_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5356,7 +5356,7 @@ def build_percentile_list_metrics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5393,7 +5393,7 @@ def build_collection_partition_region_list_metrics_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5432,7 +5432,7 @@ def build_collection_partition_list_metrics_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5470,7 +5470,7 @@ def build_collection_partition_list_usages_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5510,7 +5510,7 @@ def build_partition_key_range_id_list_metrics_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5551,7 +5551,7 @@ def build_partition_key_range_id_region_list_metrics_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5582,7 +5582,7 @@ def build_locations_get_request(location: str, subscription_id: str, **kwargs: A
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5607,7 +5607,7 @@ def build_locations_list_request(subscription_id: str, **kwargs: Any) -> HttpReq
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5633,7 +5633,7 @@ def build_cassandra_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5662,7 +5662,7 @@ def build_cassandra_clusters_create_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5693,7 +5693,7 @@ def build_cassandra_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5722,7 +5722,7 @@ def build_cassandra_clusters_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}"
     path_format_arguments = {
@@ -5745,7 +5745,7 @@ def build_cassandra_clusters_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5772,7 +5772,7 @@ def build_cassandra_clusters_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5799,7 +5799,7 @@ def build_cassandra_clusters_invoke_command_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5834,7 +5834,7 @@ def build_cassandra_clusters_deallocate_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/deallocate"
     path_format_arguments = {
@@ -5860,7 +5860,7 @@ def build_cassandra_clusters_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/start"
     path_format_arguments = {
@@ -5883,7 +5883,7 @@ def build_cassandra_clusters_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5911,7 +5911,7 @@ def build_cassandra_data_centers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5941,7 +5941,7 @@ def build_cassandra_data_centers_create_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5973,7 +5973,7 @@ def build_cassandra_data_centers_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6003,7 +6003,7 @@ def build_cassandra_data_centers_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/cassandraClusters/{clusterName}/dataCenters/{dataCenterName}"
     path_format_arguments = {
@@ -6027,7 +6027,7 @@ def build_cassandra_data_centers_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6055,7 +6055,7 @@ def build_restorable_database_accounts_get_by_location_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6083,7 +6083,7 @@ def build_restorable_database_accounts_list_by_location_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6112,7 +6112,7 @@ def build_restorable_database_accounts_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6138,7 +6138,7 @@ def build_restorable_sql_databases_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6173,7 +6173,7 @@ def build_restorable_sql_containers_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6215,7 +6215,7 @@ def build_restorable_sql_resources_list_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6249,7 +6249,7 @@ def build_restorable_mongodb_databases_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6284,7 +6284,7 @@ def build_restorable_mongodb_collections_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6326,7 +6326,7 @@ def build_restorable_mongodb_resources_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6360,7 +6360,7 @@ def build_restorable_gremlin_databases_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6395,7 +6395,7 @@ def build_restorable_gremlin_graphs_list_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6437,7 +6437,7 @@ def build_restorable_gremlin_resources_list_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6477,7 +6477,7 @@ def build_restorable_tables_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6515,7 +6515,7 @@ def build_restorable_table_resources_list_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6549,7 +6549,7 @@ def build_service_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6579,7 +6579,7 @@ def build_service_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6609,7 +6609,7 @@ def build_service_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/services/{serviceName}"
     path_format_arguments = {
@@ -6633,7 +6633,7 @@ def build_service_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6661,7 +6661,7 @@ def build_mongo_mi_resources_get_mongo_mi_role_definition_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6691,7 +6691,7 @@ def build_mongo_mi_resources_create_update_mongo_mi_role_definition_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6721,7 +6721,7 @@ def build_mongo_mi_resources_delete_mongo_mi_role_definition_request(  # pylint:
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongoMIRoleDefinitions/{roleDefinitionId}"
     path_format_arguments = {
@@ -6745,7 +6745,7 @@ def build_mongo_mi_resources_list_mongo_mi_role_definitions_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6773,7 +6773,7 @@ def build_mongo_mi_resources_get_mongo_mi_role_assignment_request(  # pylint: di
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6803,7 +6803,7 @@ def build_mongo_mi_resources_create_update_mongo_mi_role_assignment_request(  # 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6833,7 +6833,7 @@ def build_mongo_mi_resources_delete_mongo_mi_role_assignment_request(  # pylint:
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/databaseAccounts/{accountName}/mongoMIRoleAssignments/{roleAssignmentId}"
     path_format_arguments = {
@@ -6857,7 +6857,7 @@ def build_mongo_mi_resources_list_mongo_mi_role_assignments_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6885,7 +6885,7 @@ def build_fleet_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6914,7 +6914,7 @@ def build_fleet_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6945,7 +6945,7 @@ def build_fleet_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -6974,7 +6974,7 @@ def build_fleet_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/fleets/{fleetName}"
     path_format_arguments = {
@@ -6997,7 +6997,7 @@ def build_fleet_list_by_resource_group_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7022,7 +7022,7 @@ def build_fleet_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7048,7 +7048,7 @@ def build_fleetspace_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7078,7 +7078,7 @@ def build_fleetspace_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7110,7 +7110,7 @@ def build_fleetspace_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7140,7 +7140,7 @@ def build_fleetspace_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/fleets/{fleetName}/fleetspaces/{fleetspaceName}"
     path_format_arguments = {
@@ -7164,7 +7164,7 @@ def build_fleetspace_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7197,7 +7197,7 @@ def build_fleetspace_account_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7233,7 +7233,7 @@ def build_fleetspace_account_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7269,7 +7269,7 @@ def build_fleetspace_account_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/fleets/{fleetName}/fleetspaces/{fleetspaceName}/fleetspaceAccounts/{fleetspaceAccountName}"
     path_format_arguments = {
@@ -7294,7 +7294,7 @@ def build_fleetspace_account_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-15"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7317,7 +7317,7 @@ def build_fleetspace_account_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7427,7 +7427,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
+class DatabaseAccountsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9917,7 +9917,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
 
-class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
+class SqlResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16117,7 +16117,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
+class MongoDBResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19946,7 +19946,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class TableResourcesOperations:  # pylint: disable=too-many-public-methods
+class TableResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22521,7 +22521,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
+class CassandraResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26089,7 +26089,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
+class GremlinResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29919,7 +29919,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         return ItemPaged(get_next, extract_data)
 
 
-class NotebookWorkspacesOperations:
+class NotebookWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30865,7 +30865,7 @@ class NotebookWorkspacesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31434,7 +31434,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31629,7 +31629,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatabaseOperations:
+class DatabaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31979,7 +31979,7 @@ class DatabaseOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CollectionOperations:
+class CollectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32346,7 +32346,7 @@ class CollectionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CollectionRegionOperations:
+class CollectionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32489,7 +32489,7 @@ class CollectionRegionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountRegionOperations:
+class DatabaseAccountRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32617,7 +32617,7 @@ class DatabaseAccountRegionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PercentileSourceTargetOperations:
+class PercentileSourceTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32758,7 +32758,7 @@ class PercentileSourceTargetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PercentileTargetOperations:
+class PercentileTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32888,7 +32888,7 @@ class PercentileTargetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PercentileOperations:
+class PercentileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33014,7 +33014,7 @@ class PercentileOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionRegionOperations:
+class CollectionPartitionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33157,7 +33157,7 @@ class CollectionPartitionRegionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionOperations:
+class CollectionPartitionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33416,7 +33416,7 @@ class CollectionPartitionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdOperations:
+class PartitionKeyRangeIdOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33558,7 +33558,7 @@ class PartitionKeyRangeIdOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdRegionOperations:
+class PartitionKeyRangeIdRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33705,7 +33705,7 @@ class PartitionKeyRangeIdRegionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LocationsOperations:
+class LocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33883,7 +33883,7 @@ class LocationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CassandraClustersOperations:
+class CassandraClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -35309,7 +35309,7 @@ class CassandraClustersOperations:
         return deserialized  # type: ignore
 
 
-class CassandraDataCentersOperations:
+class CassandraDataCentersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36132,7 +36132,7 @@ class CassandraDataCentersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableDatabaseAccountsOperations:
+class RestorableDatabaseAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36419,7 +36419,7 @@ class RestorableDatabaseAccountsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableSqlDatabasesOperations:
+class RestorableSqlDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36543,7 +36543,7 @@ class RestorableSqlDatabasesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableSqlContainersOperations:
+class RestorableSqlContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36683,7 +36683,7 @@ class RestorableSqlContainersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableSqlResourcesOperations:
+class RestorableSqlResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36821,7 +36821,7 @@ class RestorableSqlResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbDatabasesOperations:
+class RestorableMongodbDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -36945,7 +36945,7 @@ class RestorableMongodbDatabasesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbCollectionsOperations:
+class RestorableMongodbCollectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37086,7 +37086,7 @@ class RestorableMongodbCollectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbResourcesOperations:
+class RestorableMongodbResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37224,7 +37224,7 @@ class RestorableMongodbResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinDatabasesOperations:
+class RestorableGremlinDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37348,7 +37348,7 @@ class RestorableGremlinDatabasesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinGraphsOperations:
+class RestorableGremlinGraphsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37488,7 +37488,7 @@ class RestorableGremlinGraphsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinResourcesOperations:
+class RestorableGremlinResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37626,7 +37626,7 @@ class RestorableGremlinResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableTablesOperations:
+class RestorableTablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37760,7 +37760,7 @@ class RestorableTablesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RestorableTableResourcesOperations:
+class RestorableTableResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -37897,7 +37897,7 @@ class RestorableTableResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -38473,7 +38473,7 @@ class ServiceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MongoMIResourcesOperations:
+class MongoMIResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -39637,7 +39637,7 @@ class MongoMIResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FleetOperations:
+class FleetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -40376,7 +40376,7 @@ class FleetOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FleetspaceOperations:
+class FleetspaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -41206,7 +41206,7 @@ class FleetspaceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class FleetspaceAccountOperations:
+class FleetspaceAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

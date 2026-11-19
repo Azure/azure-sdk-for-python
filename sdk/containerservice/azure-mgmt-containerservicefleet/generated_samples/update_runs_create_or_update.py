@@ -51,13 +51,34 @@ def main():
                                 {
                                     "afterGates": [{"displayName": "gate after group-a", "type": "Approval"}],
                                     "beforeGates": [{"displayName": "gate before group-a", "type": "Approval"}],
+                                    "maxAllowedFailures": "1",
                                     "maxConcurrency": "2",
+                                    "memberSelector": {"byLabel": "tier=frontend"},
                                     "name": "group-a",
                                 }
                             ],
+                            "maxAllowedFailures": "2",
                             "maxConcurrency": "10",
                             "name": "stage1",
-                        }
+                        },
+                        {
+                            "afterStageWaitInSeconds": 600,
+                            "beforeGates": [
+                                {
+                                    "displayName": "Wait until Friday evening",
+                                    "scheduledStartConfiguration": {
+                                        "startDay": "Friday",
+                                        "startTime": "18:00",
+                                        "utcOffset": "-05:00",
+                                    },
+                                    "type": "ScheduledStart",
+                                }
+                            ],
+                            "maxAllowedFailures": "25%",
+                            "maxConcurrency": "50%",
+                            "memberSelector": {"byLabel": "env=production"},
+                            "name": "stage2",
+                        },
                     ]
                 },
                 "updateStrategyId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.ContainerService/fleets/myFleet/updateStrategies/strategy1",
@@ -67,6 +88,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-01/UpdateRuns_CreateOrUpdate.json
+# x-ms-original-file: 2026-11-02-preview/UpdateRuns_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

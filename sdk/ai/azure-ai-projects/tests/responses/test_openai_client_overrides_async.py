@@ -14,7 +14,7 @@ from typing import Any
 from unittest.mock import patch
 
 import pytest
-import httpx
+import httpx2
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
 
@@ -58,16 +58,16 @@ class TestGetOpenAIClientWithOverridesAsync:
         # Track whether our custom http_client was invoked
         request_intercepted = {"called": False, "request": None}
 
-        class TrackingTransport(httpx.AsyncBaseTransport):
+        class TrackingTransport(httpx2.AsyncBaseTransport):
             """Custom async transport that tracks requests and returns mock responses."""
 
-            async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+            async def handle_async_request(self, request: httpx2.Request) -> httpx2.Response:
                 # Mark that our custom transport was called
                 request_intercepted["called"] = True
                 request_intercepted["request"] = request
 
                 # Return a mock response for the OpenAI responses.create() call
-                return httpx.Response(
+                return httpx2.Response(
                     200,
                     request=request,
                     json={
@@ -89,7 +89,7 @@ class TestGetOpenAIClientWithOverridesAsync:
                 )
 
         # Create a custom http_client with our tracking transport
-        custom_http_client = httpx.AsyncClient(transport=TrackingTransport())
+        custom_http_client = httpx2.AsyncClient(transport=TrackingTransport())
 
         # Create the AIProjectClient
         project_client = AIProjectClient(

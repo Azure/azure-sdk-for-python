@@ -39,6 +39,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBSqlTriggerDelete.json
+# x-ms-original-file: 2026-07-15/CosmosDBSqlTriggerDelete.json
 if __name__ == "__main__":
     main()

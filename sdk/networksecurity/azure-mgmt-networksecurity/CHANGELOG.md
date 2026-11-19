@@ -1,0 +1,125 @@
+# Release History
+
+## 1.0.0b2 (2026-11-17)
+
+### Features Added
+
+  - Client `NetworkSecurityMgmtClient` added operation group `agent_fabrics`
+  - Client `NetworkSecurityMgmtClient` added operation group `cluster_associations`
+  - Client `NetworkSecurityMgmtClient` added operation group `egress_trust_bundles`
+  - Client `NetworkSecurityMgmtClient` added operation group `members`
+  - Client `NetworkSecurityMgmtClient` added operation group `operation_status`
+  - Client `NetworkSecurityMgmtClient` added operation group `policy_groups`
+  - Added model `AciWorkload`
+  - Added model `AgentFabric`
+  - Added model `AgentFabricProperties`
+  - Added model `AgentFabricSandboxEndpoint`
+  - Added model `AgentFabricSandboxImage`
+  - Added model `AgentFabricSandboxResources`
+  - Added model `AgentFabricSandboxWorkload`
+  - Added model `AgentFabricTagsUpdate`
+  - Added model `AgentIdentity`
+  - Added model `AksWorkload`
+  - Added model `AksWorkloadPortMapping`
+  - Added model `AksWorkloadReference`
+  - Added model `AzureManagedCaCertificate`
+  - Added model `ClusterAssociation`
+  - Added enum `ClusterAssociationIfNoneMatch`
+  - Added model `ClusterAssociationProperties`
+  - Added enum `ClusterAssociationSkuName`
+  - Added model `ClusterAssociationStatus`
+  - Added model `ClusterAssociationUpdate`
+  - Added model `ClusterAssociationUpdateProperties`
+  - Added model `ContentInspectionPolicy`
+  - Added model `ContentInspectionPolicyAddressPrefixesSource`
+  - Added model `ContentInspectionPolicySource`
+  - Added enum `ContentInspectionPolicySourceType`
+  - Added model `ContentInspectionPolicyWorkloadIdPatternsSource`
+  - Added model `ContentInspectionProfile`
+  - Added enum `ContentInspectionSensitivity`
+  - Added model `EgressTrustBundle`
+  - Added model `EgressTrustBundleCertificate`
+  - Added model `EgressTrustBundleProperties`
+  - Added model `FqdnFilteringAddressPrefixesSource`
+  - Added model `FqdnFilteringDestination`
+  - Added enum `FqdnFilteringDestinationType`
+  - Added model `FqdnFilteringFqdnsDestination`
+  - Added model `FqdnFilteringPolicy`
+  - Added model `FqdnFilteringSource`
+  - Added enum `FqdnFilteringSourceType`
+  - Added model `FqdnFilteringWorkloadIdPatternsSource`
+  - Added enum `HttpMethod`
+  - Added enum `ImagePullPolicy`
+  - Added model `McpArgumentMatching`
+  - Added enum `McpMatchCase`
+  - Added enum `McpMatchType`
+  - Added model `McpPolicy`
+  - Added model `McpPolicyAddressPrefixesDestination`
+  - Added model `McpPolicyAddressPrefixesSource`
+  - Added model `McpPolicyDestination`
+  - Added enum `McpPolicyDestinationType`
+  - Added model `McpPolicyFqdnsDestination`
+  - Added model `McpPolicySource`
+  - Added enum `McpPolicySourceType`
+  - Added model `McpPolicyWorkloadIdPatternsDestination`
+  - Added model `McpPolicyWorkloadIdPatternsSource`
+  - Added model `McpPromptMatching`
+  - Added enum `McpPromptMethod`
+  - Added model `McpRule`
+  - Added model `McpRuleDestinationMatching`
+  - Added model `McpRuleMatchingConditions`
+  - Added model `McpStringMatching`
+  - Added model `McpToolMatching`
+  - Added enum `McpToolMethod`
+  - Added model `Member`
+  - Added model `MemberProperties`
+  - Added model `MemberTagsUpdate`
+  - Added model `MemberUpdateProperties`
+  - Added model `NetworkSecurityPolicyBase`
+  - Added enum `NetworkSecurityPolicyType`
+  - Added enum `PolicyAction`
+  - Added enum `PolicyDirection`
+  - Added model `PolicyGroup`
+  - Added model `PolicyGroupProperties`
+  - Added model `PolicyGroupTagsUpdate`
+  - Added enum `PromptInjectionOnDetection`
+  - Added model `PromptInjectionProtection`
+  - Added enum `ProvisioningState`
+  - Added model `SystemAssignedServiceIdentity`
+  - Added enum `SystemAssignedServiceIdentityType`
+  - Added enum `TlsInspectionAction`
+  - Added model `TlsInspectionCertificateBase`
+  - Added enum `TlsInspectionCertificateMode`
+  - Added model `TlsInspectionPolicy`
+  - Added model `TlsInspectionPolicySource`
+  - Added enum `TlsInspectionPolicySourceType`
+  - Added model `TlsInspectionPolicyWorkloadIdPatternsSource`
+  - Added model `TlsInspectionRule`
+  - Added model `TlsInspectionRuleDestination`
+  - Added enum `TlsInspectionRuleDestinationType`
+  - Added model `TlsInspectionRuleFqdnsDestination`
+  - Added model `UrlFilteringAddressPrefixesDestination`
+  - Added model `UrlFilteringAddressPrefixesSource`
+  - Added model `UrlFilteringDestination`
+  - Added enum `UrlFilteringDestinationType`
+  - Added model `UrlFilteringFqdnsDestination`
+  - Added model `UrlFilteringPolicy`
+  - Added model `UrlFilteringRule`
+  - Added model `UrlFilteringSource`
+  - Added enum `UrlFilteringSourceType`
+  - Added model `UrlFilteringWorkloadIdPatternsDestination`
+  - Added model `UrlFilteringWorkloadIdPatternsSource`
+  - Added model `WorkloadBase`
+  - Added enum `WorkloadType`
+  - Added operation group `AgentFabricsOperations`
+  - Added operation group `ClusterAssociationsOperations`
+  - Added operation group `EgressTrustBundlesOperations`
+  - Added operation group `MembersOperations`
+  - Added operation group `OperationStatusOperations`
+  - Added operation group `PolicyGroupsOperations`
+
+## 1.0.0b1 (2026-11-05)
+
+### Other Changes
+
+  - Initial version

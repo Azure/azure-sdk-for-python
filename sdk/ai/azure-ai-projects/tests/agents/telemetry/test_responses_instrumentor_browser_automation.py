@@ -44,7 +44,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_browser_automation_non_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
@@ -182,7 +182,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_browser_automation_non_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
@@ -314,7 +314,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_browser_automation_streaming_with_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks
@@ -444,7 +444,7 @@ class TestResponsesInstrumentorBrowserAutomation(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_browser_automation_streaming_without_content_recording(
         self, **kwargs
     ):  # pylint: disable=too-many-locals,too-many-statements,too-many-nested-blocks

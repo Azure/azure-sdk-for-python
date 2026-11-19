@@ -2,8 +2,11 @@
 # Licensed under the MIT License.
 
 import datetime
+from collections.abc import Mapping
 from importlib.metadata import version
+import json
 import locale
+import math
 from os import environ
 from os.path import isdir
 import platform
@@ -32,7 +35,10 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_OPENTELEMETRY_VERSION,
     _PYTHON_APPLICATIONINSIGHTS_ENABLE_TELEMETRY,
     _WEBSITE_SITE_NAME,
-    _GEN_AI_ATTRIBUTES,
+    _CUSTOM_PROPERTY_MAX_LENGTH,
+    _GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS,
+    _GEN_AI_ATTRIBUTE_MAX_LENGTHS,
+    _MICROSOFT_CUSTOM_MEASUREMENTS,
 )
 from azure.monitor.opentelemetry.exporter._constants import (
     _TYPE_MAP,
@@ -425,26 +431,58 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 
 # pylint: disable=W0622
-def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 8 * 1024
-    max_length_for_gen_ai_attributes = 256 * 1024
+def _filter_custom_properties(
+    properties: Attributes, filter=None, *, increase_truncation_limit: bool = False
+) -> Dict[str, str]:
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
+    max_lengths = (
+        _GEN_AI_ATTRIBUTE_INCREASED_MAX_LENGTHS if increase_truncation_limit else _GEN_AI_ATTRIBUTE_MAX_LENGTHS
+    )
     for key, val in properties.items():
         # Apply filter function
         if filter is not None:
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 8 * 1024
+        # Max key length is 150. Max value length is 8 KiB, except for specific
+        # GenAI attributes (256 KiB). When increase_truncation_limit is enabled,
+        # GenAI input/output messages are allowed up to 4 MiB.
         if not key or len(key) > 150 or val is None:
             continue
-        if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
-        else:
-            processed_properties[key] = str(val)[:max_length]
+        max_length = max_lengths.get(key, _CUSTOM_PROPERTY_MAX_LENGTH)
+        processed_properties[key] = str(val)[:max_length]
     return processed_properties
+
+
+def _filter_custom_measurements(attributes: Attributes) -> Dict[str, float]:
+    # Extract custom measurements from the `microsoft.custom_measurements` attribute.
+    processed_measurements: Dict[str, float] = {}
+    if not attributes:
+        return processed_measurements
+    value = attributes.get(_MICROSOFT_CUSTOM_MEASUREMENTS)
+    if isinstance(value, str):
+        try:
+            value = json.loads(value)
+        except (ValueError, RecursionError):
+            return processed_measurements
+    if not isinstance(value, Mapping):
+        return processed_measurements
+    for key, val in value.items():
+        if not key or not isinstance(key, str):
+            continue
+        if isinstance(val, bool) or not isinstance(val, (int, float)):
+            continue
+        try:
+            measurement = float(val)
+        except OverflowError:
+            continue
+        if not math.isfinite(measurement):
+            continue
+        # Max key length is 150
+        processed_measurements[key[:150]] = measurement
+    return processed_measurements
 
 
 def _get_auth_policy(credential, default_auth_policy, aad_audience=None):

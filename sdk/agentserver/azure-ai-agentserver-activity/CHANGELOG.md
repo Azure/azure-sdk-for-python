@@ -1,10 +1,50 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0 (2026-11-16)
+
+### Features Added
+
+- First stable release of `azure-ai-agentserver-activity`.
+- Capture invocation-local original-subject assertions from platform headers,
+  independently of Activity payload identity and user-state partition keys.
+
+### Bugs Fixed
+
+- Return a classified error for malformed platform attribution before binding
+  request context or invoking the Activity handler.
+
+### Other Changes
+
+- Require the stable Core `2.3.0` release or later.
+
+## 1.0.0b4 (2026-10-12)
+
+### Bugs Fixed
+
+- Fixed compatibility with Microsoft 365 Agents SDK 1.8.0 by removing the
+  unsupported `ClaimsIdentity.is_authenticated` constructor argument.
+  Anonymous and bearer outbound authentication behavior is unchanged.
+
+### Other Changes
+
+- Raised the minimum `microsoft-agents-hosting-core` version to `1.4.0` to use
+  the supported claims constructor and `allow_anonymous` API.
+
+## 1.0.0b3 (2026-08-21)
+
+### Features Added
+
+- `FoundryStorage` adapter backed by `FoundryStateStore` — Implements the M365 `AsyncStorageBase` interface on top of the durable Foundry state store KV layer. Each M365 storage key maps to a per-key FoundryStateStore with user-scoped key isolation. Hosted Activity agents default to `FoundryStorage` in Foundry containers and `MemoryStorage` for local development.
 
 ### Breaking Changes
 
 - Removed the `POST /api/messages` route alias. Inbound activities are served only at `POST /activity/messages`, which is the endpoint the Foundry platform routes to. Callers that posted to `/api/messages` must use `/activity/messages`.
+- Removed public SSE keepalive helper.
+
+### Other Changes
+
+- Fixed activity typing and claims test compatibility with M365 SDK 1.4.0. The package now handles the new `py.typed` marker in `microsoft-agents-hosting-core` 1.4.0 and the deprecated `is_authenticated` property.
+- Updated FoundryStorage compatibility with `microsoft-agents-hosting-core` 1.3.0+ (`target_cls` is now a keyword-only argument in `AsyncStorageBase.read`).
 
 ## 1.0.0b2 (2026-07-28)
 

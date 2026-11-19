@@ -1,5 +1,11 @@
 # Release History
 
+## 4.3.0 (2026-10-30)
+
+### Other Changes
+
+  - Upgraded the service API version to 2026-11-01.
+
 ## 4.2.0 (2026-08-13)
 
 ### Features Added

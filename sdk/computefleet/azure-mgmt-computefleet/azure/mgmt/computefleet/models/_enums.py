@@ -214,10 +214,10 @@ class FleetMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Modes for Compute Fleet."""
 
     MANAGED = "Managed"
-    """Default. Managed is the default mode for Compute Fleet where VMs are provisioned via virtual
-    machine scale sets."""
+    """Default. Managed mode where Compute Fleet provisions the VMs, manages them and their lifecycle."""
     LAUNCH = "Launch"
-    """Launch mode for Compute Fleet will directly launch VM instances to be managed by the customer."""
+    """Launch mode where Compute Fleet launches the VMs and the customer manages them and their
+    lifecycle."""
 
 
 class IPVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -608,14 +608,3 @@ class WindowsVMGuestPatchMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTOMATIC_BY_PLATFORM = "AutomaticByPlatform"
     """The virtual machine will automatically updated by the platform. The properties provisionVMAgent
     and WindowsConfiguration.enableAutomaticUpdates must be true."""
-
-
-class ZoneDistributionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Distribution strategies for Compute Fleet zone allocation policy."""
-
-    BEST_EFFORT_SINGLE_ZONE = "BestEffortSingleZone"
-    """Default. Compute Fleet allocates all Fleet capacity within a single zone based on best effort.
-    If capacity is not available, Compute Fleet can allocate capacity in different zones."""
-    PRIORITIZED = "Prioritized"
-    """Compute Fleet allocates capacity based on zone preferences. Higher priority zones are filled
-    first before allocating to lower priority zones."""

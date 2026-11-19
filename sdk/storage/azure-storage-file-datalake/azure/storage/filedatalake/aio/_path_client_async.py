@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -13,7 +14,7 @@ from azure.core.exceptions import AzureError, HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
 from .._deserialize import process_storage_error
-from .._generated.aio import AzureDataLakeStorageRESTAPI
+from .._generated.aio import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeCounters,
     AccessControlChangeFailure,
@@ -38,6 +39,7 @@ from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from ._data_lake_lease_async import DataLakeLeaseClient
+from ._session_async import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -75,6 +77,19 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type AsyncTokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this client.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided AsyncTokenCredential. Only supported with an AsyncTokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.aio.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
     """
 
     def __init__(
@@ -122,6 +137,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self.path_name = path_name
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
 
         super(PathClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs
@@ -160,10 +176,9 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
             url,
-            version=self._api_version,
-            base_url=url,
             file_system=self.file_system_name,
             path=self.path_name,
+            version=self._api_version,
             pipeline=self._pipeline,
         )
         return client

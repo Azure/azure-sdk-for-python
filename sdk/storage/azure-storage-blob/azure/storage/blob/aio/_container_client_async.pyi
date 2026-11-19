@@ -55,6 +55,7 @@ from .._models import (
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
+from ._session_async import SessionProvider
 
 class ContainerClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin, StorageAccountHostsMixin, StorageEncryptionMixin
@@ -75,10 +76,13 @@ class ContainerClient(  # type: ignore[misc]
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
+        use_session: bool = False,
+        session_provider: Optional[SessionProvider] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
@@ -100,8 +104,8 @@ class ContainerClient(  # type: ignore[misc]
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
@@ -121,8 +125,8 @@ class ContainerClient(  # type: ignore[misc]
         max_block_size: int = 4 * 1024 * 1024,
         max_page_size: int = 4 * 1024 * 1024,
         max_chunk_get_size: int = 4 * 1024 * 1024,
-        max_single_put_size: int = 64 * 1024 * 1024,
-        max_single_get_size: int = 32 * 1024 * 1024,
+        max_single_put_size: int = 4 * 1024 * 1024,
+        max_single_get_size: int = 4 * 1024 * 1024,
         min_large_block_upload_threshold: int = 4 * 1024 * 1024 + 1,
         use_byte_buffer: Optional[bool] = None,
         **kwargs: Any
@@ -314,6 +318,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[str]: ...
@@ -336,6 +341,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> StorageStreamDownloader[bytes]: ...
@@ -358,6 +364,7 @@ class ContainerClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...

@@ -40,7 +40,7 @@ class TestDurableTaskMgmtTaskHubsOperations(AzureMgmtRecordedTestCase):
             resource={
                 "id": "str",
                 "name": "str",
-                "properties": {"dashboardUrl": "str", "provisioningState": "str"},
+                "properties": {"capabilities": ["str"], "dashboardUrl": "str", "provisioningState": "str"},
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",

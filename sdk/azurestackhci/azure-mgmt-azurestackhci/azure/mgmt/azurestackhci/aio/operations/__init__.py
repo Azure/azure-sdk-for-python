@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
+from ._operations import OsImagesOperations  # type: ignore
 from ._operations import Operations  # type: ignore
 from ._operations import ArcSettingsOperations  # type: ignore
 from ._operations import OffersOperations  # type: ignore
@@ -26,6 +27,18 @@ from ._operations import UpdateRunsOperations  # type: ignore
 from ._operations import UpdatesOperations  # type: ignore
 from ._operations import UpdateSummariesOperationGroupOperations  # type: ignore
 from ._operations import ValidatedSolutionRecipesOperations  # type: ignore
+from ._operations import EdgeMachinesOperations  # type: ignore
+from ._operations import EdgeMachineJobsOperations  # type: ignore
+from ._operations import OwnershipVouchersOperations  # type: ignore
+from ._operations import ClusterJobsOperations  # type: ignore
+from ._operations import EdgeMachineNetworkAdaptersOperations  # type: ignore
+from ._operations import EdgeMachineNetworkAdapterJobsOperations  # type: ignore
+from ._operations import EdgeMachineDisksOperations  # type: ignore
+from ._operations import EdgeMachineVolumesOperations  # type: ignore
+from ._operations import EdgeMachineDiskJobsOperations  # type: ignore
+from ._operations import EdgeMachineDiskPrivilegedJobsOperations  # type: ignore
+from ._operations import EdgeMachineSecuritySettingsOperationsOperations  # type: ignore
+from ._operations import EdgeMachineDeploymentSettingsOperations  # type: ignore
 from ._operations import UpdateSummariesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -33,6 +46,7 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "OsImagesOperations",
     "Operations",
     "ArcSettingsOperations",
     "OffersOperations",
@@ -47,6 +61,18 @@ __all__ = [
     "UpdatesOperations",
     "UpdateSummariesOperationGroupOperations",
     "ValidatedSolutionRecipesOperations",
+    "EdgeMachinesOperations",
+    "EdgeMachineJobsOperations",
+    "OwnershipVouchersOperations",
+    "ClusterJobsOperations",
+    "EdgeMachineNetworkAdaptersOperations",
+    "EdgeMachineNetworkAdapterJobsOperations",
+    "EdgeMachineDisksOperations",
+    "EdgeMachineVolumesOperations",
+    "EdgeMachineDiskJobsOperations",
+    "EdgeMachineDiskPrivilegedJobsOperations",
+    "EdgeMachineSecuritySettingsOperationsOperations",
+    "EdgeMachineDeploymentSettingsOperations",
     "UpdateSummariesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

@@ -41,11 +41,18 @@ def main():
             "properties": {
                 "providerSpecificDetails": {
                     "instanceType": "A2A",
-                    "vmDisks": [
+                    "vmManagedDisks": [
                         {
-                            "diskUri": "https://vmstorage.blob.core.windows.net/vhds/datadisk1.vhd",
+                            "confidentialDiskEncryptionInfo": {
+                                "recoveryReplicaConfidentialDiskEncryptionSetId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/recoveryResource/providers/Microsoft.Compute/diskEncryptionSets/cvm-replica-des",
+                                "recoveryTargetConfidentialDiskEncryptionSetId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/recoveryResource/providers/Microsoft.Compute/diskEncryptionSets/cvm-target-des",
+                            },
+                            "diskId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/primaryResource/providers/Microsoft.Compute/disks/datadisk2",
                             "primaryStagingAzureStorageAccountId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/primaryResource/providers/Microsoft.Storage/storageAccounts/vmcachestorage",
-                            "recoveryAzureStorageAccountId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/recoveryResource/providers/Microsoft.Storage/storageAccounts/recoverystorage",
+                            "recoveryDiskAccessId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/recoveryResource/providers/Microsoft.Compute/diskAccesses/recoveryDiskAccess",
+                            "recoveryNetworkAccessPolicy": "AllowPrivate",
+                            "recoveryPublicNetworkAccess": "Disabled",
+                            "recoveryResourceGroupId": "/subscriptions/c183865e-6077-46f2-a3b1-deb0f4f4650a/resourcegroups/recoveryResource",
                         }
                     ],
                 }
@@ -55,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/ReplicationProtectedItems_AddDisks.json
+# x-ms-original-file: 2026-11-01/ReplicationProtectedItems_AddDisks.json
 if __name__ == "__main__":
     main()

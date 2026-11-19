@@ -57,6 +57,11 @@ The following are code samples that show common scenario operations with the Azu
 
 * [diagnostics_filter_sample.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/diagnostics_filter_sample.py) - Example using logging filters for diagnostics filtering
 
+* [compact_utf8_item_writes.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes.py) - Example demonstrating the `enable_compact_utf8_item_writes` client option:
+    * Sending item write bodies as compact UTF-8 instead of `\uXXXX` escape sequences
+    * Comparing the resulting request body size for Unicode-heavy items
+    * Async version: [compact_utf8_item_writes_async.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cosmos/azure-cosmos/samples/compact_utf8_item_writes_async.py)
+
 ## Prerequisites
 * Python 3.8+
 * You must have an [Azure subscription](https://azure.microsoft.com/free/) and an

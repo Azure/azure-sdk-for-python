@@ -9,7 +9,6 @@ import re
 import shutil
 from pathlib import Path
 
-
 ROOT_INIT_PREFIX = (
     "# coding=utf-8\n"
     "# --------------------------------------------------------------------------\n"
@@ -22,6 +21,7 @@ ROOT_INIT_PREFIX = (
     "from .types import *  # type: ignore # noqa: F401,F403\n"
 )
 
+
 def _remove_pycache(root: Path) -> None:
     for pycache in root.rglob("__pycache__"):
         shutil.rmtree(pycache)
@@ -31,9 +31,7 @@ def _find_emitted_models_root(emitter_output_root: Path) -> Path:
     candidates = sorted(
         path
         for path in emitter_output_root.rglob("types.py")
-        if path.parent.name == "models"
-        and (path.parent / "_unions.py").exists()
-        and (path.parent / "models").is_dir()
+        if path.parent.name == "models" and (path.parent / "_unions.py").exists() and (path.parent / "models").is_dir()
     )
     if not candidates:
         raise FileNotFoundError(f"Could not find emitted TypedDict model package under {emitter_output_root}")
@@ -118,6 +116,11 @@ def finalize(emitter_output_root: Path, generated_root: Path) -> None:
         shutil.copy2(emitted_root / "models" / file_name, models_root / file_name)
 
     (generated_root / "__init__.py").write_text(ROOT_INIT_PREFIX, encoding="utf-8")
+    if __package__:
+        from .lazy_model_emitter import emit
+    else:
+        from lazy_model_emitter import emit
+    emit(generated_root)
     _remove_pycache(generated_root)
 
 

@@ -204,6 +204,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
                                                     "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                     "loadBalancerInboundNatPools": [{"id": "str"}],
                                                     "primary": bool,
+                                                    "privateIPAddressPrefixLength": 0,
                                                     "privateIPAddressVersion": "str",
                                                     "publicIPAddressConfiguration": {
                                                         "name": "str",
@@ -572,6 +573,7 @@ class TestComputeManagementVirtualMachineScaleSetsOperations(AzureMgmtRecordedTe
                                                     "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                     "loadBalancerInboundNatPools": [{"id": "str"}],
                                                     "primary": bool,
+                                                    "privateIPAddressPrefixLength": 0,
                                                     "privateIPAddressVersion": "str",
                                                     "publicIPAddressConfiguration": {
                                                         "name": "str",

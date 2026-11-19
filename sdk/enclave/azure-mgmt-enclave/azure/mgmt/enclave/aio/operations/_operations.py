@@ -110,7 +110,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -220,7 +220,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class WorkloadOperations:
+class WorkloadOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1139,7 +1139,7 @@ class WorkloadOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualEnclaveOperations:
+class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2022,7 +2022,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_creation_initial(
         self,
@@ -2196,7 +2202,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_creation(
         self,
@@ -2285,7 +2297,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_deletion_initial(
         self,
@@ -2459,7 +2477,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_deletion(
         self,
@@ -2537,7 +2561,7 @@ class VirtualEnclaveOperations:
         )
 
 
-class CommunityOperations:
+class CommunityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3587,7 +3611,7 @@ class CommunityOperations:
         return deserialized  # type: ignore
 
 
-class TransitHubOperations:
+class TransitHubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4504,7 +4528,7 @@ class TransitHubOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EnclaveConnectionOperations:
+class EnclaveConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5859,7 +5883,7 @@ class EnclaveConnectionOperations:
         )
 
 
-class EnclaveEndpointsOperations:
+class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6792,7 +6816,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_creation_initial(
         self,
@@ -6978,7 +7008,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_creation(
         self,
@@ -7072,7 +7108,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_deletion_initial(
         self,
@@ -7258,7 +7300,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_deletion(
         self,
@@ -7340,7 +7388,7 @@ class EnclaveEndpointsOperations:
         )
 
 
-class CommunityEndpointsOperations:
+class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8282,7 +8330,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_creation_initial(
         self,
@@ -8468,7 +8522,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_creation(
         self,
@@ -8562,7 +8622,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def _handle_approval_deletion_initial(
         self,
@@ -8748,7 +8814,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     async def begin_handle_approval_deletion(
         self,
@@ -8830,7 +8902,7 @@ class CommunityEndpointsOperations:
         )
 
 
-class DedicatedHubOperations:
+class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8860,7 +8932,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def get(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -8949,7 +9021,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -9137,7 +9209,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def begin_create_or_update(
         self,
@@ -9231,7 +9303,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def _update_initial(
         self,
@@ -9417,7 +9489,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def begin_update(
         self,
@@ -9509,7 +9581,7 @@ class DedicatedHubOperations:
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -9585,7 +9657,7 @@ class DedicatedHubOperations:
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -9654,7 +9726,7 @@ class DedicatedHubOperations:
         params_added_on={
             "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "community_name", "accept"]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def list_by_community_resource(
         self, resource_group_name: str, community_name: str, **kwargs: Any
@@ -9762,7 +9834,7 @@ class DedicatedHubOperations:
     @api_version_validation(
         method_added_on="2025-11-01-preview",
         params_added_on={"2025-11-01-preview": ["api_version", "subscription_id", "community_name", "accept"]},
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def list_by_subscription(
         self, community_name: str, **kwargs: Any
@@ -9863,7 +9935,7 @@ class DedicatedHubOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ApprovalOperations:
+class ApprovalOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

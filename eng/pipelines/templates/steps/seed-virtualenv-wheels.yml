@@ -1,7 +1,7 @@
 parameters:
   WHEEL_VERSION: '0.37.0'
   SETUPTOOLS_VERSION: '59.6.0'
-  PIP_VERSION: '20.3.3'
+  PIP_VERSION: '26.2.2'
 
 steps:
   - pwsh: |

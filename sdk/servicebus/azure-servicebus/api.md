@@ -25,6 +25,18 @@ namespace azure.servicebus
             ) -> None: ...
 
 
+    class azure.servicebus.DeleteMessagesResult:
+        property deleted_message_count: int    # Read-only
+
+        def __init__(self, deleted_message_count: int) -> None: ...
+
+
+    class azure.servicebus.PurgeMessagesResult(DeleteMessagesResult):
+        property deleted_message_count: int    # Read-only
+
+        def __init__(self, deleted_message_count: int) -> None: ...
+
+
     class azure.servicebus.ServiceBusClient: implements ContextManager 
         fully_qualified_namespace: str
 
@@ -43,6 +55,7 @@ namespace azure.servicebus
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -63,6 +76,7 @@ namespace azure.servicebus
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -364,6 +378,14 @@ namespace azure.servicebus
 
         def defer_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
+        def delete_messages(
+                self, 
+                message_count: int, 
+                *, 
+                before_enqueued_time: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> DeleteMessagesResult: ...
+
         def peek_messages(
                 self, 
                 max_message_count: int = 1, 
@@ -372,6 +394,14 @@ namespace azure.servicebus
                 timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
+
+        def purge_messages(
+                self, 
+                *, 
+                before_enqueued_time: Optional[datetime] = ..., 
+                max_message_count_per_batch: int = 500, 
+                timeout: Optional[float] = ...
+            ) -> PurgeMessagesResult: ...
 
         def receive_deferred_messages(
                 self, 
@@ -537,6 +567,7 @@ namespace azure.servicebus.aio
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -557,6 +588,7 @@ namespace azure.servicebus.aio
                 retry_total: int = 3, 
                 ssl_context: Union[SSLContext, None] = ..., 
                 transport_type: TransportType = ..., 
+                try_timeout: Optional[float] = ..., 
                 uamqp_transport: bool = ..., 
                 user_agent: Optional[str] = ..., 
                 **kwargs: Any
@@ -675,6 +707,14 @@ namespace azure.servicebus.aio
 
         async def defer_message(self, message: ServiceBusReceivedMessage) -> None: ...
 
+        async def delete_messages(
+                self, 
+                message_count: int, 
+                *, 
+                before_enqueued_time: Optional[datetime] = ..., 
+                timeout: Optional[float] = ...
+            ) -> DeleteMessagesResult: ...
+
         async def peek_messages(
                 self, 
                 max_message_count: int = 1, 
@@ -683,6 +723,14 @@ namespace azure.servicebus.aio
                 timeout: Optional[float] = ..., 
                 **kwargs: Any
             ) -> List[ServiceBusReceivedMessage]: ...
+
+        async def purge_messages(
+                self, 
+                *, 
+                before_enqueued_time: Optional[datetime] = ..., 
+                max_message_count_per_batch: int = 500, 
+                timeout: Optional[float] = ...
+            ) -> PurgeMessagesResult: ...
 
         async def receive_deferred_messages(
                 self, 

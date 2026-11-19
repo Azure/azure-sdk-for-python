@@ -22,6 +22,7 @@ USAGE:
 """
 
 import os
+from urllib.parse import urlparse
 
 from sample_utils import (
     cleanup_resources,
@@ -29,7 +30,6 @@ from sample_utils import (
     print_retrieval_summary,
     setup_hotel_index,
 )
-
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
@@ -59,7 +59,11 @@ def main():
         from azure.search.documents.knowledgebases.models import (
             KnowledgeBaseMessage,
             KnowledgeBaseMessageTextContent,
+            KnowledgeBaseResponseCompletedEvent,
+            KnowledgeBaseRetrievalStartedEvent,
             KnowledgeBaseRetrievalRequest,
+            KnowledgeBaseSearchIndexReference,
+            KnowledgeBaseStreamErrorEvent,
             KnowledgeRetrievalLowReasoningEffort,
             KnowledgeRetrievalSemanticIntent,
             SearchIndexKnowledgeSourceParams,
@@ -69,6 +73,7 @@ def main():
         knowledge_source = SearchIndexKnowledgeSource(
             name=knowledge_source_name,
             description="Hotel knowledge source for retrieval response preview",
+            results_processing="rerank",
             search_index_parameters=SearchIndexKnowledgeSourceParameters(
                 search_index_name=index_name,
                 source_data_fields=[
@@ -118,6 +123,23 @@ def main():
             semantic_result = retrieval_client.retrieve(semantic_request)
             print_retrieval_summary(semantic_result)
 
+            stream_events = []
+            stream_request_id = None
+            with retrieval_client.retrieve_stream(semantic_request) as stream:
+                for event in stream:
+                    stream_events.append(event)
+                    if isinstance(event, KnowledgeBaseRetrievalStartedEvent):
+                        stream_request_id = event.request_id
+                    elif isinstance(event, KnowledgeBaseResponseCompletedEvent):
+                        assert event.status_code in {200, 206}
+                        print_retrieval_summary(event.response)
+                    elif isinstance(event, KnowledgeBaseStreamErrorEvent):
+                        error_message = event.error.message if event.error else "Retrieval failed"
+                        raise RuntimeError(f"Streaming retrieval error: {error_message}")
+            assert isinstance(stream_events[0], KnowledgeBaseRetrievalStartedEvent)
+            assert isinstance(stream_events[-1], KnowledgeBaseResponseCompletedEvent)
+            assert stream_request_id
+
             message_request = KnowledgeBaseRetrievalRequest(
                 include_activity=True,
                 messages=[
@@ -131,12 +153,40 @@ def main():
                         knowledge_source_name=knowledge_source_name,
                         include_references=True,
                         include_reference_source_data=True,
+                        results_processing="rerank",
                         max_output_documents=50,
                     )
                 ],
             )
             message_result = retrieval_client.retrieve(message_request)
             print_retrieval_summary(message_result)
+            search_references = [
+                reference
+                for reference in message_result.references or []
+                if isinstance(reference, KnowledgeBaseSearchIndexReference)
+            ]
+            assert search_references
+            search_host = urlparse(service_endpoint).netloc
+            for reference in search_references:
+                assert reference.citation_url is not None
+                citation = urlparse(reference.citation_url)
+                assert citation.scheme == "https"
+                assert citation.netloc == search_host
+
+            no_rerank_request = KnowledgeBaseRetrievalRequest(
+                include_activity=True,
+                intents=[KnowledgeRetrievalSemanticIntent(search="Which hotels include parking?")],
+                knowledge_source_params=[
+                    SearchIndexKnowledgeSourceParams(
+                        knowledge_source_name=knowledge_source_name,
+                        include_references=True,
+                        results_processing="none",
+                        max_output_documents=50,
+                    )
+                ],
+            )
+            no_rerank_result = retrieval_client.retrieve(no_rerank_request)
+            assert all(reference.reranker_score is None for reference in no_rerank_result.references or [])
         finally:
             retrieval_client.close()
         # [END sample_knowledge_retrieval_response_preview]

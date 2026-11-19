@@ -19,6 +19,32 @@ if TYPE_CHECKING:
     )
 
 
+class ComputePlacementScoresInput(TypedDict, total=False):
+    """ComputePlacementScores API Input.
+
+    :ivar desiredLocations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
+    :vartype desiredLocations: list[str]
+    :ivar desiredSizes: The desired virtual machine SKU sizes. Required.
+    :vartype desiredSizes: list["ResourceSize"]
+    :ivar desiredCount: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
+    :vartype desiredCount: int
+    :ivar availabilityZones: Defines if the scope is zonal or regional.
+    :vartype availabilityZones: bool
+    """
+
+    desiredLocations: list[str]
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desiredSizes: Required[list["ResourceSize"]]
+    """The desired virtual machine SKU sizes. Required."""
+    desiredCount: int
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
+    availabilityZones: bool
+    """Defines if the scope is zonal or regional."""
+
+
 class ResourceSize(TypedDict, total=False):
     """SpotPlacementRecommender API response.
 
@@ -42,8 +68,7 @@ class SkuMixPlacementCapacityProfile(TypedDict, total=False):
     :ivar priority: The priority of the VMs to allocate. Required. Known values are: "Regular" and
      "Spot".
     :vartype priority: Union[str, "SkuMixPlacementPriority"]
-    :ivar spotPriorityProfile: Required when priority is Spot. Contains spot-specific
-     configuration.
+    :ivar spotPriorityProfile: Contains spot-specific configuration.
     :vartype spotPriorityProfile: "SkuMixPlacementSpotPriorityProfile"
     :ivar allocationStrategy: The allocation strategy for determining the optimal SKU split. Known
      values are: "LowestPrice", "Prioritized", and "EvictionOptimized".
@@ -62,7 +87,7 @@ class SkuMixPlacementCapacityProfile(TypedDict, total=False):
     priority: Required[Union[str, "SkuMixPlacementPriority"]]
     """The priority of the VMs to allocate. Required. Known values are: \"Regular\" and \"Spot\"."""
     spotPriorityProfile: "SkuMixPlacementSpotPriorityProfile"
-    """Required when priority is Spot. Contains spot-specific configuration."""
+    """Contains spot-specific configuration."""
     allocationStrategy: Union[str, "SkuMixPlacementAllocationStrategy"]
     """The allocation strategy for determining the optimal SKU split. Known values are:
      \"LowestPrice\", \"Prioritized\", and \"EvictionOptimized\"."""
@@ -107,7 +132,7 @@ class SkuMixPlacementRequest(TypedDict, total=False):
 
 
 class SkuMixPlacementSpotPriorityProfile(TypedDict, total=False):
-    """Spot priority configuration. Required when priority is Spot.
+    """Spot priority configuration.
 
     :ivar maxPricePerVm: Maximum price per VM the customer is willing to pay. Default: -1 (no price
      restriction).
@@ -176,21 +201,24 @@ class SkuMixPlacementZonePreference(TypedDict, total=False):
 class SpotPlacementScoresInput(TypedDict, total=False):
     """SpotPlacementScores API Input.
 
-    :ivar desiredLocations: The desired regions.
+    :ivar desiredLocations: The desired regions. If not set, the location from the request URI is
+     used as the desired location. Each location in this list must be a valid Azure region.
     :vartype desiredLocations: list[str]
-    :ivar desiredSizes: The desired virtual machine SKU sizes.
+    :ivar desiredSizes: The desired virtual machine SKU sizes. Required.
     :vartype desiredSizes: list["ResourceSize"]
-    :ivar desiredCount: Desired instance count per region/zone based on the scope.
+    :ivar desiredCount: Desired instance count per region/zone based on the scope. If not set,
+     defaults to 1.
     :vartype desiredCount: int
     :ivar availabilityZones: Defines if the scope is zonal or regional.
     :vartype availabilityZones: bool
     """
 
     desiredLocations: list[str]
-    """The desired regions."""
-    desiredSizes: list["ResourceSize"]
-    """The desired virtual machine SKU sizes."""
+    """The desired regions. If not set, the location from the request URI is used as the desired
+     location. Each location in this list must be a valid Azure region."""
+    desiredSizes: Required[list["ResourceSize"]]
+    """The desired virtual machine SKU sizes. Required."""
     desiredCount: int
-    """Desired instance count per region/zone based on the scope."""
+    """Desired instance count per region/zone based on the scope. If not set, defaults to 1."""
     availabilityZones: bool
     """Defines if the scope is zonal or regional."""

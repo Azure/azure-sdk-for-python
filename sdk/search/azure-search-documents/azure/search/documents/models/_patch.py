@@ -8,29 +8,48 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
+from enum import Enum
 from typing import Any, Dict, List, Tuple, Union, cast, Optional
 from azure.core.exceptions import HttpResponseError
 
+from .._utils.model_base import SdkJSONEncoder
 from ._enums import IndexActionType
 from ._models import IndexAction
 from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
 
+_ENUM_ENCODER_MARKER = "_azure_search_documents_handles_enum"
 
-def _flatten_args(args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]) -> List[Dict]:
+
+def _patch_sdk_json_encoder() -> None:
+    default = SdkJSONEncoder.default
+    if getattr(default, _ENUM_ENCODER_MARKER, False):
+        return
+
+    def default_with_enum(self: SdkJSONEncoder, value: Any) -> Any:
+        if isinstance(value, Enum):
+            return value.value
+        return default(self, value)
+
+    setattr(default_with_enum, _ENUM_ENCODER_MARKER, True)
+    setattr(SdkJSONEncoder, "default", default_with_enum)
+
+
+def _flatten_args(args: Tuple[Union[Dict[str, Any], List[Dict[str, Any]]], ...]) -> List[Dict[str, Any]]:
     """Flatten variadic arguments into a single list of documents.
 
     Supports both:
     - add_upload_actions([doc1, doc2])  # single list
     - add_upload_actions(doc1, doc2)    # multiple args
 
-    :param args: Variadic arguments containing documents or lists of documents.
-    :type args: Tuple[Union[List[Dict[Any, Any]], List[List[Dict[Any, Any]]]], ...]
+    :param args: Variadic arguments containing documents or a list of documents.
+    :type args: tuple[dict[str, Any] or list[dict[str, Any]], ...]
     :return: A flattened list of document dictionaries.
     :rtype: List[Dict]
     """
     if len(args) == 1 and isinstance(args[0], (list, tuple)):
-        return cast(List[Dict], args[0])
-    return cast(List[Dict], args)
+        return list(cast(List[Dict[str, Any]], args[0]))
+    return list(cast(Tuple[Dict[str, Any], ...], args))
 
 
 class RequestEntityTooLargeError(HttpResponseError):
@@ -47,12 +66,13 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
     def __init__(self, *, actions: Optional[List[IndexAction]] = None) -> None:
         super().__init__(actions=actions if actions is not None else [])
-        self._actions: List[IndexAction] = self["value"]
 
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
 
-    def add_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_upload_actions(
+        self, *documents: Union[Dict[str, Any], List[Dict[str, Any]]], **kwargs: Any
+    ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to upload to the Azure search index.
 
@@ -68,7 +88,9 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.UPLOAD)
 
-    def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_delete_actions(
+        self, *documents: Union[Dict[str, Any], List[Dict[str, Any]]], **kwargs: Any
+    ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to delete from the Azure search index.
 
@@ -89,7 +111,9 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.DELETE)
 
-    def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_merge_actions(
+        self, *documents: Union[Dict[str, Any], List[Dict[str, Any]]], **kwargs: Any
+    ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
@@ -108,7 +132,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         return self._extend_batch(_flatten_args(documents), IndexActionType.MERGE)
 
     def add_merge_or_upload_actions(
-        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+        self, *documents: Union[Dict[str, Any], List[Dict[str, Any]]], **kwargs: Any
     ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
@@ -127,15 +151,23 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.MERGE_OR_UPLOAD)
 
+    def _get_actions(self) -> List[IndexAction]:
+        """Return the canonical action list stored in the wire field, initializing it if missing.
+
+        :return: the live list stored in ``self["value"]``
+        :rtype: list[~azure.search.documents.models.IndexAction]
+        """
+        if self.get("value") is None:
+            self["value"] = []
+        return cast(List[IndexAction], self["value"])
+
     @property
     def actions(self) -> List[IndexAction]:
         """The list of currently index actions to index.
 
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
-        return list(self._actions)
+        return list(self._get_actions())
 
     @actions.setter
     def actions(self, value: List[IndexAction]) -> None:
@@ -144,7 +176,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :param value: The list of index actions
         :type value: list[~azure.search.documents.models.IndexAction]
         """
-        self._actions = value if value is not None else []
+        self["value"] = value if value is not None else []
 
     def dequeue_actions(self, **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
@@ -153,10 +185,8 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :return: the current actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            return []
-        result = list(self._actions)
-        self._actions = []
+        result = list(self._get_actions())
+        self["value"] = []
         return result
 
     def enqueue_actions(self, new_actions: Union[IndexAction, List[IndexAction]], **kwargs: Any) -> None:
@@ -166,15 +196,14 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :param new_actions: the actions to enqueue
         :type new_actions: ~azure.search.documents.models.IndexAction or list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
+        actions = self._get_actions()
 
         if isinstance(new_actions, IndexAction):
-            self._actions.append(new_actions)
+            actions.append(new_actions)
         else:
-            self._actions.extend(new_actions)
+            actions.extend(new_actions)
 
-    def _extend_batch(self, documents: List[Dict], action_type: str) -> List[IndexAction]:
+    def _extend_batch(self, documents: List[Dict[str, Any]], action_type: str) -> List[IndexAction]:
         """Internal helper to extend the batch with new actions.
 
         :param documents: The documents to add
@@ -184,17 +213,15 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :return: The list of actions added
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
-        if not hasattr(self, "_actions") or self._actions is None:
-            self._actions = []
+        actions = self._get_actions()
 
         new_actions = []
         for doc in documents:
-            action_dict = {"@search.action": action_type}
-            action_dict.update(doc)
-            action = IndexAction(action_dict)
+            action = IndexAction(action_type=action_type)
+            action.update(doc)
             new_actions.append(action)
 
-        self._actions.extend(new_actions)
+        actions.extend(new_actions)
         return new_actions
 
 
@@ -214,3 +241,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+
+    _patch_sdk_json_encoder()

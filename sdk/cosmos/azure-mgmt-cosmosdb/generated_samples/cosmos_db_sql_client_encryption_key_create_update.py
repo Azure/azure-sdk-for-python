@@ -54,6 +54,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
+# x-ms-original-file: 2026-07-15/CosmosDBSqlClientEncryptionKeyCreateUpdate.json
 if __name__ == "__main__":
     main()

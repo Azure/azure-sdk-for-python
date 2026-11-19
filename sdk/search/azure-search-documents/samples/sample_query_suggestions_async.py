@@ -20,7 +20,6 @@ USAGE:
 import os
 import asyncio
 
-
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
@@ -39,7 +38,7 @@ async def suggest_query_async():
         print("Results: suggestions for 'coffee'")
         for result in results:
             hotel = await search_client.get_document(key=result["HotelId"])
-            print(f"  Text: {result['text']!r}, HotelName: {hotel['HotelName']}")
+            print(f"  Text: {result.text!r}, HotelName: {hotel['HotelName']}")
     # [END suggest_query_async]
 
 

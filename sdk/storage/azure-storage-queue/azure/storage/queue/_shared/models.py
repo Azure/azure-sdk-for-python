@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 # pylint: disable=too-many-instance-attributes
 from enum import Enum
-from typing import Optional
+from typing import Any, Optional
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.configuration import Configuration
@@ -207,53 +207,53 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DictMixin(object):
 
-    def __setitem__(self, key, item):
+    def __setitem__(self, key: str, item: Any) -> None:
         self.__dict__[key] = item
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: str) -> Any:
         return self.__dict__[key]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.keys())
 
-    def __delitem__(self, key):
+    def __delitem__(self, key: str) -> None:
         self.__dict__[key] = None
 
     # Compare objects by comparing all attributes.
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
             return self.__dict__ == other.__dict__
         return False
 
     # Compare objects by comparing all attributes.
-    def __ne__(self, other):
+    def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str({k: v for k, v in self.__dict__.items() if not k.startswith("_")})
 
-    def __contains__(self, key):
+    def __contains__(self, key: object) -> bool:
         return key in self.__dict__
 
-    def has_key(self, k):
+    def has_key(self, k: object) -> bool:
         return k in self.__dict__
 
-    def update(self, *args, **kwargs):
-        return self.__dict__.update(*args, **kwargs)
+    def update(self, *args: Any, **kwargs: Any) -> None:
+        self.__dict__.update(*args, **kwargs)
 
-    def keys(self):
+    def keys(self) -> list[str]:
         return [k for k in self.__dict__ if not k.startswith("_")]
 
-    def values(self):
+    def values(self) -> list[Any]:
         return [v for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def items(self):
+    def items(self) -> list[tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key, default=None):
+    def get(self, key: str, default: Any = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default
@@ -559,7 +559,7 @@ class StorageConfiguration(Configuration):
 
     :param int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :param int copy_polling_interval: The interval in seconds for polling copy operations.
     :param int max_block_size: The maximum chunk size for uploading a block blob in chunks.
         Defaults to 4*1024*1024, or 4MB.
@@ -569,7 +569,7 @@ class StorageConfiguration(Configuration):
     :param int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :param int min_large_chunk_upload_threshold: The max size for a single put operation.
     :param int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :param int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :param int max_range_size: The max range size for file upload.
@@ -590,13 +590,13 @@ class StorageConfiguration(Configuration):
 
     def __init__(self, **kwargs):
         super(StorageConfiguration, self).__init__(**kwargs)
-        self.max_single_put_size = kwargs.pop("max_single_put_size", 64 * 1024 * 1024)
+        self.max_single_put_size = kwargs.pop("max_single_put_size", 4 * 1024 * 1024)
         self.copy_polling_interval = 15
         self.max_block_size = kwargs.pop("max_block_size", 4 * 1024 * 1024)
         self.min_large_block_upload_threshold = kwargs.get("min_large_block_upload_threshold", 4 * 1024 * 1024 + 1)
         self.use_byte_buffer = kwargs.pop("use_byte_buffer", False)
         self.max_page_size = kwargs.pop("max_page_size", 4 * 1024 * 1024)
         self.min_large_chunk_upload_threshold = kwargs.pop("min_large_chunk_upload_threshold", 100 * 1024 * 1024 + 1)
-        self.max_single_get_size = kwargs.pop("max_single_get_size", 32 * 1024 * 1024)
+        self.max_single_get_size = kwargs.pop("max_single_get_size", 4 * 1024 * 1024)
         self.max_chunk_get_size = kwargs.pop("max_chunk_get_size", 4 * 1024 * 1024)
         self.max_range_size = kwargs.pop("max_range_size", 4 * 1024 * 1024)

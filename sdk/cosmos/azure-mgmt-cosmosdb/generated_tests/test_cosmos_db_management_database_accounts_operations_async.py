@@ -98,6 +98,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "minimalTlsVersion": "str",
                         "networkAclBypass": "str",
                         "networkAclBypassResourceIds": ["str"],
+                        "perPartitionAutomaticFailoverEnabled": bool,
                         "publicNetworkAccess": "str",
                         "restoreParameters": {
                             "databasesToRestore": [{"collectionNames": ["str"], "databaseName": "str"}],
@@ -203,6 +204,7 @@ class TestCosmosDBManagementDatabaseAccountsOperationsAsync(AzureMgmtRecordedTes
                         "minimalTlsVersion": "str",
                         "networkAclBypass": "str",
                         "networkAclBypassResourceIds": ["str"],
+                        "perPartitionAutomaticFailoverEnabled": bool,
                         "publicNetworkAccess": "str",
                         "virtualNetworkRules": [{"id": "str", "ignoreMissingVNetServiceEndpoint": bool}],
                     },

@@ -30,7 +30,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._operations import (
     build_key_vault_backup_certificate_request,
     build_key_vault_create_certificate_request,
@@ -64,7 +64,6 @@ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deseria
 from ..._utils.utils import ClientMixinABC
 from .._configuration import KeyVaultClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
@@ -272,7 +271,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def set_certificate_contacts(
-        self, contacts: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, contacts: _types.Contacts, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.Contacts:
         """Sets the certificate contacts for the specified key vault.
 
@@ -280,7 +279,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         certificates/managecontacts permission.
 
         :param contacts: The contacts for the key vault certificate. Required.
-        :type contacts: JSON
+        :type contacts: ~azure.keyvault.certificates._generated.types.Contacts
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -310,16 +309,17 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def set_certificate_contacts(
-        self, contacts: Union[_models.Contacts, JSON, IO[bytes]], **kwargs: Any
+        self, contacts: Union[_models.Contacts, _types.Contacts, IO[bytes]], **kwargs: Any
     ) -> _models.Contacts:
         """Sets the certificate contacts for the specified key vault.
 
         Sets the certificate contacts for the specified key vault. This operation requires the
         certificates/managecontacts permission.
 
-        :param contacts: The contacts for the key vault certificate. Is one of the following types:
-         Contacts, JSON, IO[bytes] Required.
-        :type contacts: ~azure.keyvault.certificates._generated.models.Contacts or JSON or IO[bytes]
+        :param contacts: The contacts for the key vault certificate. Is either a Contacts type or a
+         IO[bytes] type. Required.
+        :type contacts: ~azure.keyvault.certificates._generated.models.Contacts or
+         ~azure.keyvault.certificates._generated.types.Contacts or IO[bytes]
         :return: Contacts. The Contacts is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.Contacts
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -657,7 +657,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def set_certificate_issuer(
-        self, issuer_name: str, parameter: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        issuer_name: str,
+        parameter: _types.CertificateIssuerSetParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.IssuerBundle:
         """Sets the specified certificate issuer.
 
@@ -669,7 +674,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          identifiable or sensitive information. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer set parameter. Required.
-        :type parameter: JSON
+        :type parameter: ~azure.keyvault.certificates._generated.types.CertificateIssuerSetParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -703,7 +708,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def set_certificate_issuer(
-        self, issuer_name: str, parameter: Union[_models.CertificateIssuerSetParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        issuer_name: str,
+        parameter: Union[_models.CertificateIssuerSetParameters, _types.CertificateIssuerSetParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.IssuerBundle:
         """Sets the specified certificate issuer.
 
@@ -714,10 +722,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          the purpose of running the service. The value provided should not include personally
          identifiable or sensitive information. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer set parameter. Is one of the following types:
-         CertificateIssuerSetParameters, JSON, IO[bytes] Required.
+        :param parameter: Certificate issuer set parameter. Is either a CertificateIssuerSetParameters
+         type or a IO[bytes] type. Required.
         :type parameter: ~azure.keyvault.certificates._generated.models.CertificateIssuerSetParameters
-         or JSON or IO[bytes]
+         or ~azure.keyvault.certificates._generated.types.CertificateIssuerSetParameters or IO[bytes]
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -818,7 +826,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_certificate_issuer(
-        self, issuer_name: str, parameter: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        issuer_name: str,
+        parameter: _types.CertificateIssuerUpdateParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.IssuerBundle:
         """Updates the specified certificate issuer.
 
@@ -828,7 +841,8 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
         :param parameter: Certificate issuer update parameter. Required.
-        :type parameter: JSON
+        :type parameter:
+         ~azure.keyvault.certificates._generated.types.CertificateIssuerUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -862,7 +876,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_certificate_issuer(
         self,
         issuer_name: str,
-        parameter: Union[_models.CertificateIssuerUpdateParameters, JSON, IO[bytes]],
+        parameter: Union[
+            _models.CertificateIssuerUpdateParameters, _types.CertificateIssuerUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.IssuerBundle:
         """Updates the specified certificate issuer.
@@ -872,11 +888,11 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param issuer_name: The name of the issuer. Required.
         :type issuer_name: str
-        :param parameter: Certificate issuer update parameter. Is one of the following types:
-         CertificateIssuerUpdateParameters, JSON, IO[bytes] Required.
+        :param parameter: Certificate issuer update parameter. Is either a
+         CertificateIssuerUpdateParameters type or a IO[bytes] type. Required.
         :type parameter:
-         ~azure.keyvault.certificates._generated.models.CertificateIssuerUpdateParameters or JSON or
-         IO[bytes]
+         ~azure.keyvault.certificates._generated.models.CertificateIssuerUpdateParameters or
+         ~azure.keyvault.certificates._generated.types.CertificateIssuerUpdateParameters or IO[bytes]
         :return: IssuerBundle. The IssuerBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.IssuerBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1119,7 +1135,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def create_certificate(
-        self, certificate_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        certificate_name: str,
+        parameters: _types.CertificateCreateParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CertificateOperation:
         """Creates a new certificate.
 
@@ -1131,7 +1152,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to create a certificate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.certificates._generated.types.CertificateCreateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1167,7 +1188,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def create_certificate(
         self,
         certificate_name: str,
-        parameters: Union[_models.CertificateCreateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CertificateCreateParameters, _types.CertificateCreateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificateOperation:
         """Creates a new certificate.
@@ -1179,10 +1200,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          globally for the purpose of running the service. The value provided should not include
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
-        :param parameters: The parameters to create a certificate. Is one of the following types:
-         CertificateCreateParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters to create a certificate. Is either a
+         CertificateCreateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.keyvault.certificates._generated.models.CertificateCreateParameters or
-         JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.types.CertificateCreateParameters or IO[bytes]
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1286,7 +1307,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def import_certificate(
-        self, certificate_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        certificate_name: str,
+        parameters: _types.CertificateImportParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CertificateBundle:
         """Imports a certificate into a specified key vault.
 
@@ -1300,7 +1326,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
         :param parameters: The parameters to import the certificate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.certificates._generated.types.CertificateImportParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1338,7 +1364,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def import_certificate(
         self,
         certificate_name: str,
-        parameters: Union[_models.CertificateImportParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CertificateImportParameters, _types.CertificateImportParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificateBundle:
         """Imports a certificate into a specified key vault.
@@ -1352,10 +1378,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
          globally for the purpose of running the service. The value provided should not include
          personally identifiable or sensitive information. Required.
         :type certificate_name: str
-        :param parameters: The parameters to import the certificate. Is one of the following types:
-         CertificateImportParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters to import the certificate. Is either a
+         CertificateImportParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.keyvault.certificates._generated.models.CertificateImportParameters or
-         JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.types.CertificateImportParameters or IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1630,7 +1656,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def update_certificate_policy(
-        self, certificate_name: str, certificate_policy: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        certificate_name: str,
+        certificate_policy: _types.CertificatePolicy,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CertificatePolicy:
         """Updates the policy for a certificate.
 
@@ -1640,7 +1671,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
         :param certificate_policy: The policy for the certificate. Required.
-        :type certificate_policy: JSON
+        :type certificate_policy: ~azure.keyvault.certificates._generated.types.CertificatePolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1679,7 +1710,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_certificate_policy(
         self,
         certificate_name: str,
-        certificate_policy: Union[_models.CertificatePolicy, JSON, IO[bytes]],
+        certificate_policy: Union[_models.CertificatePolicy, _types.CertificatePolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificatePolicy:
         """Updates the policy for a certificate.
@@ -1689,10 +1720,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param certificate_name: The name of the certificate in the given vault. Required.
         :type certificate_name: str
-        :param certificate_policy: The policy for the certificate. Is one of the following types:
-         CertificatePolicy, JSON, IO[bytes] Required.
+        :param certificate_policy: The policy for the certificate. Is either a CertificatePolicy type
+         or a IO[bytes] type. Required.
         :type certificate_policy: ~azure.keyvault.certificates._generated.models.CertificatePolicy or
-         JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.types.CertificatePolicy or IO[bytes]
         :return: CertificatePolicy. The CertificatePolicy is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificatePolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1799,7 +1830,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         certificate_name: str,
         certificate_version: str,
-        parameters: JSON,
+        parameters: _types.CertificateUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1815,7 +1846,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
         :param parameters: The parameters for certificate update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.certificates._generated.types.CertificateUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1859,7 +1890,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         certificate_name: str,
         certificate_version: str,
-        parameters: Union[_models.CertificateUpdateParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CertificateUpdateParameters, _types.CertificateUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificateBundle:
         """Updates the specified attributes associated with the given certificate.
@@ -1872,10 +1903,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :type certificate_name: str
         :param certificate_version: The version of the certificate. Required.
         :type certificate_version: str
-        :param parameters: The parameters for certificate update. Is one of the following types:
-         CertificateUpdateParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters for certificate update. Is either a
+         CertificateUpdateParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.keyvault.certificates._generated.models.CertificateUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.types.CertificateUpdateParameters or IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2055,7 +2086,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_certificate_operation(
         self,
         certificate_name: str,
-        certificate_operation: JSON,
+        certificate_operation: _types.CertificateOperationUpdateParameter,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2068,7 +2099,8 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param certificate_operation: The certificate operation response. Required.
-        :type certificate_operation: JSON
+        :type certificate_operation:
+         ~azure.keyvault.certificates._generated.types.CertificateOperationUpdateParameter
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2107,7 +2139,9 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def update_certificate_operation(
         self,
         certificate_name: str,
-        certificate_operation: Union[_models.CertificateOperationUpdateParameter, JSON, IO[bytes]],
+        certificate_operation: Union[
+            _models.CertificateOperationUpdateParameter, _types.CertificateOperationUpdateParameter, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CertificateOperation:
         """Updates a certificate operation.
@@ -2117,11 +2151,11 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param certificate_operation: The certificate operation response. Is one of the following
-         types: CertificateOperationUpdateParameter, JSON, IO[bytes] Required.
+        :param certificate_operation: The certificate operation response. Is either a
+         CertificateOperationUpdateParameter type or a IO[bytes] type. Required.
         :type certificate_operation:
-         ~azure.keyvault.certificates._generated.models.CertificateOperationUpdateParameter or JSON or
-         IO[bytes]
+         ~azure.keyvault.certificates._generated.models.CertificateOperationUpdateParameter or
+         ~azure.keyvault.certificates._generated.types.CertificateOperationUpdateParameter or IO[bytes]
         :return: CertificateOperation. The CertificateOperation is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateOperation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2363,7 +2397,12 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def merge_certificate(
-        self, certificate_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        certificate_name: str,
+        parameters: _types.CertificateMergeParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CertificateBundle:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
 
@@ -2374,7 +2413,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
         :param parameters: The parameters to merge certificate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.certificates._generated.types.CertificateMergeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2409,7 +2448,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
     async def merge_certificate(
         self,
         certificate_name: str,
-        parameters: Union[_models.CertificateMergeParameters, JSON, IO[bytes]],
+        parameters: Union[_models.CertificateMergeParameters, _types.CertificateMergeParameters, IO[bytes]],
         **kwargs: Any
     ) -> _models.CertificateBundle:
         """Merges a certificate or a certificate chain with a key pair existing on the server.
@@ -2420,10 +2459,10 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         :param certificate_name: The name of the certificate. Required.
         :type certificate_name: str
-        :param parameters: The parameters to merge certificate. Is one of the following types:
-         CertificateMergeParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters to merge certificate. Is either a CertificateMergeParameters
+         type or a IO[bytes] type. Required.
         :type parameters: ~azure.keyvault.certificates._generated.models.CertificateMergeParameters or
-         JSON or IO[bytes]
+         ~azure.keyvault.certificates._generated.types.CertificateMergeParameters or IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2587,7 +2626,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @overload
     async def restore_certificate(
-        self, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, parameters: _types.CertificateRestoreParameters, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CertificateBundle:
         """Restores a backed up certificate to a vault.
 
@@ -2595,7 +2634,7 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
         certificates/restore permission.
 
         :param parameters: The parameters to restore the certificate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.keyvault.certificates._generated.types.CertificateRestoreParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2625,17 +2664,19 @@ class _KeyVaultClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def restore_certificate(
-        self, parameters: Union[_models.CertificateRestoreParameters, JSON, IO[bytes]], **kwargs: Any
+        self,
+        parameters: Union[_models.CertificateRestoreParameters, _types.CertificateRestoreParameters, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CertificateBundle:
         """Restores a backed up certificate to a vault.
 
         Restores a backed up certificate, and all its versions, to a vault. This operation requires the
         certificates/restore permission.
 
-        :param parameters: The parameters to restore the certificate. Is one of the following types:
-         CertificateRestoreParameters, JSON, IO[bytes] Required.
+        :param parameters: The parameters to restore the certificate. Is either a
+         CertificateRestoreParameters type or a IO[bytes] type. Required.
         :type parameters: ~azure.keyvault.certificates._generated.models.CertificateRestoreParameters
-         or JSON or IO[bytes]
+         or ~azure.keyvault.certificates._generated.types.CertificateRestoreParameters or IO[bytes]
         :return: CertificateBundle. The CertificateBundle is compatible with MutableMapping
         :rtype: ~azure.keyvault.certificates._generated.models.CertificateBundle
         :raises ~azure.core.exceptions.HttpResponseError:

@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
-import httpx
+import httpx2
 import pytest
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
@@ -29,7 +29,7 @@ class DummyAsyncTokenCredential(AsyncTokenCredential):
         pass
 
 
-class _TestAsyncByteStream(httpx.AsyncByteStream):
+class _TestAsyncByteStream(httpx2.AsyncByteStream):
     def __init__(self, chunks):
         self._chunks = chunks
 
@@ -177,13 +177,13 @@ async def test_openai_transport_full_logging_writes_request_response_and_raw_tok
     tmp_path, restore_logger_state
 ):
     """With logging_enable=True, the log file should include request, response, JSON bodies, and the raw bearer token."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "application/json"},
@@ -192,7 +192,7 @@ async def test_openai_transport_full_logging_writes_request_response_and_raw_tok
     log_file = tmp_path / "transport_full_async.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
+    with patch.object(httpx2.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
         result = await _OpenAILoggingTransport(logging_enabled=True).handle_async_request(request)
 
     log_text = _read_log_file(handler, log_file)
@@ -210,13 +210,13 @@ async def test_openai_transport_full_logging_writes_request_response_and_raw_tok
 @pytest.mark.asyncio
 async def test_openai_transport_reduced_logging_writes_metadata_only_to_file_async(tmp_path, restore_logger_state):
     """With logging_enable=False, the log file should include metadata but not the raw bearer token or JSON bodies."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "application/json"},
@@ -225,7 +225,7 @@ async def test_openai_transport_reduced_logging_writes_metadata_only_to_file_asy
     log_file = tmp_path / "transport_reduced_async.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
+    with patch.object(httpx2.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
         result = await _OpenAILoggingTransport(logging_enabled=False).handle_async_request(request)
 
     log_text = _read_log_file(handler, log_file)
@@ -245,13 +245,13 @@ async def test_openai_transport_streaming_response_skips_body_read_and_keeps_met
     tmp_path, restore_logger_state
 ):
     """Streaming responses should keep metadata logging without buffering the response body."""
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "text/event-stream"},
@@ -260,7 +260,7 @@ async def test_openai_transport_streaming_response_skips_body_read_and_keeps_met
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
     with (
-        patch.object(httpx.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)),
+        patch.object(httpx2.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)),
         patch.object(
             response, "aread", new=AsyncMock(side_effect=AssertionError("streaming response should not be read"))
         ),
@@ -280,13 +280,13 @@ async def test_openai_transport_streaming_response_skips_body_read_and_keeps_met
 
 @pytest.mark.asyncio
 async def test_openai_transport_streaming_response_logs_chunks_lazily_async(tmp_path, restore_logger_state):
-    request = httpx.Request(
+    request = httpx2.Request(
         "POST",
         "https://example.com/openai/v1/responses",
         headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
         content=b'{"message":"hello"}',
     )
-    response = httpx.Response(
+    response = httpx2.Response(
         200,
         request=request,
         headers={"content-type": "text/event-stream"},
@@ -295,7 +295,7 @@ async def test_openai_transport_streaming_response_logs_chunks_lazily_async(tmp_
     log_file = tmp_path / "transport_streaming_lazy_async.log"
     handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
 
-    with patch.object(httpx.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
+    with patch.object(httpx2.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
         result = await _OpenAILoggingTransport(logging_enabled=True).handle_async_request(request)
 
     log_text = _read_log_file(handler, log_file)

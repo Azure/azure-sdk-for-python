@@ -12,14 +12,14 @@ import os
 import re
 import logging
 from typing import List, Any, Optional, cast
-import httpx  # pylint: disable=networking-import-outside-azure-core-transport
+import httpx2  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI, DefaultHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from .models._patch import _AGENT_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
 logger = logging.getLogger(__name__)
@@ -82,7 +82,7 @@ def _resolve_openai_default_headers(agent_name: Optional[str], kwargs: dict) -> 
     """
     default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
     if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
-        default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
+        default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
     return default_headers
 
 
@@ -118,8 +118,8 @@ def _log_streaming_response_chunk(chunk: bytes) -> None:
         _openai_transport_logger.debug("Body chunk (raw):\n  %r", chunk)
 
 
-class _LoggingSyncByteStream(httpx.SyncByteStream):
-    def __init__(self, stream: httpx.SyncByteStream) -> None:
+class _LoggingSyncByteStream(httpx2.SyncByteStream):
+    def __init__(self, stream: httpx2.SyncByteStream) -> None:
         self._stream = stream
 
     def __iter__(self):
@@ -136,8 +136,8 @@ class _LoggingSyncByteStream(httpx.SyncByteStream):
             close()
 
 
-class _LoggingAsyncByteStream(httpx.AsyncByteStream):
-    def __init__(self, stream: httpx.AsyncByteStream) -> None:
+class _LoggingAsyncByteStream(httpx2.AsyncByteStream):
+    def __init__(self, stream: httpx2.AsyncByteStream) -> None:
         self._stream = stream
 
     async def __aiter__(self):
@@ -159,6 +159,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
@@ -260,8 +262,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         :param kwargs: Caller keyword arguments; ``http_client`` is popped when present.
         :type kwargs: dict
-        :return: An httpx.Client instance configured with logging transport, or ``None``.
-        :rtype: httpx.Client or None
+        :return: An httpx2.Client instance configured with logging transport, or ``None``.
+        :rtype: httpx2.Client or None
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
@@ -377,10 +379,10 @@ class _OpenAIAuthSecretsFilter(logging.Filter):
         return True
 
 
-class _OpenAILoggingTransport(httpx.HTTPTransport):
+class _OpenAILoggingTransport(httpx2.HTTPTransport):
     """Custom HTTP transport that logs OpenAI API requests and responses.
 
-    This transport wraps httpx.HTTPTransport to intercept all HTTP traffic and emit
+    This transport wraps httpx2.HTTPTransport to intercept all HTTP traffic and emit
     detailed request/response information through a dedicated logger. It automatically
     redacts sensitive authorization headers and handles various content types including
     multipart form data (file uploads).
@@ -410,20 +412,20 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
                 headers["authorization"] = "<ERROR>"
 
     @staticmethod
-    def _is_streaming_response(response: httpx.Response) -> bool:
+    def _is_streaming_response(response: httpx2.Response) -> bool:
         content_type = response.headers.get("content-type", "").lower()
         return "text/event-stream" in content_type
 
-    def handle_request(self, request: httpx.Request) -> httpx.Response:
+    def handle_request(self, request: httpx2.Request) -> httpx2.Response:
         """
         Log HTTP request and response details using the dedicated transport logger,
         for OpenAI / Azure OpenAI clients.
 
         :param request: The HTTP request to handle and log
-        :type request: httpx.Request
+        :type request: httpx2.Request
 
         :return: The HTTP response received
-        :rtype: httpx.Response
+        :rtype: httpx2.Response
         """
 
         _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
@@ -444,7 +446,7 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
 
         if self._is_streaming_response(response):
             if _log_streaming_response_notice(self._logging_enabled):
-                response.stream = _LoggingSyncByteStream(cast(httpx.SyncByteStream, response.stream))
+                response.stream = _LoggingSyncByteStream(cast(httpx2.SyncByteStream, response.stream))
         else:
             content = response.read()
             if content is None or content == b"":
@@ -461,11 +463,11 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
 
         return response
 
-    def _log_request_body(self, request: httpx.Request) -> None:
+    def _log_request_body(self, request: httpx2.Request) -> None:
         """Log request body content safely, handling binary data and streaming content.
 
         :param request: The HTTP request object containing the body to log
-        :type request: httpx.Request
+        :type request: httpx2.Request
         """
 
         # Check content-type header to identify file uploads
@@ -510,4 +512,7 @@ def patch_sdk():
     `patch_sdk` is a last resort escape hatch that allows you to do customizations
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
+
+    :return: None
+    :rtype: None
     """

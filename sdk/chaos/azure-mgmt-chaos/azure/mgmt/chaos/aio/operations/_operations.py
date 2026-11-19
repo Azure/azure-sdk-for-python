@@ -12,12 +12,13 @@ import json
 from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
-from azure.core import AsyncPipelineClient
+from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
+    ResourceModifiedError,
     ResourceNotFoundError,
     ResourceNotModifiedError,
     StreamClosedError,
@@ -33,7 +34,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -48,6 +49,10 @@ from ...operations._operations import (
     build_capabilities_list_request,
     build_capability_types_get_request,
     build_capability_types_list_request,
+    build_connections_create_or_update_request,
+    build_connections_delete_request,
+    build_connections_get_request,
+    build_connections_list_all_request,
     build_discovered_resources_get_request,
     build_discovered_resources_list_by_workspace_request,
     build_experiments_cancel_request,
@@ -63,16 +68,6 @@ from ...operations._operations import (
     build_experiments_update_request,
     build_operation_statuses_get_request,
     build_operations_list_all_request,
-    build_private_accesses_create_or_update_request,
-    build_private_accesses_delete_a_private_endpoint_connection_request,
-    build_private_accesses_delete_request,
-    build_private_accesses_get_a_private_endpoint_connection_request,
-    build_private_accesses_get_private_link_resources_request,
-    build_private_accesses_get_request,
-    build_private_accesses_list_all_request,
-    build_private_accesses_list_private_endpoint_connections_request,
-    build_private_accesses_list_request,
-    build_private_accesses_update_request,
     build_scenario_configurations_create_or_update_request,
     build_scenario_configurations_delete_request,
     build_scenario_configurations_execute_request,
@@ -83,6 +78,10 @@ from ...operations._operations import (
     build_scenario_runs_cancel_request,
     build_scenario_runs_get_request,
     build_scenario_runs_list_all_request,
+    build_scenario_template_versions_get_request,
+    build_scenario_template_versions_list_request,
+    build_scenario_templates_get_request,
+    build_scenario_templates_list_request,
     build_scenarios_create_or_update_request,
     build_scenarios_delete_request,
     build_scenarios_get_request,
@@ -93,23 +92,27 @@ from ...operations._operations import (
     build_targets_delete_request,
     build_targets_get_request,
     build_targets_list_request,
+    build_workspace_discoveries_get_request,
+    build_workspace_discoveries_list_request,
+    build_workspace_evaluations_get_request,
+    build_workspace_evaluations_list_request,
     build_workspaces_create_or_update_request,
     build_workspaces_delete_request,
+    build_workspaces_discover_request,
+    build_workspaces_evaluate_request,
     build_workspaces_get_request,
     build_workspaces_list_all_request,
     build_workspaces_list_request,
-    build_workspaces_refresh_recommendations_request,
     build_workspaces_update_request,
 )
 from .._configuration import ChaosManagementClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
 
 
-class CapabilitiesOperations:
+class CapabilitiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -265,7 +268,7 @@ class CapabilitiesOperations:
         parent_resource_name: str,
         target_name: str,
         capability_name: str,
-        resource: JSON,
+        resource: _types.Capability,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -286,7 +289,7 @@ class CapabilitiesOperations:
         :param capability_name: String that represents a Capability resource name. Required.
         :type capability_name: str
         :param resource: Capability resource to be created or updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.Capability
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -343,7 +346,7 @@ class CapabilitiesOperations:
         parent_resource_name: str,
         target_name: str,
         capability_name: str,
-        resource: Union[_models.Capability, JSON, IO[bytes]],
+        resource: Union[_models.Capability, _types.Capability, IO[bytes]],
         **kwargs: Any
     ) -> _models.Capability:
         """Create or update a Capability resource that extends a Target resource.
@@ -361,9 +364,10 @@ class CapabilitiesOperations:
         :type target_name: str
         :param capability_name: String that represents a Capability resource name. Required.
         :type capability_name: str
-        :param resource: Capability resource to be created or updated. Is one of the following types:
-         Capability, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.Capability or JSON or IO[bytes]
+        :param resource: Capability resource to be created or updated. Is either a Capability type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.Capability or ~azure.mgmt.chaos.types.Capability or
+         IO[bytes]
         :return: Capability. The Capability is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Capability
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -595,7 +599,10 @@ class CapabilitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -638,7 +645,7 @@ class CapabilitiesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -702,7 +709,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -745,7 +755,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TargetsOperations:
+class TargetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -893,7 +903,7 @@ class TargetsOperations:
         parent_resource_type: str,
         parent_resource_name: str,
         target_name: str,
-        resource: JSON,
+        resource: _types.Target,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -912,7 +922,7 @@ class TargetsOperations:
         :param target_name: String that represents a Target resource name. Required.
         :type target_name: str
         :param resource: Target resource to be created or updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.Target
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -965,7 +975,7 @@ class TargetsOperations:
         parent_resource_type: str,
         parent_resource_name: str,
         target_name: str,
-        resource: Union[_models.Target, JSON, IO[bytes]],
+        resource: Union[_models.Target, _types.Target, IO[bytes]],
         **kwargs: Any
     ) -> _models.Target:
         """Create or update a Target resource that extends a tracked regional resource.
@@ -981,9 +991,9 @@ class TargetsOperations:
         :type parent_resource_name: str
         :param target_name: String that represents a Target resource name. Required.
         :type target_name: str
-        :param resource: Target resource to be created or updated. Is one of the following types:
-         Target, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.Target or JSON or IO[bytes]
+        :param resource: Target resource to be created or updated. Is either a Target type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.Target or ~azure.mgmt.chaos.types.Target or IO[bytes]
         :return: Target. The Target is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Target
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1206,7 +1216,10 @@ class TargetsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1249,7 +1262,7 @@ class TargetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CapabilityTypesOperations:
+class CapabilityTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1400,7 +1413,10 @@ class CapabilityTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1443,7 +1459,7 @@ class CapabilityTypesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExperimentsOperations:
+class ExperimentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1534,7 +1550,7 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        resource: Union[_models.Experiment, JSON, IO[bytes]],
+        resource: Union[_models.Experiment, _types.Experiment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1640,7 +1656,7 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        resource: JSON,
+        resource: _types.Experiment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1653,7 +1669,7 @@ class ExperimentsOperations:
         :param experiment_name: String that represents a Experiment resource name. Required.
         :type experiment_name: str
         :param resource: Experiment resource to be created or updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.Experiment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1696,7 +1712,7 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        resource: Union[_models.Experiment, JSON, IO[bytes]],
+        resource: Union[_models.Experiment, _types.Experiment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Experiment]:
         """Create or update a Experiment resource.
@@ -1706,9 +1722,10 @@ class ExperimentsOperations:
         :type resource_group_name: str
         :param experiment_name: String that represents a Experiment resource name. Required.
         :type experiment_name: str
-        :param resource: Experiment resource to be created or updated. Is one of the following types:
-         Experiment, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.Experiment or JSON or IO[bytes]
+        :param resource: Experiment resource to be created or updated. Is either a Experiment type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.Experiment or ~azure.mgmt.chaos.types.Experiment or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Experiment. The Experiment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Experiment]
@@ -1770,7 +1787,7 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        properties: Union[_models.ExperimentUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExperimentUpdate, _types.ExperimentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1851,7 +1868,7 @@ class ExperimentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Experiment]:
-        """The operation to update an experiment.
+        """Update an experiment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1874,12 +1891,12 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        properties: JSON,
+        properties: _types.ExperimentUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Experiment]:
-        """The operation to update an experiment.
+        """Update an experiment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1887,7 +1904,7 @@ class ExperimentsOperations:
         :param experiment_name: String that represents a Experiment resource name. Required.
         :type experiment_name: str
         :param properties: Parameters supplied to the Update experiment operation. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.chaos.types.ExperimentUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1907,7 +1924,7 @@ class ExperimentsOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Experiment]:
-        """The operation to update an experiment.
+        """Update an experiment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1930,19 +1947,20 @@ class ExperimentsOperations:
         self,
         resource_group_name: str,
         experiment_name: str,
-        properties: Union[_models.ExperimentUpdate, JSON, IO[bytes]],
+        properties: Union[_models.ExperimentUpdate, _types.ExperimentUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Experiment]:
-        """The operation to update an experiment.
+        """Update an experiment.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param experiment_name: String that represents a Experiment resource name. Required.
         :type experiment_name: str
-        :param properties: Parameters supplied to the Update experiment operation. Is one of the
-         following types: ExperimentUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.chaos.models.ExperimentUpdate or JSON or IO[bytes]
+        :param properties: Parameters supplied to the Update experiment operation. Is either a
+         ExperimentUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.chaos.models.ExperimentUpdate or
+         ~azure.mgmt.chaos.types.ExperimentUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Experiment. The Experiment is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Experiment]
@@ -2186,7 +2204,10 @@ class ExperimentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2287,7 +2308,10 @@ class ExperimentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2695,7 +2719,10 @@ class ExperimentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2814,1282 +2841,7 @@ class ExperimentsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateAccessesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
-        :attr:`private_accesses` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def get(self, resource_group_name: str, private_access_name: str, **kwargs: Any) -> _models.PrivateAccess:
-        """Get a private access resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :return: PrivateAccess. The PrivateAccess is compatible with MutableMapping
-        :rtype: ~azure.mgmt.chaos.models.PrivateAccess
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
-
-        _request = build_private_accesses_get_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PrivateAccess, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        resource: Union[_models.PrivateAccess, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(resource, (IOBase, bytes)):
-            _content = resource
-        else:
-            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_private_accesses_create_or_update_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        resource: _models.PrivateAccess,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Create or update a private access.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param resource: private access resource to be created or updated. Required.
-        :type resource: ~azure.mgmt.chaos.models.PrivateAccess
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        resource: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Create or update a private access.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param resource: private access resource to be created or updated. Required.
-        :type resource: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        resource: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Create or update a private access.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param resource: private access resource to be created or updated. Required.
-        :type resource: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        resource: Union[_models.PrivateAccess, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Create or update a private access.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param resource: private access resource to be created or updated. Is one of the following
-         types: PrivateAccess, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.PrivateAccess or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                private_access_name=private_access_name,
-                resource=resource,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.PrivateAccess, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.PrivateAccess].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.PrivateAccess](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    async def _update_initial(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        properties: Union[_models.PrivateAccessPatch, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_private_accesses_update_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        properties: _models.PrivateAccessPatch,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Patch a private access tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param properties: private access resource's tags to be updated. Required.
-        :type properties: ~azure.mgmt.chaos.models.PrivateAccessPatch
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        properties: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Patch a private access tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param properties: private access resource's tags to be updated. Required.
-        :type properties: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        properties: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Patch a private access tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param properties: private access resource's tags to be updated. Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        private_access_name: str,
-        properties: Union[_models.PrivateAccessPatch, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.PrivateAccess]:
-        """Patch a private access tags.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param properties: private access resource's tags to be updated. Is one of the following types:
-         PrivateAccessPatch, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.chaos.models.PrivateAccessPatch or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns PrivateAccess. The PrivateAccess is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.PrivateAccess] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_group_name=resource_group_name,
-                private_access_name=private_access_name,
-                properties=properties,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.PrivateAccess, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.PrivateAccess].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.PrivateAccess](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    async def _delete_initial(
-        self, resource_group_name: str, private_access_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_private_accesses_delete_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete(
-        self, resource_group_name: str, private_access_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Delete a private access.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
-                private_access_name=private_access_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list(
-        self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateAccess"]:
-        """Get a list of private access resources in a resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :keyword continuation_token_parameter: String that sets the continuation token. Default value
-         is None.
-        :paramtype continuation_token_parameter: str
-        :return: An iterator like instance of PrivateAccess
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PrivateAccess]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_private_accesses_list_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    continuation_token_parameter=continuation_token_parameter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PrivateAccess],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_all(
-        self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateAccess"]:
-        """Get a list of private access resources in a subscription.
-
-        :keyword continuation_token_parameter: String that sets the continuation token. Default value
-         is None.
-        :paramtype continuation_token_parameter: str
-        :return: An iterator like instance of PrivateAccess
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.PrivateAccess]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PrivateAccess]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_private_accesses_list_all_request(
-                    subscription_id=self._config.subscription_id,
-                    continuation_token_parameter=continuation_token_parameter,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PrivateAccess],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_private_link_resources(
-        self, resource_group_name: str, private_access_name: str, **kwargs: Any
-    ) -> _models.PrivateLinkResourceListResult:
-        """Gets the private link resources possible under private access resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :return: PrivateLinkResourceListResult. The PrivateLinkResourceListResult is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.chaos.models.PrivateLinkResourceListResult
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PrivateLinkResourceListResult] = kwargs.pop("cls", None)
-
-        _request = build_private_accesses_get_private_link_resources_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PrivateLinkResourceListResult, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_a_private_endpoint_connection(
-        self, resource_group_name: str, private_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> _models.PrivateEndpointConnection:
-        """Gets information about a private endpoint connection under a private access resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
-        :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.chaos.models.PrivateEndpointConnection
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
-
-        _request = build_private_accesses_get_a_private_endpoint_connection_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    async def _delete_a_private_endpoint_connection_initial(  # pylint: disable=name-too-long
-        self, resource_group_name: str, private_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_private_accesses_delete_a_private_endpoint_connection_request(
-            resource_group_name=resource_group_name,
-            private_access_name=private_access_name,
-            private_endpoint_connection_name=private_endpoint_connection_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def begin_delete_a_private_endpoint_connection(  # pylint: disable=name-too-long
-        self, resource_group_name: str, private_access_name: str, private_endpoint_connection_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
-        """Deletes a private endpoint connection under a private access resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :param private_endpoint_connection_name: The name of the private endpoint connection. Required.
-        :type private_endpoint_connection_name: str
-        :return: An instance of AsyncLROPoller that returns None
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_a_private_endpoint_connection_initial(
-                resource_group_name=resource_group_name,
-                private_access_name=private_access_name,
-                private_endpoint_connection_name=private_endpoint_connection_name,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[None].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    @distributed_trace
-    def list_private_endpoint_connections(
-        self, resource_group_name: str, private_access_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
-        """List information about private endpoint connections under a private access resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param private_access_name: The name of the private access resource that is being created.
-         Supported characters for the name are a-z, A-Z, 0-9, _ and -. The maximum name length is 80
-         characters. Required.
-        :type private_access_name: str
-        :return: An iterator like instance of PrivateEndpointConnection
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.PrivateEndpointConnection]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.PrivateEndpointConnection]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_private_accesses_list_private_endpoint_connections_request(
-                    resource_group_name=resource_group_name,
-                    private_access_name=private_access_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.PrivateEndpointConnection],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class ActionsOperations:
+class ActionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4110,7 +2862,7 @@ class ActionsOperations:
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={"2026-05-01-preview": ["api_version", "subscription_id", "location", "action_name", "accept"]},
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(self, location: str, action_name: str, **kwargs: Any) -> _models.Action:
         """Get an Action resource for a given location.
@@ -4192,7 +2944,7 @@ class ActionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list(
         self, location: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
@@ -4250,7 +3002,10 @@ class ActionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4293,7 +3048,7 @@ class ActionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ActionVersionsOperations:
+class ActionVersionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4323,7 +3078,7 @@ class ActionVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(self, location: str, action_name: str, version_name: str, **kwargs: Any) -> _models.ActionVersion:
         """Get an Action Version resource for a given location and action.
@@ -4409,7 +3164,7 @@ class ActionVersionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list(
         self, location: str, action_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
@@ -4470,7 +3225,10 @@ class ActionVersionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4513,7 +3271,7 @@ class ActionVersionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TargetTypesOperations:
+class TargetTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4656,7 +3414,10 @@ class TargetTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4699,7 +3460,7 @@ class TargetTypesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class OperationStatusesOperations:
+class OperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4786,7 +3547,7 @@ class OperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class WorkspacesOperations:
+class WorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4809,7 +3570,7 @@ class WorkspacesOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> _models.Workspace:
         """Get a Workspace resource.
@@ -4890,15 +3651,19 @@ class WorkspacesOperations:
                 "workspace_name",
                 "content_type",
                 "accept",
-            ]
+            ],
+            "2026-11-01": ["etag", "match_condition"],
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.Workspace, JSON, IO[bytes]],
+        resource: Union[_models.Workspace, _types.Workspace, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4907,6 +3672,12 @@ class WorkspacesOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -4926,6 +3697,8 @@ class WorkspacesOperations:
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4979,6 +3752,8 @@ class WorkspacesOperations:
         resource: _models.Workspace,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Create or update a Workspace resource.
@@ -4993,6 +3768,11 @@ class WorkspacesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Workspace]
@@ -5004,9 +3784,11 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: JSON,
+        resource: _types.Workspace,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Create or update a Workspace resource.
@@ -5017,10 +3799,15 @@ class WorkspacesOperations:
         :param workspace_name: String that represents a Workspace resource name. Required.
         :type workspace_name: str
         :param resource: Workspace resource to be created or updated. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Workspace]
@@ -5035,6 +3822,8 @@ class WorkspacesOperations:
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Create or update a Workspace resource.
@@ -5049,6 +3838,11 @@ class WorkspacesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Workspace]
@@ -5066,15 +3860,19 @@ class WorkspacesOperations:
                 "workspace_name",
                 "content_type",
                 "accept",
-            ]
+            ],
+            "2026-11-01": ["etag", "match_condition"],
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.Workspace, JSON, IO[bytes]],
+        resource: Union[_models.Workspace, _types.Workspace, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Create or update a Workspace resource.
@@ -5084,9 +3882,15 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: String that represents a Workspace resource name. Required.
         :type workspace_name: str
-        :param resource: Workspace resource to be created or updated. Is one of the following types:
-         Workspace, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.Workspace or JSON or IO[bytes]
+        :param resource: Workspace resource to be created or updated. Is either a Workspace type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.Workspace or ~azure.mgmt.chaos.types.Workspace or
+         IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Workspace]
@@ -5105,6 +3909,8 @@ class WorkspacesOperations:
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 resource=resource,
+                etag=etag,
+                match_condition=match_condition,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -5156,13 +3962,13 @@ class WorkspacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _update_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.WorkspaceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.WorkspaceUpdate, _types.WorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5243,7 +4049,7 @@ class WorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
-        """The operation to update a Workspace.
+        """Update a Workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5266,12 +4072,12 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: JSON,
+        properties: _types.WorkspaceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
-        """The operation to update a Workspace.
+        """Update a Workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5279,7 +4085,7 @@ class WorkspacesOperations:
         :param workspace_name: String that represents a Workspace resource name. Required.
         :type workspace_name: str
         :param properties: Parameters supplied to the Update Workspace operation. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.chaos.types.WorkspaceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5299,7 +4105,7 @@ class WorkspacesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
-        """The operation to update a Workspace.
+        """Update a Workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5330,25 +4136,26 @@ class WorkspacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_update(
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.WorkspaceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.WorkspaceUpdate, _types.WorkspaceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
-        """The operation to update a Workspace.
+        """Update a Workspace.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param workspace_name: String that represents a Workspace resource name. Required.
         :type workspace_name: str
-        :param properties: Parameters supplied to the Update Workspace operation. Is one of the
-         following types: WorkspaceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.chaos.models.WorkspaceUpdate or JSON or IO[bytes]
+        :param properties: Parameters supplied to the Update Workspace operation. Is either a
+         WorkspaceUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.chaos.models.WorkspaceUpdate or
+         ~azure.mgmt.chaos.types.WorkspaceUpdate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.Workspace]
@@ -5411,7 +4218,7 @@ class WorkspacesOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
@@ -5480,7 +4287,7 @@ class WorkspacesOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_delete(self, resource_group_name: str, workspace_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a Workspace resource.
@@ -5550,7 +4357,7 @@ class WorkspacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list(
         self, resource_group_name: str, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
@@ -5609,7 +4416,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5657,7 +4467,7 @@ class WorkspacesOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "continuation_token_parameter", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list_all(
         self, *, continuation_token_parameter: Optional[str] = None, **kwargs: Any
@@ -5712,7 +4522,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5755,13 +4568,13 @@ class WorkspacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
+        method_added_on="2026-11-01",
         params_added_on={
-            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-11-01"],
     )
-    async def _refresh_recommendations_initial(
+    async def _discover_initial(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5777,7 +4590,7 @@ class WorkspacesOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_workspaces_refresh_recommendations_request(
+        _request = build_workspaces_discover_request(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             subscription_id=self._config.subscription_id,
@@ -5798,7 +4611,7 @@ class WorkspacesOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200, 202]:
             try:
                 await response.read()  # Load the body in memory and close the socket
             except (StreamConsumedError, StreamClosedError):
@@ -5811,8 +4624,9 @@ class WorkspacesOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -5823,16 +4637,169 @@ class WorkspacesOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
+        method_added_on="2026-11-01",
         params_added_on={
-            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name"]
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-11-01"],
     )
-    async def begin_refresh_recommendations(
+    async def begin_discover(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.WorkspaceDiscovery]:
+        """Starts discovery for the workspace. The initial 202 has no body. Poll the operation-bound
+        Location URL until completion: a successful or partially successful discovery returns the typed
+        result; failed or canceled processing returns an Azure error whose target identifies the
+        discovery resource. Ordinary discovery reads return the current resource, including failed or
+        canceled results, while retained.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :return: An instance of AsyncLROPoller that returns WorkspaceDiscovery. The WorkspaceDiscovery
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.WorkspaceDiscovery]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.WorkspaceDiscovery] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._discover_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.WorkspaceDiscovery, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.WorkspaceDiscovery].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.WorkspaceDiscovery](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def _evaluate_initial(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_workspaces_evaluate_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def begin_evaluate(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkspaceEvaluation]:
-        """Refreshes recommendation status for all scenarios in a given workspace.
+        """Starts evaluation of published scenario-template versions, including when the workspace has no
+        scenarios. Acceptance fixes the selected template membership and total count, qualified
+        resource snapshot and canonical discovery result reference. Without a usable discovery snapshot
+        or valid catalog input, the request is rejected synchronously with an Azure error and no
+        evaluation result is created. A valid empty catalog completes successfully with zero counts and
+        an empty results array. Outcome counts reflect processing after acceptance. The initial 202 has
+        no body. Poll the operation-bound Location URL until completion: a completed successful or
+        partially successful assessment returns the typed result; failed or canceled processing returns
+        an Azure error whose target identifies the evaluation resource. Ordinary evaluation reads
+        return the current resource, including failed or canceled results, while retained.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -5852,7 +4819,7 @@ class WorkspacesOperations:
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._refresh_recommendations_initial(
+            raw_result = await self._evaluate_initial(
                 resource_group_name=resource_group_name,
                 workspace_name=workspace_name,
                 cls=lambda x, y, z: x,
@@ -5864,14 +4831,10 @@ class WorkspacesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.WorkspaceEvaluation, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -5898,7 +4861,486 @@ class WorkspacesOperations:
         )
 
 
-class DiscoveredResourcesOperations:
+class WorkspaceDiscoveriesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
+        :attr:`workspace_discoveries` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "discovery_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, workspace_name: str, discovery_name: str, **kwargs: Any
+    ) -> _models.WorkspaceDiscovery:
+        """Gets a retained discovery result by its ID, or uses latest to select the most recently durably
+        admitted discovery. Returns 200 with the current representation while processing or terminal. A
+        Failed result can contain errors without a snapshot. Returns 404 if no qualifying retained
+        result exists. This is not an LRO polling endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param discovery_name: The service-generated discovery result ID. Use latest in the request
+         path for the most recently durably admitted discovery; responses contain the canonical result
+         ID. Required.
+        :type discovery_name: str
+        :return: WorkspaceDiscovery. The WorkspaceDiscovery is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.WorkspaceDiscovery
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.WorkspaceDiscovery] = kwargs.pop("cls", None)
+
+        _request = build_workspace_discoveries_get_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            discovery_name=discovery_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.WorkspaceDiscovery, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        *,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.WorkspaceDiscovery"]:
+        """Lists retained discovery results under the workspace. Each result has its canonical ID; latest
+        is an alias and is not a separate collection entry. This operation does not extend result
+        retention.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :keyword continuation_token_parameter: Opaque continuation token supplied by the returned
+         nextLink. Default value is None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of WorkspaceDiscovery
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.WorkspaceDiscovery]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.WorkspaceDiscovery]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_workspace_discoveries_list_request(
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.WorkspaceDiscovery],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class WorkspaceEvaluationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
+        :attr:`workspace_evaluations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "evaluation_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, workspace_name: str, evaluation_name: str, **kwargs: Any
+    ) -> _models.WorkspaceEvaluation:
+        """Gets a retained template evaluation by its ID, or uses latest to select the most recently
+        durably admitted GA template evaluation. Returns 200 with the current representation while
+        processing or terminal. Returns 404 if no qualifying retained result exists; scenario-backed
+        legacy operations are not substituted. This is not an LRO polling endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param evaluation_name: The stable service-generated evaluation result ID in hyphenated GUID
+         form. Use latest in the request path for the most recently durably admitted GA template
+         evaluation; responses contain the canonical result ID, not the protected polling identifier.
+         Required.
+        :type evaluation_name: str
+        :return: WorkspaceEvaluation. The WorkspaceEvaluation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.WorkspaceEvaluation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.WorkspaceEvaluation] = kwargs.pop("cls", None)
+
+        _request = build_workspace_evaluations_get_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            evaluation_name=evaluation_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.WorkspaceEvaluation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "continuation_token_parameter",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        *,
+        continuation_token_parameter: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.WorkspaceEvaluation"]:
+        """Lists retained GA template evaluations under the workspace. Each result has its canonical ID;
+        latest is an alias and is not a separate collection entry. This operation does not extend
+        retention or convert scenario-backed legacy evaluations.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :keyword continuation_token_parameter: Opaque continuation token supplied by the returned
+         nextLink. Default value is None.
+        :paramtype continuation_token_parameter: str
+        :return: An iterator like instance of WorkspaceEvaluation
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.WorkspaceEvaluation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.WorkspaceEvaluation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_workspace_evaluations_list_request(
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    continuation_token_parameter=continuation_token_parameter,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.WorkspaceEvaluation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class DiscoveredResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5928,7 +5370,7 @@ class DiscoveredResourcesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(
         self, resource_group_name: str, workspace_name: str, discovered_resource_name: str, **kwargs: Any
@@ -6010,7 +5452,7 @@ class DiscoveredResourcesOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list_by_workspace(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
@@ -6068,7 +5510,10 @@ class DiscoveredResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6111,7 +5556,7 @@ class DiscoveredResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ScenariosOperations:
+class ScenariosOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6141,7 +5586,7 @@ class ScenariosOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(
         self, resource_group_name: str, workspace_name: str, scenario_name: str, **kwargs: Any
@@ -6226,6 +5671,8 @@ class ScenariosOperations:
         resource: _models.Scenario,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.Scenario:
         """Create or update a scenario.
@@ -6242,6 +5689,11 @@ class ScenariosOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Scenario. The Scenario is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Scenario
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6253,9 +5705,11 @@ class ScenariosOperations:
         resource_group_name: str,
         workspace_name: str,
         scenario_name: str,
-        resource: JSON,
+        resource: _types.Scenario,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.Scenario:
         """Create or update a scenario.
@@ -6268,10 +5722,15 @@ class ScenariosOperations:
         :param scenario_name: Name of the scenario. Required.
         :type scenario_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.Scenario
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Scenario. The Scenario is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Scenario
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6286,6 +5745,8 @@ class ScenariosOperations:
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.Scenario:
         """Create or update a scenario.
@@ -6302,6 +5763,11 @@ class ScenariosOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Scenario. The Scenario is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Scenario
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6319,16 +5785,20 @@ class ScenariosOperations:
                 "scenario_name",
                 "content_type",
                 "accept",
-            ]
+            ],
+            "2026-11-01": ["etag", "match_condition"],
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def create_or_update(
         self,
         resource_group_name: str,
         workspace_name: str,
         scenario_name: str,
-        resource: Union[_models.Scenario, JSON, IO[bytes]],
+        resource: Union[_models.Scenario, _types.Scenario, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> _models.Scenario:
         """Create or update a scenario.
@@ -6340,9 +5810,15 @@ class ScenariosOperations:
         :type workspace_name: str
         :param scenario_name: Name of the scenario. Required.
         :type scenario_name: str
-        :param resource: Resource create parameters. Is one of the following types: Scenario, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.Scenario or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Scenario type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.chaos.models.Scenario or ~azure.mgmt.chaos.types.Scenario or
+         IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: Scenario. The Scenario is compatible with MutableMapping
         :rtype: ~azure.mgmt.chaos.models.Scenario
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6353,6 +5829,12 @@ class ScenariosOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -6373,6 +5855,8 @@ class ScenariosOperations:
             workspace_name=workspace_name,
             scenario_name=scenario_name,
             subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6427,7 +5911,7 @@ class ScenariosOperations:
                 "scenario_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def delete(self, resource_group_name: str, workspace_name: str, scenario_name: str, **kwargs: Any) -> None:
         """Delete a scenario.
@@ -6494,7 +5978,7 @@ class ScenariosOperations:
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list_all(
         self, resource_group_name: str, workspace_name: str, **kwargs: Any
@@ -6552,7 +6036,10 @@ class ScenariosOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6595,14 +6082,14 @@ class ScenariosOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ScenarioRunsOperations:
+class ScenarioTemplatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
-        :attr:`scenario_runs` attribute.
+        :attr:`scenario_templates` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -6614,38 +6101,17 @@ class ScenarioRunsOperations:
 
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "workspace_name",
-                "scenario_name",
-                "run_id",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
+        method_added_on="2026-11-01",
+        params_added_on={"2026-11-01": ["api_version", "scenario_template_name", "accept"]},
+        api_versions_list=["2026-11-01"],
     )
-    async def get(
-        self, resource_group_name: str, workspace_name: str, scenario_name: str, run_id: str, **kwargs: Any
-    ) -> _models.ScenarioRun:
-        """Get a scenario run.
+    async def get(self, scenario_template_name: str, **kwargs: Any) -> _models.ScenarioTemplate:
+        """Get a scenario template, described by its newest published version.
 
-        Get a scenario run.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: String that represents a Workspace resource name. Required.
-        :type workspace_name: str
-        :param scenario_name: Name of the scenario. Required.
-        :type scenario_name: str
-        :param run_id: The name of the ScenarioRun. Required.
-        :type run_id: str
-        :return: ScenarioRun. The ScenarioRun is compatible with MutableMapping
-        :rtype: ~azure.mgmt.chaos.models.ScenarioRun
+        :param scenario_template_name: Name of the scenario template. Required.
+        :type scenario_template_name: str
+        :return: ScenarioTemplate. The ScenarioTemplate is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.ScenarioTemplate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6659,14 +6125,10 @@ class ScenarioRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ScenarioRun] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ScenarioTemplate] = kwargs.pop("cls", None)
 
-        _request = build_scenario_runs_get_request(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            scenario_name=scenario_name,
-            run_id=run_id,
-            subscription_id=self._config.subscription_id,
+        _request = build_scenario_templates_get_request(
+            scenario_template_name=scenario_template_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6684,7 +6146,7 @@ class ScenarioRunsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 202]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     await response.read()  # Load the body in memory and close the socket
@@ -6697,56 +6159,33 @@ class ScenarioRunsOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ScenarioRun, response.json())
+            deserialized = _deserialize(_models.ScenarioTemplate, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
     @distributed_trace
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "workspace_name",
-                "scenario_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
+        method_added_on="2026-11-01",
+        params_added_on={"2026-11-01": ["api_version", "accept"]},
+        api_versions_list=["2026-11-01"],
     )
-    def list_all(
-        self, resource_group_name: str, workspace_name: str, scenario_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.ScenarioRun"]:
-        """Get a list of scenario runs.
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.ScenarioTemplate"]:
+        """Get a list of the scenario templates published by Microsoft.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: String that represents a Workspace resource name. Required.
-        :type workspace_name: str
-        :param scenario_name: Name of the scenario. Required.
-        :type scenario_name: str
-        :return: An iterator like instance of ScenarioRun
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.ScenarioRun]
+        :return: An iterator like instance of ScenarioTemplate
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.ScenarioTemplate]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ScenarioRun]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ScenarioTemplate]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6759,11 +6198,7 @@ class ScenarioRunsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_scenario_runs_list_all_request(
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    scenario_name=scenario_name,
-                    subscription_id=self._config.subscription_id,
+                _request = build_scenario_templates_list_request(
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6786,7 +6221,10 @@ class ScenarioRunsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6800,7 +6238,7 @@ class ScenarioRunsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.ScenarioRun],
+                List[_models.ScenarioTemplate],
                 deserialized.get("value", []),
             )
             if cls:
@@ -6828,37 +6266,39 @@ class ScenarioRunsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+
+class ScenarioTemplateVersionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
+        :attr:`scenario_template_versions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
     @distributed_trace_async
     @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "workspace_name",
-                "scenario_name",
-                "run_id",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
+        method_added_on="2026-11-01",
+        params_added_on={"2026-11-01": ["api_version", "scenario_template_name", "version", "accept"]},
+        api_versions_list=["2026-11-01"],
     )
-    async def cancel(
-        self, resource_group_name: str, workspace_name: str, scenario_name: str, run_id: str, **kwargs: Any
-    ) -> None:
-        """Cancel the currently running scenario execution.
+    async def get(self, scenario_template_name: str, version: str, **kwargs: Any) -> _models.ScenarioTemplateVersion:
+        """Get a single published version of a scenario template.
 
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: String that represents a Workspace resource name. Required.
-        :type workspace_name: str
-        :param scenario_name: Name of the scenario. Required.
-        :type scenario_name: str
-        :param run_id: The name of the ScenarioRun. Required.
-        :type run_id: str
-        :return: None
-        :rtype: None
+        :param scenario_template_name: Name of the scenario template. Required.
+        :type scenario_template_name: str
+        :param version: The version of the scenario template, for example 1.2. Required.
+        :type version: str
+        :return: ScenarioTemplateVersion. The ScenarioTemplateVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.ScenarioTemplateVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6872,14 +6312,11 @@ class ScenarioRunsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ScenarioTemplateVersion] = kwargs.pop("cls", None)
 
-        _request = build_scenario_runs_cancel_request(
-            resource_group_name=resource_group_name,
-            workspace_name=workspace_name,
-            scenario_name=scenario_name,
-            run_id=run_id,
-            subscription_id=self._config.subscription_id,
+        _request = build_scenario_template_versions_get_request(
+            scenario_template_name=scenario_template_name,
+            version=version,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6889,14 +6326,20 @@ class ScenarioRunsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -6904,15 +6347,119 @@ class ScenarioRunsOperations:
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ScenarioTemplateVersion, response.json())
 
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={"2026-11-01": ["api_version", "scenario_template_name", "accept"]},
+        api_versions_list=["2026-11-01"],
+    )
+    def list(self, scenario_template_name: str, **kwargs: Any) -> AsyncItemPaged["_models.ScenarioTemplateVersion"]:
+        """Get a list of the published versions of a scenario template, including superseded ones.
+
+        :param scenario_template_name: Name of the scenario template. Required.
+        :type scenario_template_name: str
+        :return: An iterator like instance of ScenarioTemplateVersion
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.ScenarioTemplateVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScenarioTemplateVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scenario_template_versions_list_request(
+                    scenario_template_name=scenario_template_name,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScenarioTemplateVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
-class ScenarioConfigurationsOperations:
+class ScenarioConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6943,7 +6490,7 @@ class ScenarioConfigurationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def get(
         self,
@@ -7039,9 +6586,10 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
                 "content_type",
                 "accept",
-            ]
+            ],
+            "2026-11-01": ["etag", "match_condition"],
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -7049,7 +6597,10 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        resource: Union[_models.ScenarioConfiguration, JSON, IO[bytes]],
+        resource: Union[_models.ScenarioConfiguration, _types.ScenarioConfiguration, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7058,6 +6609,12 @@ class ScenarioConfigurationsOperations:
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -7079,6 +6636,8 @@ class ScenarioConfigurationsOperations:
             scenario_name=scenario_name,
             scenario_configuration_name=scenario_configuration_name,
             subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7134,6 +6693,8 @@ class ScenarioConfigurationsOperations:
         resource: _models.ScenarioConfiguration,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScenarioConfiguration]:
         """Create or update a scenario definition.
@@ -7152,6 +6713,11 @@ class ScenarioConfigurationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns ScenarioConfiguration. The
          ScenarioConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioConfiguration]
@@ -7165,9 +6731,11 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        resource: JSON,
+        resource: _types.ScenarioConfiguration,
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScenarioConfiguration]:
         """Create or update a scenario definition.
@@ -7182,10 +6750,15 @@ class ScenarioConfigurationsOperations:
         :param scenario_configuration_name: Name of the scenario definition. Required.
         :type scenario_configuration_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.chaos.types.ScenarioConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns ScenarioConfiguration. The
          ScenarioConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioConfiguration]
@@ -7202,6 +6775,8 @@ class ScenarioConfigurationsOperations:
         resource: IO[bytes],
         *,
         content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScenarioConfiguration]:
         """Create or update a scenario definition.
@@ -7220,6 +6795,11 @@ class ScenarioConfigurationsOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns ScenarioConfiguration. The
          ScenarioConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioConfiguration]
@@ -7239,9 +6819,10 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
                 "content_type",
                 "accept",
-            ]
+            ],
+            "2026-11-01": ["etag", "match_condition"],
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_create_or_update(
         self,
@@ -7249,7 +6830,10 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        resource: Union[_models.ScenarioConfiguration, JSON, IO[bytes]],
+        resource: Union[_models.ScenarioConfiguration, _types.ScenarioConfiguration, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ScenarioConfiguration]:
         """Create or update a scenario definition.
@@ -7263,9 +6847,15 @@ class ScenarioConfigurationsOperations:
         :type scenario_name: str
         :param scenario_configuration_name: Name of the scenario definition. Required.
         :type scenario_configuration_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         ScenarioConfiguration, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.chaos.models.ScenarioConfiguration or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ScenarioConfiguration type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.ScenarioConfiguration or
+         ~azure.mgmt.chaos.types.ScenarioConfiguration or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
         :return: An instance of AsyncLROPoller that returns ScenarioConfiguration. The
          ScenarioConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioConfiguration]
@@ -7286,6 +6876,8 @@ class ScenarioConfigurationsOperations:
                 scenario_name=scenario_name,
                 scenario_configuration_name=scenario_configuration_name,
                 resource=resource,
+                etag=etag,
+                match_condition=match_condition,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -7337,7 +6929,7 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _delete_initial(
         self,
@@ -7420,7 +7012,7 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_delete(
         self,
@@ -7504,7 +7096,7 @@ class ScenarioConfigurationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     def list_all(
         self, resource_group_name: str, workspace_name: str, scenario_name: str, **kwargs: Any
@@ -7565,7 +7157,10 @@ class ScenarioConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7607,7 +7202,6 @@ class ScenarioConfigurationsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
     @api_version_validation(
         method_added_on="2026-05-01-preview",
         params_added_on={
@@ -7620,31 +7214,16 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
-    async def execute(
+    async def _execute_initial(
         self,
         resource_group_name: str,
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
         **kwargs: Any
-    ) -> None:
-        """Execute the scenario execution with the given scenario configuration.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param workspace_name: String that represents a Workspace resource name. Required.
-        :type workspace_name: str
-        :param scenario_name: Name of the scenario. Required.
-        :type scenario_name: str
-        :param scenario_configuration_name: Name of the scenario definition. Required.
-        :type scenario_configuration_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7656,7 +7235,7 @@ class ScenarioConfigurationsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_scenario_configurations_execute_request(
             resource_group_name=resource_group_name,
@@ -7673,7 +7252,8 @@ class ScenarioConfigurationsOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-        _stream = False
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7681,6 +7261,10 @@ class ScenarioConfigurationsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ErrorResponse,
@@ -7692,8 +7276,106 @@ class ScenarioConfigurationsOperations:
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
         response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
         if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "scenario_name",
+                "scenario_configuration_name",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
+    )
+    async def begin_execute(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        scenario_name: str,
+        scenario_configuration_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScenarioRun]:
+        """Execute the scenario execution with the given scenario configuration.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param scenario_name: Name of the scenario. Required.
+        :type scenario_name: str
+        :param scenario_configuration_name: Name of the scenario definition. Required.
+        :type scenario_configuration_name: str
+        :return: An instance of AsyncLROPoller that returns ScenarioRun. The ScenarioRun is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScenarioRun] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._execute_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                scenario_name=scenario_name,
+                scenario_configuration_name=scenario_configuration_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.ScenarioRun, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ScenarioRun].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ScenarioRun](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2026-05-01-preview",
@@ -7707,7 +7389,7 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _validate_initial(
         self,
@@ -7789,7 +7471,7 @@ class ScenarioConfigurationsOperations:
                 "scenario_configuration_name",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_validate(
         self,
@@ -7883,7 +7565,7 @@ class ScenarioConfigurationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def _fix_resource_permissions_initial(
         self,
@@ -7891,7 +7573,9 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        body: Optional[Union[_models.FixResourcePermissionsRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.FixResourcePermissionsRequest, _types.FixResourcePermissionsRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8008,7 +7692,7 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.FixResourcePermissionsRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8025,7 +7709,7 @@ class ScenarioConfigurationsOperations:
         :param scenario_configuration_name: Name of the scenario definition. Required.
         :type scenario_configuration_name: str
         :param body: Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.chaos.types.FixResourcePermissionsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8083,7 +7767,7 @@ class ScenarioConfigurationsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
     )
     async def begin_fix_resource_permissions(
         self,
@@ -8091,7 +7775,9 @@ class ScenarioConfigurationsOperations:
         workspace_name: str,
         scenario_name: str,
         scenario_configuration_name: str,
-        body: Optional[Union[_models.FixResourcePermissionsRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.FixResourcePermissionsRequest, _types.FixResourcePermissionsRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PermissionsFix]:
         """Fixes resource permissions for the given scenario configuration.
@@ -8105,9 +7791,10 @@ class ScenarioConfigurationsOperations:
         :type scenario_name: str
         :param scenario_configuration_name: Name of the scenario definition. Required.
         :type scenario_configuration_name: str
-        :param body: Is one of the following types: FixResourcePermissionsRequest, JSON, IO[bytes]
-         Default value is None.
-        :type body: ~azure.mgmt.chaos.models.FixResourcePermissionsRequest or JSON or IO[bytes]
+        :param body: Is either a FixResourcePermissionsRequest type or a IO[bytes] type. Default value
+         is None.
+        :type body: ~azure.mgmt.chaos.models.FixResourcePermissionsRequest or
+         ~azure.mgmt.chaos.types.FixResourcePermissionsRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PermissionsFix. The PermissionsFix is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.PermissionsFix]
@@ -8171,3 +7858,897 @@ class ScenarioConfigurationsOperations:
         return AsyncLROPoller[_models.PermissionsFix](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+
+class ScenarioRunsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
+        :attr:`scenario_runs` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "scenario_name",
+                "run_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, workspace_name: str, scenario_name: str, run_id: str, **kwargs: Any
+    ) -> _models.ScenarioRun:
+        """Get a scenario run.
+
+        This endpoint is also the polling target for ScenarioConfigurations.execute
+        and ScenarioRuns.cancel (final-state-via: location). While the run is in
+        progress the service returns 202 with a Location header pointing back to
+        this URL; clients must keep polling until they receive 200, which carries
+        the final ScenarioRun body.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param scenario_name: Name of the scenario. Required.
+        :type scenario_name: str
+        :param run_id: The name of the ScenarioRun. Required.
+        :type run_id: str
+        :return: ScenarioRun. The ScenarioRun is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.ScenarioRun
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScenarioRun] = kwargs.pop("cls", None)
+
+        _request = build_scenario_runs_get_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            scenario_name=scenario_name,
+            run_id=run_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ScenarioRun, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "scenario_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
+    )
+    def list_all(
+        self, resource_group_name: str, workspace_name: str, scenario_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ScenarioRun"]:
+        """Get a list of scenario runs.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param scenario_name: Name of the scenario. Required.
+        :type scenario_name: str
+        :return: An iterator like instance of ScenarioRun
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.ScenarioRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ScenarioRun]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_scenario_runs_list_all_request(
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    scenario_name=scenario_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ScenarioRun],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "scenario_name",
+                "run_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
+    )
+    async def _cancel_initial(
+        self, resource_group_name: str, workspace_name: str, scenario_name: str, run_id: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_scenario_runs_cancel_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            scenario_name=scenario_name,
+            run_id=run_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "scenario_name",
+                "run_id",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-08-01-preview", "2026-11-01"],
+    )
+    async def begin_cancel(
+        self, resource_group_name: str, workspace_name: str, scenario_name: str, run_id: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.ScenarioRun]:
+        """Cancel the currently running scenario execution.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param scenario_name: Name of the scenario. Required.
+        :type scenario_name: str
+        :param run_id: The name of the ScenarioRun. Required.
+        :type run_id: str
+        :return: An instance of AsyncLROPoller that returns ScenarioRun. The ScenarioRun is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.chaos.models.ScenarioRun]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ScenarioRun] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._cancel_initial(
+                resource_group_name=resource_group_name,
+                workspace_name=workspace_name,
+                scenario_name=scenario_name,
+                run_id=run_id,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.ScenarioRun, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ScenarioRun].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ScenarioRun](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ConnectionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.chaos.aio.ChaosManagementClient`'s
+        :attr:`connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ChaosManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, workspace_name: str, connection_name: str, **kwargs: Any
+    ) -> _models.Connection:
+        """Get a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+
+        _request = build_connections_get_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            connection_name=connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Connection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        resource: _models.Connection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Connection:
+        """Create or update a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :param resource: Connection resource to be created or updated. Required.
+        :type resource: ~azure.mgmt.chaos.models.Connection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        resource: _types.Connection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Connection:
+        """Create or update a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :param resource: Connection resource to be created or updated. Required.
+        :type resource: ~azure.mgmt.chaos.types.Connection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Connection:
+        """Create or update a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :param resource: Connection resource to be created or updated. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        workspace_name: str,
+        connection_name: str,
+        resource: Union[_models.Connection, _types.Connection, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.Connection:
+        """Create or update a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :param resource: Connection resource to be created or updated. Is either a Connection type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.chaos.models.Connection or ~azure.mgmt.chaos.types.Connection or
+         IO[bytes]
+        :return: Connection. The Connection is compatible with MutableMapping
+        :rtype: ~azure.mgmt.chaos.models.Connection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Connection] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            connection_name=connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Connection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "workspace_name",
+                "connection_name",
+            ]
+        },
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
+    )
+    async def delete(self, resource_group_name: str, workspace_name: str, connection_name: str, **kwargs: Any) -> None:
+        """Delete a connection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :param connection_name: Name of the connection. Required.
+        :type connection_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_connections_delete_request(
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            connection_name=connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-08-01-preview",
+        params_added_on={
+            "2026-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "workspace_name", "accept"]
+        },
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
+    )
+    def list_all(
+        self, resource_group_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Connection"]:
+        """Get a list of connections.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param workspace_name: String that represents a Workspace resource name. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of Connection
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.chaos.models.Connection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Connection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_connections_list_all_request(
+                    resource_group_name=resource_group_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Connection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

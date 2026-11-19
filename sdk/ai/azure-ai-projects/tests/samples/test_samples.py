@@ -5,8 +5,18 @@
 # ------------------------------------
 import os
 import pytest
-from devtools_testutils import recorded_by_proxy, AzureRecordedTestCase, RecordedTransport
-from test_base import servicePreparer, fineTuningServicePreparer, modelsServicePreparer
+from devtools_testutils import (
+    recorded_by_proxy,
+    AzureRecordedTestCase,
+    RecordedTransport,
+    remove_batch_sanitizers,
+)
+from devtools_testutils.helpers import get_recording_id
+from test_base import (
+    fineTuningServicePreparer,
+    modelsServicePreparer,
+    servicePreparer,
+)
 from sample_executor import (
     AdditionalSampleTestDetail,
     SyncSampleExecutor,
@@ -15,6 +25,8 @@ from sample_executor import (
     SamplePathPasser,
 )
 from test_samples_helpers import get_sample_env_vars
+from agent_insights.sample_test_helpers import agentInsightsServicePreparer, assert_agent_insights_output
+from agent_insights.sanitizers import agent_insights_sample_sanitizers
 from test_fine_tuning_samples_helpers import get_fine_tuning_sample_env_vars
 
 
@@ -23,19 +35,19 @@ class TestSamples(AzureRecordedTestCase):
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples.py::TestSamples::test_agent_tools_samples[sample_agent_memory_search]
     @servicePreparer()
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail( # 2/28/2026 westus2 get 500
-    #             test_id="sample_agent_azure_function",
-    #             sample_filename="sample_agent_azure_function.py",
-    #             env_vars={
-    #                 "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
-    #                 "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
-    #                 "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
-    #             },
-    #         ),
-    #     ]
-    # )
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_agent_azure_function",
+                sample_filename="sample_agent_azure_function.py",
+                env_vars={
+                    "STORAGE_INPUT_QUEUE_NAME": "sanitized_input_queue_name",
+                    "STORAGE_OUTPUT_QUEUE_NAME": "sanitized_output_queue_name",
+                    "STORAGE_QUEUE_SERVICE_ENDPOINT": "sanitized_queue_service_endpoint",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
@@ -45,14 +57,14 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_agent_code_interpreter_structured_inputs.py",  # No issue to run. Just postpone recording.
                 "sample_agent_azure_function.py",  # In the list of additional sample tests above due to more parameters needed
                 "sample_agent_computer_use.py",  # 400 BadRequestError: Invalid URI (URI string too long)
-                "sample_agent_browser_automation.py",  # APITimeoutError: request timed out
                 "sample_agent_openapi.py",  # 400 2/28/2026 validation/tool_user_error; failing weather GET curl call in OpenAPI tool
                 "sample_agent_memory_search.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
+                "sample_agent_to_agent.py",  # Skipped not sample should work, but not able to obtain a project endpoint that work with a2a at this moment
             ],
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -68,7 +80,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_memory_samples -s
     def test_memory_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
@@ -81,7 +93,6 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
-                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
@@ -89,12 +100,43 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agents_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
         executor.validate_print_calls_by_llm()
+
+    @pytest.mark.usefixtures("patch_sleep")
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_sample_paths(
+            "agent_insights",
+            samples_to_skip=[
+                "sample_agent_insights_on_demand.py",  # Skipped until recordings are available.
+                "sample_agent_insights_scheduled.py",  # Skipped until recordings are available.
+            ],
+        ),
+    )
+    @agentInsightsServicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    def test_agent_insights_samples(self, sample_path: str, **kwargs) -> None:
+        # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
+        remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
+        env_vars = get_sample_env_vars(kwargs)
+        # Record the fictional spans, not exporter health or remote configuration traffic.
+        env_vars.update(
+            FOUNDRY_AGENT_NAME="agent-insights-sample",
+            APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL="true",
+            APPLICATIONINSIGHTS_SDKSTATS_DISABLED="true",
+            APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED="true",
+        )
+        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        with agent_insights_sample_sanitizers():
+            executor.execute()
+        # These lifecycle and schedule checks do not require a second model call.
+        assert_agent_insights_output(sample_path, executor.print_output_calls)
 
     @pytest.mark.parametrize(
         "sample_path",
@@ -105,7 +147,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_connections_samples(self, sample_path: str, **kwargs) -> None:
         kwargs = kwargs.copy()
         kwargs["connection_name"] = "mcp"
@@ -123,7 +165,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_files_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -139,7 +181,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_deployments_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -161,7 +203,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @modelsServicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_models_samples(self, sample_path: str, **kwargs) -> None:
         import secrets  # local import to avoid module-level dep
 
@@ -201,15 +243,22 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_traces_for_evaluation_with_test_case_rubric.py",  # Need test recordings
                 "sample_dataset_generation_job_simpleqna_with_agent_source.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_with_file_source.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py",  # Need test recordings
+                "sample_dataset_generation_job_management.py",  # Need test recordings
+                "sample_dataset_generation_job_traces_for_evaluation_merge.py",  # Need test recordings
             ],
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     # To run this test: pytest tests/samples/test_samples.py::TestSamples::test_datasets_samples[sample_dataset_generation_job_simpleqna_with_prompt_source] -s
     def test_datasets_samples(self, sample_path: str, **kwargs) -> None:
+        # Preserve Location for the final GET; existing URL rules still redact resource identifiers.
+        # https://github.com/Azure/azure-sdk-tools/blob/b295229441fc28aec2964891655180b622283ed0/tools/test-proxy/Azure.Sdk.Tools.TestProxy/Common/SanitizerDictionary.cs#L124
+        remove_batch_sanitizers(["AZSDK2003"], headers={"x-recording-id": get_recording_id()})
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
@@ -224,7 +273,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_chat_completions_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -240,14 +289,6 @@ class TestSamples(AzureRecordedTestCase):
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                     "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
-                },
-            ),
-            AdditionalSampleTestDetail(
-                test_id="sample_create_hosted_agent_from_code",
-                sample_filename="sample_create_hosted_agent_from_code.py",
-                env_vars={
-                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
                 },
             ),
             AdditionalSampleTestDetail(
@@ -304,7 +345,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @SamplePathPasser()
     # To run a single sample: pytest tests\samples\test_samples.py::TestSamples::test_hosted_agents_samples[sample_agent_endpoint] -s
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -340,7 +381,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_skills_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -356,7 +397,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @servicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_toolboxes_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
@@ -375,7 +416,7 @@ class TestSamples(AzureRecordedTestCase):
     )
     @fineTuningServicePreparer()
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_finetuning_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_fine_tuning_sample_env_vars(sample_path, kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)

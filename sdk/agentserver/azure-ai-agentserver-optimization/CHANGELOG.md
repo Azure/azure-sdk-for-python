@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+- Resolver API GET requests now include the current agent's identity via the `x-ms-optimization-agent-name` and `x-ms-optimization-agent-version` headers, sourced from the `FOUNDRY_AGENT_NAME` and `FOUNDRY_AGENT_VERSION` environment variables when running in a Foundry hosting environment.
+
 ## 1.0.0b1 (2026-05-24)
 
 ### Features Added

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -1623,7 +1624,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(HttpResponseError):
             await copied_blob2.append_block("abc")
 
-        blobs_gen = bsc.get_container_client(self.container_name).list_blobs()
+        blobs_gen = bsc.get_container_client(self.container_name).list_blobs(response_format="xml")
         async for blob in blobs_gen:
             if blob.name == "copiedblob2":
                 assert blob.is_append_blob_sealed
@@ -1795,6 +1796,88 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                         params={"restype": "share"},
                     )
                 await bsc.delete_container(self.source_container_name)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_blob_modified_during_download_etag_lock(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+        data = b"abcd" * 1024
+        await blob.append_block(data)
+
+        # Act
+        downloader = await blob.download_blob()
+        await blob.append_block(b"x" * 512)
+
+        # Assert
+        with pytest.raises(ResourceModifiedError):
+            await downloader.readall()
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_download_blob_modified_during_download_disable_etag_lock(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=1024,
+        )
+        await self._setup(bsc)
+        blob = await self._create_blob(bsc)
+        data = b"abcd" * 1024
+        data2 = b"ab" * 256
+        await blob.append_block(data)
+
+        # Act
+        downloader = await blob.download_blob(disable_etag_lock=True)
+        await blob.append_block(data2)
+        result = await downloader.readall()
+
+        assert result == data
+
+        # Act / Assert - chunks()
+        downloader = await blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        await blob.append_block(data2)
+        assert b"".join([chunk async for chunk in downloader.chunks()]) == data
+
+        # Act / Assert - read(size)
+        downloader = await blob.download_blob(offset=0, length=len(data), disable_etag_lock=True)
+        await blob.append_block(data2)
+        assert await downloader.read(2048) + await downloader.read() == data
+
+        # Act - caller-provided etag is still enforced on every request
+        props = await blob.get_blob_properties()
+        downloader = await blob.download_blob(
+            disable_etag_lock=True, etag=props.etag, match_condition=MatchConditions.IfNotModified
+        )
+        await blob.append_block(data2)
+
+        with pytest.raises(ResourceModifiedError):
+            await downloader.readall()
+
+        # Act - blob replaced with a smaller one mid-download
+        await blob.create_append_blob()
+        await blob.append_block(data)
+        downloader = await blob.download_blob(disable_etag_lock=True)
+        await blob.create_append_blob()
+        await blob.append_block(data[:1536])
+
+        with pytest.raises(ResourceModifiedError):
+            await downloader.readall()
 
 
 # ------------------------------------------------------------------------------

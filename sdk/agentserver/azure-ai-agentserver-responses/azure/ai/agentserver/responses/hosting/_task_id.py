@@ -2,16 +2,16 @@
 # Licensed under the MIT license.
 """Resilient-task ID derivation.
 
-The resilient task that backs a conversation is identified by the conversation's
-chain identity (:func:`._chain_id.derive_conversation_chain_id`). Since Spec 038
-the chain id is itself a native, self-prefixed id (``cchain_…`` / ``rchain_…`` /
-a verbatim ``response_id``), so ``task_id == conversation_chain_id`` exactly —
-there is no separate wrapper prefix, and the resilient task and the
-handler-facing ``conversation_chain_id`` can never drift.
+The resilient task that backs a conversation uses the same chain selection as
+:func:`._chain_id.derive_conversation_chain_id`, but may use a private
+session-incarnation scope that differs from the public session identity used by
+the handler-facing ``conversation_chain_id``.
 """
 
 from __future__ import annotations
 
+import hashlib
+import json
 import re
 
 from ._chain_id import derive_conversation_chain_id
@@ -23,6 +23,45 @@ from ._chain_id import derive_conversation_chain_id
 #: validated upstream (not charset-validated), so we enforce the strict
 #: contract here.
 _TASK_ID_RE = re.compile(r"^[a-zA-Z0-9_-]{1,128}$")
+_TASK_SESSION_SCOPE_SEPARATOR = "\x1f"
+
+
+def derive_lifecycle_id(identifier: str, user_id_key: str | None) -> str:
+    """Derive a private user-scoped key without changing public identifiers.
+
+    Anonymous keys retain their previous values for recovery compatibility.
+    Identified users never fall back to those shared legacy keys.
+
+    :param identifier: The public response or derived task identifier.
+    :type identifier: str
+    :param user_id_key: The user partition, or ``None`` for anonymous.
+    :type user_id_key: str | None
+    :returns: A stable key for streams, tasks, and process-local references.
+    :rtype: str
+    """
+    if user_id_key is None:
+        return identifier
+    encoded = json.dumps([user_id_key, identifier], ensure_ascii=True, separators=(",", ":")).encode("utf-8")
+    return "lifecycle-" + hashlib.sha256(encoded).hexdigest()
+
+
+def derive_task_session_scope(*, session_id: str, session_guid: str | None) -> str:
+    """Compose the private task namespace for a hosted session incarnation.
+
+    The GUID is fixed-format lowercase hexadecimal and therefore cannot contain
+    the separator. Including the resolved public session ID preserves distinct
+    task namespaces if a hosted process accepts multiple logical session IDs.
+
+    :keyword session_id: Resolved public session identity.
+    :paramtype session_id: str
+    :keyword session_guid: System-generated session incarnation GUID.
+    :paramtype session_guid: str | None
+    :returns: The injective private task session scope.
+    :rtype: str
+    """
+    if not session_guid:
+        return session_id
+    return f"{session_guid}{_TASK_SESSION_SCOPE_SEPARATOR}{session_id}"
 
 
 def derive_task_id(
@@ -32,13 +71,14 @@ def derive_task_id(
     response_id: str,
     agent_name: str,
     session_id: str,
+    task_session_id: str | None = None,
     steerable: bool = True,
 ) -> str:
     """Derive the resilient-task id for a conversation chain.
 
-    The task id **is** the :func:`._chain_id.derive_conversation_chain_id`
-    value, so the resilient task backing a conversation and the handler-facing
-    ``conversation_chain_id`` are one and the same identity.
+    The task ID follows :func:`._chain_id.derive_conversation_chain_id`, but its
+    private session scope can be supplied separately from the public session
+    identity.
 
     :keyword conversation_id: Explicit conversation scope (highest priority).
     :paramtype conversation_id: str | None
@@ -50,9 +90,14 @@ def derive_task_id(
     :paramtype agent_name: str
     :keyword session_id: Session scope identifier.
     :paramtype session_id: str
+    :keyword task_session_id: Private task namespace. Defaults to
+        ``session_id`` for compatibility.
+    :paramtype task_session_id: str | None
     :keyword steerable: Whether steerable conversations are enabled.
     :paramtype steerable: bool
-    :returns: A deterministic resilient-task id (== the conversation chain id).
+    :returns: A deterministic physical task ID. It equals the public
+        conversation chain ID only when ``task_session_id`` is omitted or
+        equals ``session_id``.
     :rtype: str
     """
     task_id = derive_conversation_chain_id(
@@ -60,7 +105,7 @@ def derive_task_id(
         previous_response_id=previous_response_id,
         response_id=response_id,
         agent_name=agent_name,
-        session_id=session_id,
+        session_id=task_session_id if task_session_id is not None else session_id,
         steerable=steerable,
     )
     # Fail fast on the strict Public Task API contract. In case 3 the id is a

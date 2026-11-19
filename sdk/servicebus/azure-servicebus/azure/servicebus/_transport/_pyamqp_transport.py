@@ -47,7 +47,7 @@ from .._pyamqp.endpoints import Source
 from .._pyamqp._connection import Connection, _CLOSING_STATES
 
 from ._base import AmqpTransport
-from .._common.utils import utc_from_timestamp, utc_now
+from .._common.utils import utc_from_timestamp, utc_now, get_attempt_timeout
 from .._common.tracing import get_receive_links, receive_trace_context_manager
 from .._common.constants import (
     PYAMQP_LIBRARY,
@@ -755,7 +755,7 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         # pylint: disable=protected-access
         try:
             receiver._receive_context.set()
-            receiver._open()
+            receiver._open(get_attempt_timeout(None, receiver._config.try_timeout))
             if not receiver._message_iter or wait_time:
                 receiver._message_iter = receiver._handler.receive_messages_iter(timeout=wait_time)
             pyamqp_message = next(cast(Iterator["Message"], receiver._message_iter))
@@ -1108,6 +1108,19 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
             timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
         )
         return callback(status, response, description, amqp_transport=PyamqpTransport)
+
+    @staticmethod
+    def mgmt_client_setup(mgmt_client: "AMQPClient", *, node: Union[str, bytes], timeout: Optional[float]) -> None:
+        """Open the pyamqp management link without dispatching a request.
+
+        :param ~pyamqp.AMQPClient mgmt_client: Client used for management requests.
+        :keyword str or bytes node: Management target.
+        :keyword float or None timeout: Timeout in seconds, or None for no timeout.
+        """
+        try:
+            mgmt_client.open_mgmt_link(node=node, timeout=timeout or 0)
+        except TimeoutError as exception:
+            raise OperationTimeoutError(error=exception) from exception
 
     @staticmethod
     def _handle_amqp_exception_with_condition(

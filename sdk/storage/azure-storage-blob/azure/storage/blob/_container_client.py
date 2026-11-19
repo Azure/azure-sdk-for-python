@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -27,7 +28,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage
-from ._generated.models import SignedIdentifier
+from ._generated.models import SignedIdentifier as GenSignedIdentifier, SignedIdentifiers as GenSignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     ArrowBlobPropertiesPaged,
@@ -39,17 +40,18 @@ from ._list_blobs_helper import (
     FilteredBlobPaged,
     IgnoreListBlobsDeserializer,
 )
-from ._models import BlobProperties, BlobType, ContainerProperties, FilteredBlob
-from ._serialize import get_access_conditions, get_api_version, get_container_cpk_scope_info, get_modify_conditions
+from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob, SignedIdentifier
+from ._serialize import get_lease_id, get_api_version, get_container_cpk_scope_info, get_modify_conditions
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
-from ._shared.request_handlers import add_metadata_headers, serialize_iso
+from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from ._session import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from azure.core.pipeline.transport import HttpResponse  # pylint: disable=C4756
     from azure.storage.blob import BlobServiceClient
-    from ._models import AccessPolicy, PremiumPageBlobTier, PublicAccess, StandardBlobTier
+    from ._models import PremiumPageBlobTier, PublicAccess, StandardBlobTier
 
 
 class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: disable=too-many-public-methods
@@ -90,18 +92,31 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_put_size: If the blob size is less than or equal max_single_put_size, then the blob will be
         uploaded with only one http PUT request. If the blob size is larger than max_single_put_size,
-        the blob will be uploaded in chunks. Defaults to 64*1024*1024, or 64MB.
+        the blob will be uploaded in chunks. Defaults to 4*1024*1024, or 4MB.
     :keyword int min_large_block_upload_threshold: The minimum chunk size required to use the memory efficient
         algorithm when uploading a block blob. Defaults to 4*1024*1024+1.
     :keyword bool use_byte_buffer: Use a byte buffer for block blob uploads. Defaults to False.
     :keyword int max_page_size: The maximum chunk size for uploading a page blob. Defaults to 4*1024*1024, or 4MB.
     :keyword int max_single_get_size: The maximum size for a blob to be downloaded in a single call,
-        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 32*1024*1024, or 32MB.
+        the exceeded part will be downloaded in chunks (could be parallel). Defaults to 4*1024*1024, or 4MB.
     :keyword int max_chunk_get_size: The maximum chunk size used for downloading a blob. Defaults to 4*1024*1024,
         or 4MB.
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this container.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        ValueError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.blob.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -135,6 +150,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(ContainerClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()
@@ -157,7 +173,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
+        return AzureBlobStorage(self.url, version=self._api_version, pipeline=self._pipeline)
 
     def _format_url(self, hostname):
         return _format_url(
@@ -320,9 +336,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             return self._client.container.create(  # type: ignore
                 timeout=timeout,
                 access=public_access,
-                container_cpk_scope_info=container_cpk_scope_info,
                 cls=return_response_headers,
                 headers=headers,
+                default_encryption_scope=container_cpk_scope_info.get("default_encryption_scope"),
+                prevent_encryption_scope_override=container_cpk_scope_info.get("prevent_encryption_scope_override"),
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -369,8 +386,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 key_encryption_key=self.key_encryption_key,
                 key_resolver_function=self.key_resolver_function,
             )
-            renamed_container._client.container.rename(  # pylint: disable = protected-access
-                self.container_name, **kwargs
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
+                source_container_name=self.container_name, **kwargs
             )
             return renamed_container
         except HttpResponseError as error:
@@ -381,6 +398,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         Marks the specified container for deletion. The container and any blobs
         contained within it are later deleted during garbage collection.
+
+        When a container is deleted, a container with the same name can't be created
+        for at least 30 seconds.  The container might not be available for more than
+        30 seconds if the service is still processing the request.  While the container
+        is being deleted, attempts to create a container of the same name fail with
+        status code 409 (Conflict).  The service indicates that the container is being
+        deleted.  Operations on blobs within the container, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the container and its blobs
+        fail with status code 404 (Not Found).
 
         :keyword lease:
             If specified, delete_container only succeeds if the
@@ -418,14 +445,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Delete a container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
             self._client.container.delete(
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -525,14 +553,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting properties on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response = self._client.container.get_properties(
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                cls=deserialize_container_properties,
-                **kwargs,
+                timeout=timeout, cls=deserialize_container_properties, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -606,16 +631,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
             return self._client.container.set_metadata(  # type: ignore
                 timeout=timeout,
-                lease_access_conditions=access_conditions,
-                modified_access_conditions=mod_conditions,
                 cls=return_response_headers,
                 headers=headers,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -690,18 +715,22 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting the access policy on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = self._client.container.get_access_policy(
-                timeout=timeout,
-                lease_access_conditions=access_conditions,
-                cls=return_headers_and_deserialized,
-                **kwargs,
+                timeout=timeout, cls=return_headers_and_deserialized, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {"public_access": response.get("blob_public_access"), "signed_identifiers": identifiers or []}
+        items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
+        signed_identifiers = [
+            SignedIdentifier._from_generated(si) for si in (items or [])  # pylint: disable=protected-access
+        ]
+        return {
+            "public_access": response.get("blob_public_access"),
+            "signed_identifiers": signed_identifiers,
+        }
 
     @distributed_trace
     def set_container_access_policy(
@@ -762,25 +791,26 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             )
         identifiers = []
         for key, value in signed_identifiers.items():
-            if value:
-                value.start = serialize_iso(value.start)
-                value.expiry = serialize_iso(value.expiry)
-            identifiers.append(SignedIdentifier(id=key, access_policy=value))  # type: ignore
-        signed_identifiers = identifiers  # type: ignore
+            access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
+            identifiers.append(GenSignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
+        signed_identifiers = identifiers or None  # type: ignore
         lease = kwargs.pop("lease", None)
         mod_conditions = get_modify_conditions(kwargs)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             return cast(
                 Dict[str, Union[str, datetime]],
                 self._client.container.set_access_policy(
-                    container_acl=signed_identifiers or None,
+                    container_acl=(
+                        GenSignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None
+                    ),
                     timeout=timeout,
                     access=public_access,
-                    lease_access_conditions=access_conditions,
-                    modified_access_conditions=mod_conditions,
                     cls=return_response_headers,
+                    if_modified_since=mod_conditions.get("if_modified_since"),
+                    if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                    lease_id=lease_id,
                     **kwargs,
                 ),
             )
@@ -809,10 +839,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -840,7 +867,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -848,18 +875,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
 
         command = functools.partial(
             (
@@ -900,10 +919,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -922,24 +938,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         name_starts_with = kwargs.pop("name_starts_with", None)
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
-        if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
 
         # For listing only names we need to create a one-off generated client.
         client = self._build_generated_client()
@@ -995,10 +1003,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword response_format:
             The format used to return and parse the List Blobs response.
             Possible values are "auto", "xml", and "arrow".
-            Choose "auto" to let the SDK choose the best algorithm, currently "xml". The default value is "auto".
-
-            .. note::
-                The use of "arrow" requires `nanoarrow` to be installed.
+            Choose "auto" to let the SDK choose the best algorithm, currently "arrow".
         :paramtype response_format: Literal["auto", "xml", "arrow"]
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
@@ -1016,7 +1021,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -1024,18 +1029,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
 
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
-        response_format = kwargs.pop("response_format", "xml")
-        use_arrow = response_format == "arrow"
+        response_format = kwargs.pop("response_format", "auto")
+        use_arrow = response_format in ("auto", "arrow")
         if kwargs.get("end_before") is not None and not use_arrow:
             raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
-            try:
-                import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
-            except ImportError as e:
-                raise ValueError(
-                    "The use of Apache Arrow deserialization requires nanoarrow to be installed. "
-                    "Please install nanoarrow and try again."
-                ) from e
             command = functools.partial(
                 self._client.container.list_blob_hierarchy_segment_apache_arrow,
                 delimiter=delimiter,
@@ -1187,7 +1185,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             MaxBlobSizeConditionNotMet error (HTTP status code 412 - Precondition Failed).
         :keyword int max_concurrency:
             Maximum number of parallel connections to use when the blob size exceeds
-            64MB.
+            max_single_put_size.
         :keyword ~azure.storage.blob.CustomerProvidedEncryptionKey cpk:
             Encrypts the data on the service-side with the given key.
             Use of customer-provided keys must be done over HTTPS.
@@ -1403,6 +1401,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
+        :keyword bool disable_etag_lock:
+            By default, the blob's ETag from the initial request is used to ensure the blob is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the blob to change during the download, for example, when downloading
+            an append blob that is actively being written to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the blob is
+                overwritten or recreated during the download. If the blob becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

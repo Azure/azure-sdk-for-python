@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -24,25 +24,34 @@ from .operations import (
     ActionsOperations,
     CapabilitiesOperations,
     CapabilityTypesOperations,
+    ConnectionsOperations,
     DiscoveredResourcesOperations,
     ExperimentsOperations,
     OperationStatusesOperations,
     Operations,
-    PrivateAccessesOperations,
     ScenarioConfigurationsOperations,
     ScenarioRunsOperations,
+    ScenarioTemplateVersionsOperations,
+    ScenarioTemplatesOperations,
     ScenariosOperations,
     TargetTypesOperations,
     TargetsOperations,
+    WorkspaceDiscoveriesOperations,
+    WorkspaceEvaluationsOperations,
     WorkspacesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
-class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
+class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Chaos Management Client.
 
     :ivar capabilities: CapabilitiesOperations operations
@@ -55,8 +64,6 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype capability_types: azure.mgmt.chaos.operations.CapabilityTypesOperations
     :ivar experiments: ExperimentsOperations operations
     :vartype experiments: azure.mgmt.chaos.operations.ExperimentsOperations
-    :ivar private_accesses: PrivateAccessesOperations operations
-    :vartype private_accesses: azure.mgmt.chaos.operations.PrivateAccessesOperations
     :ivar actions: ActionsOperations operations
     :vartype actions: azure.mgmt.chaos.operations.ActionsOperations
     :ivar action_versions: ActionVersionsOperations operations
@@ -67,14 +74,25 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype operation_statuses: azure.mgmt.chaos.operations.OperationStatusesOperations
     :ivar workspaces: WorkspacesOperations operations
     :vartype workspaces: azure.mgmt.chaos.operations.WorkspacesOperations
+    :ivar workspace_discoveries: WorkspaceDiscoveriesOperations operations
+    :vartype workspace_discoveries: azure.mgmt.chaos.operations.WorkspaceDiscoveriesOperations
+    :ivar workspace_evaluations: WorkspaceEvaluationsOperations operations
+    :vartype workspace_evaluations: azure.mgmt.chaos.operations.WorkspaceEvaluationsOperations
     :ivar discovered_resources: DiscoveredResourcesOperations operations
     :vartype discovered_resources: azure.mgmt.chaos.operations.DiscoveredResourcesOperations
     :ivar scenarios: ScenariosOperations operations
     :vartype scenarios: azure.mgmt.chaos.operations.ScenariosOperations
-    :ivar scenario_runs: ScenarioRunsOperations operations
-    :vartype scenario_runs: azure.mgmt.chaos.operations.ScenarioRunsOperations
+    :ivar scenario_templates: ScenarioTemplatesOperations operations
+    :vartype scenario_templates: azure.mgmt.chaos.operations.ScenarioTemplatesOperations
+    :ivar scenario_template_versions: ScenarioTemplateVersionsOperations operations
+    :vartype scenario_template_versions:
+     azure.mgmt.chaos.operations.ScenarioTemplateVersionsOperations
     :ivar scenario_configurations: ScenarioConfigurationsOperations operations
     :vartype scenario_configurations: azure.mgmt.chaos.operations.ScenarioConfigurationsOperations
+    :ivar scenario_runs: ScenarioRunsOperations operations
+    :vartype scenario_runs: azure.mgmt.chaos.operations.ScenarioRunsOperations
+    :ivar connections: ConnectionsOperations operations
+    :vartype connections: azure.mgmt.chaos.operations.ConnectionsOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -84,9 +102,9 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are
-     "2026-05-01-preview". Default value is "2026-05-01-preview". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-11-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -146,9 +164,6 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.experiments = ExperimentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_accesses = PrivateAccessesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.actions = ActionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.action_versions = ActionVersionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.target_types = TargetTypesOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -156,14 +171,27 @@ class ChaosManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.workspaces = WorkspacesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.workspace_discoveries = WorkspaceDiscoveriesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.workspace_evaluations = WorkspaceEvaluationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.discovered_resources = DiscoveredResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.scenarios = ScenariosOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.scenario_runs = ScenarioRunsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.scenario_templates = ScenarioTemplatesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.scenario_template_versions = ScenarioTemplateVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.scenario_configurations = ScenarioConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.scenario_runs = ScenarioRunsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.connections = ConnectionsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

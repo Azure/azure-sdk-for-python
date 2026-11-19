@@ -38,7 +38,12 @@ def main():
                 "specification": {
                     "autoProvisionConfig": {"resourceGraph": True, "storage": True},
                     "canary": {"regions": ["brazilus"]},
+                    "manifestCheckinSpecification": {
+                        "manifestCheckinOption": "AttemptAutomaticManifestCheckin",
+                        "manifestCheckinParams": {"baselineArmManifestLocation": "EastUS2EUAP", "environment": "Prod"},
+                    },
                     "refreshSubscriptionRegistration": True,
+                    "rolloutId": "Ev2RolloutIdGuid",
                 }
             }
         },
@@ -46,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/CustomRollouts_CreateOrUpdate.json
+# x-ms-original-file: 2025-10-01/CustomRollouts_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

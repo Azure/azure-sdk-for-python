@@ -9,6 +9,34 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 **VS Code tip (record a single sample):** Open the **Testing** tab, expand the pytest tree to find the specific sample test case (for example, one parameterized case for a particular `sample_path`), then right-click it and choose **Run Test** (or **Debug Test**). Make sure your `.env` (or your test run environment) includes `AZURE_TEST_RUN_LIVE=true` and `AZURE_SKIP_LIVE_RECORDING=false` so that run captures a new recording for just that sample.
 
+## Voice evaluation recordings
+
+The dedicated `audio_conversation_sample` and `voice_agent_simulation_sample`
+tests execute the existing synchronous and asynchronous samples. Both Azure Core
+and OpenAI HTTPX transports use Test Proxy. Playback uses sanitized preparer
+values and requires no Azure credentials.
+
+For re-recording, follow the [voice evaluation setup](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/README.md#voice-evaluation)
+and provide these environment variables:
+
+| Workflow | Variables |
+| --- | --- |
+| Recorded audio | `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME`, `FOUNDRY_DATASET_ID` |
+| Voice simulation | `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME`, `FOUNDRY_AGENT_NAME`, `FOUNDRY_AGENT_VERSION`, `FOUNDRY_SIMULATOR_MODEL_NAME`, `FOUNDRY_SIMULATOR_VOICE` |
+
+Use an audio-input judge deployment for `FOUNDRY_MODEL_NAME`. Prepare one short
+synthetic store-hours call as WAV, register its recording asset, and register a
+one-row JSONL dataset referencing that WAV through `conversation_artifacts.audio`.
+The transcript can be omitted. For simulation, use an existing store-hours voice
+agent and the sample's inline seed.
+
+Record each workflow with its matching configuration if the projects differ.
+Then run both workflows in playback with the real environment variables unset.
+The tests require completed, finite scores for all four audio evaluators, or task
+completion for simulation; low scores remain valid results. Publish the
+recordings and commit the updated package `assets.json` reference using the
+[repository recording workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md).
+
 ## Sample test logging
 
 In live mode, sample execution always writes a log file to the system temp directory.
@@ -49,7 +77,7 @@ class TestSamples(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(
@@ -85,7 +113,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         ),
     )
     @SamplePathPasser()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     async def test_agent_tools_samples_async(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = AsyncSampleExecutor(
@@ -131,7 +159,7 @@ servicePreparer = functools.partial(
 
 - `@pytest.mark.parametrize`: Drives one test per sample file. Use `samples_to_test` or `samples_to_skip` with `get_sample_paths` / `get_async_sample_paths`.
 - `@SamplePathPasser`: Forwards the sample path to the recorder decorators.
-- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX` when samples use httpx in addition to the default `RecordedTransport.AZURE_CORE`.
+- `recorded_by_proxy` / `recorded_by_proxy_async`: Wrap tests for recording/playback. Include `RecordedTransport.HTTPX2` when samples use httpx2 in addition to the default `RecordedTransport.AZURE_CORE`.
 - `execute` / `execute_async`: Run the sample; any exception fails the test.
 - `validate_print_calls_by_llm` / `validate_print_calls_by_llm_async`: Validate captured print output with LLM instructions resolved automatically from the sample folder. You can still pass an explicit `instructions` override when needed.
 - `kwargs` in the test function: A dictionary with environment variables in key and value pairs.
@@ -182,7 +210,7 @@ from sample_executor import AdditionalSampleTestDetail, additionalSampleTests
     ),
 )
 @SamplePathPasser()
-@recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+@recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
 def test_agent_tools_samples(self, sample_path: str, **kwargs) -> None:
     ...
 ```
@@ -242,7 +270,7 @@ def _preprocess_validation(entries: list[str]) -> str:
     """Filter debug log entries and annotate metric counters."""
     import re
     # Remove SDK debug log entries (they start with "[module.name]")
-    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx|httpcore|msrest)")
+    _NOISE = re.compile(r"^\[(?:azure\.|openai\.|httpx2|httpcore|msrest)")
     kept = [e for e in entries if not _NOISE.match(e.strip())]
     return "\n".join(kept)
 

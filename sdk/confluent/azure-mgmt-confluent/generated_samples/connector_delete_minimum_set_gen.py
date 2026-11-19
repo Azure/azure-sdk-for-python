@@ -39,6 +39,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-08-18-preview/Connector_Delete_MinimumSet_Gen.json
+# x-ms-original-file: 2026-06-02-preview/Connector_Delete_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

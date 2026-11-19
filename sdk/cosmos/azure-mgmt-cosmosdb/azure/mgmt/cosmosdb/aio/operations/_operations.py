@@ -282,7 +282,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -392,7 +392,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
+class DatabaseAccountsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2894,7 +2894,7 @@ class DatabaseAccountsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
 
-class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
+class SqlResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9125,7 +9125,7 @@ class SqlResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
+class MongoDBResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12978,7 +12978,7 @@ class MongoDBResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TableResourcesOperations:  # pylint: disable=too-many-public-methods
+class TableResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15569,7 +15569,7 @@ class TableResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
+class CassandraResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19159,7 +19159,7 @@ class CassandraResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
+class GremlinResourcesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23009,7 +23009,7 @@ class GremlinResourcesOperations:  # pylint: disable=too-many-public-methods
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NotebookWorkspacesOperations:
+class NotebookWorkspacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23955,7 +23955,7 @@ class NotebookWorkspacesOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24529,7 +24529,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24725,7 +24725,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseOperations:
+class DatabaseOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25075,7 +25075,7 @@ class DatabaseOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionOperations:
+class CollectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25442,7 +25442,7 @@ class CollectionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionRegionOperations:
+class CollectionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25585,7 +25585,7 @@ class CollectionRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DatabaseAccountRegionOperations:
+class DatabaseAccountRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25713,7 +25713,7 @@ class DatabaseAccountRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileSourceTargetOperations:
+class PercentileSourceTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25854,7 +25854,7 @@ class PercentileSourceTargetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileTargetOperations:
+class PercentileTargetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25984,7 +25984,7 @@ class PercentileTargetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PercentileOperations:
+class PercentileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26110,7 +26110,7 @@ class PercentileOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionRegionOperations:
+class CollectionPartitionRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26253,7 +26253,7 @@ class CollectionPartitionRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CollectionPartitionOperations:
+class CollectionPartitionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26512,7 +26512,7 @@ class CollectionPartitionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdOperations:
+class PartitionKeyRangeIdOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26654,7 +26654,7 @@ class PartitionKeyRangeIdOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PartitionKeyRangeIdRegionOperations:
+class PartitionKeyRangeIdRegionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26801,7 +26801,7 @@ class PartitionKeyRangeIdRegionOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LocationsOperations:
+class LocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26979,7 +26979,7 @@ class LocationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CassandraClustersOperations:
+class CassandraClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28407,7 +28407,7 @@ class CassandraClustersOperations:
         return deserialized  # type: ignore
 
 
-class CassandraDataCentersOperations:
+class CassandraDataCentersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29230,7 +29230,7 @@ class CassandraDataCentersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableDatabaseAccountsOperations:
+class RestorableDatabaseAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29519,7 +29519,7 @@ class RestorableDatabaseAccountsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlDatabasesOperations:
+class RestorableSqlDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29643,7 +29643,7 @@ class RestorableSqlDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlContainersOperations:
+class RestorableSqlContainersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29783,7 +29783,7 @@ class RestorableSqlContainersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableSqlResourcesOperations:
+class RestorableSqlResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29921,7 +29921,7 @@ class RestorableSqlResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbDatabasesOperations:
+class RestorableMongodbDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30045,7 +30045,7 @@ class RestorableMongodbDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbCollectionsOperations:
+class RestorableMongodbCollectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30186,7 +30186,7 @@ class RestorableMongodbCollectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableMongodbResourcesOperations:
+class RestorableMongodbResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30324,7 +30324,7 @@ class RestorableMongodbResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinDatabasesOperations:
+class RestorableGremlinDatabasesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30448,7 +30448,7 @@ class RestorableGremlinDatabasesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinGraphsOperations:
+class RestorableGremlinGraphsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30588,7 +30588,7 @@ class RestorableGremlinGraphsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableGremlinResourcesOperations:
+class RestorableGremlinResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30726,7 +30726,7 @@ class RestorableGremlinResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTablesOperations:
+class RestorableTablesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30861,7 +30861,7 @@ class RestorableTablesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RestorableTableResourcesOperations:
+class RestorableTableResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30998,7 +30998,7 @@ class RestorableTableResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ServiceOperations:
+class ServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31576,7 +31576,7 @@ class ServiceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MongoMIResourcesOperations:
+class MongoMIResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32742,7 +32742,7 @@ class MongoMIResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetOperations:
+class FleetOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33483,7 +33483,7 @@ class FleetOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetspaceOperations:
+class FleetspaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34315,7 +34315,7 @@ class FleetspaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FleetspaceAccountOperations:
+class FleetspaceAccountOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

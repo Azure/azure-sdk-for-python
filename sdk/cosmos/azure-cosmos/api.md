@@ -3914,6 +3914,7 @@ namespace azure.cosmos.scripts
                 consistency_level: Optional[str] = None, 
                 availability_strategy: Union[bool, dict[str, Any]] = False, 
                 availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
+                enable_compact_utf8_item_writes: bool = False, 
                 **kwargs: Any
             ) -> None: ...
 
@@ -4708,6 +4709,7 @@ namespace azure.cosmos.user
                 consistency_level: Optional[str] = None, 
                 availability_strategy: Union[bool, dict[str, Any]] = False, 
                 availability_strategy_executor: Optional[ThreadPoolExecutor] = None, 
+                enable_compact_utf8_item_writes: bool = False, 
                 **kwargs: Any
             ) -> None: ...
 

@@ -9,7 +9,6 @@ import logging
 import sys
 
 import pytest
-import opentelemetry.propagate as otel_propagate
 from opentelemetry import baggage, trace
 from starlette.applications import Starlette
 from starlette.routing import Host, Mount, WebSocketRoute
@@ -17,7 +16,7 @@ from starlette.testclient import TestClient
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.core import get_request_context
-from azure.ai.agentserver.invocations.voice import Session, SessionReady, VoiceAgentServerHost
+from azure.ai.agentserver.invocations.voice import Session, SessionReady, SessionTermination, VoiceAgentServerHost
 from azure.ai.agentserver.invocations.voice import _session as session_module
 from azure.ai.agentserver.invocations.voice import _voice_host as voice_host_module
 from azure.ai.agentserver.invocations.voice._codec import MAX_FRAME_BYTES
@@ -385,7 +384,7 @@ def test_voice_upgrade_preserves_repeated_w3c_headers():
             (b"traceparent", f"00-{expected_trace_id}-2222222222222222-01".encode()),
             (b"tracestate", b"vendor1=value1"),
             (b"tracestate", b"vendor2=value2"),
-            (b"baggage", b"tenant.id=tenant-1"),
+            (b"baggage", b"microsoft.tenant.id=tenant-1"),
             (b"baggage", b"region=west"),
             (b"x-request-id", b""),
             (b"x-request-id", b"request-first"),
@@ -399,9 +398,22 @@ def test_voice_upgrade_preserves_repeated_w3c_headers():
     assert f"{span_context.trace_id:032x}" == expected_trace_id
     assert span_context.trace_state.get("vendor1") == "value1"
     assert span_context.trace_state.get("vendor2") == "value2"
-    assert baggage.get_baggage("tenant.id", context=context) == "tenant-1"
-    assert baggage.get_baggage("region", context=context) == "west"
-    assert baggage.get_baggage("x_request_id", context=context) == "request-first"
+    assert baggage.get_baggage("microsoft.tenant.id", context=context) == "tenant-1"
+    assert baggage.get_baggage("region", context=context) is None
+    assert baggage.get_baggage("x_request_id", context=context) is None
+
+
+@pytest.mark.parametrize(
+    ("value_lengths", "expected"),
+    [((253, 254), True), ((254, 254), False)],
+)
+def test_voice_tracestate_enforces_total_512_byte_limit(value_lengths, expected):
+    first_length, second_length = value_lengths
+    tracestate = f"a={'a' * first_length},b={'b' * second_length}".encode("ascii")
+    assert len(tracestate) == (512 if expected else 513)
+    headers = [(b"tracestate", tracestate)]
+
+    assert voice_host_module._has_valid_tracestate(headers) is expected  # pylint: disable=protected-access
 
 
 def test_voice_upgrade_rejects_duplicate_traceparent():
@@ -420,7 +432,7 @@ def test_voice_upgrade_ignores_context_extraction_failure(monkeypatch):
     def fail_extract(*_args, **_kwargs):
         raise RuntimeError("context extraction failed")
 
-    monkeypatch.setattr(otel_propagate, "extract", fail_extract)
+    monkeypatch.setattr(voice_host_module._VOICE_TRACE_PROPAGATOR, "extract", fail_extract)
     app = VoiceAgentServerHost(configure_observability=None)
 
     @app.on_session_start
@@ -594,6 +606,158 @@ async def test_voice_stalled_close_releases_endpoint_session_and_context(monkeyp
         await _finish_close_attempts(baseline_attempts)
 
     assert set(session_module._CLOSE_ATTEMPTS) == baseline_attempts  # pylint: disable=protected-access
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+@pytest.mark.parametrize("accept_failure", [None, "before_commit", "after_commit"])
+async def test_voice_malformed_metadata_upgrades_before_close(path, accept_failure, monkeypatch):
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed = []
+    sent_messages = []
+    close_events = []
+    inbound_events = [
+        {"type": "websocket.connect"},
+        {"type": "websocket.receive", "text": json.dumps(_session_start_frame())},
+        {"type": "websocket.disconnect", "code": 1000},
+    ]
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+
+    @app.on_session_start
+    async def on_session_start(_session, _event):
+        observed.append("session_start")
+
+    @app.on_disconnect
+    async def on_disconnect(_session, _event):
+        observed.append("disconnect")
+
+    def create_session(*_args, **_kwargs):
+        pytest.fail("Malformed metadata must not create a Voice Session.")
+
+    monkeypatch.setattr(Session, "_create", create_session)
+
+    async def receive():
+        if accept_failure == "before_commit":
+            raise OSError("accept failed before commit")
+        return inbound_events.pop(0)
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.accept" and accept_failure == "after_commit":
+            raise OSError("accept failed after commit")
+
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    await asyncio.wait_for(app(scope, receive, send), timeout=1)
+
+    if accept_failure == "before_commit":
+        assert sent_messages == []
+    else:
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+        assert sent_messages[-1] == {
+            "type": "websocket.close",
+            "code": 1011,
+            "reason": "Internal server error",
+        }
+    assert close_events == [(1011, "accept_failed" if accept_failure else "invalid_original_subject")]
+    assert not observed
+    assert get_request_context().original_subject is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+async def test_voice_malformed_metadata_stalled_close_is_bounded(path, monkeypatch):
+    monkeypatch.setattr(session_module, "CLOSE_TIMEOUT_SECONDS", 0.01)
+    app = VoiceAgentServerHost(configure_observability=None)
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+    close_started = asyncio.Event()
+    close_release = asyncio.Event()
+    close_events = []
+    sent_messages = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+
+    def create_session(*_args, **_kwargs):
+        pytest.fail("Malformed metadata must not create a Voice Session.")
+
+    monkeypatch.setattr(Session, "_create", create_session)
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        sent_messages.append(message)
+        if message["type"] == "websocket.close":
+            assert get_request_context().original_subject is None
+            close_started.set()
+            await close_release.wait()
+
+    endpoint = asyncio.create_task(app(scope, receive, send))
+    try:
+        await asyncio.wait_for(close_started.wait(), timeout=1)
+        await asyncio.wait_for(asyncio.shield(endpoint), timeout=1)
+        assert [message["type"] for message in sent_messages] == ["websocket.accept", "websocket.close"]
+        assert sent_messages[-1]["code"] == 1011
+        assert close_events == [(1011, "invalid_original_subject")]
+        assert session_module._VOICE_SESSION_SCOPE_KEY not in scope  # pylint: disable=protected-access
+        assert get_request_context().original_subject is None
+    finally:
+        close_release.set()
+        await asyncio.gather(endpoint, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("path", ["/invocations_ws", "/voice_conversation_engine"])
+@pytest.mark.parametrize("close_cancellation", ["direct", "wrapped", "consumed"])
+async def test_voice_malformed_metadata_close_preserves_cancellation(path, close_cancellation):
+    app = VoiceAgentServerHost(configure_observability=None)
+    websocket = _websocket_with_headers([(b"x-ms-original-subject", b"malformed")])
+    scope = dict(websocket.scope, path=path, raw_path=path.encode("ascii"))
+    close_started = asyncio.Event()
+    close_release = asyncio.Event()
+    close_events = []
+    baseline_attempts = set(session_module._CLOSE_ATTEMPTS)  # pylint: disable=protected-access
+    app._emit_close_event = (  # type: ignore[method-assign]  # pylint: disable=protected-access
+        lambda _session_id, code, _duration_ms, *, error_code=None: close_events.append((code, error_code))
+    )
+
+    async def receive():
+        return {"type": "websocket.connect"}
+
+    async def send(message):
+        if message["type"] != "websocket.close":
+            return
+        close_started.set()
+        try:
+            await close_release.wait()
+        except asyncio.CancelledError as cancellation:
+            if close_cancellation == "wrapped":
+                raise OSError("transport wrapped cancellation") from cancellation
+            if close_cancellation == "consumed":
+                return
+            raise
+
+    endpoint = asyncio.create_task(app(scope, receive, send))
+    try:
+        await asyncio.wait_for(close_started.wait(), timeout=1)
+        endpoint.cancel("malformed-close-cancel")
+        with pytest.raises(asyncio.CancelledError) as raised:
+            await asyncio.wait_for(endpoint, timeout=1)
+        assert raised.value.args == (("malformed-close-cancel",) if sys.version_info >= (3, 11) else ())
+        assert close_events == [(1011, "cancelled")]
+        assert session_module._VOICE_SESSION_SCOPE_KEY not in scope  # pylint: disable=protected-access
+        assert get_request_context().original_subject is None
+    finally:
+        close_release.set()
+        await asyncio.gather(endpoint, return_exceptions=True)
+        await _finish_close_attempts(baseline_attempts)
 
 
 @pytest.mark.asyncio
@@ -1139,7 +1303,17 @@ async def test_voice_materializes_callback_self_cancellation_before_finalization
 
 
 @pytest.mark.asyncio
-async def test_voice_recovers_cancellation_wrapped_by_handler():
+@pytest.mark.parametrize(
+    "wrapper_type",
+    [
+        RuntimeError,
+        pytest.param(
+            _LoggingBaseException,
+            marks=pytest.mark.skipif(sys.version_info < (3, 11), reason="task cancellation provenance requires 3.11"),
+        ),
+    ],
+)
+async def test_voice_recovers_cancellation_wrapped_by_handler(wrapper_type):
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [
         {"type": "websocket.connect"},
@@ -1157,7 +1331,7 @@ async def test_voice_recovers_cancellation_wrapped_by_handler():
             await asyncio.Future()
         except asyncio.CancelledError as exc:
             captured_cancellations.append(exc)
-            raise RuntimeError("handler wrapped cancellation") from exc
+            raise wrapper_type("handler wrapped cancellation") from exc
 
     async def receive():
         return inbound_events.pop(0)
@@ -1843,6 +2017,43 @@ async def test_voice_send_side_peer_loss_dispatches_disconnect_once():
 
 
 @pytest.mark.asyncio
+async def test_receive_side_transport_failure_is_committed_before_cleanup():
+    app = VoiceAgentServerHost(configure_observability=None)
+    observed_terminations = []
+    disconnects = []
+    inbound_events = [{"type": "websocket.connect"}]
+    sent_messages = []
+
+    @app.on_connection_terminating
+    def on_connection_terminating(session):
+        observed_terminations.append(session.termination)
+
+    @app.on_disconnect
+    async def on_disconnect(_session, event):
+        disconnects.append((event.code, event.reason))
+
+    async def receive():
+        if inbound_events:
+            return inbound_events.pop(0)
+        raise OSError("peer receive failed")
+
+    async def send(message):
+        sent_messages.append(message)
+
+    websocket = _websocket_with_headers([])
+    websocket._receive = receive  # pylint: disable=protected-access
+    websocket._send = send  # pylint: disable=protected-access
+
+    await asyncio.wait_for(app._ws_endpoint(websocket), timeout=1)  # pylint: disable=protected-access
+
+    assert observed_terminations == [SessionTermination.TRANSPORT_ERROR]
+    assert disconnects == [(1006, None)]
+    assert [message["type"] for message in sent_messages] == ["websocket.accept"]
+    assert Session._current(websocket) is None  # pylint: disable=protected-access
+    assert _live_voice_transport_tasks() == []
+
+
+@pytest.mark.asyncio
 async def test_voice_send_side_peer_loss_wins_later_receive_disconnect():
     app = VoiceAgentServerHost(configure_observability=None)
     inbound_events = [
@@ -2060,12 +2271,14 @@ async def test_voice_teardown_observes_in_flight_send_outcome_before_disconnect_
 
         disconnect_key = session_module._VOICE_DISCONNECT_EVENT_SCOPE_KEY  # pylint: disable=protected-access
         assert disconnect_key not in websocket.scope
-        assert [message["type"] for message in sent_messages] == [
-            "websocket.accept",
-            "websocket.send",
-            "websocket.close",
-        ]
-        assert sent_messages[-1]["code"] == 1002
+        expected_message_types = (
+            ["websocket.accept", "websocket.send"]
+            if peer_loss
+            else ["websocket.accept", "websocket.send", "websocket.close"]
+        )
+        assert [message["type"] for message in sent_messages] == expected_message_types
+        if not peer_loss:
+            assert sent_messages[-1]["code"] == 1002
         assert close_events == [(1002, None)]
         assert Session._current(websocket) is None  # pylint: disable=protected-access
         with pytest.raises(RuntimeError, match="terminating"):

@@ -1,5 +1,42 @@
 # Release History
 
+## 1.0.0b4 (2026-11-05)
+
+### Features Added
+
+  - Client `RecommenderMgmtClient` added operation group `compute_placement_scores`
+  - Model `PlacementScore` added property `placement_preference`
+  - Added model `ComputePlacementScoresBase`
+  - Added model `ComputePlacementScoresInput`
+  - Added model `ComputePlacementScoresResponse`
+  - Added enum `PlacementScoreValue`
+  - Added model `PlacementScoresProperties`
+  - Added model `SpotPlacementScoresBase`
+  - Added operation group `ComputePlacementScoresOperations`
+
+### Breaking Changes
+
+  - Model `PlacementScore` deleted or renamed its instance variable `is_quota_available`
+  - `SpotPlacementScoresInput.desired_sizes` is now required.
+  - Deleted or renamed model `ComputeDiagnosticBase`
+  - Deleted or renamed model `DiagnosticProperties`
+  - Model `PlacementScore` changed type of property `score` from `Optional[str]` to `Optional[Union[str, PlacementScoreValue]]`
+  - Method `SpotPlacementScoresOperations.get` changed return type from `ComputeDiagnosticBase` to `SpotPlacementScoresBase`
+
+## 1.0.0b3 (2026-08-28)
+
+### Features Added
+
+  - Model `SkuMixPlacementResponse` added property `capacity_limits`
+  - Model `SkuMixPlacementResponse` added property `id`
+  - Added model `SkuMixPlacementCapacityLimit`
+  - Added enum `SkuMixPlacementCapacityLimitReason`
+
+### Breaking Changes
+
+  - Model `SkuMixPlacementDeploymentChoice` deleted or renamed its instance variable `id`
+  - Model `SkuMixPlacementItem` deleted or renamed its instance variable `capacity_max`
+
 ## 1.0.0b2 (2026-08-03)
 
 ### Features Added

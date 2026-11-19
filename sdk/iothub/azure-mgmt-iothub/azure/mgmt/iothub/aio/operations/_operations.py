@@ -84,7 +84,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -194,7 +194,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -766,7 +766,7 @@ class PrivateEndpointConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
+class IotHubResourceOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1403,6 +1403,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
             409: ResourceExistsError,
             304: ResourceNotModifiedError,
         }
@@ -1443,7 +1444,6 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
             error = None
             if response.status_code == 404:
                 error = _failsafe_deserialize(_models.ErrorDetails, response)
-                raise ResourceNotFoundError(response=response, model=error, error_format=ARMErrorFormat)
             else:
                 error = _failsafe_deserialize(
                     _models.ErrorDetails,
@@ -3875,7 +3875,7 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class IotHubOperations:
+class IotHubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4142,7 +4142,7 @@ class IotHubOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class CertificatesOperations:
+class CertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4956,7 +4956,7 @@ class CertificatesOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5123,7 +5123,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class ResourceProviderCommonOperations:
+class ResourceProviderCommonOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

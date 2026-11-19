@@ -19,7 +19,6 @@ USAGE:
     3) AZURE_SEARCH_INDEX_NAME - target search index name (e.g., "hotels-sample-index")
 """
 
-
 import os
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]

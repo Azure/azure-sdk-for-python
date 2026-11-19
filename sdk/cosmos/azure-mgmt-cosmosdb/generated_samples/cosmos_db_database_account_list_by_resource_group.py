@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-03-15/CosmosDBDatabaseAccountListByResourceGroup.json
+# x-ms-original-file: 2026-07-15/CosmosDBDatabaseAccountListByResourceGroup.json
 if __name__ == "__main__":
     main()

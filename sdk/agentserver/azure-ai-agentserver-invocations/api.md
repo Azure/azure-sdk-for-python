@@ -76,35 +76,6 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     @dataclass(frozen=True, kw_only=True, repr=False)
-    class azure.ai.agentserver.invocations.voice.BargeIn(_InboundMessage):
-        heard_text: str
-        id: str
-        item_id: Optional[str]
-        response_id: str
-        ts: str
-        type: ClassVar[str] = barge_in
-
-        def __delattr__() -> None: ...
-
-        def __eq__() -> None: ...
-
-        def __hash__() -> None: ...
-
-        def __init__(
-                id: str,
-                ts: str,
-                response_id: str,
-                heard_text: str,
-                item_id: str | None = None
-            ) -> None: ...
-
-        def __setattr__() -> None: ...
-
-        def _voice_model_repr(self: Any) -> str: ...
-
-
-    @experimental
-    @dataclass(frozen=True, kw_only=True, repr=False)
     class azure.ai.agentserver.invocations.voice.EndCall(_OutboundMessage):
         id: str
         mode: EndCallMode = EndCallMode.DRAIN
@@ -134,6 +105,27 @@ namespace azure.ai.agentserver.invocations.voice
     class azure.ai.agentserver.invocations.voice.EndCallMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DRAIN = "drain"
         IMMEDIATE = "immediate"
+
+
+    @experimental
+    @dataclass(frozen=True, kw_only=True, repr=False)
+    class azure.ai.agentserver.invocations.voice.InputDataPart:
+        data: Mapping[str, Any]
+        type: Literal["input_data"] = input_data
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(data: Mapping) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __setattr__() -> None: ...
+
+        def _voice_model_repr(self: Any) -> str: ...
 
 
     @experimental
@@ -348,6 +340,37 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     @dataclass(frozen=True, kw_only=True, repr=False)
+    class azure.ai.agentserver.invocations.voice.ResponseOutputDataDone(_OutboundMessage):
+        data: Mapping[str, Any]
+        id: str
+        item_id: str
+        response_id: str
+        ts: str
+        type: ClassVar[str] = response.output_data.done
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                id: str = ...,
+                ts: str = ...,
+                response_id: str,
+                item_id: str,
+                data: Mapping
+            ) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __setattr__() -> None: ...
+
+        def _voice_model_repr(self: Any) -> str: ...
+
+
+    @experimental
+    @dataclass(frozen=True, kw_only=True, repr=False)
     class azure.ai.agentserver.invocations.voice.ResponseOutputTextDelta(_OutboundMessage):
         delta: str
         id: str
@@ -467,10 +490,19 @@ namespace azure.ai.agentserver.invocations.voice
 
     @experimental
     class azure.ai.agentserver.invocations.voice.Session:
+        property termination: SessionTermination | None    # Read-only
 
         def __init__(self) -> None: ...
 
         async def send(self, message: OutboundVoiceMessage) -> None: ...
+
+        def start_target_turn(
+                self,
+                *,
+                input_count: int,
+                origin: TargetTurnOrigin | str,
+                trigger_context: SpanContext | None = ...
+            ) -> TargetTurn: ...
 
 
     @experimental
@@ -586,14 +618,95 @@ namespace azure.ai.agentserver.invocations.voice
         def __hash__() -> None: ...
 
         def __init__(
+                self,
+                *,
+                caller: Mapping[str, Any] | None = ...,
+                greeting: str | None = ...,
                 id: str,
-                ts: str,
+                no_input_timeout_ms: int | None = ...,
                 protocol_version: str,
                 reconnect: bool,
                 response_timeouts: ResponseTimeouts,
-                greeting: str | None = None,
-                no_input_timeout_ms: int | None = None,
-                caller: Mapping = None
+                ts: str
+            ) -> None: ...
+
+        def __setattr__() -> None: ...
+
+        def _voice_model_repr(self: Any) -> str: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.SessionTermination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPT_ERROR = "accept_error"
+        CALLBACK_ERROR = "callback_error"
+        CANCELLED = "cancelled"
+        COMPLETED = "completed"
+        INTERNAL_ERROR = "internal_error"
+        PROTOCOL_ERROR = "protocol_error"
+        TRANSPORT_ERROR = "transport_error"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurn:
+        property is_completed: bool    # Read-only
+
+        def __init__(self) -> None: ...
+
+        def activate(self) -> ContextManager[None]: ...
+
+        def complete(
+                self,
+                *,
+                outcome: TargetTurnOutcome | str,
+                output_item_count: int | None = ...,
+                response_id: str | None = ...
+            ) -> None: ...
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOrigin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NO_INPUT = "no_input"
+        OTHER = "other"
+        PROACTIVE = "proactive"
+        RECOVERY = "recovery"
+        USER = "user"
+
+
+    @experimental
+    class azure.ai.agentserver.invocations.voice.TargetTurnOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ABANDONED = "abandoned"
+        CANCELLED = "cancelled"
+        END_CALL = "end_call"
+        ERROR = "error"
+        NONE = "none"
+        OTHER = "other"
+        RESPONSE = "response"
+        TIMEOUT = "timeout"
+        TRANSPORT_ERROR = "transport_error"
+
+
+    @experimental
+    @dataclass(frozen=True, kw_only=True, repr=False)
+    class azure.ai.agentserver.invocations.voice.UserBargeIn(_InboundMessage):
+        heard_text: str
+        id: str
+        item_id: Optional[str]
+        response_id: str
+        ts: str
+        type: ClassVar[str] = user.barge_in
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(
+                id: str,
+                ts: str,
+                response_id: str,
+                heard_text: str,
+                item_id: str | None = None
             ) -> None: ...
 
         def __setattr__() -> None: ...
@@ -604,7 +717,7 @@ namespace azure.ai.agentserver.invocations.voice
     @experimental
     @dataclass(frozen=True, kw_only=True, repr=False)
     class azure.ai.agentserver.invocations.voice.UserMessage(_InboundMessage):
-        content: tuple[InputTextPart, Ellipsis]
+        content: tuple[Union[InputTextPart, InputDataPart], Ellipsis]
         id: str
         item_id: str
         ts: str
@@ -680,6 +793,13 @@ namespace azure.ai.agentserver.invocations.voice
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
 
+        async def __call__(
+                self,
+                scope: Scope,
+                receive: Receive,
+                send: Send
+            ) -> None: ...
+
         def __init__(
                 self,
                 *,
@@ -701,8 +821,6 @@ namespace azure.ai.agentserver.invocations.voice
 
         def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
 
-        def on_barge_in(self, callback: BargeInCallback) -> BargeInCallback: ...
-
         def on_connection_terminating(self, callback: ConnectionTerminatingCallback) -> ConnectionTerminatingCallback: ...
 
         def on_disconnect(self, callback: DisconnectCallback) -> DisconnectCallback: ...
@@ -718,6 +836,8 @@ namespace azure.ai.agentserver.invocations.voice
         def on_session_end(self, callback: SessionEndCallback) -> SessionEndCallback: ...
 
         def on_session_start(self, callback: SessionStartCallback) -> SessionStartCallback: ...
+
+        def on_user_barge_in(self, callback: UserBargeInCallback) -> UserBargeInCallback: ...
 
         def on_user_message(self, callback: UserMessageCallback) -> UserMessageCallback: ...
 

@@ -1,0 +1,9 @@
+{
+  "items": [
+    {
+      "type": "add_comment",
+      "body": "## Management SDK PR review\n\n**Findings:** None.\n\n### Unverified checks\n\n**Unverified checks:** None.\n\n### Breaking-change attribution\n\n**Package: azure-mgmt-deviceregistrysoftwareupdate | Release: 1.0.0b1 (2026-09-22)**\nNeeds human review: this is a newly introduced package (all files are additions), and the deterministic breaking-change collection reports `status: unverified` \u2014 no previous release heading exists at the merge base and `_metadata.json` was not found there (404), so a merge-base-vs-latest comparison could not be produced. The `CHANGELOG.md` only lists an \"Other Changes \u2014 Initial version\" entry with no Breaking Changes section, and `apiVersionDrift` for this package is `unchanged` (`2026-11-02-preview` at both the first and latest PR revisions), but confirming that no breaking-change baseline exists is left to human review given the unverified collection status.\n\n### Review summary\n\n| Package | Completed checks |\n| --- | --- |\n| azure-mgmt-deviceregistrysoftwareupdate | Management package discovery; Version consistency; Preview version; Changelog date; Stability flags; Client signature; Client name consistency; README snippets; API-version drift |"
+    }
+  ],
+  "errors": []
+}

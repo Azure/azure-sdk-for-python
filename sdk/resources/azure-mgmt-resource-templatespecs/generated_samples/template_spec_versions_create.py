@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2021-05-01/examples/TemplateSpecVersionsCreate.json
+# x-ms-original-file: specification/resources/resource-manager/Microsoft.Resources/templateSpecs/stable/2022-02-01/examples/TemplateSpecVersionsCreate.json
 if __name__ == "__main__":
     main()

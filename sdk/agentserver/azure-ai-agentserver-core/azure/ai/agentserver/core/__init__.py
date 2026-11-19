@@ -16,9 +16,11 @@ from ._base import AgentServerHost
 from ._config import AgentConfig, resolve_state_subdir
 from ._errors import create_error_response
 from ._experimental import experimental
+from ._lifecycle import AgentSessionContext
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
+    FoundryOriginalSubject,
     get_request_context,
     reset_request_context,
     set_request_context,
@@ -30,7 +32,9 @@ from ._tracing import (
     detach_context,
     end_span,
     flush_spans,
+    flush_spans_async,
     record_error,
+    schedule_flush_spans,
     set_current_span,
     trace_stream,
 )
@@ -39,11 +43,13 @@ from ._version import VERSION
 
 __all__ = [
     "AgentConfig",
+    "AgentSessionContext",
     "AgentServerHost",
     "MiddlewareFactory",
     "StreamContent",
     "InboundRequestLoggingMiddleware",
     "FoundryAgentRequestContext",
+    "FoundryOriginalSubject",
     "RequestIdMiddleware",
     "build_server_version",
     "configure_observability",
@@ -52,6 +58,8 @@ __all__ = [
     "end_span",
     "experimental",
     "flush_spans",
+    "flush_spans_async",
+    "schedule_flush_spans",
     "get_request_context",
     "record_error",
     "read_request_id",

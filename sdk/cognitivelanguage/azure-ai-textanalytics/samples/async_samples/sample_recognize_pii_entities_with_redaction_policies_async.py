@@ -39,6 +39,7 @@ from azure.ai.textanalytics.models import (
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
+    NoMaskPolicyType,
     SyntheticReplacementPolicyType,
     AnalyzeTextPiiResult,
 )
@@ -73,11 +74,13 @@ async def sample_pii_with_redaction_policies_async():
                         unmask_from_end=False,
                         entity_types=["USSocialSecurityNumber"],
                     ),
-                    # Person & Email: replace with synthetic (fake) values
+                    # Person: replace with a synthetic (fake) value
                     SyntheticReplacementPolicyType(
                         policy_name="syntheticPolicy",
-                        entity_types=["Person", "Email"],
+                        entity_types=["Person"],
                     ),
+                    # Email: detect the entity without masking it
+                    NoMaskPolicyType(policy_name="noMaskPolicy", entity_types=["Email"]),
                 ],
             ),
         )
@@ -99,6 +102,8 @@ async def sample_pii_with_redaction_policies_async():
                         if entity.subcategory:
                             print(f"  Subcategory: {entity.subcategory}")
                         print(f"  Masked As: {entity.mask}")
+                        print(f"  Mask Offset: {entity.mask_offset}")
+                        print(f"  Mask Length: {entity.mask_length}")
                         print(f"  Offset: {entity.offset}")
                         print(f"  Length: {entity.length}")
                         print(f"  Confidence score: {entity.confidence_score}\n")

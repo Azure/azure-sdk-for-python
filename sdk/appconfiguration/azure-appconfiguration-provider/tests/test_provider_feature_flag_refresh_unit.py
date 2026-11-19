@@ -114,6 +114,26 @@ class TestAttemptRefreshReloadsBothFeatureFlagSources(unittest.TestCase):
         client.load_feature_flags.assert_called_once()
         client.load_enhanced_feature_flags.assert_called_once()
 
+    def test_no_callback_when_no_feature_flag_selectors(self):
+        provider = _make_provider()
+        provider._feature_flag_selectors = []
+        provider._enhanced_feature_flag_selectors = []
+        provider._on_refresh_success = Mock()
+
+        provider._attempt_refresh(_make_client(True, True), replica_count=0, is_failover_request=False)
+
+        provider._on_refresh_success.assert_not_called()
+
+    def test_callback_when_only_enhanced_flags_refresh(self):
+        provider = _make_provider()
+        provider._feature_flag_selectors = []
+        provider._refresh_feature_flags = Mock(return_value=(None, [], [], []))
+        provider._on_refresh_success = Mock()
+
+        provider._attempt_refresh(_make_client(False, True), replica_count=0, is_failover_request=False)
+
+        provider._on_refresh_success.assert_called_once()
+
     def test_reload_updates_etag_state_for_both_sources(self):
         provider = _make_provider()
         provider._feature_flag_page_etags = [["old_kv_etag"]]

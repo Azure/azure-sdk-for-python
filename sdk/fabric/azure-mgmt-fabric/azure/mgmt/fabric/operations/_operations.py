@@ -52,7 +52,7 @@ def build_fabric_capacities_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -81,7 +81,7 @@ def build_fabric_capacities_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -112,7 +112,7 @@ def build_fabric_capacities_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -141,7 +141,7 @@ def build_fabric_capacities_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Fabric/capacities/{capacityName}"
     path_format_arguments = {
@@ -164,7 +164,7 @@ def build_fabric_capacities_list_by_resource_group_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -191,7 +191,7 @@ def build_fabric_capacities_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -216,7 +216,7 @@ def build_fabric_capacities_resume_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Fabric/capacities/{capacityName}/resume"
     path_format_arguments = {
@@ -238,7 +238,7 @@ def build_fabric_capacities_suspend_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Fabric/capacities/{capacityName}/suspend"
     path_format_arguments = {
@@ -262,7 +262,7 @@ def build_fabric_capacities_check_name_availability_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -291,7 +291,7 @@ def build_fabric_capacities_list_skus_for_capacity_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -319,7 +319,7 @@ def build_fabric_capacities_list_skus_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -345,7 +345,7 @@ def build_fabric_capacities_list_usages_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -370,7 +370,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1847,7 +1847,7 @@ class FabricCapacitiesOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-01-15-preview",
         params_added_on={"2025-01-15-preview": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2025-01-15-preview", "2026-08-01-preview"],
+        api_versions_list=["2025-01-15-preview", "2026-09-01-preview"],
     )
     def list_usages(self, location: str, **kwargs: Any) -> ItemPaged["_models.Quota"]:
         """List the current consumption and limit in this location for the provided subscription.

@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-05-01-preview",
+  "apiVersion": "2026-11-01",
   "apiVersions": {
-    "Microsoft.Devices": "2026-05-01-preview"
+    "Microsoft.Devices": "2026-11-01"
   },
-  "commit": "81261972e09ae6977caf311750928c7a42876ad8",
+  "commit": "5ee00f0f451f745b94e0022ec4143a39a113441a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/iothub/resource-manager/Microsoft.Devices/IoTHub",
-  "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "emitterVersion": "0.63.11",
+  "httpClientPythonVersion": "0.40.0"
 }

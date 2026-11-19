@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+
 from collections.abc import MutableMapping  # pylint: disable=import-error
 from typing import Any, cast, IO, List, Sequence, Union, Optional, TYPE_CHECKING
 
@@ -16,7 +17,7 @@ from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._operations._patch import _convert_index_response
 from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
@@ -29,7 +30,9 @@ if TYPE_CHECKING:
     import azure.search.documents.aio
 
 
-class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerated):
+class _SearchIndexClientOperationsMixin(
+    _SearchIndexClientOperationsMixinGenerated
+):  # pylint: disable=too-many-public-methods
     """Custom operations mixin for SearchIndexClient (async)."""
 
     @distributed_trace_async
@@ -62,13 +65,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name = synonym_map  # type: ignore
             return await self._delete_synonym_map(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_synonym_map(
         self,
-        synonym_map: Union[_models.SynonymMap, JSON],
+        synonym_map: Union[_models.SynonymMap, _types.SynonymMap, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -76,7 +80,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         :param synonym_map: The SynonymMap object to create or update. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or TypedDict or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SynonymMap
@@ -124,13 +128,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name = index  # type: ignore
             return await self._delete_index(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_index(
         self,
-        index: Union[_models.SearchIndex, JSON],
+        index: Union[_models.SearchIndex, _types.SearchIndex, _types.SearchIndexInput, JSON],
         allow_index_downtime: Optional[bool] = None,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -139,7 +144,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The SearchIndex object to create or update. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndex or
+         ~azure.search.documents.indexes.types.SearchIndexInput or JSON
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -167,7 +174,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_alias(
         self,
-        alias: Union[_models.SearchAlias, JSON],
+        alias: Union[_models.SearchAlias, _types.SearchAlias, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -175,7 +182,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new search alias or updates an alias if it already exists.
 
         :param alias: The SearchAlias object to create or update. Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias or TypedDict or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchAlias
@@ -223,6 +230,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name = alias  # type: ignore
             return await self._delete_alias(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -256,13 +264,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name = knowledge_base  # type: ignore
             return await self._delete_knowledge_base(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_knowledge_base(
         self,
-        knowledge_base: Union[_models.KnowledgeBase, JSON],
+        knowledge_base: Union[_models.KnowledgeBase, _types.KnowledgeBase, _types.KnowledgeBaseInput, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -270,7 +279,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new knowledge base or updates a knowledge base if it already exists.
 
         :param knowledge_base: The KnowledgeBase object to create or update. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBase or
+         ~azure.search.documents.indexes.types.KnowledgeBaseInput or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeBase
@@ -291,7 +302,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_knowledge_source(
         self,
-        knowledge_source: Union[_models.KnowledgeSource, JSON],
+        knowledge_source: Union[_models.KnowledgeSource, _types.KnowledgeSource, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -299,7 +310,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new knowledge source or updates a knowledge source if it already exists.
 
         :param knowledge_source: The KnowledgeSource object to create or update. Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or TypedDict or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeSource
@@ -347,6 +358,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name = knowledge_source  # type: ignore
             return await self._delete_knowledge_source(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
@@ -412,14 +424,38 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """
         await self._delete_knowledge_source_file(name=name, file_id=file_id, **kwargs)
 
+    @distributed_trace_async
+    # pylint: disable-next=arguments-renamed
+    async def update_knowledge_source_file(  # type: ignore[override]
+        self,
+        name: str,
+        file_id: str,
+        body: Union[_models.UpdateKnowledgeSourceFileRequest, _types.UpdateKnowledgeSourceFileRequest],
+        **kwargs: Any,
+    ) -> _models.KnowledgeSourceFile:
+        """Updates an existing file in a File knowledge source in place.
+
+        :param name: The name of the File knowledge source. Required.
+        :type name: str
+        :param file_id: The unique identifier of the file to update. Required.
+        :type file_id: str
+        :param body: The multipart body containing replacement metadata and content. Required.
+        :type body: ~azure.search.documents.indexes.models.UpdateKnowledgeSourceFileRequest or
+         ~azure.search.documents.indexes.types.UpdateKnowledgeSourceFileRequest
+        :return: The updated knowledge source file.
+        :rtype: ~azure.search.documents.indexes.models.KnowledgeSourceFile
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await super().update_knowledge_source_file(name=name, file_id=file_id, body=body, **kwargs)
+
     @distributed_trace
     def list_indexes(
         self,
         *,
         select: Optional[List[str]] = None,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[_models.SearchIndex]:
         """Lists all indexes available for a search service.
@@ -428,14 +464,13 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             list of JSON property names, or '*' for all properties. The default is all properties.
             Default value is None.
         :paramtype select: list[str]
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-            None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-            false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An async iterator like instance of SearchIndex
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.search.documents.indexes.models.SearchIndex]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -445,58 +480,84 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
                 AsyncItemPaged[_models.SearchIndex],
                 self._list_indexes_with_selected_properties(
                     select=select,
-                    top=top,
-                    skip=skip,
-                    count=count,
+                    search=search,
+                    page_size=page_size,
+                    search_type=search_type,
                     cls=lambda objs: [_convert_index_response(x) for x in objs],
                     **kwargs,
                 ),
             )
-        return cast(AsyncItemPaged[_models.SearchIndex], self._list_indexes(top=top, skip=skip, count=count, **kwargs))
+        return cast(
+            AsyncItemPaged[_models.SearchIndex],
+            self._list_indexes(search=search, page_size=page_size, search_type=search_type, **kwargs),
+        )
 
     @distributed_trace
     def list_index_names(
         self,
         *,
-        top: Optional[int] = None,
-        skip: Optional[int] = None,
-        count: Optional[bool] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged[str]:
         """Lists the names of all indexes available for a search service.
 
-        :keyword top: The number of items to retrieve. Default is 50, maximum is 1000. Default value is
-            None.
-        :paramtype top: int
-        :keyword skip: The number of items to skip. Default value is None.
-        :paramtype skip: int
-        :keyword count: A value that specifies whether to fetch the total count of items. Default is
-            false. Default value is None.
-        :paramtype count: bool
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: An async iterator like instance of index names
         :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        names = self._list_indexes(top=top, skip=skip, count=count, cls=lambda objs: [x.name for x in objs], **kwargs)
+        names = self._list_indexes(
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            cls=lambda objs: [x.name for x in objs],
+            **kwargs,
+        )
         return cast(AsyncItemPaged[str], names)
 
     @distributed_trace_async
-    async def get_synonym_maps(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SynonymMap]:
+    async def get_synonym_maps(
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
+    ) -> List[_models.SynonymMap]:
         """Lists all synonym maps available for a search service.
 
         :keyword select: Selects which top-level properties of the synonym maps to retrieve. Specified
             as a comma-separated list of JSON property names, or '*' for all properties. The default is
             all properties. Default value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of synonym maps
         :rtype: list[~azure.search.documents.indexes.models.SynonymMap]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._get_synonym_maps(select=select, **kwargs)
-        assert result.synonym_maps is not None  # Hint for mypy
-        # typed_result = [cast(_models.SynonymMap, x) for x in result.synonym_maps]
-        typed_result = result.synonym_maps
-        return typed_result
+        result = self.list_synonym_maps(
+            select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            **kwargs,
+        )
+        return [item async for item in result]
 
     @distributed_trace_async
     async def get_synonym_map_names(self, **kwargs: Any) -> List[str]:
@@ -524,7 +585,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     async def analyze_text(
         self,
         index_name: str,
-        analyze_request: _models.AnalyzeTextOptions,
+        analyze_request: Union[_models.AnalyzeTextOptions, _types.AnalyzeTextOptions, IO[bytes]],
         **kwargs: Any,
     ) -> _models.AnalyzeResult:
         """Shows how an analyzer breaks text into tokens.
@@ -532,7 +593,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :param index_name: The name of the index to test an analyzer on. Required.
         :type index_name: str
         :param analyze_request: The text and analyzer or analysis components to test. Required.
-        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions
+        :type analyze_request: ~azure.search.documents.indexes.models.AnalyzeTextOptions or TypedDict or IO[bytes]
         :return: AnalyzeResult
         :rtype: ~azure.search.documents.indexes.models.AnalyzeResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -614,13 +675,16 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = data_source_connection  # type: ignore
             return await self._delete_data_source_connection(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_data_source_connection(
         self,
-        data_source_connection: Union[_models.SearchIndexerDataSourceConnection, JSON],
+        data_source_connection: Union[
+            _models.SearchIndexerDataSourceConnection, _types.SearchIndexerDataSourceConnection, JSON
+        ],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -629,7 +693,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new data source connection or updates a data source connection if it already exists.
 
         :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
-        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or TypedDict or JSON
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
@@ -680,13 +744,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = indexer  # type: ignore
             return await self._delete_indexer(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_indexer(
         self,
-        indexer: Union[_models.SearchIndexer, JSON],
+        indexer: Union[_models.SearchIndexer, _types.SearchIndexer, JSON],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -696,7 +761,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new indexer or updates an indexer if it already exists.
 
         :param indexer: The SearchIndexer object to create or update. Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or TypedDict or JSON
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
@@ -725,7 +790,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     async def resync(
         self,
         name: str,
-        indexer_resync: Union[_models.IndexerResyncBody, JSON, IO[bytes]],
+        indexer_resync: Union[_models.IndexerResyncBody, _types.IndexerResyncBody, JSON, IO[bytes]],
         **kwargs: Any,
     ) -> None:
         """Resync selective options from the datasource to be re-ingested by the indexer.
@@ -733,12 +798,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :param name: The name of the indexer. Required.
         :type name: str
         :param indexer_resync: The definition of the indexer resync options. Required.
-        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or JSON or IO[bytes]
+        :type indexer_resync: ~azure.search.documents.indexes.models.IndexerResyncBody or TypedDict or JSON or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._resync(name=name, indexer_resync=indexer_resync, **kwargs)
+        typed_indexer_resync = cast(
+            Union[_models.IndexerResyncBody, _types.IndexerResyncBody, IO[bytes]], indexer_resync
+        )
+        return await self._resync(name=name, indexer_resync=typed_indexer_resync, **kwargs)
 
     @distributed_trace_async
     async def reset_documents(
@@ -764,7 +832,10 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._reset_documents(name=name, keys_or_ids=keys_or_ids, overwrite=overwrite, **kwargs)
+        typed_keys_or_ids = cast(
+            Optional[Union[_models.DocumentKeysOrIds, _types.DocumentKeysOrIds, IO[bytes]]], keys_or_ids
+        )
+        return await self._reset_documents(name=name, keys_or_ids=typed_keys_or_ids, overwrite=overwrite, **kwargs)
 
     @distributed_trace_async
     async def delete_skillset(
@@ -796,13 +867,14 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
             name = skillset  # type: ignore
             return await self._delete_skillset(
                 name=name,
+                match_condition=match_condition,
                 **kwargs,
             )
 
     @distributed_trace_async
     async def create_or_update_skillset(
         self,
-        skillset: Union[_models.SearchIndexerSkillset, JSON],
+        skillset: Union[_models.SearchIndexerSkillset, _types.SearchIndexerSkillset, JSON],
         *,
         skip_indexer_reset_requirement_for_cache: Optional[bool] = None,
         disable_cache_reprocessing_change_detection: Optional[bool] = None,
@@ -812,7 +884,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         :param skillset: The SearchIndexerSkillset object to create or update. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or TypedDict or JSON
         :keyword skip_indexer_reset_requirement_for_cache: Ignores cache reset requirements. Default value is None.
         :paramtype skip_indexer_reset_requirement_for_cache: bool
         :keyword disable_cache_reprocessing_change_detection: Disables cache reprocessing change
@@ -854,11 +926,18 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        return await self._reset_skills(name=name, skill_names=skill_names, **kwargs)
+        typed_skill_names = cast(Union[_models.SkillNames, _types.SkillNames, IO[bytes]], skill_names)
+        return await self._reset_skills(name=name, skill_names=typed_skill_names, **kwargs)
 
     @distributed_trace_async
     async def get_skillsets(
-        self, *, select: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
     ) -> List[_models.SearchIndexerSkillset]:
         """Lists all skillsets available for a search service.
 
@@ -866,33 +945,61 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the SearchIndexerSkillsets.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerSkillset]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._get_skillsets(select=select, **kwargs)
-        assert result.skillsets is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerSkillset, x) for x in result.skillsets]
-        typed_result = result.skillsets
-        return typed_result
+        result = self.list_skillsets(
+            select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            **kwargs,
+        )
+        return [item async for item in result]
 
     @distributed_trace_async
-    async def get_indexers(self, *, select: Optional[List[str]] = None, **kwargs: Any) -> List[_models.SearchIndexer]:
+    async def get_indexers(
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
+    ) -> List[_models.SearchIndexer]:
         """Lists all indexers available for a search service.
 
         :keyword select: Selects which top-level properties to retrieve. Specified as a comma-separated
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the SearchIndexers.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexer]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._get_indexers(select=select, **kwargs)
-        assert result.indexers is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexer, x) for x in result.indexers]
-        typed_result = result.indexers
-        return typed_result
+        result = self.list_indexers(
+            select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            **kwargs,
+        )
+        return [item async for item in result]
 
     @distributed_trace_async
     async def get_indexer_names(self, **kwargs) -> Sequence[str]:
@@ -906,7 +1013,13 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
 
     @distributed_trace_async
     async def get_data_source_connections(
-        self, *, select: Optional[List[str]] = None, **kwargs: Any
+        self,
+        *,
+        select: Optional[List[str]] = None,
+        search: Optional[str] = None,
+        page_size: Optional[int] = None,
+        search_type: Optional[Union[str, _models.ListingSearchType]] = None,
+        **kwargs: Any,
     ) -> List[_models.SearchIndexerDataSourceConnection]:
         """Lists all data source connections available for a search service.
 
@@ -914,15 +1027,25 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
          list of JSON property names, or '*' for all properties. The default is all properties. Default
          value is None.
         :paramtype select: list[str]
+        :keyword search: A string used to narrow down the listing. Default value is None.
+        :paramtype search: str
+        :keyword page_size: The maximum number of items to return in a single page. Default value is None.
+        :paramtype page_size: int
+        :keyword search_type: Specifies how the search parameter is interpreted. Currently only
+            'prefix' is supported. Default value is None.
+        :paramtype search_type: str or ~azure.search.documents.indexes.models.ListingSearchType
         :return: List of all the data source connections.
         :rtype: list[~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        result = await self._get_data_source_connections(select=select, **kwargs)
-        assert result.data_sources is not None  # Hint for mypy
-        # typed_result = [cast(_models.SearchIndexerDataSourceConnection, x) for x in result.data_sources]
-        typed_result = result.data_sources
-        return typed_result
+        result = self.list_data_source_connections(
+            select=select,
+            search=search,
+            page_size=page_size,
+            search_type=search_type,
+            **kwargs,
+        )
+        return [item async for item in result]
 
     @distributed_trace_async
     async def get_data_source_connection_names(self, **kwargs) -> Sequence[str]:

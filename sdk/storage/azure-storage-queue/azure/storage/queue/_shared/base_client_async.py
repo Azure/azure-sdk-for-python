@@ -129,13 +129,12 @@ class AsyncStorageAccountHostsMixin(object):
                 AzureSasCredentialPolicy,
             ]
         ] = None
+        audience = kwargs.pop("audience", None)
+        session_policy_factory = kwargs.pop("_session_policy_factory", None)
         if hasattr(credential, "get_token"):
-            if kwargs.get("audience"):
-                audience = str(kwargs.pop("audience")).rstrip("/") + DEFAULT_OAUTH_SCOPE
-            else:
-                audience = STORAGE_OAUTH_SCOPE
+            scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE if audience else STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
-                cast(AsyncTokenCredential, credential), audience
+                cast(AsyncTokenCredential, credential), scope
             )
         elif isinstance(credential, SharedKeyCredentialPolicy):
             self._credential_policy = credential
@@ -172,12 +171,18 @@ class AsyncStorageAccountHostsMixin(object):
             config.headers_policy,
             StorageRequestHook(**kwargs),
             self._credential_policy,
-            config.logging_policy,
-            AsyncStorageResponseHook(**kwargs),
-            DistributedTracingPolicy(**kwargs),
-            HttpLoggingPolicy(**kwargs),
-            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
+        if session_policy_factory:
+            policies.append(session_policy_factory(self, credential, transport, audience, kwargs))
+        policies.extend(
+            [
+                StorageSensitiveHeaderCleanupPolicy(**kwargs),
+                config.logging_policy,
+                AsyncStorageResponseHook(**kwargs),
+                DistributedTracingPolicy(**kwargs),
+                HttpLoggingPolicy(**kwargs),
+            ]
+        )
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
         config.transport = transport  # type: ignore
@@ -204,6 +209,15 @@ class AsyncStorageAccountHostsMixin(object):
         policies = [StorageHeadersPolicy()]
         if self._credential_policy:
             policies.append(self._credential_policy)  # type: ignore
+
+        for req in reqs:
+            for header_name, header_value in req.headers.items():
+                if header_value is not None:
+                    if "\r" in header_name or "\n" in header_name or "\r" in header_value or "\n" in header_value:
+                        raise ValueError(
+                            f"Invalid header {header_name!r} in batch sub-request: the header name or its value "
+                            r"contains a '\r' or '\n' character, which is not permitted."
+                        )
 
         request.set_multipart_mixed(*reqs, policies=policies, enforce_https=False)
 

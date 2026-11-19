@@ -7,7 +7,7 @@
 """Unit tests for the _SessionBrowser sentinel value, page size, and
 management response handling.
 
-These tests verify the active-messages sentinel matches the value the service
+These tests verify the default-listing sentinel matches the value the service
 expects, and that the list_sessions_op handler covers all response branches,
 without requiring Azure credentials or a live Service Bus namespace.
 """
@@ -38,10 +38,11 @@ from azure.servicebus._common.constants import (
 
 
 class TestSessionBrowserSentinel:
-    """Verify the active-messages sentinel value is correct.
+    """Verify the default-listing sentinel value is correct.
 
     The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality)
-    to switch between "active messages" mode and "updated since" mode. The .NET
+    to switch between default listing mode and updated-since mode. The default
+    listing mode returns sessions with active messages or stored session state. The .NET
     AMQP library (TimeStampEncoding.cs) encodes DateTime.MaxValue as
     253402300800000 ms (10000-01-01T00:00:00Z) due to double-to-long rounding
     in TimeSpan.TotalMilliseconds, and its decoder clamps values exceeding
@@ -50,7 +51,7 @@ class TestSessionBrowserSentinel:
     Sending 253402300799999 (1 ms less) decodes to a DateTime that is NOT
     DateTime.MaxValue, causing the service to use "updated-since" mode with
     a far-future timestamp, which returns empty results instead of sessions
-    with active messages.
+    with active messages or stored session state.
     """
 
     def test_sentinel_value_matches_dotnet_amqp_encoding_of_datetime_maxvalue(self):
@@ -204,19 +205,24 @@ class TestListSessionsPagination:
 
     def test_paginates_full_first_page_then_partial_second(self):
         page1 = [f"session-{i}" for i in range(_PAGE_SIZE)]  # full page -> fetch next
-        page2 = [f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 30)]  # partial -> stop
+        page2 = [
+            f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 30)
+        ]  # partial -> stop
         skips = []
         serve = _paged_mgmt_stub({0: page1, _PAGE_SIZE: page2}, skips)
 
         browser = _live_browser(_SessionBrowser)
-        browser._mgmt_request_response_with_retry = lambda operation, message, callback, **kwargs: serve(
-            message["skip"][VALUE]
+        browser._mgmt_request_response_with_retry = (
+            lambda operation, message, callback, **kwargs: serve(message["skip"][VALUE])
         )
 
         result = list(browser.list_sessions())
 
         assert result == page1 + page2  # every ID from both pages, in order
-        assert skips == [0, _PAGE_SIZE]  # skip advanced by len(page1)=100, stopped after the partial page
+        assert skips == [
+            0,
+            _PAGE_SIZE,
+        ]  # skip advanced by len(page1)=100, stopped after the partial page
 
 
 class TestListSessionsPaginationAsync:
@@ -270,7 +276,9 @@ class TestListSessionsTimeoutBudget:
         browser = _live_browser(_SessionBrowser)
 
         def _should_not_run(*args, **kwargs):
-            raise AssertionError("management request should not be issued after the budget is spent")
+            raise AssertionError(
+                "management request should not be issued after the budget is spent"
+            )
 
         browser._mgmt_request_response_with_retry = _should_not_run
         # base 1000 -> deadline 1005; first page check at 1006 -> -1 remaining -> raise.
@@ -300,7 +308,10 @@ class TestListSessionsTimeoutBudgetAsync:
         browser = _live_browser(_SessionBrowserAsync)
         browser._mgmt_request_response_with_retry = serve
         clock = iter([1000.0, 1000.0, 1003.0])
-        _ = [sid async for sid in browser.list_sessions(timeout=10, _now=lambda: next(clock))]
+        _ = [
+            sid
+            async for sid in browser.list_sessions(timeout=10, _now=lambda: next(clock))
+        ]
 
         assert seen == [10.0, 7.0]
 
@@ -309,12 +320,19 @@ class TestListSessionsTimeoutBudgetAsync:
         browser = _live_browser(_SessionBrowserAsync)
 
         async def _should_not_run(*args, **kwargs):
-            raise AssertionError("management request should not be issued after the budget is spent")
+            raise AssertionError(
+                "management request should not be issued after the budget is spent"
+            )
 
         browser._mgmt_request_response_with_retry = _should_not_run
         clock = iter([1000.0, 1006.0])
         with pytest.raises(OperationTimeoutError):
-            _ = [sid async for sid in browser.list_sessions(timeout=5, _now=lambda: next(clock))]
+            _ = [
+                sid
+                async for sid in browser.list_sessions(
+                    timeout=5, _now=lambda: next(clock)
+                )
+            ]
 
 
 def _capture_last_updated_ms(browser):
@@ -330,17 +348,21 @@ def _capture_last_updated_ms(browser):
 
 
 class TestUpdatedAfterSentinelBoundary:
-    """An explicit filter timestamp must never collide with the active-messages sentinel.
+    """An explicit filter timestamp must never collide with the default-listing sentinel.
 
     `datetime.max` in UTC is 1 ms below `_MAX_DATETIME_MS`. Float `timestamp() * 1000`
     rounds it up onto the sentinel, which would silently switch the request into
-    active-messages mode. Integer arithmetic must keep it at `_MAX_DATETIME_MS - 1`.
+    default listing mode. Integer arithmetic must keep it at `_MAX_DATETIME_MS - 1`.
     """
 
     def test_datetime_max_stays_below_sentinel(self):
         browser = _live_browser(_SessionBrowser)
         captured = _capture_last_updated_ms(browser)
-        list(browser.list_sessions(state_updated_after=datetime.max.replace(tzinfo=timezone.utc)))
+        list(
+            browser.list_sessions(
+                state_updated_after=datetime.max.replace(tzinfo=timezone.utc)
+            )
+        )
         assert captured["ms"] == _MAX_DATETIME_MS - 1
         assert captured["ms"] != _MAX_DATETIME_MS
 
@@ -354,8 +376,12 @@ class TestUpdatedAfterSentinelBoundary:
             return []
 
         browser._mgmt_request_response_with_retry = _serve
-        _ = [sid async for sid in browser.list_sessions(
-            state_updated_after=datetime.max.replace(tzinfo=timezone.utc))]
+        _ = [
+            sid
+            async for sid in browser.list_sessions(
+                state_updated_after=datetime.max.replace(tzinfo=timezone.utc)
+            )
+        ]
         assert captured["ms"] == _MAX_DATETIME_MS - 1
         assert captured["ms"] != _MAX_DATETIME_MS
 
@@ -406,7 +432,7 @@ class TestToLastUpdatedMs:
     """The shared `_to_last_updated_ms` helper is used by both the sync and async
     browsers, so a drift between the two copies cannot change the query mode."""
 
-    def test_none_returns_active_messages_sentinel(self):
+    def test_none_returns_default_listing_sentinel(self):
         assert _to_last_updated_ms(None) == _MAX_DATETIME_MS
 
     def test_naive_datetime_is_treated_as_utc(self):
@@ -451,7 +477,9 @@ class TestBrowserEagerClose:
 
     def test_close_called_once_on_terminal_page_only(self):
         page1 = [f"session-{i}" for i in range(_PAGE_SIZE)]  # full -> continue
-        page2 = [f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 3)]  # partial -> close
+        page2 = [
+            f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 3)
+        ]  # partial -> close
         pages = {0: page1, _PAGE_SIZE: page2}
         close_calls = []
 
@@ -460,7 +488,9 @@ class TestBrowserEagerClose:
         browser._amqp_transport = PyamqpTransport
         browser.close = lambda: close_calls.append(1)
         browser._mgmt_request_response_with_retry = (
-            lambda operation, message, callback, **kwargs: pages.get(message["skip"][VALUE], [])
+            lambda operation, message, callback, **kwargs: pages.get(
+                message["skip"][VALUE], []
+            )
         )
 
         pager = browser.list_sessions().by_page()
@@ -485,7 +515,9 @@ class TestBrowserEagerClose:
         browser._amqp_transport = PyamqpTransport
         browser.close = lambda: close_calls.append(1)
         browser._mgmt_request_response_with_retry = (
-            lambda operation, message, callback, **kwargs: pages.get(message["skip"][VALUE], [])
+            lambda operation, message, callback, **kwargs: pages.get(
+                message["skip"][VALUE], []
+            )
         )
 
         pager = browser.list_sessions().by_page()
@@ -531,7 +563,9 @@ class TestBrowserShutdownGuard:
         browser._shutdown = threading.Event()
         browser._shutdown.set()
         requested = []
-        browser._mgmt_request_response_with_retry = lambda *a, **k: requested.append(1) or []
+        browser._mgmt_request_response_with_retry = (
+            lambda *a, **k: requested.append(1) or []
+        )
 
         with pytest.raises(ValueError, match="already been shutdown"):
             list(browser.list_sessions())
@@ -552,5 +586,3 @@ class TestBrowserShutdownGuard:
         with pytest.raises(ValueError, match="already been shutdown"):
             _ = [sid async for sid in browser.list_sessions()]
         assert requested == []
-
-

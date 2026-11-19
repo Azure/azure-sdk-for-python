@@ -1,14 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Typed Voice Live Bridge event relay over ``invocations_ws``."""
+"""Typed Voice Live Bridge event relay over ``voice_conversation_engine`` or legacy ``invocations_ws``."""
 
 from ._models import (
     AgentError,
-    BargeIn,
     EndCall,
     EndCallMode,
     InboundVoiceMessage,
+    InputDataPart,
     InputTextPart,
     OutboundVoiceMessage,
     ResponseAccepted,
@@ -18,6 +18,7 @@ from ._models import (
     ResponseDone,
     ResponseDropped,
     ResponseNone,
+    ResponseOutputDataDone,
     ResponseOutputTextDelta,
     ResponseOutputTextDone,
     ResponseTimeout,
@@ -27,6 +28,7 @@ from ._models import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    UserBargeIn,
     UserMessage,
     UserNoInput,
     UserSpeechStarted,
@@ -34,9 +36,9 @@ from ._models import (
     new_message_id,
     new_response_id,
 )
-from ._session import Session
+from ._session import Session, SessionTermination
+from ._turn import TargetTurn, TargetTurnOrigin, TargetTurnOutcome
 from ._voice_host import (
-    BargeInCallback,
     ConnectionTerminatingCallback,
     DisconnectCallback,
     ResponseAcceptedCallback,
@@ -45,6 +47,7 @@ from ._voice_host import (
     ResponseTimeoutCallback,
     SessionEndCallback,
     SessionStartCallback,
+    UserBargeInCallback,
     UserMessageCallback,
     UserNoInputCallback,
     UserSpeechStartedCallback,
@@ -53,13 +56,12 @@ from ._voice_host import (
 
 __all__ = [
     "AgentError",
-    "BargeIn",
-    "BargeInCallback",
     "ConnectionTerminatingCallback",
     "DisconnectCallback",
     "EndCall",
     "EndCallMode",
     "InboundVoiceMessage",
+    "InputDataPart",
     "InputTextPart",
     "OutboundVoiceMessage",
     "ResponseAccepted",
@@ -72,6 +74,7 @@ __all__ = [
     "ResponseDropped",
     "ResponseDroppedCallback",
     "ResponseNone",
+    "ResponseOutputDataDone",
     "ResponseOutputTextDelta",
     "ResponseOutputTextDone",
     "ResponseTimeout",
@@ -85,6 +88,12 @@ __all__ = [
     "SessionRejected",
     "SessionStart",
     "SessionStartCallback",
+    "SessionTermination",
+    "TargetTurn",
+    "TargetTurnOrigin",
+    "TargetTurnOutcome",
+    "UserBargeIn",
+    "UserBargeInCallback",
     "UserMessage",
     "UserMessageCallback",
     "UserNoInput",

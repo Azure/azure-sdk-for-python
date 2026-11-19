@@ -30,7 +30,14 @@ from typing import (
     TYPE_CHECKING,
 )
 
-from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteReadError, ServiceResponseError
+from azure.core import MatchConditions
+from azure.core.exceptions import (
+    DecodeError,
+    HttpResponseError,
+    IncompleteReadError,
+    ResourceModifiedError,
+    ServiceResponseError,
+)
 
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
@@ -43,6 +50,7 @@ from .._encryption import (
     decrypt_blob,
     is_encryption_v2,
     parse_encryption_data,
+    _GCMRegionNonceValidator,
 )
 
 if TYPE_CHECKING:
@@ -80,6 +88,7 @@ async def process_content(
                 end_offset,
                 data.response.headers,
                 expected_encryption_data,
+                encryption.get("gcm_nonce_validator"),
             )
         except Exception as error:
             raise HttpResponseError(message="Decryption failed.", response=data.response, error=error) from error
@@ -171,10 +180,16 @@ class _AsyncChunkDownloader(_ChunkDownloader):
                     await asyncio.sleep(1)
             content_length = response.content_length
 
-            # This makes sure that if_match is set so that we can validate
-            # that subsequent downloads are to an unmodified blob
-            if self.request_options.get("modified_access_conditions"):
-                self.request_options["modified_access_conditions"].if_match = response.properties.etag
+            if self.disable_etag_lock and len(chunk_data) != chunk_end - chunk_start + 1:
+                raise ResourceModifiedError(
+                    "The blob has been modified during download and the returned data may be incomplete."
+                )
+
+            if not self.disable_etag_lock:
+                # This makes sure that if_match is set so that we can validate
+                # that subsequent downloads are to an unmodified blob
+                self.request_options["etag"] = response.properties.etag
+                self.request_options["match_condition"] = MatchConditions.IfNotModified
 
         return chunk_data, content_length
 
@@ -264,6 +279,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         container: str = None,  # type: ignore [assignment]
         encoding: Optional[str] = None,
         download_cls: Optional[Callable] = None,
+        disable_etag_lock: bool = False,
         **kwargs: Any,
     ) -> None:
         self.name = name
@@ -302,6 +318,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         # Whether the current content is the first chunk of download content or not
         self._first_chunk = True
         self._download_start = self._start_range or 0
+        self._disable_etag_lock = disable_etag_lock
 
         # The cls is passed in via download_cls to avoid conflicting arg name with Generic.__new__
         # but needs to be changed to cls in the request options.
@@ -336,6 +353,8 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     async def _setup(self) -> None:
         if self._encryption_options.get("key") is not None or self._encryption_options.get("resolver") is not None:
             await self._get_encryption_data_request()
+            if is_encryption_v2(self._encryption_data):
+                self._encryption_options["gcm_nonce_validator"] = _GCMRegionNonceValidator()
 
         # The service only provides transactional MD5s for chunks under 4MB.
         # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
@@ -479,8 +498,9 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 pass
 
         self._is_structured_message = response.response.headers.get("x-ms-structured-body") is not None
-        if not self._download_complete and self._request_options.get("modified_access_conditions"):
-            self._request_options["modified_access_conditions"].if_match = response.properties.etag
+        if not self._disable_etag_lock and not self._download_complete:
+            self._request_options["etag"] = response.properties.etag
+            self._request_options["match_condition"] = MatchConditions.IfNotModified
 
         return response
 
@@ -533,6 +553,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_options=self._encryption_options,
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
+                disable_etag_lock=self._disable_etag_lock,
                 **self._request_options,
             )
 
@@ -643,6 +664,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
                 encryption_data=self._encryption_data,
                 use_location=self._location_mode,
                 progress_hook=self._progress_hook,
+                disable_etag_lock=self._disable_etag_lock,
                 **self._request_options,
             )
             self._first_chunk = False
@@ -791,6 +813,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
             encryption_data=self._encryption_data,
             use_location=self._location_mode,
             progress_hook=self._progress_hook,
+            disable_etag_lock=self._disable_etag_lock,
             **self._request_options,
         )
 

@@ -11,7 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -34,7 +34,7 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -43,6 +43,23 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class PlacementScoreValue(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Placement score value indicating the likelihood of successfully allocating the requested VM(s)."""
+
+    HIGH = "High"
+    """High likelihood of successful allocation."""
+    MEDIUM = "Medium"
+    """Medium likelihood of successful allocation."""
+    LOW = "Low"
+    """Low likelihood of successful allocation."""
+    RESTRICTED_SKU_NOT_AVAILABLE = "RestrictedSkuNotAvailable"
+    """The requested SKU is restricted and not available."""
+    INSUFFICIENT_QUOTA = "InsufficientQuota"
+    """Insufficient quota is available to fulfill the request."""
+    DATA_NOT_FOUND_OR_STALE = "DataNotFoundOrStale"
+    """Data was not found or is stale."""
 
 
 class SkuMixPlacementAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,6 +71,20 @@ class SkuMixPlacementAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnum
     """VMs allocated based on customer-specified rank for each VM size."""
     EVICTION_OPTIMIZED = "EvictionOptimized"
     """VMs allocated to optimize for lowest eviction rate (Spot only)."""
+
+
+class SkuMixPlacementCapacityLimitReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason the capacity limit for a (VM size, zone) is below the requested capacity."""
+
+    NONE = "None"
+    """The full requested capacity is available for this (VM size, zone)."""
+    INSUFFICIENT_CAPACITY = "InsufficientCapacity"
+    """Allocable capacity bounded the limit below the requested capacity."""
+    INSUFFICIENT_QUOTA = "InsufficientQuota"
+    """Quota bounded the limit below the requested capacity. Takes precedence when both capacity and
+    quota are insufficient."""
+    SKU_NOT_AVAILABLE = "SkuNotAvailable"
+    """This VM size is not available in this zone for the subscription."""
 
 
 class SkuMixPlacementCapacityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

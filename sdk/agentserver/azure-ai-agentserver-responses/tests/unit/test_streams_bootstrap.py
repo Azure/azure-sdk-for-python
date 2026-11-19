@@ -43,6 +43,7 @@ def _isolate_streams_registry() -> Iterator[None]:
     saved_slots = dict(streams._slots)  # type: ignore[attr-defined]
     saved_locks = dict(streams._id_locks)  # type: ignore[attr-defined]
     saved_factory = streams._factory  # type: ignore[attr-defined]
+    saved_restore = streams._restore
     streams._slots.clear()  # type: ignore[attr-defined]
     streams._id_locks.clear()  # type: ignore[attr-defined]
     streams.use_in_memory_live()
@@ -54,6 +55,7 @@ def _isolate_streams_registry() -> Iterator[None]:
         streams._id_locks.clear()  # type: ignore[attr-defined]
         streams._id_locks.update(saved_locks)  # type: ignore[attr-defined]
         streams._factory = saved_factory  # type: ignore[attr-defined]
+        streams._restore = saved_restore
 
 
 @pytest.mark.asyncio

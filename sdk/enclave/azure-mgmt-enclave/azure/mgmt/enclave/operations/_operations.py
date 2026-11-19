@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_workload_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_workload_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_workload_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +163,7 @@ def build_workload_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/virtualEnclaves/{virtualEnclaveName}/workloads/{workloadName}"
     path_format_arguments = {
@@ -187,7 +187,7 @@ def build_workload_list_by_enclave_resource_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_workload_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +242,7 @@ def build_virtual_enclave_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -271,7 +271,7 @@ def build_virtual_enclave_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -302,7 +302,7 @@ def build_virtual_enclave_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +331,7 @@ def build_virtual_enclave_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/virtualEnclaves/{virtualEnclaveName}"
     path_format_arguments = {
@@ -354,7 +354,7 @@ def build_virtual_enclave_list_by_resource_group_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -383,7 +383,7 @@ def build_virtual_enclave_list_by_subscription_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -410,7 +410,7 @@ def build_virtual_enclave_handle_approval_creation_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -441,7 +441,7 @@ def build_virtual_enclave_handle_approval_deletion_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -471,7 +471,7 @@ def build_community_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -500,7 +500,7 @@ def build_community_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,7 +531,7 @@ def build_community_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -560,7 +560,7 @@ def build_community_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/communities/{communityName}"
     path_format_arguments = {
@@ -583,7 +583,7 @@ def build_community_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -610,7 +610,7 @@ def build_community_list_by_subscription_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -637,7 +637,7 @@ def build_community_check_address_space_availability_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +667,7 @@ def build_transit_hub_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -697,7 +697,7 @@ def build_transit_hub_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -729,7 +729,7 @@ def build_transit_hub_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -759,7 +759,7 @@ def build_transit_hub_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/communities/{communityName}/transitHubs/{transitHubName}"
     path_format_arguments = {
@@ -783,7 +783,7 @@ def build_transit_hub_list_by_community_resource_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -811,7 +811,7 @@ def build_transit_hub_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -838,7 +838,7 @@ def build_enclave_connection_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -867,7 +867,7 @@ def build_enclave_connection_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -898,7 +898,7 @@ def build_enclave_connection_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -927,7 +927,7 @@ def build_enclave_connection_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/enclaveConnections/{enclaveConnectionName}"
     path_format_arguments = {
@@ -950,7 +950,7 @@ def build_enclave_connection_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -977,7 +977,7 @@ def build_enclave_connection_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1004,7 +1004,7 @@ def build_enclave_connection_handle_approval_creation_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1035,7 +1035,7 @@ def build_enclave_connection_handle_approval_deletion_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1065,7 +1065,7 @@ def build_enclave_endpoints_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1095,7 +1095,7 @@ def build_enclave_endpoints_create_or_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1127,7 +1127,7 @@ def build_enclave_endpoints_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1157,7 +1157,7 @@ def build_enclave_endpoints_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/virtualEnclaves/{virtualEnclaveName}/enclaveEndpoints/{enclaveEndpointName}"
     path_format_arguments = {
@@ -1181,7 +1181,7 @@ def build_enclave_endpoints_list_by_enclave_resource_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1209,7 +1209,7 @@ def build_enclave_endpoints_list_by_subscription_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1237,7 +1237,7 @@ def build_enclave_endpoints_handle_approval_creation_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1269,7 +1269,7 @@ def build_enclave_endpoints_handle_approval_deletion_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1300,7 +1300,7 @@ def build_community_endpoints_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1330,7 +1330,7 @@ def build_community_endpoints_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1362,7 +1362,7 @@ def build_community_endpoints_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1392,7 +1392,7 @@ def build_community_endpoints_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/communities/{communityName}/communityEndpoints/{communityEndpointName}"
     path_format_arguments = {
@@ -1416,7 +1416,7 @@ def build_community_endpoints_list_by_community_resource_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1444,7 +1444,7 @@ def build_community_endpoints_list_by_subscription_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1472,7 +1472,7 @@ def build_community_endpoints_handle_approval_creation_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1504,7 +1504,7 @@ def build_community_endpoints_handle_approval_deletion_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1535,7 +1535,7 @@ def build_dedicated_hub_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1565,7 +1565,7 @@ def build_dedicated_hub_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1597,7 +1597,7 @@ def build_dedicated_hub_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1627,7 +1627,7 @@ def build_dedicated_hub_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Mission/communities/{communityName}/dedicatedHubs/{dedicatedHubName}"
     path_format_arguments = {
@@ -1651,7 +1651,7 @@ def build_dedicated_hub_list_by_community_resource_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1679,7 +1679,7 @@ def build_dedicated_hub_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1704,7 +1704,7 @@ def build_approval_get_request(resource_uri: str, approval_name: str, **kwargs: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1730,7 +1730,7 @@ def build_approval_create_or_update_request(resource_uri: str, approval_name: st
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1757,7 +1757,7 @@ def build_approval_list_by_parent_request(resource_uri: str, **kwargs: Any) -> H
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1782,7 +1782,7 @@ def build_approval_update_request(resource_uri: str, approval_name: str, **kwarg
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1808,7 +1808,7 @@ def build_approval_update_request(resource_uri: str, approval_name: str, **kwarg
 def build_approval_delete_request(resource_uri: str, approval_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     # Construct URL
     _url = "/{resourceUri}/providers/Microsoft.Mission/approvals/{approvalName}"
     path_format_arguments = {
@@ -1829,7 +1829,7 @@ def build_approval_notify_initiator_request(resource_uri: str, approval_name: st
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1852,7 +1852,7 @@ def build_approval_notify_initiator_request(resource_uri: str, approval_name: st
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1962,7 +1962,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkloadOperations:
+class WorkloadOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2879,7 +2879,7 @@ class WorkloadOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VirtualEnclaveOperations:
+class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3756,7 +3756,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_creation_initial(
         self,
@@ -3930,7 +3936,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_creation(
         self,
@@ -4019,7 +4031,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_deletion_initial(
         self,
@@ -4193,7 +4211,13 @@ class VirtualEnclaveOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_deletion(
         self,
@@ -4271,7 +4295,7 @@ class VirtualEnclaveOperations:
         )
 
 
-class CommunityOperations:
+class CommunityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5317,7 +5341,7 @@ class CommunityOperations:
         return deserialized  # type: ignore
 
 
-class TransitHubOperations:
+class TransitHubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6234,7 +6258,7 @@ class TransitHubOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EnclaveConnectionOperations:
+class EnclaveConnectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7575,7 +7599,7 @@ class EnclaveConnectionOperations:
         )
 
 
-class EnclaveEndpointsOperations:
+class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8506,7 +8530,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_creation_initial(
         self,
@@ -8692,7 +8722,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_creation(
         self,
@@ -8786,7 +8822,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_deletion_initial(
         self,
@@ -8972,7 +9014,13 @@ class EnclaveEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_deletion(
         self,
@@ -9054,7 +9102,7 @@ class EnclaveEndpointsOperations:
         )
 
 
-class CommunityEndpointsOperations:
+class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9986,7 +10034,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_creation_initial(
         self,
@@ -10172,7 +10226,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_creation(
         self,
@@ -10266,7 +10326,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def _handle_approval_deletion_initial(
         self,
@@ -10452,7 +10518,13 @@ class CommunityEndpointsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2024-12-01-preview", "2025-05-01-preview", "2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=[
+            "2024-12-01-preview",
+            "2025-05-01-preview",
+            "2025-11-01-preview",
+            "2026-03-01-preview",
+            "2026-04-01",
+        ],
     )
     def begin_handle_approval_deletion(
         self,
@@ -10534,7 +10606,7 @@ class CommunityEndpointsOperations:
         )
 
 
-class DedicatedHubOperations:
+class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10564,7 +10636,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def get(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -10653,7 +10725,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def _create_or_update_initial(
         self,
@@ -10841,7 +10913,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def begin_create_or_update(
         self,
@@ -10935,7 +11007,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def _update_initial(
         self,
@@ -11121,7 +11193,7 @@ class DedicatedHubOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def begin_update(
         self,
@@ -11213,7 +11285,7 @@ class DedicatedHubOperations:
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def _delete_initial(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -11289,7 +11361,7 @@ class DedicatedHubOperations:
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def begin_delete(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -11358,7 +11430,7 @@ class DedicatedHubOperations:
         params_added_on={
             "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "community_name", "accept"]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def list_by_community_resource(
         self, resource_group_name: str, community_name: str, **kwargs: Any
@@ -11465,7 +11537,7 @@ class DedicatedHubOperations:
     @api_version_validation(
         method_added_on="2025-11-01-preview",
         params_added_on={"2025-11-01-preview": ["api_version", "subscription_id", "community_name", "accept"]},
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
     )
     def list_by_subscription(self, community_name: str, **kwargs: Any) -> ItemPaged["_models.DedicatedHubResource"]:
         """List DedicatedHubResource resources by subscription ID.
@@ -11563,7 +11635,7 @@ class DedicatedHubOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApprovalOperations:
+class ApprovalOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

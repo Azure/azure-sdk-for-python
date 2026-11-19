@@ -33,6 +33,6 @@ def main():
     client.check_aml_fs_subnets()
 
 
-# x-ms-original-file: 2026-01-01/checkAmlFSSubnets.json
+# x-ms-original-file: 2026-08-01/checkAmlFSSubnets.json
 if __name__ == "__main__":
     main()

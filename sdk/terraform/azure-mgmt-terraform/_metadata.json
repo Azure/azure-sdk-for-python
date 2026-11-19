@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-09-01-preview",
+  "apiVersions": {
+    "Microsoft.AzureTerraform": "2026-09-01-preview"
+  },
+  "commit": "fd120e0fcfaa15303cf56fb1987fa805d76cc467",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/terraform/resource-manager/Microsoft.AzureTerraform/AzureTerraform",
+  "emitterVersion": "0.63.5",
+  "httpClientPythonVersion": "^0.36.0"
+}

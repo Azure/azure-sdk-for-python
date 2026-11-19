@@ -10,26 +10,56 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from functools import wraps
 import inspect
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
+from .._realtime import (
+    Realtime,
+    RealtimeConnection,
+    RealtimeConnectionManager,
+    ClientEvent,
+    ConversationItem,
+    ServerEvent,
+)
+from .._live import BetaLive, BetaLiveConnection, BetaLiveConnectionManager, LiveClientEvent, LiveServerEvent
 from ._patch_agents import AgentsOperations
+from ._patch_agent_insights import AgentInsightMonitorsOperations
 from ._patch_datasets import DatasetsOperations
+from ._patch_evaluators import EvaluatorsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
+from ._patch_campaigns import BetaVoiceAgentsTelephonyOperations
+
+# Nested operation groups are re-exported here rather than in the generated package exports.
 from ._operations import (
-    BetaAgentsOperations,
-    BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
-    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
     BetaRoutinesOperations,
     BetaSchedulesOperations,
     BetaSkillsOperations,
+    BetaVoiceAgentsLiveConversationsOperations,
+    BetaVoiceAgentsOperations as GeneratedBetaVoiceAgentsOperations,
+    VoiceAgentsConversationsOperations,
+    VoiceAgentsOperations as GeneratedVoiceAgentsOperations,
+    VoiceAgentsTelephonyOperations,
+)
+
+_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS = frozenset(
+    {
+        "cancel_call_job",
+        "create_binding",
+        "create_call_job",
+        "delete_binding",
+        "delete_call_job",
+        "end_call",
+        "replace_transfer_targets",
+        "transfer_call",
+        "update_binding",
+    }
 )
 
 
@@ -51,14 +81,50 @@ def _method_accepts_keyword_headers(method: Callable[..., Any]) -> bool:
 class _OperationMethodHeaderProxy:
     """Proxy that injects the Foundry-Features header into public operation method calls."""
 
-    def __init__(self, operation: Any, foundry_features_value: str):
+    def __init__(
+        self,
+        operation: Any,
+        foundry_features_value: str,
+        *,
+        method_names: Optional[frozenset[str]] = None,
+    ):
+        """Wrap an operation and its nested operation groups with the same header value.
+
+        For example, ``.beta.voice_agents`` stores ``live_conversations`` and ``telephony`` as nested
+        operation groups. Wrapping them with the parent proxy ensures every call under
+        ``.beta.voice_agents.live_conversations`` and ``.beta.voice_agents.telephony`` receives the
+        ``Foundry-Features: VoiceAgents=V1Preview`` header.
+
+        ``method_names`` restricts injection to conditional preview operations on a GA group.
+        """
         object.__setattr__(self, "_operation", operation)
         object.__setattr__(self, "_foundry_features_value", foundry_features_value)
+        object.__setattr__(self, "_method_names", method_names)
+        for name, attribute in vars(operation).items():
+            # Generated operation groups share these fields; ordinary public attributes do not.
+            if (
+                not name.startswith("_")
+                and not isinstance(attribute, _OperationMethodHeaderProxy)
+                and hasattr(attribute, "_client")
+                and hasattr(attribute, "_config")
+            ):
+                setattr(operation, name, _OperationMethodHeaderProxy(attribute, foundry_features_value))
 
     def __getattr__(self, name: str) -> Any:
         attribute = getattr(self._operation, name)
 
-        if name.startswith("_") or not callable(attribute) or not _method_accepts_keyword_headers(attribute):
+        if name.startswith("_"):
+            return attribute
+        if not callable(attribute):
+            if isinstance(attribute, _OperationMethodHeaderProxy):
+                return attribute
+            # Also wrap an operation group that was assigned after this proxy was initialized.
+            if hasattr(attribute, "_client") and hasattr(attribute, "_config"):
+                return _OperationMethodHeaderProxy(attribute, self._foundry_features_value)
+            return attribute
+        if (self._method_names is not None and name not in self._method_names) or not _method_accepts_keyword_headers(
+            attribute
+        ):
             return attribute
 
         @wraps(attribute)
@@ -86,6 +152,61 @@ class _OperationMethodHeaderProxy:
         setattr(self._operation, name, value)
 
 
+class VoiceAgentsOperations(GeneratedVoiceAgentsOperations):
+    """Generally available voice-agent operations.
+
+    Access these operations through :class:`~azure.ai.projects.AIProjectClient`'s
+    ``voice_agents`` attribute.
+    """
+
+    conversations: VoiceAgentsConversationsOperations
+    """:class:`~azure.ai.projects.operations.VoiceAgentsConversationsOperations` operations"""
+    telephony: VoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.VoiceAgentsTelephonyOperations` operations"""
+    realtime: Realtime
+    """:class:`~azure.ai.projects.operations.Realtime` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        # WebSocket connections cannot be kept alive by the generated HTTP pipeline.
+        self.realtime = Realtime(self)
+        if self._config.allow_preview:
+            setattr(
+                self,
+                "telephony",
+                _OperationMethodHeaderProxy(
+                    self.telephony,
+                    _BETA_OPERATION_FEATURE_HEADERS["voice_agents"],
+                    method_names=_VOICE_AGENT_CONDITIONAL_TELEPHONY_METHODS,
+                ),
+            )
+
+
+class BetaVoiceAgentsOperations(GeneratedBetaVoiceAgentsOperations):
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.AIProjectClient`'s :attr:`beta` attribute's
+        :attr:`~azure.ai.projects.operations.BetaOperations.voice_agents` attribute.
+    """
+
+    telephony: BetaVoiceAgentsTelephonyOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsTelephonyOperations` operations"""
+    live_conversations: BetaVoiceAgentsLiveConversationsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsLiveConversationsOperations` operations"""
+    live: BetaLive
+    """:class:`~azure.ai.projects.operations.BetaLive` operations"""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.telephony = BetaVoiceAgentsTelephonyOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.live = BetaLive(self)
+
+
 class BetaOperations(GeneratedBetaOperations):
     """
     .. warning::
@@ -96,12 +217,8 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
-    agents: BetaAgentsOperations
-    """:class:`~azure.ai.projects.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
-    evaluators: BetaEvaluatorsOperations
-    """:class:`~azure.ai.projects.operations.BetaEvaluatorsOperations` operations"""
     insights: BetaInsightsOperations
     """:class:`~azure.ai.projects.operations.BetaInsightsOperations` operations"""
     memory_stores: BetaMemoryStoresOperations
@@ -116,19 +233,17 @@ class BetaOperations(GeneratedBetaOperations):
     """:class:`~azure.ai.projects.operations.BetaSchedulesOperations` operations"""
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.operations.BetaSkillsOperations` operations"""
-    datasets: BetaDatasetsOperations
-    """:class:`~azure.ai.projects.operations.BetaDatasetsOperations` operations"""
+    voice_agents: BetaVoiceAgentsOperations
+    """:class:`~azure.ai.projects.operations.BetaVoiceAgentsOperations` operations"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        # Replace with patched class that includes upload()
-        self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        # Replace with patched class that adds file-path overload to upload_session_file
-        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that wires up the hand-written realtime client
+        self.voice_agents = BetaVoiceAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(
@@ -140,10 +255,8 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
-    "BetaAgentsOperations",
-    "BetaDatasetsOperations",
+    "AgentInsightMonitorsOperations",
     "BetaEvaluationTaxonomiesOperations",
-    "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
     "BetaMemoryStoresOperations",
     "BetaModelsOperations",
@@ -152,9 +265,27 @@ __all__: List[str] = [
     "BetaRoutinesOperations",
     "BetaSchedulesOperations",
     "BetaSkillsOperations",
+    "BetaVoiceAgentsTelephonyOperations",
+    "BetaVoiceAgentsLiveConversationsOperations",
+    "BetaVoiceAgentsOperations",
+    "VoiceAgentsConversationsOperations",
+    "VoiceAgentsOperations",
+    "VoiceAgentsTelephonyOperations",
+    "ClientEvent",
     "ConnectionsOperations",
+    "ConversationItem",
     "DatasetsOperations",
+    "EvaluatorsOperations",
     "EvaluationRulesOperations",
+    "Realtime",
+    "RealtimeConnection",
+    "RealtimeConnectionManager",
+    "BetaLive",
+    "BetaLiveConnection",
+    "BetaLiveConnectionManager",
+    "LiveClientEvent",
+    "LiveServerEvent",
+    "ServerEvent",
     "TelemetryOperations",
 ]  # Add all objects you want publicly available to users at this package level
 

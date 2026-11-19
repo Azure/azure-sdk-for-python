@@ -17,12 +17,13 @@ from typing import (
 from types import TracebackType
 from typing_extensions import Self
 
+from azure.storage.filedatalake.aio._session_async import SessionProvider
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.storage.blob.aio import BlobClient
-from .._generated import AzureDataLakeStorageRESTAPI
+from .._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from .._models import (
     AccessControlChangeResult,
     AccessControlChanges,
@@ -55,6 +56,9 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         *,
         api_version: Optional[str] = None,
         audience: Optional[str] = None,
+        use_session: bool = False,
+        session_provider: Optional[SessionProvider] = None,
+        session_account_name: Optional[str] = None,
         **kwargs: Any
     ) -> None: ...
     async def __aenter__(self) -> Self: ...

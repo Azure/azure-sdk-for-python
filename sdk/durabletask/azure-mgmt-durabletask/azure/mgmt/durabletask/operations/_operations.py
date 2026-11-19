@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DurableTaskMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,11 +50,68 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/providers/Microsoft.DurableTask/operations"
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_detectors_get_request(
+    resource_group_name: str, scheduler_name: str, detector_id: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/detectors/{detectorId}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "detectorId": _SERIALIZER.url("detector_id", detector_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_detectors_list_by_scheduler_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/detectors"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -72,7 +128,7 @@ def build_schedulers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +157,7 @@ def build_schedulers_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +188,7 @@ def build_schedulers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +217,7 @@ def build_schedulers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}"
     path_format_arguments = {
@@ -184,7 +240,7 @@ def build_schedulers_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -213,7 +269,7 @@ def build_schedulers_list_by_subscription_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -239,7 +295,7 @@ def build_schedulers_get_private_link_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +324,7 @@ def build_schedulers_list_private_links_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -300,7 +356,7 @@ def build_schedulers_get_private_endpoint_connection_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -336,7 +392,7 @@ def build_schedulers_create_or_update_private_endpoint_connection_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -374,7 +430,7 @@ def build_schedulers_update_private_endpoint_connection_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -410,7 +466,7 @@ def build_schedulers_delete_private_endpoint_connection_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -436,7 +492,7 @@ def build_schedulers_list_private_endpoint_connections_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -458,13 +514,35 @@ def build_schedulers_list_private_endpoint_connections_request(  # pylint: disab
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_schedulers_restart_request(
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/restart"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+
+
 def build_task_hubs_get_request(
     resource_group_name: str, scheduler_name: str, task_hub_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -494,7 +572,7 @@ def build_task_hubs_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -524,7 +602,7 @@ def build_task_hubs_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}"
     path_format_arguments = {
@@ -548,7 +626,7 @@ def build_task_hubs_list_by_scheduler_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -570,13 +648,182 @@ def build_task_hubs_list_by_scheduler_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_task_queues_get_request(
+    resource_group_name: str,
+    scheduler_name: str,
+    task_hub_name: str,
+    task_queue_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}/taskQueues/{taskQueueName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "taskHubName": _SERIALIZER.url("task_hub_name", task_hub_name, "str"),
+        "taskQueueName": _SERIALIZER.url("task_queue_name", task_queue_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_task_queues_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    scheduler_name: str,
+    task_hub_name: str,
+    task_queue_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}/taskQueues/{taskQueueName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "taskHubName": _SERIALIZER.url("task_hub_name", task_hub_name, "str"),
+        "taskQueueName": _SERIALIZER.url("task_queue_name", task_queue_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_task_queues_update_request(
+    resource_group_name: str,
+    scheduler_name: str,
+    task_hub_name: str,
+    task_queue_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}/taskQueues/{taskQueueName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "taskHubName": _SERIALIZER.url("task_hub_name", task_hub_name, "str"),
+        "taskQueueName": _SERIALIZER.url("task_queue_name", task_queue_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_task_queues_delete_request(
+    resource_group_name: str,
+    scheduler_name: str,
+    task_hub_name: str,
+    task_queue_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}/taskQueues/{taskQueueName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "taskHubName": _SERIALIZER.url("task_hub_name", task_hub_name, "str"),
+        "taskQueueName": _SERIALIZER.url("task_queue_name", task_queue_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_task_queues_list_by_task_hub_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, task_hub_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/taskHubs/{taskHubName}/taskQueues"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+        "taskHubName": _SERIALIZER.url("task_hub_name", task_hub_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_retention_policies_get_request(
     resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -605,7 +852,7 @@ def build_retention_policies_create_or_replace_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -636,7 +883,7 @@ def build_retention_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -665,7 +912,7 @@ def build_retention_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/retentionPolicies/default"
     path_format_arguments = {
@@ -688,7 +935,7 @@ def build_retention_policies_list_by_scheduler_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -710,7 +957,281 @@ def build_retention_policies_list_by_scheduler_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+def build_transparent_data_encryptions_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/transparentDataEncryptions/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_transparent_data_encryptions_create_or_replace_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/transparentDataEncryptions/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_transparent_data_encryptions_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/transparentDataEncryptions/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_transparent_data_encryptions_list_by_scheduler_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/transparentDataEncryptions"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_failover_instances_get_request(
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_failover_instances_create_or_replace_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_failover_instances_delete_request(
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances/default"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_failover_instances_list_by_scheduler_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_failover_instances_failover_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances/default/failover"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_failover_instances_force_failover_allow_data_loss_request(  # pylint: disable=name-too-long
+    resource_group_name: str, scheduler_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DurableTask/schedulers/{schedulerName}/failoverInstances/default/forceFailoverAllowDataLoss"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "schedulerName": _SERIALIZER.url("scheduler_name", scheduler_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -774,7 +1295,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -817,7 +1341,221 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class SchedulersOperations:
+class DetectorsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.durabletask.DurableTaskMgmtClient`'s
+        :attr:`detectors` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DurableTaskMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "detector_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def get(self, resource_group_name: str, scheduler_name: str, detector_id: str, **kwargs: Any) -> _models.Detector:
+        """Gets a diagnostic detector.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param detector_id: The name of the Detector. Required.
+        :type detector_id: str
+        :return: Detector. The Detector is compatible with MutableMapping
+        :rtype: ~azure.mgmt.durabletask.models.Detector
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.Detector] = kwargs.pop("cls", None)
+
+        _request = build_detectors_get_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            detector_id=detector_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Detector, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def list_by_scheduler(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.Detector"]:
+        """Lists the diagnostic detectors belonging to a scheduler.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An iterator like instance of Detector
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.durabletask.models.Detector]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.Detector]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_detectors_list_by_scheduler_request(
+                    resource_group_name=resource_group_name,
+                    scheduler_name=scheduler_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Detector],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class SchedulersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -908,7 +1646,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: Union[_models.Scheduler, JSON, IO[bytes]],
+        resource: Union[_models.Scheduler, _types.Scheduler, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1014,7 +1752,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: JSON,
+        resource: _types.Scheduler,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1027,7 +1765,7 @@ class SchedulersOperations:
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.durabletask.types.Scheduler
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1070,7 +1808,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: Union[_models.Scheduler, JSON, IO[bytes]],
+        resource: Union[_models.Scheduler, _types.Scheduler, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Scheduler]:
         """Create or update a Scheduler.
@@ -1080,9 +1818,10 @@ class SchedulersOperations:
         :type resource_group_name: str
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
-        :param resource: Resource create parameters. Is one of the following types: Scheduler, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.durabletask.models.Scheduler or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Scheduler type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.durabletask.models.Scheduler or
+         ~azure.mgmt.durabletask.types.Scheduler or IO[bytes]
         :return: An instance of LROPoller that returns Scheduler. The Scheduler is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.Scheduler]
@@ -1144,7 +1883,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: Union[_models.SchedulerUpdate, JSON, IO[bytes]],
+        properties: Union[_models.SchedulerUpdate, _types.SchedulerUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1248,7 +1987,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: JSON,
+        properties: _types.SchedulerUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1261,7 +2000,7 @@ class SchedulersOperations:
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.durabletask.types.SchedulerUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1304,7 +2043,7 @@ class SchedulersOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: Union[_models.SchedulerUpdate, JSON, IO[bytes]],
+        properties: Union[_models.SchedulerUpdate, _types.SchedulerUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Scheduler]:
         """Update a Scheduler.
@@ -1314,9 +2053,10 @@ class SchedulersOperations:
         :type resource_group_name: str
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SchedulerUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.durabletask.models.SchedulerUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SchedulerUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.durabletask.models.SchedulerUpdate or
+         ~azure.mgmt.durabletask.types.SchedulerUpdate or IO[bytes]
         :return: An instance of LROPoller that returns Scheduler. The Scheduler is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.Scheduler]
@@ -1542,7 +2282,10 @@ class SchedulersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1632,7 +2375,10 @@ class SchedulersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1687,7 +2433,7 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def get_private_link(
         self, resource_group_name: str, scheduler_name: str, private_link_resource_name: str, **kwargs: Any
@@ -1771,7 +2517,7 @@ class SchedulersOperations:
         params_added_on={
             "2026-02-01": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def list_private_links(
         self, resource_group_name: str, scheduler_name: str, **kwargs: Any
@@ -1830,7 +2576,10 @@ class SchedulersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1885,7 +2634,7 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def get_private_endpoint_connection(
         self, resource_group_name: str, scheduler_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -1976,14 +2725,14 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def _create_or_update_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2095,7 +2844,7 @@ class SchedulersOperations:
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2111,7 +2860,7 @@ class SchedulersOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.durabletask.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2167,14 +2916,14 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def begin_create_or_update_private_endpoint_connection(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Create or update a private endpoint connection for the durable task scheduler.
@@ -2187,9 +2936,10 @@ class SchedulersOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         PrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.durabletask.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a PrivateEndpointConnection type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.durabletask.models.PrivateEndpointConnection or
+         ~azure.mgmt.durabletask.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.PrivateEndpointConnection]
@@ -2261,14 +3011,14 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def _update_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self,
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnectionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnectionUpdate, _types.PrivateEndpointConnectionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2378,7 +3128,7 @@ class SchedulersOperations:
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        properties: JSON,
+        properties: _types.PrivateEndpointConnectionUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2394,7 +3144,7 @@ class SchedulersOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.durabletask.types.PrivateEndpointConnectionUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2450,14 +3200,14 @@ class SchedulersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def begin_update_private_endpoint_connection(
         self,
         resource_group_name: str,
         scheduler_name: str,
         private_endpoint_connection_name: str,
-        properties: Union[_models.PrivateEndpointConnectionUpdate, JSON, IO[bytes]],
+        properties: Union[_models.PrivateEndpointConnectionUpdate, _types.PrivateEndpointConnectionUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Update a private endpoint connection for the durable task scheduler.
@@ -2470,10 +3220,10 @@ class SchedulersOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         PrivateEndpointConnectionUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.durabletask.models.PrivateEndpointConnectionUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a
+         PrivateEndpointConnectionUpdate type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.durabletask.models.PrivateEndpointConnectionUpdate or
+         ~azure.mgmt.durabletask.types.PrivateEndpointConnectionUpdate or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.PrivateEndpointConnection]
@@ -2543,7 +3293,7 @@ class SchedulersOperations:
                 "private_endpoint_connection_name",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def _delete_private_endpoint_connection_initial(  # pylint: disable=name-too-long
         self, resource_group_name: str, scheduler_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -2619,7 +3369,7 @@ class SchedulersOperations:
                 "private_endpoint_connection_name",
             ]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def begin_delete_private_endpoint_connection(
         self, resource_group_name: str, scheduler_name: str, private_endpoint_connection_name: str, **kwargs: Any
@@ -2689,7 +3439,7 @@ class SchedulersOperations:
         params_added_on={
             "2026-02-01": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
         },
-        api_versions_list=["2026-02-01"],
+        api_versions_list=["2026-02-01", "2026-05-01-preview", "2026-07-01-preview"],
     )
     def list_private_endpoint_connections(
         self, resource_group_name: str, scheduler_name: str, **kwargs: Any
@@ -2747,7 +3497,10 @@ class SchedulersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2789,8 +3542,74 @@ class SchedulersOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def restart(  # pylint: disable=inconsistent-return-statements
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> None:
+        """Restart a Scheduler.
 
-class TaskHubsOperations:
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_schedulers_restart_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class TaskHubsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2885,7 +3704,7 @@ class TaskHubsOperations:
         resource_group_name: str,
         scheduler_name: str,
         task_hub_name: str,
-        resource: Union[_models.TaskHub, JSON, IO[bytes]],
+        resource: Union[_models.TaskHub, _types.TaskHub, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2996,7 +3815,7 @@ class TaskHubsOperations:
         resource_group_name: str,
         scheduler_name: str,
         task_hub_name: str,
-        resource: JSON,
+        resource: _types.TaskHub,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3011,7 +3830,7 @@ class TaskHubsOperations:
         :param task_hub_name: The name of the TaskHub. Required.
         :type task_hub_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.durabletask.types.TaskHub
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3058,7 +3877,7 @@ class TaskHubsOperations:
         resource_group_name: str,
         scheduler_name: str,
         task_hub_name: str,
-        resource: Union[_models.TaskHub, JSON, IO[bytes]],
+        resource: Union[_models.TaskHub, _types.TaskHub, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.TaskHub]:
         """Create or Update a Task Hub.
@@ -3070,9 +3889,10 @@ class TaskHubsOperations:
         :type scheduler_name: str
         :param task_hub_name: The name of the TaskHub. Required.
         :type task_hub_name: str
-        :param resource: Resource create parameters. Is one of the following types: TaskHub, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.durabletask.models.TaskHub or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a TaskHub type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.durabletask.models.TaskHub or ~azure.mgmt.durabletask.types.TaskHub
+         or IO[bytes]
         :return: An instance of LROPoller that returns TaskHub. The TaskHub is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskHub]
@@ -3312,7 +4132,10 @@ class TaskHubsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3355,7 +4178,989 @@ class TaskHubsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RetentionPoliciesOperations:
+class TaskQueuesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.durabletask.DurableTaskMgmtClient`'s
+        :attr:`task_queues` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DurableTaskMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def get(
+        self, resource_group_name: str, scheduler_name: str, task_hub_name: str, task_queue_name: str, **kwargs: Any
+    ) -> _models.TaskQueue:
+        """Get a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :return: TaskQueue. The TaskQueue is compatible with MutableMapping
+        :rtype: ~azure.mgmt.durabletask.models.TaskQueue
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TaskQueue] = kwargs.pop("cls", None)
+
+        _request = build_task_queues_get_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            task_hub_name=task_hub_name,
+            task_queue_name=task_queue_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TaskQueue, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        resource: Union[_models.TaskQueue, _types.TaskQueue, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_task_queues_create_or_update_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            task_hub_name=task_hub_name,
+            task_queue_name=task_queue_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        resource: _models.TaskQueue,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Create or update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.models.TaskQueue
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        resource: _types.TaskQueue,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Create or update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.types.TaskQueue
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Create or update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        resource: Union[_models.TaskQueue, _types.TaskQueue, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Create or update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param resource: Resource create parameters. Is either a TaskQueue type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.durabletask.models.TaskQueue or
+         ~azure.mgmt.durabletask.types.TaskQueue or IO[bytes]
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TaskQueue] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                task_hub_name=task_hub_name,
+                task_queue_name=task_queue_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TaskQueue, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TaskQueue].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TaskQueue](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        properties: Union[_models.TaskQueueUpdate, _types.TaskQueueUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_task_queues_update_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            task_hub_name=task_hub_name,
+            task_queue_name=task_queue_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        properties: _models.TaskQueueUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.durabletask.models.TaskQueueUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        properties: _types.TaskQueueUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.durabletask.types.TaskQueueUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        task_hub_name: str,
+        task_queue_name: str,
+        properties: Union[_models.TaskQueueUpdate, _types.TaskQueueUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.TaskQueue]:
+        """Update a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :param properties: The resource properties to be updated. Is either a TaskQueueUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.durabletask.models.TaskQueueUpdate or
+         ~azure.mgmt.durabletask.types.TaskQueueUpdate or IO[bytes]
+        :return: An instance of LROPoller that returns TaskQueue. The TaskQueue is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TaskQueue] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                task_hub_name=task_hub_name,
+                task_queue_name=task_queue_name,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TaskQueue, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TaskQueue].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TaskQueue](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, scheduler_name: str, task_hub_name: str, task_queue_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_task_queues_delete_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            task_hub_name=task_hub_name,
+            task_queue_name=task_queue_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "task_queue_name",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, scheduler_name: str, task_hub_name: str, task_queue_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Delete a Task Queue.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :param task_queue_name: The name of the TaskQueue. Required.
+        :type task_queue_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                task_hub_name=task_hub_name,
+                task_queue_name=task_queue_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "task_hub_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def list_by_task_hub(
+        self, resource_group_name: str, scheduler_name: str, task_hub_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.TaskQueue"]:
+        """List Task Queues by Task Hub.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param task_hub_name: The name of the TaskHub. Required.
+        :type task_hub_name: str
+        :return: An iterator like instance of TaskQueue
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.durabletask.models.TaskQueue]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TaskQueue]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_task_queues_list_by_task_hub_request(
+                    resource_group_name=resource_group_name,
+                    scheduler_name=scheduler_name,
+                    task_hub_name=task_hub_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TaskQueue],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class RetentionPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3378,7 +5183,13 @@ class RetentionPoliciesOperations:
         params_added_on={
             "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def get(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> _models.RetentionPolicy:
         """Get a Retention Policy.
@@ -3461,13 +5272,19 @@ class RetentionPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def _create_or_replace_initial(
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: Union[_models.RetentionPolicy, JSON, IO[bytes]],
+        resource: Union[_models.RetentionPolicy, _types.RetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3573,7 +5390,7 @@ class RetentionPoliciesOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: JSON,
+        resource: _types.RetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3586,7 +5403,7 @@ class RetentionPoliciesOperations:
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.durabletask.types.RetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3637,13 +5454,19 @@ class RetentionPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def begin_create_or_replace(
         self,
         resource_group_name: str,
         scheduler_name: str,
-        resource: Union[_models.RetentionPolicy, JSON, IO[bytes]],
+        resource: Union[_models.RetentionPolicy, _types.RetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RetentionPolicy]:
         """Create or Update a Retention Policy.
@@ -3653,9 +5476,10 @@ class RetentionPoliciesOperations:
         :type resource_group_name: str
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
-        :param resource: Resource create parameters. Is one of the following types: RetentionPolicy,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.durabletask.models.RetentionPolicy or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a RetentionPolicy type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.durabletask.models.RetentionPolicy or
+         ~azure.mgmt.durabletask.types.RetentionPolicy or IO[bytes]
         :return: An instance of LROPoller that returns RetentionPolicy. The RetentionPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.RetentionPolicy]
@@ -3725,13 +5549,19 @@ class RetentionPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: Union[_models.RetentionPolicy, JSON, IO[bytes]],
+        properties: Union[_models.RetentionPolicy, _types.RetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3835,7 +5665,7 @@ class RetentionPoliciesOperations:
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: JSON,
+        properties: _types.RetentionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3848,7 +5678,7 @@ class RetentionPoliciesOperations:
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.durabletask.types.RetentionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3899,13 +5729,19 @@ class RetentionPoliciesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def begin_update(
         self,
         resource_group_name: str,
         scheduler_name: str,
-        properties: Union[_models.RetentionPolicy, JSON, IO[bytes]],
+        properties: Union[_models.RetentionPolicy, _types.RetentionPolicy, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.RetentionPolicy]:
         """Update a Retention Policy.
@@ -3915,9 +5751,10 @@ class RetentionPoliciesOperations:
         :type resource_group_name: str
         :param scheduler_name: The name of the Scheduler. Required.
         :type scheduler_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         RetentionPolicy, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.durabletask.models.RetentionPolicy or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a RetentionPolicy type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.durabletask.models.RetentionPolicy or
+         ~azure.mgmt.durabletask.types.RetentionPolicy or IO[bytes]
         :return: An instance of LROPoller that returns RetentionPolicy. The RetentionPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.RetentionPolicy]
@@ -3980,7 +5817,13 @@ class RetentionPoliciesOperations:
         params_added_on={
             "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def _delete_initial(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4047,7 +5890,13 @@ class RetentionPoliciesOperations:
         params_added_on={
             "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def begin_delete(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> LROPoller[None]:
         """Delete a Retention Policy.
@@ -4111,7 +5960,13 @@ class RetentionPoliciesOperations:
         params_added_on={
             "2025-04-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
         },
-        api_versions_list=["2025-04-01-preview", "2025-11-01", "2026-02-01"],
+        api_versions_list=[
+            "2025-04-01-preview",
+            "2025-11-01",
+            "2026-02-01",
+            "2026-05-01-preview",
+            "2026-07-01-preview",
+        ],
     )
     def list_by_scheduler(
         self, resource_group_name: str, scheduler_name: str, **kwargs: Any
@@ -4169,7 +6024,10 @@ class RetentionPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4210,3 +6068,1480 @@ class RetentionPoliciesOperations:
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+
+class TransparentDataEncryptionsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.durabletask.DurableTaskMgmtClient`'s
+        :attr:`transparent_data_encryptions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DurableTaskMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def get(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> _models.TransparentDataEncryption:
+        """Get a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: TransparentDataEncryption. The TransparentDataEncryption is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.durabletask.models.TransparentDataEncryption
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TransparentDataEncryption] = kwargs.pop("cls", None)
+
+        _request = build_transparent_data_encryptions_get_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TransparentDataEncryption, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def _create_or_replace_initial(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: Union[_models.TransparentDataEncryption, _types.TransparentDataEncryption, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_transparent_data_encryptions_create_or_replace_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: _models.TransparentDataEncryption,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TransparentDataEncryption]:
+        """Create or Update a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.models.TransparentDataEncryption
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransparentDataEncryption. The
+         TransparentDataEncryption is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TransparentDataEncryption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: _types.TransparentDataEncryption,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TransparentDataEncryption]:
+        """Create or Update a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.types.TransparentDataEncryption
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransparentDataEncryption. The
+         TransparentDataEncryption is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TransparentDataEncryption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TransparentDataEncryption]:
+        """Create or Update a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransparentDataEncryption. The
+         TransparentDataEncryption is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TransparentDataEncryption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: Union[_models.TransparentDataEncryption, _types.TransparentDataEncryption, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.TransparentDataEncryption]:
+        """Create or Update a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Is either a TransparentDataEncryption type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.durabletask.models.TransparentDataEncryption or
+         ~azure.mgmt.durabletask.types.TransparentDataEncryption or IO[bytes]
+        :return: An instance of LROPoller that returns TransparentDataEncryption. The
+         TransparentDataEncryption is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.TransparentDataEncryption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TransparentDataEncryption] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_replace_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TransparentDataEncryption, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TransparentDataEncryption].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TransparentDataEncryption](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def _delete_initial(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_transparent_data_encryptions_delete_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def begin_delete(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete a Transparent Data Encryption.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01-preview"],
+    )
+    def list_by_scheduler(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.TransparentDataEncryption"]:
+        """List Transparent Data Encryptions.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An iterator like instance of TransparentDataEncryption
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.durabletask.models.TransparentDataEncryption]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TransparentDataEncryption]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_transparent_data_encryptions_list_by_scheduler_request(
+                    resource_group_name=resource_group_name,
+                    scheduler_name=scheduler_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TransparentDataEncryption],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class FailoverInstancesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.durabletask.DurableTaskMgmtClient`'s
+        :attr:`failover_instances` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DurableTaskMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def get(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> _models.FailoverInstance:
+        """Get a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: FailoverInstance. The FailoverInstance is compatible with MutableMapping
+        :rtype: ~azure.mgmt.durabletask.models.FailoverInstance
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FailoverInstance] = kwargs.pop("cls", None)
+
+        _request = build_failover_instances_get_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.FailoverInstance, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _create_or_replace_initial(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: Union[_models.FailoverInstance, _types.FailoverInstance, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_failover_instances_create_or_replace_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: _models.FailoverInstance,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Create or Update a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.models.FailoverInstance
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: _types.FailoverInstance,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Create or Update a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.durabletask.types.FailoverInstance
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Create or Update a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "scheduler_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_create_or_replace(
+        self,
+        resource_group_name: str,
+        scheduler_name: str,
+        resource: Union[_models.FailoverInstance, _types.FailoverInstance, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Create or Update a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :param resource: Resource create parameters. Is either a FailoverInstance type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.durabletask.models.FailoverInstance or
+         ~azure.mgmt.durabletask.types.FailoverInstance or IO[bytes]
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.FailoverInstance] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_replace_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.FailoverInstance, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.FailoverInstance].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.FailoverInstance](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _delete_initial(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_failover_instances_delete_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_delete(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Delete a Failover Instance.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def list_by_scheduler(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.FailoverInstance"]:
+        """List Failover Instances.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An iterator like instance of FailoverInstance
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.FailoverInstance]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_failover_instances_list_by_scheduler_request(
+                    resource_group_name=resource_group_name,
+                    scheduler_name=scheduler_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.FailoverInstance],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _failover_initial(self, resource_group_name: str, scheduler_name: str, **kwargs: Any) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_failover_instances_failover_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_failover(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Trigger a graceful failover for the parent scheduler.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FailoverInstance] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._failover_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.FailoverInstance, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.FailoverInstance].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.FailoverInstance](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def _force_failover_allow_data_loss_initial(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_failover_instances_force_failover_allow_data_loss_request(
+            resource_group_name=resource_group_name,
+            scheduler_name=scheduler_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-01-preview",
+        params_added_on={
+            "2026-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "scheduler_name", "accept"]
+        },
+        api_versions_list=["2026-07-01-preview"],
+    )
+    def begin_force_failover_allow_data_loss(
+        self, resource_group_name: str, scheduler_name: str, **kwargs: Any
+    ) -> LROPoller[_models.FailoverInstance]:
+        """Trigger a forced failover with potential data loss for the parent scheduler.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param scheduler_name: The name of the Scheduler. Required.
+        :type scheduler_name: str
+        :return: An instance of LROPoller that returns FailoverInstance. The FailoverInstance is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.durabletask.models.FailoverInstance]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.FailoverInstance] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._force_failover_allow_data_loss_initial(
+                resource_group_name=resource_group_name,
+                scheduler_name=scheduler_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.FailoverInstance, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.FailoverInstance].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.FailoverInstance](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )

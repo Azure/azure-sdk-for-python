@@ -10,10 +10,9 @@ import pytest
 
 from devtools_testutils import (
     AzureRecordedTestCase,
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
 )
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.core.credentials import AzureKeyCredential
 from azure.ai.textanalytics.aio import TextAnalysisClient
 from azure.ai.textanalytics.models import (
     MultiLanguageTextInput,
@@ -23,28 +22,35 @@ from azure.ai.textanalytics.models import (
     PiiActionContent,
     EntityMaskPolicyType,
     CharacterMaskPolicyType,
+    NoMaskPolicyType,
     SyntheticReplacementPolicyType,
 )
 
 TextAnalysisPreparer = functools.partial(
-    EnvironmentVariableLoader,
+    PowerShellPreparer,
     "text_analysis",
     text_analysis_endpoint="https://Sanitized.cognitiveservices.azure.com/",
-    text_analysis_key="fake_key",
 )
 
 
 class TestTextAnalysis(AzureRecordedTestCase):
-    def create_client(self, endpoint: str, key: str) -> TextAnalysisClient:
-        return TextAnalysisClient(endpoint, AzureKeyCredential(key))
+    def create_client(self, endpoint: str) -> TextAnalysisClient:
+        credential = self.get_credential(TextAnalysisClient, is_async=True)
+        return self.create_client_from_credential(
+            TextAnalysisClient,
+            credential=credential,
+            endpoint=endpoint,
+        )
 
 
 class TestTextAnalysisCase(TestTextAnalysis):
     @TextAnalysisPreparer()
     @recorded_by_proxy_async
     @pytest.mark.asyncio
-    async def test_recognize_pii_redaction_policies_async(self, text_analysis_endpoint, text_analysis_key): # pylint: disable=name-too-long
-        async with self.create_client(text_analysis_endpoint, text_analysis_key) as client:
+    async def test_recognize_pii_redaction_policies_async(
+        self, text_analysis_endpoint
+    ):  # pylint: disable=name-too-long
+        async with self.create_client(text_analysis_endpoint) as client:
 
             # Documents
             documents = [
@@ -73,11 +79,13 @@ class TestTextAnalysisCase(TestTextAnalysis):
             )
 
             synthetic_policy = SyntheticReplacementPolicyType(
-                policy_name="syntheticMaskForPerson", entity_types=["Person", "Email"]
+                policy_name="syntheticMaskForPerson", entity_types=["Person"]
             )
+            no_mask_policy = NoMaskPolicyType(policy_name="noMaskForEmail", entity_types=["Email"])
 
             parameters = PiiActionContent(
-                pii_categories=["All"], redaction_policies=[default_policy, ssn_policy, synthetic_policy]
+                pii_categories=["All"],
+                redaction_policies=[default_policy, ssn_policy, synthetic_policy, no_mask_policy],
             )
 
             body = TextPiiEntitiesRecognitionInput(text_input=text_input, action_content=parameters)
@@ -98,26 +106,28 @@ class TestTextAnalysisCase(TestTextAnalysis):
                 assert redacted is not None
                 assert "John Doe" not in redacted
                 assert "123-45-6789" not in redacted
-                assert "john@example.com" not in redacted
+                assert "john@example.com" in redacted
 
                 # Must detect 3 PII entities
                 assert len(doc.entities) == 3
                 categories = {e.category for e in doc.entities}
                 assert categories == {"Person", "USSocialSecurityNumber", "Email"}
+                for entity in doc.entities:
+                    assert entity.mask is not None
+                    assert entity.mask_offset is not None
+                    assert entity.mask_length is not None
+                    assert entity.mask_length == len(entity.mask)
+                    assert redacted[entity.mask_offset : entity.mask_offset + entity.mask_length] == entity.mask
 
                 # Validate Person entity was replaced (synthetic replacement)
                 person = next(e for e in doc.entities if e.category == "Person")
-                assert person.mask is not None
                 assert person.mask != person.text  # replaced with a different name
 
                 # Validate SSN is masked with asterisks
                 ssn = next(e for e in doc.entities if e.category == "USSocialSecurityNumber")
-                assert ssn.mask is not None
                 assert "*" in ssn.mask
                 assert "123-45-6789" not in redacted
 
-                # Validate Email is replaced (synthetic replacement)
+                # Validate Email is not masked.
                 email = next(e for e in doc.entities if e.category == "Email")
-                assert email.mask is not None
-                assert email.mask != email.text
-                assert "john@example.com" not in redacted
+                assert email.mask == email.text

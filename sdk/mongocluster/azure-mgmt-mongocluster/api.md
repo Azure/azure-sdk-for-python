@@ -95,7 +95,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 firewall_rule_name: str, 
-                resource: JSON, 
+                resource: FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -164,7 +164,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                resource: JSON, 
+                resource: MongoCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -205,7 +205,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                body: JSON, 
+                body: PromoteReplicaRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -238,7 +238,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                properties: JSON, 
+                properties: MongoClusterUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -269,7 +269,7 @@ namespace azure.mgmt.mongocluster.aio.operations
         async def check_name_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: CheckNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -350,7 +350,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: PrivateEndpointConnectionResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -421,7 +421,7 @@ namespace azure.mgmt.mongocluster.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-06-01-preview', params_added_on={'2024-06-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2024-06-01-preview', '2024-07-01', '2024-10-01-preview', '2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-06-01-preview', params_added_on={'2024-06-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2024-06-01-preview', '2024-07-01', '2024-10-01-preview', '2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def list_by_parent(
                 self, 
                 resource_group_name: str, 
@@ -456,7 +456,7 @@ namespace azure.mgmt.mongocluster.aio.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 user_name: str, 
-                resource: JSON, 
+                resource: User, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -475,7 +475,7 @@ namespace azure.mgmt.mongocluster.aio.operations
             ) -> AsyncLROPoller[User]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -485,7 +485,7 @@ namespace azure.mgmt.mongocluster.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -495,7 +495,7 @@ namespace azure.mgmt.mongocluster.aio.operations
             ) -> User: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def list_by_mongo_cluster(
                 self, 
                 resource_group_name: str, 
@@ -1211,6 +1211,7 @@ namespace azure.mgmt.mongocluster.models
 
     class azure.mgmt.mongocluster.models.PromoteOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FORCED = "Forced"
+        PLANNED = "Planned"
 
 
     class azure.mgmt.mongocluster.models.PromoteReplicaRequest(_Model):
@@ -1447,7 +1448,7 @@ namespace azure.mgmt.mongocluster.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 firewall_rule_name: str, 
-                resource: JSON, 
+                resource: FirewallRule, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1516,7 +1517,7 @@ namespace azure.mgmt.mongocluster.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                resource: JSON, 
+                resource: MongoCluster, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1557,7 +1558,7 @@ namespace azure.mgmt.mongocluster.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                body: JSON, 
+                body: PromoteReplicaRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1590,7 +1591,7 @@ namespace azure.mgmt.mongocluster.operations
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
-                properties: JSON, 
+                properties: MongoClusterUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1621,7 +1622,7 @@ namespace azure.mgmt.mongocluster.operations
         def check_name_availability(
                 self, 
                 location: str, 
-                body: JSON, 
+                body: CheckNameAvailabilityRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1702,7 +1703,7 @@ namespace azure.mgmt.mongocluster.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: PrivateEndpointConnectionResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1773,7 +1774,7 @@ namespace azure.mgmt.mongocluster.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-06-01-preview', params_added_on={'2024-06-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2024-06-01-preview', '2024-07-01', '2024-10-01-preview', '2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-06-01-preview', params_added_on={'2024-06-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2024-06-01-preview', '2024-07-01', '2024-10-01-preview', '2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def list_by_parent(
                 self, 
                 resource_group_name: str, 
@@ -1808,7 +1809,7 @@ namespace azure.mgmt.mongocluster.operations
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 user_name: str, 
-                resource: JSON, 
+                resource: User, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1827,7 +1828,7 @@ namespace azure.mgmt.mongocluster.operations
             ) -> LROPoller[User]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1837,7 +1838,7 @@ namespace azure.mgmt.mongocluster.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'user_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -1847,13 +1848,404 @@ namespace azure.mgmt.mongocluster.operations
             ) -> User: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'mongo_cluster_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-07-01-preview', '2025-08-01-preview', '2025-09-01', '2026-02-01-preview', '2026-06-01', '2026-06-15-preview', '2026-09-01'])
         def list_by_mongo_cluster(
                 self, 
                 resource_group_name: str, 
                 mongo_cluster_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[User]: ...
+
+
+namespace azure.mgmt.mongocluster.types
+
+    class azure.mgmt.mongocluster.types.AdministratorProperties(TypedDict, total=False):
+        key "password": str
+        key "userName": str
+        password: str
+        userName: str
+
+
+    class azure.mgmt.mongocluster.types.AuthConfigProperties(TypedDict, total=False):
+        allowedModes: list[Union[str, AuthenticationMode]]
+
+
+    class azure.mgmt.mongocluster.types.BackupProperties(TypedDict, total=False):
+        key "earliestRestoreTime": str
+        earliestRestoreTime: str
+
+
+    class azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest(TypedDict, total=False):
+        key "name": str
+        key "type": str
+        name: str
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.ComputeProperties(TypedDict, total=False):
+        key "tier": str
+        tier: str
+
+
+    class azure.mgmt.mongocluster.types.CustomerManagedKeyEncryptionProperties(TypedDict, total=False):
+        key "keyEncryptionKeyIdentity": ForwardRef('KeyEncryptionKeyIdentity', module='types')
+        key "keyEncryptionKeyUrl": str
+        keyEncryptionKeyIdentity: KeyEncryptionKeyIdentity
+        keyEncryptionKeyUrl: str
+
+
+    class azure.mgmt.mongocluster.types.DataApiProperties(TypedDict, total=False):
+        key "mode": Union[str, DataApiMode]
+        mode: Union[str, DataApiMode]
+
+
+    class azure.mgmt.mongocluster.types.DatabaseRole(TypedDict, total=False):
+        key "db": Required[str]
+        key "role": Required[Union[str, UserRole]]
+        db: str
+        role: Union[str, UserRole]
+
+
+    class azure.mgmt.mongocluster.types.EncryptionProperties(TypedDict, total=False):
+        key "customerManagedKeyEncryption": ForwardRef('CustomerManagedKeyEncryptionProperties', module='types')
+        customerManagedKeyEncryption: CustomerManagedKeyEncryptionProperties
+
+
+    class azure.mgmt.mongocluster.types.EntraIdentityProvider(TypedDict, total=False):
+        key "properties": Required[EntraIdentityProviderProperties]
+        key "type": Required[Literal[IdentityProviderType.MICROSOFT_ENTRA_ID]]
+        properties: EntraIdentityProviderProperties
+        type: Literal[IdentityProviderType.MICROSOFT_ENTRA_ID]
+
+
+    class azure.mgmt.mongocluster.types.EntraIdentityProviderProperties(TypedDict, total=False):
+        key "principalType": Required[Union[str, EntraPrincipalType]]
+        principalType: Union[str, EntraPrincipalType]
+
+
+    class azure.mgmt.mongocluster.types.FirewallRule(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('FirewallRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: FirewallRuleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.FirewallRuleProperties(TypedDict, total=False):
+        key "endIpAddress": Required[str]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "startIpAddress": Required[str]
+        endIpAddress: str
+        provisioningState: Union[str, ProvisioningState]
+        startIpAddress: str
+
+
+    class azure.mgmt.mongocluster.types.HighAvailabilityProperties(TypedDict, total=False):
+        key "targetMode": Union[str, HighAvailabilityMode]
+        targetMode: Union[str, HighAvailabilityMode]
+
+
+    class azure.mgmt.mongocluster.types.IdentityProvider(TypedDict, total=False):
+        key "properties": Required[EntraIdentityProviderProperties]
+        key "type": Required[Literal[IdentityProviderType.MICROSOFT_ENTRA_ID]]
+        properties: EntraIdentityProviderProperties
+        type: Literal[IdentityProviderType.MICROSOFT_ENTRA_ID]
+
+
+    class azure.mgmt.mongocluster.types.IdentityProviderType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        MICROSOFT_ENTRA_ID = "MicrosoftEntraID"
+
+
+    class azure.mgmt.mongocluster.types.KeyEncryptionKeyIdentity(TypedDict, total=False):
+        key "identityType": Union[str, KeyEncryptionKeyIdentityType]
+        key "userAssignedIdentityResourceId": str
+        identityType: Union[str, KeyEncryptionKeyIdentityType]
+        userAssignedIdentityResourceId: str
+
+
+    class azure.mgmt.mongocluster.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principalId: str
+        tenantId: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.mongocluster.types.MongoCluster(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('MongoClusterProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: MongoClusterProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.MongoClusterProperties(TypedDict, total=False):
+        key "administrator": ForwardRef('AdministratorProperties', module='types')
+        key "authConfig": ForwardRef('AuthConfigProperties', module='types')
+        key "backup": ForwardRef('BackupProperties', module='types')
+        key "clusterStatus": Union[str, MongoClusterStatus]
+        key "compute": ForwardRef('ComputeProperties', module='types')
+        key "connectionString": str
+        key "createMode": Union[str, CreateMode]
+        key "dataApi": ForwardRef('DataApiProperties', module='types')
+        key "encryption": ForwardRef('EncryptionProperties', module='types')
+        key "highAvailability": ForwardRef('HighAvailabilityProperties', module='types')
+        key "infrastructureVersion": str
+        key "networkBypassMode": Union[str, NetworkBypassMode]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "replica": ForwardRef('ReplicationProperties', module='types')
+        key "replicaParameters": ForwardRef('MongoClusterReplicaParameters', module='types')
+        key "restoreParameters": ForwardRef('MongoClusterRestoreParameters', module='types')
+        key "serverVersion": str
+        key "sharding": ForwardRef('ShardingProperties', module='types')
+        key "storage": ForwardRef('StorageProperties', module='types')
+        administrator: AdministratorProperties
+        authConfig: AuthConfigProperties
+        backup: BackupProperties
+        clusterStatus: Union[str, MongoClusterStatus]
+        compute: ComputeProperties
+        connectionString: str
+        createMode: Union[str, CreateMode]
+        dataApi: DataApiProperties
+        encryption: EncryptionProperties
+        highAvailability: HighAvailabilityProperties
+        infrastructureVersion: str
+        networkBypassMode: Union[str, NetworkBypassMode]
+        previewFeatures: list[Union[str, PreviewFeature]]
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        replica: ReplicationProperties
+        replicaParameters: MongoClusterReplicaParameters
+        restoreParameters: MongoClusterRestoreParameters
+        serverVersion: str
+        sharding: ShardingProperties
+        storage: StorageProperties
+
+
+    class azure.mgmt.mongocluster.types.MongoClusterReplicaParameters(TypedDict, total=False):
+        key "sourceLocation": Required[str]
+        key "sourceResourceId": Required[str]
+        sourceLocation: str
+        sourceResourceId: str
+
+
+    class azure.mgmt.mongocluster.types.MongoClusterRestoreParameters(TypedDict, total=False):
+        key "pointInTimeUTC": str
+        key "sourceResourceId": str
+        pointInTimeUTC: str
+        sourceResourceId: str
+
+
+    class azure.mgmt.mongocluster.types.MongoClusterUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('MongoClusterUpdateProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: MongoClusterUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.mongocluster.types.MongoClusterUpdateProperties(TypedDict, total=False):
+        key "administrator": ForwardRef('AdministratorProperties', module='types')
+        key "authConfig": ForwardRef('AuthConfigProperties', module='types')
+        key "backup": ForwardRef('BackupProperties', module='types')
+        key "compute": ForwardRef('ComputeProperties', module='types')
+        key "dataApi": ForwardRef('DataApiProperties', module='types')
+        key "encryption": ForwardRef('EncryptionProperties', module='types')
+        key "highAvailability": ForwardRef('HighAvailabilityProperties', module='types')
+        key "networkBypassMode": Union[str, NetworkBypassMode]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "serverVersion": str
+        key "sharding": ForwardRef('ShardingProperties', module='types')
+        key "storage": ForwardRef('StorageProperties', module='types')
+        administrator: AdministratorProperties
+        authConfig: AuthConfigProperties
+        backup: BackupProperties
+        compute: ComputeProperties
+        dataApi: DataApiProperties
+        encryption: EncryptionProperties
+        highAvailability: HighAvailabilityProperties
+        networkBypassMode: Union[str, NetworkBypassMode]
+        previewFeatures: list[Union[str, PreviewFeature]]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        serverVersion: str
+        sharding: ShardingProperties
+        storage: StorageProperties
+
+
+    class azure.mgmt.mongocluster.types.PrivateEndpoint(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.mongocluster.types.PrivateEndpointConnection(Resource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
+        key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        groupIds: list[str]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
+
+
+    class azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": str
+        key "status": Union[str, PrivateEndpointServiceConnectionStatus]
+        actionsRequired: str
+        description: str
+        status: Union[str, PrivateEndpointServiceConnectionStatus]
+
+
+    class azure.mgmt.mongocluster.types.PromoteReplicaRequest(TypedDict, total=False):
+        key "mode": Union[str, PromoteMode]
+        key "promoteOption": Required[Union[str, PromoteOption]]
+        mode: Union[str, PromoteMode]
+        promoteOption: Union[str, PromoteOption]
+
+
+    class azure.mgmt.mongocluster.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.ReplicationProperties(TypedDict, total=False):
+        key "replicationState": Union[str, ReplicationState]
+        key "role": Union[str, ReplicationRole]
+        key "sourceResourceId": str
+        replicationState: Union[str, ReplicationState]
+        role: Union[str, ReplicationRole]
+        sourceResourceId: str
+
+
+    class azure.mgmt.mongocluster.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.ShardingProperties(TypedDict, total=False):
+        key "shardCount": int
+        shardCount: int
+
+
+    class azure.mgmt.mongocluster.types.StorageProperties(TypedDict, total=False):
+        key "sizeGb": int
+        key "type": Union[str, StorageType]
+        sizeGb: int
+        type: Union[str, StorageType]
+
+
+    class azure.mgmt.mongocluster.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
+
+
+    class azure.mgmt.mongocluster.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.User(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('UserProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: UserProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.mongocluster.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        clientId: str
+        principalId: str
+
+
+    class azure.mgmt.mongocluster.types.UserProperties(TypedDict, total=False):
+        key "identityProvider": ForwardRef('IdentityProvider', module='types')
+        key "provisioningState": Union[str, ProvisioningState]
+        identityProvider: IdentityProvider
+        provisioningState: Union[str, ProvisioningState]
+        roles: list[DatabaseRole]
 
 
 ```

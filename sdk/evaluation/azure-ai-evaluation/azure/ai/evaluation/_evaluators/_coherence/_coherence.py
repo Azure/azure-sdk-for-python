@@ -7,6 +7,7 @@ from typing import Dict, Union, List
 from typing_extensions import overload, override
 
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
 from azure.ai.evaluation._evaluators._common._validators import ConversationValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import ErrorTarget
 from azure.ai.evaluation._model_configurations import Conversation
@@ -20,7 +21,8 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     flows smoothly, and resembles human-like language in its responses. Use it when assessing the readability
     and user-friendliness of a model's generated responses in real-world applications.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the coherence evaluator. Default is 3.
@@ -67,7 +69,9 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "coherence.prompty"
+    _DECISION_FILE = "coherence.decision.yaml"
     _RESULT_KEY = "coherence"
+    _supports_decision_models = True
 
     _validator: ValidatorInterface
 
@@ -92,6 +96,11 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             _higher_is_better=self._higher_is_better,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.COHERENCE_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -163,3 +172,7 @@ class CoherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator.validate_eval_input(kwargs)
 
         return await super()._real_call(**kwargs)
+
+    @override
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+        return await self._decision.evaluate({"query": eval_input["query"], "response": eval_input["response"]})

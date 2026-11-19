@@ -389,6 +389,170 @@ class AccessListUsersSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AccessPointProperties(_Model):
+    """Access Point Properties.
+
+    :ivar access_point_name: Display name of the access point. Required.
+    :vartype access_point_name: str
+    :ivar region: The cloud service provider region for the access point. Required.
+    :vartype region: str
+    :ivar vnet_injection: VNet injection target (LiftrBase standard model). Contains the virtual
+     network resource ID and the delegated subnet resource ID. Required.
+    :vartype vnet_injection: ~azure.mgmt.confluent.models.VnetInjectionDetails
+    :ivar egress_routes: IP ranges to route through your virtual network instead of Confluent's
+     default path. Required for Kafka clients in peered VNets or on-premises networks (e.g.,
+     10.0.0.0/8, 172.16.0.0/12).
+    :vartype egress_routes: list[str]
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar provisioning_state: Provisioning state of the access point. Known values are: "Accepted",
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted", and
+     "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.confluent.models.ProvisionState
+    :ivar dictionary: Additional properties for extensibility.
+    :vartype dictionary: list[~azure.mgmt.confluent.models.KeyValuePair]
+    """
+
+    access_point_name: str = rest_field(
+        name="accessPointName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the access point. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cloud service provider region for the access point. Required."""
+    vnet_injection: "_models.VnetInjectionDetails" = rest_field(
+        name="vnetInjection", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """VNet injection target (LiftrBase standard model). Contains the virtual network resource ID and
+     the delegated subnet resource ID. Required."""
+    egress_routes: Optional[list[str]] = rest_field(
+        name="egressRoutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP ranges to route through your virtual network instead of Confluent's default path. Required
+     for Kafka clients in peered VNets or on-premises networks (e.g., 10.0.0.0/8, 172.16.0.0/12)."""
+    metadata: Optional["_models.SCMetadataEntity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata of the record."""
+    provisioning_state: Optional[Union[str, "_models.ProvisionState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the access point. Known values are: \"Accepted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", \"Canceled\", \"Deleted\", and
+     \"NotSpecified\"."""
+    dictionary: Optional[list["_models.KeyValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional properties for extensibility."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        access_point_name: str,
+        region: str,
+        vnet_injection: "_models.VnetInjectionDetails",
+        egress_routes: Optional[list[str]] = None,
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        dictionary: Optional[list["_models.KeyValuePair"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    """
+
+
+class AccessPointResource(ProxyResource):
+    """Details of access point record.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar properties: Access Point Properties.
+    :vartype properties: ~azure.mgmt.confluent.models.AccessPointProperties
+    """
+
+    properties: Optional["_models.AccessPointProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access Point Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AccessPointProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AccessRoleBindingNameListSuccessResponse(_Model):
     """Details of the role binding names returned on successful response.
 
@@ -416,6 +580,41 @@ class AccessRoleBindingNameListSuccessResponse(_Model):
         kind: Optional[str] = None,
         metadata: Optional["_models.ConfluentListMetadata"] = None,
         data: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ActivateSaaSParameterRequest(_Model):
+    """SaaS guid & PublisherId for Activate and Validate SaaS Resource.
+
+    :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
+    :vartype saas_guid: str
+    :ivar publisher_id: Publisher Id for Confluent resource.
+    :vartype publisher_id: str
+    """
+
+    saas_guid: str = rest_field(name="saasGuid", visibility=["read", "create", "update", "delete", "query"])
+    """SaaS guid for Activate and Validate SaaS Resource. Required."""
+    publisher_id: Optional[str] = rest_field(
+        name="publisherId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Publisher Id for Confluent resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_guid: str,
+        publisher_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1662,51 +1861,6 @@ class ConnectorInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    """
-
-
 class ConnectorResource(ProxyResource):
     """Details of connector record.
 
@@ -2637,6 +2791,76 @@ class KafkaAzureSynapseAnalyticsSinkConnectorInfo(
         self.partner_connector_type = PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK  # type: ignore
 
 
+class KeyValuePair(_Model):
+    """A key-value pair for extensibility.
+
+    :ivar key: The key. Required.
+    :vartype key: str
+    :ivar value: The value. Required.
+    :vartype value: str
+    """
+
+    key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key. Required."""
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: str,
+        value: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LatestLinkedSaaSResponse(_Model):
+    """Response of get latest linked SaaS resource operation.
+
+    :ivar saa_s_resource_id: SaaS resource id.
+    :vartype saa_s_resource_id: str
+    :ivar is_hidden_saa_s: Flag indicating if the SaaS resource is hidden.
+    :vartype is_hidden_saa_s: bool
+    """
+
+    saa_s_resource_id: Optional[str] = rest_field(
+        name="saaSResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SaaS resource id."""
+    is_hidden_saa_s: Optional[bool] = rest_field(
+        name="isHiddenSaaS", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Flag indicating if the SaaS resource is hidden."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saa_s_resource_id: Optional[str] = None,
+        is_hidden_saa_s: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LinkOrganization(_Model):
     """Link an existing Confluent organization.
 
@@ -2760,6 +2984,106 @@ class MetadataEntity(_Model):
         created_at: Optional[str] = None,
         updated_at: Optional[str] = None,
         deleted_at: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkGatewayProperties(_Model):
+    """Network Gateway Properties.
+
+    :ivar network_gateway_name: Display name of the network gateway. Required.
+    :vartype network_gateway_name: str
+    :ivar region: The cloud service provider region for the network gateway. Required.
+    :vartype region: str
+    :ivar metadata: Metadata of the record.
+    :vartype metadata: ~azure.mgmt.confluent.models.SCMetadataEntity
+    :ivar provisioning_state: Provisioning state of the network gateway. Known values are:
+     "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed", "Canceled", "Deleted",
+     and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.confluent.models.ProvisionState
+    :ivar dictionary: Additional properties for extensibility.
+    :vartype dictionary: list[~azure.mgmt.confluent.models.KeyValuePair]
+    """
+
+    network_gateway_name: str = rest_field(
+        name="networkGatewayName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Display name of the network gateway. Required."""
+    region: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The cloud service provider region for the network gateway. Required."""
+    metadata: Optional["_models.SCMetadataEntity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata of the record."""
+    provisioning_state: Optional[Union[str, "_models.ProvisionState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the network gateway. Known values are: \"Accepted\", \"Creating\",
+     \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", \"Canceled\", \"Deleted\", and
+     \"NotSpecified\"."""
+    dictionary: Optional[list["_models.KeyValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional properties for extensibility."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_gateway_name: str,
+        region: str,
+        metadata: Optional["_models.SCMetadataEntity"] = None,
+        dictionary: Optional[list["_models.KeyValuePair"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkGatewayResource(ProxyResource):
+    """Details of network gateway record.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar properties: Network Gateway Properties.
+    :vartype properties: ~azure.mgmt.confluent.models.NetworkGatewayProperties
+    """
+
+    properties: Optional["_models.NetworkGatewayProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network Gateway Properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.NetworkGatewayProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -3341,6 +3665,75 @@ class RoleBindingRecord(_Model):
         principal: Optional[str] = None,
         role_name: Optional[str] = None,
         crn_pattern: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SaaSData(_Model):
+    """SaaS-related data properties.
+
+    :ivar saa_s_resource_id: SaaS resource id.
+    :vartype saa_s_resource_id: str
+    """
+
+    saa_s_resource_id: Optional[str] = rest_field(
+        name="saaSResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SaaS resource id."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saa_s_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SaaSResourceDetailsResponse(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar saas_id: Id of the Marketplace SaaS Resource.
+    :vartype saas_id: str
+    """
+
+    saas_id: Optional[str] = rest_field(name="saasId", visibility=["read", "create", "update", "delete", "query"])
+    """Id of the Marketplace SaaS Resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        saas_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -4479,6 +4872,43 @@ class ValidationResponse(_Model):
         self,
         *,
         info: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VnetInjectionDetails(_Model):
+    """Details for VNet injection.
+
+    :ivar virtual_network_resource_id: Resource ID of the virtual network. Required.
+    :vartype virtual_network_resource_id: str
+    :ivar subnet_resource_id: Resource ID of the subnet. Required.
+    :vartype subnet_resource_id: str
+    """
+
+    virtual_network_resource_id: str = rest_field(
+        name="virtualNetworkResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of the virtual network. Required."""
+    subnet_resource_id: str = rest_field(
+        name="subnetResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of the subnet. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        virtual_network_resource_id: str,
+        subnet_resource_id: str,
     ) -> None: ...
 
     @overload

@@ -13,8 +13,10 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_header_regex_sanitizer,
     add_oauth_response_sanitizer,
+    add_remove_header_sanitizer,
     add_uri_string_sanitizer,
     test_proxy,
+    set_custom_default_matcher,
 )
 
 
@@ -28,3 +30,5 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
 
     add_uri_string_sanitizer(target=".preprod.", value=".")
+    set_custom_default_matcher(ignore_query_ordering=True)
+    add_remove_header_sanitizer(headers="Accept")

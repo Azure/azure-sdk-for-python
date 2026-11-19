@@ -17,21 +17,50 @@ DESCRIPTION:
 USAGE:
     python sample_knowledge_source_crud.py
 
-    Set the following environment variables before running the sample:
+    Set the following environment variables before running the standard CRUD scenarios:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
         (e.g., https://<your-search-service-name>.search.windows.net)
     2) AZURE_SEARCH_API_KEY - the admin key for your search service
     3) AZURE_SEARCH_INDEX_NAME - target search index name. The index must have a
         semantic configuration (e.g., "hotels-sample-index").
+
+    The private Blob ingestion scenario runs only when all of these optional variables are set:
+    4) AZURE_STORAGE_RESOURCE_ID_CONNECTION_STRING - ResourceId connection string for private Blob ingestion
+    5) AZURE_STORAGE_CONTAINER - Blob container with supported and fallback language fixtures
+    6) AZURE_SEARCH_USER_ASSIGNED_IDENTITY - user-assigned identity assigned to the Search service
+    7) AZURE_AI_SERVICES_ENDPOINT - AI Services endpoint used for language detection
+    8) AZURE_AI_SERVICES_API_KEY - AI Services API key
+    9) AZURE_SEARCH_EXPECTED_ANALYZER - analyzer expected for the supported-language fixture
+    10) AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER - analyzer expected for the fallback fixture
+    11) AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_EMBEDDING_DEPLOYMENT, AZURE_OPENAI_EMBEDDING_MODEL
+        - embedding resource and deployment accessible to the Search identity
+
+    The storage and AI Services shared private links must already be approved. Shared private-link
+    resources are control-plane resources and are not configured by this data-plane sample.
 """
 
-
 import os
+
+from sample_utils import cleanup_resources, get_sample_run_tag, wait_for_knowledge_source_active
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
 index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
 key = os.environ["AZURE_SEARCH_API_KEY"]
-knowledge_source_name = "hotels-sample-knowledge-source"
+run_tag = get_sample_run_tag()
+knowledge_source_name = f"hotels-sample-knowledge-source-{run_tag}"
+private_blob_source_name = f"hotels-private-blob-knowledge-source-{run_tag}"
+private_blob_environment_variables = (
+    "AZURE_STORAGE_RESOURCE_ID_CONNECTION_STRING",
+    "AZURE_STORAGE_CONTAINER",
+    "AZURE_SEARCH_USER_ASSIGNED_IDENTITY",
+    "AZURE_AI_SERVICES_ENDPOINT",
+    "AZURE_AI_SERVICES_API_KEY",
+    "AZURE_SEARCH_EXPECTED_ANALYZER",
+    "AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER",
+    "AZURE_OPENAI_ENDPOINT",
+    "AZURE_OPENAI_EMBEDDING_DEPLOYMENT",
+    "AZURE_OPENAI_EMBEDDING_MODEL",
+)
 
 
 def create_knowledge_source():
@@ -102,12 +131,115 @@ def list_knowledge_sources():
     # [START list_knowledge_sources]
     from azure.core.credentials import AzureKeyCredential
     from azure.search.documents.indexes import SearchIndexClient
+    from azure.search.documents.indexes.models import SearchIndexKnowledgeSource, SearchIndexKnowledgeSourceParameters
 
     index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-
-    for ks in index_client.list_knowledge_sources():
-        print(f"Listed: knowledge source '{ks.name}'")
+    companion_name = f"{knowledge_source_name}-page"
+    companion = SearchIndexKnowledgeSource(
+        name=companion_name,
+        search_index_parameters=SearchIndexKnowledgeSourceParameters(search_index_name=index_name),
+    )
+    index_client.create_or_update_knowledge_source(companion)
+    try:
+        sources = list(
+            index_client.list_knowledge_sources(
+                search=knowledge_source_name,
+                page_size=1,
+                search_type="prefix",
+            )
+        )
+        source_names = [source.name for source in sources]
+        assert set(source_names) == {knowledge_source_name, companion_name}
+        assert len(source_names) == len(set(source_names))
+        print(f"Paged through {len(sources)} knowledge sources without duplicates")
+    finally:
+        index_client.delete_knowledge_source(companion_name)
     # [END list_knowledge_sources]
+
+
+def create_private_blob_knowledge_source():  # pylint: disable=too-many-locals
+    missing_variables = [name for name in private_blob_environment_variables if not os.environ.get(name)]
+    if missing_variables:
+        print(
+            "Skipping private Blob knowledge source scenario; set these optional variables: "
+            + ", ".join(missing_variables)
+        )
+        return
+
+    # [START create_private_blob_knowledge_source]
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+    from azure.search.documents.indexes.models import (
+        AzureBlobKnowledgeSource,
+        AzureBlobKnowledgeSourceParameters,
+        AzureOpenAIVectorizerParameters,
+        LexicalAnalyzerName,
+        SearchIndexerDataUserAssignedIdentity,
+    )
+    from azure.search.documents.knowledgebases.models import (
+        AIServices,
+        KnowledgeSourceAzureOpenAIVectorizer,
+        KnowledgeSourceIngestionParameters,
+    )
+
+    credential = AzureKeyCredential(key)
+    index_client = SearchIndexClient(service_endpoint, credential)
+    indexer_client = SearchIndexerClient(service_endpoint, credential)
+    private_source = AzureBlobKnowledgeSource(
+        name=private_blob_source_name,
+        azure_blob_parameters=AzureBlobKnowledgeSourceParameters(
+            connection_string=os.environ["AZURE_STORAGE_RESOURCE_ID_CONNECTION_STRING"],
+            container_name=os.environ["AZURE_STORAGE_CONTAINER"],
+            ingestion_parameters=KnowledgeSourceIngestionParameters(
+                identity=SearchIndexerDataUserAssignedIdentity(
+                    resource_id=os.environ["AZURE_SEARCH_USER_ASSIGNED_IDENTITY"]
+                ),
+                content_extraction_mode="minimal",
+                embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
+                    azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+                        resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
+                        deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
+                        model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
+                    )
+                ),
+                ai_services=AIServices(
+                    uri=os.environ["AZURE_AI_SERVICES_ENDPOINT"],
+                    api_key=os.environ["AZURE_AI_SERVICES_API_KEY"],
+                ),
+                network_access_mode="private",
+            ),
+        ),
+    )
+    try:
+        index_client.create_or_update_knowledge_source(private_source)
+        wait_for_knowledge_source_active(index_client, private_blob_source_name)
+        created = index_client.get_knowledge_source(private_blob_source_name)
+        assert isinstance(created, AzureBlobKnowledgeSource)
+        assert created.azure_blob_parameters.ingestion_parameters is not None
+        assert created.as_dict()["azureBlobParameters"]["ingestionParameters"]["networkAccessMode"] == "private"
+        resources = created.azure_blob_parameters.created_resources
+        assert resources is not None
+        data_source_name = resources.get("datasource")
+        indexer_name = resources.get("indexer")
+        generated_index_name = resources.get("index")
+        assert data_source_name and indexer_name and generated_index_name
+
+        assert indexer_client.get_data_source_connection(data_source_name).name == data_source_name
+        assert indexer_client.get_indexer_status(indexer_name).status is not None
+        generated_index = index_client.get_index(generated_index_name)
+        analyzers = {
+            field.analyzer_name.value if isinstance(field.analyzer_name, LexicalAnalyzerName) else field.analyzer_name
+            for field in generated_index.fields
+            if field.analyzer_name is not None
+        }
+        assert os.environ["AZURE_SEARCH_EXPECTED_ANALYZER"] in analyzers
+        assert os.environ["AZURE_SEARCH_EXPECTED_FALLBACK_ANALYZER"] in analyzers
+        print(f"Verified generated resources and analyzers: {sorted(analyzers)}")
+    finally:
+        cleanup_resources(index_client, knowledge_source_name=private_blob_source_name)
+        indexer_client.close()
+        index_client.close()
+    # [END create_private_blob_knowledge_source]
 
 
 def delete_knowledge_source():
@@ -123,8 +255,16 @@ def delete_knowledge_source():
 
 
 if __name__ == "__main__":
-    create_knowledge_source()
-    get_knowledge_source()
-    update_knowledge_source()
-    list_knowledge_sources()
-    delete_knowledge_source()
+    from azure.core.credentials import AzureKeyCredential
+    from azure.search.documents.indexes import SearchIndexClient
+
+    try:
+        create_knowledge_source()
+        get_knowledge_source()
+        update_knowledge_source()
+        list_knowledge_sources()
+        create_private_blob_knowledge_source()
+        delete_knowledge_source()
+    finally:
+        with SearchIndexClient(service_endpoint, AzureKeyCredential(key)) as cleanup_client:
+            cleanup_resources(cleanup_client, knowledge_source_name=knowledge_source_name)

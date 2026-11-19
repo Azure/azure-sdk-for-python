@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import MongoClusterMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_mongo_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_mongo_clusters_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_mongo_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +160,7 @@ def build_mongo_clusters_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}"
     path_format_arguments = {
@@ -184,7 +183,7 @@ def build_mongo_clusters_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -209,7 +208,7 @@ def build_mongo_clusters_list_request(subscription_id: str, **kwargs: Any) -> Ht
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -235,7 +234,7 @@ def build_mongo_clusters_list_connection_strings_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -264,7 +263,7 @@ def build_mongo_clusters_check_name_availability_request(  # pylint: disable=nam
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -294,7 +293,7 @@ def build_mongo_clusters_promote_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/promote"
     path_format_arguments = {
@@ -321,7 +320,7 @@ def build_firewall_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -351,7 +350,7 @@ def build_firewall_rules_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,7 +380,7 @@ def build_firewall_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/firewallRules/{firewallRuleName}"
     path_format_arguments = {
@@ -405,7 +404,7 @@ def build_firewall_rules_list_by_mongo_cluster_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -433,7 +432,7 @@ def build_private_endpoint_connections_list_by_mongo_cluster_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -465,7 +464,7 @@ def build_private_endpoint_connections_get_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -501,7 +500,7 @@ def build_private_endpoint_connections_create_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -537,7 +536,7 @@ def build_private_endpoint_connections_delete_request(  # pylint: disable=name-t
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -563,7 +562,7 @@ def build_private_links_list_by_mongo_cluster_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -591,7 +590,7 @@ def build_replicas_list_by_parent_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -619,7 +618,7 @@ def build_users_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -649,7 +648,7 @@ def build_users_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -679,7 +678,7 @@ def build_users_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DocumentDB/mongoClusters/{mongoClusterName}/users/{userName}"
     path_format_arguments = {
@@ -703,7 +702,7 @@ def build_users_list_by_mongo_cluster_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -725,7 +724,7 @@ def build_users_list_by_mongo_cluster_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -835,7 +834,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class MongoClustersOperations:
+class MongoClustersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -854,12 +853,12 @@ class MongoClustersOperations:
 
     @distributed_trace
     def get(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> _models.MongoCluster:
-        """Gets information about a mongo cluster.
+        """Gets information about a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: MongoCluster. The MongoCluster is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.MongoCluster
@@ -934,13 +933,13 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview", "2026-06-01"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01", "2026-06-15-preview", "2026-09-01"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: Union[_models.MongoCluster, JSON, IO[bytes]],
+        resource: Union[_models.MongoCluster, _types.MongoCluster, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1020,13 +1019,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.MongoCluster
@@ -1044,21 +1043,21 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: JSON,
+        resource: _types.MongoCluster,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.MongoCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1078,13 +1077,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -1110,26 +1109,27 @@ class MongoClustersOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-02-01-preview", "2026-06-01"],
+        api_versions_list=["2026-02-01-preview", "2026-06-01", "2026-06-15-preview", "2026-09-01"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        resource: Union[_models.MongoCluster, JSON, IO[bytes]],
+        resource: Union[_models.MongoCluster, _types.MongoCluster, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Create or update a mongo cluster. Update overwrites all properties for the resource. To only
-        modify some of the properties, use PATCH.
+        """Create or update a DocumentDB cluster. Update overwrites all properties for the resource. To
+        only modify some of the properties, use PATCH.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param resource: Resource create parameters. Is one of the following types: MongoCluster, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.MongoCluster or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a MongoCluster type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.MongoCluster or
+         ~azure.mgmt.mongocluster.types.MongoCluster or IO[bytes]
         :return: An instance of LROPoller that returns MongoCluster. The MongoCluster is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1191,7 +1191,7 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoClusterUpdate, _types.MongoClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1272,13 +1272,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate
@@ -1296,21 +1296,21 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: JSON,
+        properties: _types.MongoClusterUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.mongocluster.types.MongoClusterUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1330,13 +1330,13 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param properties: The resource properties to be updated. Required.
         :type properties: IO[bytes]
@@ -1354,20 +1354,21 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        properties: Union[_models.MongoClusterUpdate, JSON, IO[bytes]],
+        properties: Union[_models.MongoClusterUpdate, _types.MongoClusterUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.MongoCluster]:
-        """Updates an existing mongo cluster. The request body can contain one to many of the properties
-        present in the normal mongo cluster definition.
+        """Updates an existing DocumentDB cluster. The request body can contain one to many of the
+        properties present in the normal DocumentDB cluster definition.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         MongoClusterUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a MongoClusterUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.mongocluster.models.MongoClusterUpdate or
+         ~azure.mgmt.mongocluster.types.MongoClusterUpdate or IO[bytes]
         :return: An instance of LROPoller that returns MongoCluster. The MongoCluster is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1486,12 +1487,12 @@ class MongoClustersOperations:
 
     @distributed_trace
     def begin_delete(self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any) -> LROPoller[None]:
-        """Deletes a mongo cluster.
+        """Deletes a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -1543,7 +1544,7 @@ class MongoClustersOperations:
 
     @distributed_trace
     def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> ItemPaged["_models.MongoCluster"]:
-        """List all the mongo clusters in a given resource group.
+        """List all the DocumentDB clusters in a given resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -1640,7 +1641,7 @@ class MongoClustersOperations:
 
     @distributed_trace
     def list(self, **kwargs: Any) -> ItemPaged["_models.MongoCluster"]:
-        """List all the mongo clusters in a given subscription.
+        """List all the DocumentDB clusters in a given subscription.
 
         :return: An iterator like instance of MongoCluster
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.MongoCluster]
@@ -1735,13 +1736,13 @@ class MongoClustersOperations:
     def list_connection_strings(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> _models.ListConnectionStringsResult:
-        """List mongo cluster connection strings. This includes the default connection string using
+        """List DocumentDB cluster connection strings. This includes the default connection string using
         SCRAM-SHA-256, as well as other connection strings supported by the cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: ListConnectionStringsResult. The ListConnectionStringsResult is compatible with
          MutableMapping
@@ -1814,7 +1815,7 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1831,14 +1832,19 @@ class MongoClustersOperations:
 
     @overload
     def check_name_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The CheckAvailability request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1852,7 +1858,7 @@ class MongoClustersOperations:
     def check_name_availability(
         self, location: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1869,15 +1875,19 @@ class MongoClustersOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, location: str, body: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResponse:
-        """Check if mongo cluster name is available for use.
+        """Check if DocumentDB cluster name is available for use.
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The CheckAvailability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The CheckAvailability request. Is either a CheckNameAvailabilityRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.mongocluster.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResponse. The CheckNameAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.CheckNameAvailabilityResponse
@@ -1970,13 +1980,15 @@ class MongoClustersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def _promote_initial(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        body: Union[_models.PromoteReplicaRequest, _types.PromoteReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2056,12 +2068,12 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
         :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest
@@ -2078,20 +2090,20 @@ class MongoClustersOperations:
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: JSON,
+        body: _types.PromoteReplicaRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.mongocluster.types.PromoteReplicaRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2110,12 +2122,12 @@ class MongoClustersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param body: The content of the action request. Required.
         :type body: IO[bytes]
@@ -2149,25 +2161,28 @@ class MongoClustersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def begin_promote(
         self,
         resource_group_name: str,
         mongo_cluster_name: str,
-        body: Union[_models.PromoteReplicaRequest, JSON, IO[bytes]],
+        body: Union[_models.PromoteReplicaRequest, _types.PromoteReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
-        """Promotes a replica mongo cluster to a primary role.
+        """Promotes a replica DocumentDB cluster to a primary role.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param body: The content of the action request. Is one of the following types:
-         PromoteReplicaRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a PromoteReplicaRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.mongocluster.models.PromoteReplicaRequest or
+         ~azure.mgmt.mongocluster.types.PromoteReplicaRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2220,7 +2235,7 @@ class MongoClustersOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class FirewallRulesOperations:
+class FirewallRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2241,14 +2256,14 @@ class FirewallRulesOperations:
     def get(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> _models.FirewallRule:
-        """Gets information about a mongo cluster firewall rule.
+        """Gets information about a DocumentDB cluster firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :return: FirewallRule. The FirewallRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.FirewallRule
@@ -2317,7 +2332,7 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.FirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2400,14 +2415,14 @@ class FirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.FirewallRule
@@ -2426,22 +2441,22 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: JSON,
+        resource: _types.FirewallRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.FirewallRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2462,14 +2477,14 @@ class FirewallRulesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -2488,21 +2503,22 @@ class FirewallRulesOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         firewall_rule_name: str,
-        resource: Union[_models.FirewallRule, JSON, IO[bytes]],
+        resource: Union[_models.FirewallRule, _types.FirewallRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.FirewallRule]:
-        """Creates a new firewall rule or updates an existing firewall rule on a mongo cluster.
+        """Creates a new firewall rule or updates an existing firewall rule on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
-        :param resource: Resource create parameters. Is one of the following types: FirewallRule, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.FirewallRule or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FirewallRule type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.FirewallRule or
+         ~azure.mgmt.mongocluster.types.FirewallRule or IO[bytes]
         :return: An instance of LROPoller that returns FirewallRule. The FirewallRule is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.FirewallRule]
@@ -2627,14 +2643,14 @@ class FirewallRulesOperations:
     def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, firewall_rule_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a mongo cluster firewall rule.
+        """Deletes a DocumentDB cluster firewall rule.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param firewall_rule_name: The name of the mongo cluster firewall rule. Required.
+        :param firewall_rule_name: The name of the DocumentDB cluster firewall rule. Required.
         :type firewall_rule_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -2689,12 +2705,12 @@ class FirewallRulesOperations:
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> ItemPaged["_models.FirewallRule"]:
-        """List all the firewall rules in a given mongo cluster.
+        """List all the firewall rules in a given DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of FirewallRule
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.FirewallRule]
@@ -2788,7 +2804,7 @@ class FirewallRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2814,7 +2830,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of PrivateEndpointConnectionResource
         :rtype:
@@ -2917,7 +2933,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -2990,7 +3006,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3078,7 +3094,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -3101,7 +3117,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.PrivateEndpointConnectionResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3111,13 +3127,13 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3144,7 +3160,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -3167,7 +3183,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.PrivateEndpointConnectionResource, JSON, IO[bytes]],
+        resource: Union[_models.PrivateEndpointConnectionResource, _types.PrivateEndpointConnectionResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnectionResource]:
         """Create a Private endpoint connection.
@@ -3175,15 +3191,15 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         PrivateEndpointConnectionResource, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a PrivateEndpointConnectionResource type
+         or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.mongocluster.models.PrivateEndpointConnectionResource or
+         ~azure.mgmt.mongocluster.types.PrivateEndpointConnectionResource or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnectionResource. The
          PrivateEndpointConnectionResource is compatible with MutableMapping
         :rtype:
@@ -3318,7 +3334,7 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
@@ -3373,7 +3389,7 @@ class PrivateEndpointConnectionsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class PrivateLinksOperations:
+class PrivateLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3399,7 +3415,7 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of PrivateLinkResource
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.PrivateLinkResource]
@@ -3493,7 +3509,7 @@ class PrivateLinksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ReplicasOperations:
+class ReplicasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3532,17 +3548,19 @@ class ReplicasOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def list_by_parent(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> ItemPaged["_models.Replica"]:
-        """List all the replicas for the mongo cluster.
+        """List all the replicas for the DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of Replica
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.Replica]
@@ -3636,7 +3654,7 @@ class ReplicasOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class UsersOperations:
+class UsersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3673,17 +3691,19 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def get(self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any) -> _models.User:
-        """Gets the defintion of a Mongo cluster user.
+        """Gets the defintion of a DocumentDB cluster user.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :return: User. The User is compatible with MutableMapping
         :rtype: ~azure.mgmt.mongocluster.models.User
@@ -3767,6 +3787,8 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def _create_or_update_initial(
@@ -3774,7 +3796,7 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: Union[_models.User, JSON, IO[bytes]],
+        resource: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3856,14 +3878,14 @@ class UsersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
         :type resource: ~azure.mgmt.mongocluster.models.User
@@ -3881,22 +3903,22 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: JSON,
+        resource: _types.User,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.mongocluster.types.User
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3916,14 +3938,14 @@ class UsersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> LROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :param resource: Resource create parameters. Required.
         :type resource: IO[bytes]
@@ -3956,6 +3978,8 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def begin_create_or_update(
@@ -3963,21 +3987,22 @@ class UsersOperations:
         resource_group_name: str,
         mongo_cluster_name: str,
         user_name: str,
-        resource: Union[_models.User, JSON, IO[bytes]],
+        resource: Union[_models.User, _types.User, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.User]:
-        """Creates a new user or updates an existing user on a mongo cluster.
+        """Creates a new user or updates an existing user on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
-        :param resource: Resource create parameters. Is one of the following types: User, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.mongocluster.models.User or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a User type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.mongocluster.models.User or ~azure.mgmt.mongocluster.types.User or
+         IO[bytes]
         :return: An instance of LROPoller that returns User. The User is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.mongocluster.models.User]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4053,6 +4078,8 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def _delete_initial(
@@ -4136,19 +4163,21 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def begin_delete(
         self, resource_group_name: str, mongo_cluster_name: str, user_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes a mongo cluster user.
+        """Deletes a DocumentDB cluster user.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
-        :param user_name: The name of the mongo cluster user. Required.
+        :param user_name: The name of the DocumentDB cluster user. Required.
         :type user_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -4218,17 +4247,19 @@ class UsersOperations:
             "2025-09-01",
             "2026-02-01-preview",
             "2026-06-01",
+            "2026-06-15-preview",
+            "2026-09-01",
         ],
     )
     def list_by_mongo_cluster(
         self, resource_group_name: str, mongo_cluster_name: str, **kwargs: Any
     ) -> ItemPaged["_models.User"]:
-        """List all the users on a mongo cluster.
+        """List all the users on a DocumentDB cluster.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param mongo_cluster_name: The name of the mongo cluster. Required.
+        :param mongo_cluster_name: The name of the DocumentDB cluster. Required.
         :type mongo_cluster_name: str
         :return: An iterator like instance of User
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.mongocluster.models.User]

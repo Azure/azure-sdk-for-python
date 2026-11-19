@@ -235,5 +235,5 @@
         "azure.mgmt.enclave.operations.ApprovalOperations.begin_notify_initiator": "Microsoft.Mission.Approval.notifyInitiator",
         "azure.mgmt.enclave.aio.operations.ApprovalOperations.begin_notify_initiator": "Microsoft.Mission.Approval.notifyInitiator"
     },
-    "CrossLanguageVersion": "606a5e506172"
+    "CrossLanguageVersion": "d4a66a4b371e"
 }

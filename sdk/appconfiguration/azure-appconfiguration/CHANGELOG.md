@@ -1,14 +1,15 @@
 # Release History
 
-## 1.10.0b2 (Unreleased)
+## 1.11.0 (Unreleased)
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
+- Added `FeatureFlagClient` (sync and async) and feature flag models for managing feature flags through the dedicated endpoint.
 
 ### Other Changes
+
+- Promoted the package from preview to general availability.
+- Updated the default service API version to `2026-05-01-preview`.
 
 ## 1.10.0b1 (2026-08-19)
 
@@ -23,6 +24,18 @@
 ### Other Changes
 
 - Updated the default service API version to `2026-05-01-preview`.
+
+## 1.10.1 (2026-11-19)
+
+### Other Changes
+
+- Improved Microsoft Entra ID authentication audience inference for additional App Configuration endpoint formats.
+
+## 1.10.0 (2026-10-08)
+
+### Other Changes
+
+- Improved Microsoft Entra ID authentication audience detection for sovereign clouds. When `audience` is not set, the client now derives it from the App Configuration endpoint hostname. An explicitly configured audience continues to override detection.
 
 ## 1.9.0 (2026-06-18)
 

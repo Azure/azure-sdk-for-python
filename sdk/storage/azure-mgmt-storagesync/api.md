@@ -353,6 +353,45 @@ namespace azure.mgmt.storagesync.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: CloudEndpointUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CloudEndpoint]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: CloudEndpointUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CloudEndpoint]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CloudEndpoint]: ...
+
         @distributed_trace_async
         async def get(
                 self, 
@@ -1171,6 +1210,7 @@ namespace azure.mgmt.storagesync.models
 
     class azure.mgmt.storagesync.models.CloudEndpointCreateParametersProperties(_Model):
         azure_file_share_name: Optional[str]
+        change_enumeration_interval_days: Optional[int]
         friendly_name: Optional[str]
         storage_account_resource_id: Optional[str]
         storage_account_tenant_id: Optional[str]
@@ -1180,6 +1220,7 @@ namespace azure.mgmt.storagesync.models
                 self, 
                 *, 
                 azure_file_share_name: Optional[str] = ..., 
+                change_enumeration_interval_days: Optional[int] = ..., 
                 friendly_name: Optional[str] = ..., 
                 storage_account_resource_id: Optional[str] = ..., 
                 storage_account_tenant_id: Optional[str] = ...
@@ -1201,6 +1242,7 @@ namespace azure.mgmt.storagesync.models
     class azure.mgmt.storagesync.models.CloudEndpointProperties(_Model):
         azure_file_share_name: Optional[str]
         backup_enabled: Optional[str]
+        change_enumeration_interval_days: Optional[int]
         change_enumeration_status: Optional[CloudEndpointChangeEnumerationStatus]
         friendly_name: Optional[str]
         last_operation_name: Optional[str]
@@ -1215,6 +1257,7 @@ namespace azure.mgmt.storagesync.models
                 self, 
                 *, 
                 azure_file_share_name: Optional[str] = ..., 
+                change_enumeration_interval_days: Optional[int] = ..., 
                 friendly_name: Optional[str] = ..., 
                 last_operation_name: Optional[str] = ..., 
                 last_workflow_id: Optional[str] = ..., 
@@ -1222,6 +1265,34 @@ namespace azure.mgmt.storagesync.models
                 provisioning_state: Optional[str] = ..., 
                 storage_account_resource_id: Optional[str] = ..., 
                 storage_account_tenant_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storagesync.models.CloudEndpointUpdateParameters(_Model):
+        properties: Optional[CloudEndpointUpdateProperties]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[CloudEndpointUpdateProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.storagesync.models.CloudEndpointUpdateProperties(_Model):
+        change_enumeration_interval_days: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                change_enumeration_interval_days: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -2172,12 +2243,23 @@ namespace azure.mgmt.storagesync.models
     class azure.mgmt.storagesync.models.ServerEndpointSyncActivityStatus(_Model):
         applied_bytes: Optional[int]
         applied_item_count: Optional[int]
+        in_progress_large_file_path: Optional[str]
+        in_progress_large_file_percent_complete: Optional[int]
+        in_progress_large_file_size_bytes: Optional[int]
+        is_remaining_final: Optional[bool]
         per_item_error_count: Optional[int]
+        recent_items_per_second: Optional[float]
+        recent_megabytes_per_second: Optional[float]
+        remaining_delete_count: Optional[int]
+        remaining_directory_count: Optional[int]
+        remaining_file_count: Optional[int]
+        remaining_logical_size_bytes: Optional[int]
         session_minutes_remaining: Optional[int]
         sync_mode: Optional[Union[str, ServerEndpointSyncMode]]
         timestamp: Optional[datetime]
         total_bytes: Optional[int]
         total_item_count: Optional[int]
+        warning: Optional[Union[str, ServerEndpointSyncSessionWarningType]]
 
 
     class azure.mgmt.storagesync.models.ServerEndpointSyncMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2197,6 +2279,11 @@ namespace azure.mgmt.storagesync.models
         last_sync_timestamp: Optional[datetime]
         persistent_files_not_syncing_count: Optional[int]
         transient_files_not_syncing_count: Optional[int]
+
+
+    class azure.mgmt.storagesync.models.ServerEndpointSyncSessionWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BLOCKED_BY_LARGE_FILE = "BlockedByLargeFile"
+        NO_WARNING = "NoWarning"
 
 
     class azure.mgmt.storagesync.models.ServerEndpointSyncStatus(_Model):
@@ -2962,6 +3049,45 @@ namespace azure.mgmt.storagesync.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: CloudEndpointUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CloudEndpoint]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: CloudEndpointUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CloudEndpoint]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_sync_service_name: str, 
+                sync_group_name: str, 
+                cloud_endpoint_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[CloudEndpoint]: ...
+
         @distributed_trace
         def get(
                 self, 
@@ -3650,7 +3776,7 @@ namespace azure.mgmt.storagesync.types
 
     class azure.mgmt.storagesync.types.BackupRequest(TypedDict, total=False):
         key "azureFileShare": str
-        azure_file_share: str
+        azureFileShare: str
 
 
     class azure.mgmt.storagesync.types.CheckNameAvailabilityParameters(TypedDict, total=False):
@@ -3669,30 +3795,41 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: CloudEndpointCreateParametersProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.storagesync.types.CloudEndpointCreateParametersProperties(TypedDict, total=False):
         key "azureFileShareName": str
+        key "changeEnumerationIntervalDays": int
         key "friendlyName": str
         key "storageAccountResourceId": str
         key "storageAccountTenantId": str
-        azure_file_share_name: str
-        friendly_name: str
-        storage_account_resource_id: str
-        storage_account_tenant_id: str
+        azureFileShareName: str
+        changeEnumerationIntervalDays: int
+        friendlyName: str
+        storageAccountResourceId: str
+        storageAccountTenantId: str
+
+
+    class azure.mgmt.storagesync.types.CloudEndpointUpdateParameters(TypedDict, total=False):
+        key "properties": ForwardRef('CloudEndpointUpdateProperties', module='types')
+        properties: CloudEndpointUpdateProperties
+
+
+    class azure.mgmt.storagesync.types.CloudEndpointUpdateProperties(TypedDict, total=False):
+        key "changeEnumerationIntervalDays": int
+        changeEnumerationIntervalDays: int
 
 
     class azure.mgmt.storagesync.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, ManagedServiceIdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ManagedServiceIdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.storagesync.types.PostRestoreRequest(TypedDict, total=False):
@@ -3703,14 +3840,13 @@ namespace azure.mgmt.storagesync.types
         key "requestId": str
         key "sourceAzureFileShareUri": str
         key "status": str
-        azure_file_share_uri: str
-        failed_file_list: str
+        azureFileShareUri: str
+        failedFileList: str
         partition: str
-        replica_group: str
-        request_id: str
+        replicaGroup: str
+        requestId: str
         restoreFileSpec: list[RestoreFileSpec]
-        restore_file_spec: list[RestoreFileSpec]
-        source_azure_file_share_uri: str
+        sourceAzureFileShareUri: str
         status: str
 
 
@@ -3723,15 +3859,14 @@ namespace azure.mgmt.storagesync.types
         key "requestId": str
         key "sourceAzureFileShareUri": str
         key "status": str
-        azure_file_share_uri: str
-        backup_metadata_property_bag: str
+        azureFileShareUri: str
+        backupMetadataPropertyBag: str
         partition: str
-        pause_wait_for_sync_drain_time_period_in_seconds: int
-        replica_group: str
-        request_id: str
+        pauseWaitForSyncDrainTimePeriodInSeconds: int
+        replicaGroup: str
+        requestId: str
         restoreFileSpec: list[RestoreFileSpec]
-        restore_file_spec: list[RestoreFileSpec]
-        source_azure_file_share_uri: str
+        sourceAzureFileShareUri: str
         status: str
 
 
@@ -3749,7 +3884,7 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3758,17 +3893,16 @@ namespace azure.mgmt.storagesync.types
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
         groupIds: list[str]
-        group_ids: list[str]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.storagesync.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateEndpointServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateEndpointServiceConnectionStatus]
 
@@ -3780,7 +3914,7 @@ namespace azure.mgmt.storagesync.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3788,7 +3922,7 @@ namespace azure.mgmt.storagesync.types
         key "pattern": str
         key "recallPath": str
         pattern: str
-        recall_path: str
+        recallPath: str
 
 
     class azure.mgmt.storagesync.types.RegisteredServerCreateParameters(ProxyResource):
@@ -3800,7 +3934,7 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: RegisteredServerCreateParametersProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3816,17 +3950,17 @@ namespace azure.mgmt.storagesync.types
         key "serverId": str
         key "serverOSVersion": str
         key "serverRole": str
-        agent_version: str
-        application_id: str
-        cluster_id: str
-        cluster_name: str
-        friendly_name: str
+        agentVersion: str
+        applicationId: str
+        clusterId: str
+        clusterName: str
+        friendlyName: str
         identity: bool
-        last_heart_beat: str
-        server_certificate: str
-        server_id: str
-        server_os_version: str
-        server_role: str
+        lastHeartBeat: str
+        serverCertificate: str
+        serverId: str
+        serverOSVersion: str
+        serverRole: str
 
 
     class azure.mgmt.storagesync.types.RegisteredServerUpdateParameters(ProxyResource):
@@ -3838,14 +3972,14 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: RegisteredServerUpdateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.storagesync.types.RegisteredServerUpdateProperties(TypedDict, total=False):
         key "applicationId": str
         key "identity": bool
-        application_id: str
+        applicationId: str
         identity: bool
 
 
@@ -3856,7 +3990,7 @@ namespace azure.mgmt.storagesync.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3876,7 +4010,7 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: ServerEndpointCreateParametersProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3892,17 +4026,17 @@ namespace azure.mgmt.storagesync.types
         key "serverResourceId": str
         key "tierFilesOlderThanDays": int
         key "volumeFreeSpacePercent": int
-        cloud_tiering: Union[str, FeatureStatus]
-        friendly_name: str
-        initial_download_policy: Union[str, InitialDownloadPolicy]
-        initial_upload_policy: Union[str, InitialUploadPolicy]
-        local_cache_mode: Union[str, LocalCacheMode]
-        offline_data_transfer: Union[str, FeatureStatus]
-        offline_data_transfer_share_name: str
-        server_local_path: str
-        server_resource_id: str
-        tier_files_older_than_days: int
-        volume_free_space_percent: int
+        cloudTiering: Union[str, FeatureStatus]
+        friendlyName: str
+        initialDownloadPolicy: Union[str, InitialDownloadPolicy]
+        initialUploadPolicy: Union[str, InitialUploadPolicy]
+        localCacheMode: Union[str, LocalCacheMode]
+        offlineDataTransfer: Union[str, FeatureStatus]
+        offlineDataTransferShareName: str
+        serverLocalPath: str
+        serverResourceId: str
+        tierFilesOlderThanDays: int
+        volumeFreeSpacePercent: int
 
 
     class azure.mgmt.storagesync.types.ServerEndpointUpdateParameters(TypedDict, total=False):
@@ -3917,12 +4051,12 @@ namespace azure.mgmt.storagesync.types
         key "offlineDataTransferShareName": str
         key "tierFilesOlderThanDays": int
         key "volumeFreeSpacePercent": int
-        cloud_tiering: Union[str, FeatureStatus]
-        local_cache_mode: Union[str, LocalCacheMode]
-        offline_data_transfer: Union[str, FeatureStatus]
-        offline_data_transfer_share_name: str
-        tier_files_older_than_days: int
-        volume_free_space_percent: int
+        cloudTiering: Union[str, FeatureStatus]
+        localCacheMode: Union[str, LocalCacheMode]
+        offlineDataTransfer: Union[str, FeatureStatus]
+        offlineDataTransferShareName: str
+        tierFilesOlderThanDays: int
+        volumeFreeSpacePercent: int
 
 
     class azure.mgmt.storagesync.types.StorageSyncServiceCreateParameters(TrackedResource):
@@ -3938,7 +4072,7 @@ namespace azure.mgmt.storagesync.types
         location: str
         name: str
         properties: StorageSyncServiceCreateParametersProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -3946,8 +4080,8 @@ namespace azure.mgmt.storagesync.types
     class azure.mgmt.storagesync.types.StorageSyncServiceCreateParametersProperties(TypedDict, total=False):
         key "incomingTrafficPolicy": Union[str, IncomingTrafficPolicy]
         key "useIdentity": bool
-        incoming_traffic_policy: Union[str, IncomingTrafficPolicy]
-        use_identity: bool
+        incomingTrafficPolicy: Union[str, IncomingTrafficPolicy]
+        useIdentity: bool
 
 
     class azure.mgmt.storagesync.types.StorageSyncServiceUpdateParameters(TypedDict, total=False):
@@ -3961,8 +4095,8 @@ namespace azure.mgmt.storagesync.types
     class azure.mgmt.storagesync.types.StorageSyncServiceUpdateProperties(TypedDict, total=False):
         key "incomingTrafficPolicy": Union[str, IncomingTrafficPolicy]
         key "useIdentity": bool
-        incoming_traffic_policy: Union[str, IncomingTrafficPolicy]
-        use_identity: bool
+        incomingTrafficPolicy: Union[str, IncomingTrafficPolicy]
+        useIdentity: bool
 
 
     class azure.mgmt.storagesync.types.SyncGroupCreateParameters(ProxyResource):
@@ -3974,7 +4108,7 @@ namespace azure.mgmt.storagesync.types
         id: str
         name: str
         properties: Any
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3985,12 +4119,12 @@ namespace azure.mgmt.storagesync.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.storagesync.types.TrackedResource(Resource):
@@ -4002,7 +4136,7 @@ namespace azure.mgmt.storagesync.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -4010,21 +4144,21 @@ namespace azure.mgmt.storagesync.types
     class azure.mgmt.storagesync.types.TriggerChangeDetectionParameters(TypedDict, total=False):
         key "changeDetectionMode": Union[str, ChangeDetectionMode]
         key "directoryPath": str
-        change_detection_mode: Union[str, ChangeDetectionMode]
-        directory_path: str
+        changeDetectionMode: Union[str, ChangeDetectionMode]
+        directoryPath: str
         paths: list[str]
 
 
     class azure.mgmt.storagesync.types.TriggerRolloverRequest(TypedDict, total=False):
         key "serverCertificate": str
-        server_certificate: str
+        serverCertificate: str
 
 
     class azure.mgmt.storagesync.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

@@ -1,5 +1,27 @@
 # Release History
 
+## 2.1.0 (2026-08-13)
+
+### Features Added
+
+  - Model `CloudEndpointCreateParametersProperties` added property `change_enumeration_interval_days`
+  - Model `CloudEndpointProperties` added property `change_enumeration_interval_days`
+  - Model `ServerEndpointSyncActivityStatus` added property `in_progress_large_file_path`
+  - Model `ServerEndpointSyncActivityStatus` added property `in_progress_large_file_percent_complete`
+  - Model `ServerEndpointSyncActivityStatus` added property `in_progress_large_file_size_bytes`
+  - Model `ServerEndpointSyncActivityStatus` added property `is_remaining_final`
+  - Model `ServerEndpointSyncActivityStatus` added property `recent_items_per_second`
+  - Model `ServerEndpointSyncActivityStatus` added property `recent_megabytes_per_second`
+  - Model `ServerEndpointSyncActivityStatus` added property `remaining_delete_count`
+  - Model `ServerEndpointSyncActivityStatus` added property `remaining_directory_count`
+  - Model `ServerEndpointSyncActivityStatus` added property `remaining_file_count`
+  - Model `ServerEndpointSyncActivityStatus` added property `remaining_logical_size_bytes`
+  - Model `ServerEndpointSyncActivityStatus` added property `warning`
+  - Added model `CloudEndpointUpdateParameters`
+  - Added model `CloudEndpointUpdateProperties`
+  - Added enum `ServerEndpointSyncSessionWarningType`
+  - Operation group `CloudEndpointsOperations` added method `begin_update`
+
 ## 2.0.0 (2026-07-29)
 
 ### Features Added

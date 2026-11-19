@@ -17,16 +17,20 @@ from ._operations import Operations  # type: ignore
 from ._operations import TargetsOperations  # type: ignore
 from ._operations import CapabilityTypesOperations  # type: ignore
 from ._operations import ExperimentsOperations  # type: ignore
-from ._operations import PrivateAccessesOperations  # type: ignore
 from ._operations import ActionsOperations  # type: ignore
 from ._operations import ActionVersionsOperations  # type: ignore
 from ._operations import TargetTypesOperations  # type: ignore
 from ._operations import OperationStatusesOperations  # type: ignore
 from ._operations import WorkspacesOperations  # type: ignore
+from ._operations import WorkspaceDiscoveriesOperations  # type: ignore
+from ._operations import WorkspaceEvaluationsOperations  # type: ignore
 from ._operations import DiscoveredResourcesOperations  # type: ignore
 from ._operations import ScenariosOperations  # type: ignore
-from ._operations import ScenarioRunsOperations  # type: ignore
+from ._operations import ScenarioTemplatesOperations  # type: ignore
+from ._operations import ScenarioTemplateVersionsOperations  # type: ignore
 from ._operations import ScenarioConfigurationsOperations  # type: ignore
+from ._operations import ScenarioRunsOperations  # type: ignore
+from ._operations import ConnectionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -38,16 +42,20 @@ __all__ = [
     "TargetsOperations",
     "CapabilityTypesOperations",
     "ExperimentsOperations",
-    "PrivateAccessesOperations",
     "ActionsOperations",
     "ActionVersionsOperations",
     "TargetTypesOperations",
     "OperationStatusesOperations",
     "WorkspacesOperations",
+    "WorkspaceDiscoveriesOperations",
+    "WorkspaceEvaluationsOperations",
     "DiscoveredResourcesOperations",
     "ScenariosOperations",
-    "ScenarioRunsOperations",
+    "ScenarioTemplatesOperations",
+    "ScenarioTemplateVersionsOperations",
     "ScenarioConfigurationsOperations",
+    "ScenarioRunsOperations",
+    "ConnectionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

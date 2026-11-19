@@ -26,6 +26,7 @@ from ._shared.models import (
     UserDelegationKey,
     Services,
 )
+from ._session import ContainerSessionProvider, Session, SessionProvider
 from ._generated.models import RehydratePriority
 from ._models import (
     BlobType,
@@ -49,6 +50,7 @@ from ._models import (
     BlobBlock,
     PageRange,
     AccessPolicy,
+    SignedIdentifier,
     ContainerSasPermissions,
     BlobSasPermissions,
     CustomerProvidedEncryptionKey,
@@ -243,6 +245,7 @@ __all__ = [
     "BlobBlock",
     "PageRange",
     "AccessPolicy",
+    "SignedIdentifier",
     "QuickQueryDialect",
     "ContainerSasPermissions",
     "BlobSasPermissions",
@@ -265,4 +268,7 @@ __all__ = [
     "ObjectReplicationPolicy",
     "ObjectReplicationRule",
     "Services",
+    "Session",
+    "SessionProvider",
+    "ContainerSessionProvider",
 ]

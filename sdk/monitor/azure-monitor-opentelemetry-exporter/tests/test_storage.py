@@ -5,6 +5,7 @@ import errno
 import os
 import shutil
 import tempfile
+import threading
 import unittest
 from unittest import mock
 
@@ -12,6 +13,7 @@ from azure.monitor.opentelemetry.exporter._storage import (
     LocalFileBlob,
     LocalFileStorage,
     StorageExportResult,
+    _fmt,
     _now,
     _seconds,
 )
@@ -332,7 +334,9 @@ class TestLocalFileStorage(unittest.TestCase):
 
     def test_get(self):
         now = _now()
-        with LocalFileStorage(os.path.join(TEST_FOLDER, "foo")) as stor:
+        with self.assertNoLogs(STORAGE_MODULE, level="DEBUG"), LocalFileStorage(
+            os.path.join(TEST_FOLDER, "foo")
+        ) as stor:
             stor.put((1, 2, 3), lease_period=10)
             with mock.patch("azure.monitor.opentelemetry.exporter._storage._now") as m:
                 m.return_value = now - _seconds(30 * 24 * 60 * 60)
@@ -389,6 +393,58 @@ class TestLocalFileStorage(unittest.TestCase):
             stor.put(test_input)
             self.assertEqual(stor.get(), None)
 
+    @mock.patch(f"{STORAGE_MODULE}.PeriodicTask")
+    def test_routed_cleanup_reports_data_loss(self, _task):
+        now = _now()
+        for suffix in (".blob", ".tmp"):
+            with self.subTest(suffix=suffix):
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, suffix[1:]), capacity_path=TEST_FOLDER, retention_period=60
+                ) as stor:
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now):
+                        stor.put([{"private": "secret-telemetry"}], lease_period=0)
+                        path = stor.get().fullpath
+                    if suffix == ".tmp":
+                        os.rename(path, path + suffix)
+                        path += suffix
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now + _seconds(61)):
+                        with self.assertLogs(STORAGE_MODULE, level="WARNING") as logs:
+                            self.assertEqual(list(stor.gets()), [])
+                    self.assertFalse(os.path.exists(path))
+                    self.assertEqual(logs.records[0].levelname, "WARNING")
+                    self.assertNotIn("secret-telemetry", logs.output[0])
+                    self.assertNotIn(TEST_FOLDER, logs.output[0])
+
+    @mock.patch(f"{STORAGE_MODULE}.PeriodicTask")
+    def test_routed_eviction_failure_remains_silent(self, _task):
+        now = _now()
+        for cleanup, suffix in (
+            ("gets", ".blob"),
+            ("gets", ".tmp"),
+            ("_check_storage_size", ".blob"),
+            ("_check_storage_size", ".tmp"),
+        ):
+            with self.subTest(cleanup=cleanup, suffix=suffix):
+                with LocalFileStorage(
+                    os.path.join(TEST_FOLDER, f"{cleanup}-{suffix[1:]}"),
+                    capacity_path=TEST_FOLDER,
+                    retention_period=60,
+                ) as stor:
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now):
+                        stor.put([{"private": "secret-telemetry"}], lease_period=0)
+                        path = stor.get().fullpath
+                    if suffix == ".tmp":
+                        os.rename(path, path + suffix)
+                        path += suffix
+                    with mock.patch(f"{STORAGE_MODULE}._now", return_value=now + _seconds(61)):
+                        with mock.patch(f"{STORAGE_MODULE}.os.remove", side_effect=PermissionError("secret-path")):
+                            with self.assertNoLogs(STORAGE_MODULE, level="DEBUG"):
+                                if cleanup == "gets":
+                                    self.assertEqual(list(stor.gets()), [])
+                                else:
+                                    self.assertTrue(stor._check_storage_size())
+                    self.assertTrue(os.path.exists(path))
+
     def test_check_storage_size_full(self):
         test_input = (1, 2, 3)
         test_path = os.path.join(TEST_FOLDER, "asd2")
@@ -408,6 +464,18 @@ class TestLocalFileStorage(unittest.TestCase):
         with LocalFileStorage(os.path.join(TEST_FOLDER, "asd3"), 1000) as stor:
             self.assertTrue(stor._check_storage_size())
 
+    @mock.patch(f"{STORAGE_MODULE}._get_capacity_lock")
+    def test_default_storage_does_not_use_shared_capacity_lock(self, capacity_lock):
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "default")) as stor:
+            self.assertIsNone(stor._capacity_lock)
+        capacity_lock.assert_not_called()
+
+    def test_default_storage_size_check_does_not_run_shared_cleanup(self):
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "default-cleanup")) as stor:
+            with mock.patch.object(stor, "_cleanup_expired_capacity") as cleanup:
+                self.assertTrue(stor._check_storage_size())
+        cleanup.assert_not_called()
+
     def test_check_storage_size_links(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "asd4"), 1000) as stor:
@@ -423,7 +491,9 @@ class TestLocalFileStorage(unittest.TestCase):
                 stor.put(test_input)
                 with mock.patch("os.path.islink") as os_mock:
                     os_mock.return_value = True
-                self.assertTrue(stor._check_storage_size())
+                with mock.patch(f"{STORAGE_MODULE}.logger") as log:
+                    self.assertTrue(stor._check_storage_size())
+                log.error.assert_called_once()
 
     def test_maintenance_routine(self):
         with mock.patch("os.makedirs") as m:
@@ -485,6 +555,108 @@ class TestLocalFileStorage(unittest.TestCase):
             with mock.patch.object(stor, "_check_storage_size", return_value=False):
                 result = stor.put(test_input)
                 self.assertEqual(result, StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED)
+
+    def test_shared_capacity_removes_expired_unopened_partition_files(self):
+        now = _now()
+        capacity_path = os.path.join(TEST_FOLDER, "shared")
+        current_path = os.path.join(capacity_path, "current")
+        abandoned_path = os.path.join(capacity_path, "abandoned")
+        os.makedirs(abandoned_path)
+        expired_prefix = "{}-deadbeef.blob".format(_fmt(now - _seconds(20)))
+        expired_blob = os.path.join(abandoned_path, expired_prefix)
+        expired_lock = os.path.join(
+            abandoned_path,
+            "{}@{}.lock".format(expired_prefix, _fmt(now - _seconds(1))),
+        )
+        active_lock = os.path.join(
+            abandoned_path,
+            "{}@{}.lock".format(expired_prefix, _fmt(now + _seconds(30))),
+        )
+        stale_tmp = os.path.join(
+            abandoned_path,
+            "{}-stale.blob.tmp".format(_fmt(now - _seconds(20))),
+        )
+        fresh_tmp = os.path.join(
+            abandoned_path,
+            "{}-fresh.blob.tmp".format(_fmt(now)),
+        )
+        for path in (expired_blob, expired_lock, active_lock, stale_tmp, fresh_tmp):
+            with open(path, "w", encoding="utf-8") as file:
+                file.write("x" * 100)
+
+        with mock.patch("azure.monitor.opentelemetry.exporter._storage._now", return_value=now):
+            with LocalFileStorage(
+                current_path,
+                max_size=300,
+                retention_period=10,
+                write_timeout=10,
+                capacity_path=capacity_path,
+            ) as stor:
+                with self.assertLogs(STORAGE_MODULE, level="WARNING") as logs:
+                    result = stor.put([{"value": 1}], lease_period=0)
+
+        self.assertEqual(result, StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+        self.assertEqual([record.levelname for record in logs.records], ["WARNING"] * 3)
+        self.assertNotIn(TEST_FOLDER, "\n".join(logs.output))
+        self.assertFalse(os.path.exists(expired_blob))
+        self.assertFalse(os.path.exists(expired_lock))
+        self.assertFalse(os.path.exists(stale_tmp))
+        self.assertTrue(os.path.exists(active_lock))
+        self.assertTrue(os.path.exists(fresh_tmp))
+
+    def test_shared_capacity_serializes_quota_check_and_write(self):
+        capacity_path = os.path.join(TEST_FOLDER, "shared")
+        first_entered = threading.Event()
+        second_entered = threading.Event()
+        release_first = threading.Event()
+        start = threading.Barrier(3)
+        call_lock = threading.Lock()
+        results = []
+        calls = 0
+        original_put = LocalFileBlob.put
+
+        def delayed_put(blob, data, lease_period=0):
+            nonlocal calls
+            with call_lock:
+                calls += 1
+                call = calls
+            if call == 1:
+                first_entered.set()
+                release_first.wait(2)
+            else:
+                second_entered.set()
+            return original_put(blob, data, lease_period)
+
+        def write(storage):
+            start.wait()
+            results.append(storage.put([{"value": 1}], lease_period=0))
+
+        with LocalFileStorage(
+            os.path.join(capacity_path, "one"), max_size=1, capacity_path=capacity_path
+        ) as first, LocalFileStorage(
+            os.path.join(capacity_path, "two"), max_size=1, capacity_path=capacity_path
+        ) as second, mock.patch.object(
+            LocalFileBlob, "put", new=delayed_put
+        ):
+            threads = [threading.Thread(target=write, args=(storage,)) for storage in (first, second)]
+            try:
+                for thread in threads:
+                    thread.start()
+                start.wait()
+                self.assertTrue(first_entered.wait(2))
+                self.assertFalse(second_entered.wait(0.1))
+            finally:
+                release_first.set()
+                for thread in threads:
+                    thread.join(timeout=2)
+
+        self.assertCountEqual(
+            results,
+            [
+                StorageExportResult.LOCAL_FILE_BLOB_SUCCESS,
+                StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED,
+            ],
+        )
 
     def test_put_success_returns_localfileblob(self):
         test_input = (1, 2, 3)

@@ -360,14 +360,14 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_non_streaming_with_content_recording_events(self, **kwargs):
         """Test synchronous MCP agent with non-streaming and content recording enabled (event-based messages)."""
         self._test_sync_mcp_non_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_non_streaming_with_content_recording_attributes(self, **kwargs):
         """Test synchronous MCP agent with non-streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_non_streaming_with_content_recording_impl(False, **kwargs)
@@ -675,14 +675,14 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_non_streaming_without_content_recording_events(self, **kwargs):
         """Test synchronous MCP agent with non-streaming and content recording disabled (event-based messages)."""
         self._test_sync_mcp_non_streaming_without_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_non_streaming_without_content_recording_attributes(self, **kwargs):
         """Test synchronous MCP agent with non-streaming and content recording disabled (attribute-based messages)."""
         self._test_sync_mcp_non_streaming_without_content_recording_impl(False, **kwargs)
@@ -957,14 +957,14 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_streaming_with_content_recording_events(self, **kwargs):
         """Test synchronous MCP agent with streaming and content recording enabled (event-based messages)."""
         self._test_sync_mcp_streaming_with_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_with_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_streaming_with_content_recording_attributes(self, **kwargs):
         """Test synchronous MCP agent with streaming and content recording enabled (attribute-based messages)."""
         self._test_sync_mcp_streaming_with_content_recording_impl(False, **kwargs)
@@ -1233,14 +1233,14 @@ class TestResponsesInstrumentorMCP(TestAiAgentsInstrumentorBase):
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_streaming_without_content_recording_events(self, **kwargs):
         """Test synchronous MCP agent with streaming and content recording disabled (event-based messages)."""
         self._test_sync_mcp_streaming_without_content_recording_impl(True, **kwargs)
 
     @pytest.mark.usefixtures("instrument_without_content")
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_sync_mcp_streaming_without_content_recording_attributes(self, **kwargs):
         """Test synchronous MCP agent with streaming and content recording disabled (attribute-based messages)."""
         self._test_sync_mcp_streaming_without_content_recording_impl(False, **kwargs)

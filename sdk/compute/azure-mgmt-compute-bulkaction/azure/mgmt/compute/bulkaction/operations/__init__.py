@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import VirtualMachineBulkOperationsOperations  # type: ignore
-from ._operations import LaunchBulkInstancesOperationOperations  # type: ignore
 from ._operations import BulkCreateCustomOperations  # type: ignore
+from ._operations import BulkCreateOperations  # type: ignore
 from ._operations import ScheduledActionsOperations  # type: ignore
 from ._operations import ScheduledActionExtensionOperations  # type: ignore
 from ._operations import ScheduledActionOperationStatusOperations  # type: ignore
@@ -29,8 +29,8 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "VirtualMachineBulkOperationsOperations",
-    "LaunchBulkInstancesOperationOperations",
     "BulkCreateCustomOperations",
+    "BulkCreateOperations",
     "ScheduledActionsOperations",
     "ScheduledActionExtensionOperations",
     "ScheduledActionOperationStatusOperations",

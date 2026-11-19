@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "optimization"]
 
 dependencies = [
-    "pyyaml>=6.0",
+    "pyyaml>=6.0.2",
     "azure-core>=1.31.0",
     "azure-identity>=1.15.0",
 ]

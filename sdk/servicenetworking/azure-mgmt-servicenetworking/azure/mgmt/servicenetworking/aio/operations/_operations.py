@@ -9,7 +9,7 @@
 from collections.abc import MutableMapping
 from io import IOBase
 import json
-from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, List, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
 from azure.core import AsyncPipelineClient
@@ -33,9 +33,9 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
-from ..._model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
-from ..._serialization import Deserializer, Serializer
+from ... import models as _models, types as _types
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
 from ...operations._operations import (
     build_associations_interface_create_or_update_request,
@@ -49,6 +49,12 @@ from ...operations._operations import (
     build_frontends_interface_list_by_traffic_controller_request,
     build_frontends_interface_update_request,
     build_operations_list_request,
+    build_private_endpoint_connections_interface_delete_request,
+    build_private_endpoint_connections_interface_get_request,
+    build_private_endpoint_connections_interface_list_by_traffic_controller_request,
+    build_private_endpoint_connections_interface_update_request,
+    build_private_link_resources_interface_get_request,
+    build_private_link_resources_interface_list_by_traffic_controller_request,
     build_security_policies_interface_create_or_update_request,
     build_security_policies_interface_delete_request,
     build_security_policies_interface_get_request,
@@ -63,12 +69,12 @@ from ...operations._operations import (
 )
 from .._configuration import ServiceNetworkingMgmtClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
-class AssociationsInterfaceOperations:
+class AssociationsInterfaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -131,6 +137,7 @@ class AssociationsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -145,11 +152,14 @@ class AssociationsInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Association, response.json())
 
@@ -163,7 +173,7 @@ class AssociationsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         association_name: str,
-        resource: Union[_models.Association, JSON, IO[bytes]],
+        resource: Union[_models.Association, _types.Association, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -203,6 +213,7 @@ class AssociationsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -216,14 +227,17 @@ class AssociationsInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -267,7 +281,7 @@ class AssociationsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         association_name: str,
-        resource: JSON,
+        resource: _types.Association,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -282,7 +296,7 @@ class AssociationsInterfaceOperations:
         :param association_name: Name of Association. Required.
         :type association_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.servicenetworking.types.Association
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -329,7 +343,7 @@ class AssociationsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         association_name: str,
-        resource: Union[_models.Association, JSON, IO[bytes]],
+        resource: Union[_models.Association, _types.Association, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Association]:
         """Create a Association.
@@ -341,9 +355,10 @@ class AssociationsInterfaceOperations:
         :type traffic_controller_name: str
         :param association_name: Name of Association. Required.
         :type association_name: str
-        :param resource: Resource create parameters. Is one of the following types: Association, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.Association or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Association type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.Association or
+         ~azure.mgmt.servicenetworking.types.Association or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Association. The Association is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.Association]
@@ -438,7 +453,7 @@ class AssociationsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         association_name: str,
-        properties: JSON,
+        properties: _types.AssociationUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -453,7 +468,7 @@ class AssociationsInterfaceOperations:
         :param association_name: Name of Association. Required.
         :type association_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.servicenetworking.types.AssociationUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -498,7 +513,7 @@ class AssociationsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         association_name: str,
-        properties: Union[_models.AssociationUpdate, JSON, IO[bytes]],
+        properties: Union[_models.AssociationUpdate, _types.AssociationUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Association:
         """Update a Association.
@@ -510,9 +525,10 @@ class AssociationsInterfaceOperations:
         :type traffic_controller_name: str
         :param association_name: Name of Association. Required.
         :type association_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         AssociationUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.AssociationUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a AssociationUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.servicenetworking.models.AssociationUpdate or
+         ~azure.mgmt.servicenetworking.types.AssociationUpdate or IO[bytes]
         :return: Association. The Association is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicenetworking.models.Association
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -554,6 +570,7 @@ class AssociationsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -568,11 +585,14 @@ class AssociationsInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Association, response.json())
 
@@ -611,6 +631,7 @@ class AssociationsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -624,7 +645,10 @@ class AssociationsInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -632,7 +656,7 @@ class AssociationsInterfaceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -704,7 +728,7 @@ class AssociationsInterfaceOperations:
     @distributed_trace
     def list_by_traffic_controller(
         self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Association"]:
+    ) -> AsyncItemPaged["_models.Association"]:
         """List Association resources by TrafficController.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -759,7 +783,10 @@ class AssociationsInterfaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -772,7 +799,10 @@ class AssociationsInterfaceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Association], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Association],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -788,7 +818,10 @@ class AssociationsInterfaceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -796,7 +829,7 @@ class AssociationsInterfaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class FrontendsInterfaceOperations:
+class FrontendsInterfaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -859,6 +892,7 @@ class FrontendsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -873,11 +907,14 @@ class FrontendsInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Frontend, response.json())
 
@@ -891,7 +928,7 @@ class FrontendsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         frontend_name: str,
-        resource: Union[_models.Frontend, JSON, IO[bytes]],
+        resource: Union[_models.Frontend, _types.Frontend, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -931,6 +968,7 @@ class FrontendsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -944,14 +982,17 @@ class FrontendsInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -995,7 +1036,7 @@ class FrontendsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         frontend_name: str,
-        resource: JSON,
+        resource: _types.Frontend,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1010,7 +1051,7 @@ class FrontendsInterfaceOperations:
         :param frontend_name: Frontends. Required.
         :type frontend_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.servicenetworking.types.Frontend
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1057,7 +1098,7 @@ class FrontendsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         frontend_name: str,
-        resource: Union[_models.Frontend, JSON, IO[bytes]],
+        resource: Union[_models.Frontend, _types.Frontend, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Frontend]:
         """Create a Frontend.
@@ -1069,9 +1110,10 @@ class FrontendsInterfaceOperations:
         :type traffic_controller_name: str
         :param frontend_name: Frontends. Required.
         :type frontend_name: str
-        :param resource: Resource create parameters. Is one of the following types: Frontend, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.Frontend or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Frontend type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.Frontend or
+         ~azure.mgmt.servicenetworking.types.Frontend or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Frontend. The Frontend is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.Frontend]
@@ -1166,7 +1208,7 @@ class FrontendsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         frontend_name: str,
-        properties: JSON,
+        properties: _types.FrontendUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1181,7 +1223,7 @@ class FrontendsInterfaceOperations:
         :param frontend_name: Frontends. Required.
         :type frontend_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.servicenetworking.types.FrontendUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1226,7 +1268,7 @@ class FrontendsInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         frontend_name: str,
-        properties: Union[_models.FrontendUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FrontendUpdate, _types.FrontendUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.Frontend:
         """Update a Frontend.
@@ -1238,9 +1280,10 @@ class FrontendsInterfaceOperations:
         :type traffic_controller_name: str
         :param frontend_name: Frontends. Required.
         :type frontend_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FrontendUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.FrontendUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FrontendUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.servicenetworking.models.FrontendUpdate or
+         ~azure.mgmt.servicenetworking.types.FrontendUpdate or IO[bytes]
         :return: Frontend. The Frontend is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicenetworking.models.Frontend
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1282,6 +1325,7 @@ class FrontendsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1296,11 +1340,14 @@ class FrontendsInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Frontend, response.json())
 
@@ -1339,6 +1386,7 @@ class FrontendsInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1352,7 +1400,10 @@ class FrontendsInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -1360,7 +1411,7 @@ class FrontendsInterfaceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1432,7 +1483,7 @@ class FrontendsInterfaceOperations:
     @distributed_trace
     def list_by_traffic_controller(
         self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.Frontend"]:
+    ) -> AsyncItemPaged["_models.Frontend"]:
         """List Frontend resources by TrafficController.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -1486,7 +1537,10 @@ class FrontendsInterfaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1499,7 +1553,10 @@ class FrontendsInterfaceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Frontend], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Frontend],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -1515,7 +1572,10 @@ class FrontendsInterfaceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -1523,7 +1583,7 @@ class FrontendsInterfaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SecurityPoliciesInterfaceOperations:
+class SecurityPoliciesInterfaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1555,6 +1615,7 @@ class SecurityPoliciesInterfaceOperations:
                 "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def get(
         self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
@@ -1599,6 +1660,7 @@ class SecurityPoliciesInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1613,11 +1675,14 @@ class SecurityPoliciesInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityPolicy, response.json())
 
@@ -1639,13 +1704,14 @@ class SecurityPoliciesInterfaceOperations:
                 "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
         security_policy_name: str,
-        resource: Union[_models.SecurityPolicy, JSON, IO[bytes]],
+        resource: Union[_models.SecurityPolicy, _types.SecurityPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1685,6 +1751,7 @@ class SecurityPoliciesInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1698,14 +1765,17 @@ class SecurityPoliciesInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -1749,7 +1819,7 @@ class SecurityPoliciesInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         security_policy_name: str,
-        resource: JSON,
+        resource: _types.SecurityPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1764,7 +1834,7 @@ class SecurityPoliciesInterfaceOperations:
         :param security_policy_name: SecurityPolicy. Required.
         :type security_policy_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.servicenetworking.types.SecurityPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1819,13 +1889,14 @@ class SecurityPoliciesInterfaceOperations:
                 "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def begin_create_or_update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
         security_policy_name: str,
-        resource: Union[_models.SecurityPolicy, JSON, IO[bytes]],
+        resource: Union[_models.SecurityPolicy, _types.SecurityPolicy, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SecurityPolicy]:
         """Create a SecurityPolicy.
@@ -1837,9 +1908,10 @@ class SecurityPoliciesInterfaceOperations:
         :type traffic_controller_name: str
         :param security_policy_name: SecurityPolicy. Required.
         :type security_policy_name: str
-        :param resource: Resource create parameters. Is one of the following types: SecurityPolicy,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.SecurityPolicy or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SecurityPolicy type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.SecurityPolicy or
+         ~azure.mgmt.servicenetworking.types.SecurityPolicy or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SecurityPolicy. The SecurityPolicy is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.SecurityPolicy]
@@ -1934,7 +2006,7 @@ class SecurityPoliciesInterfaceOperations:
         resource_group_name: str,
         traffic_controller_name: str,
         security_policy_name: str,
-        properties: JSON,
+        properties: _types.SecurityPolicyUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1949,7 +2021,7 @@ class SecurityPoliciesInterfaceOperations:
         :param security_policy_name: SecurityPolicy. Required.
         :type security_policy_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.servicenetworking.types.SecurityPolicyUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2002,13 +2074,14 @@ class SecurityPoliciesInterfaceOperations:
                 "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def update(
         self,
         resource_group_name: str,
         traffic_controller_name: str,
         security_policy_name: str,
-        properties: Union[_models.SecurityPolicyUpdate, JSON, IO[bytes]],
+        properties: Union[_models.SecurityPolicyUpdate, _types.SecurityPolicyUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityPolicy:
         """Update a SecurityPolicy.
@@ -2020,10 +2093,10 @@ class SecurityPoliciesInterfaceOperations:
         :type traffic_controller_name: str
         :param security_policy_name: SecurityPolicy. Required.
         :type security_policy_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         SecurityPolicyUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a SecurityPolicyUpdate type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.servicenetworking.models.SecurityPolicyUpdate or
+         ~azure.mgmt.servicenetworking.types.SecurityPolicyUpdate or IO[bytes]
         :return: SecurityPolicy. The SecurityPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicenetworking.models.SecurityPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2065,6 +2138,7 @@ class SecurityPoliciesInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2079,11 +2153,14 @@ class SecurityPoliciesInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SecurityPolicy, response.json())
 
@@ -2101,9 +2178,9 @@ class SecurityPoliciesInterfaceOperations:
                 "resource_group_name",
                 "traffic_controller_name",
                 "security_policy_name",
-                "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
@@ -2135,6 +2212,7 @@ class SecurityPoliciesInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2148,7 +2226,10 @@ class SecurityPoliciesInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2156,7 +2237,7 @@ class SecurityPoliciesInterfaceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2173,9 +2254,9 @@ class SecurityPoliciesInterfaceOperations:
                 "resource_group_name",
                 "traffic_controller_name",
                 "security_policy_name",
-                "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, traffic_controller_name: str, security_policy_name: str, **kwargs: Any
@@ -2250,10 +2331,11 @@ class SecurityPoliciesInterfaceOperations:
                 "accept",
             ]
         },
+        api_versions_list=["2024-05-01-preview", "2025-01-01", "2025-03-01-preview", "2026-03-01"],
     )
     def list_by_traffic_controller(
         self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.SecurityPolicy"]:
+    ) -> AsyncItemPaged["_models.SecurityPolicy"]:
         """List SecurityPolicy resources by TrafficController.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -2308,7 +2390,10 @@ class SecurityPoliciesInterfaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2321,7 +2406,10 @@ class SecurityPoliciesInterfaceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.SecurityPolicy], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.SecurityPolicy],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -2337,7 +2425,10 @@ class SecurityPoliciesInterfaceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -2345,7 +2436,7 @@ class SecurityPoliciesInterfaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TrafficControllerInterfaceOperations:
+class TrafficControllerInterfaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2405,6 +2496,7 @@ class TrafficControllerInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2419,11 +2511,14 @@ class TrafficControllerInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TrafficController, response.json())
 
@@ -2436,7 +2531,7 @@ class TrafficControllerInterfaceOperations:
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        resource: Union[_models.TrafficController, JSON, IO[bytes]],
+        resource: Union[_models.TrafficController, _types.TrafficController, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2475,6 +2570,7 @@ class TrafficControllerInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2488,14 +2584,17 @@ class TrafficControllerInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
         if response.status_code == 201:
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2536,7 +2635,7 @@ class TrafficControllerInterfaceOperations:
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        resource: JSON,
+        resource: _types.TrafficController,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2549,7 +2648,7 @@ class TrafficControllerInterfaceOperations:
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.servicenetworking.types.TrafficController
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2594,7 +2693,7 @@ class TrafficControllerInterfaceOperations:
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        resource: Union[_models.TrafficController, JSON, IO[bytes]],
+        resource: Union[_models.TrafficController, _types.TrafficController, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TrafficController]:
         """Create a TrafficController.
@@ -2604,9 +2703,10 @@ class TrafficControllerInterfaceOperations:
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param resource: Resource create parameters. Is one of the following types: TrafficController,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.servicenetworking.models.TrafficController or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a TrafficController type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.TrafficController or
+         ~azure.mgmt.servicenetworking.types.TrafficController or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TrafficController. The TrafficController is
          compatible with MutableMapping
         :rtype:
@@ -2697,7 +2797,7 @@ class TrafficControllerInterfaceOperations:
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        properties: JSON,
+        properties: _types.TrafficControllerUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2710,7 +2810,7 @@ class TrafficControllerInterfaceOperations:
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.servicenetworking.types.TrafficControllerUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2751,7 +2851,7 @@ class TrafficControllerInterfaceOperations:
         self,
         resource_group_name: str,
         traffic_controller_name: str,
-        properties: Union[_models.TrafficControllerUpdate, JSON, IO[bytes]],
+        properties: Union[_models.TrafficControllerUpdate, _types.TrafficControllerUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.TrafficController:
         """Update a TrafficController.
@@ -2761,10 +2861,10 @@ class TrafficControllerInterfaceOperations:
         :type resource_group_name: str
         :param traffic_controller_name: traffic controller name for path. Required.
         :type traffic_controller_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         TrafficControllerUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.servicenetworking.models.TrafficControllerUpdate or JSON or
-         IO[bytes]
+        :param properties: The resource properties to be updated. Is either a TrafficControllerUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.servicenetworking.models.TrafficControllerUpdate or
+         ~azure.mgmt.servicenetworking.types.TrafficControllerUpdate or IO[bytes]
         :return: TrafficController. The TrafficController is compatible with MutableMapping
         :rtype: ~azure.mgmt.servicenetworking.models.TrafficController
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2805,6 +2905,7 @@ class TrafficControllerInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2819,11 +2920,14 @@ class TrafficControllerInterfaceOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.TrafficController, response.json())
 
@@ -2861,6 +2965,7 @@ class TrafficControllerInterfaceOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -2874,7 +2979,10 @@ class TrafficControllerInterfaceOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}
@@ -2882,7 +2990,7 @@ class TrafficControllerInterfaceOperations:
             response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -2951,7 +3059,7 @@ class TrafficControllerInterfaceOperations:
     @distributed_trace
     def list_by_resource_group(
         self, resource_group_name: str, **kwargs: Any
-    ) -> AsyncIterable["_models.TrafficController"]:
+    ) -> AsyncItemPaged["_models.TrafficController"]:
         """List TrafficController resources by resource group.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -3003,7 +3111,10 @@ class TrafficControllerInterfaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3016,7 +3127,10 @@ class TrafficControllerInterfaceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TrafficController], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.TrafficController],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3032,7 +3146,10 @@ class TrafficControllerInterfaceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3040,7 +3157,7 @@ class TrafficControllerInterfaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_by_subscription(self, **kwargs: Any) -> AsyncIterable["_models.TrafficController"]:
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.TrafficController"]:
         """List TrafficController resources by subscription ID.
 
         :return: An iterator like instance of TrafficController
@@ -3088,7 +3205,10 @@ class TrafficControllerInterfaceOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3101,7 +3221,10 @@ class TrafficControllerInterfaceOperations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.TrafficController], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.TrafficController],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3117,7 +3240,10 @@ class TrafficControllerInterfaceOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -3125,7 +3251,894 @@ class TrafficControllerInterfaceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class Operations:
+class PrivateEndpointConnectionsInterfaceOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.servicenetworking.aio.ServiceNetworkingMgmtClient`'s
+        :attr:`private_endpoint_connections_interface` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ServiceNetworkingMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_endpoint_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> _models.PrivateEndpointConnection:
+        """Get a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :return: PrivateEndpointConnection. The PrivateEndpointConnection is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.servicenetworking.models.PrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
+
+        _request = build_private_endpoint_connections_interface_get_request(
+            resource_group_name=resource_group_name,
+            traffic_controller_name=traffic_controller_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_private_endpoint_connections_interface_update_request(
+            resource_group_name=resource_group_name,
+            traffic_controller_name=traffic_controller_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        resource: _models.PrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Create a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.PrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        resource: _types.PrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Create a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.servicenetworking.types.PrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Create a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        resource: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
+        """Create a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Is either a PrivateEndpointConnection type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.servicenetworking.models.PrivateEndpointConnection or
+         ~azure.mgmt.servicenetworking.types.PrivateEndpointConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
+         PrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicenetworking.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PrivateEndpointConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                traffic_controller_name=traffic_controller_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PrivateEndpointConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PrivateEndpointConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PrivateEndpointConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def _delete_initial(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_private_endpoint_connections_interface_delete_request(
+            resource_group_name=resource_group_name,
+            traffic_controller_name=traffic_controller_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def begin_delete(
+        self,
+        resource_group_name: str,
+        traffic_controller_name: str,
+        private_endpoint_connection_name: str,
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_endpoint_connection_name: Private Endpoint Connection. Required.
+        :type private_endpoint_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                traffic_controller_name=traffic_controller_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "traffic_controller_name", "accept"]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    def list_by_traffic_controller(
+        self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
+        """List PrivateEndpointConnection resources by TrafficController.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :return: An iterator like instance of PrivateEndpointConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicenetworking.models.PrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateEndpointConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_private_endpoint_connections_interface_list_by_traffic_controller_request(
+                    resource_group_name=resource_group_name,
+                    traffic_controller_name=traffic_controller_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class PrivateLinkResourcesInterfaceOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.servicenetworking.aio.ServiceNetworkingMgmtClient`'s
+        :attr:`private_link_resources_interface` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ServiceNetworkingMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "traffic_controller_name",
+                "private_link_resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    async def get(
+        self, resource_group_name: str, traffic_controller_name: str, private_link_resource_name: str, **kwargs: Any
+    ) -> _models.PrivateLinkResource:
+        """Get a PrivateLinkResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :param private_link_resource_name: Private Link Resource. Required.
+        :type private_link_resource_name: str
+        :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.servicenetworking.models.PrivateLinkResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
+
+        _request = build_private_link_resources_interface_get_request(
+            resource_group_name=resource_group_name,
+            traffic_controller_name=traffic_controller_name,
+            private_link_resource_name=private_link_resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateLinkResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-03-01",
+        params_added_on={
+            "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "traffic_controller_name", "accept"]
+        },
+        api_versions_list=["2026-03-01"],
+    )
+    def list_by_traffic_controller(
+        self, resource_group_name: str, traffic_controller_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.PrivateLinkResource"]:
+        """List PrivateLinkResource resources by TrafficController.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param traffic_controller_name: traffic controller name for path. Required.
+        :type traffic_controller_name: str
+        :return: An iterator like instance of PrivateLinkResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicenetworking.models.PrivateLinkResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.PrivateLinkResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_private_link_resources_interface_list_by_traffic_controller_request(
+                    resource_group_name=resource_group_name,
+                    traffic_controller_name=traffic_controller_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PrivateLinkResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3145,7 +4158,7 @@ class Operations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncIterable["_models.Operation"]:
+    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
         :return: An iterator like instance of Operation
@@ -3191,7 +4204,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3204,7 +4220,10 @@ class Operations:
 
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
@@ -3220,7 +4239,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response.json())
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response

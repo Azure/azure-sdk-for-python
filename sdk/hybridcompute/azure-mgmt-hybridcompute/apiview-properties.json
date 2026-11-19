@@ -119,6 +119,12 @@
         "azure.mgmt.hybridcompute.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.hybridcompute.models.TagsResource": "Microsoft.HybridCompute.TagsResource",
         "azure.mgmt.hybridcompute.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",
+        "azure.mgmt.hybridcompute.models.VmApplication": "Microsoft.HybridCompute.VmApplication",
+        "azure.mgmt.hybridcompute.models.VmApplicationInstanceView": "Microsoft.HybridCompute.VmApplicationInstanceView",
+        "azure.mgmt.hybridcompute.models.VmApplicationInstanceViewAction": "Microsoft.HybridCompute.VmApplicationInstanceViewAction",
+        "azure.mgmt.hybridcompute.models.VmApplicationProperties": "Microsoft.HybridCompute.VmApplicationProperties",
+        "azure.mgmt.hybridcompute.models.VmApplicationUpdate": "Microsoft.HybridCompute.VmApplicationUpdate",
+        "azure.mgmt.hybridcompute.models.VmApplicationUpdateProperties": "Azure.ResourceManager.Foundations.ResourceUpdateModelProperties",
         "azure.mgmt.hybridcompute.models.VolumeLicenseDetails": "Microsoft.HybridCompute.VolumeLicenseDetails",
         "azure.mgmt.hybridcompute.models.WindowsParameters": "Microsoft.HybridCompute.WindowsParameters",
         "azure.mgmt.hybridcompute.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
@@ -226,6 +232,18 @@
         "azure.mgmt.hybridcompute.aio.operations.MachineRunCommandsOperations.begin_delete": "Microsoft.HybridCompute.MachineRunCommands.delete",
         "azure.mgmt.hybridcompute.operations.MachineRunCommandsOperations.list": "Microsoft.HybridCompute.MachineRunCommands.list",
         "azure.mgmt.hybridcompute.aio.operations.MachineRunCommandsOperations.list": "Microsoft.HybridCompute.MachineRunCommands.list",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.get": "Microsoft.HybridCompute.VmApplications.get",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.get": "Microsoft.HybridCompute.VmApplications.get",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.get_instance_view": "Microsoft.HybridCompute.VmApplications.getInstanceView",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.get_instance_view": "Microsoft.HybridCompute.VmApplications.getInstanceView",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.begin_create_or_update": "Microsoft.HybridCompute.VmApplications.createOrUpdate",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.begin_create_or_update": "Microsoft.HybridCompute.VmApplications.createOrUpdate",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.begin_update": "Microsoft.HybridCompute.VmApplications.update",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.begin_update": "Microsoft.HybridCompute.VmApplications.update",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.begin_delete": "Microsoft.HybridCompute.VmApplications.delete",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.begin_delete": "Microsoft.HybridCompute.VmApplications.delete",
+        "azure.mgmt.hybridcompute.operations.VmApplicationsOperations.list": "Microsoft.HybridCompute.VmApplications.list",
+        "azure.mgmt.hybridcompute.aio.operations.VmApplicationsOperations.list": "Microsoft.HybridCompute.VmApplications.list",
         "azure.mgmt.hybridcompute.operations.GatewaysOperations.get": "Microsoft.HybridCompute.Gateways.get",
         "azure.mgmt.hybridcompute.aio.operations.GatewaysOperations.get": "Microsoft.HybridCompute.Gateways.get",
         "azure.mgmt.hybridcompute.operations.GatewaysOperations.begin_create_or_update": "Microsoft.HybridCompute.Gateways.createOrUpdate",
@@ -297,5 +315,5 @@
         "azure.mgmt.hybridcompute.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions",
         "azure.mgmt.hybridcompute.aio.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions"
     },
-    "CrossLanguageVersion": "d7b3cc5469b8"
+    "CrossLanguageVersion": "545a32462d00"
 }

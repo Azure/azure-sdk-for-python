@@ -27,7 +27,7 @@ from azure.ai.projects.models import (
 class TestAgentToolsWithConversations(TestBase):
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_function_tool_with_conversation(self, **kwargs):  # pylint: disable=too-many-statements
         """
         Test using FunctionTool within a conversation.
@@ -189,7 +189,7 @@ class TestAgentToolsWithConversations(TestBase):
             print("Cleanup completed")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_file_search_with_conversation(self, **kwargs):
         """
         Test using FileSearchTool within a conversation.
@@ -306,7 +306,7 @@ Widget C:
             print("Cleanup completed")
 
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_code_interpreter_with_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool within a conversation.
@@ -388,7 +388,7 @@ Widget C:
     # To run this test only:
     # pytest tests/agents/tools/test_agent_tools_with_conversations.py::TestAgentToolsWithConversations::test_code_interpreter_with_file_in_conversation -s
     @servicePreparer()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
     def test_code_interpreter_with_file_in_conversation(self, **kwargs):
         """
         Test using CodeInterpreterTool with file upload within a conversation.

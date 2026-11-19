@@ -1109,6 +1109,8 @@ class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01",
             "2026-05-31-preview",
             "2026-07-01",
+            "2026-08-31-preview",
+            "2026-11-01",
         ],
     )
     def list_by_subscription_id(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.DeletedVault"]:
@@ -1219,6 +1221,8 @@ class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01",
             "2026-05-31-preview",
             "2026-07-01",
+            "2026-08-31-preview",
+            "2026-11-01",
         ],
     )
     async def get(self, location: str, deleted_vault_name: str, **kwargs: Any) -> _models.DeletedVault:
@@ -1302,6 +1306,8 @@ class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01",
             "2026-05-31-preview",
             "2026-07-01",
+            "2026-08-31-preview",
+            "2026-11-01",
         ],
     )
     async def _undelete_initial(
@@ -1473,6 +1479,8 @@ class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01",
             "2026-05-31-preview",
             "2026-07-01",
+            "2026-08-31-preview",
+            "2026-11-01",
         ],
     )
     async def begin_undelete(
@@ -1557,6 +1565,8 @@ class DeletedVaultsOperations:  # pylint: disable=docstring-missing-param
             "2026-05-01",
             "2026-05-31-preview",
             "2026-07-01",
+            "2026-08-31-preview",
+            "2026-11-01",
         ],
     )
     async def get_operation_status(

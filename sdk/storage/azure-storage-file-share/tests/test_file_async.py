@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -4540,3 +4541,71 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         await file_client.create_file(len(data), data=data)
         downloaded_data = await (await file_client.download_file()).readall()
         assert downloaded_data == data
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_get_properties_by_file_id(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        try:
+            share_client = self.fsc.get_share_client(self.share_name)
+            directory_client = await share_client.create_directory(self.get_resource_name(TEST_DIRECTORY_PREFIX))
+            file_client = directory_client.get_file_client(self._get_file_reference())
+            await file_client.create_file(1024)
+            file_props = await file_client.get_file_properties()
+            directory_props = await directory_client.get_directory_properties()
+
+            props = await share_client.get_file_client_by_file_id(file_props.file_id).get_file_properties()
+            assert props.file_id == file_props.file_id
+            assert props.parent_id == file_props.parent_id
+            assert props.name == file_client.file_name
+            assert props.size == 1024
+            assert props.path is None
+
+            props = await share_client.get_directory_client_by_file_id(
+                directory_props.file_id
+            ).get_directory_properties()
+            assert props.file_id == directory_props.file_id
+            assert props.parent_id == directory_props.parent_id
+            assert props.name == directory_client.directory_path
+        finally:
+            await self.fsc.delete_share(self.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_get_file_links(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        try:
+            share_client = self.fsc.get_share_client(self.share_name)
+            directory_client = await share_client.create_directory(self.get_resource_name(TEST_DIRECTORY_PREFIX))
+            file_client = directory_client.get_file_client(self._get_file_reference())
+            await file_client.create_file(1024)
+            file_props = await file_client.get_file_properties()
+
+            links = await share_client.get_file_client_by_file_id(file_props.file_id).get_file_links()
+            assert len(links) == 1
+            assert links[0].name == file_client.file_name
+            assert links[0].parent_id == file_props.parent_id
+        finally:
+            await self.fsc.delete_share(self.share_name)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_get_file_links_by_file_id_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = self.fsc.get_share_client(self.share_name).get_file_client_by_file_id("11111111111111111111")
+
+        with pytest.raises(HttpResponseError) as e:
+            await file_client.get_file_links()
+        assert e.value.error_code is not None

@@ -166,13 +166,15 @@ def list_logs_in_datastore(
         storage_type=ds_info["storage_type"],
     )
 
-    items = storage_client.list(starts_with=prefix + "/user_logs/")
+    prefix = prefix.rstrip("/")
+    log_prefix = prefix + "/" if prefix else ""
+    items = storage_client.list(starts_with=log_prefix + "user_logs/")
     # Append legacy log files if present
-    items.extend(storage_client.list(starts_with=prefix + legacy_log_folder_name))
+    items.extend(storage_client.list(starts_with=log_prefix + legacy_log_folder_name.lstrip("/")))
 
     log_dict = {}
     for item_name in items:
-        sub_name = item_name.split(prefix + "/")[1]
+        sub_name = item_name[len(log_prefix) :]
         if isinstance(storage_client, BlobStorageClient):
             token = generate_blob_sas(
                 account_name=ds_info["storage_account"],
@@ -183,10 +185,12 @@ def list_logs_in_datastore(
                 expiry=datetime.utcnow() + timedelta(minutes=30),
             )
         elif isinstance(storage_client, Gen2StorageClient):
-            token = generate_file_sas(  # pylint: disable=no-value-for-parameter
+            directory_name, _, file_name = item_name.rpartition("/")
+            token = generate_file_sas(
                 account_name=ds_info["storage_account"],
                 file_system_name=ds_info["container_name"],
-                file_name=item_name,
+                directory_name=directory_name,
+                file_name=file_name,
                 credential=ds_info["credential"],
                 permission=FileSasPermissions(read=True),
                 expiry=datetime.utcnow() + timedelta(minutes=30),

@@ -52,6 +52,7 @@ REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION = VENDOR + b":get-message-sessio
 REQUEST_RESPONSE_ADD_RULE_OPERATION = VENDOR + b":add-rule"
 REQUEST_RESPONSE_REMOVE_RULE_OPERATION = VENDOR + b":remove-rule"
 REQUEST_RESPONSE_GET_RULES_OPERATION = VENDOR + b":enumerate-rules"
+REQUEST_RESPONSE_BATCH_DELETE_MESSAGES_OPERATION = VENDOR + b":batch-delete-messages"
 
 CONTAINER_PREFIX = "servicebus.pysdk-"
 JWT_TOKEN_SCOPE = "https://servicebus.azure.net//.default"
@@ -68,6 +69,8 @@ DEFAULT_SERVER_TIMEOUT_MS = 60000
 SERVER_TIMEOUT_BUFFER_MS = 1000
 # The property is encoded as an AMQP uint, so cap at its maximum (about 49.7 days).
 MAX_SERVER_TIMEOUT_MS = 2**32 - 1
+# Bounds a receive when neither the call nor the receiver supplied a wait time.
+DEFAULT_RECEIVE_WAIT_TIME_SECS = 60
 
 MANAGEMENT_PATH_SUFFIX = "/$management"
 
@@ -82,6 +85,8 @@ MGMT_REQUEST_SEQUENCE_NUMBERS = "sequence-numbers"
 MGMT_REQUEST_RECEIVER_SETTLE_MODE = "receiver-settle-mode"
 MGMT_REQUEST_FROM_SEQUENCE_NUMBER = "from-sequence-number"
 MGMT_REQUEST_MAX_MESSAGE_COUNT = "message-count"
+MGMT_REQUEST_MESSAGE_COUNT = MGMT_REQUEST_MAX_MESSAGE_COUNT
+MGMT_REQUEST_ENQUEUED_TIME_UTC = "enqueued-time-utc"
 MGMT_REQUEST_MESSAGE = "message"
 MGMT_REQUEST_MESSAGES = "messages"
 MGMT_REQUEST_MESSAGE_ID = "message-id"

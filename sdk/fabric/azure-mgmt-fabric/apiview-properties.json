@@ -57,5 +57,5 @@
         "azure.mgmt.fabric.operations.Operations.list": "Azure.ResourceManager.Operations.list",
         "azure.mgmt.fabric.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list"
     },
-    "CrossLanguageVersion": "663845fadb51"
+    "CrossLanguageVersion": "d892c3a8be5e"
 }

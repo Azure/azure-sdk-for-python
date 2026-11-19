@@ -11,12 +11,36 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation strategy for combining a set of health states into one."""
+
+    WORST_OF = "WorstOf"
+    """Worst health state across members is propagated. Default behavior."""
+    BEST_OF = "BestOf"
+    """Best (least severe) health state across the non-Unknown members is propagated. Unknown members
+    are excluded from the selection; if every member is Unknown the group resolves to Unknown. The
+    'ignoreUnknown' flag has no observable effect for this strategy and is documented as such."""
+    MIN_HEALTHY = "MinHealthy"
+    """Healthy if the count/percentage of healthy members meets the threshold."""
+    MAX_NOT_HEALTHY = "MaxNotHealthy"
+    """Healthy if the count/percentage of not-healthy members stays below the threshold."""
+
+
+class AggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Unit type for the thresholds used by threshold-bearing aggregation strategies."""
+
+    ABSOLUTE = "Absolute"
+    """Threshold is an absolute count of members."""
+    PERCENTAGE = "Percentage"
+    """Threshold is a percentage of members (0-100)."""
 
 
 class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -52,26 +76,6 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
-
-
-class DependenciesAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Aggregation type for child dependencies."""
-
-    WORST_OF = "WorstOf"
-    """Default behavior: Worst child health state is propagated."""
-    MIN_HEALTHY = "MinHealthy"
-    """Healthy if the count/percentage of healthy children meets the threshold."""
-    MAX_NOT_HEALTHY = "MaxNotHealthy"
-    """Healthy if the count/percentage of not-healthy children stays below the threshold."""
-
-
-class DependenciesAggregationUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Unit type for dependency aggregation thresholds."""
-
-    ABSOLUTE = "Absolute"
-    """Threshold is an absolute count of entities."""
-    PERCENTAGE = "Percentage"
-    """Threshold is a percentage of entities (0-100)."""
 
 
 class DiscoveryRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -151,21 +155,6 @@ class HealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Unhealthy status."""
     UNKNOWN = "Unknown"
     """Unknown status."""
-    DELETED = "Deleted"
-    """Deleted status."""
-
-
-class LookBackWindow(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allowed look-back window durations for dynamic threshold computation."""
-
-    PT5_M = "PT5M"
-    """Five minutes."""
-    PT15_M = "PT15M"
-    """Fifteen minutes."""
-    PT30_M = "PT30M"
-    """Thirty minutes."""
-    PT1_H = "PT1H"
-    """One hour."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -202,7 +191,7 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -317,3 +306,14 @@ class SignalOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dynamic threshold — uses deviation from a ML-computed baseline to determine health state
     transitions. Only valid for the unhealthy threshold rule. Requires ``sensitivity`` and
     ``lookBackWindow`` on the rule; ``threshold`` is ignored."""
+
+
+class SignalRecommendationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported signal recommendation kinds."""
+
+    AZURE_RESOURCE_METRIC = "AzureResourceMetric"
+    """Azure Resource Metric recommendation."""
+    LOG_ANALYTICS_QUERY = "LogAnalyticsQuery"
+    """Log Analytics Query recommendation."""
+    PROMETHEUS_METRICS_QUERY = "PrometheusMetricsQuery"
+    """Prometheus Metrics Query recommendation."""

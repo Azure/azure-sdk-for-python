@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import logging
 from typing import List, Any, Optional, cast
-import httpx  # pylint: disable=networking-import-outside-azure-core-transport
+import httpx2  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
@@ -39,6 +39,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
     :ivar beta: BetaOperations operations
     :vartype beta: azure.ai.projects.aio.operations.BetaOperations
+    :ivar voice_agents: VoiceAgentsOperations operations
+    :vartype voice_agents: azure.ai.projects.aio.operations.VoiceAgentsOperations
     :ivar agents: AgentsOperations operations
     :vartype agents: azure.ai.projects.aio.operations.AgentsOperations
     :ivar evaluation_rules: EvaluationRulesOperations operations
@@ -141,8 +143,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         :param kwargs: Caller keyword arguments; ``http_client`` is popped when present.
         :type kwargs: dict
-        :return: An httpx.AsyncClient instance configured with logging transport, or ``None``.
-        :rtype: httpx.AsyncClient or None
+        :return: An httpx2.AsyncClient instance configured with logging transport, or ``None``.
+        :rtype: httpx2.AsyncClient or None
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
@@ -222,10 +224,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         return client
 
 
-class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
+class _OpenAILoggingTransport(httpx2.AsyncHTTPTransport):
     """Custom HTTP async transport that logs OpenAI API requests and responses to the console.
 
-    This transport wraps httpx.AsyncHTTPTransport to intercept all HTTP traffic and print
+    This transport wraps httpx2.AsyncHTTPTransport to intercept all HTTP traffic and print
     detailed request/response information for debugging purposes. It automatically
     redacts sensitive authorization headers and handles various content types including
     multipart form data (file uploads).
@@ -255,20 +257,20 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
                 headers["authorization"] = "<ERROR>"
 
     @staticmethod
-    def _is_streaming_response(response: httpx.Response) -> bool:
+    def _is_streaming_response(response: httpx2.Response) -> bool:
         content_type = response.headers.get("content-type", "").lower()
         return "text/event-stream" in content_type
 
-    async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
+    async def handle_async_request(self, request: httpx2.Request) -> httpx2.Response:
         """
         Log HTTP request and response details to console, in a nicely formatted way,
         for OpenAI / Azure OpenAI clients.
 
         :param request: The HTTP request to handle and log
-        :type request: httpx.Request
+        :type request: httpx2.Request
 
         :return: The HTTP response received
-        :rtype: httpx.Response
+        :rtype: httpx2.Response
         """
 
         _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
@@ -291,7 +293,7 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
 
         if self._is_streaming_response(response):
             if _log_streaming_response_notice(self._logging_enabled):
-                response.stream = _LoggingAsyncByteStream(cast(httpx.AsyncByteStream, response.stream))
+                response.stream = _LoggingAsyncByteStream(cast(httpx2.AsyncByteStream, response.stream))
         else:
             content = await response.aread()
             if content is None or content == b"":
@@ -308,11 +310,11 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
 
         return response
 
-    def _log_request_body(self, request: httpx.Request) -> None:
+    def _log_request_body(self, request: httpx2.Request) -> None:
         """Log request body content safely, handling binary data and streaming content.
 
         :param request: The HTTP request object containing the body to log
-        :type request: httpx.Request
+        :type request: httpx2.Request
         """
 
         # Check content-type header to identify file uploads

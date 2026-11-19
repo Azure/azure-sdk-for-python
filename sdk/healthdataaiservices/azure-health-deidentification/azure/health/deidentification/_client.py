@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, TYPE_CHECKING
-from typing_extensions import Self
 
 from azure.core import PipelineClient
 from azure.core.pipeline import policies
@@ -18,19 +18,27 @@ from ._configuration import DeidentificationClientConfiguration
 from ._operations import _DeidentificationClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DeidentificationClient(_DeidentificationClientOperationsMixin):
+class DeidentificationClient(
+    _DeidentificationClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DeidentificationClient.
 
     :param endpoint: Url of your De-identification Service. Required.
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-07-15-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2025-07-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no

@@ -41,6 +41,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/Skus_GetNestedResourceTypeThird.json
+# x-ms-original-file: 2025-10-01/Skus_GetNestedResourceTypeThird.json
 if __name__ == "__main__":
     main()

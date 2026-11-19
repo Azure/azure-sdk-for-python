@@ -1,5 +1,94 @@
 # Release History
 
+## 1.3.0 (2026-10-29)
+
+### Other Changes
+
+- Stable release of the 1.3.0 preview series, including the experimental
+  Voice route and protocol-scoped task activation. No implementation changes
+  since 1.3.0b1.
+- Require the stable `azure-ai-agentserver-core>=2.3.0` release. Publish Core
+  before Invocations.
+
+## 1.3.0b1 (2026-10-26)
+
+### Features Added
+
+- Capture invocation-local original-subject assertions for HTTP, WebSocket and
+  typed Voice handlers. Model-header propagation is an explicit per-call opt-in.
+- Added immutable `InputDataPart` and `ResponseOutputDataDone` for structured application data in Bridge protocol `1.0`. Existing callbacks and explicit `ResponseNone` silent completion remain application-owned.
+- Added a standalone `/voice_conversation_engine` WebSocket route to the experimental `VoiceAgentServerHost`, reusing the existing typed Bridge event relay alongside `/invocations_ws`. Existing `invocations_ws` behavior and generic `InvocationAgentServerHost` raw WebSocket handlers are unchanged.
+- Aligned the experimental Voice caller-interruption contract with `user.barge_in`, `UserBargeIn`, `UserBargeInCallback`, and `VoiceAgentServerHost.on_user_barge_in`, preserving playback snapshots and application-owned cancellation/history. Voice Live senders must use the same event contract.
+
+### Bugs Fixed
+
+- Reject malformed platform attribution before binding HTTP context, and
+  finalize WebSocket connections with a classified error on invalid metadata.
+- Upgrade both typed Voice WebSocket endpoints before closing with code `1011`
+  on malformed platform attribution, instead of rejecting the HTTP handshake.
+- Apply the Invocations task-runtime switch to both typed Voice WebSocket
+  endpoints, including composed Voice/Responses hosts where Responses
+  independently enables the task manager.
+
+### Other Changes
+
+- Raised the minimum `azure-ai-agentserver-core` dependency to `2.3.0b2` for
+  protocol-scoped task-runtime support and original-subject attribution.
+  Publish that Core version before this package.
+- Invocations continues to opt into resilient tasks with
+  `set_resilient_tasks_enabled(True)` before host startup. Responses
+  protocol-scoped task-runtime activation does not change that global switch,
+  so enabling Responses does not implicitly activate Invocations.
+
+## 1.2.0 (2026-09-29)
+
+### Other Changes
+
+- Stable release of the 1.2.0 preview series.
+- Generate fallback invocation and session IDs only when no valid supplied ID is available.
+
+## 1.2.0b1 (2026-09-03)
+
+### Features Added
+
+- Added W3C Voice connection tracing with one `agentserver.connection` span,
+  content-free `voice.callback` dispatch spans, and aggregate duration and
+  propagation-failure metrics.
+- Added application-declared target-turn tracing through
+  `Session.start_target_turn`, `TargetTurn.activate`, and explicit
+  `TargetTurn.complete` outcomes. The SDK does not infer response lifecycle or
+  own application tasks.
+- Added source-aware `Session.termination` for classifying unfinished
+  application work during connection cleanup.
+
+### Samples
+
+- Updated `basic_voice_agent` to declare target turns around real background
+  generation work and report truthful response, timeout, cancellation,
+  end-call, and transport outcomes, with bounded per-connection concurrency and
+  retained model output. Unfinished turns now distinguish clean abandonment,
+  application/server errors, and protocol or transport loss.
+
+### Other Changes
+
+- Expanded supported `azure-ai-agentserver-core` versions to `<3.0.0`.
+
+## 1.1.0 (2026-08-24)
+
+### Features Added
+
+- Added the typed Voice event relay API under `azure.ai.agentserver.invocations.voice`, including `VoiceAgentServerHost`, typed protocol messages, session lifecycle callbacks, response cancellation and timeout handling, and a basic Voice agent sample.
+
+### Samples
+
+- Updated the resilient LangGraph sample to current `langgraph`,
+  `langgraph-checkpoint-sqlite`, and `langchain-core` release lines.
+
+### Other Changes
+
+- Constrained runtime, development, and sample dependencies to compatible release lines.
+- Updated the minimum `azure-ai-agentserver-core` dependency to the stable `2.1.0` release.
+
 ## 1.1.0b1 (2026-08-11)
 
 ### Samples

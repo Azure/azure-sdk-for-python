@@ -4,11 +4,13 @@ namespace azure.mgmt.containerservicefleet
     class azure.mgmt.containerservicefleet.ContainerServiceFleetMgmtClient: implements ContextManager 
         auto_upgrade_profile_operations: AutoUpgradeProfileOperationsOperations
         auto_upgrade_profiles: AutoUpgradeProfilesOperations
+        cluster_mesh_profiles: ClusterMeshProfilesOperations
         fleet_managed_namespaces: FleetManagedNamespacesOperations
         fleet_members: FleetMembersOperations
         fleet_update_strategies: FleetUpdateStrategiesOperations
         fleets: FleetsOperations
         gates: GatesOperations
+        identity_binding_profiles: IdentityBindingProfilesOperations
         operations: Operations
         update_runs: UpdateRunsOperations
 
@@ -40,11 +42,13 @@ namespace azure.mgmt.containerservicefleet.aio
     class azure.mgmt.containerservicefleet.aio.ContainerServiceFleetMgmtClient: implements AsyncContextManager 
         auto_upgrade_profile_operations: AutoUpgradeProfileOperationsOperations
         auto_upgrade_profiles: AutoUpgradeProfilesOperations
+        cluster_mesh_profiles: ClusterMeshProfilesOperations
         fleet_managed_namespaces: FleetManagedNamespacesOperations
         fleet_members: FleetMembersOperations
         fleet_update_strategies: FleetUpdateStrategiesOperations
         fleets: FleetsOperations
         gates: GatesOperations
+        identity_binding_profiles: IdentityBindingProfilesOperations
         operations: Operations
         update_runs: UpdateRunsOperations
 
@@ -82,7 +86,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-01', params_added_on={'2025-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-03-01', params_added_on={'2025-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_generate_update_run(
                 self, 
                 resource_group_name: str, 
@@ -143,7 +147,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[AutoUpgradeProfile]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'etag', 'match_condition']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'etag', 'match_condition']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -156,7 +160,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -166,7 +170,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AutoUpgradeProfile: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -176,6 +180,102 @@ namespace azure.mgmt.containerservicefleet.aio.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[AutoUpgradeProfile]: ...
+
+
+    class azure.mgmt.containerservicefleet.aio.operations.ClusterMeshProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        async def begin_apply(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: ClusterMeshProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: ClusterMeshProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[ClusterMeshProfile]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'etag', 'match_condition']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                **kwargs: Any
+            ) -> ClusterMeshProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        def list_by_fleet(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ClusterMeshProfile]: ...
 
 
     class azure.mgmt.containerservicefleet.aio.operations.FleetManagedNamespacesOperations:
@@ -229,7 +329,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[FleetManagedNamespace]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'etag', 'match_condition']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'etag', 'match_condition']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -284,7 +384,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[FleetManagedNamespace]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -294,7 +394,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> FleetManagedNamespace: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -480,7 +580,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[FleetUpdateStrategy]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'etag', 'match_condition']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'etag', 'match_condition']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -493,7 +593,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -503,7 +603,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> FleetUpdateStrategy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -696,7 +796,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[Gate]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'gate_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'gate_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -706,7 +806,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> Gate: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'filter', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'filter', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -717,6 +817,102 @@ namespace azure.mgmt.containerservicefleet.aio.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Gate]: ...
+
+
+    class azure.mgmt.containerservicefleet.aio.operations.IdentityBindingProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2026-11-02-preview'])
+        async def begin_apply(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IdentityBindingProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IdentityBindingProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[IdentityBindingProfile]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'etag', 'match_condition']}, api_versions_list=['2026-11-02-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'accept']}, api_versions_list=['2026-11-02-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                **kwargs: Any
+            ) -> IdentityBindingProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2026-11-02-preview'])
+        def list_by_fleet(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[IdentityBindingProfile]: ...
 
 
     class azure.mgmt.containerservicefleet.aio.operations.Operations:
@@ -782,7 +978,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[UpdateRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -837,7 +1033,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[UpdateRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -850,7 +1046,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[UpdateRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -863,7 +1059,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> AsyncLROPoller[UpdateRun]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -873,7 +1069,7 @@ namespace azure.mgmt.containerservicefleet.aio.operations
             ) -> UpdateRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -929,6 +1125,20 @@ namespace azure.mgmt.containerservicefleet.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservicefleet.models.AffinityPatch(_Model):
+        cluster_affinity: Optional[ClusterAffinityPatch]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cluster_affinity: Optional[ClusterAffinityPatch] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.AgentProfile(_Model):
         subnet_id: Optional[str]
         vm_size: Optional[str]
@@ -939,6 +1149,22 @@ namespace azure.mgmt.containerservicefleet.models
                 *, 
                 subnet_id: Optional[str] = ..., 
                 vm_size: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.AllowedSubject(_Model):
+        namespace_selector: IdentityBindingLabelSelector
+        service_account_selector: Optional[IdentityBindingLabelSelector]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                namespace_selector: IdentityBindingLabelSelector, 
+                service_account_selector: Optional[IdentityBindingLabelSelector] = ...
             ) -> None: ...
 
         @overload
@@ -1031,9 +1257,15 @@ namespace azure.mgmt.containerservicefleet.models
 
     class azure.mgmt.containerservicefleet.models.AutoUpgradeProfileStatus(_Model):
         last_trigger_error: Optional[ErrorDetail]
+        last_trigger_message: Optional[str]
         last_trigger_status: Optional[Union[str, AutoUpgradeLastTriggerStatus]]
         last_trigger_upgrade_versions: Optional[list[str]]
         last_triggered_at: Optional[datetime]
+
+
+    class azure.mgmt.containerservicefleet.models.CiliumProperties(_Model):
+        id: int
+        name: str
 
 
     class azure.mgmt.containerservicefleet.models.ClusterAffinity(_Model):
@@ -1050,14 +1282,110 @@ namespace azure.mgmt.containerservicefleet.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservicefleet.models.ClusterResourcePlacementSpec(_Model):
-        policy: Optional[PlacementPolicy]
+    class azure.mgmt.containerservicefleet.models.ClusterAffinityPatch(_Model):
+        required_during_scheduling_ignored_during_execution: Optional[ClusterSelectorPatch]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                policy: Optional[PlacementPolicy] = ...
+                required_during_scheduling_ignored_during_execution: Optional[ClusterSelectorPatch] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterMeshProfile(ProxyResource):
+        e_tag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[ClusterMeshProfileProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[ClusterMeshProfileProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterMeshProfileProperties(_Model):
+        member_selector: Optional[MemberSelector]
+        provisioning_state: Optional[Union[str, ClusterMeshProfileProvisioningState]]
+        status: Optional[ClusterMeshProfileStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                member_selector: Optional[MemberSelector] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterMeshProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterMeshProfileStatus(_Model):
+        last_applied_member_selector: Optional[MemberSelector]
+        last_operation_error: Optional[ErrorDetail]
+        last_operation_id: Optional[str]
+        state: Union[str, ClusterMeshState]
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterMeshState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLYING = "Applying"
+        CONNECTED = "Connected"
+        DEGRADED = "Degraded"
+        FAILED = "Failed"
+        NOT_CONNECTED = "NotConnected"
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterResourcePlacementSpec(_Model):
+        policy: Optional[PlacementPolicy]
+        rollout_strategy: Optional[RolloutStrategy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                policy: Optional[PlacementPolicy] = ..., 
+                rollout_strategy: Optional[RolloutStrategy] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterResourcePlacementSpecPatch(_Model):
+        policy: Optional[PlacementPolicyPatch]
+        rollout_strategy: Optional[RolloutStrategy]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                policy: Optional[PlacementPolicyPatch] = ..., 
+                rollout_strategy: Optional[RolloutStrategy] = ...
             ) -> None: ...
 
         @overload
@@ -1072,6 +1400,20 @@ namespace azure.mgmt.containerservicefleet.models
                 self, 
                 *, 
                 cluster_selector_terms: list[ClusterSelectorTerm]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterSelectorPatch(_Model):
+        cluster_selector_terms: Optional[list[ClusterSelectorTermPatch]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cluster_selector_terms: Optional[list[ClusterSelectorTermPatch]] = ...
             ) -> None: ...
 
         @overload
@@ -1094,11 +1436,51 @@ namespace azure.mgmt.containerservicefleet.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservicefleet.models.ClusterSelectorTermPatch(_Model):
+        label_selector: Optional[LabelSelectorPatch]
+        property_selector: Optional[PropertySelectorPatch]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                label_selector: Optional[LabelSelectorPatch] = ..., 
+                property_selector: Optional[PropertySelectorPatch] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ClusterUpdateStrategyReference(_Model):
+        name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPLICATION = "Application"
         KEY = "Key"
         MANAGED_IDENTITY = "ManagedIdentity"
         USER = "User"
+
+
+    class azure.mgmt.containerservicefleet.models.DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FRIDAY = "Friday"
+        MONDAY = "Monday"
+        SATURDAY = "Saturday"
+        SUNDAY = "Sunday"
+        THURSDAY = "Thursday"
+        TUESDAY = "Tuesday"
+        WEDNESDAY = "Wednesday"
 
 
     class azure.mgmt.containerservicefleet.models.DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1228,12 +1610,14 @@ namespace azure.mgmt.containerservicefleet.models
 
 
     class azure.mgmt.containerservicefleet.models.FleetManagedNamespacePatch(_Model):
+        properties: Optional[FleetManagedNamespacePropertiesPatch]
         tags: Optional[dict[str, str]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                properties: Optional[FleetManagedNamespacePropertiesPatch] = ..., 
                 tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
@@ -1258,6 +1642,26 @@ namespace azure.mgmt.containerservicefleet.models
                 delete_policy: Union[str, DeletePolicy], 
                 managed_namespace_properties: Optional[ManagedNamespaceProperties] = ..., 
                 propagation_policy: Optional[PropagationPolicy] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.FleetManagedNamespacePropertiesPatch(_Model):
+        adoption_policy: Optional[Union[str, AdoptionPolicy]]
+        delete_policy: Optional[Union[str, DeletePolicy]]
+        managed_namespace_properties: Optional[ManagedNamespaceProperties]
+        propagation_policy: Optional[PropagationPolicyPatch]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                adoption_policy: Optional[Union[str, AdoptionPolicy]] = ..., 
+                delete_policy: Optional[Union[str, DeletePolicy]] = ..., 
+                managed_namespace_properties: Optional[ManagedNamespaceProperties] = ..., 
+                propagation_policy: Optional[PropagationPolicyPatch] = ...
             ) -> None: ...
 
         @overload
@@ -1309,6 +1713,7 @@ namespace azure.mgmt.containerservicefleet.models
         cluster_resource_id: str
         group: Optional[str]
         labels: Optional[dict[str, str]]
+        mesh_properties: Optional[MeshProperties]
         provisioning_state: Optional[Union[str, FleetMemberProvisioningState]]
         status: Optional[FleetMemberStatus]
 
@@ -1500,6 +1905,7 @@ namespace azure.mgmt.containerservicefleet.models
 
     class azure.mgmt.containerservicefleet.models.GateConfiguration(_Model):
         display_name: Optional[str]
+        scheduled_start_configuration: Optional[ScheduledStartConfiguration]
         type: Union[str, GateType]
 
         @overload
@@ -1507,6 +1913,7 @@ namespace azure.mgmt.containerservicefleet.models
                 self, 
                 *, 
                 display_name: Optional[str] = ..., 
+                scheduled_start_configuration: Optional[ScheduledStartConfiguration] = ..., 
                 type: Union[str, GateType]
             ) -> None: ...
 
@@ -1546,6 +1953,7 @@ namespace azure.mgmt.containerservicefleet.models
         display_name: Optional[str]
         gate_type: Union[str, GateType]
         provisioning_state: Optional[Union[str, GateProvisioningState]]
+        scheduled_start_properties: Optional[ScheduledStartProperties]
         state: Union[str, GateState]
         target: GateTarget
 
@@ -1555,6 +1963,7 @@ namespace azure.mgmt.containerservicefleet.models
                 *, 
                 display_name: Optional[str] = ..., 
                 gate_type: Union[str, GateType], 
+                scheduled_start_properties: Optional[ScheduledStartProperties] = ..., 
                 state: Union[str, GateState], 
                 target: GateTarget
             ) -> None: ...
@@ -1593,10 +2002,147 @@ namespace azure.mgmt.containerservicefleet.models
 
     class azure.mgmt.containerservicefleet.models.GateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPROVAL = "Approval"
+        SCHEDULED_START = "ScheduledStart"
 
 
     class azure.mgmt.containerservicefleet.models.GenerateResponse(_Model):
         id: str
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelector(_Model):
+        match_expressions: Optional[list[IdentityBindingLabelSelectorRequirement]]
+        match_labels: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                match_expressions: Optional[list[IdentityBindingLabelSelectorRequirement]] = ..., 
+                match_labels: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DOES_NOT_EXIST = "DoesNotExist"
+        EXISTS = "Exists"
+        IN = "In"
+        NOT_IN = "NotIn"
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorRequirement(_Model):
+        key: Optional[str]
+        operator: Optional[Union[str, IdentityBindingLabelSelectorOperator]]
+        values_property: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key: Optional[str] = ..., 
+                operator: Optional[Union[str, IdentityBindingLabelSelectorOperator]] = ..., 
+                values_property: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingManagedIdentityProfile(_Model):
+        client_id: Optional[str]
+        object_id: Optional[str]
+        resource_id: str
+        tenant_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingOidcIssuerProfile(_Model):
+        oidc_issuer_url: Optional[str]
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingProfile(ProxyResource):
+        e_tag: Optional[str]
+        id: str
+        name: str
+        properties: Optional[IdentityBindingProfileProperties]
+        system_data: SystemData
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[IdentityBindingProfileProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingProfileProperties(_Model):
+        identity_binding_properties: IdentityBindingProperties
+        member_selector: Optional[MemberSelector]
+        provisioning_state: Optional[Union[str, IdentityBindingProfileProvisioningState]]
+        status: Optional[IdentityBindingProfileStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity_binding_properties: IdentityBindingProperties, 
+                member_selector: Optional[MemberSelector] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingProfileProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPLYING = "Applying"
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingProfileStatus(_Model):
+        last_operation_error: Optional[ErrorDetail]
+        last_operation_id: Optional[str]
+
+
+    class azure.mgmt.containerservicefleet.models.IdentityBindingProperties(_Model):
+        allowed_subjects: Optional[list[AllowedSubject]]
+        managed_identity: IdentityBindingManagedIdentityProfile
+        oidc_issuer: Optional[IdentityBindingOidcIssuerProfile]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allowed_subjects: Optional[list[AllowedSubject]] = ..., 
+                managed_identity: IdentityBindingManagedIdentityProfile
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservicefleet.models.LabelSelector(_Model):
@@ -1622,6 +2168,22 @@ namespace azure.mgmt.containerservicefleet.models
         NOT_IN = "NotIn"
 
 
+    class azure.mgmt.containerservicefleet.models.LabelSelectorPatch(_Model):
+        match_expressions: Optional[list[LabelSelectorRequirementPatch]]
+        match_labels: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                match_expressions: Optional[list[LabelSelectorRequirementPatch]] = ..., 
+                match_labels: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.LabelSelectorRequirement(_Model):
         key: str
         operator: Union[str, LabelSelectorOperator]
@@ -1633,6 +2195,24 @@ namespace azure.mgmt.containerservicefleet.models
                 *, 
                 key: str, 
                 operator: Union[str, LabelSelectorOperator], 
+                values_property: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.LabelSelectorRequirementPatch(_Model):
+        key: Optional[str]
+        operator: Optional[Union[str, LabelSelectorOperator]]
+        values_property: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key: Optional[str] = ..., 
+                operator: Optional[Union[str, LabelSelectorOperator]] = ..., 
                 values_property: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -1723,12 +2303,46 @@ namespace azure.mgmt.containerservicefleet.models
         USER_ASSIGNED = "UserAssigned"
 
 
+    class azure.mgmt.containerservicefleet.models.MemberSelector(_Model):
+        by_label: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                by_label: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.MemberUpdateStatus(_Model):
         cluster_resource_id: Optional[str]
         message: Optional[str]
         name: Optional[str]
         operation_id: Optional[str]
         status: Optional[UpdateStatus]
+
+
+    class azure.mgmt.containerservicefleet.models.MeshMemberState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONNECTED = "Connected"
+        CONNECTING = "Connecting"
+        DISCONNECTING = "Disconnecting"
+        FAILED = "Failed"
+
+
+    class azure.mgmt.containerservicefleet.models.MeshMemberStatus(_Model):
+        error: Optional[ErrorDetail]
+        last_operation_id: Optional[str]
+        last_updated_at: Optional[datetime]
+        state: Union[str, MeshMemberState]
+
+
+    class azure.mgmt.containerservicefleet.models.MeshProperties(_Model):
+        cilium_properties: CiliumProperties
+        cluster_mesh_profile_resource_id: str
+        status: MeshMemberStatus
 
 
     class azure.mgmt.containerservicefleet.models.NetworkPolicy(_Model):
@@ -1828,6 +2442,26 @@ namespace azure.mgmt.containerservicefleet.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservicefleet.models.PlacementPolicyPatch(_Model):
+        affinity: Optional[AffinityPatch]
+        cluster_names: Optional[list[str]]
+        placement_type: Optional[Union[str, PlacementType]]
+        tolerations: Optional[list[Toleration]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                affinity: Optional[AffinityPatch] = ..., 
+                cluster_names: Optional[list[str]] = ..., 
+                placement_type: Optional[Union[str, PlacementType]] = ..., 
+                tolerations: Optional[list[Toleration]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.PlacementProfile(_Model):
         default_cluster_resource_placement: Optional[ClusterResourcePlacementSpec]
 
@@ -1836,6 +2470,20 @@ namespace azure.mgmt.containerservicefleet.models
                 self, 
                 *, 
                 default_cluster_resource_placement: Optional[ClusterResourcePlacementSpec] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.PlacementProfilePatch(_Model):
+        default_cluster_resource_placement: Optional[ClusterResourcePlacementSpecPatch]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                default_cluster_resource_placement: Optional[ClusterResourcePlacementSpecPatch] = ...
             ) -> None: ...
 
         @overload
@@ -1869,6 +2517,22 @@ namespace azure.mgmt.containerservicefleet.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.containerservicefleet.models.PropagationPolicyPatch(_Model):
+        placement_profile: Optional[PlacementProfilePatch]
+        type: Optional[Union[str, PropagationType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                placement_profile: Optional[PlacementProfilePatch] = ..., 
+                type: Optional[Union[str, PropagationType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.PropagationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PLACEMENT = "Placement"
 
@@ -1896,6 +2560,20 @@ namespace azure.mgmt.containerservicefleet.models
         NE = "Ne"
 
 
+    class azure.mgmt.containerservicefleet.models.PropertySelectorPatch(_Model):
+        match_expressions: Optional[list[PropertySelectorRequirementPatch]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                match_expressions: Optional[list[PropertySelectorRequirementPatch]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.containerservicefleet.models.PropertySelectorRequirement(_Model):
         name: str
         operator: Union[str, PropertySelectorOperator]
@@ -1908,6 +2586,24 @@ namespace azure.mgmt.containerservicefleet.models
                 name: str, 
                 operator: Union[str, PropertySelectorOperator], 
                 values_property: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.PropertySelectorRequirementPatch(_Model):
+        name: Optional[str]
+        operator: Optional[Union[str, PropertySelectorOperator]]
+        values_property: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                operator: Optional[Union[str, PropertySelectorOperator]] = ..., 
+                values_property: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -1942,6 +2638,64 @@ namespace azure.mgmt.containerservicefleet.models
                 cpu_request: Optional[str] = ..., 
                 memory_limit: Optional[str] = ..., 
                 memory_request: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.RolloutStrategy(_Model):
+        cluster_update_strategy: Optional[ClusterUpdateStrategyReference]
+        type: Optional[Union[str, RolloutStrategyType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cluster_update_strategy: Optional[ClusterUpdateStrategyReference] = ..., 
+                type: Optional[Union[str, RolloutStrategyType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.RolloutStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXTERNAL = "External"
+        ROLLING_UPDATE = "RollingUpdate"
+
+
+    class azure.mgmt.containerservicefleet.models.ScheduledStartConfiguration(_Model):
+        start_day: Union[str, DayOfWeek]
+        start_time: str
+        utc_offset: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                start_day: Union[str, DayOfWeek], 
+                start_time: str, 
+                utc_offset: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.containerservicefleet.models.ScheduledStartProperties(_Model):
+        absolute_start_time: Optional[datetime]
+        start_day: Union[str, DayOfWeek]
+        start_time: str
+        utc_offset: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                start_day: Union[str, DayOfWeek], 
+                start_time: str, 
+                utc_offset: str
             ) -> None: ...
 
         @overload
@@ -2066,7 +2820,9 @@ namespace azure.mgmt.containerservicefleet.models
     class azure.mgmt.containerservicefleet.models.UpdateGroup(_Model):
         after_gates: Optional[list[GateConfiguration]]
         before_gates: Optional[list[GateConfiguration]]
+        max_allowed_failures: Optional[str]
         max_concurrency: Optional[str]
+        member_selector: Optional[MemberSelector]
         name: str
 
         @overload
@@ -2075,7 +2831,9 @@ namespace azure.mgmt.containerservicefleet.models
                 *, 
                 after_gates: Optional[list[GateConfiguration]] = ..., 
                 before_gates: Optional[list[GateConfiguration]] = ..., 
+                max_allowed_failures: Optional[str] = ..., 
                 max_concurrency: Optional[str] = ..., 
+                member_selector: Optional[MemberSelector] = ..., 
                 name: str
             ) -> None: ...
 
@@ -2086,6 +2844,8 @@ namespace azure.mgmt.containerservicefleet.models
     class azure.mgmt.containerservicefleet.models.UpdateGroupStatus(_Model):
         after_gates: Optional[list[UpdateRunGateStatus]]
         before_gates: Optional[list[UpdateRunGateStatus]]
+        failure_count: Optional[int]
+        max_allowed_failures: Optional[int]
         max_concurrency: Optional[int]
         members: Optional[list[MemberUpdateStatus]]
         name: Optional[str]
@@ -2170,6 +2930,7 @@ namespace azure.mgmt.containerservicefleet.models
 
 
     class azure.mgmt.containerservicefleet.models.UpdateRunStatus(_Model):
+        failure_count: Optional[int]
         node_image_selection: Optional[NodeImageSelectionStatus]
         stages: Optional[list[UpdateStageStatus]]
         status: Optional[UpdateStatus]
@@ -2194,7 +2955,9 @@ namespace azure.mgmt.containerservicefleet.models
         after_stage_wait_in_seconds: Optional[int]
         before_gates: Optional[list[GateConfiguration]]
         groups: Optional[list[UpdateGroup]]
+        max_allowed_failures: Optional[str]
         max_concurrency: Optional[str]
+        member_selector: Optional[MemberSelector]
         name: str
 
         @overload
@@ -2205,7 +2968,9 @@ namespace azure.mgmt.containerservicefleet.models
                 after_stage_wait_in_seconds: Optional[int] = ..., 
                 before_gates: Optional[list[GateConfiguration]] = ..., 
                 groups: Optional[list[UpdateGroup]] = ..., 
+                max_allowed_failures: Optional[str] = ..., 
                 max_concurrency: Optional[str] = ..., 
+                member_selector: Optional[MemberSelector] = ..., 
                 name: str
             ) -> None: ...
 
@@ -2217,7 +2982,9 @@ namespace azure.mgmt.containerservicefleet.models
         after_gates: Optional[list[UpdateRunGateStatus]]
         after_stage_wait_status: Optional[WaitStatus]
         before_gates: Optional[list[UpdateRunGateStatus]]
+        failure_count: Optional[int]
         groups: Optional[list[UpdateGroupStatus]]
+        max_allowed_failures: Optional[int]
         max_concurrency: Optional[int]
         name: Optional[str]
         status: Optional[UpdateStatus]
@@ -2244,6 +3011,7 @@ namespace azure.mgmt.containerservicefleet.models
     class azure.mgmt.containerservicefleet.models.UpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NODE_IMAGE = "NodeImage"
         RAPID = "Rapid"
+        SECURITY_PATCH = "SecurityPatch"
         STABLE = "Stable"
         TARGET_KUBERNETES_VERSION = "TargetKubernetesVersion"
 
@@ -2269,7 +3037,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-01', params_added_on={'2025-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-03-01', params_added_on={'2025-03-01': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_generate_update_run(
                 self, 
                 resource_group_name: str, 
@@ -2330,7 +3098,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[AutoUpgradeProfile]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'etag', 'match_condition']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'etag', 'match_condition']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2343,7 +3111,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'auto_upgrade_profile_name', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2353,7 +3121,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> AutoUpgradeProfile: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2024-05-02-preview', params_added_on={'2024-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -2363,6 +3131,102 @@ namespace azure.mgmt.containerservicefleet.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[AutoUpgradeProfile]: ...
+
+
+    class azure.mgmt.containerservicefleet.operations.ClusterMeshProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        def begin_apply(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: ClusterMeshProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: ClusterMeshProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[ClusterMeshProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[ClusterMeshProfile]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'etag', 'match_condition']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'cluster_mesh_profile_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                cluster_mesh_profile_name: str, 
+                **kwargs: Any
+            ) -> ClusterMeshProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-03-02-preview', params_added_on={'2026-03-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2026-03-02-preview', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
+        def list_by_fleet(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[ClusterMeshProfile]: ...
 
 
     class azure.mgmt.containerservicefleet.operations.FleetManagedNamespacesOperations:
@@ -2416,7 +3280,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[FleetManagedNamespace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'etag', 'match_condition']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'etag', 'match_condition']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2471,7 +3335,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[FleetManagedNamespace]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'managed_namespace_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2481,7 +3345,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> FleetManagedNamespace: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-08-01-preview', params_added_on={'2025-08-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -2667,7 +3531,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[FleetUpdateStrategy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'etag', 'match_condition']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'etag', 'match_condition']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2680,7 +3544,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_strategy_name', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2690,7 +3554,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> FleetUpdateStrategy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-08-15-preview', params_added_on={'2023-08-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -2883,7 +3747,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[Gate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'gate_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'gate_name', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -2893,7 +3757,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> Gate: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'filter', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2025-04-01-preview', params_added_on={'2025-04-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'filter', 'top', 'skip_token', 'accept']}, api_versions_list=['2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -2904,6 +3768,102 @@ namespace azure.mgmt.containerservicefleet.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Gate]: ...
+
+
+    class azure.mgmt.containerservicefleet.operations.IdentityBindingProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2026-11-02-preview'])
+        def begin_apply(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IdentityBindingProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IdentityBindingProfile, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[IdentityBindingProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[IdentityBindingProfile]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'etag', 'match_condition']}, api_versions_list=['2026-11-02-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'identity_binding_profile_name', 'accept']}, api_versions_list=['2026-11-02-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                identity_binding_profile_name: str, 
+                **kwargs: Any
+            ) -> IdentityBindingProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-02-preview', params_added_on={'2026-11-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'accept']}, api_versions_list=['2026-11-02-preview'])
+        def list_by_fleet(
+                self, 
+                resource_group_name: str, 
+                fleet_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[IdentityBindingProfile]: ...
 
 
     class azure.mgmt.containerservicefleet.operations.Operations:
@@ -2969,7 +3929,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[UpdateRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3024,7 +3984,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[UpdateRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_start(
                 self, 
                 resource_group_name: str, 
@@ -3037,7 +3997,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[UpdateRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept', 'etag', 'match_condition']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def begin_stop(
                 self, 
                 resource_group_name: str, 
@@ -3050,7 +4010,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> LROPoller[UpdateRun]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'update_run_name', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3060,7 +4020,7 @@ namespace azure.mgmt.containerservicefleet.operations
             ) -> UpdateRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01'])
+        @api_version_validation(method_added_on='2023-03-15-preview', params_added_on={'2023-03-15-preview': ['api_version', 'subscription_id', 'resource_group_name', 'fleet_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2023-03-15-preview', '2023-06-15-preview', '2023-08-15-preview', '2023-10-15', '2024-02-02-preview', '2024-04-01', '2024-05-02-preview', '2025-03-01', '2025-04-01-preview', '2025-08-01-preview', '2026-02-01-preview', '2026-03-02-preview', '2026-06-01', '2026-06-02-preview', '2026-11-01', '2026-11-02-preview'])
         def list_by_fleet(
                 self, 
                 resource_group_name: str, 
@@ -3088,11 +4048,23 @@ namespace azure.mgmt.containerservicefleet.types
         clusterAffinity: ClusterAffinity
 
 
+    class azure.mgmt.containerservicefleet.types.AffinityPatch(TypedDict, total=False):
+        key "clusterAffinity": ForwardRef('ClusterAffinityPatch', module='types')
+        clusterAffinity: ClusterAffinityPatch
+
+
     class azure.mgmt.containerservicefleet.types.AgentProfile(TypedDict, total=False):
         key "subnetId": str
         key "vmSize": str
         subnetId: str
         vmSize: str
+
+
+    class azure.mgmt.containerservicefleet.types.AllowedSubject(TypedDict, total=False):
+        key "namespaceSelector": Required[IdentityBindingLabelSelector]
+        key "serviceAccountSelector": ForwardRef('IdentityBindingLabelSelector', module='types')
+        namespaceSelector: IdentityBindingLabelSelector
+        serviceAccountSelector: IdentityBindingLabelSelector
 
 
     class azure.mgmt.containerservicefleet.types.AutoUpgradeNodeImageSelection(TypedDict, total=False):
@@ -3136,12 +4108,21 @@ namespace azure.mgmt.containerservicefleet.types
 
     class azure.mgmt.containerservicefleet.types.AutoUpgradeProfileStatus(TypedDict, total=False):
         key "lastTriggerError": ForwardRef('ErrorDetail', module='types')
+        key "lastTriggerMessage": str
         key "lastTriggerStatus": Union[str, AutoUpgradeLastTriggerStatus]
         key "lastTriggeredAt": str
         lastTriggerError: ErrorDetail
+        lastTriggerMessage: str
         lastTriggerStatus: Union[str, AutoUpgradeLastTriggerStatus]
         lastTriggerUpgradeVersions: list[str]
         lastTriggeredAt: str
+
+
+    class azure.mgmt.containerservicefleet.types.CiliumProperties(TypedDict, total=False):
+        key "id": Required[int]
+        key "name": Required[str]
+        id: int
+        name: str
 
 
     class azure.mgmt.containerservicefleet.types.ClusterAffinity(TypedDict, total=False):
@@ -3149,9 +4130,58 @@ namespace azure.mgmt.containerservicefleet.types
         requiredDuringSchedulingIgnoredDuringExecution: ClusterSelector
 
 
+    class azure.mgmt.containerservicefleet.types.ClusterAffinityPatch(TypedDict, total=False):
+        key "requiredDuringSchedulingIgnoredDuringExecution": ForwardRef('ClusterSelectorPatch', module='types')
+        requiredDuringSchedulingIgnoredDuringExecution: ClusterSelectorPatch
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterMeshProfile(ProxyResource):
+        key "eTag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('ClusterMeshProfileProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        name: str
+        properties: ClusterMeshProfileProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterMeshProfileProperties(TypedDict, total=False):
+        key "memberSelector": ForwardRef('MemberSelector', module='types')
+        key "provisioningState": Union[str, ClusterMeshProfileProvisioningState]
+        key "status": ForwardRef('ClusterMeshProfileStatus', module='types')
+        memberSelector: MemberSelector
+        provisioningState: Union[str, ClusterMeshProfileProvisioningState]
+        status: ClusterMeshProfileStatus
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterMeshProfileStatus(TypedDict, total=False):
+        key "lastAppliedMemberSelector": ForwardRef('MemberSelector', module='types')
+        key "lastOperationError": ForwardRef('ErrorDetail', module='types')
+        key "lastOperationId": str
+        key "state": Required[Union[str, ClusterMeshState]]
+        lastAppliedMemberSelector: MemberSelector
+        lastOperationError: ErrorDetail
+        lastOperationId: str
+        state: Union[str, ClusterMeshState]
+
+
     class azure.mgmt.containerservicefleet.types.ClusterResourcePlacementSpec(TypedDict, total=False):
         key "policy": ForwardRef('PlacementPolicy', module='types')
+        key "rolloutStrategy": ForwardRef('RolloutStrategy', module='types')
         policy: PlacementPolicy
+        rolloutStrategy: RolloutStrategy
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterResourcePlacementSpecPatch(TypedDict, total=False):
+        key "policy": ForwardRef('PlacementPolicyPatch', module='types')
+        key "rolloutStrategy": ForwardRef('RolloutStrategy', module='types')
+        policy: PlacementPolicyPatch
+        rolloutStrategy: RolloutStrategy
 
 
     class azure.mgmt.containerservicefleet.types.ClusterSelector(TypedDict, total=False):
@@ -3159,11 +4189,27 @@ namespace azure.mgmt.containerservicefleet.types
         clusterSelectorTerms: list[ClusterSelectorTerm]
 
 
+    class azure.mgmt.containerservicefleet.types.ClusterSelectorPatch(TypedDict, total=False):
+        clusterSelectorTerms: list[ClusterSelectorTermPatch]
+
+
     class azure.mgmt.containerservicefleet.types.ClusterSelectorTerm(TypedDict, total=False):
         key "labelSelector": ForwardRef('LabelSelector', module='types')
         key "propertySelector": ForwardRef('PropertySelector', module='types')
         labelSelector: LabelSelector
         propertySelector: PropertySelector
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterSelectorTermPatch(TypedDict, total=False):
+        key "labelSelector": ForwardRef('LabelSelectorPatch', module='types')
+        key "propertySelector": ForwardRef('PropertySelectorPatch', module='types')
+        labelSelector: LabelSelectorPatch
+        propertySelector: PropertySelectorPatch
+
+
+    class azure.mgmt.containerservicefleet.types.ClusterUpdateStrategyReference(TypedDict, total=False):
+        key "name": str
+        name: str
 
 
     class azure.mgmt.containerservicefleet.types.ErrorAdditionalInfo(TypedDict, total=False):
@@ -3238,6 +4284,8 @@ namespace azure.mgmt.containerservicefleet.types
 
 
     class azure.mgmt.containerservicefleet.types.FleetManagedNamespacePatch(TypedDict, total=False):
+        key "properties": ForwardRef('FleetManagedNamespacePropertiesPatch', module='types')
+        properties: FleetManagedNamespacePropertiesPatch
         tags: dict[str, str]
 
 
@@ -3256,6 +4304,17 @@ namespace azure.mgmt.containerservicefleet.types
         propagationPolicy: PropagationPolicy
         provisioningState: Union[str, FleetManagedNamespaceProvisioningState]
         status: FleetManagedNamespaceStatus
+
+
+    class azure.mgmt.containerservicefleet.types.FleetManagedNamespacePropertiesPatch(TypedDict, total=False):
+        key "adoptionPolicy": Union[str, AdoptionPolicy]
+        key "deletePolicy": Union[str, DeletePolicy]
+        key "managedNamespaceProperties": ForwardRef('ManagedNamespaceProperties', module='types')
+        key "propagationPolicy": ForwardRef('PropagationPolicyPatch', module='types')
+        adoptionPolicy: Union[str, AdoptionPolicy]
+        deletePolicy: Union[str, DeletePolicy]
+        managedNamespaceProperties: ManagedNamespaceProperties
+        propagationPolicy: PropagationPolicyPatch
 
 
     class azure.mgmt.containerservicefleet.types.FleetManagedNamespaceStatus(TypedDict, total=False):
@@ -3283,11 +4342,13 @@ namespace azure.mgmt.containerservicefleet.types
     class azure.mgmt.containerservicefleet.types.FleetMemberProperties(TypedDict, total=False):
         key "clusterResourceId": Required[str]
         key "group": str
+        key "meshProperties": ForwardRef('MeshProperties', module='types')
         key "provisioningState": Union[str, FleetMemberProvisioningState]
         key "status": ForwardRef('FleetMemberStatus', module='types')
         clusterResourceId: str
         group: str
         labels: dict[str, str]
+        meshProperties: MeshProperties
         provisioningState: Union[str, FleetMemberProvisioningState]
         status: FleetMemberStatus
 
@@ -3356,8 +4417,10 @@ namespace azure.mgmt.containerservicefleet.types
 
     class azure.mgmt.containerservicefleet.types.GateConfiguration(TypedDict, total=False):
         key "displayName": str
+        key "scheduledStartConfiguration": ForwardRef('ScheduledStartConfiguration', module='types')
         key "type": Required[Union[str, GateType]]
         displayName: str
+        scheduledStartConfiguration: ScheduledStartConfiguration
         type: Union[str, GateType]
 
 
@@ -3371,14 +4434,97 @@ namespace azure.mgmt.containerservicefleet.types
         state: Union[str, GateState]
 
 
+    class azure.mgmt.containerservicefleet.types.IdentityBindingLabelSelector(TypedDict, total=False):
+        matchExpressions: list[IdentityBindingLabelSelectorRequirement]
+        matchLabels: list[str]
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingLabelSelectorRequirement(TypedDict, total=False):
+        key "key": str
+        key "operator": Union[str, IdentityBindingLabelSelectorOperator]
+        key: str
+        operator: Union[str, IdentityBindingLabelSelectorOperator]
+        values: list[str]
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingManagedIdentityProfile(TypedDict, total=False):
+        key "clientId": str
+        key "objectId": str
+        key "resourceId": Required[str]
+        key "tenantId": str
+        clientId: str
+        objectId: str
+        resourceId: str
+        tenantId: str
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingOidcIssuerProfile(TypedDict, total=False):
+        key "oidcIssuerUrl": str
+        oidcIssuerUrl: str
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingProfile(ProxyResource):
+        key "eTag": str
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('IdentityBindingProfileProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        eTag: str
+        id: str
+        name: str
+        properties: IdentityBindingProfileProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingProfileProperties(TypedDict, total=False):
+        key "identityBindingProperties": Required[IdentityBindingProperties]
+        key "memberSelector": ForwardRef('MemberSelector', module='types')
+        key "provisioningState": Union[str, IdentityBindingProfileProvisioningState]
+        key "status": ForwardRef('IdentityBindingProfileStatus', module='types')
+        identityBindingProperties: IdentityBindingProperties
+        memberSelector: MemberSelector
+        provisioningState: Union[str, IdentityBindingProfileProvisioningState]
+        status: IdentityBindingProfileStatus
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingProfileStatus(TypedDict, total=False):
+        key "lastOperationError": ForwardRef('ErrorDetail', module='types')
+        key "lastOperationId": str
+        lastOperationError: ErrorDetail
+        lastOperationId: str
+
+
+    class azure.mgmt.containerservicefleet.types.IdentityBindingProperties(TypedDict, total=False):
+        key "managedIdentity": Required[IdentityBindingManagedIdentityProfile]
+        key "oidcIssuer": ForwardRef('IdentityBindingOidcIssuerProfile', module='types')
+        allowedSubjects: list[AllowedSubject]
+        managedIdentity: IdentityBindingManagedIdentityProfile
+        oidcIssuer: IdentityBindingOidcIssuerProfile
+
+
     class azure.mgmt.containerservicefleet.types.LabelSelector(TypedDict, total=False):
         matchExpressions: list[LabelSelectorRequirement]
+        matchLabels: dict[str, str]
+
+
+    class azure.mgmt.containerservicefleet.types.LabelSelectorPatch(TypedDict, total=False):
+        matchExpressions: list[LabelSelectorRequirementPatch]
         matchLabels: dict[str, str]
 
 
     class azure.mgmt.containerservicefleet.types.LabelSelectorRequirement(TypedDict, total=False):
         key "key": Required[str]
         key "operator": Required[Union[str, LabelSelectorOperator]]
+        key: str
+        operator: Union[str, LabelSelectorOperator]
+        values: list[str]
+
+
+    class azure.mgmt.containerservicefleet.types.LabelSelectorRequirementPatch(TypedDict, total=False):
+        key "key": str
+        key "operator": Union[str, LabelSelectorOperator]
         key: str
         operator: Union[str, LabelSelectorOperator]
         values: list[str]
@@ -3417,6 +4563,11 @@ namespace azure.mgmt.containerservicefleet.types
         userAssignedIdentities: dict[str, UserAssignedIdentity]
 
 
+    class azure.mgmt.containerservicefleet.types.MemberSelector(TypedDict, total=False):
+        key "byLabel": Required[str]
+        byLabel: str
+
+
     class azure.mgmt.containerservicefleet.types.MemberUpdateStatus(TypedDict, total=False):
         key "clusterResourceId": str
         key "message": str
@@ -3428,6 +4579,26 @@ namespace azure.mgmt.containerservicefleet.types
         name: str
         operationId: str
         status: UpdateStatus
+
+
+    class azure.mgmt.containerservicefleet.types.MeshMemberStatus(TypedDict, total=False):
+        key "error": ForwardRef('ErrorDetail', module='types')
+        key "lastOperationId": str
+        key "lastUpdatedAt": str
+        key "state": Required[Union[str, MeshMemberState]]
+        error: ErrorDetail
+        lastOperationId: str
+        lastUpdatedAt: str
+        state: Union[str, MeshMemberState]
+
+
+    class azure.mgmt.containerservicefleet.types.MeshProperties(TypedDict, total=False):
+        key "ciliumProperties": Required[CiliumProperties]
+        key "clusterMeshProfileResourceId": Required[str]
+        key "status": Required[MeshMemberStatus]
+        ciliumProperties: CiliumProperties
+        clusterMeshProfileResourceId: str
+        status: MeshMemberStatus
 
 
     class azure.mgmt.containerservicefleet.types.NetworkPolicy(TypedDict, total=False):
@@ -3461,9 +4632,23 @@ namespace azure.mgmt.containerservicefleet.types
         tolerations: list[Toleration]
 
 
+    class azure.mgmt.containerservicefleet.types.PlacementPolicyPatch(TypedDict, total=False):
+        key "affinity": ForwardRef('AffinityPatch', module='types')
+        key "placementType": Union[str, PlacementType]
+        affinity: AffinityPatch
+        clusterNames: list[str]
+        placementType: Union[str, PlacementType]
+        tolerations: list[Toleration]
+
+
     class azure.mgmt.containerservicefleet.types.PlacementProfile(TypedDict, total=False):
         key "defaultClusterResourcePlacement": ForwardRef('ClusterResourcePlacementSpec', module='types')
         defaultClusterResourcePlacement: ClusterResourcePlacementSpec
+
+
+    class azure.mgmt.containerservicefleet.types.PlacementProfilePatch(TypedDict, total=False):
+        key "defaultClusterResourcePlacement": ForwardRef('ClusterResourcePlacementSpecPatch', module='types')
+        defaultClusterResourcePlacement: ClusterResourcePlacementSpecPatch
 
 
     class azure.mgmt.containerservicefleet.types.PropagationPolicy(TypedDict, total=False):
@@ -3473,15 +4658,34 @@ namespace azure.mgmt.containerservicefleet.types
         type: Union[str, PropagationType]
 
 
+    class azure.mgmt.containerservicefleet.types.PropagationPolicyPatch(TypedDict, total=False):
+        key "placementProfile": ForwardRef('PlacementProfilePatch', module='types')
+        key "type": Union[str, PropagationType]
+        placementProfile: PlacementProfilePatch
+        type: Union[str, PropagationType]
+
+
     class azure.mgmt.containerservicefleet.types.PropertySelector(TypedDict, total=False):
         key "matchExpressions": Required[list[PropertySelectorRequirement]]
         matchExpressions: list[PropertySelectorRequirement]
+
+
+    class azure.mgmt.containerservicefleet.types.PropertySelectorPatch(TypedDict, total=False):
+        matchExpressions: list[PropertySelectorRequirementPatch]
 
 
     class azure.mgmt.containerservicefleet.types.PropertySelectorRequirement(TypedDict, total=False):
         key "name": Required[str]
         key "operator": Required[Union[str, PropertySelectorOperator]]
         key "values": Required[list[str]]
+        name: str
+        operator: Union[str, PropertySelectorOperator]
+        values: list[str]
+
+
+    class azure.mgmt.containerservicefleet.types.PropertySelectorRequirementPatch(TypedDict, total=False):
+        key "name": str
+        key "operator": Union[str, PropertySelectorOperator]
         name: str
         operator: Union[str, PropertySelectorOperator]
         values: list[str]
@@ -3518,6 +4722,22 @@ namespace azure.mgmt.containerservicefleet.types
         cpuRequest: str
         memoryLimit: str
         memoryRequest: str
+
+
+    class azure.mgmt.containerservicefleet.types.RolloutStrategy(TypedDict, total=False):
+        key "clusterUpdateStrategy": ForwardRef('ClusterUpdateStrategyReference', module='types')
+        key "type": Union[str, RolloutStrategyType]
+        clusterUpdateStrategy: ClusterUpdateStrategyReference
+        type: Union[str, RolloutStrategyType]
+
+
+    class azure.mgmt.containerservicefleet.types.ScheduledStartConfiguration(TypedDict, total=False):
+        key "startDay": Required[Union[str, DayOfWeek]]
+        key "startTime": Required[str]
+        key "utcOffset": Required[str]
+        startDay: Union[str, DayOfWeek]
+        startTime: str
+        utcOffset: str
 
 
     class azure.mgmt.containerservicefleet.types.SkipProperties(TypedDict, total=False):
@@ -3573,20 +4793,28 @@ namespace azure.mgmt.containerservicefleet.types
 
 
     class azure.mgmt.containerservicefleet.types.UpdateGroup(TypedDict, total=False):
+        key "maxAllowedFailures": str
         key "maxConcurrency": str
+        key "memberSelector": ForwardRef('MemberSelector', module='types')
         key "name": Required[str]
         afterGates: list[GateConfiguration]
         beforeGates: list[GateConfiguration]
+        maxAllowedFailures: str
         maxConcurrency: str
+        memberSelector: MemberSelector
         name: str
 
 
     class azure.mgmt.containerservicefleet.types.UpdateGroupStatus(TypedDict, total=False):
+        key "failureCount": int
+        key "maxAllowedFailures": int
         key "maxConcurrency": int
         key "name": str
         key "status": ForwardRef('UpdateStatus', module='types')
         afterGates: list[UpdateRunGateStatus]
         beforeGates: list[UpdateRunGateStatus]
+        failureCount: int
+        maxAllowedFailures: int
         maxConcurrency: int
         members: list[MemberUpdateStatus]
         name: str
@@ -3633,8 +4861,10 @@ namespace azure.mgmt.containerservicefleet.types
 
 
     class azure.mgmt.containerservicefleet.types.UpdateRunStatus(TypedDict, total=False):
+        key "failureCount": int
         key "nodeImageSelection": ForwardRef('NodeImageSelectionStatus', module='types')
         key "status": ForwardRef('UpdateStatus', module='types')
+        failureCount: int
         nodeImageSelection: NodeImageSelectionStatus
         stages: list[UpdateStageStatus]
         status: UpdateStatus
@@ -3647,25 +4877,33 @@ namespace azure.mgmt.containerservicefleet.types
 
     class azure.mgmt.containerservicefleet.types.UpdateStage(TypedDict, total=False):
         key "afterStageWaitInSeconds": int
+        key "maxAllowedFailures": str
         key "maxConcurrency": str
+        key "memberSelector": ForwardRef('MemberSelector', module='types')
         key "name": Required[str]
         afterGates: list[GateConfiguration]
         afterStageWaitInSeconds: int
         beforeGates: list[GateConfiguration]
         groups: list[UpdateGroup]
+        maxAllowedFailures: str
         maxConcurrency: str
+        memberSelector: MemberSelector
         name: str
 
 
     class azure.mgmt.containerservicefleet.types.UpdateStageStatus(TypedDict, total=False):
         key "afterStageWaitStatus": ForwardRef('WaitStatus', module='types')
+        key "failureCount": int
+        key "maxAllowedFailures": int
         key "maxConcurrency": int
         key "name": str
         key "status": ForwardRef('UpdateStatus', module='types')
         afterGates: list[UpdateRunGateStatus]
         afterStageWaitStatus: WaitStatus
         beforeGates: list[UpdateRunGateStatus]
+        failureCount: int
         groups: list[UpdateGroupStatus]
+        maxAllowedFailures: int
         maxConcurrency: int
         name: str
         status: UpdateStatus

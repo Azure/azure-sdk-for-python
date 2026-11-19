@@ -78,7 +78,7 @@ class ProxyResource(Resource):
     """
 
 
-class AccessPolicyAssignment(ProxyResource):
+class AccessPolicyAssignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the access policy assignment of Redis Enterprise database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -101,7 +101,7 @@ class AccessPolicyAssignment(ProxyResource):
     )
     """Properties of the access policy assignment."""
 
-    __flattened_items = ["provisioning_state", "access_policy_name", "user"]
+    __flattened_items = ["provisioning_state", "access_policy_name", "access_string", "provisioning_error", "user"]
 
     @overload
     def __init__(
@@ -139,15 +139,22 @@ class AccessPolicyAssignment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AccessPolicyAssignmentProperties(_Model):
+class AccessPolicyAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Redis Enterprise database access policy assignment.
 
     :ivar provisioning_state: Current provisioning status of the access policy assignment. Known
      values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.redisenterprise.models.ProvisioningState
-    :ivar access_policy_name: Name of access policy under specific access policy assignment. Only
-     "default" policy is supported for now. Required.
+    :ivar access_policy_name: **Deprecated.** This property always returns "default". Use
+     ``accessString`` to configure custom Redis ACL permissions instead.
     :vartype access_policy_name: str
+    :ivar access_string: The Redis ACL permissions string applied to this assignment, for example
+     ``+@read ~cache:*``. Defaults to ``+@all ~*`` if not specified.
+    :vartype access_string: str
+    :ivar provisioning_error: Provisioning error details when the access string failed to apply
+     (e.g., invalid ACL syntax). Null when provisioning succeeded.
+    :vartype provisioning_error:
+     ~azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProvisioningError
     :ivar user: The user associated with the access policy. Required.
     :vartype user: ~azure.mgmt.redisenterprise.models.AccessPolicyAssignmentPropertiesUser
     """
@@ -157,11 +164,21 @@ class AccessPolicyAssignmentProperties(_Model):
     )
     """Current provisioning status of the access policy assignment. Known values are: \"Succeeded\",
      \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-    access_policy_name: str = rest_field(
+    access_policy_name: Optional[str] = rest_field(
         name="accessPolicyName", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Name of access policy under specific access policy assignment. Only \"default\" policy is
-     supported for now. Required."""
+    """**Deprecated.** This property always returns \"default\". Use ``accessString`` to configure
+     custom Redis ACL permissions instead."""
+    access_string: Optional[str] = rest_field(
+        name="accessString", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Redis ACL permissions string applied to this assignment, for example ``+@read ~cache:*``.
+     Defaults to ``+@all ~*`` if not specified."""
+    provisioning_error: Optional["_models.AccessPolicyAssignmentProvisioningError"] = rest_field(
+        name="provisioningError", visibility=["read"]
+    )
+    """Provisioning error details when the access string failed to apply (e.g., invalid ACL syntax).
+     Null when provisioning succeeded."""
     user: "_models.AccessPolicyAssignmentPropertiesUser" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -171,8 +188,9 @@ class AccessPolicyAssignmentProperties(_Model):
     def __init__(
         self,
         *,
-        access_policy_name: str,
         user: "_models.AccessPolicyAssignmentPropertiesUser",
+        access_policy_name: Optional[str] = None,
+        access_string: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -186,7 +204,7 @@ class AccessPolicyAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessPolicyAssignmentPropertiesUser(_Model):
+class AccessPolicyAssignmentPropertiesUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The user associated with the access policy.
 
     :ivar object_id: The object ID of the user.
@@ -214,7 +232,45 @@ class AccessPolicyAssignmentPropertiesUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationProperties(_Model):
+class AccessPolicyAssignmentProvisioningError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Error details for access policy assignment provisioning failures.
+
+    :ivar code: Machine-readable error code (e.g., "InvalidAccessString"). Required.
+    :vartype code: str
+    :ivar message: Human-readable error message describing the failure. Required.
+    :vartype message: str
+    :ivar target: The property that caused the error (e.g., "properties.accessString").
+    :vartype target: str
+    """
+
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Machine-readable error code (e.g., \"InvalidAccessString\"). Required."""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable error message describing the failure. Required."""
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The property that caused the error (e.g., \"properties.accessString\")."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for Redis Enterprise migration operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -228,7 +284,7 @@ class MigrationProperties(_Model):
     :vartype target_resource_id: str
     :ivar provisioning_state: Current provisioning status of the migration. Known values are:
      "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling",
-     "Cancelled", and "CancellationFailed".
+     "Cancelled", "CancellationFailed", "Unlinking", "Unlinked", and "UnlinkFailed".
     :vartype provisioning_state: str or
      ~azure.mgmt.redisenterprise.models.MigrationProvisioningState
     :ivar status_details: Additional details about the migration operation's status in free text
@@ -238,6 +294,12 @@ class MigrationProperties(_Model):
     :vartype creation_time: ~datetime.datetime
     :ivar last_modified_time: The timestamp when the migration operation was last updated.
     :vartype last_modified_time: ~datetime.datetime
+    :ivar rollback_eligible_until: The timestamp until which a successful migration remains
+     eligible to be undone (rolled back) to the source cache. This property is only returned while
+     the migration is in the Succeeded state, and is calculated from the time the migration
+     succeeded plus the rollback window. After this time the source cache is released and the
+     migration can no longer be undone.
+    :vartype rollback_eligible_until: ~datetime.datetime
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -249,8 +311,8 @@ class MigrationProperties(_Model):
         name="provisioningState", visibility=["read"]
     )
     """Current provisioning status of the migration. Known values are: \"Accepted\", \"InProgress\",
-     \"ReadyForDnsSwitch\", \"Succeeded\", \"Failed\", \"Cancelling\", \"Cancelled\", and
-     \"CancellationFailed\"."""
+     \"ReadyForDnsSwitch\", \"Succeeded\", \"Failed\", \"Cancelling\", \"Cancelled\",
+     \"CancellationFailed\", \"Unlinking\", \"Unlinked\", and \"UnlinkFailed\"."""
     status_details: Optional[str] = rest_field(name="statusDetails", visibility=["read"])
     """Additional details about the migration operation's status in free text format."""
     creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
@@ -259,6 +321,13 @@ class MigrationProperties(_Model):
         name="lastModifiedTime", visibility=["read"], format="rfc3339"
     )
     """The timestamp when the migration operation was last updated."""
+    rollback_eligible_until: Optional[datetime.datetime] = rest_field(
+        name="rollbackEligibleUntil", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp until which a successful migration remains eligible to be undone (rolled back) to
+     the source cache. This property is only returned while the migration is in the Succeeded state,
+     and is calculated from the time the migration succeeded plus the rollback window. After this
+     time the source cache is released and the migration can no longer be undone."""
 
     @overload
     def __init__(
@@ -278,7 +347,9 @@ class MigrationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="AzureCacheForRedis"):
+class AzureCacheForRedisMigrationProperties(
+    MigrationProperties, discriminator="AzureCacheForRedis"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for Redis Enterprise migration operation for Azure Cache for Redis.
 
     :ivar target_resource_id: The Azure resource ID of the Azure Managed Redis destination cache to
@@ -286,7 +357,7 @@ class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="
     :vartype target_resource_id: str
     :ivar provisioning_state: Current provisioning status of the migration. Known values are:
      "Accepted", "InProgress", "ReadyForDnsSwitch", "Succeeded", "Failed", "Cancelling",
-     "Cancelled", and "CancellationFailed".
+     "Cancelled", "CancellationFailed", "Unlinking", "Unlinked", and "UnlinkFailed".
     :vartype provisioning_state: str or
      ~azure.mgmt.redisenterprise.models.MigrationProvisioningState
     :ivar status_details: Additional details about the migration operation's status in free text
@@ -296,6 +367,12 @@ class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="
     :vartype creation_time: ~datetime.datetime
     :ivar last_modified_time: The timestamp when the migration operation was last updated.
     :vartype last_modified_time: ~datetime.datetime
+    :ivar rollback_eligible_until: The timestamp until which a successful migration remains
+     eligible to be undone (rolled back) to the source cache. This property is only returned while
+     the migration is in the Succeeded state, and is calculated from the time the migration
+     succeeded plus the rollback window. After this time the source cache is released and the
+     migration can no longer be undone.
+    :vartype rollback_eligible_until: ~datetime.datetime
     :ivar source_resource_id: The source resource ID to migrate from. This is the resource ID of
      the Azure Cache for Redis. Required.
     :vartype source_resource_id: str
@@ -303,8 +380,8 @@ class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="
      from the source cache to the target cache. This property must be true during the preview.
      Required.
     :vartype switch_dns: bool
-    :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. This
-     property must be true during the preview. Required.
+    :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. Set
+     this property to true to skip data migration. Required.
     :vartype skip_data_migration: bool
     :ivar force_migrate: Sets whether to ignore warnings when performing validation of the
      migration request. If this property is true, warning-level disparities between the source and
@@ -327,8 +404,8 @@ class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="
     skip_data_migration: bool = rest_field(
         name="skipDataMigration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Sets whether the data is migrated from source to target or not. This property must be true
-     during the preview. Required."""
+    """Sets whether the data is migrated from source to target or not. Set this property to true to
+     skip data migration. Required."""
     force_migrate: Optional[bool] = rest_field(
         name="forceMigrate", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -362,7 +439,7 @@ class AzureCacheForRedisMigrationProperties(MigrationProperties, discriminator="
         self.source_type = SourceType.AZURE_CACHE_FOR_REDIS  # type: ignore
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -406,7 +483,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Cluster(TrackedResource):
+class Cluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Redis Enterprise cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -456,6 +533,7 @@ class Cluster(TrackedResource):
         "minimum_tls_version",
         "encryption",
         "maintenance_configuration",
+        "firewall_rules",
         "host_name",
         "provisioning_state",
         "redundancy_mode",
@@ -507,7 +585,7 @@ class Cluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Redis Enterprise clusters, as opposed to general resource properties like
     location, tags.
 
@@ -524,6 +602,22 @@ class ClusterProperties(_Model):
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -569,6 +663,23 @@ class ClusterProperties(_Model):
         name="maintenanceConfiguration", visibility=["read", "create", "update"]
     )
     """Cluster-level maintenance configuration."""
+    firewall_rules: Optional[list["_models.FirewallRule"]] = rest_field(
+        name="firewallRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The complete set of firewall rules for an Azure Managed Redis (AMR) cluster. At most 250 rules
+     are supported, and non-empty rules require publicNetworkAccess to be Enabled.
+     
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+     
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+     
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+     
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request."""
     host_name: Optional[str] = rest_field(name="hostName", visibility=["read"])
     """DNS name of the cluster endpoint."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -606,6 +717,7 @@ class ClusterProperties(_Model):
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -619,7 +731,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterCreateProperties(ClusterProperties):
+class ClusterCreateProperties(ClusterProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Redis Enterprise clusters for create operations.
 
     :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
@@ -635,6 +747,22 @@ class ClusterCreateProperties(ClusterProperties):
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -681,6 +809,7 @@ class ClusterCreateProperties(ClusterProperties):
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
     ) -> None: ...
 
     @overload
@@ -694,7 +823,7 @@ class ClusterCreateProperties(ClusterProperties):
         super().__init__(*args, **kwargs)
 
 
-class ClusterPropertiesEncryption(_Model):
+class ClusterPropertiesEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Encryption-at-rest configuration for the cluster.
 
     :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
@@ -729,7 +858,9 @@ class ClusterPropertiesEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_Model):  # pylint: disable=name-too-long
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """All Customer-managed key encryption properties for the resource. Set this to an empty object to
     use Microsoft-managed key encryption.
 
@@ -776,7 +907,9 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryption(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(_Model):  # pylint: disable=name-too-long
+class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """All identity configuration for Customer-managed key settings defining which identity should be
     used to auth to Key Vault.
 
@@ -821,7 +954,7 @@ class ClusterPropertiesEncryptionCustomerManagedKeyEncryptionKeyIdentity(_Model)
         super().__init__(*args, **kwargs)
 
 
-class ClusterUpdate(_Model):
+class ClusterUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A partial update to the Redis Enterprise cluster.
 
     :ivar sku: The SKU to create, which affects price, performance, and features.
@@ -852,6 +985,7 @@ class ClusterUpdate(_Model):
         "minimum_tls_version",
         "encryption",
         "maintenance_configuration",
+        "firewall_rules",
         "host_name",
         "provisioning_state",
         "redundancy_mode",
@@ -901,7 +1035,7 @@ class ClusterUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ClusterUpdateProperties(ClusterProperties):
+class ClusterUpdateProperties(ClusterProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Redis Enterprise clusters for update operations.
 
     :ivar high_availability: Enabled by default. If highAvailability is disabled, the data set is
@@ -917,6 +1051,22 @@ class ClusterUpdateProperties(ClusterProperties):
     :vartype encryption: ~azure.mgmt.redisenterprise.models.ClusterPropertiesEncryption
     :ivar maintenance_configuration: Cluster-level maintenance configuration.
     :vartype maintenance_configuration: ~azure.mgmt.redisenterprise.models.MaintenanceConfiguration
+    :ivar firewall_rules: The complete set of firewall rules for an Azure Managed Redis (AMR)
+     cluster. At most 250 rules are supported, and non-empty rules require publicNetworkAccess to be
+     Enabled.
+
+     On PUT, the supplied array replaces all existing rules. Omitting this property or supplying an
+     empty array clears all rules.
+
+     On PATCH, omitting this property preserves existing rules. A supplied array replaces all
+     existing rules; rules absent from it are deleted. Supplying an empty array clears all rules.
+
+     Disabling publicNetworkAccess also clears existing rules. With publicNetworkAccess Enabled, an
+     empty rule set allows all public traffic; it does not deny all traffic.
+
+     Firewall rule changes cannot be combined with scaling or encryption changes in the same update
+     request.
+    :vartype firewall_rules: list[~azure.mgmt.redisenterprise.models.FirewallRule]
     :ivar host_name: DNS name of the cluster endpoint.
     :vartype host_name: str
     :ivar provisioning_state: Current provisioning status of the cluster. Known values are:
@@ -962,6 +1112,7 @@ class ClusterUpdateProperties(ClusterProperties):
         minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
         encryption: Optional["_models.ClusterPropertiesEncryption"] = None,
         maintenance_configuration: Optional["_models.MaintenanceConfiguration"] = None,
+        firewall_rules: Optional[list["_models.FirewallRule"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
     ) -> None: ...
 
@@ -976,7 +1127,7 @@ class ClusterUpdateProperties(ClusterProperties):
         super().__init__(*args, **kwargs)
 
 
-class Database(ProxyResource):
+class Database(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a database on the Redis Enterprise cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1051,7 +1202,7 @@ class Database(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseProperties(_Model):
+class DatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Redis Enterprise databases, as opposed to general resource properties like
     location, tags.
 
@@ -1200,7 +1351,7 @@ class DatabaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseCreateProperties(DatabaseProperties):
+class DatabaseCreateProperties(DatabaseProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for creating Redis Enterprise databases.
 
     :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
@@ -1282,7 +1433,7 @@ class DatabaseCreateProperties(DatabaseProperties):
         super().__init__(*args, **kwargs)
 
 
-class DatabasePropertiesGeoReplication(_Model):
+class DatabasePropertiesGeoReplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional set of properties to configure geo replication for this database.
 
     :ivar group_nickname: Name for the group of linked database resources.
@@ -1317,7 +1468,7 @@ class DatabasePropertiesGeoReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatabaseUpdate(_Model):
+class DatabaseUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A partial update to the Redis Enterprise database.
 
     :ivar properties: Properties of the database.
@@ -1381,7 +1532,7 @@ class DatabaseUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class DatabaseUpdateProperties(DatabaseProperties):
+class DatabaseUpdateProperties(DatabaseProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for updating Redis Enterprise databases.
 
     :ivar client_protocol: Specifies whether redis clients can connect using TLS-encrypted or
@@ -1507,7 +1658,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1535,7 +1686,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportClusterParameters(_Model):
+class ExportClusterParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a Redis Enterprise export operation.
 
     :ivar sas_uri: SAS URI for the target directory to export to. Required.
@@ -1563,7 +1714,48 @@ class ExportClusterParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlushParameters(_Model):
+class FirewallRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A firewall rule associated with the cluster.
+
+    :ivar name: The name of the firewall rule, unique within the cluster ignoring case. Must be
+     1-80 characters and contain only letters, numbers, hyphens, or underscores. Required.
+    :vartype name: str
+    :ivar source_address_prefix: An IPv4 address (for example, "203.0.113.1"), IPv4 CIDR prefix
+     (for example, "203.0.113.0/24"), or Azure service tag (for example, "AzureCloud"). IPv6
+     addresses are not supported. Required.
+    :vartype source_address_prefix: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the firewall rule, unique within the cluster ignoring case. Must be 1-80 characters
+     and contain only letters, numbers, hyphens, or underscores. Required."""
+    source_address_prefix: str = rest_field(
+        name="sourceAddressPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An IPv4 address (for example, \"203.0.113.1\"), IPv4 CIDR prefix (for example,
+     \"203.0.113.0/24\"), or Azure service tag (for example, \"AzureCloud\"). IPv6 addresses are not
+     supported. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        source_address_prefix: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FlushParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a Redis Enterprise active geo-replication flush operation.
 
     :ivar ids: The identifiers of all the other database resources in the georeplication group to
@@ -1592,7 +1784,7 @@ class FlushParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForceLinkParameters(_Model):
+class ForceLinkParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for reconfiguring active geo-replication, of an existing database that was
     previously unlinked from a replication group.
 
@@ -1623,7 +1815,7 @@ class ForceLinkParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForceLinkParametersGeoReplication(_Model):
+class ForceLinkParametersGeoReplication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure geo replication for this database.
 
     :ivar group_nickname: The name of the group of linked database resources. This should match the
@@ -1664,7 +1856,7 @@ class ForceLinkParametersGeoReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForceUnlinkParameters(_Model):
+class ForceUnlinkParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a Redis Enterprise Active Geo Replication Force Unlink operation.
 
     :ivar ids: The resource IDs of the database resources to be unlinked. Required.
@@ -1692,7 +1884,7 @@ class ForceUnlinkParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportClusterParameters(_Model):
+class ImportClusterParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters for a Redis Enterprise import operation.
 
     :ivar sas_uris: SAS URIs for the target blobs to import from. Required.
@@ -1720,7 +1912,7 @@ class ImportClusterParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkedDatabase(_Model):
+class LinkedDatabase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies details of a linked database resource.
 
     :ivar id: Resource ID of a database resource to link with this database.
@@ -1754,7 +1946,7 @@ class LinkedDatabase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceConfiguration(_Model):
+class MaintenanceConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster-level maintenance configuration.
 
     :ivar maintenance_windows: Custom maintenance windows that apply to the cluster.
@@ -1784,7 +1976,7 @@ class MaintenanceConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single custom maintenance window.
 
     :ivar type: Maintenance window type. Required. "Weekly"
@@ -1831,7 +2023,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowSchedule(_Model):
+class MaintenanceWindowSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schedule details for a maintenance window.
 
     :ivar day_of_week: Day of week. Required when the maintenance window type is 'Weekly'. Known
@@ -1863,7 +2055,7 @@ class MaintenanceWindowSchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1915,7 +2107,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Migration(ProxyResource):
+class Migration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the current migration operation on a Redis Enterprise cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1956,7 +2148,43 @@ class Migration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MigrationValidationDisparity(_Model):
+class MigrationUndoRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters supplied to the undo migration operation.
+
+    :ivar rollback_reason: The reason for undoing (rolling back) the migration. Choose the value
+     that best describes why the rollback is needed. This information helps us improve the migration
+     experience and does not change how the rollback is performed. Known values are: "performance",
+     "compatibility", "clientConnection", "cost", "testing", "stability", "dataLoss", and "other".
+    :vartype rollback_reason: str or ~azure.mgmt.redisenterprise.models.MigrationRollbackReason
+    """
+
+    rollback_reason: Optional[Union[str, "_models.MigrationRollbackReason"]] = rest_field(
+        name="rollbackReason", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reason for undoing (rolling back) the migration. Choose the value that best describes why
+     the rollback is needed. This information helps us improve the migration experience and does not
+     change how the rollback is performed. Known values are: \"performance\", \"compatibility\",
+     \"clientConnection\", \"cost\", \"testing\", \"stability\", \"dataLoss\", and \"other\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        rollback_reason: Optional[Union[str, "_models.MigrationRollbackReason"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrationValidationDisparity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a specific validation issue found during migration validation.
 
     :ivar category: A localized string denoting the category of the validation issue. Examples are
@@ -1991,7 +2219,7 @@ class MigrationValidationDisparity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationValidationError(_Model):
+class MigrationValidationError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a validation error that prevents migration.
 
     :ivar disparities: List of specific disparities that cause this error. Required.
@@ -2021,7 +2249,7 @@ class MigrationValidationError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationValidationRequest(_Model):
+class MigrationValidationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for validating migration from Azure Cache for Redis to Redis Enterprise.
 
     :ivar source_resource_id: The source resource ID to validate migration from. This is the
@@ -2030,11 +2258,6 @@ class MigrationValidationRequest(_Model):
     :ivar skip_data_migration: Sets whether the data is migrated from source to target or not. The
      default value is true.
     :vartype skip_data_migration: bool
-    :ivar force_migrate: Sets whether to ignore warnings when validating if the source cache can be
-     migrated to the target cache. If this property is true, the isValid property in the response
-     will ignore warning-level disparities between the source and target resource. The default value
-     is false.
-    :vartype force_migrate: bool
     """
 
     source_resource_id: str = rest_field(
@@ -2046,12 +2269,6 @@ class MigrationValidationRequest(_Model):
         name="skipDataMigration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Sets whether the data is migrated from source to target or not. The default value is true."""
-    force_migrate: Optional[bool] = rest_field(
-        name="forceMigrate", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Sets whether to ignore warnings when validating if the source cache can be migrated to the
-     target cache. If this property is true, the isValid property in the response will ignore
-     warning-level disparities between the source and target resource. The default value is false."""
 
     @overload
     def __init__(
@@ -2059,7 +2276,6 @@ class MigrationValidationRequest(_Model):
         *,
         source_resource_id: str,
         skip_data_migration: Optional[bool] = None,
-        force_migrate: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2073,7 +2289,7 @@ class MigrationValidationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationValidationResponse(_Model):
+class MigrationValidationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for migration validation operation.
 
     :ivar is_valid: Indicates whether the migration validation passed. Required.
@@ -2115,7 +2331,7 @@ class MigrationValidationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MigrationValidationWarning(_Model):
+class MigrationValidationWarning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a validation warning that may impact migration.
 
     :ivar disparities: List of specific disparities that cause this warning. Required.
@@ -2145,7 +2361,7 @@ class MigrationValidationWarning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Module(_Model):
+class Module(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies configuration of a redis module.
 
     :ivar name: The name of the module, e.g. 'RedisBloom', 'RediSearch', 'RedisTimeSeries'.
@@ -2183,7 +2399,7 @@ class Module(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2271,7 +2487,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of a long-running operation.
 
     :ivar id: The operation's unique id.
@@ -2324,7 +2540,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Persistence(_Model):
+class Persistence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Persistence-related configuration for the Redis Enterprise database.
 
     :ivar aof_enabled: Sets whether AOF is enabled. Note that at most one of AOF or RDB persistence
@@ -2394,7 +2610,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Private Endpoint Connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2455,7 +2671,7 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -2508,7 +2724,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2549,7 +2765,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -2587,7 +2803,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -2634,7 +2850,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegenerateKeyParameters(_Model):
+class RegenerateKeyParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies which access keys to reset to a new random value.
 
     :ivar key_type: Which access key to regenerate. Required. Known values are: "Primary" and
@@ -2665,7 +2881,7 @@ class RegenerateKeyParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SKU parameters supplied to the create Redis Enterprise cluster operation.
 
     :ivar name: The level of Redis Enterprise cluster to deploy. Possible values: ('Balanced_B5',
@@ -2752,7 +2968,7 @@ class SkuDetails(_Model):
     """The cache size in GB."""
 
 
-class SkuDetailsList(_Model):
+class SkuDetailsList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a listSkusForScaling operation.
 
     :ivar skus: List of SKUS available to scale up or scale down.
@@ -2780,7 +2996,7 @@ class SkuDetailsList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

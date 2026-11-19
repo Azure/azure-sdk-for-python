@@ -17,16 +17,22 @@ from ._data_lake_file_client import DataLakeFileClient
 from ._data_lake_service_client_helpers import _format_url, _parse_url
 from ._deserialize import get_datalake_service_properties
 from ._file_system_client import FileSystemClient
-from ._generated import AzureDataLakeStorageRESTAPI
+from ._generated import DataLakeClient as AzureDataLakeStorageRESTAPI
 from ._models import (
+    AnalyticsLogging,
+    CorsRule,
     DirectoryProperties,
     FileProperties,
     FileSystemProperties,
     FileSystemPropertiesPaged,
     LocationMode,
+    Metrics,
+    RetentionPolicy,
+    StaticWebsite,
     UserDelegationKey,
 )
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
+from ._session import _configure_session
 from ._shared.base_client import parse_connection_str, parse_query, StorageAccountHostsMixin, TransportWrapper
 
 if TYPE_CHECKING:
@@ -67,6 +73,19 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
 
     .. admonition:: Example:
@@ -110,7 +129,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
+        _configure_session(kwargs)
         super(DataLakeServiceClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, **kwargs
         )
@@ -118,9 +137,7 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         self._hosts[LocationMode.SECONDARY] = ""
 
         self._api_version = get_api_version(kwargs)
-        self._client = AzureDataLakeStorageRESTAPI(
-            self.url, version=self._api_version, base_url=self.url, pipeline=self._pipeline
-        )
+        self._client = AzureDataLakeStorageRESTAPI(self.url, version=self._api_version, pipeline=self._pipeline)
 
     def __enter__(self) -> Self:
         self._client.__enter__()
@@ -405,6 +422,16 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
 
+        When a file system is deleted, a file system with the same name can't be created
+        for at least 30 seconds.  The file system might not be available for more than
+        30 seconds if the service is still processing the request.  While the file system
+        is being deleted, attempts to create a file system of the same name fail with
+        status code 409 (Conflict).  The service indicates that the file system is being
+        deleted.  Operations on files within the file system, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the file system and its files
+        fail with status code 404 (Not Found).
+
         :param file_system:
             The file system to delete. This can either be the name of the file system,
             or an instance of FileSystemProperties.
@@ -641,6 +668,29 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
             #other-client--per-operation-configuration>`_.
         :rtype: None
         """
+        # Convert datalake-public service-property models to blob-public types so
+        # this code path remains correct once azure-storage-blob migrates to typespec
+        # models (msrest duck-typing through StorageServiceProperties goes away).
+        if "analytics_logging" in kwargs:
+            kwargs["analytics_logging"] = AnalyticsLogging._to_generated(  # pylint: disable=protected-access
+                kwargs["analytics_logging"]
+            )
+        if "hour_metrics" in kwargs:
+            kwargs["hour_metrics"] = Metrics._to_generated(kwargs["hour_metrics"])  # pylint: disable=protected-access
+        if "minute_metrics" in kwargs:
+            kwargs["minute_metrics"] = Metrics._to_generated(  # pylint: disable=protected-access
+                kwargs["minute_metrics"]
+            )
+        if "cors" in kwargs:
+            kwargs["cors"] = CorsRule._to_generated(kwargs["cors"])  # pylint: disable=protected-access
+        if "delete_retention_policy" in kwargs:
+            kwargs["delete_retention_policy"] = RetentionPolicy._to_generated(  # pylint: disable=protected-access
+                kwargs["delete_retention_policy"]
+            )
+        if "static_website" in kwargs:
+            kwargs["static_website"] = StaticWebsite._to_generated(  # pylint: disable=protected-access
+                kwargs["static_website"]
+            )
         return self._blob_service_client.set_service_properties(**kwargs)
 
     @distributed_trace

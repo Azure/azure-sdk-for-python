@@ -16,19 +16,20 @@ DESCRIPTION:
 USAGE: python sync_token_sample.py
 
     Set the environment variables with your own values before running the sample:
-    1) APPCONFIGURATION_CONNECTION_STRING: Connection String used to access the Azure App Configuration.
+    1) APPCONFIGURATION_ENDPOINT_STRING: Endpoint URL used to access the Azure App Configuration.
 """
 
 import os
 from azure.appconfiguration import AzureAppConfigurationClient
+from azure.identity import DefaultAzureCredential
 
 
 def handle_event_grid_notifications(event_grid_events):
-    CONNECTION_STRING = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+    endpoint = os.environ["APPCONFIGURATION_ENDPOINT_STRING"]
 
     all_keys = []
 
-    with AzureAppConfigurationClient.from_connection_string(CONNECTION_STRING) as client:
+    with AzureAppConfigurationClient(endpoint, DefaultAzureCredential()) as client:
         for event_grid_event in event_grid_events:
             if event_grid_event["eventType"] == "Microsoft.KeyValueModified":
                 sync_token = event_grid_event["data"]["syncToken"]

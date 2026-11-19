@@ -296,6 +296,7 @@
         "azure.mgmt.cosmosdb.models.TableRoleAssignmentResourceProperties": "Microsoft.DocumentDB.TableRoleAssignmentResourceProperties",
         "azure.mgmt.cosmosdb.models.TableRoleDefinitionResource": "Microsoft.DocumentDB.TableRoleDefinitionResource",
         "azure.mgmt.cosmosdb.models.TableRoleDefinitionResourceProperties": "Microsoft.DocumentDB.TableRoleDefinitionResourceProperties",
+        "azure.mgmt.cosmosdb.models.ThroughputBucketResource": "Microsoft.DocumentDB.ThroughputBucketResource",
         "azure.mgmt.cosmosdb.models.ThroughputPolicyResource": "Microsoft.DocumentDB.ThroughputPolicyResource",
         "azure.mgmt.cosmosdb.models.ThroughputSettingsGetProperties": "Microsoft.DocumentDB.ThroughputSettingsGetProperties",
         "azure.mgmt.cosmosdb.models.ThroughputSettingsResource": "Microsoft.DocumentDB.ThroughputSettingsResource",
@@ -838,5 +839,5 @@
         "azure.mgmt.cosmosdb.operations.FleetspaceAccountOperations.list": "Microsoft.DocumentDB.FleetspaceAccountResources.list",
         "azure.mgmt.cosmosdb.aio.operations.FleetspaceAccountOperations.list": "Microsoft.DocumentDB.FleetspaceAccountResources.list"
     },
-    "CrossLanguageVersion": "3b6896c407fd"
+    "CrossLanguageVersion": "38bf8d67c852"
 }
