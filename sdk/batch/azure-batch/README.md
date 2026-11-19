@@ -573,6 +573,28 @@ dependencies installed:
 python -m unittest test_response_handlers test_customization_regressions -v
 ```
 
+## Live recording resources
+
+Windows recording pools use Windows Server 2022 Datacenter Gen2
+(`MicrosoftWindowsServer:windowsserver2022:2022-datacenter-g2`); Linux pools use Ubuntu 22.04 LTS.
+Windows compute-node tests request `standard_d2s_v3` to support the Gen2 image;
+Linux compute-node tests request `standard_d2_v2`.
+
+The node-log upload test requires `BATCH_LOG_CONTAINER_SAS_URL`: an HTTPS Blob
+container SAS URL with write permission and sufficient validity for the test run.
+Keep this value in your local environment, never in source control or shared logs.
+The test replaces the container URL in recordings; playback does not need the SAS.
+
+Set `BATCH_TEST_APP_ZIP` to a local application ZIP if testing with your own package.
+When unset, the preparer creates a valid ZIP containing a text file in memory.
+The package is used for application-package upload and activation, not as a task executable.
+
+The disk-encryption test additionally requires `BATCH_USERSUB_ACCOUNT_NAME`,
+`BATCH_RESOURCE_GROUP`, and `BATCH_DISKENCRYPTIONSET_ID` for a pre-created
+UserSubscription Batch account and a compatible Disk Encryption Set.
+Set these variables before starting pytest. Ordinary tests create temporary accounts
+and should be run sequentially when regional account quota is limited.
+
 # Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the

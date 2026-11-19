@@ -20,14 +20,13 @@ from typing import Iterable, Union
 import pytest
 import six
 
-from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer
+from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer, BatchStorageAccountPreparer, get_log_container_url
 from async_wrapper import wrap_list_result, wrap_result, wrap_file_result
 from decorators import recorded_by_proxy_async, client_setup
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
     EnvironmentVariableLoader,
-    StorageAccountPreparer,
     CachedResourceGroupPreparer,
     set_custom_default_matcher,
 )
@@ -114,8 +113,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
-                    offer="WindowsServer",
-                    sku="2016-Datacenter-smalldisk",
+                    offer="windowsserver2022",
+                    sku="2022-datacenter-g2",
                 ),
                 node_agent_sku_id="batch.node.windows amd64",
                 windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
@@ -260,8 +259,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
             virtual_machine_configuration=models.VirtualMachineConfiguration(
                 image_reference=models.BatchVmImageReference(
                     publisher="MicrosoftWindowsServer",
-                    offer="WindowsServer",
-                    sku="2016-Datacenter-smalldisk",
+                    offer="windowsserver2022",
+                    sku="2022-datacenter-g2",
                 ),
                 node_agent_sku_id="batch.node.windows amd64",
                 windows_configuration=models.WindowsConfiguration(enable_automatic_updates=True),
@@ -315,7 +314,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
                 image_reference=models.BatchVmImageReference(
                     publisher="microsoftwindowsserver",
-                    offer="windowsserver",
+                    offer="windowsserver2022",
                     sku="2022-datacenter-g2",
                     version="latest",
                 ),
@@ -391,7 +390,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 ),
                 image_reference=models.BatchVmImageReference(
                     publisher="microsoftwindowsserver",
-                    offer="windowsserver",
+                    offer="windowsserver2022",
                     sku="2022-datacenter-g2",
                     version="latest",
                 ),
@@ -770,7 +769,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Upload Log
         config = models.UploadBatchServiceLogsOptions(
-            container_url="https://computecontainer.blob.core.windows.net/",
+            container_url=get_log_container_url(self.is_live),
             start_time=datetime.datetime.utcnow() - datetime.timedelta(minutes=6),
         )
         set_custom_default_matcher(
@@ -971,8 +970,22 @@ class TestBatch(AzureMgmtRecordedTestCase):
             assert remote_desktop_bytes is not None
         assert "remoteLoginIPAddress" in remote_desktop_bytes
 
+    async def _wait_for_file_test_node(self, client, pool_name):
+        deadline = time.monotonic() + 1200
+        nodes = list(await wrap_list_result(client.list_nodes(pool_name)))
+        while self.is_live and (len(nodes) != 1 or any(n.state != models.BatchNodeState.IDLE for n in nodes)):
+            pool = await wrap_result(client.get_pool(pool_name))
+            if pool.resize_errors:
+                self.fail("File-test pool allocation failed: {}".format(pool.resize_errors))
+            if time.monotonic() >= deadline:
+                self.fail("Timed out waiting for one idle file-test node; states: {}".format([n.state for n in nodes]))
+            await asyncio.sleep(10)
+            nodes = list(await wrap_list_result(client.list_nodes(pool_name)))
+        assert len(nodes) == 1
+        return nodes[0]
+
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
-    @StorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
+    @BatchStorageAccountPreparer(name_prefix="batch4", location=AZURE_LOCATION)
     @AccountPreparer(
         location=AZURE_LOCATION,
         batch_environment=BATCH_ENVIRONMENT,
@@ -986,12 +999,8 @@ class TestBatch(AzureMgmtRecordedTestCase):
     async def test_batch_files(self, client: BatchClient, **kwargs):
         batch_pool = kwargs.pop("batch_pool")
         batch_job = kwargs.pop("batch_job")
-        nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        while self.is_live and any(n for n in nodes if n.state != models.BatchNodeState.IDLE):
-            time.sleep(10)
-            nodes = list(await wrap_list_result(client.list_nodes(batch_pool.name)))
-        assert len(nodes) == 1
-        node = nodes[0].id
+        ready_node = await self._wait_for_file_test_node(client, batch_pool.name)
+        node = ready_node.id
         assert node is not None
         task_id = "test_task"
         task_param = models.BatchTaskCreateOptions(id=task_id, command_line='cmd /c "echo hello world"')

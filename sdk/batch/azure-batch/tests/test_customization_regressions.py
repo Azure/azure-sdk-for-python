@@ -9,11 +9,16 @@ import hmac
 import importlib
 import inspect
 import json
+import io
+import os
 import re
 import unittest
+import zipfile
 from typing import get_args, get_type_hints
-from unittest.mock import AsyncMock, MagicMock, Mock, patch
+from unittest.mock import AsyncMock, MagicMock, Mock, mock_open, patch
 
+import batch_preparers
+from devtools_testutils import AzureTestError
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.pipeline import PipelineContext, PipelineRequest
@@ -34,6 +39,72 @@ OPTIONAL_BODY_POST_OPERATIONS = (
     ("_reboot_node_internal", ("pool", "node"), models.BatchNodeRebootOptions),
     ("_reimage_node_internal", ("pool", "node"), models.BatchNodeReimageOptions),
 )
+
+
+class TestLiveRecordingResources(unittest.TestCase):
+    def test_storage_preparer_explicitly_disables_anonymous_blob_access(self):
+        preparer = batch_preparers.BatchStorageAccountPreparer(name_prefix="batch4", location="eastus2")
+        preparer.client = Mock()
+        operation = preparer._create_account("test-group", "teststorage")
+        self.assertIs(operation, preparer.client.storage_accounts.begin_create.return_value)
+        preparer.client.storage_accounts.begin_create.assert_called_once_with(
+            "test-group",
+            "teststorage",
+            {
+                "sku": {"name": "Standard_LRS"},
+                "location": "eastus2",
+                "kind": "StorageV2",
+                "enable_https_traffic_only": True,
+                "allow_blob_public_access": False,
+            },
+        )
+
+    def test_default_application_package_is_valid_zip(self):
+        with patch.dict(os.environ, {"BATCH_TEST_APP_ZIP": ""}):
+            content = batch_preparers.load_application_package()
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            self.assertEqual(archive.namelist(), ["readme.txt"])
+            self.assertIsNone(archive.testzip())
+
+    def test_configured_application_package_is_preserved(self):
+        with patch.dict(os.environ, {"BATCH_TEST_APP_ZIP": ""}):
+            content = batch_preparers.load_application_package()
+        with patch.dict(os.environ, {"BATCH_TEST_APP_ZIP": "test-application.zip"}):
+            with patch("builtins.open", mock_open(read_data=content)):
+                self.assertEqual(batch_preparers.load_application_package(), content)
+
+    def test_invalid_application_package_fails_explicitly(self):
+        with patch.dict(os.environ, {"BATCH_TEST_APP_ZIP": "invalid.zip"}):
+            with patch("builtins.open", mock_open(read_data=b"not a zip")):
+                with self.assertRaisesRegex(AzureTestError, "valid ZIP"):
+                    batch_preparers.load_application_package()
+
+    def test_playback_needs_no_sas_or_sanitizer_registration(self):
+        with patch.dict(os.environ, {"BATCH_LOG_CONTAINER_SAS_URL": ""}):
+            with patch.object(batch_preparers, "add_general_string_sanitizer") as sanitizer:
+                self.assertEqual(
+                    batch_preparers.get_log_container_url(False), batch_preparers.PLAYBACK_LOG_CONTAINER_URL
+                )
+                sanitizer.assert_not_called()
+
+    def test_live_sas_is_sanitized_before_use(self):
+        url = "https://example.blob.core.windows.net/logs?sp=w&sr=c&sig=unit-test-signature"
+        with patch.dict(os.environ, {"BATCH_LOG_CONTAINER_SAS_URL": url}):
+            with patch.object(batch_preparers, "add_general_string_sanitizer") as general:
+                with patch.object(batch_preparers, "add_body_key_sanitizer") as body:
+                    self.assertEqual(batch_preparers.get_log_container_url(True), url)
+        general.assert_called_once_with(target=url, value=batch_preparers.PLAYBACK_LOG_CONTAINER_URL)
+        body.assert_called_once_with(json_path="$..containerUrl", value=batch_preparers.PLAYBACK_LOG_CONTAINER_URL)
+
+    def test_missing_or_invalid_sas_fails_without_disclosing_it(self):
+        for value in ("", "not-a-url", "https://example.blob.core.windows.net/logs?sp=r&sr=c&sig=test"):
+            with self.subTest(case="missing" if not value else "invalid"):
+                with patch.dict(os.environ, {"BATCH_LOG_CONTAINER_SAS_URL": value}):
+                    with self.assertRaises(AzureTestError) as raised:
+                        batch_preparers.get_log_container_url(True)
+                self.assertIn("BATCH_LOG_CONTAINER_SAS_URL", str(raised.exception))
+                if value:
+                    self.assertNotIn(value, str(raised.exception))
 
 
 def named_key():
