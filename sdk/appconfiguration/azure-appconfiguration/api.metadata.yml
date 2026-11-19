@@ -1,5 +1,5 @@
-apiHash: e75f213cb465b8a22176195cdce280f1173d95c2f90f185cfafd6b41670c9253
+apiHash: 904787e9710f174b0aaf3aca04acfbf9c4c56cde81018ad0e0b608aa6e3e714f
 packageRelativePath: sdk/appconfiguration/azure-appconfiguration
-packageVersion: 1.10.0
+packageVersion: 1.11.0
 parserVersion: 0.3.31
 pythonVersion: 3.12.16
