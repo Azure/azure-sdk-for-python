@@ -213,7 +213,7 @@ class TestConfigure(unittest.TestCase):
         tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
         configure_azure_monitor()
         tracing_mock.assert_not_called()
-        logging_mock.assert_called_once_with(configurations)
+        logging_mock.assert_called_once_with(configurations, 100.0)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
@@ -310,7 +310,7 @@ class TestConfigure(unittest.TestCase):
         config_mock.return_value = configurations
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
-        logging_mock.assert_called_once_with(configurations)
+        logging_mock.assert_called_once_with(configurations, tracing_mock.return_value)
         metrics_mock.assert_not_called()
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
@@ -356,10 +356,15 @@ class TestConfigure(unittest.TestCase):
         call_order = []
         metrics_mock.side_effect = lambda *args, **kwargs: call_order.append("metrics")
         logging_mock.side_effect = lambda *args, **kwargs: call_order.append("logging")
-        tracing_mock.side_effect = lambda *args, **kwargs: call_order.append("tracing")
+
+        def setup_tracing(*args, **kwargs):
+            call_order.append("tracing")
+            return 5.0
+
+        tracing_mock.side_effect = setup_tracing
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
-        logging_mock.assert_called_once_with(configurations)
+        logging_mock.assert_called_once_with(configurations, 5.0)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_called_once_with(configurations)
         instrumentation_mock.assert_called_once_with(configurations)
@@ -410,7 +415,7 @@ class TestConfigure(unittest.TestCase):
         config_mock.return_value = configurations
         configure_azure_monitor()
         tracing_mock.assert_called_once_with(configurations)
-        logging_mock.assert_called_once_with(configurations)
+        logging_mock.assert_called_once_with(configurations, tracing_mock.return_value)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
         statsbeat_live_metrics_feature_mock.assert_called_once_with()
@@ -482,7 +487,7 @@ class TestConfigure(unittest.TestCase):
                     "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
                 },
             ):
-                _setup_tracing(configurations)
+                self.assertEqual(_setup_tracing(configurations), 50)
                 sampler_mock.assert_called_once_with(sampling_ratio=0.5)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
@@ -561,7 +566,7 @@ class TestConfigure(unittest.TestCase):
                     "azure.core.tracing.ext.opentelemetry_span": Mock(OpenTelemetrySpan=opentelemetry_span_mock),
                 },
             ):
-                _setup_tracing(configurations)
+                self.assertEqual(_setup_tracing(configurations), 100)
                 sampler_mock.assert_called_once_with(target_spans_per_second_limit=2.0)
                 tp_mock.assert_called_once_with(sampler=sampler_init_mock, resource=TEST_RESOURCE)
                 set_tracer_provider_mock.assert_called_once_with(tp_init_mock)
@@ -704,13 +709,15 @@ class TestConfigure(unittest.TestCase):
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
             },
         ):
-            _setup_logging(configurations)
+            _setup_logging(configurations, 100.0)
 
         # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False, "fallback_sample_rate": 100.0}
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 4)
         lp_init_mock.add_log_record_processor.assert_has_calls(
             [call(genai_lrp_init_mock), call(custom_lrp), call(pclp_init_mock), call(blrp_init_mock)]
@@ -774,13 +781,15 @@ class TestConfigure(unittest.TestCase):
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
             },
         ):
-            _setup_logging(configurations)
+            _setup_logging(configurations, 5.0)
 
         # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": True})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": True, "fallback_sample_rate": 5.0}
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
         lp_init_mock.add_log_record_processor.assert_has_calls(
             [call(genai_lrp_init_mock), call(pclp_init_mock), call(blrp_init_mock)]
@@ -839,13 +848,15 @@ class TestConfigure(unittest.TestCase):
                 "azure.monitor.opentelemetry.exporter": Mock(AzureMonitorLogExporter=log_exporter_mock),
             },
         ):
-            _setup_logging(configurations)
+            _setup_logging(configurations, 100.0)
 
         # Verify the correct behavior
         lp_mock.assert_called_once_with(resource=TEST_RESOURCE)
         set_logger_provider_mock.assert_called_once_with(lp_init_mock)
         log_exporter_mock.assert_called_once_with(**configurations)
-        blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
+        blrp_mock.assert_called_once_with(
+            log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False, "fallback_sample_rate": 100.0}
+        )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 2)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(genai_lrp_init_mock), call(blrp_init_mock)])
         logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)

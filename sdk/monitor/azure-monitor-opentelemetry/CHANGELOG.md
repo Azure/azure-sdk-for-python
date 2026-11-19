@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed `ItemCount` for logs retained by `enable_trace_based_sampling_for_logs`. At 5% sampling, each retained log counts as 20 items. Logs outside a trace still count as one.
+
 ### Other Changes
 
 ## 1.8.12 (2026-11-05)

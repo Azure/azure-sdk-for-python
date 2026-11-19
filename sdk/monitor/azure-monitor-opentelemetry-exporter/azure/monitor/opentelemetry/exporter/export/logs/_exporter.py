@@ -43,6 +43,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_LOG_MESSAGE,
     _EXCEPTION_ENVELOPE_NAME,
     _EXPORTER_DOMAIN_SCHEMA_VERSION,
+    _LOG_SAMPLE_RATE_ATTR,
     _MESSAGE_ENVELOPE_NAME,
     _MICROSOFT_AVAILABILITY_DURATION,
     _MICROSOFT_AVAILABILITY_ID,
@@ -53,6 +54,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
     _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
+    _SAMPLE_RATE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     AvailabilityData,
@@ -212,6 +214,12 @@ def _convert_log_to_envelope(
     log_record = readable_log_record.log_record
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
+    sample_rate = getattr(log_record, _LOG_SAMPLE_RATE_ATTR, None)
+    if sample_rate is None and log_record.attributes:
+        sample_rate = log_record.attributes.get(_SAMPLE_RATE_KEY)
+    sample_rate = _utils._get_valid_sample_rate(sample_rate)
+    if sample_rate is not None and sample_rate < 100:
+        envelope.sample_rate = sample_rate
     tags = envelope.tags or {}
     tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
     tags[ContextTagKeys.AI_OPERATION_ID] = "{:032x}".format(log_record.trace_id or _DEFAULT_TRACE_ID)  # type: ignore
@@ -407,6 +415,7 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
         _MICROSOFT_CUSTOM_MEASUREMENTS,
+        _SAMPLE_RATE_KEY,
         _MICROSOFT_AVAILABILITY_ID,
         _MICROSOFT_AVAILABILITY_NAME,
         _MICROSOFT_AVAILABILITY_DURATION,

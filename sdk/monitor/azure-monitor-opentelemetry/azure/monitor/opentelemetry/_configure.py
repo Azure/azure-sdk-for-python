@@ -180,12 +180,13 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
         set_statsbeat_live_metrics_feature_set()
 
     # Set up tracing pipeline
+    fallback_sample_rate = 100.0
     if not disable_tracing:
-        _setup_tracing(configurations)
+        fallback_sample_rate = _setup_tracing(configurations)
 
     # Set up logging pipeline
     if not disable_logging:
-        _setup_logging(configurations)
+        _setup_logging(configurations, fallback_sample_rate)
 
     # Set up instrumentations
     # Instrumentations need to be set up last so to use the global providers
@@ -196,25 +197,25 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     _setup_browser_sdk_loader(configurations)
 
 
-def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
+def _setup_tracing(configurations: Dict[str, ConfigurationValue]) -> float:
+    """Set up tracing and return the fixed sampling percentage, if any, for correlated logs."""
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     if SAMPLING_ARG in configurations:
         sampler_arg = configurations[SAMPLING_ARG]
         sampler_type = configurations[SAMPLER_TYPE]
         sampler = _get_sampler_from_name(sampler_type, sampler_arg)
-        tracer_provider = TracerProvider(sampler=sampler, resource=resource)
+        fallback_sample_rate = cast(float, sampler_arg) * 100
     elif SAMPLING_RATIO_ARG in configurations:
-        sampling_ratio = configurations[SAMPLING_RATIO_ARG]
-        tracer_provider = TracerProvider(
-            sampler=ApplicationInsightsSampler(sampling_ratio=cast(float, sampling_ratio)), resource=resource
-        )
+        sampling_ratio = cast(float, configurations[SAMPLING_RATIO_ARG])
+        sampler = ApplicationInsightsSampler(sampling_ratio=sampling_ratio)
+        fallback_sample_rate = sampling_ratio * 100
     else:
-        traces_per_second = configurations[SAMPLING_TRACES_PER_SECOND_ARG]
-        tracer_provider = TracerProvider(
-            sampler=RateLimitedSampler(target_spans_per_second_limit=cast(float, traces_per_second)), resource=resource
-        )
+        traces_per_second = cast(float, configurations[SAMPLING_TRACES_PER_SECOND_ARG])
+        sampler = RateLimitedSampler(target_spans_per_second_limit=traces_per_second)
+        fallback_sample_rate = 100.0
 
+    tracer_provider = TracerProvider(sampler=sampler, resource=resource)
     # GenAI main-agent attribution processor must be registered first
     tracer_provider.add_span_processor(_GenAIMainAgentSpanProcessor())
     for span_processor in configurations[SPAN_PROCESSORS_ARG]:  # type: ignore
@@ -251,9 +252,10 @@ def _setup_tracing(configurations: Dict[str, ConfigurationValue]):
                 "Exception occurred when setting Azure SDK Tracing: %s.",
                 ex,
             )
+    return fallback_sample_rate
 
 
-def _setup_logging(configurations: Dict[str, ConfigurationValue]):
+def _setup_logging(configurations: Dict[str, ConfigurationValue], fallback_sample_rate: float):
     # Setup logging
     # Use try catch while signal is experimental
     try:
@@ -283,7 +285,10 @@ def _setup_logging(configurations: Dict[str, ConfigurationValue]):
         log_record_exporter = AzureMonitorLogExporter(**configurations)
         log_record_processor = _AzureBatchLogRecordProcessor(
             log_record_exporter,
-            {"enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs},
+            {
+                "enable_trace_based_sampling_for_logs": enable_trace_based_sampling_for_logs,
+                "fallback_sample_rate": fallback_sample_rate,
+            },
         )
         logger_provider.add_log_record_processor(log_record_processor)
         set_logger_provider(logger_provider)

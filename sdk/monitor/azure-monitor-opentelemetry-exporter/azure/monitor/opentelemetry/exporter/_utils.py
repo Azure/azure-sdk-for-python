@@ -298,6 +298,12 @@ class PeriodicTask(threading.Thread):
         self.finished.set()
 
 
+def _get_valid_sample_rate(value: object) -> Optional[float]:
+    if isinstance(value, (int, float)) and not isinstance(value, bool) and 0 < value <= 100:
+        return value
+    return None
+
+
 def _create_telemetry_item(timestamp: int) -> TelemetryItem:
     ts = datetime.datetime.fromtimestamp(timestamp / 1e9, tz=datetime.timezone.utc)
     return TelemetryItem(

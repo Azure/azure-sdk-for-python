@@ -16,6 +16,7 @@
 
 ### Bugs Fixed
 
+- Fixed undercounting of trace-sampled logs by exporting their sampling percentage without consuming a log attribute slot.
 - Fixed Statsbeat routing after accepted ingestion redirects so EU SDK statistics use the EU destination, including Germany North, without resetting metric collection. Preserve OneSettings destination overrides and keep collection and export on the same route.
 - Allow Statsbeat configurations with an unknown region to apply OneSettings defaults and resume collection after being re-enabled.
 - Allowed ingestion redirects across trusted Azure Monitor domain suffixes within the same cloud.
