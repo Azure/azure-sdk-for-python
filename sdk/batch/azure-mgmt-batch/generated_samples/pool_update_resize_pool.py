@@ -50,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/PoolUpdate_ResizePool.json
+# x-ms-original-file: 2026-10-01/PoolUpdate_ResizePool.json
 if __name__ == "__main__":
     main()

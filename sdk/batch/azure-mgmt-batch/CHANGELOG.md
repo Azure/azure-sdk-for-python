@@ -1,5 +1,40 @@
 # Release History
 
+## 20.0.0 (2026-11-19)
+
+### Features Added
+
+  - Model `PoolProperties` added property `vm_sku_profile`
+  - Model `VirtualMachineConfiguration` added property `hardware_profile`
+  - Model `VirtualMachineConfiguration` added property `placement`
+  - Model `VirtualMachineConfiguration` added property `resiliency_policy`
+  - Added model `DeploymentConfigurationPatch`
+  - Added model `HardwareProfile`
+  - Added model `MaxInstancePercentPerZonePolicy`
+  - Added model `MaxInstancePercentPerZonePolicyPatch`
+  - Added model `Placement`
+  - Added model `PlacementPatch`
+  - Added model `PoolPatch`
+  - Added model `PoolPatchProperties`
+  - Added enum `RequestedComputeNodeDeallocationOption`
+  - Added model `ResiliencyPolicy`
+  - Added model `ResiliencyPolicyPatch`
+  - Added model `TrackedResource`
+  - Added model `VirtualMachineConfigurationPatch`
+  - Added enum `VirtualMachineSkuAllocationStrategy`
+  - Added model `VirtualMachineSkuProfile`
+  - Added model `VirtualMachineSkuProfileVmSize`
+  - Added model `VmSizeProperties`
+  - Added model `ZoneAllocationPolicy`
+  - Added model `ZoneAllocationPolicyPatch`
+  - Added enum `ZonePlacementPolicyType`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `AuthenticationMode.TASK_AUTHENTICATION_TOKEN`
+  - Deleted or renamed model `AzureResource`
+  - Method `PoolOperations.update` changed type of its parameter `parameters` from `Pool` to `PoolPatch`
+
 ## 19.0.0 (2026-02-27)
 
 ### Features Added
