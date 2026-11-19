@@ -19,6 +19,42 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class ClusterAssociationIfNoneMatch(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Allowed If-None-Match values for cluster association creation."""
+
+    WILDCARD = "*"
+    """Match any current representation."""
+
+
+class ClusterAssociationSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of a cluster association SKU."""
+
+    STANDARD = "Standard"
+    """AgentGateway only."""
+    PREMIUM = "Premium"
+    """AgentGateway and AgentFabric."""
+
+
+class ContentInspectionPolicySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of source selector for a content inspection policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select sources by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select sources by IP address prefixes in CIDR notation."""
+
+
+class ContentInspectionSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sensitivity level of content inspection."""
+
+    LOW = "Low"
+    """Low sensitivity."""
+    MEDIUM = "Medium"
+    """Medium sensitivity."""
+    HIGH = "High"
+    """High sensitivity."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -30,6 +66,50 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a managed identity."""
     KEY = "Key"
     """The entity was created by a key."""
+
+
+class FqdnFilteringDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of destination selector for an FQDN filtering policy."""
+
+    FQDNS = "Fqdns"
+    """Select destinations by fully qualified domain names."""
+
+
+class FqdnFilteringSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of source selector for an FQDN filtering policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select sources by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select sources by IP address prefixes in CIDR notation."""
+
+
+class HttpMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The HTTP method matched by a URL filtering rule."""
+
+    GET = "GET"
+    """HTTP GET method."""
+    POST = "POST"
+    """HTTP POST method."""
+    PUT = "PUT"
+    """HTTP PUT method."""
+    DELETE = "DELETE"
+    """HTTP DELETE method."""
+    PATCH = "PATCH"
+    """HTTP PATCH method."""
+    HEAD = "HEAD"
+    """HTTP HEAD method."""
+    OPTIONS = "OPTIONS"
+    """HTTP OPTIONS method."""
+
+
+class ImagePullPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The image pull policy for a sandbox workload container image."""
+
+    ALWAYS = "Always"
+    """Always pull the image."""
+    IF_NOT_PRESENT = "IfNotPresent"
+    """Pull the image only if it is not already present on the host."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,6 +125,81 @@ class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User assigned managed identity."""
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
     """System and user assigned managed identity."""
+
+
+class McpMatchCase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether an MCP string condition compares case-sensitively."""
+
+    CASE_SENSITIVE = "CaseSensitive"
+    """Compare strings exactly. This is the default."""
+    CASE_INSENSITIVE = "CaseInsensitive"
+    """Compare strings after case folding both sides: uppercase, then lowercase."""
+
+
+class McpMatchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How an MCP string condition compares a request or response string with its values."""
+
+    EXACT_MATCH = "ExactMatch"
+    """The string equals one of the values."""
+    CONTAINS = "Contains"
+    """The string contains one of the values."""
+    NOT_EXACT_MATCH = "NotExactMatch"
+    """The string equals none of the values."""
+    NOT_CONTAINS = "NotContains"
+    """The string contains none of the values."""
+
+
+class McpPolicyDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of destination selector for an MCP policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select destinations by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select destinations by IP address prefixes in CIDR notation."""
+    FQDNS = "Fqdns"
+    """Select destinations by fully qualified domain names."""
+
+
+class McpPolicySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of source selector for an MCP policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select sources by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select sources by IP address prefixes in CIDR notation."""
+
+
+class McpPromptMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An MCP prompt request method."""
+
+    GET = "Get"
+    """The prompts/get request."""
+    LIST = "List"
+    """The prompts/list request."""
+
+
+class McpToolMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """An MCP tool request method."""
+
+    CALL = "Call"
+    """The tools/call request."""
+    LIST = "List"
+    """The tools/list request."""
+
+
+class NetworkSecurityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of network security policy."""
+
+    FQDN_FILTERING = "FqdnFiltering"
+    """FQDN filtering policy type."""
+    URL_FILTERING = "UrlFiltering"
+    """URL filtering policy type."""
+    MCP = "Mcp"
+    """MCP server policy type."""
+    TLS_INSPECTION = "TlsInspection"
+    """TLS inspection policy type."""
+    CONTENT_INSPECTION = "ContentInspection"
+    """Content inspection policy type."""
 
 
 class NeuroShieldFindingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -124,6 +279,58 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
+class PolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action to take when a network security policy or rule matches traffic."""
+
+    ALLOW = "Allow"
+    """Allow the matching traffic."""
+    DENY = "Deny"
+    """Deny the matching traffic."""
+
+
+class PolicyDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of network traffic for a policy."""
+
+    OUTBOUND = "Outbound"
+    """Outbound traffic only."""
+    INBOUND = "Inbound"
+    """Inbound traffic only."""
+    BOTH = "Both"
+    """Both inbound and outbound traffic."""
+
+
+class PromptInjectionOnDetection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The action to take when prompt injection is detected."""
+
+    BLOCK_AND_ALERT = "BlockAndAlert"
+    """Block the request or response and raise an alert."""
+    ALERT = "Alert"
+    """Raise an alert but allow the request or response to proceed."""
+    SANITIZE = "Sanitize"
+    """Remove the detected content and allow the request or response to proceed."""
+
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource provisioning succeeded."""
+    FAILED = "Failed"
+    """Resource provisioning failed."""
+    CANCELED = "Canceled"
+    """Resource provisioning was canceled."""
+    PROVISIONING = "Provisioning"
+    """The resource create request has been accepted; provisioning is in progress."""
+    CREATING = "Creating"
+    """The resource is being created."""
+    UPDATING = "Updating"
+    """The resource update request has been accepted; the update is in progress."""
+    DELETING = "Deleting"
+    """The resource delete request has been accepted; deletion is in progress."""
+    ACCEPTED = "Accepted"
+    """The long-running operation has been accepted and is not yet complete."""
+
+
 class ProvisioningStateNeuroShield(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning states shared by NeuroShield resources. The non-terminal states are used by
     asynchronous protected-resource operations; synchronous NeuroShield operations return only
@@ -153,3 +360,75 @@ class ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource creation failed."""
     CANCELED = "Canceled"
     """Resource creation was canceled."""
+
+
+class SystemAssignedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (either system assigned, or none)."""
+
+    NONE = "None"
+    """No managed system identity."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned managed system identity."""
+
+
+class TlsInspectionAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The TLS inspection action."""
+
+    INSPECT = "Inspect"
+    """Intercept and decrypt the TLS connection, so policies that read the HTTP request apply."""
+    BYPASS = "Bypass"
+    """Do not intercept the TLS connection. FQDN filtering still applies, using the TLS server name
+    (SNI)."""
+
+
+class TlsInspectionCertificateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of the certificate used for TLS inspection."""
+
+    AZURE_MANAGED_CA = "AzureManagedCA"
+    """Certificate issued by an Azure-managed certificate authority."""
+
+
+class TlsInspectionPolicySourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of source selector for a TLS inspection policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select sources by workload ID patterns."""
+
+
+class TlsInspectionRuleDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of destination selector for a TLS inspection rule."""
+
+    FQDNS = "Fqdns"
+    """Select destinations by fully qualified domain names."""
+
+
+class UrlFilteringDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of destination selector for a URL filtering policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select destinations by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select destinations by IP address prefixes in CIDR notation."""
+    FQDNS = "Fqdns"
+    """Deprecated. Select destinations by fully qualified domain names; use rule hostname for new
+    configurations."""
+
+
+class UrlFilteringSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of source selector for a URL filtering policy."""
+
+    WORKLOAD_ID_PATTERNS = "WorkloadIdPatterns"
+    """Select sources by workload ID patterns."""
+    ADDRESS_PREFIXES = "AddressPrefixes"
+    """Select sources by IP address prefixes in CIDR notation."""
+
+
+class WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The workload type of a member."""
+
+    ACI = "ACI"
+    """ACI (Azure Container Instances) sandbox workload type."""
+    AGENT_FABRIC_SANDBOX = "AgentFabricSandbox"
+    """Agent Fabric sandbox workload type."""
+    AKS = "AKS"
+    """AKS workload type."""
