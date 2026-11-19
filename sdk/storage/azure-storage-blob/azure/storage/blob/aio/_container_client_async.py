@@ -1420,6 +1420,16 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], Awaitable[None]]
+        :keyword bool disable_etag_lock:
+            By default, the blob's ETag from the initial request is used to ensure the blob is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the blob to change during the download, for example, when downloading
+            an append blob that is actively being written to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the blob is
+                overwritten or recreated during the download. If the blob becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

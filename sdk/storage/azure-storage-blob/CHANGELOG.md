@@ -3,6 +3,7 @@
 ## 12.33.0b1 (Unreleased)
 
 ### Features Added
+- Added `disable_etag_lock` keyword to `download_blob` to allow downloading a blob that is being modified during the download, such as an append blob that is actively being written to. Set `disable_etag_lock=True` to enable this behavior (defaults to `False`).
 
 ## 12.32.0b1 (2026-11-05)
 
