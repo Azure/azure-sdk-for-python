@@ -1,3 +1,5 @@
-apiMdSha256: eb4b6ccaf75b4570f0f8afa8bc5d28aa5c1dc3100042053b39f4026b36c34dac
-parserVersion: 0.3.30
-pythonVersion: 3.14.3
+apiHash: e75f213cb465b8a22176195cdce280f1173d95c2f90f185cfafd6b41670c9253
+packageRelativePath: sdk/appconfiguration/azure-appconfiguration
+packageVersion: 1.10.0
+parserVersion: 0.3.31
+pythonVersion: 3.12.16
