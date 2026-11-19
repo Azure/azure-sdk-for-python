@@ -25,21 +25,6 @@ from ._operations import RansomwareReportsOperations  # type: ignore
 from ._operations import BackupVaultsOperations  # type: ignore
 from ._operations import BucketsOperations  # type: ignore
 from ._operations import CachesOperations  # type: ignore
-from ._operations import ElasticAccountsOperations  # type: ignore
-from ._operations import ElasticCapacityPoolsOperations  # type: ignore
-from ._operations import ElasticVolumesOperations  # type: ignore
-from ._operations import ElasticSnapshotsOperations  # type: ignore
-from ._operations import ElasticSnapshotPoliciesOperations  # type: ignore
-from ._operations import ElasticBackupVaultsOperations  # type: ignore
-from ._operations import ElasticBackupPoliciesOperations  # type: ignore
-from ._operations import ElasticBackupsOperations  # type: ignore
-from ._operations import ActiveDirectoryConfigsOperations  # type: ignore
-from ._operations import ExternalClustersOperations  # type: ignore
-from ._operations import ClusterPeersOperations  # type: ignore
-from ._operations import ExternalSvmsOperations  # type: ignore
-from ._operations import SvmPeersOperations  # type: ignore
-from ._operations import ExternalCachesOperations  # type: ignore
-from ._operations import ExternalCacheConnectionsOperations  # type: ignore
 from ._operations import NetAppResourceQuotaLimitsOperations  # type: ignore
 from ._operations import NetAppResourceRegionInfosOperations  # type: ignore
 from ._operations import AccountsOperations  # type: ignore
@@ -47,7 +32,6 @@ from ._operations import BackupsUnderAccountOperations  # type: ignore
 from ._operations import PoolsOperations  # type: ignore
 from ._operations import BackupsUnderBackupVaultOperations  # type: ignore
 from ._operations import BackupsUnderVolumeOperations  # type: ignore
-from ._operations import SubvolumesOperations  # type: ignore
 from ._operations import NetAppResourceOperations  # type: ignore
 from ._operations import NetAppResourceUsagesOperations  # type: ignore
 
@@ -69,21 +53,6 @@ __all__ = [
     "BackupVaultsOperations",
     "BucketsOperations",
     "CachesOperations",
-    "ElasticAccountsOperations",
-    "ElasticCapacityPoolsOperations",
-    "ElasticVolumesOperations",
-    "ElasticSnapshotsOperations",
-    "ElasticSnapshotPoliciesOperations",
-    "ElasticBackupVaultsOperations",
-    "ElasticBackupPoliciesOperations",
-    "ElasticBackupsOperations",
-    "ActiveDirectoryConfigsOperations",
-    "ExternalClustersOperations",
-    "ClusterPeersOperations",
-    "ExternalSvmsOperations",
-    "SvmPeersOperations",
-    "ExternalCachesOperations",
-    "ExternalCacheConnectionsOperations",
     "NetAppResourceQuotaLimitsOperations",
     "NetAppResourceRegionInfosOperations",
     "AccountsOperations",
@@ -91,7 +60,6 @@ __all__ = [
     "PoolsOperations",
     "BackupsUnderBackupVaultOperations",
     "BackupsUnderVolumeOperations",
-    "SubvolumesOperations",
     "NetAppResourceOperations",
     "NetAppResourceUsagesOperations",
 ]

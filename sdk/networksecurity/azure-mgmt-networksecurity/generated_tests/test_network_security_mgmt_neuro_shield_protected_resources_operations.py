@@ -25,6 +25,7 @@ class TestNetworkSecurityMgmtNeuroShieldProtectedResourcesOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -66,6 +67,7 @@ class TestNetworkSecurityMgmtNeuroShieldProtectedResourcesOperations(AzureMgmtRe
                 },
                 "type": "str",
             },
+            api_version="2026-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,6 +80,7 @@ class TestNetworkSecurityMgmtNeuroShieldProtectedResourcesOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
+            api_version="2026-10-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -89,6 +92,7 @@ class TestNetworkSecurityMgmtNeuroShieldProtectedResourcesOperations(AzureMgmtRe
         response = self.client.neuro_shield_protected_resources.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -101,6 +105,7 @@ class TestNetworkSecurityMgmtNeuroShieldProtectedResourcesOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself

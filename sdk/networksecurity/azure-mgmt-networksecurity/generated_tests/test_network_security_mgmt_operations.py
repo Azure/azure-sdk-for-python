@@ -21,7 +21,9 @@ class TestNetworkSecurityMgmtOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_operations_list(self, resource_group):
-        response = self.client.operations.list()
+        response = self.client.operations.list(
+            api_version="2026-10-01-preview",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
