@@ -83,6 +83,7 @@ _NATIVE_HTTP_ERROR_TYPES: Dict[str, Type[HttpResponseError]] = {
 
 def _native_error_type() -> Type[Exception]:
     try:
+        # pylint: disable-next=import-error,no-name-in-module
         from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
             NativeTransferError,
         )
@@ -162,7 +163,11 @@ class _NativeErrorIterator:
 
 
 def _native_disabled() -> bool:
-    """Return True if the native transfer path has been explicitly disabled via env var."""
+    """Check whether native transfers are explicitly disabled.
+
+    :returns: Whether the disable environment variable is truthy.
+    :rtype: bool
+    """
     return os.environ.get(_DISABLE_NATIVE_ENV_VAR, "").strip().lower() in (
         "1",
         "true",
@@ -172,10 +177,15 @@ def _native_disabled() -> bool:
 
 
 def _is_native_available() -> bool:
-    """Check if the native transfer extension is installed, importable, and not disabled."""
+    """Check if the native transfer extension is installed, importable, and not disabled.
+
+    :returns: Whether native transfers are available.
+    :rtype: bool
+    """
     if _native_disabled():
         return False
     try:
+        # pylint: disable-next=import-error,no-name-in-module
         from azure.storage.extensions.transfer import (
             is_available,
         )  # pylint: disable=import-outside-toplevel
@@ -202,6 +212,10 @@ def _build_token_provider(
     a synchronous refresh once a token is expired, so the extension never receives an
     already-expired token. A per-provider :class:`threading.Lock` serializes concurrent
     calls (the native side may invoke the provider from multiple worker threads).
+
+    :param any credential: Credential used to obtain tokens.
+    :returns: A token callback, or None for credentials without token support.
+    :rtype: callable or None
     """
     if credential is None:
         return None
@@ -251,6 +265,14 @@ def _can_use_native_upload(
     Returns ``False`` only when the native extension is unavailable or explicitly disabled.
     If the extension is available, unsupported upload options raise :class:`ValueError`
     with a reason-specific message instead of silently falling back to the Python upload path.
+
+    :param str blob_type: Type of blob to upload.
+    :param dict encryption_options: Client-side encryption settings.
+    :param any validate_content: Content validation setting.
+    :param any data: Upload payload.
+    :param any credential: Authentication credential.
+    :returns: Whether native upload is available for these inputs.
+    :rtype: bool
     """
     if not _is_native_available():
         return False
@@ -293,6 +315,12 @@ def _can_use_native_download(
     Returns ``False`` only when the native extension is unavailable or explicitly disabled.
     If the extension is available, unsupported download options raise :class:`ValueError`
     with a reason-specific message instead of silently falling back to the Python download path.
+
+    :param dict encryption_options: Client-side encryption settings.
+    :param any validate_content: Content validation setting.
+    :param any credential: Authentication credential.
+    :returns: Whether native download is available for these inputs.
+    :rtype: bool
     """
     if not _is_native_available():
         return False
@@ -336,6 +364,15 @@ def try_native_upload(
     Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
     extension is available, unsupported inputs and native execution failures are raised rather
     than falling back to the Python upload path.
+
+    :param any blob_client: Client for the target blob.
+    :param any data: Upload payload.
+    :param str blob_type: Type of blob to upload.
+    :param dict encryption_options: Client-side encryption settings.
+    :param any validate_content: Content validation setting.
+    :param StorageConfiguration config: Transfer configuration.
+    :returns: Upload response, or None when native transfers are unavailable.
+    :rtype: dict or None
     """
     if not _can_use_native_upload(
         blob_type=blob_type,
@@ -347,6 +384,7 @@ def try_native_upload(
     ):
         return None
 
+    # pylint: disable-next=import-error,no-name-in-module
     from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
         upload_blob as native_upload,
     )
@@ -368,19 +406,11 @@ def try_native_upload(
 
     token_provider = _build_token_provider(blob_client.credential)
 
-    overwrite = kwargs.get("overwrite", False)
     content_settings = kwargs.get("content_settings", None)
-    content_type = getattr(content_settings, "content_type", None)
-    content_encoding = getattr(content_settings, "content_encoding", None)
-    content_language = getattr(content_settings, "content_language", None)
-    content_disposition = getattr(content_settings, "content_disposition", None)
-    cache_control = getattr(content_settings, "cache_control", None)
     content_md5 = getattr(content_settings, "content_md5", None)
     if content_md5 is not None:
         content_md5 = bytes(content_md5)
 
-    metadata = kwargs.get("metadata", None)
-    max_concurrency = kwargs.get("max_concurrency", None)
     cpk = kwargs.get("cpk", None)
     lease = get_lease_id(kwargs.get("lease", None))
     tags = kwargs.get("tags", None)
@@ -398,7 +428,7 @@ def try_native_upload(
             immutability_policy_mode = immutability_policy_mode.value
 
     tier = kwargs.get("standard_blob_tier", None)
-    if hasattr(tier, "value"):
+    if tier is not None and hasattr(tier, "value"):
         tier = tier.value
 
     with _translate_native_errors():
@@ -414,14 +444,14 @@ def try_native_upload(
             api_version=blob_client.api_version,
             token_provider=token_provider,
             credential_id=id(blob_client.credential) if token_provider else None,
-            overwrite=overwrite,
-            content_type=content_type,
-            content_encoding=content_encoding,
-            content_language=content_language,
-            content_disposition=content_disposition,
-            cache_control=cache_control,
+            overwrite=kwargs.get("overwrite", False),
+            content_type=getattr(content_settings, "content_type", None),
+            content_encoding=getattr(content_settings, "content_encoding", None),
+            content_language=getattr(content_settings, "content_language", None),
+            content_disposition=getattr(content_settings, "content_disposition", None),
+            cache_control=getattr(content_settings, "cache_control", None),
             content_md5=content_md5,
-            metadata=metadata,
+            metadata=kwargs.get("metadata", None),
             tags=tags,
             lease_id=lease,
             encryption_key=getattr(cpk, "key_value", None),
@@ -438,7 +468,7 @@ def try_native_upload(
             legal_hold=kwargs.get("legal_hold", None),
             tier=tier,
             timeout=kwargs.get("timeout", None),
-            max_concurrency=max_concurrency,
+            max_concurrency=kwargs.get("max_concurrency", None),
             max_block_size=config.max_block_size,
         )
     return result
@@ -518,7 +548,7 @@ class NativeStorageStreamDownloader:
     def readinto(self, stream: Any) -> int:
         """Write the full content to a writable stream, one chunk at a time.
 
-        :param stream: A writable stream (file-like object).
+        :param any stream: A writable stream (file-like object).
         :returns: Number of bytes written.
         :rtype: int
         """
@@ -535,6 +565,8 @@ class NativeStorageStreamDownloader:
     def chunks(self) -> Iterator[bytes]:
         """Chunk iteration is not supported for native downloads.
 
+        :returns: No value; always raises NotImplementedError.
+        :rtype: Iterator[bytes]
         :raises NotImplementedError: Native downloads do not support chunk iteration.
         """
         raise NotImplementedError(
@@ -562,6 +594,14 @@ def try_native_download(
     Returns ``None`` only when the extension is unavailable or explicitly disabled. Once the
     extension is available, unsupported inputs and native execution failures are raised rather
     than falling back to the Python download path.
+
+    :param any blob_client: Client for the source blob.
+    :param int offset: Start of the download range, or None.
+    :param int length: Number of bytes to download, or None.
+    :param dict encryption_options: Client-side encryption settings.
+    :param any validate_content: Content validation setting.
+    :returns: Native downloader, or None when native transfers are unavailable.
+    :rtype: NativeStorageStreamDownloader or None
     """
     if not _can_use_native_download(
         encryption_options=encryption_options,
@@ -571,6 +611,7 @@ def try_native_download(
     ):
         return None
 
+    # pylint: disable-next=import-error,no-name-in-module
     from azure.storage.extensions.transfer import (  # pylint: disable=import-outside-toplevel
         download_blob as native_download,
     )

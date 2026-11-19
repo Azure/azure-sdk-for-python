@@ -17,6 +17,7 @@ words:
   - baug
   - cdef
   - cdefgh
+  - cdylib
   - consectetur
   - cpkdirectory
   - cpkfile
@@ -28,6 +29,7 @@ words:
   - download
   - efgh
   - elit
+  - esac
   - Fdir
   - Fdirectory
   - FFFE
@@ -44,6 +46,9 @@ words:
   - ISREG
   - mday
   - mpsc
+  - msrustup
+  - msvc
+  - msys
   - myaccount
   - myclientfilesystem
   - myclientfilesystemasync
