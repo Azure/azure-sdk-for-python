@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -62,7 +62,7 @@ class ProxyResource(Resource):
     """
 
 
-class AttestationStatus(ProxyResource):
+class AttestationStatus(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The attestation status of the virtual machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -185,6 +185,134 @@ class AttestationStatusProperties(_Model):
      Confidential VM. Known values are: \"NonPersistedTPM\" and \"Unknown\"."""
 
 
+class BackendAddressPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backend address pool for the load balancer.
+
+    :ivar name: name of the backend pool. Required.
+    :vartype name: str
+    :ivar properties: properties for the backend pool. Required.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.BackendAddressPoolProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create"])
+    """name of the backend pool. Required."""
+    properties: "_models.BackendAddressPoolProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """properties for the backend pool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.BackendAddressPoolProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BackendAddressPoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Backend address pool for the load balancer.
+
+    :ivar load_balancer_backend_addresses: List of backend addresses for the backend pool.
+    :vartype load_balancer_backend_addresses:
+     list[~azure.mgmt.azurestackhcivm.models.LoadBalancerBackendAddress]
+    :ivar virtual_network: Reference to the virtual network for this backend pool. Mutually
+     exclusive with logicalNetwork.
+    :vartype virtual_network: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkArmReference
+    :ivar logical_network: Reference to the logical network for this backend pool. Mutually
+     exclusive with virtualNetwork.
+    :vartype logical_network: ~azure.mgmt.azurestackhcivm.models.LogicalNetworkArmReference
+    """
+
+    load_balancer_backend_addresses: Optional[list["_models.LoadBalancerBackendAddress"]] = rest_field(
+        name="loadBalancerBackendAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of backend addresses for the backend pool."""
+    virtual_network: Optional["_models.VirtualNetworkArmReference"] = rest_field(
+        name="virtualNetwork", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the virtual network for this backend pool. Mutually exclusive with logicalNetwork."""
+    logical_network: Optional["_models.LogicalNetworkArmReference"] = rest_field(
+        name="logicalNetwork", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference to the logical network for this backend pool. Mutually exclusive with virtualNetwork."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        load_balancer_backend_addresses: Optional[list["_models.LoadBalancerBackendAddress"]] = None,
+        virtual_network: Optional["_models.VirtualNetworkArmReference"] = None,
+        logical_network: Optional["_models.LogicalNetworkArmReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Data used when creating a disk or snapshot.
+
+    :ivar create_option: This enumerates the possible sources of a disk's creation. Required. Known
+     values are: "Copy" and "Empty".
+    :vartype create_option: str or ~azure.mgmt.azurestackhcivm.models.DiskCreateOption
+    :ivar source_resource_id: ARM ID of the source resource used for disk creation. Required when
+     createOption is Copy.
+    :vartype source_resource_id: str
+    :ivar source_unique_id: Unique ID of the source resource used for disk creation. Read-only and
+     not required for disk creation.
+    :vartype source_unique_id: str
+    """
+
+    create_option: Union[str, "_models.DiskCreateOption"] = rest_field(
+        name="createOption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This enumerates the possible sources of a disk's creation. Required. Known values are: \"Copy\"
+     and \"Empty\"."""
+    source_resource_id: Optional[str] = rest_field(
+        name="sourceResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the source resource used for disk creation. Required when createOption is Copy."""
+    source_unique_id: Optional[str] = rest_field(name="sourceUniqueId", visibility=["read"])
+    """Unique ID of the source resource used for disk creation. Read-only and not required for disk
+     creation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        create_option: Union[str, "_models.DiskCreateOption"],
+        source_resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -221,15 +349,15 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -257,7 +385,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
@@ -309,7 +437,159 @@ class ExtensionResource(Resource):
     """
 
 
-class TrackedResource(Resource):
+class FabricIntegrationStatus(_Model):
+    """Enhanced fabric integration status with detailed health monitoring and connectivity state.
+
+    :ivar state: Current fabric integration state. Known values are: "Connected", "Disconnected",
+     "Misconfigured", "NotApplicable", and "Connecting".
+    :vartype state: str or ~azure.mgmt.azurestackhcivm.models.FabricIntegrationStateEnum
+    :ivar health: Health status of the fabric connection. Known values are: "Healthy", "Warning",
+     "Error", and "Unknown".
+    :vartype health: str or ~azure.mgmt.azurestackhcivm.models.FabricConnectionHealthEnum
+    :ivar last_checked: Timestamp of the last fabric health check as ISO 8601 string.
+    :vartype last_checked: ~datetime.datetime
+    :ivar resource_type: Type of fabric resource referenced. Known values are: "L2IsolationDomain"
+     and "L3InternalNetwork".
+    :vartype resource_type: str or ~azure.mgmt.azurestackhcivm.models.FabricResourceTypeEnum
+    :ivar issues: Issues raised by fabric.
+    :vartype issues: list[~azure.mgmt.azurestackhcivm.models.FabricIssue]
+    """
+
+    state: Optional[Union[str, "_models.FabricIntegrationStateEnum"]] = rest_field(visibility=["read"])
+    """Current fabric integration state. Known values are: \"Connected\", \"Disconnected\",
+     \"Misconfigured\", \"NotApplicable\", and \"Connecting\"."""
+    health: Optional[Union[str, "_models.FabricConnectionHealthEnum"]] = rest_field(visibility=["read"])
+    """Health status of the fabric connection. Known values are: \"Healthy\", \"Warning\", \"Error\",
+     and \"Unknown\"."""
+    last_checked: Optional[datetime.datetime] = rest_field(name="lastChecked", visibility=["read"], format="rfc3339")
+    """Timestamp of the last fabric health check as ISO 8601 string."""
+    resource_type: Optional[Union[str, "_models.FabricResourceTypeEnum"]] = rest_field(
+        name="resourceType", visibility=["read"]
+    )
+    """Type of fabric resource referenced. Known values are: \"L2IsolationDomain\" and
+     \"L3InternalNetwork\"."""
+    issues: Optional[list["_models.FabricIssue"]] = rest_field(visibility=["read"])
+    """Issues raised by fabric."""
+
+
+class FabricIssue(_Model):
+    """Issues exposed by managed network fabric.
+
+    :ivar code: Specific error/warning code.
+    :vartype code: str
+    :ivar severity: issue severity.
+    :vartype severity: str
+    :ivar message: Description of the issue.
+    :vartype message: str
+    :ivar target: specific property or resource that has the issue.
+    :vartype target: str
+    :ivar timestamp: Timestamp of the issue as ISO 8601 string.
+    :vartype timestamp: ~datetime.datetime
+    """
+
+    code: Optional[str] = rest_field(visibility=["read"])
+    """Specific error/warning code."""
+    severity: Optional[str] = rest_field(visibility=["read"])
+    """issue severity."""
+    message: Optional[str] = rest_field(visibility=["read"])
+    """Description of the issue."""
+    target: Optional[str] = rest_field(visibility=["read"])
+    """specific property or resource that has the issue."""
+    timestamp: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """Timestamp of the issue as ISO 8601 string."""
+
+
+class FrontendIPConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """FrontendIP Configuration object for a load balancer.
+
+    :ivar name: name for the frontend IP configuration. Required.
+    :vartype name: str
+    :ivar properties: properties for this frontendIPConfiguration. Required.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.FrontendIPConfigurationProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create"])
+    """name for the frontend IP configuration. Required."""
+    properties: "_models.FrontendIPConfigurationProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """properties for this frontendIPConfiguration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.FrontendIPConfigurationProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FrontendIPConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """FrontendIP Configuration object for a load balancer.
+
+    :ivar private_ip_address: Private IP Address that was allocated (dynamic) or is to be allocated
+     (static) from the subnet.
+    :vartype private_ip_address: str
+    :ivar private_ip_allocation_method: privateIPAllocationMethod - set to Static for requesting a
+     specific IP. Known values are: "Dynamic" and "Static".
+    :vartype private_ip_allocation_method: str or
+     ~azure.mgmt.azurestackhcivm.models.IpAllocationMethodEnum
+    :ivar subnet: subnet - the subnet from which to allocate the private IP.
+    :vartype subnet: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetArmReference
+    :ivar public_ip_address: Public IP.
+    :vartype public_ip_address: ~azure.mgmt.azurestackhcivm.models.PublicIPAddressArmReference
+    """
+
+    private_ip_address: Optional[str] = rest_field(
+        name="privateIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Private IP Address that was allocated (dynamic) or is to be allocated (static) from the subnet."""
+    private_ip_allocation_method: Optional[Union[str, "_models.IpAllocationMethodEnum"]] = rest_field(
+        name="privateIPAllocationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """privateIPAllocationMethod - set to Static for requesting a specific IP. Known values are:
+     \"Dynamic\" and \"Static\"."""
+    subnet: Optional["_models.VirtualNetworkSubnetArmReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """subnet - the subnet from which to allocate the private IP."""
+    public_ip_address: Optional["_models.PublicIPAddressArmReference"] = rest_field(
+        name="publicIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public IP."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        private_ip_address: Optional[str] = None,
+        private_ip_allocation_method: Optional[Union[str, "_models.IpAllocationMethodEnum"]] = None,
+        subnet: Optional["_models.VirtualNetworkSubnetArmReference"] = None,
+        public_ip_address: Optional["_models.PublicIPAddressArmReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -329,7 +609,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -339,7 +619,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -353,7 +633,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImage(TrackedResource):
+class GalleryImage(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The gallery images resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -391,7 +671,7 @@ class GalleryImage(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.GalleryImageProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -407,7 +687,7 @@ class GalleryImage(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageIdentifier(_Model):
+class GalleryImageIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the gallery image definition identifier.
 
     :ivar publisher: The name of the gallery image definition publisher. Required.
@@ -445,7 +725,7 @@ class GalleryImageIdentifier(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageProperties(_Model):
+class GalleryImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the gallery image resource.
 
     :ivar container_id: Storage ContainerID of the storage container to be used for gallery image.
@@ -459,12 +739,8 @@ class GalleryImageProperties(_Model):
      cloud-init [NoCloud, Azure]. Known values are: "NoCloud" and "Azure".
     :vartype cloud_init_data_source: str or ~azure.mgmt.azurestackhcivm.models.CloudInitDataSource
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
-     values are: "V1" and "V2".
+     values are: "V1", "V2", and "NA".
     :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhcivm.models.HyperVGeneration
-    :ivar vm_image_repository_credentials: The credentials used to login to the image repository
-     that has access to the specified image.
-    :vartype vm_image_repository_credentials:
-     ~azure.mgmt.azurestackhcivm.models.VmImageRepositoryCredentials
     :ivar identifier: This is the gallery image definition identifier.
     :vartype identifier: ~azure.mgmt.azurestackhcivm.models.GalleryImageIdentifier
     :ivar version: Specifies information about the gallery image version that you want to create or
@@ -499,11 +775,8 @@ class GalleryImageProperties(_Model):
     hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = rest_field(
         name="hyperVGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\" and \"V2\"."""
-    vm_image_repository_credentials: Optional["_models.VmImageRepositoryCredentials"] = rest_field(
-        name="vmImageRepositoryCredentials", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The credentials used to login to the image repository that has access to the specified image."""
+    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\", \"V2\",
+     and \"NA\"."""
     identifier: Optional["_models.GalleryImageIdentifier"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -533,7 +806,6 @@ class GalleryImageProperties(_Model):
         image_path: Optional[str] = None,
         cloud_init_data_source: Optional[Union[str, "_models.CloudInitDataSource"]] = None,
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
-        vm_image_repository_credentials: Optional["_models.VmImageRepositoryCredentials"] = None,
         identifier: Optional["_models.GalleryImageIdentifier"] = None,
         version: Optional["_models.GalleryImageVersion"] = None,
         source_virtual_machine_id: Optional[str] = None,
@@ -550,7 +822,7 @@ class GalleryImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageStatus(_Model):
+class GalleryImageStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of gallery images.
 
     :ivar error_code: GalleryImage provisioning error code.
@@ -607,7 +879,7 @@ class GalleryImageStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageStatusDownloadStatus(_Model):
+class GalleryImageStatusDownloadStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The download status of the gallery image.
 
     :ivar download_size_in_mb: The downloaded sized of the image in MB.
@@ -637,7 +909,7 @@ class GalleryImageStatusDownloadStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageStatusProvisioningStatus(_Model):
+class GalleryImageStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the operation performed on the gallery image.
 
     :ivar operation_id: The ID of the operation performed on the gallery image.
@@ -676,21 +948,21 @@ class GalleryImageStatusProvisioningStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageTagsUpdate(_Model):
+class GalleryImageTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in GalleryImage resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -704,7 +976,7 @@ class GalleryImageTagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersion(_Model):
+class GalleryImageVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies information about the gallery image version that you want to create or update.
 
     :ivar name: This is the version of the gallery image.
@@ -759,7 +1031,7 @@ class GalleryImageVersion(_Model):
             super().__setattr__(key, value)
 
 
-class GalleryImageVersionProperties(_Model):
+class GalleryImageVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a gallery image version.
 
     :ivar storage_profile: This is the storage profile of a Gallery Image Version. Required.
@@ -789,7 +1061,7 @@ class GalleryImageVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GalleryImageVersionStorageProfile(_Model):
+class GalleryImageVersionStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the storage profile of a Gallery Image Version.
 
     :ivar os_disk_image: This is the OS disk image.
@@ -830,7 +1102,7 @@ class GalleryOSDiskImage(_Model):
     """This property indicates the size of the VHD to be created."""
 
 
-class GuestAgent(ProxyResource):
+class GuestAgent(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the GuestAgent.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -898,11 +1170,11 @@ class GuestAgentInstallStatus(_Model):
     """The time of the last status change."""
     agent_version: Optional[str] = rest_field(name="agentVersion", visibility=["read"])
     """The hybrid machine agent full version."""
-    error_details: Optional[List["_models.ErrorDetail"]] = rest_field(name="errorDetails", visibility=["read"])
+    error_details: Optional[list["_models.ErrorDetail"]] = rest_field(name="errorDetails", visibility=["read"])
     """Details about the error state."""
 
 
-class GuestAgentProperties(_Model):
+class GuestAgentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the resource properties.
 
     :ivar credentials: Username / Password Credentials to provision guest agent.
@@ -953,7 +1225,7 @@ class GuestAgentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GuestCredential(_Model):
+class GuestCredential(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Username / Password Credentials to connect to guest.
 
     :ivar username: The username to connect with the guest.
@@ -986,7 +1258,7 @@ class GuestCredential(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HardwareProfileUpdate(_Model):
+class HardwareProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HardwareProfile - Specifies the hardware settings for the virtual machine instance.
 
     :ivar vm_size: VM Size Enum. Known values are: "Default", "Standard_A2_v2", "Standard_A4_v2",
@@ -1004,6 +1276,10 @@ class HardwareProfileUpdate(_Model):
      instance.
     :vartype virtual_machine_gp_us:
      list[~azure.mgmt.azurestackhcivm.models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU]
+    :ivar dynamic_memory_config: Dynamic memory config for day-2 updates and static-to-dynamic
+     conversion of the virtual machine instance.
+    :vartype dynamic_memory_config:
+     ~azure.mgmt.azurestackhcivm.models.VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig
     """
 
     vm_size: Optional[Union[str, "_models.VmSizeEnum"]] = rest_field(
@@ -1020,9 +1296,14 @@ class HardwareProfileUpdate(_Model):
     memory_mb: Optional[int] = rest_field(name="memoryMB", visibility=["read", "create", "update", "delete", "query"])
     """RAM in MB for the virtual machine instance."""
     virtual_machine_gp_us: Optional[
-        List["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
+        list["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
     ] = rest_field(name="virtualMachineGPUs", visibility=["read", "create", "update", "delete", "query"])
     """virtualMachineGPUs - updated list of GPUs on the virtual machine instance."""
+    dynamic_memory_config: Optional["_models.VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig"] = (
+        rest_field(name="dynamicMemoryConfig", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Dynamic memory config for day-2 updates and static-to-dynamic conversion of the virtual machine
+     instance."""
 
     @overload
     def __init__(
@@ -1032,7 +1313,10 @@ class HardwareProfileUpdate(_Model):
         processors: Optional[int] = None,
         memory_mb: Optional[int] = None,
         virtual_machine_gp_us: Optional[
-            List["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
+            list["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
+        ] = None,
+        dynamic_memory_config: Optional[
+            "_models.VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig"
         ] = None,
     ) -> None: ...
 
@@ -1047,7 +1331,7 @@ class HardwareProfileUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HttpProxyConfiguration(_Model):
+class HttpProxyConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """HTTP Proxy configuration for the VM.
 
     :ivar http_proxy: The HTTP proxy server endpoint to use.
@@ -1066,7 +1350,7 @@ class HttpProxyConfiguration(_Model):
         name="httpsProxy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The HTTPS proxy server endpoint to use."""
-    no_proxy: Optional[List[str]] = rest_field(
+    no_proxy: Optional[list[str]] = rest_field(
         name="noProxy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The endpoints that should not go through proxy."""
@@ -1079,7 +1363,7 @@ class HttpProxyConfiguration(_Model):
         *,
         http_proxy: Optional[str] = None,
         https_proxy: Optional[str] = None,
-        no_proxy: Optional[List[str]] = None,
+        no_proxy: Optional[list[str]] = None,
         trusted_ca: Optional[str] = None,
     ) -> None: ...
 
@@ -1094,7 +1378,7 @@ class HttpProxyConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HybridIdentityMetadata(ProxyResource):
+class HybridIdentityMetadata(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the HybridIdentityMetadata.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1135,7 +1419,7 @@ class HybridIdentityMetadata(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class HybridIdentityMetadataProperties(_Model):
+class HybridIdentityMetadataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the resource properties.
 
     :ivar resource_uid: The unique identifier for the resource.
@@ -1182,7 +1466,7 @@ class HybridIdentityMetadataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
@@ -1218,15 +1502,15 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageArmReference(_Model):
-    """The ARM ID for a Gallery Image.
+class ImageArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Gallery Image.
 
-    :ivar id: The ARM ID for an image resource used by the virtual machine instance.
+    :ivar id: The Azure Resource ID for an image resource used by the virtual machine instance.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create"])
-    """The ARM ID for an image resource used by the virtual machine instance."""
+    """The Azure Resource ID for an image resource used by the virtual machine instance."""
 
     @overload
     def __init__(
@@ -1246,7 +1530,204 @@ class ImageArmReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InstanceViewStatus(_Model):
+class InboundRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The inbound rule resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.InboundRuleProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.InboundRuleProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.InboundRuleProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InboundRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Inbound rule properties - extends InboundNATRuleProperties with additional status tracking.
+
+    :ivar protocol: Protocol for the NAT rule. Required. Known values are: "Tcp" and "Udp".
+    :vartype protocol: str or ~azure.mgmt.azurestackhcivm.models.InboundNATRuleProtocol
+    :ivar frontend_port: Frontend Port for the inbound rule. Required.
+    :vartype frontend_port: int
+    :ivar backend_port: backend Port for the inbound rule. Required.
+    :vartype backend_port: int
+    :ivar backend_ip_configuration: IP configuration for the target backend. Required.
+    :vartype backend_ip_configuration:
+     ~azure.mgmt.azurestackhcivm.models.IPConfigurationArmReference
+    :ivar public_ip_address: Public IP Address for this NAT rule. Required.
+    :vartype public_ip_address: ~azure.mgmt.azurestackhcivm.models.PublicIPAddressArmReference
+    :ivar provisioning_state: Provisioning state of the inbound rule. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: The observed state of Inbound Rule.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.InboundRuleStatus
+    """
+
+    protocol: Union[str, "_models.InboundNATRuleProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Protocol for the NAT rule. Required. Known values are: \"Tcp\" and \"Udp\"."""
+    frontend_port: int = rest_field(name="frontendPort", visibility=["read", "create", "update", "delete", "query"])
+    """Frontend Port for the inbound rule. Required."""
+    backend_port: int = rest_field(name="backendPort", visibility=["read", "create", "update", "delete", "query"])
+    """backend Port for the inbound rule. Required."""
+    backend_ip_configuration: "_models.IPConfigurationArmReference" = rest_field(
+        name="backendIPConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP configuration for the target backend. Required."""
+    public_ip_address: "_models.PublicIPAddressArmReference" = rest_field(
+        name="publicIPAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public IP Address for this NAT rule. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the inbound rule. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.InboundRuleStatus"] = rest_field(visibility=["read"])
+    """The observed state of Inbound Rule."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        protocol: Union[str, "_models.InboundNATRuleProtocol"],
+        frontend_port: int,
+        backend_port: int,
+        backend_ip_configuration: "_models.IPConfigurationArmReference",
+        public_ip_address: "_models.PublicIPAddressArmReference",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InboundRuleStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The observed state of inbound rule.
+
+    :ivar error_code: InboundRule provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: InboundRule provisioning status.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.InboundRuleStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """InboundRule provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.InboundRuleStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """InboundRule provisioning status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.InboundRuleStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InboundRuleStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provisioning status of Inbound Rule.
+
+    :ivar operation_id: The ID of the operation performed on the inbound rule.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the inbound rule [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the inbound rule."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the inbound rule [Succeeded, Failed, InProgress].
+     Known values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InstanceViewStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instance view status.
 
     :ivar code: The status code.
@@ -1300,14 +1781,14 @@ class InstanceViewStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InterfaceDNSSettings(_Model):
+class InterfaceDNSSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DNS Settings of the interface.
 
     :ivar dns_servers: List of DNS server IP Addresses for the interface.
     :vartype dns_servers: list[str]
     """
 
-    dns_servers: Optional[List[str]] = rest_field(
+    dns_servers: Optional[list[str]] = rest_field(
         name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of DNS server IP Addresses for the interface."""
@@ -1316,7 +1797,7 @@ class InterfaceDNSSettings(_Model):
     def __init__(
         self,
         *,
-        dns_servers: Optional[List[str]] = None,
+        dns_servers: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1330,7 +1811,7 @@ class InterfaceDNSSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPConfiguration(_Model):
+class IPConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InterfaceIPConfiguration IPConfiguration in a network interface.
 
     :ivar name: Name - The name of the resource that is unique within a resource group. This name
@@ -1367,7 +1848,37 @@ class IPConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPConfigurationProperties(_Model):
+class IPConfigurationArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID of an IPConfiguration resource.
+
+    :ivar resource_id: The Azure Resource ID of an IPConfiguration resource.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource ID of an IPConfiguration resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IPConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InterfaceIPConfigurationPropertiesFormat properties of IP configuration.
 
     :ivar gateway: Gateway for network interface.
@@ -1412,7 +1923,7 @@ class IPConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPPool(_Model):
+class IPPool(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes IPPool.
 
     :ivar name: Name of the IP-Pool.
@@ -1477,7 +1988,541 @@ class IPPoolInfo(_Model):
     """Number of IP addresses available in the IP Pool."""
 
 
-class LogicalNetwork(TrackedResource):
+class LoadBalancer(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The LoadBalancer resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.LoadBalancerProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.LoadBalancerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.LoadBalancerProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerBackendAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LoadBalancer Backend Address.
+
+    :ivar name: name of the backend address. Required.
+    :vartype name: str
+    :ivar properties: backend address properties. Required.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.LoadBalancerBackendAddressProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create"])
+    """name of the backend address. Required."""
+    properties: "_models.LoadBalancerBackendAddressProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """backend address properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.LoadBalancerBackendAddressProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerBackendAddressPoolReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a LoadBalancer backend address pool reference.
+
+    :ivar name: name of the backend address pool. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the backend address pool. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerBackendAddressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LoadBalancer Backend Address properties.
+
+    :ivar admin_state: admin state - if set to false, the address is removed from the pool. Known
+     values are: "Up" and "Down".
+    :vartype admin_state: str or
+     ~azure.mgmt.azurestackhcivm.models.LoadBalancerBackendAddressAdminState
+    :ivar ip_address: IP address of the backend target. Populated automatically from the referenced
+     IP configuration.
+    :vartype ip_address: str
+    :ivar subnet: Reference to the subnet containing the backend address. Populated automatically
+     from the referenced IP configuration. Mutually exclusive with logicalNetwork.
+    :vartype subnet: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetArmReference
+    :ivar virtual_network: Reference to the virtual network containing the backend address.
+     Populated automatically from the referenced IP configuration. Mutually exclusive with
+     logicalNetwork.
+    :vartype virtual_network: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkArmReference
+    :ivar logical_network: Reference to the logical network containing this backend address.
+     Populated automatically from the referenced IP configuration. Mutually exclusive with subnet
+     and virtualNetwork.
+    :vartype logical_network: ~azure.mgmt.azurestackhcivm.models.LogicalNetworkArmReference
+    :ivar network_interface_ip_configuration: Nic Based backend-ip association.
+    :vartype network_interface_ip_configuration:
+     ~azure.mgmt.azurestackhcivm.models.IPConfigurationArmReference
+    """
+
+    admin_state: Optional[Union[str, "_models.LoadBalancerBackendAddressAdminState"]] = rest_field(
+        name="adminState", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """admin state - if set to false, the address is removed from the pool. Known values are: \"Up\"
+     and \"Down\"."""
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read"])
+    """IP address of the backend target. Populated automatically from the referenced IP configuration."""
+    subnet: Optional["_models.VirtualNetworkSubnetArmReference"] = rest_field(visibility=["read"])
+    """Reference to the subnet containing the backend address. Populated automatically from the
+     referenced IP configuration. Mutually exclusive with logicalNetwork."""
+    virtual_network: Optional["_models.VirtualNetworkArmReference"] = rest_field(
+        name="virtualNetwork", visibility=["read"]
+    )
+    """Reference to the virtual network containing the backend address. Populated automatically from
+     the referenced IP configuration. Mutually exclusive with logicalNetwork."""
+    logical_network: Optional["_models.LogicalNetworkArmReference"] = rest_field(
+        name="logicalNetwork", visibility=["read"]
+    )
+    """Reference to the logical network containing this backend address. Populated automatically from
+     the referenced IP configuration. Mutually exclusive with subnet and virtualNetwork."""
+    network_interface_ip_configuration: Optional["_models.IPConfigurationArmReference"] = rest_field(
+        name="networkInterfaceIPConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Nic Based backend-ip association."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        admin_state: Optional[Union[str, "_models.LoadBalancerBackendAddressAdminState"]] = None,
+        network_interface_ip_configuration: Optional["_models.IPConfigurationArmReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerFrontendIPConfigurationReference(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Reference to a LoadBalancer Frontend IPConfiguration.
+
+    :ivar name: name of the frontnedIPConfiguration. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the frontnedIPConfiguration. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerProbeReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Reference to a LoadBalancer health probe.
+
+    :ivar name: name of the health probe. Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """name of the health probe. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Load Balancer resource properties.
+
+    :ivar frontend_ip_configurations: Frontend IPs for the loadbalancer. Required.
+    :vartype frontend_ip_configurations:
+     list[~azure.mgmt.azurestackhcivm.models.FrontendIPConfiguration]
+    :ivar backend_address_pools: backendAddressPools for the loadbalancer.
+    :vartype backend_address_pools: list[~azure.mgmt.azurestackhcivm.models.BackendAddressPool]
+    :ivar load_balancing_rules: load balancer rules.
+    :vartype load_balancing_rules: list[~azure.mgmt.azurestackhcivm.models.LoadBalancerRule]
+    :ivar probes: load balancer health probes.
+    :vartype probes: list[~azure.mgmt.azurestackhcivm.models.Probe]
+    :ivar provisioning_state: Provisioning state of the Load Balancer. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: observed state of the load balancer.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.LoadBalancerStatus
+    """
+
+    frontend_ip_configurations: list["_models.FrontendIPConfiguration"] = rest_field(
+        name="frontendIPConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Frontend IPs for the loadbalancer. Required."""
+    backend_address_pools: Optional[list["_models.BackendAddressPool"]] = rest_field(
+        name="backendAddressPools", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """backendAddressPools for the loadbalancer."""
+    load_balancing_rules: Optional[list["_models.LoadBalancerRule"]] = rest_field(
+        name="loadBalancingRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """load balancer rules."""
+    probes: Optional[list["_models.Probe"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """load balancer health probes."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the Load Balancer. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.LoadBalancerStatus"] = rest_field(visibility=["read"])
+    """observed state of the load balancer."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frontend_ip_configurations: list["_models.FrontendIPConfiguration"],
+        backend_address_pools: Optional[list["_models.BackendAddressPool"]] = None,
+        load_balancing_rules: Optional[list["_models.LoadBalancerRule"]] = None,
+        probes: Optional[list["_models.Probe"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """LoadBalancer Rules.
+
+    :ivar name: name of the load balancer rule. Required.
+    :vartype name: str
+    :ivar properties: load balancer rule properties. Required.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.LoadBalancerRuleProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create"])
+    """name of the load balancer rule. Required."""
+    properties: "_models.LoadBalancerRuleProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """load balancer rule properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.LoadBalancerRuleProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for LoadBalancerRules.
+
+    :ivar frontend_ip_configuration: arm reference to frontend IP being used by this LB. Required.
+    :vartype frontend_ip_configuration:
+     ~azure.mgmt.azurestackhcivm.models.LoadBalancerFrontendIPConfigurationReference
+    :ivar backend_address_pool: arm reference to backend pool being used by ths pool. Required.
+    :vartype backend_address_pool:
+     ~azure.mgmt.azurestackhcivm.models.LoadBalancerBackendAddressPoolReference
+    :ivar frontend_port: Frontend port to accept connections. Required.
+    :vartype frontend_port: int
+    :ivar backend_port: backendPort to forward connections. Required.
+    :vartype backend_port: int
+    :ivar protocol: IP Protocol that the rule must load-balance. Required. Known values are: "Tcp",
+     "Udp", and "All".
+    :vartype protocol: str or ~azure.mgmt.azurestackhcivm.models.LoadBalancerRuleTransportProtocol
+    :ivar probe: Reference for the health probe for this connection.
+    :vartype probe: ~azure.mgmt.azurestackhcivm.models.LoadBalancerProbeReference
+    :ivar load_distribution: SessionPersistence: Default (5-tuple), SourceIP(2-tuple),
+     sourceIPProtocol(3-tuple). Known values are: "Default", "SourceIP", and "SourceIPProtocol".
+    :vartype load_distribution: str or
+     ~azure.mgmt.azurestackhcivm.models.LoadBalancerRuleSessionPersistenceType
+    :ivar idle_timeout_in_minutes: Time for which connections are preserved before being torn down.
+    :vartype idle_timeout_in_minutes: int
+    """
+
+    frontend_ip_configuration: "_models.LoadBalancerFrontendIPConfigurationReference" = rest_field(
+        name="frontendIPConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """arm reference to frontend IP being used by this LB. Required."""
+    backend_address_pool: "_models.LoadBalancerBackendAddressPoolReference" = rest_field(
+        name="backendAddressPool", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """arm reference to backend pool being used by ths pool. Required."""
+    frontend_port: int = rest_field(name="frontendPort", visibility=["read", "create", "update", "delete", "query"])
+    """Frontend port to accept connections. Required."""
+    backend_port: int = rest_field(name="backendPort", visibility=["read", "create", "update", "delete", "query"])
+    """backendPort to forward connections. Required."""
+    protocol: Union[str, "_models.LoadBalancerRuleTransportProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP Protocol that the rule must load-balance. Required. Known values are: \"Tcp\", \"Udp\", and
+     \"All\"."""
+    probe: Optional["_models.LoadBalancerProbeReference"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Reference for the health probe for this connection."""
+    load_distribution: Optional[Union[str, "_models.LoadBalancerRuleSessionPersistenceType"]] = rest_field(
+        name="loadDistribution", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """SessionPersistence: Default (5-tuple), SourceIP(2-tuple), sourceIPProtocol(3-tuple). Known
+     values are: \"Default\", \"SourceIP\", and \"SourceIPProtocol\"."""
+    idle_timeout_in_minutes: Optional[int] = rest_field(
+        name="idleTimeoutInMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Time for which connections are preserved before being torn down."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        frontend_ip_configuration: "_models.LoadBalancerFrontendIPConfigurationReference",
+        backend_address_pool: "_models.LoadBalancerBackendAddressPoolReference",
+        frontend_port: int,
+        backend_port: int,
+        protocol: Union[str, "_models.LoadBalancerRuleTransportProtocol"],
+        probe: Optional["_models.LoadBalancerProbeReference"] = None,
+        load_distribution: Optional[Union[str, "_models.LoadBalancerRuleSessionPersistenceType"]] = None,
+        idle_timeout_in_minutes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The observed status of the virtual network.
+
+    :ivar error_code: LoadBalancer provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: virtual network provisioning status.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.LoadBalancerStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """LoadBalancer provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.LoadBalancerStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """virtual network provisioning status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.LoadBalancerStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of load balancer operations.
+
+    :ivar operation_id: The ID of the operation performed on the load balancer.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the loadbalancer [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the load balancer."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the loadbalancer [Succeeded, Failed, InProgress].
+     Known values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LoadBalancerTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in LoadBalancer resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LogicalNetwork(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The logical network resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1515,7 +2560,7 @@ class LogicalNetwork(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.LogicalNetworkProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -1531,15 +2576,15 @@ class LogicalNetwork(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkArmReference(_Model):
-    """The ARM ID for a Logical Network.
+class LogicalNetworkArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Logical Network.
 
-    :ivar id: The ARM ID for a Logical Network.
+    :ivar id: The Azure Resource ID for a Logical Network.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Logical Network."""
+    """The Azure Resource ID for a Logical Network."""
 
     @overload
     def __init__(
@@ -1559,12 +2604,16 @@ class LogicalNetworkArmReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkProperties(_Model):
+class LogicalNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the logical network resource.
 
     :ivar dhcp_options: DhcpOptions contains an array of DNS servers available to VMs deployed in
      the logical network. Standard DHCP option for a subnet overrides logical network DHCP options.
     :vartype dhcp_options: ~azure.mgmt.azurestackhcivm.models.LogicalNetworkPropertiesDhcpOptions
+    :ivar fabric_network_configuration: Managed network fabric l2/l3 ISD for this logical network.
+     If set empty, the logical network remains entirely local.
+    :vartype fabric_network_configuration:
+     ~azure.mgmt.azurestackhcivm.models.ManagedNetworkFabricArmReference
     :ivar subnets: Subnet - list of subnets under the logical network.
     :vartype subnets: list[~azure.mgmt.azurestackhcivm.models.Subnet]
     :ivar provisioning_state: Provisioning state of the logical network. Known values are:
@@ -1584,7 +2633,12 @@ class LogicalNetworkProperties(_Model):
     )
     """DhcpOptions contains an array of DNS servers available to VMs deployed in the logical network.
      Standard DHCP option for a subnet overrides logical network DHCP options."""
-    subnets: Optional[List["_models.Subnet"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    fabric_network_configuration: Optional["_models.ManagedNetworkFabricArmReference"] = rest_field(
+        name="fabricNetworkConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed network fabric l2/l3 ISD for this logical network. If set empty, the logical network
+     remains entirely local."""
+    subnets: Optional[list["_models.Subnet"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Subnet - list of subnets under the logical network."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -1607,7 +2661,8 @@ class LogicalNetworkProperties(_Model):
         self,
         *,
         dhcp_options: Optional["_models.LogicalNetworkPropertiesDhcpOptions"] = None,
-        subnets: Optional[List["_models.Subnet"]] = None,
+        fabric_network_configuration: Optional["_models.ManagedNetworkFabricArmReference"] = None,
+        subnets: Optional[list["_models.Subnet"]] = None,
         vm_switch_name: Optional[str] = None,
     ) -> None: ...
 
@@ -1622,7 +2677,7 @@ class LogicalNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkPropertiesDhcpOptions(_Model):
+class LogicalNetworkPropertiesDhcpOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DhcpOptions contains an array of DNS servers available to VMs deployed in the logical network.
     Standard DHCP option for a subnet overrides logical network DHCP options.
 
@@ -1630,7 +2685,7 @@ class LogicalNetworkPropertiesDhcpOptions(_Model):
     :vartype dns_servers: list[str]
     """
 
-    dns_servers: Optional[List[str]] = rest_field(
+    dns_servers: Optional[list[str]] = rest_field(
         name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of DNS servers IP addresses."""
@@ -1639,7 +2694,7 @@ class LogicalNetworkPropertiesDhcpOptions(_Model):
     def __init__(
         self,
         *,
-        dns_servers: Optional[List[str]] = None,
+        dns_servers: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1653,7 +2708,7 @@ class LogicalNetworkPropertiesDhcpOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkStatus(_Model):
+class LogicalNetworkStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of logical networks.
 
     :ivar error_code: LogicalNetwork provisioning error code.
@@ -1663,6 +2718,9 @@ class LogicalNetworkStatus(_Model):
     :ivar provisioning_status: Logical network provisioning status.
     :vartype provisioning_status:
      ~azure.mgmt.azurestackhcivm.models.LogicalNetworkStatusProvisioningStatus
+    :ivar fabric_integration: Enhanced fabric integration status with detailed health monitoring
+     and connectivity state.
+    :vartype fabric_integration: ~azure.mgmt.azurestackhcivm.models.FabricIntegrationStatus
     """
 
     error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
@@ -1675,6 +2733,10 @@ class LogicalNetworkStatus(_Model):
         name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Logical network provisioning status."""
+    fabric_integration: Optional["_models.FabricIntegrationStatus"] = rest_field(
+        name="fabricIntegration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enhanced fabric integration status with detailed health monitoring and connectivity state."""
 
     @overload
     def __init__(
@@ -1683,6 +2745,7 @@ class LogicalNetworkStatus(_Model):
         error_code: Optional[str] = None,
         error_message: Optional[str] = None,
         provisioning_status: Optional["_models.LogicalNetworkStatusProvisioningStatus"] = None,
+        fabric_integration: Optional["_models.FabricIntegrationStatus"] = None,
     ) -> None: ...
 
     @overload
@@ -1696,7 +2759,7 @@ class LogicalNetworkStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworkStatusProvisioningStatus(_Model):
+class LogicalNetworkStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the status of the provisioning.
 
     :ivar operation_id: The ID of the operation performed on the logical network.
@@ -1735,21 +2798,21 @@ class LogicalNetworkStatusProvisioningStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogicalNetworksUpdateRequest(_Model):
+class LogicalNetworksUpdateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The logical network resource patch definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -1763,7 +2826,38 @@ class LogicalNetworksUpdateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedNetworkFabricArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Managed Network Fabric L2ISD or L3ISD internal network.
+
+    :ivar resource_id: The Azure Resource ID for a Managed Network Fabric L2ISD or L3ISD internal
+     network.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource ID for a Managed Network Fabric L2ISD or L3ISD internal network."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1791,7 +2885,7 @@ class ManagedServiceIdentity(_Model):
     )
     """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
      \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
-    user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
     """The identities assigned to this resource by the user."""
@@ -1801,7 +2895,7 @@ class ManagedServiceIdentity(_Model):
         self,
         *,
         type: Union[str, "_models.ManagedServiceIdentityType"],
-        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -1815,7 +2909,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImage(TrackedResource):
+class MarketplaceGalleryImage(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The marketplace gallery image resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1853,7 +2947,7 @@ class MarketplaceGalleryImage(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MarketplaceGalleryImageProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -1869,7 +2963,7 @@ class MarketplaceGalleryImage(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImageProperties(_Model):
+class MarketplaceGalleryImageProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the marketplace gallery image resource.
 
     :ivar container_id: Storage ContainerID of the storage container to be used for marketplace
@@ -1882,7 +2976,7 @@ class MarketplaceGalleryImageProperties(_Model):
      cloud-init [NoCloud, Azure]. Known values are: "NoCloud" and "Azure".
     :vartype cloud_init_data_source: str or ~azure.mgmt.azurestackhcivm.models.CloudInitDataSource
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
-     values are: "V1" and "V2".
+     values are: "V1", "V2", and "NA".
     :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhcivm.models.HyperVGeneration
     :ivar identifier: This is the gallery image definition identifier.
     :vartype identifier: ~azure.mgmt.azurestackhcivm.models.GalleryImageIdentifier
@@ -1913,7 +3007,8 @@ class MarketplaceGalleryImageProperties(_Model):
     hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = rest_field(
         name="hyperVGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\" and \"V2\"."""
+    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\", \"V2\",
+     and \"NA\"."""
     identifier: Optional["_models.GalleryImageIdentifier"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1953,7 +3048,7 @@ class MarketplaceGalleryImageProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImageStatus(_Model):
+class MarketplaceGalleryImageStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of marketplace gallery images.
 
     :ivar error_code: MarketplaceGalleryImage provisioning error code.
@@ -2011,7 +3106,9 @@ class MarketplaceGalleryImageStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImageStatusDownloadStatus(_Model):  # pylint: disable=name-too-long
+class MarketplaceGalleryImageStatusDownloadStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The download status of the gallery image.
 
     :ivar download_size_in_mb: The downloaded sized of the image in MB.
@@ -2041,7 +3138,9 @@ class MarketplaceGalleryImageStatusDownloadStatus(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImageStatusProvisioningStatus(_Model):  # pylint: disable=name-too-long
+class MarketplaceGalleryImageStatusProvisioningStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Marketplace GalleryImage provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the gallery image.
@@ -2080,21 +3179,21 @@ class MarketplaceGalleryImageStatusProvisioningStatus(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceGalleryImageTagsUpdate(_Model):
+class MarketplaceGalleryImageTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in MarketplaceGalleryImage resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2108,7 +3207,250 @@ class MarketplaceGalleryImageTagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterface(TrackedResource):
+class NatGateway(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The NatGateway resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.NatGatewayProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.NatGatewayProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NatGatewayProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NatGatewayArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The ARM ID for a Network Security Group.
+
+    :ivar resource_id: The ARM ID for a Network Security Group.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ARM ID for a Network Security Group."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NatGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Nat Gateway resource properties.
+
+    :ivar public_ip_addresses: List of public ip addresses that the gateway can use for NAT.
+    :vartype public_ip_addresses:
+     list[~azure.mgmt.azurestackhcivm.models.PublicIPAddressArmReference]
+    :ivar subnets: List of subnets associated with the nat gateway. These can only be vnet subnets
+     and must be from the same vnet.
+    :vartype subnets: list[~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetArmReference]
+    :ivar provisioning_state: Provisioning state of the public IP. Known values are: "Succeeded",
+     "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: The observed state of Nat Gateway.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.NatGatewayStatus
+    """
+
+    public_ip_addresses: Optional[list["_models.PublicIPAddressArmReference"]] = rest_field(
+        name="publicIPAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of public ip addresses that the gateway can use for NAT."""
+    subnets: Optional[list["_models.VirtualNetworkSubnetArmReference"]] = rest_field(visibility=["read"])
+    """List of subnets associated with the nat gateway. These can only be vnet subnets and must be
+     from the same vnet."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the public IP. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.NatGatewayStatus"] = rest_field(visibility=["read"])
+    """The observed state of Nat Gateway."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_ip_addresses: Optional[list["_models.PublicIPAddressArmReference"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NatGatewayStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Nat Gateway resource status.
+
+    :ivar error_code: NatGateway provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: NatGateway provisioning status.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.NatGatewayStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """NatGateway provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.NatGatewayStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NatGateway provisioning status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.NatGatewayStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NatGatewayStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Provisioning status of Nat Gateway.
+
+    :ivar operation_id: The ID of the operation performed on the nat gateway.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the nat gateway [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the nat gateway."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the nat gateway [Succeeded, Failed, InProgress]. Known
+     values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NatGatewayTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in NatGateway resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkInterface(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network interface resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2146,7 +3488,7 @@ class NetworkInterface(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.NetworkInterfaceProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -2162,15 +3504,15 @@ class NetworkInterface(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceArmReference(_Model):
-    """The ARM ID for a Network Interface.
+class NetworkInterfaceArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Network Interface.
 
-    :ivar id: The ARM ID for a Network Interface.
+    :ivar id: The Azure Resource ID for a Network Interface.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Network Interface."""
+    """The Azure Resource ID for a Network Interface."""
 
     @overload
     def __init__(
@@ -2190,7 +3532,7 @@ class NetworkInterfaceArmReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceProperties(_Model):
+class NetworkInterfaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the network interface resource.
 
     :ivar ip_configurations: IPConfigurations - A list of IPConfigurations of the network
@@ -2212,9 +3554,14 @@ class NetworkInterfaceProperties(_Model):
      network interface.
     :vartype network_security_group:
      ~azure.mgmt.azurestackhcivm.models.NetworkSecurityGroupArmReference
+    :ivar bypass_sdn_policies: This setting is applicable only when SDN is supported and enabled in
+     the environment. Indicates whether SDN policies should be bypassed for this network interface.
+     By default, SDN is enabled. Set this value to true only if you want to disable SDN for the
+     network interface.
+    :vartype bypass_sdn_policies: bool
     """
 
-    ip_configurations: Optional[List["_models.IPConfiguration"]] = rest_field(
+    ip_configurations: Optional[list["_models.IPConfiguration"]] = rest_field(
         name="ipConfigurations", visibility=["read", "create", "update", "delete", "query"]
     )
     """IPConfigurations - A list of IPConfigurations of the network interface."""
@@ -2242,16 +3589,23 @@ class NetworkInterfaceProperties(_Model):
         name="networkSecurityGroup", visibility=["read", "create", "update", "delete", "query"]
     )
     """NetworkSecurityGroup - Network Security Group attached to the network interface."""
+    bypass_sdn_policies: Optional[bool] = rest_field(
+        name="bypassSdnPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This setting is applicable only when SDN is supported and enabled in the environment. Indicates
+     whether SDN policies should be bypassed for this network interface. By default, SDN is enabled.
+     Set this value to true only if you want to disable SDN for the network interface."""
 
     @overload
     def __init__(
         self,
         *,
-        ip_configurations: Optional[List["_models.IPConfiguration"]] = None,
+        ip_configurations: Optional[list["_models.IPConfiguration"]] = None,
         mac_address: Optional[str] = None,
         dns_settings: Optional["_models.InterfaceDNSSettings"] = None,
         create_from_local: Optional[bool] = None,
         network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = None,
+        bypass_sdn_policies: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2265,7 +3619,7 @@ class NetworkInterfaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceStatus(_Model):
+class NetworkInterfaceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of network interfaces.
 
     :ivar error_code: NetworkInterface provisioning error code.
@@ -2308,7 +3662,7 @@ class NetworkInterfaceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceStatusProvisioningStatus(_Model):
+class NetworkInterfaceStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network interface provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the network interface.
@@ -2347,7 +3701,7 @@ class NetworkInterfaceStatusProvisioningStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfacesUpdateProperties(_Model):
+class NetworkInterfacesUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the resource properties for the update.
 
     :ivar network_security_group: NetworkSecurityGroup - Network Security Group attached to the
@@ -2356,6 +3710,11 @@ class NetworkInterfacesUpdateProperties(_Model):
      ~azure.mgmt.azurestackhcivm.models.NetworkSecurityGroupArmReference
     :ivar dns_settings: DNS Settings for the interface.
     :vartype dns_settings: ~azure.mgmt.azurestackhcivm.models.InterfaceDNSSettings
+    :ivar bypass_sdn_policies: This setting is applicable only when SDN is supported and enabled in
+     the environment. Indicates whether SDN policies should be bypassed for this network interface.
+     By default, SDN is enabled. Set this value to true only if you want to disable SDN for the
+     network interface.
+    :vartype bypass_sdn_policies: bool
     """
 
     network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = rest_field(
@@ -2366,6 +3725,12 @@ class NetworkInterfacesUpdateProperties(_Model):
         name="dnsSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """DNS Settings for the interface."""
+    bypass_sdn_policies: Optional[bool] = rest_field(
+        name="bypassSdnPolicies", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """This setting is applicable only when SDN is supported and enabled in the environment. Indicates
+     whether SDN policies should be bypassed for this network interface. By default, SDN is enabled.
+     Set this value to true only if you want to disable SDN for the network interface."""
 
     @overload
     def __init__(
@@ -2373,6 +3738,7 @@ class NetworkInterfacesUpdateProperties(_Model):
         *,
         network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = None,
         dns_settings: Optional["_models.InterfaceDNSSettings"] = None,
+        bypass_sdn_policies: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -2386,7 +3752,7 @@ class NetworkInterfacesUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfacesUpdateRequest(_Model):
+class NetworkInterfacesUpdateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network interface resource patch definition.
 
     :ivar tags: Resource tags.
@@ -2395,7 +3761,7 @@ class NetworkInterfacesUpdateRequest(_Model):
     :vartype properties: ~azure.mgmt.azurestackhcivm.models.NetworkInterfacesUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.NetworkInterfacesUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2406,7 +3772,7 @@ class NetworkInterfacesUpdateRequest(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.NetworkInterfacesUpdateProperties"] = None,
     ) -> None: ...
 
@@ -2421,7 +3787,7 @@ class NetworkInterfacesUpdateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfileUpdate(_Model):
+class NetworkProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkProfile - describes the network update configuration the virtual machine instance.
 
     :ivar network_interfaces: NetworkInterfaces - list of network interfaces to be attached to the
@@ -2430,7 +3796,7 @@ class NetworkProfileUpdate(_Model):
      list[~azure.mgmt.azurestackhcivm.models.NetworkInterfaceArmReference]
     """
 
-    network_interfaces: Optional[List["_models.NetworkInterfaceArmReference"]] = rest_field(
+    network_interfaces: Optional[list["_models.NetworkInterfaceArmReference"]] = rest_field(
         name="networkInterfaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """NetworkInterfaces - list of network interfaces to be attached to the virtual machine instance."""
@@ -2439,7 +3805,7 @@ class NetworkProfileUpdate(_Model):
     def __init__(
         self,
         *,
-        network_interfaces: Optional[List["_models.NetworkInterfaceArmReference"]] = None,
+        network_interfaces: Optional[list["_models.NetworkInterfaceArmReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -2453,7 +3819,7 @@ class NetworkProfileUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroup(TrackedResource):
+class NetworkSecurityGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkSecurityGroup resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2501,7 +3867,7 @@ class NetworkSecurityGroup(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.NetworkSecurityGroupProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -2517,15 +3883,15 @@ class NetworkSecurityGroup(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupArmReference(_Model):
-    """The ARM ID for a Network Security Group.
+class NetworkSecurityGroupArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Network Security Group.
 
-    :ivar id: The ARM ID for a Network Security Group.
+    :ivar id: The Azure Resource ID for a Network Security Group.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Network Security Group."""
+    """The Azure Resource ID for a Network Security Group."""
 
     @overload
     def __init__(
@@ -2562,11 +3928,11 @@ class NetworkSecurityGroupProperties(_Model):
     :vartype status: ~azure.mgmt.azurestackhcivm.models.NetworkSecurityGroupStatus
     """
 
-    network_interfaces: Optional[List["_models.NetworkInterfaceArmReference"]] = rest_field(
+    network_interfaces: Optional[list["_models.NetworkInterfaceArmReference"]] = rest_field(
         name="networkInterfaces", visibility=["read"]
     )
     """A collection of references to network interfaces that are currently using this NSG."""
-    subnets: Optional[List["_models.LogicalNetworkArmReference"]] = rest_field(visibility=["read"])
+    subnets: Optional[list["_models.LogicalNetworkArmReference"]] = rest_field(visibility=["read"])
     """A collection of references to logical networks that are currently using this NSG."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
         name="provisioningState", visibility=["read"]
@@ -2577,7 +3943,7 @@ class NetworkSecurityGroupProperties(_Model):
     """The observed state of Network Security Group."""
 
 
-class NetworkSecurityGroupStatus(_Model):
+class NetworkSecurityGroupStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of network security group.
 
     :ivar error_code: NetworkSecurityGroup provisioning error code.
@@ -2620,7 +3986,9 @@ class NetworkSecurityGroupStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupStatusProvisioningStatus(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityGroupStatusProvisioningStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """network security group provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the network security group.
@@ -2659,21 +4027,21 @@ class NetworkSecurityGroupStatusProvisioningStatus(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityGroupTagsUpdate(_Model):
+class NetworkSecurityGroupTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in NetworkSecurityGroup resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -2687,7 +4055,219 @@ class NetworkSecurityGroupTagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OsProfileUpdate(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """REST API Operation.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
+    :vartype name: str
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for Azure Resource Manager/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
+    :vartype display: ~azure.mgmt.azurestackhcivm.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.azurestackhcivm.models.Origin
+    :ivar action_type: Extensible enum. Indicates the action type. "Internal" refers to actions
+     that are for internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.azurestackhcivm.models.ActionType
+    """
+
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     \"Microsoft.Compute/virtualMachines/write\",
+     \"Microsoft.Compute/virtualMachines/capture/action\"."""
+    is_data_action: Optional[bool] = rest_field(name="isDataAction", visibility=["read"])
+    """Whether the operation applies to data-plane. This is \"true\" for data-plane operations and
+     \"false\" for Azure Resource Manager/control-plane operations."""
+    display: Optional["_models.OperationDisplay"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Localized display information for this particular operation."""
+    origin: Optional[Union[str, "_models.Origin"]] = rest_field(visibility=["read"])
+    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
+     logs UX. Default value is \"user,system\". Known values are: \"user\", \"system\", and
+     \"user,system\"."""
+    action_type: Optional[Union[str, "_models.ActionType"]] = rest_field(name="actionType", visibility=["read"])
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for
+     internal only APIs. \"Internal\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        display: Optional["_models.OperationDisplay"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OperationDisplay(_Model):
+    """Localized display information for an operation.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
+    :vartype provider: str
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
+    :vartype resource: str
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
+    :vartype operation: str
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
+    :vartype description: str
+    """
+
+    provider: Optional[str] = rest_field(visibility=["read"])
+    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
+     Insights\" or \"Microsoft Compute\"."""
+    resource: Optional[str] = rest_field(visibility=["read"])
+    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
+     Machines\" or \"Job Schedule Collections\"."""
+    operation: Optional[str] = rest_field(visibility=["read"])
+    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
+     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """The short, localized friendly description of the operation; suitable for tool tips and detailed
+     views."""
+
+
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The current status of an async operation.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.azurestackhcivm.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.azurestackhcivm.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Fully qualified ID for the async operation."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the async operation."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Operation status. Required."""
+    percent_complete: Optional[float] = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percent of the operation that is complete."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the operation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the operation."""
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operations list."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OperationStepResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The observed result of a step in a resource operation.
+
+    :ivar name: The stable identifier of the step, unique within the operation. Required.
+    :vartype name: str
+    :ivar status: The current status of the step. Required. Known values are: "Succeeded",
+     "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    :ivar message: Additional information about the step, such as the reason for a failure.
+    :vartype message: str
+    :ivar completed_time: The time the step completed, in UTC. Omitted while the step is in
+     progress.
+    :vartype completed_time: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The stable identifier of the step, unique within the operation. Required."""
+    status: Union[str, "_models.Status"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current status of the step. Required. Known values are: \"Succeeded\", \"Failed\", and
+     \"InProgress\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional information about the step, such as the reason for a failure."""
+    completed_time: Optional[datetime.datetime] = rest_field(
+        name="completedTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the step completed, in UTC. Omitted while the step is in progress."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        status: Union[str, "_models.Status"],
+        message: Optional[str] = None,
+        completed_time: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OsProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OsProfile - describes the update configuration of the operating system.
 
     :ivar computer_name: ComputerName - name of the computer.
@@ -2733,7 +4313,7 @@ class OsProfileUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OsProfileUpdateLinuxConfiguration(_Model):
+class OsProfileUpdateLinuxConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OSProfile update linux configuration.
 
     :ivar provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should be
@@ -2774,7 +4354,7 @@ class OsProfileUpdateLinuxConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OsProfileUpdateWindowsConfiguration(_Model):
+class OsProfileUpdateWindowsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OSProfile update windows configuration.
 
     :ivar provision_vm_agent: Used to indicate whether Arc for Servers agent onboarding should be
@@ -2815,7 +4395,314 @@ class OsProfileUpdateWindowsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Route(_Model):
+class PowerOffVirtualMachineOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The operation gracefully shuts down a virtual machine by requesting the operating system to
+    shut down. The virtual machine can be restarted with the same provisioned resources. To force
+    an immediate shut down, see the skipShutdown flag.
+
+    :ivar skip_shutdown: Indicates whether to perform an immediate shut down. When set to true, the
+     VM is forcefully shut down. If not specified, the default value is false, and the operation
+     attempts a graceful shut down of the VM.
+    :vartype skip_shutdown: bool
+    """
+
+    skip_shutdown: Optional[bool] = rest_field(
+        name="skipShutdown", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether to perform an immediate shut down. When set to true, the VM is forcefully
+     shut down. If not specified, the default value is false, and the operation attempts a graceful
+     shut down of the VM."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skip_shutdown: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Probe(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Load balancer health probes.
+
+    :ivar name: name of the load balancer health probe. Required.
+    :vartype name: str
+    :ivar properties: load balancer rule properties. Required.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.ProbeProperties
+    """
+
+    name: str = rest_field(visibility=["read", "create"])
+    """name of the load balancer health probe. Required."""
+    properties: "_models.ProbeProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """load balancer rule properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        properties: "_models.ProbeProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProbeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """properties for LoadBalancer health probes.
+
+    :ivar protocol: Protocol for this probe: Can be Tcp or Http - Diverges from Azure where Https
+     is also an option. Required. Known values are: "Tcp" and "Http".
+    :vartype protocol: str or ~azure.mgmt.azurestackhcivm.models.LoadBalancerProbeProtocol
+    :ivar port: Port on the backend address to probe. Required.
+    :vartype port: int
+    :ivar request_path: For http probes, specify the request path e.g. /health.
+    :vartype request_path: str
+    :ivar interval_in_seconds: Probe interval in seconds (5-300) default 15.
+    :vartype interval_in_seconds: int
+    :ivar number_of_probes: number of consecutive probe failures before marking unhealthy (1-20)
+     default 2.
+    :vartype number_of_probes: int
+    """
+
+    protocol: Union[str, "_models.LoadBalancerProbeProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Protocol for this probe: Can be Tcp or Http - Diverges from Azure where Https is also an
+     option. Required. Known values are: \"Tcp\" and \"Http\"."""
+    port: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Port on the backend address to probe. Required."""
+    request_path: Optional[str] = rest_field(
+        name="requestPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """For http probes, specify the request path e.g. /health."""
+    interval_in_seconds: Optional[int] = rest_field(
+        name="intervalInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Probe interval in seconds (5-300) default 15."""
+    number_of_probes: Optional[int] = rest_field(
+        name="numberOfProbes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """number of consecutive probe failures before marking unhealthy (1-20) default 2."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        protocol: Union[str, "_models.LoadBalancerProbeProtocol"],
+        port: int,
+        request_path: Optional[str] = None,
+        interval_in_seconds: Optional[int] = None,
+        number_of_probes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PublicIPAddress(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The publicIP resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.PublicIPAddressProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.PublicIPAddressProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.PublicIPAddressProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PublicIPAddressArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID of a Public IP resource.
+
+    :ivar resource_id: The Azure Resource ID of a Public IP resource.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource ID of a Public IP resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PublicIPAddressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Public IP Properties resource.
+
+    :ivar public_ip_address_version: Whether the public IP is v4 or v6. Defaults to IPv4. Known
+     values are: "IPv4" and "IPv6".
+    :vartype public_ip_address_version: str or
+     ~azure.mgmt.azurestackhcivm.models.PublicIPAddressType
+    :ivar ip_allocation_scope: ipAllocationScope: Azure Reference to a particular IP Pool (ALM) or
+     a LogicalNetwork (ALL) for allocating public IP.
+    :vartype ip_allocation_scope: str
+    :ivar ip_address: IP Address. This is static. If the user specifies, we allocate that otherwise
+     allocate from logical network address space.
+    :vartype ip_address: str
+    :ivar ip_configuration: network interface or LoadBalancer frontendIPconfiguration using this
+     public IP.
+    :vartype ip_configuration: ~azure.mgmt.azurestackhcivm.models.IPConfigurationArmReference
+    :ivar nat_gateway: natGateway using this public IP.
+    :vartype nat_gateway: ~azure.mgmt.azurestackhcivm.models.NatGatewayArmReference
+    :ivar provisioning_state: Provisioning state of the public IP. Known values are: "Succeeded",
+     "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    """
+
+    public_ip_address_version: Optional[Union[str, "_models.PublicIPAddressType"]] = rest_field(
+        name="publicIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the public IP is v4 or v6. Defaults to IPv4. Known values are: \"IPv4\" and \"IPv6\"."""
+    ip_allocation_scope: Optional[str] = rest_field(
+        name="ipAllocationScope", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ipAllocationScope: Azure Reference to a particular IP Pool (ALM) or a LogicalNetwork (ALL) for
+     allocating public IP."""
+    ip_address: Optional[str] = rest_field(name="ipAddress", visibility=["read", "create", "update", "delete", "query"])
+    """IP Address. This is static. If the user specifies, we allocate that otherwise allocate from
+     logical network address space."""
+    ip_configuration: Optional["_models.IPConfigurationArmReference"] = rest_field(
+        name="ipConfiguration", visibility=["read"]
+    )
+    """network interface or LoadBalancer frontendIPconfiguration using this public IP."""
+    nat_gateway: Optional["_models.NatGatewayArmReference"] = rest_field(name="natGateway", visibility=["read"])
+    """natGateway using this public IP."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the public IP. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        public_ip_address_version: Optional[Union[str, "_models.PublicIPAddressType"]] = None,
+        ip_allocation_scope: Optional[str] = None,
+        ip_address: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PublicIPAddressTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in PublicIPAddress resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Route(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route - Route resource.
 
     :ivar properties: Properties of the route.
@@ -2870,7 +4757,7 @@ class Route(_Model):
             super().__setattr__(key, value)
 
 
-class RouteProperties(_Model):
+class RouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RoutePropertiesFormat - Route resource.
 
     :ivar address_prefix: The destination CIDR to which the route applies.
@@ -2909,7 +4796,7 @@ class RouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteTable(_Model):
+class RouteTable(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route table resource.
 
     :ivar etag: A unique read-only string that changes whenever the resource is updated.
@@ -2971,21 +4858,21 @@ class RouteTable(_Model):
             super().__setattr__(key, value)
 
 
-class RouteTableProperties(_Model):
+class RouteTableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RouteTablePropertiesFormat - Route Table resource.
 
     :ivar routes: Collection of routes contained within a route table.
     :vartype routes: list[~azure.mgmt.azurestackhcivm.models.Route]
     """
 
-    routes: Optional[List["_models.Route"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    routes: Optional[list["_models.Route"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Collection of routes contained within a route table."""
 
     @overload
     def __init__(
         self,
         *,
-        routes: Optional[List["_models.Route"]] = None,
+        routes: Optional[list["_models.Route"]] = None,
     ) -> None: ...
 
     @overload
@@ -2999,7 +4886,7 @@ class RouteTableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityRule(ProxyResource):
+class SecurityRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Rule resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3047,7 +4934,7 @@ class SecurityRule(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SecurityRuleProperties(_Model):
+class SecurityRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security rule resource.
 
     :ivar description: A description for this rule. Restricted to 140 chars.
@@ -3088,20 +4975,20 @@ class SecurityRuleProperties(_Model):
     )
     """Network protocol this rule applies to. Required. Known values are: \"Tcp\", \"Udp\", \"Icmp\",
      and \"*\"."""
-    source_address_prefixes: Optional[List[str]] = rest_field(
+    source_address_prefixes: Optional[list[str]] = rest_field(
         name="sourceAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The CIDR or source IP ranges."""
-    destination_address_prefixes: Optional[List[str]] = rest_field(
+    destination_address_prefixes: Optional[list[str]] = rest_field(
         name="destinationAddressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """The destination address prefixes. CIDR or destination IP ranges."""
-    source_port_ranges: Optional[List[str]] = rest_field(
+    source_port_ranges: Optional[list[str]] = rest_field(
         name="sourcePortRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The source port ranges. Integer or range between 0 and 65535. Asterisk '*' can also be used to
      match all ports."""
-    destination_port_ranges: Optional[List[str]] = rest_field(
+    destination_port_ranges: Optional[list[str]] = rest_field(
         name="destinationPortRanges", visibility=["read", "create", "update", "delete", "query"]
     )
     """The destination port ranges. Integer or range between 0 and 65535. Asterisk '*' can also be
@@ -3134,10 +5021,10 @@ class SecurityRuleProperties(_Model):
         priority: int,
         direction: Union[str, "_models.SecurityRuleDirection"],
         description: Optional[str] = None,
-        source_address_prefixes: Optional[List[str]] = None,
-        destination_address_prefixes: Optional[List[str]] = None,
-        source_port_ranges: Optional[List[str]] = None,
-        destination_port_ranges: Optional[List[str]] = None,
+        source_address_prefixes: Optional[list[str]] = None,
+        destination_address_prefixes: Optional[list[str]] = None,
+        source_port_ranges: Optional[list[str]] = None,
+        destination_port_ranges: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -3151,14 +5038,232 @@ class SecurityRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshConfiguration(_Model):
+class Snapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The snapshot resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.SnapshotProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.SnapshotProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.SnapshotProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties under the snapshot resource.
+
+    :ivar creation_data: Data used when creating a snapshot.
+    :vartype creation_data: ~azure.mgmt.azurestackhcivm.models.CreationData
+    :ivar time_created: The time when the snapshot was created.
+    :vartype time_created: ~datetime.datetime
+    :ivar disk_size_bytes: The size of the disk in bytes.
+    :vartype disk_size_bytes: int
+    :ivar unique_id: Unique identifier for the snapshot.
+    :vartype unique_id: str
+    :ivar provisioning_state: Provisioning state of the snapshot. Known values are: "Succeeded",
+     "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: The observed state of snapshots.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.SnapshotStatus
+    """
+
+    creation_data: Optional["_models.CreationData"] = rest_field(
+        name="creationData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data used when creating a snapshot."""
+    time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
+    """The time when the snapshot was created."""
+    disk_size_bytes: Optional[int] = rest_field(name="diskSizeBytes", visibility=["read"])
+    """The size of the disk in bytes."""
+    unique_id: Optional[str] = rest_field(name="uniqueId", visibility=["read"])
+    """Unique identifier for the snapshot."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the snapshot. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.SnapshotStatus"] = rest_field(visibility=["read"])
+    """The observed state of snapshots."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        creation_data: Optional["_models.CreationData"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SnapshotStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The observed state of snapshots.
+
+    :ivar error_code: Snapshot provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: Provisioning status of the snapshot.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.SnapshotStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """Snapshot provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.SnapshotStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Provisioning status of the snapshot."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.SnapshotStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SnapshotStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Snapshot Status provisioning status.
+
+    :ivar operation_id: The ID of the operation performed on the snapshot.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the snapshot [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the snapshot."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the snapshot [Succeeded, Failed, InProgress]. Known
+     values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SnapshotTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in Snapshot resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SshConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for Linux based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with linux based VMs.
     :vartype public_keys: list[~azure.mgmt.azurestackhcivm.models.SshPublicKey]
     """
 
-    public_keys: Optional[List["_models.SshPublicKey"]] = rest_field(
+    public_keys: Optional[list["_models.SshPublicKey"]] = rest_field(
         name="publicKeys", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of SSH public keys used to authenticate with linux based VMs."""
@@ -3167,7 +5272,7 @@ class SshConfiguration(_Model):
     def __init__(
         self,
         *,
-        public_keys: Optional[List["_models.SshPublicKey"]] = None,
+        public_keys: Optional[list["_models.SshPublicKey"]] = None,
     ) -> None: ...
 
     @overload
@@ -3181,7 +5286,7 @@ class SshConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPublicKey(_Model):
+class SshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about SSH certificate public key and the path on the Linux VM where the
     public key is placed.
 
@@ -3226,7 +5331,7 @@ class SshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainer(TrackedResource):
+class StorageContainer(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The storage container resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3264,7 +5369,7 @@ class StorageContainer(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.StorageContainerProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -3280,7 +5385,7 @@ class StorageContainer(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainerProperties(_Model):
+class StorageContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the storage container resource.
 
     :ivar path: Path of the storage container on the disk. Required.
@@ -3320,7 +5425,7 @@ class StorageContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainerStatus(_Model):
+class StorageContainerStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of storage containers.
 
     :ivar error_code: StorageContainer provisioning error code.
@@ -3377,7 +5482,7 @@ class StorageContainerStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainerStatusProvisioningStatus(_Model):
+class StorageContainerStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage container provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the storage container.
@@ -3416,21 +5521,21 @@ class StorageContainerStatusProvisioningStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageContainerTagsUpdate(_Model):
+class StorageContainerTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for updating tags in StorageContainer resources.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
 
     @overload
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -3444,14 +5549,14 @@ class StorageContainerTagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageProfileUpdate(_Model):
+class StorageProfileUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage profile update.
 
     :ivar data_disks: adds data disks to the virtual machine instance for the update call.
     :vartype data_disks: list[~azure.mgmt.azurestackhcivm.models.VirtualHardDiskArmReference]
     """
 
-    data_disks: Optional[List["_models.VirtualHardDiskArmReference"]] = rest_field(
+    data_disks: Optional[list["_models.VirtualHardDiskArmReference"]] = rest_field(
         name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
     """adds data disks to the virtual machine instance for the update call."""
@@ -3460,7 +5565,7 @@ class StorageProfileUpdate(_Model):
     def __init__(
         self,
         *,
-        data_disks: Optional[List["_models.VirtualHardDiskArmReference"]] = None,
+        data_disks: Optional[list["_models.VirtualHardDiskArmReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -3474,7 +5579,7 @@ class StorageProfileUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Subnet(_Model):
+class Subnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the subnet.
 
     :ivar properties: Properties of the subnet.
@@ -3501,6 +5606,7 @@ class Subnet(_Model):
         "route_table",
         "ip_pools",
         "vlan",
+        "provisioning_state",
     ]
 
     @overload
@@ -3540,15 +5646,15 @@ class Subnet(_Model):
             super().__setattr__(key, value)
 
 
-class SubnetIpConfigurationReference(_Model):
-    """The ARM ID for a Network Interface.
+class SubnetIpConfigurationReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Network Interface.
 
-    :ivar id: The ARM ID for a Network Interface.
+    :ivar id: The Azure Resource ID for a Network Interface.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(name="ID", visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Network Interface."""
+    """The Azure Resource ID for a Network Interface."""
 
     @overload
     def __init__(
@@ -3568,7 +5674,7 @@ class SubnetIpConfigurationReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubnetProperties(_Model):
+class SubnetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the subnet.
 
     :ivar address_prefix: The address prefix for the subnet: Cidr for this subnet - IPv4, IPv6.
@@ -3592,13 +5698,16 @@ class SubnetProperties(_Model):
     :vartype ip_pools: list[~azure.mgmt.azurestackhcivm.models.IPPool]
     :ivar vlan: Vlan to use for the subnet.
     :vartype vlan: int
+    :ivar provisioning_state: Provisioning state of the subnet resource. Known values are:
+     "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
     """
 
     address_prefix: Optional[str] = rest_field(
         name="addressPrefix", visibility=["read", "create", "update", "delete", "query"]
     )
     """The address prefix for the subnet: Cidr for this subnet - IPv4, IPv6."""
-    address_prefixes: Optional[List[str]] = rest_field(
+    address_prefixes: Optional[list[str]] = rest_field(
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of address prefixes for the subnet."""
@@ -3607,7 +5716,7 @@ class SubnetProperties(_Model):
     )
     """IPAllocationMethod - The IP address allocation method. Possible values include: 'Static',
      'Dynamic'. Known values are: \"Dynamic\" and \"Static\"."""
-    ip_configuration_references: Optional[List["_models.SubnetIpConfigurationReference"]] = rest_field(
+    ip_configuration_references: Optional[list["_models.SubnetIpConfigurationReference"]] = rest_field(
         name="ipConfigurationReferences", visibility=["read", "create", "update", "delete", "query"]
     )
     """IPConfigurationReferences - list of IPConfigurationReferences."""
@@ -3619,24 +5728,29 @@ class SubnetProperties(_Model):
         name="routeTable", visibility=["read", "create", "update", "delete", "query"]
     )
     """Route table resource."""
-    ip_pools: Optional[List["_models.IPPool"]] = rest_field(
+    ip_pools: Optional[list["_models.IPPool"]] = rest_field(
         name="ipPools", visibility=["read", "create", "update", "delete", "query"]
     )
     """network associated pool of IP Addresses."""
     vlan: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Vlan to use for the subnet."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the subnet resource. Known values are: \"Succeeded\", \"Failed\",
+     \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
 
     @overload
     def __init__(
         self,
         *,
         address_prefix: Optional[str] = None,
-        address_prefixes: Optional[List[str]] = None,
+        address_prefixes: Optional[list[str]] = None,
         ip_allocation_method: Optional[Union[str, "_models.IpAllocationMethodEnum"]] = None,
-        ip_configuration_references: Optional[List["_models.SubnetIpConfigurationReference"]] = None,
+        ip_configuration_references: Optional[list["_models.SubnetIpConfigurationReference"]] = None,
         network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = None,
         route_table: Optional["_models.RouteTable"] = None,
-        ip_pools: Optional[List["_models.IPPool"]] = None,
+        ip_pools: Optional[list["_models.IPPool"]] = None,
         vlan: Optional[int] = None,
     ) -> None: ...
 
@@ -3651,7 +5765,7 @@ class SubnetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3733,7 +5847,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class VirtualHardDisk(TrackedResource):
+class VirtualHardDisk(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The virtual hard disk resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3771,7 +5885,7 @@ class VirtualHardDisk(TrackedResource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VirtualHardDiskProperties"] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
     ) -> None: ...
@@ -3787,15 +5901,15 @@ class VirtualHardDisk(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskArmReference(_Model):
-    """The ARM ID for a Virtual Hard Disk.
+class VirtualHardDiskArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Virtual Hard Disk.
 
-    :ivar id: The ARM ID for a Virtual Hard Disk.
+    :ivar id: The Azure Resource ID for a Virtual Hard Disk.
     :vartype id: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Virtual Hard Disk."""
+    """The Azure Resource ID for a Virtual Hard Disk."""
 
     @overload
     def __init__(
@@ -3815,7 +5929,7 @@ class VirtualHardDiskArmReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskDownloadStatus(_Model):
+class VirtualHardDiskDownloadStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The download status of the virtual hard disk.
 
     :ivar downloaded_size_in_mb: The downloaded sized of the virtual hard disk in MB.
@@ -3861,11 +5975,13 @@ class VirtualHardDiskDownloadStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskProperties(_Model):
+class VirtualHardDiskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the virtual hard disk resource.
 
     :ivar block_size_bytes: Block size in bytes.
     :vartype block_size_bytes: int
+    :ivar creation_data: Data used when creating a virtual hard disk.
+    :vartype creation_data: ~azure.mgmt.azurestackhcivm.models.CreationData
     :ivar disk_size_gb: Size of the disk in GB.
     :vartype disk_size_gb: int
     :ivar dynamic: Boolean for enabling dynamic sizing on the virtual hard disk.
@@ -3878,7 +5994,7 @@ class VirtualHardDiskProperties(_Model):
      a secure link from where the VHD can be downloaded or accessed directly.
     :vartype download_url: str
     :ivar hyper_v_generation: The hypervisor generation of the Virtual Machine [V1, V2]. Known
-     values are: "V1" and "V2".
+     values are: "V1", "V2", and "NA".
     :vartype hyper_v_generation: str or ~azure.mgmt.azurestackhcivm.models.HyperVGeneration
     :ivar disk_file_format: The format of the actual VHD file [vhd, vhdx]. Known values are: "vhdx"
      and "vhd".
@@ -3886,6 +6002,9 @@ class VirtualHardDiskProperties(_Model):
     :ivar create_from_local: Boolean indicating whether it is an existing local hard disk or if one
      should be created.
     :vartype create_from_local: bool
+    :ivar local_vhd_path: Absolute path of the VHD. This is only applicable when createFromLocal is
+     true.
+    :vartype local_vhd_path: str
     :ivar provisioning_state: Provisioning state of the virtual hard disk. Known values are:
      "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
@@ -3902,6 +6021,10 @@ class VirtualHardDiskProperties(_Model):
         name="blockSizeBytes", visibility=["read", "create", "update", "delete", "query"]
     )
     """Block size in bytes."""
+    creation_data: Optional["_models.CreationData"] = rest_field(
+        name="creationData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data used when creating a virtual hard disk."""
     disk_size_gb: Optional[int] = rest_field(
         name="diskSizeGB", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3924,7 +6047,8 @@ class VirtualHardDiskProperties(_Model):
     hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = rest_field(
         name="hyperVGeneration", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\" and \"V2\"."""
+    """The hypervisor generation of the Virtual Machine [V1, V2]. Known values are: \"V1\", \"V2\",
+     and \"NA\"."""
     disk_file_format: Optional[Union[str, "_models.DiskFileFormat"]] = rest_field(
         name="diskFileFormat", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3933,6 +6057,10 @@ class VirtualHardDiskProperties(_Model):
         name="createFromLocal", visibility=["read", "create", "update", "delete", "query"]
     )
     """Boolean indicating whether it is an existing local hard disk or if one should be created."""
+    local_vhd_path: Optional[str] = rest_field(
+        name="localVhdPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Absolute path of the VHD. This is only applicable when createFromLocal is true."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -3953,6 +6081,7 @@ class VirtualHardDiskProperties(_Model):
         self,
         *,
         block_size_bytes: Optional[int] = None,
+        creation_data: Optional["_models.CreationData"] = None,
         disk_size_gb: Optional[int] = None,
         dynamic: Optional[bool] = None,
         logical_sector_bytes: Optional[int] = None,
@@ -3961,6 +6090,7 @@ class VirtualHardDiskProperties(_Model):
         hyper_v_generation: Optional[Union[str, "_models.HyperVGeneration"]] = None,
         disk_file_format: Optional[Union[str, "_models.DiskFileFormat"]] = None,
         create_from_local: Optional[bool] = None,
+        local_vhd_path: Optional[str] = None,
         container_id: Optional[str] = None,
         max_shares: Optional[int] = None,
     ) -> None: ...
@@ -3976,7 +6106,7 @@ class VirtualHardDiskProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskStatus(_Model):
+class VirtualHardDiskStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of virtual hard disks.
 
     :ivar error_code: VirtualHardDisk provisioning error code.
@@ -3990,7 +6120,7 @@ class VirtualHardDiskStatus(_Model):
     :vartype download_status: ~azure.mgmt.azurestackhcivm.models.VirtualHardDiskDownloadStatus
     :ivar upload_status: The upload status of the virtual hard disk.
     :vartype upload_status: ~azure.mgmt.azurestackhcivm.models.VirtualHardDiskUploadStatus
-    :ivar managed_by: ARM IDs of the VMs that are consuming the VHD.
+    :ivar managed_by: Azure Resource IDs of the VMs that are consuming the VHD.
     :vartype managed_by: list[str]
     :ivar unique_id: Unique Guid identifying the resource.
     :vartype unique_id: str
@@ -4014,10 +6144,10 @@ class VirtualHardDiskStatus(_Model):
         name="uploadStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """The upload status of the virtual hard disk."""
-    managed_by: Optional[List[str]] = rest_field(
+    managed_by: Optional[list[str]] = rest_field(
         name="managedBy", visibility=["read", "create", "update", "delete", "query"]
     )
-    """ARM IDs of the VMs that are consuming the VHD."""
+    """Azure Resource IDs of the VMs that are consuming the VHD."""
     unique_id: Optional[str] = rest_field(name="uniqueId", visibility=["read", "create", "update", "delete", "query"])
     """Unique Guid identifying the resource."""
 
@@ -4030,7 +6160,7 @@ class VirtualHardDiskStatus(_Model):
         provisioning_status: Optional["_models.VirtualHardDiskStatusProvisioningStatus"] = None,
         download_status: Optional["_models.VirtualHardDiskDownloadStatus"] = None,
         upload_status: Optional["_models.VirtualHardDiskUploadStatus"] = None,
-        managed_by: Optional[List[str]] = None,
+        managed_by: Optional[list[str]] = None,
         unique_id: Optional[str] = None,
     ) -> None: ...
 
@@ -4045,7 +6175,7 @@ class VirtualHardDiskStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskStatusProvisioningStatus(_Model):
+class VirtualHardDiskStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VHD Status provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the virtual hard disk.
@@ -4084,7 +6214,7 @@ class VirtualHardDiskStatusProvisioningStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDisksUpdateProperties(_Model):
+class VirtualHardDisksUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the resource properties for the update.
 
     :ivar disk_size_gb: Size of the disk in GB.
@@ -4114,7 +6244,7 @@ class VirtualHardDisksUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDisksUpdateRequest(_Model):
+class VirtualHardDisksUpdateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The virtual hard disk resource patch definition.
 
     :ivar tags: Resource tags.
@@ -4123,7 +6253,7 @@ class VirtualHardDisksUpdateRequest(_Model):
     :vartype properties: ~azure.mgmt.azurestackhcivm.models.VirtualHardDisksUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.VirtualHardDisksUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -4134,7 +6264,7 @@ class VirtualHardDisksUpdateRequest(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.VirtualHardDisksUpdateProperties"] = None,
     ) -> None: ...
 
@@ -4149,7 +6279,7 @@ class VirtualHardDisksUpdateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskUploadRequest(_Model):
+class VirtualHardDiskUploadRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request for uploading virtual hard disk.
 
     :ivar azure_managed_disk_upload_url: The Azure managed disk SAS URL to upload the virtual hard
@@ -4180,10 +6310,10 @@ class VirtualHardDiskUploadRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskUploadResponse(_Model):
+class VirtualHardDiskUploadResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for uploading virtual hard disk.
 
-    :ivar virtual_hard_disk_id: The ARM ID for a Virtual Hard Disk.
+    :ivar virtual_hard_disk_id: The Azure Resource ID for a Virtual Hard Disk.
     :vartype virtual_hard_disk_id: str
     :ivar upload_status: The upload status of the virtual hard disk.
     :vartype upload_status: ~azure.mgmt.azurestackhcivm.models.VirtualHardDiskUploadStatus
@@ -4192,7 +6322,7 @@ class VirtualHardDiskUploadResponse(_Model):
     virtual_hard_disk_id: Optional[str] = rest_field(
         name="virtualHardDiskId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The ARM ID for a Virtual Hard Disk."""
+    """The Azure Resource ID for a Virtual Hard Disk."""
     upload_status: Optional["_models.VirtualHardDiskUploadStatus"] = rest_field(
         name="uploadStatus", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4217,7 +6347,7 @@ class VirtualHardDiskUploadResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualHardDiskUploadStatus(_Model):
+class VirtualHardDiskUploadStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The upload status of the virtual hard disk.
 
     :ivar uploaded_size_in_mb: The uploaded sized of the virtual hard disk in MB.
@@ -4275,7 +6405,7 @@ class VirtualHardDiskUploadStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineConfigAgentInstanceView(_Model):
+class VirtualMachineConfigAgentInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of the VM Config Agent running on the virtual machine.
 
     :ivar vm_config_agent_version: The VM Config Agent full version.
@@ -4288,7 +6418,7 @@ class VirtualMachineConfigAgentInstanceView(_Model):
         name="vmConfigAgentVersion", visibility=["read", "create", "update", "delete", "query"]
     )
     """The VM Config Agent full version."""
-    statuses: Optional[List["_models.InstanceViewStatus"]] = rest_field(
+    statuses: Optional[list["_models.InstanceViewStatus"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource status information."""
@@ -4298,7 +6428,7 @@ class VirtualMachineConfigAgentInstanceView(_Model):
         self,
         *,
         vm_config_agent_version: Optional[str] = None,
-        statuses: Optional[List["_models.InstanceViewStatus"]] = None,
+        statuses: Optional[list["_models.InstanceViewStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -4312,7 +6442,7 @@ class VirtualMachineConfigAgentInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstance(ExtensionResource):
+class VirtualMachineInstance(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The virtual machine instance resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4367,7 +6497,9 @@ class VirtualMachineInstance(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceManagedDiskParameters(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstanceManagedDiskParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The parameters of a managed disk.
 
     :ivar security_profile: Specifies the security profile for the managed disk.
@@ -4397,7 +6529,7 @@ class VirtualMachineInstanceManagedDiskParameters(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceProperties(_Model):
+class VirtualMachineInstanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties under the virtual machine instance resource.
 
     :ivar hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
@@ -4429,6 +6561,9 @@ class VirtualMachineInstanceProperties(_Model):
     :ivar create_from_local: Boolean indicating whether this is an existing local virtual machine
      or if one should be created.
     :vartype create_from_local: bool
+    :ivar local_vm_name: HyperV name of the VM. This is only applicable when createFromLocal is
+     true.
+    :vartype local_vm_name: str
     :ivar provisioning_state: Provisioning state of the virtual machine instance. Known values are:
      "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
@@ -4438,7 +6573,8 @@ class VirtualMachineInstanceProperties(_Model):
     :vartype status: ~azure.mgmt.azurestackhcivm.models.VirtualMachineInstanceStatus
     :ivar guest_agent_install_status: Guest agent install status.
     :vartype guest_agent_install_status: ~azure.mgmt.azurestackhcivm.models.GuestAgentInstallStatus
-    :ivar vm_id: Unique identifier for the vm resource.
+    :ivar vm_id: The SMBIOS GUID of the VM (hybrid compute identity). This is null for non-secure
+     VMs and is populated for TrustedLaunch and ConfidentialVM VMs.
     :vartype vm_id: str
     :ivar resource_uid: Unique identifier defined by ARC to identify the guest of the VM.
     :vartype resource_uid: str
@@ -4484,6 +6620,10 @@ class VirtualMachineInstanceProperties(_Model):
     )
     """Boolean indicating whether this is an existing local virtual machine or if one should be
      created."""
+    local_vm_name: Optional[str] = rest_field(
+        name="localVmName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HyperV name of the VM. This is only applicable when createFromLocal is true."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -4498,7 +6638,8 @@ class VirtualMachineInstanceProperties(_Model):
     )
     """Guest agent install status."""
     vm_id: Optional[str] = rest_field(name="vmId", visibility=["read"])
-    """Unique identifier for the vm resource."""
+    """The SMBIOS GUID of the VM (hybrid compute identity). This is null for non-secure VMs and is
+     populated for TrustedLaunch and ConfidentialVM VMs."""
     resource_uid: Optional[str] = rest_field(
         name="resourceUid", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4522,6 +6663,7 @@ class VirtualMachineInstanceProperties(_Model):
         storage_profile: Optional["_models.VirtualMachineInstancePropertiesStorageProfile"] = None,
         http_proxy_config: Optional["_models.HttpProxyConfiguration"] = None,
         create_from_local: Optional[bool] = None,
+        local_vm_name: Optional[str] = None,
         guest_agent_install_status: Optional["_models.GuestAgentInstallStatus"] = None,
         resource_uid: Optional[str] = None,
     ) -> None: ...
@@ -4537,7 +6679,9 @@ class VirtualMachineInstanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesHardwareProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesHardwareProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """HardwareProfile - Specifies the hardware settings for the virtual machine instance.
 
     :ivar vm_size: Enum of VM Sizes. Known values are: "Default", "Standard_A2_v2",
@@ -4578,7 +6722,7 @@ class VirtualMachineInstancePropertiesHardwareProfile(_Model):  # pylint: disabl
     )
     """Dynamic memory config."""
     virtual_machine_gp_us: Optional[
-        List["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
+        list["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
     ] = rest_field(name="virtualMachineGPUs", visibility=["read", "create", "update", "delete", "query"])
     """virtualMachineGPUs - list of gpus to be attached to the virtual machine instance."""
 
@@ -4593,7 +6737,7 @@ class VirtualMachineInstancePropertiesHardwareProfile(_Model):  # pylint: disabl
             "_models.VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig"
         ] = None,
         virtual_machine_gp_us: Optional[
-            List["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
+            list["_models.VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU"]
         ] = None,
     ) -> None: ...
 
@@ -4608,7 +6752,9 @@ class VirtualMachineInstancePropertiesHardwareProfile(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Dynamic memory config.
 
     :ivar maximum_memory_mb: Maximum memory in MB.
@@ -4620,6 +6766,10 @@ class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(_Model)
      machine instance is thought to need. This only applies to virtual systems with dynamic memory
      enabled. This property can be in the range of 5 to 2000.
     :vartype target_memory_buffer: int
+    :ivar enabled: Specifies whether dynamic memory is enabled for the virtual machine instance.
+     When omitted, dynamic memory remains enabled; setting this to false converts the virtual
+     machine instance to static memory.
+    :vartype enabled: bool
     """
 
     maximum_memory_mb: Optional[int] = rest_field(
@@ -4637,6 +6787,10 @@ class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(_Model)
      runtime, as a percentage of the total memory that the virtual machine instance is thought to
      need. This only applies to virtual systems with dynamic memory enabled. This property can be in
      the range of 5 to 2000."""
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether dynamic memory is enabled for the virtual machine instance. When omitted,
+     dynamic memory remains enabled; setting this to false converts the virtual machine instance to
+     static memory."""
 
     @overload
     def __init__(
@@ -4645,6 +6799,7 @@ class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(_Model)
         maximum_memory_mb: Optional[int] = None,
         minimum_memory_mb: Optional[int] = None,
         target_memory_buffer: Optional[int] = None,
+        enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -4658,7 +6813,9 @@ class VirtualMachineInstancePropertiesHardwareProfileDynamicMemoryConfig(_Model)
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """GPU properties - describes the GPU configuration.
 
     :ivar assignment_type: GPU assignment type. Required. Known values are: "GpuDDA" and "GpuP".
@@ -4700,7 +6857,9 @@ class VirtualMachineInstancePropertiesHardwareProfileVirtualMachineGPU(_Model): 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesNetworkProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesNetworkProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """NetworkProfile - describes the network configuration the virtual machine instance.
 
     :ivar network_interfaces: NetworkInterfaces - list of network interfaces to be attached to the
@@ -4709,7 +6868,7 @@ class VirtualMachineInstancePropertiesNetworkProfile(_Model):  # pylint: disable
      list[~azure.mgmt.azurestackhcivm.models.NetworkInterfaceArmReference]
     """
 
-    network_interfaces: Optional[List["_models.NetworkInterfaceArmReference"]] = rest_field(
+    network_interfaces: Optional[list["_models.NetworkInterfaceArmReference"]] = rest_field(
         name="networkInterfaces", visibility=["read", "create", "update", "delete", "query"]
     )
     """NetworkInterfaces - list of network interfaces to be attached to the virtual machine instance."""
@@ -4718,7 +6877,7 @@ class VirtualMachineInstancePropertiesNetworkProfile(_Model):  # pylint: disable
     def __init__(
         self,
         *,
-        network_interfaces: Optional[List["_models.NetworkInterfaceArmReference"]] = None,
+        network_interfaces: Optional[list["_models.NetworkInterfaceArmReference"]] = None,
     ) -> None: ...
 
     @overload
@@ -4732,7 +6891,9 @@ class VirtualMachineInstancePropertiesNetworkProfile(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesOsProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesOsProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """OsProfile - describes the configuration of the operating system and sets login data.
 
     :ivar admin_password: AdminPassword - admin password.
@@ -4791,7 +6952,9 @@ class VirtualMachineInstancePropertiesOsProfile(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesOsProfileLinuxConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesOsProfileLinuxConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """LinuxConfiguration - linux specific configuration values for the virtual machine instance.
 
     :ivar disable_password_authentication: DisablePasswordAuthentication - whether password
@@ -4845,7 +7008,9 @@ class VirtualMachineInstancePropertiesOsProfileLinuxConfiguration(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesOsProfileWindowsConfiguration(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesOsProfileWindowsConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Windows Configuration for the virtual machine instance.
 
     :ivar enable_automatic_updates: Whether to EnableAutomaticUpdates on the machine.
@@ -4903,7 +7068,9 @@ class VirtualMachineInstancePropertiesOsProfileWindowsConfiguration(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesPlacementProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesPlacementProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """PlacementProfile - Specifies the placement related settings for the virtual machine.
 
     :ivar zone: The zone in which the VM should be placed in.
@@ -4939,7 +7106,9 @@ class VirtualMachineInstancePropertiesPlacementProfile(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesSecurityProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesSecurityProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SecurityProfile - Specifies the security settings for the virtual machine instance.
 
     :ivar enable_tpm: Enable TPM flag.
@@ -4988,7 +7157,9 @@ class VirtualMachineInstancePropertiesSecurityProfile(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesSecurityProfileUefiSettings(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesSecurityProfileUefiSettings(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Uefi settings - Specifies whether secure boot should be enabled on the virtual machine
     instance.
 
@@ -5020,7 +7191,9 @@ class VirtualMachineInstancePropertiesSecurityProfileUefiSettings(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesStorageProfile(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesStorageProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """StorageProfile - contains information about the disks and storage information for the virtual
     machine instance.
 
@@ -5036,7 +7209,7 @@ class VirtualMachineInstancePropertiesStorageProfile(_Model):  # pylint: disable
     :vartype vm_config_storage_path_id: str
     """
 
-    data_disks: Optional[List["_models.VirtualHardDiskArmReference"]] = rest_field(
+    data_disks: Optional[list["_models.VirtualHardDiskArmReference"]] = rest_field(
         name="dataDisks", visibility=["read", "create", "update", "delete", "query"]
     )
     """adds data disks to the virtual machine instance."""
@@ -5057,7 +7230,7 @@ class VirtualMachineInstancePropertiesStorageProfile(_Model):  # pylint: disable
     def __init__(
         self,
         *,
-        data_disks: Optional[List["_models.VirtualHardDiskArmReference"]] = None,
+        data_disks: Optional[list["_models.VirtualHardDiskArmReference"]] = None,
         image_reference: Optional["_models.ImageArmReference"] = None,
         os_disk: Optional["_models.VirtualMachineInstancePropertiesStorageProfileOsDisk"] = None,
         vm_config_storage_path_id: Optional[str] = None,
@@ -5074,10 +7247,12 @@ class VirtualMachineInstancePropertiesStorageProfile(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstancePropertiesStorageProfileOsDisk(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstancePropertiesStorageProfileOsDisk(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VHD to attach as OS disk.
 
-    :ivar id: The ARM ID for a Virtual Hard Disk.
+    :ivar id: The Azure Resource ID for a Virtual Hard Disk.
     :vartype id: str
     :ivar os_type: This property allows you to specify the type of the OS that is included in the
      disk if creating a VM from user-image or a specialized VHD. Possible values are: Windows,
@@ -5089,7 +7264,7 @@ class VirtualMachineInstancePropertiesStorageProfileOsDisk(_Model):  # pylint: d
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ARM ID for a Virtual Hard Disk."""
+    """The Azure Resource ID for a Virtual Hard Disk."""
     os_type: Optional[Union[str, "_models.OperatingSystemTypes"]] = rest_field(
         name="osType", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5121,7 +7296,7 @@ class VirtualMachineInstancePropertiesStorageProfileOsDisk(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceStatus(_Model):
+class VirtualMachineInstanceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The observed state of virtual machine instances.
 
     :ivar error_code: VirtualMachine provisioning error code.
@@ -5135,6 +7310,10 @@ class VirtualMachineInstanceStatus(_Model):
     :ivar provisioning_status: Provisioning status of the virtual machine instance.
     :vartype provisioning_status:
      ~azure.mgmt.azurestackhcivm.models.VirtualMachineInstanceStatusProvisioningStatus
+    :ivar operation_details: Ordered steps of the current operation on the virtual machine
+     instance. Steps are replaced when a new operation begins and are omitted when no step details
+     are available.
+    :vartype operation_details: list[~azure.mgmt.azurestackhcivm.models.OperationStepResult]
     """
 
     error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
@@ -5153,6 +7332,11 @@ class VirtualMachineInstanceStatus(_Model):
         name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
     )
     """Provisioning status of the virtual machine instance."""
+    operation_details: Optional[list["_models.OperationStepResult"]] = rest_field(
+        name="operationDetails", visibility=["read"]
+    )
+    """Ordered steps of the current operation on the virtual machine instance. Steps are replaced when
+     a new operation begins and are omitted when no step details are available."""
 
     @overload
     def __init__(
@@ -5175,7 +7359,9 @@ class VirtualMachineInstanceStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceStatusProvisioningStatus(_Model):  # pylint: disable=name-too-long
+class VirtualMachineInstanceStatusProvisioningStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Virtual machine instance provisioning status.
 
     :ivar operation_id: The ID of the operation performed on the virtual machine instance.
@@ -5214,7 +7400,7 @@ class VirtualMachineInstanceStatusProvisioningStatus(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceUpdateProperties(_Model):
+class VirtualMachineInstanceUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the resource properties for the update.
 
     :ivar hardware_profile: HardwareProfile - Specifies the hardware settings for the virtual
@@ -5268,7 +7454,7 @@ class VirtualMachineInstanceUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceUpdateRequest(_Model):
+class VirtualMachineInstanceUpdateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The virtual machine instance resource patch definition.
 
     :ivar properties: Defines the resource properties for the update.
@@ -5303,7 +7489,7 @@ class VirtualMachineInstanceUpdateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineInstanceView(_Model):
+class VirtualMachineInstanceView(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The instance view of a virtual machine.
 
     :ivar vm_agent: The VM Config Agent running on the virtual machine.
@@ -5333,7 +7519,646 @@ class VirtualMachineInstanceView(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VMDiskSecurityProfile(_Model):
+class VirtualNetwork(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The virtual network resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.VirtualNetworkProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.VirtualNetworkProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkAddressSpace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Address Space Information.
+
+    :ivar address_prefixes: A list of one or more CIDR blocks that define the address space.
+     Required.
+    :vartype address_prefixes: list[str]
+    """
+
+    address_prefixes: list[str] = rest_field(
+        name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A list of one or more CIDR blocks that define the address space. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address_prefixes: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Virtual Network.
+
+    :ivar resource_id: The Azure Resource ID for a Virtual Network.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource ID for a Virtual Network."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkDhcpOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """DHCP options for virtual networks.
+
+    :ivar dns_servers: An array of DNS server IP addresses that VMs or wokloads in the vnet can
+     inherit.
+    :vartype dns_servers: list[str]
+    """
+
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """An array of DNS server IP addresses that VMs or wokloads in the vnet can inherit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        dns_servers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Virtual network resource properties.
+
+    :ivar address_space: Virtual Network address space. All subnets must be within the defined
+     range. Required.
+    :vartype address_space: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkAddressSpace
+    :ivar dhcp_options: Virtual Network DHCP options. Inherited by all subnets and VMs. Required.
+    :vartype dhcp_options: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkDhcpOptions
+    :ivar provisioning_state: The provisioning state of the virtual network resource. Known values
+     are: "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: The observed status of Virtual Network.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkStatus
+    """
+
+    address_space: "_models.VirtualNetworkAddressSpace" = rest_field(
+        name="addressSpace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Virtual Network address space. All subnets must be within the defined range. Required."""
+    dhcp_options: "_models.VirtualNetworkDhcpOptions" = rest_field(
+        name="dhcpOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Virtual Network DHCP options. Inherited by all subnets and VMs. Required."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the virtual network resource. Known values are: \"Succeeded\",
+     \"Failed\", \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.VirtualNetworkStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The observed status of Virtual Network."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address_space: "_models.VirtualNetworkAddressSpace",
+        dhcp_options: "_models.VirtualNetworkDhcpOptions",
+        status: Optional["_models.VirtualNetworkStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The observed status of the virtual network.
+
+    :ivar error_code: VirtualNetwork provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: virtual network provisioning status.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.VirtualNetworkStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """VirtualNetwork provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.VirtualNetworkStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """virtual network provisioning status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.VirtualNetworkStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkStatusProvisioningStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of virtual network operations.
+
+    :ivar operation_id: The ID of the operation performed on the virtual network.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the virtual network [Succeeded, Failed,
+     InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the virtual network."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the virtual network [Succeeded, Failed, InProgress].
+     Known values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnet(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The virtual network resource definition.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.azurestackhcivm.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetProperties
+    :ivar extended_location: The extendedLocation of the resource.
+    :vartype extended_location: ~azure.mgmt.azurestackhcivm.models.ExtendedLocation
+    """
+
+    properties: Optional["_models.VirtualNetworkSubnetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    extended_location: Optional["_models.ExtendedLocation"] = rest_field(
+        name="extendedLocation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The extendedLocation of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkSubnetProperties"] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetArmReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a Virtual Network subnet.
+
+    :ivar resource_id: The Azure Resource ID for a Virtual Network subnet.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(
+        name="resourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Azure Resource ID for a Virtual Network subnet."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetIpConfigurationReference(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The Azure Resource ID for a resource consuming IP on a subnet.
+
+    :ivar id: The Azure Resource ID for a Network Interface.
+    :vartype id: str
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure Resource ID for a Network Interface."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """VirtualNetwork subnet resource.
+
+    :ivar address_prefix: Subnet CIDR. Required.
+    :vartype address_prefix: str
+    :ivar network_security_group: Network Security Group attached to the subnet.
+    :vartype network_security_group:
+     ~azure.mgmt.azurestackhcivm.models.NetworkSecurityGroupArmReference
+    :ivar nat_gateway: Nat Gateway attached to the subnet for non-vnet traffic.
+    :vartype nat_gateway: ~azure.mgmt.azurestackhcivm.models.NatGatewayArmReference
+    :ivar route_table: RouteTable defining custom routes for the subnet.
+    :vartype route_table: ~azure.mgmt.azurestackhcivm.models.RouteTable
+    :ivar ip_configurations: List of ip configurations for the subnet.
+    :vartype ip_configurations:
+     list[~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetIpConfigurationReference]
+    :ivar provisioning_state: The provisioning state of the virtual network subnet resource. Known
+     values are: "Succeeded", "Failed", "InProgress", "Accepted", "Deleting", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.azurestackhcivm.models.ProvisioningStateEnum
+    :ivar status: The observed status of the virtual network subnet resource.
+    :vartype status: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetStatus
+    """
+
+    address_prefix: str = rest_field(name="addressPrefix", visibility=["read", "create", "update", "delete", "query"])
+    """Subnet CIDR. Required."""
+    network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = rest_field(
+        name="networkSecurityGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network Security Group attached to the subnet."""
+    nat_gateway: Optional["_models.NatGatewayArmReference"] = rest_field(
+        name="natGateway", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Nat Gateway attached to the subnet for non-vnet traffic."""
+    route_table: Optional["_models.RouteTable"] = rest_field(
+        name="routeTable", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """RouteTable defining custom routes for the subnet."""
+    ip_configurations: Optional[list["_models.VirtualNetworkSubnetIpConfigurationReference"]] = rest_field(
+        name="ipConfigurations", visibility=["read"]
+    )
+    """List of ip configurations for the subnet."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningStateEnum"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the virtual network subnet resource. Known values are: \"Succeeded\",
+     \"Failed\", \"InProgress\", \"Accepted\", \"Deleting\", and \"Canceled\"."""
+    status: Optional["_models.VirtualNetworkSubnetStatus"] = rest_field(visibility=["read"])
+    """The observed status of the virtual network subnet resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        address_prefix: str,
+        network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = None,
+        nat_gateway: Optional["_models.NatGatewayArmReference"] = None,
+        route_table: Optional["_models.RouteTable"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of virtual network subnet operations.
+
+    :ivar error_code: VirtualNetworkSubnet provisioning error code.
+    :vartype error_code: str
+    :ivar error_message: Descriptive error message.
+    :vartype error_message: str
+    :ivar provisioning_status: Public IP provisioning status.
+    :vartype provisioning_status:
+     ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetStatusProvisioningStatus
+    """
+
+    error_code: Optional[str] = rest_field(name="errorCode", visibility=["read", "create", "update", "delete", "query"])
+    """VirtualNetworkSubnet provisioning error code."""
+    error_message: Optional[str] = rest_field(
+        name="errorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Descriptive error message."""
+    provisioning_status: Optional["_models.VirtualNetworkSubnetStatusProvisioningStatus"] = rest_field(
+        name="provisioningStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Public IP provisioning status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error_code: Optional[str] = None,
+        error_message: Optional[str] = None,
+        provisioning_status: Optional["_models.VirtualNetworkSubnetStatusProvisioningStatus"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetStatusProvisioningStatus(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Status of virtual network subnet operations.
+
+    :ivar operation_id: The ID of the operation performed on the virtual network subnet.
+    :vartype operation_id: str
+    :ivar status: The status of the operation performed on the virtual network subnet [Succeeded,
+     Failed, InProgress]. Known values are: "Succeeded", "Failed", and "InProgress".
+    :vartype status: str or ~azure.mgmt.azurestackhcivm.models.Status
+    """
+
+    operation_id: Optional[str] = rest_field(
+        name="operationId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the operation performed on the virtual network subnet."""
+    status: Optional[Union[str, "_models.Status"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the operation performed on the virtual network subnet [Succeeded, Failed,
+     InProgress]. Known values are: \"Succeeded\", \"Failed\", and \"InProgress\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The virtual network subnet resource patch properties definition.
+
+    :ivar network_security_group: NetworkSecurityGroup - Network Security Group attached to the
+     subnet.
+    :vartype network_security_group:
+     ~azure.mgmt.azurestackhcivm.models.NetworkSecurityGroupArmReference
+    :ivar nat_gateway: NatGateway - NatGateway attached to the subnet.
+    :vartype nat_gateway: ~azure.mgmt.azurestackhcivm.models.NatGatewayArmReference
+    """
+
+    network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = rest_field(
+        name="networkSecurityGroup", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetworkSecurityGroup - Network Security Group attached to the subnet."""
+    nat_gateway: Optional["_models.NatGatewayArmReference"] = rest_field(
+        name="natGateway", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NatGateway - NatGateway attached to the subnet."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_security_group: Optional["_models.NetworkSecurityGroupArmReference"] = None,
+        nat_gateway: Optional["_models.NatGatewayArmReference"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkSubnetUpdateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The virtual network subnet resource patch definition.
+
+    :ivar properties: properties to update.
+    :vartype properties: ~azure.mgmt.azurestackhcivm.models.VirtualNetworkSubnetUpdateProperties
+    """
+
+    properties: Optional["_models.VirtualNetworkSubnetUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """properties to update."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.VirtualNetworkSubnetUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VirtualNetworkTagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The type used for updating tags in VirtualNetwork resources.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VMDiskSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the security profile settings for the managed disk. NOTE: It can only be set for
     Confidential VMs.
 
@@ -5356,39 +8181,6 @@ class VMDiskSecurityProfile(_Model):
         self,
         *,
         security_encryption_type: Optional[Union[str, "_models.SecurityEncryptionType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VmImageRepositoryCredentials(_Model):
-    """The credentials used to login to the image repository that has access to the specified image.
-
-    :ivar username: Username for accessing image repository. Required.
-    :vartype username: str
-    :ivar password: Password for accessing image repository. Required.
-    :vartype password: str
-    """
-
-    username: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Username for accessing image repository. Required."""
-    password: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Password for accessing image repository. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: str,
     ) -> None: ...
 
     @overload

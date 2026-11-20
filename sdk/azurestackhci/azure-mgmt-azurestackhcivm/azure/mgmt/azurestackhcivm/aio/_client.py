@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -24,21 +24,35 @@ from .operations import (
     GalleryImagesOperations,
     GuestAgentsOperations,
     HybridIdentityMetadataOperations,
+    InboundRulesOperations,
+    LoadBalancersOperations,
     LogicalNetworksOperations,
     MarketplaceGalleryImagesOperations,
+    NatGatewaysOperations,
     NetworkInterfacesOperations,
     NetworkSecurityGroupsOperations,
+    Operations,
+    PublicIPAddressesOperations,
     SecurityRulesOperations,
+    SnapshotsOperations,
     StorageContainersOperations,
     VirtualHardDisksOperations,
     VirtualMachineInstancesOperations,
+    VirtualNetworkSubnetsOperations,
+    VirtualNetworksOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
+class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Azure Stack HCI management service.
 
     :ivar gallery_images: GalleryImagesOperations operations
@@ -56,6 +70,8 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.azurestackhcivm.aio.operations.NetworkSecurityGroupsOperations
     :ivar security_rules: SecurityRulesOperations operations
     :vartype security_rules: azure.mgmt.azurestackhcivm.aio.operations.SecurityRulesOperations
+    :ivar snapshots: SnapshotsOperations operations
+    :vartype snapshots: azure.mgmt.azurestackhcivm.aio.operations.SnapshotsOperations
     :ivar storage_containers: StorageContainersOperations operations
     :vartype storage_containers:
      azure.mgmt.azurestackhcivm.aio.operations.StorageContainersOperations
@@ -73,14 +89,34 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.azurestackhcivm.aio.operations.AttestationStatusesOperations
     :ivar guest_agents: GuestAgentsOperations operations
     :vartype guest_agents: azure.mgmt.azurestackhcivm.aio.operations.GuestAgentsOperations
+    :ivar virtual_networks: VirtualNetworksOperations operations
+    :vartype virtual_networks: azure.mgmt.azurestackhcivm.aio.operations.VirtualNetworksOperations
+    :ivar virtual_network_subnets: VirtualNetworkSubnetsOperations operations
+    :vartype virtual_network_subnets:
+     azure.mgmt.azurestackhcivm.aio.operations.VirtualNetworkSubnetsOperations
+    :ivar public_ip_addresses: PublicIPAddressesOperations operations
+    :vartype public_ip_addresses:
+     azure.mgmt.azurestackhcivm.aio.operations.PublicIPAddressesOperations
+    :ivar nat_gateways: NatGatewaysOperations operations
+    :vartype nat_gateways: azure.mgmt.azurestackhcivm.aio.operations.NatGatewaysOperations
+    :ivar inbound_rules: InboundRulesOperations operations
+    :vartype inbound_rules: azure.mgmt.azurestackhcivm.aio.operations.InboundRulesOperations
+    :ivar load_balancers: LoadBalancersOperations operations
+    :vartype load_balancers: azure.mgmt.azurestackhcivm.aio.operations.LoadBalancersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.azurestackhcivm.aio.operations.Operations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
     :type subscription_id: str
     :param base_url: Service host. Default value is None.
     :type base_url: str
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-06-01-preview". Note that overriding this default value may result in unsupported
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -88,10 +124,16 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self, credential: "AsyncTokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "AsyncTokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
@@ -100,6 +142,7 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
+            cloud_setting=cloud_setting,
             credential_scopes=credential_scopes,
             **kwargs
         )
@@ -143,6 +186,7 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.security_rules = SecurityRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage_containers = StorageContainersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -159,6 +203,19 @@ class AzureStackHCIVmClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.guest_agents = GuestAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.virtual_networks = VirtualNetworksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.virtual_network_subnets = VirtualNetworkSubnetsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.public_ip_addresses = PublicIPAddressesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.nat_gateways = NatGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.inbound_rules = InboundRulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

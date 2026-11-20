@@ -66,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/VirtualMachineInstances_CreateOrUpdate_Put_Virtual_Machine_Instance_With_Vm_Config_Agent.json
+# x-ms-original-file: 2026-07-01-preview/VirtualMachineInstances_CreateOrUpdate_Put_Virtual_Machine_Instance_With_Vm_Config_Agent.json
 if __name__ == "__main__":
     main()
