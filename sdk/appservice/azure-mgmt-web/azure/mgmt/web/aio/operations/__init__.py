@@ -22,12 +22,20 @@ from ._operations import SiteCertificatesOperations  # type: ignore
 from ._operations import GlobalOperations  # type: ignore
 from ._operations import DiagnosticsOperations  # type: ignore
 from ._operations import KubeEnvironmentsOperations  # type: ignore
+from ._operations import SitesOperations  # type: ignore
+from ._operations import StaticSitesAsyncOperationsOperations  # type: ignore
+from ._operations import AiGatewaysOperations  # type: ignore
 from ._operations import WorkflowRunsOperations  # type: ignore
 from ._operations import WorkflowRunActionsOperations  # type: ignore
 from ._operations import WorkflowRunActionScopeRepetitionsOperations  # type: ignore
 from ._operations import WorkflowTriggersOperations  # type: ignore
 from ._operations import WorkflowTriggerHistoriesOperations  # type: ignore
 from ._operations import WorkflowVersionsOperations  # type: ignore
+from ._operations import SiteSiloResourcesOperations  # type: ignore
+from ._operations import SiteSiloVirtualNetworkConnectionsOperations  # type: ignore
+from ._operations import ServerFarmSiloResourcesOperations  # type: ignore
+from ._operations import ManagedTrafficConfigResourcesOperations  # type: ignore
+from ._operations import LastKnownGoodResourcesOperations  # type: ignore
 from ._operations import ProviderOperations  # type: ignore
 from ._operations import DeletedWebAppsOperations  # type: ignore
 from ._operations import ResourceHealthMetadataOperations  # type: ignore
@@ -52,12 +60,20 @@ __all__ = [
     "GlobalOperations",
     "DiagnosticsOperations",
     "KubeEnvironmentsOperations",
+    "SitesOperations",
+    "StaticSitesAsyncOperationsOperations",
+    "AiGatewaysOperations",
     "WorkflowRunsOperations",
     "WorkflowRunActionsOperations",
     "WorkflowRunActionScopeRepetitionsOperations",
     "WorkflowTriggersOperations",
     "WorkflowTriggerHistoriesOperations",
     "WorkflowVersionsOperations",
+    "SiteSiloResourcesOperations",
+    "SiteSiloVirtualNetworkConnectionsOperations",
+    "ServerFarmSiloResourcesOperations",
+    "ManagedTrafficConfigResourcesOperations",
+    "LastKnownGoodResourcesOperations",
     "ProviderOperations",
     "DeletedWebAppsOperations",
     "ResourceHealthMetadataOperations",

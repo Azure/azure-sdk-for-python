@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import WebSiteManagementClientConfiguration
 from .operations import (
+    AiGatewaysOperations,
     AppServiceEnvironmentsOperations,
     AppServicePlansOperations,
     CertificatesOperations,
@@ -28,10 +29,17 @@ from .operations import (
     GetUsagesInLocationOperations,
     GlobalOperations,
     KubeEnvironmentsOperations,
+    LastKnownGoodResourcesOperations,
+    ManagedTrafficConfigResourcesOperations,
     ProviderOperations,
     RecommendationsOperations,
     ResourceHealthMetadataOperations,
+    ServerFarmSiloResourcesOperations,
     SiteCertificatesOperations,
+    SiteSiloResourcesOperations,
+    SiteSiloVirtualNetworkConnectionsOperations,
+    SitesOperations,
+    StaticSitesAsyncOperationsOperations,
     StaticSitesOperations,
     WebAppsOperations,
     WorkflowRunActionRepetitionsOperations,
@@ -56,7 +64,9 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class WebSiteManagementClient(
+    _WebSiteManagementClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """WebSiteManagementClient.
 
     :ivar app_service_environments: AppServiceEnvironmentsOperations operations
@@ -80,6 +90,13 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :vartype diagnostics: azure.mgmt.web.aio.operations.DiagnosticsOperations
     :ivar kube_environments: KubeEnvironmentsOperations operations
     :vartype kube_environments: azure.mgmt.web.aio.operations.KubeEnvironmentsOperations
+    :ivar sites: SitesOperations operations
+    :vartype sites: azure.mgmt.web.aio.operations.SitesOperations
+    :ivar static_sites_async_operations: StaticSitesAsyncOperationsOperations operations
+    :vartype static_sites_async_operations:
+     azure.mgmt.web.aio.operations.StaticSitesAsyncOperationsOperations
+    :ivar ai_gateways: AiGatewaysOperations operations
+    :vartype ai_gateways: azure.mgmt.web.aio.operations.AiGatewaysOperations
     :ivar workflow_runs: WorkflowRunsOperations operations
     :vartype workflow_runs: azure.mgmt.web.aio.operations.WorkflowRunsOperations
     :ivar workflow_run_actions: WorkflowRunActionsOperations operations
@@ -95,6 +112,21 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
      azure.mgmt.web.aio.operations.WorkflowTriggerHistoriesOperations
     :ivar workflow_versions: WorkflowVersionsOperations operations
     :vartype workflow_versions: azure.mgmt.web.aio.operations.WorkflowVersionsOperations
+    :ivar site_silo_resources: SiteSiloResourcesOperations operations
+    :vartype site_silo_resources: azure.mgmt.web.aio.operations.SiteSiloResourcesOperations
+    :ivar site_silo_virtual_network_connections: SiteSiloVirtualNetworkConnectionsOperations
+     operations
+    :vartype site_silo_virtual_network_connections:
+     azure.mgmt.web.aio.operations.SiteSiloVirtualNetworkConnectionsOperations
+    :ivar server_farm_silo_resources: ServerFarmSiloResourcesOperations operations
+    :vartype server_farm_silo_resources:
+     azure.mgmt.web.aio.operations.ServerFarmSiloResourcesOperations
+    :ivar managed_traffic_config_resources: ManagedTrafficConfigResourcesOperations operations
+    :vartype managed_traffic_config_resources:
+     azure.mgmt.web.aio.operations.ManagedTrafficConfigResourcesOperations
+    :ivar last_known_good_resources: LastKnownGoodResourcesOperations operations
+    :vartype last_known_good_resources:
+     azure.mgmt.web.aio.operations.LastKnownGoodResourcesOperations
     :ivar provider: ProviderOperations operations
     :vartype provider: azure.mgmt.web.aio.operations.ProviderOperations
     :ivar deleted_web_apps: DeletedWebAppsOperations operations
@@ -122,7 +154,7 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-05-01"
+    :keyword api_version: The API version to use for this operation. Known values are "2026-08-01"
      and None. Default value is None. If not set, the operation's default API version will be used.
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -197,6 +229,11 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
         self.kube_environments = KubeEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.sites = SitesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.static_sites_async_operations = StaticSitesAsyncOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.ai_gateways = AiGatewaysOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workflow_runs = WorkflowRunsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.workflow_run_actions = WorkflowRunActionsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -211,6 +248,21 @@ class WebSiteManagementClient(_WebSiteManagementClientOperationsMixin):  # pylin
             self._client, self._config, self._serialize, self._deserialize
         )
         self.workflow_versions = WorkflowVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.site_silo_resources = SiteSiloResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.site_silo_virtual_network_connections = SiteSiloVirtualNetworkConnectionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.server_farm_silo_resources = ServerFarmSiloResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_traffic_config_resources = ManagedTrafficConfigResourcesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.last_known_good_resources = LastKnownGoodResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.provider = ProviderOperations(self._client, self._config, self._serialize, self._deserialize)
