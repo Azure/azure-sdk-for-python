@@ -112,7 +112,7 @@ class TestEnclaveMgmtEnclaveConnectionOperations(AzureMgmtRecordedTestCase):
         response = self.client.enclave_connection.begin_handle_approval_creation(
             resource_group_name=resource_group.name,
             enclave_connection_name="str",
-            body={"approvalStatus": "Approved", "resourceRequestAction": "Create", "approvalCallbackPayload": "str"},
+            body={"approvalStatus": "str", "resourceRequestAction": "str", "approvalCallbackPayload": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -124,7 +124,7 @@ class TestEnclaveMgmtEnclaveConnectionOperations(AzureMgmtRecordedTestCase):
         response = self.client.enclave_connection.begin_handle_approval_deletion(
             resource_group_name=resource_group.name,
             enclave_connection_name="str",
-            body={"resourceRequestAction": "Create"},
+            body={"resourceRequestAction": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

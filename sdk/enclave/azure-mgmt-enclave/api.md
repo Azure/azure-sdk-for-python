@@ -331,6 +331,16 @@ namespace azure.mgmt.enclave.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[ApprovalActionResponse]: ...
 
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'community_endpoint_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        async def begin_sync(
+                self, 
+                resource_group_name: str, 
+                community_name: str, 
+                community_endpoint_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[CommunityEndpointResource]: ...
+
         @overload
         async def begin_update(
                 self, 
@@ -571,7 +581,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncLROPoller[DedicatedHubResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -617,7 +627,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncLROPoller[DedicatedHubResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -627,7 +637,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> DedicatedHubResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def list_by_community_resource(
                 self, 
                 resource_group_name: str, 
@@ -636,7 +646,7 @@ namespace azure.mgmt.enclave.aio.operations
             ) -> AsyncItemPaged[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def list_by_subscription(
                 self, 
                 community_name: str, 
@@ -1415,18 +1425,44 @@ namespace azure.mgmt.enclave.models
         INTERNAL = "Internal"
 
 
-    class azure.mgmt.enclave.models.ApprovalActionRequest(_Model):
-        approval_status: Union[Literal["Approved"], Literal["Rejected"], str]
+    class azure.mgmt.enclave.models.AddressSpaceEntry(_Model):
+        address_space: Optional[str]
+        prefix_length: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                approval_status: Union[Literal[Approved], Literal[Rejected], str]
+                address_space: Optional[str] = ..., 
+                prefix_length: Optional[int] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.AddressSpaceOwnership(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CUSTOMER_MANAGED = "CustomerManaged"
+        PRODUCT_MANAGED = "ProductManaged"
+
+
+    class azure.mgmt.enclave.models.ApprovalActionRequest(_Model):
+        approval_status: Union[str, ApprovalActionRequestApprovalStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                approval_status: Union[str, ApprovalActionRequestApprovalStatus]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.ApprovalActionRequestApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "Approved"
+        REJECTED = "Rejected"
 
 
     class azure.mgmt.enclave.models.ApprovalActionResponse(_Model):
@@ -1445,34 +1481,52 @@ namespace azure.mgmt.enclave.models
 
     class azure.mgmt.enclave.models.ApprovalCallbackRequest(_Model):
         approval_callback_payload: Optional[str]
-        approval_status: Union[Literal["Approved"], Literal["Rejected"], str]
-        resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str]
+        approval_status: Union[str, ApprovalCallbackRequestApprovalStatus]
+        resource_request_action: Union[str, ApprovalCallbackRequestResourceRequestAction]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 approval_callback_payload: Optional[str] = ..., 
-                approval_status: Union[Literal[Approved], Literal[Rejected], str], 
-                resource_request_action: Union[Literal[Create], Literal[Delete], Literal[Update], Literal[Reset], str]
+                approval_status: Union[str, ApprovalCallbackRequestApprovalStatus], 
+                resource_request_action: Union[str, ApprovalCallbackRequestResourceRequestAction]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.enclave.models.ApprovalCallbackRequestApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "Approved"
+        REJECTED = "Rejected"
+
+
+    class azure.mgmt.enclave.models.ApprovalCallbackRequestResourceRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE = "Create"
+        DELETE = "Delete"
+        RESET = "Reset"
+        UPDATE = "Update"
+
+
     class azure.mgmt.enclave.models.ApprovalDeletionCallbackRequest(_Model):
-        resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], str]
+        resource_request_action: Union[str, ApprovalDeletionCallbackRequestResourceRequestAction]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                resource_request_action: Union[Literal[Create], Literal[Delete], Literal[Update], str]
+                resource_request_action: Union[str, ApprovalDeletionCallbackRequestResourceRequestAction]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.ApprovalDeletionCallbackRequestResourceRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CREATE = "Create"
+        DELETE = "Delete"
+        UPDATE = "Update"
 
 
     class azure.mgmt.enclave.models.ApprovalPatchModel(_Model):
@@ -1668,15 +1722,17 @@ namespace azure.mgmt.enclave.models
 
 
     class azure.mgmt.enclave.models.CheckAddressSpaceAvailabilityRequest(_Model):
+        address_space: Optional[str]
         community_resource_id: str
-        enclave_virtual_network: EnclaveVirtualNetworkModel
+        prefix_length: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                address_space: Optional[str] = ..., 
                 community_resource_id: str, 
-                enclave_virtual_network: EnclaveVirtualNetworkModel
+                prefix_length: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -1700,6 +1756,7 @@ namespace azure.mgmt.enclave.models
     class azure.mgmt.enclave.models.CommunityEndpointDestinationRule(_Model):
         destination: Optional[str]
         destination_type: Optional[Union[str, DestinationType]]
+        direction: Optional[Union[str, RuleDirection]]
         endpoint_rule_name: Optional[str]
         ports: Optional[str]
         protocols: Optional[list[Union[str, CommunityEndpointProtocol]]]
@@ -1711,6 +1768,7 @@ namespace azure.mgmt.enclave.models
                 *, 
                 destination: Optional[str] = ..., 
                 destination_type: Optional[Union[str, DestinationType]] = ..., 
+                direction: Optional[Union[str, RuleDirection]] = ..., 
                 endpoint_rule_name: Optional[str] = ..., 
                 ports: Optional[str] = ..., 
                 protocols: Optional[list[Union[str, CommunityEndpointProtocol]]] = ..., 
@@ -1739,6 +1797,7 @@ namespace azure.mgmt.enclave.models
 
     class azure.mgmt.enclave.models.CommunityEndpointPatchProperties(_Model):
         rule_collection: list[CommunityEndpointDestinationRule]
+        sync_to: Optional[list[str]]
         update_mode: Optional[Union[str, UpdateMode]]
 
         @overload
@@ -1746,6 +1805,7 @@ namespace azure.mgmt.enclave.models
                 self, 
                 *, 
                 rule_collection: list[CommunityEndpointDestinationRule], 
+                sync_to: Optional[list[str]] = ..., 
                 update_mode: Optional[Union[str, UpdateMode]] = ...
             ) -> None: ...
 
@@ -1757,6 +1817,11 @@ namespace azure.mgmt.enclave.models
         provisioning_state: Optional[Union[str, ProvisioningState]]
         resource_collection: Optional[list[str]]
         rule_collection: list[CommunityEndpointDestinationRule]
+        sync_destination_statuses: Optional[list[SyncDestinationStatus]]
+        sync_from: Optional[str]
+        sync_performed_by: Optional[SyncPerformedBy]
+        sync_status: Optional[Union[str, SyncStatus]]
+        sync_to: Optional[list[str]]
         update_mode: Optional[Union[str, UpdateMode]]
 
         @overload
@@ -1764,6 +1829,7 @@ namespace azure.mgmt.enclave.models
                 self, 
                 *, 
                 rule_collection: list[CommunityEndpointDestinationRule], 
+                sync_to: Optional[list[str]] = ..., 
                 update_mode: Optional[Union[str, UpdateMode]] = ...
             ) -> None: ...
 
@@ -1831,7 +1897,8 @@ namespace azure.mgmt.enclave.models
         granular_approval_settings: Optional[ApprovalSettingsPatchProperties]
         maintenance_mode_configuration: Optional[MaintenanceModeConfigurationPatchModel]
         monitoring_settings: Optional[MonitoringSettingsPatchModel]
-        policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]]
+        policy_override: Optional[Union[str, CommunityPropertiesPolicyOverride]]
+        subnet_join_policy_mode: Optional[Union[str, SubnetJoinPolicyMode]]
 
         @overload
         def __init__(
@@ -1845,7 +1912,8 @@ namespace azure.mgmt.enclave.models
                 granular_approval_settings: Optional[ApprovalSettingsPatchProperties] = ..., 
                 maintenance_mode_configuration: Optional[MaintenanceModeConfigurationPatchModel] = ..., 
                 monitoring_settings: Optional[MonitoringSettingsPatchModel] = ..., 
-                policy_override: Optional[Union[Literal[Enclave], Literal[None], str]] = ...
+                policy_override: Optional[Union[str, CommunityPropertiesPolicyOverride]] = ..., 
+                subnet_join_policy_mode: Optional[Union[str, SubnetJoinPolicyMode]] = ...
             ) -> None: ...
 
         @overload
@@ -1865,9 +1933,10 @@ namespace azure.mgmt.enclave.models
         managed_on_behalf_of_configuration: Optional[ManagedOnBehalfOfConfiguration]
         managed_resource_group_name: Optional[str]
         monitoring_settings: Optional[MonitoringSettingsModel]
-        policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]]
+        policy_override: Optional[Union[str, CommunityPropertiesPolicyOverride]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         resource_collection: Optional[list[str]]
+        subnet_join_policy_mode: Optional[Union[str, SubnetJoinPolicyMode]]
 
         @overload
         def __init__(
@@ -1882,11 +1951,17 @@ namespace azure.mgmt.enclave.models
                 granular_approval_settings: Optional[ApprovalSettings] = ..., 
                 maintenance_mode_configuration: Optional[MaintenanceModeConfigurationModel] = ..., 
                 monitoring_settings: Optional[MonitoringSettingsModel] = ..., 
-                policy_override: Optional[Union[Literal[Enclave], Literal[None], str]] = ...
+                policy_override: Optional[Union[str, CommunityPropertiesPolicyOverride]] = ..., 
+                subnet_join_policy_mode: Optional[Union[str, SubnetJoinPolicyMode]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.CommunityPropertiesPolicyOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENCLAVE = "Enclave"
+        NONE = "None"
 
 
     class azure.mgmt.enclave.models.CommunityResource(TrackedResource):
@@ -1907,6 +1982,24 @@ namespace azure.mgmt.enclave.models
                 location: str, 
                 properties: Optional[CommunityProperties] = ..., 
                 tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.ComputedAddressSpaceEntry(_Model):
+        address_space: Optional[str]
+        ownership: Optional[Union[str, AddressSpaceOwnership]]
+        prefix_length: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                address_space: Optional[str] = ..., 
+                ownership: Optional[Union[str, AddressSpaceOwnership]] = ..., 
+                prefix_length: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -2007,22 +2100,7 @@ namespace azure.mgmt.enclave.models
         BOTH = "Both"
         COMMUNITY_ONLY = "CommunityOnly"
         ENCLAVE_ONLY = "EnclaveOnly"
-
-
-    class azure.mgmt.enclave.models.EnclaveAddressSpacesModel(_Model):
-        enclave_address_space: Optional[str]
-        managed_address_space: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enclave_address_space: Optional[str] = ..., 
-                managed_address_space: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+        UNSPECIFIED = "Unspecified"
 
 
     class azure.mgmt.enclave.models.EnclaveConnectionPatchModel(_Model):
@@ -2105,10 +2183,12 @@ namespace azure.mgmt.enclave.models
         ACTIVE = "Active"
         APPROVED = "Approved"
         CONNECTED = "Connected"
+        DEGRADED = "Degraded"
         DISCONNECTED = "Disconnected"
         FAILED = "Failed"
         PENDING_APPROVAL = "PendingApproval"
         PENDING_UPDATE = "PendingUpdate"
+        RECONCILING = "Reconciling"
 
 
     class azure.mgmt.enclave.models.EnclaveDefaultSettingsModel(_Model):
@@ -2267,28 +2347,6 @@ namespace azure.mgmt.enclave.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.enclave.models.EnclaveVirtualNetworkModel(_Model):
-        allow_subnet_communication: Optional[bool]
-        custom_cidr_range: Optional[str]
-        network_name: Optional[str]
-        network_size: Optional[str]
-        subnet_configurations: Optional[list[SubnetConfiguration]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allow_subnet_communication: Optional[bool] = ..., 
-                custom_cidr_range: Optional[str] = ..., 
-                network_name: Optional[str] = ..., 
-                network_size: Optional[str] = ..., 
-                subnet_configurations: Optional[list[SubnetConfiguration]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.enclave.models.ErrorAdditionalInfo(_Model):
         info: Optional[Any]
         type: Optional[str]
@@ -2330,10 +2388,10 @@ namespace azure.mgmt.enclave.models
 
 
     class azure.mgmt.enclave.models.GovernedServiceItem(_Model):
-        enforcement: Optional[Union[Literal["Enabled"], Literal["Disabled"], str]]
+        enforcement: Optional[Union[str, GovernedServiceItemEnforcement]]
         initiatives: Optional[list[str]]
-        option: Optional[Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"], Literal["NotApplicable"], str]]
-        policy_action: Optional[Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]]
+        option: Optional[Union[str, GovernedServiceItemOption]]
+        policy_action: Optional[Union[str, GovernedServiceItemPolicyAction]]
         service_id: Union[str, ServiceIdentifier]
         service_name: Optional[str]
 
@@ -2341,9 +2399,9 @@ namespace azure.mgmt.enclave.models
         def __init__(
                 self, 
                 *, 
-                enforcement: Optional[Union[Literal[Enabled], Literal[Disabled], str]] = ..., 
-                option: Optional[Union[Literal[Allow], Literal[Deny], Literal[ExceptionOnly], Literal[NotApplicable], str]] = ..., 
-                policy_action: Optional[Union[Literal[AuditOnly], Literal[Enforce], Literal[None], str]] = ..., 
+                enforcement: Optional[Union[str, GovernedServiceItemEnforcement]] = ..., 
+                option: Optional[Union[str, GovernedServiceItemOption]] = ..., 
+                policy_action: Optional[Union[str, GovernedServiceItemPolicyAction]] = ..., 
                 service_id: Union[str, ServiceIdentifier]
             ) -> None: ...
 
@@ -2351,17 +2409,35 @@ namespace azure.mgmt.enclave.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.enclave.models.GovernedServiceItemEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+
+
+    class azure.mgmt.enclave.models.GovernedServiceItemOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOW = "Allow"
+        DENY = "Deny"
+        EXCEPTION_ONLY = "ExceptionOnly"
+        NOT_APPLICABLE = "NotApplicable"
+
+
+    class azure.mgmt.enclave.models.GovernedServiceItemPolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIT_ONLY = "AuditOnly"
+        ENFORCE = "Enforce"
+        NONE = "None"
+
+
     class azure.mgmt.enclave.models.MaintenanceModeConfigurationModel(_Model):
-        justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]]
-        mode: Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]
+        justification: Optional[Union[str, MaintenanceModeConfigurationModelJustification]]
+        mode: Union[str, MaintenanceModeConfigurationModelMode]
         principals: Optional[list[Principal]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                justification: Optional[Union[Literal[Networking], Literal[Governance], Literal[Off], str]] = ..., 
-                mode: Union[Literal[On], Literal[CanNotDelete], Literal[Off], Literal[General], Literal[Advanced], str], 
+                justification: Optional[Union[str, MaintenanceModeConfigurationModelJustification]] = ..., 
+                mode: Union[str, MaintenanceModeConfigurationModelMode], 
                 principals: Optional[list[Principal]] = ...
             ) -> None: ...
 
@@ -2369,17 +2445,31 @@ namespace azure.mgmt.enclave.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.enclave.models.MaintenanceModeConfigurationModelJustification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GOVERNANCE = "Governance"
+        NETWORKING = "Networking"
+        OFF = "Off"
+
+
+    class azure.mgmt.enclave.models.MaintenanceModeConfigurationModelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ADVANCED = "Advanced"
+        CAN_NOT_DELETE = "CanNotDelete"
+        GENERAL = "General"
+        OFF = "Off"
+        ON = "On"
+
+
     class azure.mgmt.enclave.models.MaintenanceModeConfigurationPatchModel(_Model):
-        justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]]
-        mode: Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]
+        justification: Optional[Union[str, MaintenanceModeConfigurationModelJustification]]
+        mode: Union[str, MaintenanceModeConfigurationModelMode]
         principals: Optional[list[Principal]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                justification: Optional[Union[Literal[Networking], Literal[Governance], Literal[Off], str]] = ..., 
-                mode: Union[Literal[On], Literal[CanNotDelete], Literal[Off], Literal[General], Literal[Advanced], str], 
+                justification: Optional[Union[str, MaintenanceModeConfigurationModelJustification]] = ..., 
+                mode: Union[str, MaintenanceModeConfigurationModelMode], 
                 principals: Optional[list[Principal]] = ...
             ) -> None: ...
 
@@ -2551,18 +2641,24 @@ namespace azure.mgmt.enclave.models
 
     class azure.mgmt.enclave.models.Principal(_Model):
         id: str
-        type: Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str]
+        type: Union[str, PrincipalType]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 id: str, 
-                type: Union[Literal[User], Literal[Group], Literal[ServicePrincipal], str]
+                type: Union[str, PrincipalType]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        GROUP = "Group"
+        SERVICE_PRINCIPAL = "ServicePrincipal"
+        USER = "User"
 
 
     class azure.mgmt.enclave.models.ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2652,6 +2748,11 @@ namespace azure.mgmt.enclave.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.enclave.models.RuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INBOUND = "Inbound"
+        OUTBOUND = "Outbound"
+
+
     class azure.mgmt.enclave.models.SecurityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AZURE_FIREWALL = "AzureFirewall"
         NONE = "None"
@@ -2661,6 +2762,7 @@ namespace azure.mgmt.enclave.models
         AKS = "AKS"
         APP_SERVICE = "AppService"
         AZURE_FIREWALLS = "AzureFirewalls"
+        AZURE_LOCAL = "AzureLocal"
         CONTAINER_REGISTRY = "ContainerRegistry"
         COSMOS_DB = "CosmosDB"
         DATA_CONNECTORS = "DataConnectors"
@@ -2681,6 +2783,7 @@ namespace azure.mgmt.enclave.models
         network_security_group_resource_id: Optional[str]
         subnet_delegation: Optional[str]
         subnet_name: str
+        subnet_purpose: Optional[Union[str, SubnetPurpose]]
         subnet_resource_id: Optional[str]
 
         @overload
@@ -2689,11 +2792,46 @@ namespace azure.mgmt.enclave.models
                 *, 
                 network_prefix_size: int, 
                 subnet_delegation: Optional[str] = ..., 
-                subnet_name: str
+                subnet_name: str, 
+                subnet_purpose: Optional[Union[str, SubnetPurpose]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.enclave.models.SubnetJoinPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUDIT = "Audit"
+        DENY = "Deny"
+
+
+    class azure.mgmt.enclave.models.SubnetPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AKS = "AKS"
+        AKS_API_SERVER = "AKSApiServer"
+        GENERAL = "General"
+
+
+    class azure.mgmt.enclave.models.SyncDestinationStatus(_Model):
+        destination_id: str
+        error_message: Optional[str]
+        last_sync_time: Optional[datetime]
+        status: Union[str, SyncStatus]
+
+
+    class azure.mgmt.enclave.models.SyncPerformedBy(_Model):
+        correlation_id: str
+        performed_at: datetime
+        principal_id: str
+        principal_type: str
+        tenant_id: str
+
+
+    class azure.mgmt.enclave.models.SyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        NOT_CONFIGURED = "NotConfigured"
+        PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.enclave.models.SystemData(_Model):
@@ -2931,16 +3069,17 @@ namespace azure.mgmt.enclave.models
 
 
     class azure.mgmt.enclave.models.VirtualEnclavePatchProperties(_Model):
+        address_spaces: Optional[list[AddressSpaceEntry]]
         approval_settings: Optional[VirtualEnclaveApprovalSettingsPatchProperties]
         bastion_enabled: Optional[bool]
         dedicated_hub_resource_id: Optional[str]
         enclave_default_settings: Optional[EnclaveDefaultSettingsPatchModel]
         enclave_role_assignments: Optional[list[RoleAssignmentItem]]
-        enclave_virtual_network: EnclaveVirtualNetworkModel
         governed_service_list: Optional[list[GovernedServiceItem]]
         maintenance_mode_configuration: Optional[MaintenanceModeConfigurationPatchModel]
         monitoring_settings: Optional[MonitoringSettingsPatchModel]
         rbac_inheritance: Optional[Union[str, RbacInheritanceMode]]
+        subnet_configurations: Optional[list[SubnetConfiguration]]
         workload_resource_visibility: Optional[Union[str, ResourceVisibilityMode]]
         workload_role_assignments: Optional[list[RoleAssignmentItem]]
 
@@ -2948,16 +3087,17 @@ namespace azure.mgmt.enclave.models
         def __init__(
                 self, 
                 *, 
+                address_spaces: Optional[list[AddressSpaceEntry]] = ..., 
                 approval_settings: Optional[VirtualEnclaveApprovalSettingsPatchProperties] = ..., 
                 bastion_enabled: Optional[bool] = ..., 
                 dedicated_hub_resource_id: Optional[str] = ..., 
                 enclave_default_settings: Optional[EnclaveDefaultSettingsPatchModel] = ..., 
                 enclave_role_assignments: Optional[list[RoleAssignmentItem]] = ..., 
-                enclave_virtual_network: EnclaveVirtualNetworkModel, 
                 governed_service_list: Optional[list[GovernedServiceItem]] = ..., 
                 maintenance_mode_configuration: Optional[MaintenanceModeConfigurationPatchModel] = ..., 
                 monitoring_settings: Optional[MonitoringSettingsPatchModel] = ..., 
                 rbac_inheritance: Optional[Union[str, RbacInheritanceMode]] = ..., 
+                subnet_configurations: Optional[list[SubnetConfiguration]] = ..., 
                 workload_resource_visibility: Optional[Union[str, ResourceVisibilityMode]] = ..., 
                 workload_role_assignments: Optional[list[RoleAssignmentItem]] = ...
             ) -> None: ...
@@ -2967,22 +3107,25 @@ namespace azure.mgmt.enclave.models
 
 
     class azure.mgmt.enclave.models.VirtualEnclaveProperties(_Model):
+        address_spaces: Optional[list[AddressSpaceEntry]]
+        allow_subnet_communication: Optional[bool]
         approval_settings: Optional[VirtualEnclaveApprovalSettings]
         bastion_enabled: Optional[bool]
         community_resource_id: str
+        computed_address_spaces: Optional[list[ComputedAddressSpaceEntry]]
         dedicated_hub_resource_id: Optional[str]
-        enclave_address_spaces: Optional[EnclaveAddressSpacesModel]
         enclave_default_settings: Optional[EnclaveDefaultSettingsModel]
         enclave_role_assignments: Optional[list[RoleAssignmentItem]]
-        enclave_virtual_network: EnclaveVirtualNetworkModel
         governed_service_list: Optional[list[GovernedServiceItem]]
         maintenance_mode_configuration: Optional[MaintenanceModeConfigurationModel]
         managed_on_behalf_of_configuration: Optional[ManagedOnBehalfOfConfiguration]
         managed_resource_group_name: Optional[str]
         monitoring_settings: Optional[MonitoringSettingsModel]
+        network_name: Optional[str]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         rbac_inheritance: Optional[Union[str, RbacInheritanceMode]]
         resource_collection: Optional[list[str]]
+        subnet_configurations: Optional[list[SubnetConfiguration]]
         workload_resource_visibility: Optional[Union[str, ResourceVisibilityMode]]
         workload_role_assignments: Optional[list[RoleAssignmentItem]]
 
@@ -2990,17 +3133,19 @@ namespace azure.mgmt.enclave.models
         def __init__(
                 self, 
                 *, 
+                address_spaces: Optional[list[AddressSpaceEntry]] = ..., 
+                allow_subnet_communication: Optional[bool] = ..., 
                 approval_settings: Optional[VirtualEnclaveApprovalSettings] = ..., 
                 bastion_enabled: Optional[bool] = ..., 
                 community_resource_id: str, 
                 dedicated_hub_resource_id: Optional[str] = ..., 
                 enclave_default_settings: Optional[EnclaveDefaultSettingsModel] = ..., 
                 enclave_role_assignments: Optional[list[RoleAssignmentItem]] = ..., 
-                enclave_virtual_network: EnclaveVirtualNetworkModel, 
                 governed_service_list: Optional[list[GovernedServiceItem]] = ..., 
                 maintenance_mode_configuration: Optional[MaintenanceModeConfigurationModel] = ..., 
                 monitoring_settings: Optional[MonitoringSettingsModel] = ..., 
                 rbac_inheritance: Optional[Union[str, RbacInheritanceMode]] = ..., 
+                subnet_configurations: Optional[list[SubnetConfiguration]] = ..., 
                 workload_resource_visibility: Optional[Union[str, ResourceVisibilityMode]] = ..., 
                 workload_role_assignments: Optional[list[RoleAssignmentItem]] = ...
             ) -> None: ...
@@ -3335,6 +3480,16 @@ namespace azure.mgmt.enclave.operations
                 **kwargs: Any
             ) -> LROPoller[ApprovalActionResponse]: ...
 
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-01-preview', params_added_on={'2026-10-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'community_endpoint_name', 'accept']}, api_versions_list=['2026-10-01-preview'])
+        def begin_sync(
+                self, 
+                resource_group_name: str, 
+                community_name: str, 
+                community_endpoint_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[CommunityEndpointResource]: ...
+
         @overload
         def begin_update(
                 self, 
@@ -3575,7 +3730,7 @@ namespace azure.mgmt.enclave.operations
             ) -> LROPoller[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3621,7 +3776,7 @@ namespace azure.mgmt.enclave.operations
             ) -> LROPoller[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'dedicated_hub_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3631,7 +3786,7 @@ namespace azure.mgmt.enclave.operations
             ) -> DedicatedHubResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def list_by_community_resource(
                 self, 
                 resource_group_name: str, 
@@ -3640,7 +3795,7 @@ namespace azure.mgmt.enclave.operations
             ) -> ItemPaged[DedicatedHubResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01'])
+        @api_version_validation(method_added_on='2025-11-01-preview', params_added_on={'2025-11-01-preview': ['api_version', 'subscription_id', 'community_name', 'accept']}, api_versions_list=['2025-11-01-preview', '2026-03-01-preview', '2026-04-01', '2026-10-01-preview'])
         def list_by_subscription(
                 self, 
                 community_name: str, 
@@ -4410,23 +4565,30 @@ namespace azure.mgmt.enclave.operations
 
 namespace azure.mgmt.enclave.types
 
+    class azure.mgmt.enclave.types.AddressSpaceEntry(TypedDict, total=False):
+        key "addressSpace": str
+        key "prefixLength": int
+        addressSpace: str
+        prefixLength: int
+
+
     class azure.mgmt.enclave.types.ApprovalActionRequest(TypedDict, total=False):
-        key "approvalStatus": Required[Union[Literal["Approved"], Literal["Rejected"], str]]
-        approvalStatus: Union[Literal[Approved], Literal[Rejected], str]
+        key "approvalStatus": Required[Union[str, ApprovalActionRequestApprovalStatus]]
+        approvalStatus: Union[str, ApprovalActionRequestApprovalStatus]
 
 
     class azure.mgmt.enclave.types.ApprovalCallbackRequest(TypedDict, total=False):
         key "approvalCallbackPayload": str
-        key "approvalStatus": Required[Union[Literal["Approved"], Literal["Rejected"], str]]
-        key "resourceRequestAction": Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str]]
+        key "approvalStatus": Required[Union[str, ApprovalCallbackRequestApprovalStatus]]
+        key "resourceRequestAction": Required[Union[str, ApprovalCallbackRequestResourceRequestAction]]
         approvalCallbackPayload: str
-        approvalStatus: Union[Literal[Approved], Literal[Rejected], str]
-        resourceRequestAction: Union[Literal[Create], Literal[Delete], Literal[Update], Literal[Reset], str]
+        approvalStatus: Union[str, ApprovalCallbackRequestApprovalStatus]
+        resourceRequestAction: Union[str, ApprovalCallbackRequestResourceRequestAction]
 
 
     class azure.mgmt.enclave.types.ApprovalDeletionCallbackRequest(TypedDict, total=False):
-        key "resourceRequestAction": Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], str]]
-        resourceRequestAction: Union[Literal[Create], Literal[Delete], Literal[Update], str]
+        key "resourceRequestAction": Required[Union[str, ApprovalDeletionCallbackRequestResourceRequestAction]]
+        resourceRequestAction: Union[str, ApprovalDeletionCallbackRequestResourceRequestAction]
 
 
     class azure.mgmt.enclave.types.ApprovalPatchModel(TypedDict, total=False):
@@ -4542,20 +4704,24 @@ namespace azure.mgmt.enclave.types
 
 
     class azure.mgmt.enclave.types.CheckAddressSpaceAvailabilityRequest(TypedDict, total=False):
+        key "addressSpace": str
         key "communityResourceId": Required[str]
-        key "enclaveVirtualNetwork": Required[EnclaveVirtualNetworkModel]
+        key "prefixLength": int
+        addressSpace: str
         communityResourceId: str
-        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
+        prefixLength: int
 
 
     class azure.mgmt.enclave.types.CommunityEndpointDestinationRule(TypedDict, total=False):
         key "destination": str
         key "destinationType": Union[str, DestinationType]
+        key "direction": Union[str, RuleDirection]
         key "endpointRuleName": str
         key "ports": str
         key "transitHubResourceId": str
         destination: str
         destinationType: Union[str, DestinationType]
+        direction: Union[str, RuleDirection]
         endpointRuleName: str
         ports: str
         protocols: list[Union[str, CommunityEndpointProtocol]]
@@ -4572,16 +4738,25 @@ namespace azure.mgmt.enclave.types
         key "ruleCollection": Required[list[CommunityEndpointDestinationRule]]
         key "updateMode": Union[str, UpdateMode]
         ruleCollection: list[CommunityEndpointDestinationRule]
+        syncTo: list[str]
         updateMode: Union[str, UpdateMode]
 
 
     class azure.mgmt.enclave.types.CommunityEndpointProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
         key "ruleCollection": Required[list[CommunityEndpointDestinationRule]]
+        key "syncFrom": str
+        key "syncPerformedBy": ForwardRef('SyncPerformedBy', module='types')
+        key "syncStatus": Union[str, SyncStatus]
         key "updateMode": Union[str, UpdateMode]
         provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
         ruleCollection: list[CommunityEndpointDestinationRule]
+        syncDestinationStatuses: list[SyncDestinationStatus]
+        syncFrom: str
+        syncPerformedBy: SyncPerformedBy
+        syncStatus: Union[str, SyncStatus]
+        syncTo: list[str]
         updateMode: Union[str, UpdateMode]
 
 
@@ -4614,7 +4789,8 @@ namespace azure.mgmt.enclave.types
         key "firewallSku": Union[str, FirewallSKU]
         key "maintenanceModeConfiguration": ForwardRef('MaintenanceModeConfigurationPatchModel', module='types')
         key "monitoringSettings": ForwardRef('MonitoringSettingsPatchModel', module='types')
-        key "policyOverride": Union[Literal["Enclave"], Literal["None"], str]
+        key "policyOverride": Union[str, CommunityPropertiesPolicyOverride]
+        key "subnetJoinPolicyMode": Union[str, SubnetJoinPolicyMode]
         addressSpaces: list[str]
         approvalSettings: ApprovalSettingsPatchProperties
         communityRoleAssignments: list[RoleAssignmentItem]
@@ -4623,7 +4799,8 @@ namespace azure.mgmt.enclave.types
         governedServiceList: list[GovernedServiceItem]
         maintenanceModeConfiguration: MaintenanceModeConfigurationPatchModel
         monitoringSettings: MonitoringSettingsPatchModel
-        policyOverride: Union[Literal[Enclave], Literal[None], str]
+        policyOverride: Union[str, CommunityPropertiesPolicyOverride]
+        subnetJoinPolicyMode: Union[str, SubnetJoinPolicyMode]
 
 
     class azure.mgmt.enclave.types.CommunityProperties(TypedDict, total=False):
@@ -4634,8 +4811,9 @@ namespace azure.mgmt.enclave.types
         key "managedOnBehalfOfConfiguration": ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
         key "managedResourceGroupName": str
         key "monitoringSettings": ForwardRef('MonitoringSettingsModel', module='types')
-        key "policyOverride": Union[Literal["Enclave"], Literal["None"], str]
+        key "policyOverride": Union[str, CommunityPropertiesPolicyOverride]
         key "provisioningState": Union[str, ProvisioningState]
+        key "subnetJoinPolicyMode": Union[str, SubnetJoinPolicyMode]
         addressSpace: str
         addressSpaces: list[str]
         approvalSettings: ApprovalSettings
@@ -4648,9 +4826,10 @@ namespace azure.mgmt.enclave.types
         managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
         managedResourceGroupName: str
         monitoringSettings: MonitoringSettingsModel
-        policyOverride: Union[Literal[Enclave], Literal[None], str]
+        policyOverride: Union[str, CommunityPropertiesPolicyOverride]
         provisioningState: Union[str, ProvisioningState]
         resourceCollection: list[str]
+        subnetJoinPolicyMode: Union[str, SubnetJoinPolicyMode]
 
 
     class azure.mgmt.enclave.types.CommunityResource(TrackedResource):
@@ -4669,6 +4848,15 @@ namespace azure.mgmt.enclave.types
         systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.enclave.types.ComputedAddressSpaceEntry(TypedDict, total=False):
+        key "addressSpace": str
+        key "ownership": Union[str, AddressSpaceOwnership]
+        key "prefixLength": int
+        addressSpace: str
+        ownership: Union[str, AddressSpaceOwnership]
+        prefixLength: int
 
 
     class azure.mgmt.enclave.types.DedicatedHubPatchModel(TypedDict, total=False):
@@ -4709,13 +4897,6 @@ namespace azure.mgmt.enclave.types
         systemData: SystemData
         tags: dict[str, str]
         type: str
-
-
-    class azure.mgmt.enclave.types.EnclaveAddressSpacesModel(TypedDict, total=False):
-        key "enclaveAddressSpace": str
-        key "managedAddressSpace": str
-        enclaveAddressSpace: str
-        managedAddressSpace: str
 
 
     class azure.mgmt.enclave.types.EnclaveConnectionPatchModel(TypedDict, total=False):
@@ -4845,18 +5026,6 @@ namespace azure.mgmt.enclave.types
         type: str
 
 
-    class azure.mgmt.enclave.types.EnclaveVirtualNetworkModel(TypedDict, total=False):
-        key "allowSubnetCommunication": bool
-        key "customCidrRange": str
-        key "networkName": str
-        key "networkSize": str
-        allowSubnetCommunication: bool
-        customCidrRange: str
-        networkName: str
-        networkSize: str
-        subnetConfigurations: list[SubnetConfiguration]
-
-
     class azure.mgmt.enclave.types.ExtensionResource(Resource):
         key "id": str
         key "name": str
@@ -4869,32 +5038,32 @@ namespace azure.mgmt.enclave.types
 
 
     class azure.mgmt.enclave.types.GovernedServiceItem(TypedDict, total=False):
-        key "enforcement": Union[Literal["Enabled"], Literal["Disabled"], str]
-        key "option": Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"], Literal["NotApplicable"], str]
-        key "policyAction": Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]
+        key "enforcement": Union[str, GovernedServiceItemEnforcement]
+        key "option": Union[str, GovernedServiceItemOption]
+        key "policyAction": Union[str, GovernedServiceItemPolicyAction]
         key "serviceId": Required[Union[str, ServiceIdentifier]]
         key "serviceName": str
-        enforcement: Union[Literal[Enabled], Literal[Disabled], str]
+        enforcement: Union[str, GovernedServiceItemEnforcement]
         initiatives: list[str]
-        option: Union[Literal[Allow], Literal[Deny], Literal[ExceptionOnly], Literal[NotApplicable], str]
-        policyAction: Union[Literal[AuditOnly], Literal[Enforce], Literal[None], str]
+        option: Union[str, GovernedServiceItemOption]
+        policyAction: Union[str, GovernedServiceItemPolicyAction]
         serviceId: Union[str, ServiceIdentifier]
         serviceName: str
 
 
     class azure.mgmt.enclave.types.MaintenanceModeConfigurationModel(TypedDict, total=False):
-        key "justification": Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]
-        key "mode": Required[Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]]
-        justification: Union[Literal[Networking], Literal[Governance], Literal[Off], str]
-        mode: Union[Literal[On], Literal[CanNotDelete], Literal[Off], Literal[General], Literal[Advanced], str]
+        key "justification": Union[str, MaintenanceModeConfigurationModelJustification]
+        key "mode": Required[Union[str, MaintenanceModeConfigurationModelMode]]
+        justification: Union[str, MaintenanceModeConfigurationModelJustification]
+        mode: Union[str, MaintenanceModeConfigurationModelMode]
         principals: list[Principal]
 
 
     class azure.mgmt.enclave.types.MaintenanceModeConfigurationPatchModel(TypedDict, total=False):
-        key "justification": Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]
-        key "mode": Required[Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]]
-        justification: Union[Literal[Networking], Literal[Governance], Literal[Off], str]
-        mode: Union[Literal[On], Literal[CanNotDelete], Literal[Off], Literal[General], Literal[Advanced], str]
+        key "justification": Union[str, MaintenanceModeConfigurationModelJustification]
+        key "mode": Required[Union[str, MaintenanceModeConfigurationModelMode]]
+        justification: Union[str, MaintenanceModeConfigurationModelJustification]
+        mode: Union[str, MaintenanceModeConfigurationModelMode]
         principals: list[Principal]
 
 
@@ -4954,9 +5123,9 @@ namespace azure.mgmt.enclave.types
 
     class azure.mgmt.enclave.types.Principal(TypedDict, total=False):
         key "id": Required[str]
-        key "type": Required[Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str]]
+        key "type": Required[Union[str, PrincipalType]]
         id: str
-        type: Union[Literal[User], Literal[Group], Literal[ServicePrincipal], str]
+        type: Union[str, PrincipalType]
 
 
     class azure.mgmt.enclave.types.RequestMetadata(TypedDict, total=False):
@@ -5006,13 +5175,39 @@ namespace azure.mgmt.enclave.types
         key "networkSecurityGroupResourceId": str
         key "subnetDelegation": str
         key "subnetName": Required[str]
+        key "subnetPurpose": Union[str, SubnetPurpose]
         key "subnetResourceId": str
         addressPrefix: str
         networkPrefixSize: int
         networkSecurityGroupResourceId: str
         subnetDelegation: str
         subnetName: str
+        subnetPurpose: Union[str, SubnetPurpose]
         subnetResourceId: str
+
+
+    class azure.mgmt.enclave.types.SyncDestinationStatus(TypedDict, total=False):
+        key "destinationId": Required[str]
+        key "errorMessage": str
+        key "lastSyncTime": str
+        key "status": Required[Union[str, SyncStatus]]
+        destinationId: str
+        errorMessage: str
+        lastSyncTime: str
+        status: Union[str, SyncStatus]
+
+
+    class azure.mgmt.enclave.types.SyncPerformedBy(TypedDict, total=False):
+        key "correlationId": Required[str]
+        key "performedAt": Required[str]
+        key "principalId": Required[str]
+        key "principalType": Required[str]
+        key "tenantId": Required[str]
+        correlationId: str
+        performedAt: str
+        principalId: str
+        principalType: str
+        tenantId: str
 
 
     class azure.mgmt.enclave.types.SystemData(TypedDict, total=False):
@@ -5143,56 +5338,59 @@ namespace azure.mgmt.enclave.types
         key "bastionEnabled": bool
         key "dedicatedHubResourceId": str
         key "enclaveDefaultSettings": ForwardRef('EnclaveDefaultSettingsPatchModel', module='types')
-        key "enclaveVirtualNetwork": Required[EnclaveVirtualNetworkModel]
         key "maintenanceModeConfiguration": ForwardRef('MaintenanceModeConfigurationPatchModel', module='types')
         key "monitoringSettings": ForwardRef('MonitoringSettingsPatchModel', module='types')
         key "rbacInheritance": Union[str, RbacInheritanceMode]
         key "workloadResourceVisibility": Union[str, ResourceVisibilityMode]
+        addressSpaces: list[AddressSpaceEntry]
         approvalSettings: VirtualEnclaveApprovalSettingsPatchProperties
         bastionEnabled: bool
         dedicatedHubResourceId: str
         enclaveDefaultSettings: EnclaveDefaultSettingsPatchModel
         enclaveRoleAssignments: list[RoleAssignmentItem]
-        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
         governedServiceList: list[GovernedServiceItem]
         maintenanceModeConfiguration: MaintenanceModeConfigurationPatchModel
         monitoringSettings: MonitoringSettingsPatchModel
         rbacInheritance: Union[str, RbacInheritanceMode]
+        subnetConfigurations: list[SubnetConfiguration]
         workloadResourceVisibility: Union[str, ResourceVisibilityMode]
         workloadRoleAssignments: list[RoleAssignmentItem]
 
 
     class azure.mgmt.enclave.types.VirtualEnclaveProperties(TypedDict, total=False):
+        key "allowSubnetCommunication": bool
         key "approvalSettings": ForwardRef('VirtualEnclaveApprovalSettings', module='types')
         key "bastionEnabled": bool
         key "communityResourceId": Required[str]
         key "dedicatedHubResourceId": str
-        key "enclaveAddressSpaces": ForwardRef('EnclaveAddressSpacesModel', module='types')
         key "enclaveDefaultSettings": ForwardRef('EnclaveDefaultSettingsModel', module='types')
-        key "enclaveVirtualNetwork": Required[EnclaveVirtualNetworkModel]
         key "maintenanceModeConfiguration": ForwardRef('MaintenanceModeConfigurationModel', module='types')
         key "managedOnBehalfOfConfiguration": ForwardRef('ManagedOnBehalfOfConfiguration', module='types')
         key "managedResourceGroupName": str
         key "monitoringSettings": ForwardRef('MonitoringSettingsModel', module='types')
+        key "networkName": str
         key "provisioningState": Union[str, ProvisioningState]
         key "rbacInheritance": Union[str, RbacInheritanceMode]
         key "workloadResourceVisibility": Union[str, ResourceVisibilityMode]
+        addressSpaces: list[AddressSpaceEntry]
+        allowSubnetCommunication: bool
         approvalSettings: VirtualEnclaveApprovalSettings
         bastionEnabled: bool
         communityResourceId: str
+        computedAddressSpaces: list[ComputedAddressSpaceEntry]
         dedicatedHubResourceId: str
-        enclaveAddressSpaces: EnclaveAddressSpacesModel
         enclaveDefaultSettings: EnclaveDefaultSettingsModel
         enclaveRoleAssignments: list[RoleAssignmentItem]
-        enclaveVirtualNetwork: EnclaveVirtualNetworkModel
         governedServiceList: list[GovernedServiceItem]
         maintenanceModeConfiguration: MaintenanceModeConfigurationModel
         managedOnBehalfOfConfiguration: ManagedOnBehalfOfConfiguration
         managedResourceGroupName: str
         monitoringSettings: MonitoringSettingsModel
+        networkName: str
         provisioningState: Union[str, ProvisioningState]
         rbacInheritance: Union[str, RbacInheritanceMode]
         resourceCollection: list[str]
+        subnetConfigurations: list[SubnetConfiguration]
         workloadResourceVisibility: Union[str, ResourceVisibilityMode]
         workloadRoleAssignments: list[RoleAssignmentItem]
 

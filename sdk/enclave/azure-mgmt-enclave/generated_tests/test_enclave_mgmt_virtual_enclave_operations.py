@@ -47,22 +47,8 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                 "name": "str",
                 "properties": {
                     "communityResourceId": "str",
-                    "enclaveVirtualNetwork": {
-                        "allowSubnetCommunication": bool,
-                        "customCidrRange": "str",
-                        "networkName": "str",
-                        "networkSize": "str",
-                        "subnetConfigurations": [
-                            {
-                                "networkPrefixSize": 0,
-                                "subnetName": "str",
-                                "addressPrefix": "str",
-                                "networkSecurityGroupResourceId": "str",
-                                "subnetDelegation": "str",
-                                "subnetResourceId": "str",
-                            }
-                        ],
-                    },
+                    "addressSpaces": [{"addressSpace": "str", "prefixLength": 0}],
+                    "allowSubnetCommunication": bool,
                     "approvalSettings": {
                         "connectionCreation": {
                             "approvalPolicy": "str",
@@ -86,8 +72,8 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                         },
                     },
                     "bastionEnabled": bool,
+                    "computedAddressSpaces": [{"addressSpace": "str", "ownership": "str", "prefixLength": 0}],
                     "dedicatedHubResourceId": "str",
-                    "enclaveAddressSpaces": {"enclaveAddressSpace": "str", "managedAddressSpace": "str"},
                     "enclaveDefaultSettings": {
                         "diagnosticDestination": "str",
                         "keyVaultResourceId": "str",
@@ -95,22 +81,22 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                         "storageAccountResourceId": "str",
                     },
                     "enclaveRoleAssignments": [
-                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "str"}]}
                     ],
                     "governedServiceList": [
                         {
                             "serviceId": "str",
-                            "enforcement": "Enabled",
+                            "enforcement": "str",
                             "initiatives": ["str"],
-                            "option": "Allow",
-                            "policyAction": "AuditOnly",
+                            "option": "str",
+                            "policyAction": "str",
                             "serviceName": "str",
                         }
                     ],
                     "maintenanceModeConfiguration": {
-                        "mode": "On",
-                        "justification": "Networking",
-                        "principals": [{"id": "str", "type": "User"}],
+                        "mode": "str",
+                        "justification": "str",
+                        "principals": [{"id": "str", "type": "str"}],
                     },
                     "managedOnBehalfOfConfiguration": {"moboBrokerResources": [{"id": "str"}]},
                     "managedResourceGroupName": "str",
@@ -128,12 +114,24 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                             "diagnosticSettingsName": "str",
                         },
                     },
+                    "networkName": "str",
                     "provisioningState": "str",
                     "rbacInheritance": "str",
                     "resourceCollection": ["str"],
+                    "subnetConfigurations": [
+                        {
+                            "networkPrefixSize": 0,
+                            "subnetName": "str",
+                            "addressPrefix": "str",
+                            "networkSecurityGroupResourceId": "str",
+                            "subnetDelegation": "str",
+                            "subnetPurpose": "str",
+                            "subnetResourceId": "str",
+                        }
+                    ],
                     "workloadResourceVisibility": "str",
                     "workloadRoleAssignments": [
-                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "str"}]}
                     ],
                 },
                 "systemData": {
@@ -166,22 +164,7 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {
-                    "enclaveVirtualNetwork": {
-                        "allowSubnetCommunication": bool,
-                        "customCidrRange": "str",
-                        "networkName": "str",
-                        "networkSize": "str",
-                        "subnetConfigurations": [
-                            {
-                                "networkPrefixSize": 0,
-                                "subnetName": "str",
-                                "addressPrefix": "str",
-                                "networkSecurityGroupResourceId": "str",
-                                "subnetDelegation": "str",
-                                "subnetResourceId": "str",
-                            }
-                        ],
-                    },
+                    "addressSpaces": [{"addressSpace": "str", "prefixLength": 0}],
                     "approvalSettings": {
                         "connectionCreation": {
                             "approvalPolicy": "str",
@@ -208,22 +191,22 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                     "dedicatedHubResourceId": "str",
                     "enclaveDefaultSettings": {"diagnosticDestination": "str"},
                     "enclaveRoleAssignments": [
-                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "str"}]}
                     ],
                     "governedServiceList": [
                         {
                             "serviceId": "str",
-                            "enforcement": "Enabled",
+                            "enforcement": "str",
                             "initiatives": ["str"],
-                            "option": "Allow",
-                            "policyAction": "AuditOnly",
+                            "option": "str",
+                            "policyAction": "str",
                             "serviceName": "str",
                         }
                     ],
                     "maintenanceModeConfiguration": {
-                        "mode": "On",
-                        "justification": "Networking",
-                        "principals": [{"id": "str", "type": "User"}],
+                        "mode": "str",
+                        "justification": "str",
+                        "principals": [{"id": "str", "type": "str"}],
                     },
                     "monitoringSettings": {
                         "diagnosticDestinations": [
@@ -240,9 +223,20 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
                         },
                     },
                     "rbacInheritance": "str",
+                    "subnetConfigurations": [
+                        {
+                            "networkPrefixSize": 0,
+                            "subnetName": "str",
+                            "addressPrefix": "str",
+                            "networkSecurityGroupResourceId": "str",
+                            "subnetDelegation": "str",
+                            "subnetPurpose": "str",
+                            "subnetResourceId": "str",
+                        }
+                    ],
                     "workloadResourceVisibility": "str",
                     "workloadRoleAssignments": [
-                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "str"}]}
                     ],
                 },
                 "tags": {"str": "str"},
@@ -287,7 +281,7 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_enclave.begin_handle_approval_creation(
             resource_group_name=resource_group.name,
             virtual_enclave_name="str",
-            body={"approvalStatus": "Approved", "resourceRequestAction": "Create", "approvalCallbackPayload": "str"},
+            body={"approvalStatus": "str", "resourceRequestAction": "str", "approvalCallbackPayload": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -299,7 +293,7 @@ class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
         response = self.client.virtual_enclave.begin_handle_approval_deletion(
             resource_group_name=resource_group.name,
             virtual_enclave_name="str",
-            body={"resourceRequestAction": "Create"},
+            body={"resourceRequestAction": "str"},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

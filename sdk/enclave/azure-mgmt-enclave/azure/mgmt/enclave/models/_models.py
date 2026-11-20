@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -17,25 +17,66 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ApprovalActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for calling post-action.
+class AddressSpaceEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A customer-requested address space for the enclave. The RP returns this entry exactly as
+    provided.
 
-    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
-     the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approval_status: str or str or str
+    :ivar prefix_length: CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address
+     space.
+    :vartype prefix_length: int
+    :ivar address_space: CIDR notation address space (e.g., '10.0.0.0/23'). Optional — if omitted,
+     RP allocates based on prefixLength. If provided, used as-is (custom address space).
+    :vartype address_space: str
     """
 
-    approval_status: Union[Literal["Approved"], Literal["Rejected"], str] = rest_field(
-        name="approvalStatus", visibility=["read", "create", "update", "delete", "query"]
+    prefix_length: Optional[int] = rest_field(
+        name="prefixLength", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Approval status indicating 'Approved' or 'Rejected'. Required. Is one of the following types:
-     Literal[\"Approved\"], Literal[\"Rejected\"], str"""
+    """CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address space."""
+    address_space: Optional[str] = rest_field(
+        name="addressSpace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDR notation address space (e.g., '10.0.0.0/23'). Optional — if omitted, RP allocates based on
+     prefixLength. If provided, used as-is (custom address space)."""
 
     @overload
     def __init__(
         self,
         *,
-        approval_status: Union[Literal["Approved"], Literal["Rejected"], str],
+        prefix_length: Optional[int] = None,
+        address_space: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApprovalActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for calling post-action.
+
+    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype approval_status: str or ~azure.mgmt.enclave.models.ApprovalActionRequestApprovalStatus
+    """
+
+    approval_status: Union[str, "_models.ApprovalActionRequestApprovalStatus"] = rest_field(
+        name="approvalStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Approval status indicating 'Approved' or 'Rejected'. Required. Known values are: \"Approved\"
+     and \"Rejected\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        approval_status: Union[str, "_models.ApprovalActionRequestApprovalStatus"],
     ) -> None: ...
 
     @overload
@@ -81,27 +122,29 @@ class ApprovalCallbackRequest(_Model):  # pylint: disable=docstring-keyword-shou
     """Request body for calling post-action.
 
     :ivar resource_request_action: Resource request action indicating action which needed to be
-     performed upon calling approval-callback post action. Required. Is one of the following types:
-     Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str
-    :vartype resource_request_action: str or str or str or str or str
-    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
-     the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approval_status: str or str or str
+     performed upon calling approval-callback post action. Required. Known values are: "Create",
+     "Delete", "Update", and "Reset".
+    :vartype resource_request_action: str or
+     ~azure.mgmt.enclave.models.ApprovalCallbackRequestResourceRequestAction
+    :ivar approval_status: Approval status indicating 'Approved' or 'Rejected'. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype approval_status: str or
+     ~azure.mgmt.enclave.models.ApprovalCallbackRequestApprovalStatus
     :ivar approval_callback_payload: Payload requested by client upon approval action.
     :vartype approval_callback_payload: str
     """
 
-    resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str] = (
-        rest_field(name="resourceRequestAction", visibility=["read", "create", "update", "delete", "query"])
+    resource_request_action: Union[str, "_models.ApprovalCallbackRequestResourceRequestAction"] = rest_field(
+        name="resourceRequestAction", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource request action indicating action which needed to be performed upon calling
-     approval-callback post action. Required. Is one of the following types: Literal[\"Create\"],
-     Literal[\"Delete\"], Literal[\"Update\"], Literal[\"Reset\"], str"""
-    approval_status: Union[Literal["Approved"], Literal["Rejected"], str] = rest_field(
+     approval-callback post action. Required. Known values are: \"Create\", \"Delete\", \"Update\",
+     and \"Reset\"."""
+    approval_status: Union[str, "_models.ApprovalCallbackRequestApprovalStatus"] = rest_field(
         name="approvalStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Approval status indicating 'Approved' or 'Rejected'. Required. Is one of the following types:
-     Literal[\"Approved\"], Literal[\"Rejected\"], str"""
+    """Approval status indicating 'Approved' or 'Rejected'. Required. Known values are: \"Approved\"
+     and \"Rejected\"."""
     approval_callback_payload: Optional[str] = rest_field(
         name="approvalCallbackPayload", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -111,8 +154,8 @@ class ApprovalCallbackRequest(_Model):  # pylint: disable=docstring-keyword-shou
     def __init__(
         self,
         *,
-        resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str],
-        approval_status: Union[Literal["Approved"], Literal["Rejected"], str],
+        resource_request_action: Union[str, "_models.ApprovalCallbackRequestResourceRequestAction"],
+        approval_status: Union[str, "_models.ApprovalCallbackRequestApprovalStatus"],
         approval_callback_payload: Optional[str] = None,
     ) -> None: ...
 
@@ -131,23 +174,24 @@ class ApprovalDeletionCallbackRequest(_Model):  # pylint: disable=docstring-keyw
     """Request body for calling post-action.
 
     :ivar resource_request_action: Resource request action indicating action which needed to be
-     performed upon calling approval-deletion-callback post action. Required. Is one of the
-     following types: Literal["Create"], Literal["Delete"], Literal["Update"], str
-    :vartype resource_request_action: str or str or str or str
+     performed upon calling approval-deletion-callback post action. Required. Known values are:
+     "Create", "Delete", and "Update".
+    :vartype resource_request_action: str or
+     ~azure.mgmt.enclave.models.ApprovalDeletionCallbackRequestResourceRequestAction
     """
 
-    resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], str] = rest_field(
+    resource_request_action: Union[str, "_models.ApprovalDeletionCallbackRequestResourceRequestAction"] = rest_field(
         name="resourceRequestAction", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource request action indicating action which needed to be performed upon calling
-     approval-deletion-callback post action. Required. Is one of the following types:
-     Literal[\"Create\"], Literal[\"Delete\"], Literal[\"Update\"], str"""
+     approval-deletion-callback post action. Required. Known values are: \"Create\", \"Delete\", and
+     \"Update\"."""
 
     @overload
     def __init__(
         self,
         *,
-        resource_request_action: Union[Literal["Create"], Literal["Delete"], Literal["Update"], str],
+        resource_request_action: Union[str, "_models.ApprovalDeletionCallbackRequestResourceRequestAction"],
     ) -> None: ...
 
     @overload
@@ -704,25 +748,35 @@ class CheckAddressSpaceAvailabilityRequest(_Model):  # pylint: disable=docstring
 
     :ivar community_resource_id: Resource Id of the Community. Required.
     :vartype community_resource_id: str
-    :ivar enclave_virtual_network: Information about the enclave virtual network. Required.
-    :vartype enclave_virtual_network: ~azure.mgmt.enclave.models.EnclaveVirtualNetworkModel
+    :ivar prefix_length: CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address
+     space to check.
+    :vartype prefix_length: int
+    :ivar address_space: Specific CIDR address space to check availability for. If omitted, RP
+     checks for any available space of the given prefixLength.
+    :vartype address_space: str
     """
 
     community_resource_id: str = rest_field(
         name="communityResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Resource Id of the Community. Required."""
-    enclave_virtual_network: "_models.EnclaveVirtualNetworkModel" = rest_field(
-        name="enclaveVirtualNetwork", visibility=["read", "create", "update", "delete", "query"]
+    prefix_length: Optional[int] = rest_field(
+        name="prefixLength", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Information about the enclave virtual network. Required."""
+    """CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address space to check."""
+    address_space: Optional[str] = rest_field(
+        name="addressSpace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specific CIDR address space to check availability for. If omitted, RP checks for any available
+     space of the given prefixLength."""
 
     @overload
     def __init__(
         self,
         *,
         community_resource_id: str,
-        enclave_virtual_network: "_models.EnclaveVirtualNetworkModel",
+        prefix_length: Optional[int] = None,
+        address_space: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -774,6 +828,9 @@ class CommunityEndpointDestinationRule(_Model):  # pylint: disable=docstring-key
     :vartype protocols: list[str or ~azure.mgmt.enclave.models.CommunityEndpointProtocol]
     :ivar transit_hub_resource_id: Transit Hub Resource Id.
     :vartype transit_hub_resource_id: str
+    :ivar direction: The direction of traffic for this rule. Defaults to Outbound if not specified.
+     Known values are: "Outbound" and "Inbound".
+    :vartype direction: str or ~azure.mgmt.enclave.models.RuleDirection
     :ivar endpoint_rule_name: Endpoint Rule Name.
     :vartype endpoint_rule_name: str
     :ivar destination: Destination address. Can include multiple CIDR/IP Addresses or fqdn tags or
@@ -797,6 +854,11 @@ class CommunityEndpointDestinationRule(_Model):  # pylint: disable=docstring-key
         name="transitHubResourceId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Transit Hub Resource Id."""
+    direction: Optional[Union[str, "_models.RuleDirection"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The direction of traffic for this rule. Defaults to Outbound if not specified. Known values
+     are: \"Outbound\" and \"Inbound\"."""
     endpoint_rule_name: Optional[str] = rest_field(
         name="endpointRuleName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -814,6 +876,7 @@ class CommunityEndpointDestinationRule(_Model):  # pylint: disable=docstring-key
         destination_type: Optional[Union[str, "_models.DestinationType"]] = None,
         protocols: Optional[list[Union[str, "_models.CommunityEndpointProtocol"]]] = None,
         transit_hub_resource_id: Optional[str] = None,
+        direction: Optional[Union[str, "_models.RuleDirection"]] = None,
         endpoint_rule_name: Optional[str] = None,
         destination: Optional[str] = None,
         ports: Optional[str] = None,
@@ -873,6 +936,10 @@ class CommunityEndpointPatchProperties(_Model):  # pylint: disable=docstring-key
     :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
      and "Manual".
     :vartype update_mode: str or ~azure.mgmt.enclave.models.UpdateMode
+    :ivar sync_to: Array of ARM resource IDs of destination communities to synchronize this
+     endpoint's rules to. The RP creates and manages the destination CEPs automatically within each
+     community. Maximum 100 destinations per source endpoint.
+    :vartype sync_to: list[str]
     """
 
     rule_collection: list["_models.CommunityEndpointDestinationRule"] = rest_field(
@@ -883,6 +950,10 @@ class CommunityEndpointPatchProperties(_Model):  # pylint: disable=docstring-key
         name="updateMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether update mode is automatic or manual. Known values are: \"Automatic\" and \"Manual\"."""
+    sync_to: Optional[list[str]] = rest_field(name="syncTo", visibility=["read", "create", "update", "delete", "query"])
+    """Array of ARM resource IDs of destination communities to synchronize this endpoint's rules to.
+     The RP creates and manages the destination CEPs automatically within each community. Maximum
+     100 destinations per source endpoint."""
 
     @overload
     def __init__(
@@ -890,6 +961,7 @@ class CommunityEndpointPatchProperties(_Model):  # pylint: disable=docstring-key
         *,
         rule_collection: list["_models.CommunityEndpointDestinationRule"],
         update_mode: Optional[Union[str, "_models.UpdateMode"]] = None,
+        sync_to: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -916,6 +988,24 @@ class CommunityEndpointProperties(_Model):  # pylint: disable=docstring-keyword-
     :ivar update_mode: Whether update mode is automatic or manual. Known values are: "Automatic"
      and "Manual".
     :vartype update_mode: str or ~azure.mgmt.enclave.models.UpdateMode
+    :ivar sync_to: Array of ARM resource IDs of destination communities to synchronize this
+     endpoint's rules to. The RP creates and manages the destination CEPs automatically within each
+     community. Maximum 100 destinations per source endpoint.
+    :vartype sync_to: list[str]
+    :ivar sync_from: ARM resource ID of the source Community Endpoint that manages this endpoint's
+     rules via synchronization. This property is read-only and set by the RP on destination CEPs
+     created by the sync process.
+    :vartype sync_from: str
+    :ivar sync_status: The synchronization status of this Community Endpoint. Tracks sync state
+     independently of provisioningState. Known values are: "NotConfigured", "Succeeded",
+     "InProgress", "Failed", and "PartiallySucceeded".
+    :vartype sync_status: str or ~azure.mgmt.enclave.models.SyncStatus
+    :ivar sync_destination_statuses: Per-destination synchronization status. Only populated on
+     source CEPs that have syncTo configured.
+    :vartype sync_destination_statuses: list[~azure.mgmt.enclave.models.SyncDestinationStatus]
+    :ivar sync_performed_by: Information about the principal who last configured or modified
+     syncTo. Set by the RP and surfaced for audit transparency.
+    :vartype sync_performed_by: ~azure.mgmt.enclave.models.SyncPerformedBy
     """
 
     rule_collection: list["_models.CommunityEndpointDestinationRule"] = rest_field(
@@ -933,6 +1023,26 @@ class CommunityEndpointProperties(_Model):  # pylint: disable=docstring-keyword-
         name="updateMode", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether update mode is automatic or manual. Known values are: \"Automatic\" and \"Manual\"."""
+    sync_to: Optional[list[str]] = rest_field(name="syncTo", visibility=["read", "create", "update", "delete", "query"])
+    """Array of ARM resource IDs of destination communities to synchronize this endpoint's rules to.
+     The RP creates and manages the destination CEPs automatically within each community. Maximum
+     100 destinations per source endpoint."""
+    sync_from: Optional[str] = rest_field(name="syncFrom", visibility=["read"])
+    """ARM resource ID of the source Community Endpoint that manages this endpoint's rules via
+     synchronization. This property is read-only and set by the RP on destination CEPs created by
+     the sync process."""
+    sync_status: Optional[Union[str, "_models.SyncStatus"]] = rest_field(name="syncStatus", visibility=["read"])
+    """The synchronization status of this Community Endpoint. Tracks sync state independently of
+     provisioningState. Known values are: \"NotConfigured\", \"Succeeded\", \"InProgress\",
+     \"Failed\", and \"PartiallySucceeded\"."""
+    sync_destination_statuses: Optional[list["_models.SyncDestinationStatus"]] = rest_field(
+        name="syncDestinationStatuses", visibility=["read"]
+    )
+    """Per-destination synchronization status. Only populated on source CEPs that have syncTo
+     configured."""
+    sync_performed_by: Optional["_models.SyncPerformedBy"] = rest_field(name="syncPerformedBy", visibility=["read"])
+    """Information about the principal who last configured or modified syncTo. Set by the RP and
+     surfaced for audit transparency."""
 
     @overload
     def __init__(
@@ -940,6 +1050,7 @@ class CommunityEndpointProperties(_Model):  # pylint: disable=docstring-keyword-
         *,
         rule_collection: list["_models.CommunityEndpointDestinationRule"],
         update_mode: Optional[Union[str, "_models.UpdateMode"]] = None,
+        sync_to: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1094,14 +1205,18 @@ class CommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar governed_service_list: List of services governed by a community.
     :vartype governed_service_list: list[~azure.mgmt.enclave.models.GovernedServiceItem]
     :ivar policy_override: Policy override setting for the community. Specifies whether to apply
-     enclave-specific policies or disable policy enforcement. Is one of the following types:
-     Literal["Enclave"], Literal["None"], str
-    :vartype policy_override: str or str or str
+     enclave-specific policies or disable policy enforcement. Known values are: "Enclave" and
+     "None".
+    :vartype policy_override: str or ~azure.mgmt.enclave.models.CommunityPropertiesPolicyOverride
     :ivar community_role_assignments: Community role assignments.
     :vartype community_role_assignments: list[~azure.mgmt.enclave.models.RoleAssignmentItem]
     :ivar firewall_sku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
     :vartype firewall_sku: str or ~azure.mgmt.enclave.models.FirewallSKU
+    :ivar subnet_join_policy_mode: Desired enforcement mode for the subscription-scoped subnet join
+     deny policy. Defaults to 'Deny' on api-version 2026-10-01-preview and later. Known values are:
+     "Deny" and "Audit".
+    :vartype subnet_join_policy_mode: str or ~azure.mgmt.enclave.models.SubnetJoinPolicyMode
     :ivar granular_approval_settings: Granular approval requirements for various actions on the
      community's resources.
     :vartype granular_approval_settings: ~azure.mgmt.enclave.models.ApprovalSettingsPatchProperties
@@ -1123,12 +1238,11 @@ class CommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="governedServiceList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of services governed by a community."""
-    policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]] = rest_field(
+    policy_override: Optional[Union[str, "_models.CommunityPropertiesPolicyOverride"]] = rest_field(
         name="policyOverride", visibility=["read", "create", "update", "delete", "query"]
     )
     """Policy override setting for the community. Specifies whether to apply enclave-specific policies
-     or disable policy enforcement. Is one of the following types: Literal[\"Enclave\"],
-     Literal[\"None\"], str"""
+     or disable policy enforcement. Known values are: \"Enclave\" and \"None\"."""
     community_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = rest_field(
         name="communityRoleAssignments", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1138,6 +1252,11 @@ class CommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-sho
     )
     """SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard is the default.
      Known values are: \"Basic\", \"Standard\", and \"Premium\"."""
+    subnet_join_policy_mode: Optional[Union[str, "_models.SubnetJoinPolicyMode"]] = rest_field(
+        name="subnetJoinPolicyMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired enforcement mode for the subscription-scoped subnet join deny policy. Defaults to
+     'Deny' on api-version 2026-10-01-preview and later. Known values are: \"Deny\" and \"Audit\"."""
     granular_approval_settings: Optional["_models.ApprovalSettingsPatchProperties"] = rest_field(
         name="approvalSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1161,9 +1280,10 @@ class CommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-sho
         *,
         dns_servers: Optional[list[str]] = None,
         governed_service_list: Optional[list["_models.GovernedServiceItem"]] = None,
-        policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]] = None,
+        policy_override: Optional[Union[str, "_models.CommunityPropertiesPolicyOverride"]] = None,
         community_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         firewall_sku: Optional[Union[str, "_models.FirewallSKU"]] = None,
+        subnet_join_policy_mode: Optional[Union[str, "_models.SubnetJoinPolicyMode"]] = None,
         granular_approval_settings: Optional["_models.ApprovalSettingsPatchProperties"] = None,
         maintenance_mode_configuration: Optional["_models.MaintenanceModeConfigurationPatchModel"] = None,
         monitoring_settings: Optional["_models.MonitoringSettingsPatchModel"] = None,
@@ -1201,14 +1321,18 @@ class CommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     :ivar governed_service_list: List of services governed by a community.
     :vartype governed_service_list: list[~azure.mgmt.enclave.models.GovernedServiceItem]
     :ivar policy_override: Policy override setting for the community. Specifies whether to apply
-     enclave-specific policies or disable policy enforcement. Is one of the following types:
-     Literal["Enclave"], Literal["None"], str
-    :vartype policy_override: str or str or str
+     enclave-specific policies or disable policy enforcement. Known values are: "Enclave" and
+     "None".
+    :vartype policy_override: str or ~azure.mgmt.enclave.models.CommunityPropertiesPolicyOverride
     :ivar community_role_assignments: Community role assignments.
     :vartype community_role_assignments: list[~azure.mgmt.enclave.models.RoleAssignmentItem]
     :ivar firewall_sku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
     :vartype firewall_sku: str or ~azure.mgmt.enclave.models.FirewallSKU
+    :ivar subnet_join_policy_mode: Desired enforcement mode for the subscription-scoped subnet join
+     deny policy. Defaults to 'Deny' on api-version 2026-10-01-preview and later. Known values are:
+     "Deny" and "Audit".
+    :vartype subnet_join_policy_mode: str or ~azure.mgmt.enclave.models.SubnetJoinPolicyMode
     :ivar granular_approval_settings: Granular approval requirements for various actions on the
      community's resources.
     :vartype granular_approval_settings: ~azure.mgmt.enclave.models.ApprovalSettings
@@ -1247,12 +1371,11 @@ class CommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         name="governedServiceList", visibility=["read", "create", "update", "delete", "query"]
     )
     """List of services governed by a community."""
-    policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]] = rest_field(
+    policy_override: Optional[Union[str, "_models.CommunityPropertiesPolicyOverride"]] = rest_field(
         name="policyOverride", visibility=["read", "create", "update", "delete", "query"]
     )
     """Policy override setting for the community. Specifies whether to apply enclave-specific policies
-     or disable policy enforcement. Is one of the following types: Literal[\"Enclave\"],
-     Literal[\"None\"], str"""
+     or disable policy enforcement. Known values are: \"Enclave\" and \"None\"."""
     community_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = rest_field(
         name="communityRoleAssignments", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1262,6 +1385,11 @@ class CommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-m
     )
     """SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard is the default.
      Known values are: \"Basic\", \"Standard\", and \"Premium\"."""
+    subnet_join_policy_mode: Optional[Union[str, "_models.SubnetJoinPolicyMode"]] = rest_field(
+        name="subnetJoinPolicyMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Desired enforcement mode for the subscription-scoped subnet join deny policy. Defaults to
+     'Deny' on api-version 2026-10-01-preview and later. Known values are: \"Deny\" and \"Audit\"."""
     granular_approval_settings: Optional["_models.ApprovalSettings"] = rest_field(
         name="approvalSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1290,9 +1418,10 @@ class CommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-m
         address_space: Optional[str] = None,
         dns_servers: Optional[list[str]] = None,
         governed_service_list: Optional[list["_models.GovernedServiceItem"]] = None,
-        policy_override: Optional[Union[Literal["Enclave"], Literal["None"], str]] = None,
+        policy_override: Optional[Union[str, "_models.CommunityPropertiesPolicyOverride"]] = None,
         community_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         firewall_sku: Optional[Union[str, "_models.FirewallSKU"]] = None,
+        subnet_join_policy_mode: Optional[Union[str, "_models.SubnetJoinPolicyMode"]] = None,
         granular_approval_settings: Optional["_models.ApprovalSettings"] = None,
         maintenance_mode_configuration: Optional["_models.MaintenanceModeConfigurationModel"] = None,
         monitoring_settings: Optional["_models.MonitoringSettingsModel"] = None,
@@ -1351,6 +1480,55 @@ class CommunityResource(TrackedResource):  # pylint: disable=docstring-keyword-s
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.CommunityProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ComputedAddressSpaceEntry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An address space computed by the RP for the enclave. Customer-requested entries have ownership
+    'CustomerManaged'; the RP-managed address space has ownership 'ProductManaged' and is always
+    the last element.
+
+    :ivar prefix_length: CIDR prefix length of the address space.
+    :vartype prefix_length: int
+    :ivar address_space: CIDR notation address space allocated to the enclave (e.g.,
+     '10.0.0.0/23').
+    :vartype address_space: str
+    :ivar ownership: Indicates whether this address space is customer-managed or product-managed.
+     Known values are: "CustomerManaged" and "ProductManaged".
+    :vartype ownership: str or ~azure.mgmt.enclave.models.AddressSpaceOwnership
+    """
+
+    prefix_length: Optional[int] = rest_field(
+        name="prefixLength", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDR prefix length of the address space."""
+    address_space: Optional[str] = rest_field(
+        name="addressSpace", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDR notation address space allocated to the enclave (e.g., '10.0.0.0/23')."""
+    ownership: Optional[Union[str, "_models.AddressSpaceOwnership"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether this address space is customer-managed or product-managed. Known values are:
+     \"CustomerManaged\" and \"ProductManaged\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        prefix_length: Optional[int] = None,
+        address_space: Optional[str] = None,
+        ownership: Optional[Union[str, "_models.AddressSpaceOwnership"]] = None,
     ) -> None: ...
 
     @overload
@@ -1531,43 +1709,6 @@ class DedicatedHubResource(TrackedResource):  # pylint: disable=docstring-keywor
         super().__init__(*args, **kwargs)
 
 
-class EnclaveAddressSpacesModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Enclave Address Spaces.
-
-    :ivar enclave_address_space: Enclave Address Space.
-    :vartype enclave_address_space: str
-    :ivar managed_address_space: Managed Address Space.
-    :vartype managed_address_space: str
-    """
-
-    enclave_address_space: Optional[str] = rest_field(
-        name="enclaveAddressSpace", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Enclave Address Space."""
-    managed_address_space: Optional[str] = rest_field(
-        name="managedAddressSpace", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Managed Address Space."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        enclave_address_space: Optional[str] = None,
-        managed_address_space: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EnclaveConnectionPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enclave Connection Patch Resource.
 
@@ -1637,7 +1778,8 @@ class EnclaveConnectionProperties(_Model):  # pylint: disable=docstring-keyword-
     """Enclave Connection Resource properties.
 
     :ivar state: The state of the enclaveConnection. Known values are: "PendingApproval",
-     "PendingUpdate", "Approved", "Active", "Failed", "Connected", and "Disconnected".
+     "PendingUpdate", "Approved", "Active", "Failed", "Connected", "Disconnected", "Reconciling",
+     and "Degraded".
     :vartype state: str or ~azure.mgmt.enclave.models.EnclaveConnectionState
     :ivar community_resource_id: Community Resource Id. Required.
     :vartype community_resource_id: str
@@ -1659,7 +1801,8 @@ class EnclaveConnectionProperties(_Model):  # pylint: disable=docstring-keyword-
 
     state: Optional[Union[str, "_models.EnclaveConnectionState"]] = rest_field(visibility=["read"])
     """The state of the enclaveConnection. Known values are: \"PendingApproval\", \"PendingUpdate\",
-     \"Approved\", \"Active\", \"Failed\", \"Connected\", and \"Disconnected\"."""
+     \"Approved\", \"Active\", \"Failed\", \"Connected\", \"Disconnected\", \"Reconciling\", and
+     \"Degraded\"."""
     community_resource_id: str = rest_field(name="communityResourceId", visibility=["read", "create"])
     """Community Resource Id. Required."""
     source_resource_id: str = rest_field(name="sourceResourceId", visibility=["read", "create"])
@@ -1759,7 +1902,7 @@ class EnclaveDefaultSettingsModel(_Model):  # pylint: disable=docstring-keyword-
     :ivar log_analytics_resource_id_collection: Log Analytics Resource Ids.
     :vartype log_analytics_resource_id_collection: list[str]
     :ivar diagnostic_destination: Diagnostic Destination. Known values are: "CommunityOnly",
-     "EnclaveOnly", and "Both".
+     "EnclaveOnly", "Both", and "Unspecified".
     :vartype diagnostic_destination: str or ~azure.mgmt.enclave.models.DiagnosticDestination
     """
 
@@ -1774,7 +1917,8 @@ class EnclaveDefaultSettingsModel(_Model):  # pylint: disable=docstring-keyword-
     diagnostic_destination: Optional[Union[str, "_models.DiagnosticDestination"]] = rest_field(
         name="diagnosticDestination", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", and \"Both\"."""
+    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", \"Both\", and
+     \"Unspecified\"."""
 
     @overload
     def __init__(
@@ -1798,14 +1942,15 @@ class EnclaveDefaultSettingsPatchModel(_Model):  # pylint: disable=docstring-key
     """Virtual Enclave Default Settings.
 
     :ivar diagnostic_destination: Diagnostic Destination. Known values are: "CommunityOnly",
-     "EnclaveOnly", and "Both".
+     "EnclaveOnly", "Both", and "Unspecified".
     :vartype diagnostic_destination: str or ~azure.mgmt.enclave.models.DiagnosticDestination
     """
 
     diagnostic_destination: Optional[Union[str, "_models.DiagnosticDestination"]] = rest_field(
         name="diagnosticDestination", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", and \"Both\"."""
+    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", \"Both\", and
+     \"Unspecified\"."""
 
     @overload
     def __init__(
@@ -2099,60 +2244,6 @@ class EnclaveResource(TrackedResource):  # pylint: disable=docstring-keyword-sho
         super().__init__(*args, **kwargs)
 
 
-class EnclaveVirtualNetworkModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Enclave Virtual Network Properties.
-
-    :ivar network_name: Network Name.
-    :vartype network_name: str
-    :ivar network_size: Network Size.
-    :vartype network_size: str
-    :ivar custom_cidr_range: Custom CIDR Range.
-    :vartype custom_cidr_range: str
-    :ivar subnet_configurations: Subnet Configurations.
-    :vartype subnet_configurations: list[~azure.mgmt.enclave.models.SubnetConfiguration]
-    :ivar allow_subnet_communication: Allow Subnet Communication.
-    :vartype allow_subnet_communication: bool
-    """
-
-    network_name: Optional[str] = rest_field(
-        name="networkName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Network Name."""
-    network_size: Optional[str] = rest_field(name="networkSize", visibility=["read", "create"])
-    """Network Size."""
-    custom_cidr_range: Optional[str] = rest_field(name="customCidrRange", visibility=["read", "create"])
-    """Custom CIDR Range."""
-    subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = rest_field(
-        name="subnetConfigurations", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Subnet Configurations."""
-    allow_subnet_communication: Optional[bool] = rest_field(
-        name="allowSubnetCommunication", visibility=["read", "create"]
-    )
-    """Allow Subnet Communication."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        network_name: Optional[str] = None,
-        network_size: Optional[str] = None,
-        custom_cidr_range: Optional[str] = None,
-        subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = None,
-        allow_subnet_communication: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ErrorAdditionalInfo(_Model):
     """The resource management error additional info.
 
@@ -2230,21 +2321,20 @@ class GovernedServiceItem(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar service_id: Service ID. Required. Known values are: "AKS", "AppService",
      "AzureFirewalls", "ContainerRegistry", "CosmosDB", "DataConnectors", "Insights", "KeyVault",
-     "Logic", "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus", and
-     "Storage".
+     "Logic", "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus",
+     "Storage", and "AzureLocal".
     :vartype service_id: str or ~azure.mgmt.enclave.models.ServiceIdentifier
     :ivar service_name: Service name.
     :vartype service_name: str
     :ivar option: Governance option for this service (Allow, Deny, ExceptionOnly, or
-     NotApplicable). Is one of the following types: Literal["Allow"], Literal["Deny"],
-     Literal["ExceptionOnly"], Literal["NotApplicable"], str
-    :vartype option: str or str or str or str or str
-    :ivar enforcement: Initiative enforcement (Enabled or Disabled). Is one of the following types:
-     Literal["Enabled"], Literal["Disabled"], str
-    :vartype enforcement: str or str or str
-    :ivar policy_action: Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the
-     following types: Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str
-    :vartype policy_action: str or str or str or str
+     NotApplicable). Known values are: "Allow", "Deny", "ExceptionOnly", and "NotApplicable".
+    :vartype option: str or ~azure.mgmt.enclave.models.GovernedServiceItemOption
+    :ivar enforcement: Initiative enforcement (Enabled or Disabled). Known values are: "Enabled"
+     and "Disabled".
+    :vartype enforcement: str or ~azure.mgmt.enclave.models.GovernedServiceItemEnforcement
+    :ivar policy_action: Enforcement mode for policy. AuditOnly, Enforce, or None. Known values
+     are: "AuditOnly", "Enforce", and "None".
+    :vartype policy_action: str or ~azure.mgmt.enclave.models.GovernedServiceItemPolicyAction
     :ivar initiatives: Initiatives associated with this service.
     :vartype initiatives: list[str]
     """
@@ -2254,26 +2344,24 @@ class GovernedServiceItem(_Model):  # pylint: disable=docstring-keyword-should-m
     )
     """Service ID. Required. Known values are: \"AKS\", \"AppService\", \"AzureFirewalls\",
      \"ContainerRegistry\", \"CosmosDB\", \"DataConnectors\", \"Insights\", \"KeyVault\", \"Logic\",
-     \"MicrosoftSQL\", \"Monitoring\", \"PostgreSQL\", \"PrivateDNSZones\", \"ServiceBus\", and
-     \"Storage\"."""
+     \"MicrosoftSQL\", \"Monitoring\", \"PostgreSQL\", \"PrivateDNSZones\", \"ServiceBus\",
+     \"Storage\", and \"AzureLocal\"."""
     service_name: Optional[str] = rest_field(name="serviceName", visibility=["read"])
     """Service name."""
-    option: Optional[
-        Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"], Literal["NotApplicable"], str]
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Governance option for this service (Allow, Deny, ExceptionOnly, or NotApplicable). Is one of
-     the following types: Literal[\"Allow\"], Literal[\"Deny\"], Literal[\"ExceptionOnly\"],
-     Literal[\"NotApplicable\"], str"""
-    enforcement: Optional[Union[Literal["Enabled"], Literal["Disabled"], str]] = rest_field(
+    option: Optional[Union[str, "_models.GovernedServiceItemOption"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Initiative enforcement (Enabled or Disabled). Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"Disabled\"], str"""
-    policy_action: Optional[Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]] = rest_field(
+    """Governance option for this service (Allow, Deny, ExceptionOnly, or NotApplicable). Known values
+     are: \"Allow\", \"Deny\", \"ExceptionOnly\", and \"NotApplicable\"."""
+    enforcement: Optional[Union[str, "_models.GovernedServiceItemEnforcement"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Initiative enforcement (Enabled or Disabled). Known values are: \"Enabled\" and \"Disabled\"."""
+    policy_action: Optional[Union[str, "_models.GovernedServiceItemPolicyAction"]] = rest_field(
         name="policyAction", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the following types:
-     Literal[\"AuditOnly\"], Literal[\"Enforce\"], Literal[\"None\"], str"""
+    """Enforcement mode for policy. AuditOnly, Enforce, or None. Known values are: \"AuditOnly\",
+     \"Enforce\", and \"None\"."""
     initiatives: Optional[list[str]] = rest_field(visibility=["read"])
     """Initiatives associated with this service."""
 
@@ -2282,11 +2370,9 @@ class GovernedServiceItem(_Model):  # pylint: disable=docstring-keyword-should-m
         self,
         *,
         service_id: Union[str, "_models.ServiceIdentifier"],
-        option: Optional[
-            Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"], Literal["NotApplicable"], str]
-        ] = None,
-        enforcement: Optional[Union[Literal["Enabled"], Literal["Disabled"], str]] = None,
-        policy_action: Optional[Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]] = None,
+        option: Optional[Union[str, "_models.GovernedServiceItemOption"]] = None,
+        enforcement: Optional[Union[str, "_models.GovernedServiceItemEnforcement"]] = None,
+        policy_action: Optional[Union[str, "_models.GovernedServiceItemPolicyAction"]] = None,
     ) -> None: ...
 
     @overload
@@ -2303,42 +2389,39 @@ class GovernedServiceItem(_Model):  # pylint: disable=docstring-keyword-should-m
 class MaintenanceModeConfigurationModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance Mode.
 
-    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
-     types: Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"],
-     Literal["Advanced"], str
-    :vartype mode: str or str or str or str or str or str
+    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Known values are: "On",
+     "CanNotDelete", "Off", "General", and "Advanced".
+    :vartype mode: str or ~azure.mgmt.enclave.models.MaintenanceModeConfigurationModelMode
     :ivar principals: The user, group or service principal object affected by Maintenance Mode.
     :vartype principals: list[~azure.mgmt.enclave.models.Principal]
-    :ivar justification: Justification for entering or exiting Maintenance Mode. Is one of the
-     following types: Literal["Networking"], Literal["Governance"], Literal["Off"], str
-    :vartype justification: str or str or str or str
+    :ivar justification: Justification for entering or exiting Maintenance Mode. Known values are:
+     "Networking", "Governance", and "Off".
+    :vartype justification: str or
+     ~azure.mgmt.enclave.models.MaintenanceModeConfigurationModelJustification
     """
 
-    mode: Union[
-        Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Current mode of Maintenance Mode Configuration. Required. Is one of the following types:
-     Literal[\"On\"], Literal[\"CanNotDelete\"], Literal[\"Off\"], Literal[\"General\"],
-     Literal[\"Advanced\"], str"""
+    mode: Union[str, "_models.MaintenanceModeConfigurationModelMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current mode of Maintenance Mode Configuration. Required. Known values are: \"On\",
+     \"CanNotDelete\", \"Off\", \"General\", and \"Advanced\"."""
     principals: Optional[list["_models.Principal"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The user, group or service principal object affected by Maintenance Mode."""
-    justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]] = rest_field(
+    justification: Optional[Union[str, "_models.MaintenanceModeConfigurationModelJustification"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Justification for entering or exiting Maintenance Mode. Is one of the following types:
-     Literal[\"Networking\"], Literal[\"Governance\"], Literal[\"Off\"], str"""
+    """Justification for entering or exiting Maintenance Mode. Known values are: \"Networking\",
+     \"Governance\", and \"Off\"."""
 
     @overload
     def __init__(
         self,
         *,
-        mode: Union[
-            Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str
-        ],
+        mode: Union[str, "_models.MaintenanceModeConfigurationModelMode"],
         principals: Optional[list["_models.Principal"]] = None,
-        justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]] = None,
+        justification: Optional[Union[str, "_models.MaintenanceModeConfigurationModelJustification"]] = None,
     ) -> None: ...
 
     @overload
@@ -2355,42 +2438,39 @@ class MaintenanceModeConfigurationModel(_Model):  # pylint: disable=docstring-ke
 class MaintenanceModeConfigurationPatchModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance Mode Patch Model.
 
-    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
-     types: Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"],
-     Literal["Advanced"], str
-    :vartype mode: str or str or str or str or str or str
+    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Known values are: "On",
+     "CanNotDelete", "Off", "General", and "Advanced".
+    :vartype mode: str or ~azure.mgmt.enclave.models.MaintenanceModeConfigurationModelMode
     :ivar principals: The user, group or service principal object affected by Maintenance Mode.
     :vartype principals: list[~azure.mgmt.enclave.models.Principal]
-    :ivar justification: Justification for entering or exiting Maintenance Mode. Is one of the
-     following types: Literal["Networking"], Literal["Governance"], Literal["Off"], str
-    :vartype justification: str or str or str or str
+    :ivar justification: Justification for entering or exiting Maintenance Mode. Known values are:
+     "Networking", "Governance", and "Off".
+    :vartype justification: str or
+     ~azure.mgmt.enclave.models.MaintenanceModeConfigurationModelJustification
     """
 
-    mode: Union[
-        Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str
-    ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Current mode of Maintenance Mode Configuration. Required. Is one of the following types:
-     Literal[\"On\"], Literal[\"CanNotDelete\"], Literal[\"Off\"], Literal[\"General\"],
-     Literal[\"Advanced\"], str"""
+    mode: Union[str, "_models.MaintenanceModeConfigurationModelMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Current mode of Maintenance Mode Configuration. Required. Known values are: \"On\",
+     \"CanNotDelete\", \"Off\", \"General\", and \"Advanced\"."""
     principals: Optional[list["_models.Principal"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The user, group or service principal object affected by Maintenance Mode."""
-    justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]] = rest_field(
+    justification: Optional[Union[str, "_models.MaintenanceModeConfigurationModelJustification"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Justification for entering or exiting Maintenance Mode. Is one of the following types:
-     Literal[\"Networking\"], Literal[\"Governance\"], Literal[\"Off\"], str"""
+    """Justification for entering or exiting Maintenance Mode. Known values are: \"Networking\",
+     \"Governance\", and \"Off\"."""
 
     @overload
     def __init__(
         self,
         *,
-        mode: Union[
-            Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str
-        ],
+        mode: Union[str, "_models.MaintenanceModeConfigurationModelMode"],
         principals: Optional[list["_models.Principal"]] = None,
-        justification: Optional[Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]] = None,
+        justification: Optional[Union[str, "_models.MaintenanceModeConfigurationModelJustification"]] = None,
     ) -> None: ...
 
     @overload
@@ -2793,26 +2873,22 @@ class Principal(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
     :ivar id: The object id associated with the principal. Required.
     :vartype id: str
     :ivar type: The type of the object id. We currently allow users, groups, and service
-     principals. Required. Is one of the following types: Literal["User"], Literal["Group"],
-     Literal["ServicePrincipal"], str
-    :vartype type: str or str or str or str
+     principals. Required. Known values are: "User", "Group", and "ServicePrincipal".
+    :vartype type: str or ~azure.mgmt.enclave.models.PrincipalType
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object id associated with the principal. Required."""
-    type: Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    type: Union[str, "_models.PrincipalType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The type of the object id. We currently allow users, groups, and service principals. Required.
-     Is one of the following types: Literal[\"User\"], Literal[\"Group\"],
-     Literal[\"ServicePrincipal\"], str"""
+     Known values are: \"User\", \"Group\", and \"ServicePrincipal\"."""
 
     @overload
     def __init__(
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        type: Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str],
+        type: Union[str, "_models.PrincipalType"],
     ) -> None: ...
 
     @overload
@@ -2985,6 +3061,9 @@ class SubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
     :vartype address_prefix: str
     :ivar network_security_group_resource_id: Network security group ID.
     :vartype network_security_group_resource_id: str
+    :ivar subnet_purpose: The purpose of the subnet, used to determine automatic configuration
+     behavior. Known values are: "General", "AKS", and "AKSApiServer".
+    :vartype subnet_purpose: str or ~azure.mgmt.enclave.models.SubnetPurpose
     """
 
     subnet_name: str = rest_field(name="subnetName", visibility=["read", "create", "update", "delete", "query"])
@@ -3005,6 +3084,11 @@ class SubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
         name="networkSecurityGroupResourceId", visibility=["read"]
     )
     """Network security group ID."""
+    subnet_purpose: Optional[Union[str, "_models.SubnetPurpose"]] = rest_field(
+        name="subnetPurpose", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The purpose of the subnet, used to determine automatic configuration behavior. Known values
+     are: \"General\", \"AKS\", and \"AKSApiServer\"."""
 
     @overload
     def __init__(
@@ -3013,6 +3097,7 @@ class SubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
         subnet_name: str,
         network_prefix_size: int,
         subnet_delegation: Optional[str] = None,
+        subnet_purpose: Optional[Union[str, "_models.SubnetPurpose"]] = None,
     ) -> None: ...
 
     @overload
@@ -3024,6 +3109,58 @@ class SubnetConfiguration(_Model):  # pylint: disable=docstring-keyword-should-m
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SyncDestinationStatus(_Model):
+    """Status of synchronization to a specific destination Community Endpoint.
+
+    :ivar destination_id: ARM resource ID of the destination Community Endpoint. Required.
+    :vartype destination_id: str
+    :ivar status: The synchronization status for this destination. Required. Known values are:
+     "NotConfigured", "Succeeded", "InProgress", "Failed", and "PartiallySucceeded".
+    :vartype status: str or ~azure.mgmt.enclave.models.SyncStatus
+    :ivar error_message: Error message if the sync to this destination failed.
+    :vartype error_message: str
+    :ivar last_sync_time: Timestamp of the last successful sync to this destination.
+    :vartype last_sync_time: ~datetime.datetime
+    """
+
+    destination_id: str = rest_field(name="destinationId", visibility=["read"])
+    """ARM resource ID of the destination Community Endpoint. Required."""
+    status: Union[str, "_models.SyncStatus"] = rest_field(visibility=["read"])
+    """The synchronization status for this destination. Required. Known values are: \"NotConfigured\",
+     \"Succeeded\", \"InProgress\", \"Failed\", and \"PartiallySucceeded\"."""
+    error_message: Optional[str] = rest_field(name="errorMessage", visibility=["read"])
+    """Error message if the sync to this destination failed."""
+    last_sync_time: Optional[datetime.datetime] = rest_field(name="lastSyncTime", visibility=["read"], format="rfc3339")
+    """Timestamp of the last successful sync to this destination."""
+
+
+class SyncPerformedBy(_Model):
+    """Information about the principal who performed the sync operation.
+
+    :ivar principal_id: Object ID of the user principal who configured syncTo. Required.
+    :vartype principal_id: str
+    :ivar principal_type: The type of principal (e.g., User, ServicePrincipal). Required.
+    :vartype principal_type: str
+    :ivar tenant_id: Tenant ID of the principal. Required.
+    :vartype tenant_id: str
+    :ivar performed_at: Timestamp when the syncTo was configured or last modified. Required.
+    :vartype performed_at: ~datetime.datetime
+    :ivar correlation_id: ARM correlation ID from the source PUT that set up syncTo. Required.
+    :vartype correlation_id: str
+    """
+
+    principal_id: str = rest_field(name="principalId", visibility=["read"])
+    """Object ID of the user principal who configured syncTo. Required."""
+    principal_type: str = rest_field(name="principalType", visibility=["read"])
+    """The type of principal (e.g., User, ServicePrincipal). Required."""
+    tenant_id: str = rest_field(name="tenantId", visibility=["read"])
+    """Tenant ID of the principal. Required."""
+    performed_at: datetime.datetime = rest_field(name="performedAt", visibility=["read"], format="rfc3339")
+    """Timestamp when the syncTo was configured or last modified. Required."""
+    correlation_id: str = rest_field(name="correlationId", visibility=["read"])
+    """ARM correlation ID from the source PUT that set up syncTo. Required."""
 
 
 class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -3522,8 +3659,6 @@ class VirtualEnclavePatchModel(_Model):  # pylint: disable=docstring-keyword-sho
 class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual Enclave Patchable Properties.
 
-    :ivar enclave_virtual_network: Virtual Network. Required.
-    :vartype enclave_virtual_network: ~azure.mgmt.enclave.models.EnclaveVirtualNetworkModel
     :ivar bastion_enabled: Deploy Bastion service (True or False).
     :vartype bastion_enabled: bool
     :ivar workload_resource_visibility: Specifies whether resources in the workload resource
@@ -3538,6 +3673,13 @@ class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keywor
     :vartype workload_role_assignments: list[~azure.mgmt.enclave.models.RoleAssignmentItem]
     :ivar governed_service_list: Enclave specific policies.
     :vartype governed_service_list: list[~azure.mgmt.enclave.models.GovernedServiceItem]
+    :ivar address_spaces: Customer-requested address spaces for the enclave. Supports multiple
+     entries. Each entry specifies a prefixLength for the RP to allocate, or a custom addressSpace
+     CIDR. The RP returns these entries exactly as provided; allocated values are reported in
+     computedAddressSpaces.
+    :vartype address_spaces: list[~azure.mgmt.enclave.models.AddressSpaceEntry]
+    :ivar subnet_configurations: Subnet configurations for the enclave network.
+    :vartype subnet_configurations: list[~azure.mgmt.enclave.models.SubnetConfiguration]
     :ivar enclave_default_settings: Enclave default settings.
     :vartype enclave_default_settings: ~azure.mgmt.enclave.models.EnclaveDefaultSettingsPatchModel
     :ivar maintenance_mode_configuration: Maintenance Mode configuration.
@@ -3553,10 +3695,6 @@ class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keywor
     :vartype monitoring_settings: ~azure.mgmt.enclave.models.MonitoringSettingsPatchModel
     """
 
-    enclave_virtual_network: "_models.EnclaveVirtualNetworkModel" = rest_field(
-        name="enclaveVirtualNetwork", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Virtual Network. Required."""
     bastion_enabled: Optional[bool] = rest_field(
         name="bastionEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3583,6 +3721,16 @@ class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keywor
         name="governedServiceList", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enclave specific policies."""
+    address_spaces: Optional[list["_models.AddressSpaceEntry"]] = rest_field(
+        name="addressSpaces", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer-requested address spaces for the enclave. Supports multiple entries. Each entry
+     specifies a prefixLength for the RP to allocate, or a custom addressSpace CIDR. The RP returns
+     these entries exactly as provided; allocated values are reported in computedAddressSpaces."""
+    subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = rest_field(
+        name="subnetConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnet configurations for the enclave network."""
     enclave_default_settings: Optional["_models.EnclaveDefaultSettingsPatchModel"] = rest_field(
         name="enclaveDefaultSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3608,13 +3756,14 @@ class VirtualEnclavePatchProperties(_Model):  # pylint: disable=docstring-keywor
     def __init__(
         self,
         *,
-        enclave_virtual_network: "_models.EnclaveVirtualNetworkModel",
         bastion_enabled: Optional[bool] = None,
         workload_resource_visibility: Optional[Union[str, "_models.ResourceVisibilityMode"]] = None,
         rbac_inheritance: Optional[Union[str, "_models.RbacInheritanceMode"]] = None,
         enclave_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         workload_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         governed_service_list: Optional[list["_models.GovernedServiceItem"]] = None,
+        address_spaces: Optional[list["_models.AddressSpaceEntry"]] = None,
+        subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = None,
         enclave_default_settings: Optional["_models.EnclaveDefaultSettingsPatchModel"] = None,
         maintenance_mode_configuration: Optional["_models.MaintenanceModeConfigurationPatchModel"] = None,
         dedicated_hub_resource_id: Optional[str] = None,
@@ -3639,10 +3788,6 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :ivar provisioning_state: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.enclave.models.ProvisioningState
-    :ivar enclave_virtual_network: Virtual Network. Required.
-    :vartype enclave_virtual_network: ~azure.mgmt.enclave.models.EnclaveVirtualNetworkModel
-    :ivar enclave_address_spaces: Enclave Address Spaces.
-    :vartype enclave_address_spaces: ~azure.mgmt.enclave.models.EnclaveAddressSpacesModel
     :ivar community_resource_id: Community Resource Id. Required.
     :vartype community_resource_id: str
     :ivar resource_collection: List of resource ids created by Virtual Enclave.
@@ -3666,6 +3811,22 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
     :vartype workload_role_assignments: list[~azure.mgmt.enclave.models.RoleAssignmentItem]
     :ivar governed_service_list: Enclave specific policies.
     :vartype governed_service_list: list[~azure.mgmt.enclave.models.GovernedServiceItem]
+    :ivar address_spaces: Customer-requested address spaces for the enclave. Supports multiple
+     entries. Each entry specifies a prefixLength for the RP to allocate, or a custom addressSpace
+     CIDR. The RP returns these entries exactly as provided; allocated values are reported in
+     computedAddressSpaces.
+    :vartype address_spaces: list[~azure.mgmt.enclave.models.AddressSpaceEntry]
+    :ivar computed_address_spaces: Address spaces computed by the RP for the enclave. Contains an
+     entry for each customer-requested address space with its allocated CIDR, followed by the
+     product-managed address space.
+    :vartype computed_address_spaces: list[~azure.mgmt.enclave.models.ComputedAddressSpaceEntry]
+    :ivar network_name: The name of the enclave's virtual network.
+    :vartype network_name: str
+    :ivar subnet_configurations: Subnet configurations for the enclave network.
+    :vartype subnet_configurations: list[~azure.mgmt.enclave.models.SubnetConfiguration]
+    :ivar allow_subnet_communication: Whether subnets within the enclave can communicate with each
+     other.
+    :vartype allow_subnet_communication: bool
     :ivar enclave_default_settings: Enclave default settings.
     :vartype enclave_default_settings: ~azure.mgmt.enclave.models.EnclaveDefaultSettingsModel
     :ivar maintenance_mode_configuration: Maintenance Mode configuration.
@@ -3685,14 +3846,6 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
     )
     """Provisioning State. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\",
      \"Creating\", \"Deleting\", \"NotSpecified\", \"Running\", and \"Updating\"."""
-    enclave_virtual_network: "_models.EnclaveVirtualNetworkModel" = rest_field(
-        name="enclaveVirtualNetwork", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Virtual Network. Required."""
-    enclave_address_spaces: Optional["_models.EnclaveAddressSpacesModel"] = rest_field(
-        name="enclaveAddressSpaces", visibility=["read"]
-    )
-    """Enclave Address Spaces."""
     community_resource_id: str = rest_field(name="communityResourceId", visibility=["read", "create"])
     """Community Resource Id. Required."""
     resource_collection: Optional[list[str]] = rest_field(name="resourceCollection", visibility=["read"])
@@ -3729,6 +3882,28 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
         name="governedServiceList", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enclave specific policies."""
+    address_spaces: Optional[list["_models.AddressSpaceEntry"]] = rest_field(
+        name="addressSpaces", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer-requested address spaces for the enclave. Supports multiple entries. Each entry
+     specifies a prefixLength for the RP to allocate, or a custom addressSpace CIDR. The RP returns
+     these entries exactly as provided; allocated values are reported in computedAddressSpaces."""
+    computed_address_spaces: Optional[list["_models.ComputedAddressSpaceEntry"]] = rest_field(
+        name="computedAddressSpaces", visibility=["read"]
+    )
+    """Address spaces computed by the RP for the enclave. Contains an entry for each
+     customer-requested address space with its allocated CIDR, followed by the product-managed
+     address space."""
+    network_name: Optional[str] = rest_field(name="networkName", visibility=["read"])
+    """The name of the enclave's virtual network."""
+    subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = rest_field(
+        name="subnetConfigurations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Subnet configurations for the enclave network."""
+    allow_subnet_communication: Optional[bool] = rest_field(
+        name="allowSubnetCommunication", visibility=["read", "create"]
+    )
+    """Whether subnets within the enclave can communicate with each other."""
     enclave_default_settings: Optional["_models.EnclaveDefaultSettingsModel"] = rest_field(
         name="enclaveDefaultSettings", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3754,7 +3929,6 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
     def __init__(
         self,
         *,
-        enclave_virtual_network: "_models.EnclaveVirtualNetworkModel",
         community_resource_id: str,
         bastion_enabled: Optional[bool] = None,
         workload_resource_visibility: Optional[Union[str, "_models.ResourceVisibilityMode"]] = None,
@@ -3762,6 +3936,9 @@ class VirtualEnclaveProperties(_Model):  # pylint: disable=docstring-keyword-sho
         enclave_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         workload_role_assignments: Optional[list["_models.RoleAssignmentItem"]] = None,
         governed_service_list: Optional[list["_models.GovernedServiceItem"]] = None,
+        address_spaces: Optional[list["_models.AddressSpaceEntry"]] = None,
+        subnet_configurations: Optional[list["_models.SubnetConfiguration"]] = None,
+        allow_subnet_communication: Optional[bool] = None,
         enclave_default_settings: Optional["_models.EnclaveDefaultSettingsModel"] = None,
         maintenance_mode_configuration: Optional["_models.MaintenanceModeConfigurationModel"] = None,
         dedicated_hub_resource_id: Optional[str] = None,

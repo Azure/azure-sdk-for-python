@@ -149,7 +149,7 @@ class TestEnclaveMgmtApprovalOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.approval.begin_notify_initiator(
                 resource_uri="str",
                 approval_name="str",
-                body={"approvalStatus": "Approved"},
+                body={"approvalStatus": "str"},
             )
         ).result()  # call '.result()' to poll until service return final result
 

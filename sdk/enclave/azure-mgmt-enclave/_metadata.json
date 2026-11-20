@@ -1,11 +1,11 @@
 {
-  "apiVersion": "2026-04-01",
+  "apiVersion": "2026-10-01-preview",
   "apiVersions": {
-    "Microsoft.Mission": "2026-04-01"
+    "Microsoft.Mission": "2026-10-01-preview"
   },
-  "commit": "ae8bfcbd69fc161651b0509f4869f55376750f1a",
+  "commit": "be93aca8c35ada896dd7fd6c7f65b1a9f766e84c",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/mission/resource-manager/Microsoft.Mission/Mission",
-  "emitterVersion": "0.63.5",
-  "httpClientPythonVersion": "^0.36.0"
+  "emitterVersion": "0.63.12",
+  "httpClientPythonVersion": "0.40.1"
 }
