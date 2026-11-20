@@ -310,7 +310,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024 : 30 * 1024 * 1024]
-    
+
     @DataLakePreparer()
     @recorded_by_proxy
     def test_create_session_download_crc64(self, **kwargs):
@@ -335,4 +335,5 @@ class TestStorageContentValidation(StorageRecordedTestCase):
             ).readall()
 
             assert result == data
-            assert capture_auth_header["download"].startswith("Session ")
+            is_session_auth = capture_auth_header["download"].startswith("Session ")
+            assert is_session_auth

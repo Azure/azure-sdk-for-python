@@ -719,4 +719,5 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         ).readall()
 
         assert result == data
-        assert capture_auth_header["download"].startswith("Session ")
+        is_session_auth = capture_auth_header["download"].startswith("Session ")
+        assert is_session_auth
