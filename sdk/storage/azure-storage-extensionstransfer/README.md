@@ -30,7 +30,7 @@ When installed, this package transparently accelerates:
 - **Block blob uploads** — Large data uploads use the Rust SDK's managed parallel chunking
 - **Block blob downloads** — Downloads keep up to `max_concurrency` ranged requests in flight
   and prefetch completed chunks in the background while Python consumes earlier ones.
-  Streaming consumers (`readinto()`, `chunks()`) keep memory bounded to roughly two windows of
+  Streaming consumers (`readinto()`) keep memory bounded to roughly two windows of
   `max_concurrency * max_chunk_size` bytes, regardless of blob size. `readall()` copies the
   downloaded chunks directly into a single preallocated `bytes` object as they arrive. All
   requests after the first are locked to the ETag of the first response, so a blob modified
