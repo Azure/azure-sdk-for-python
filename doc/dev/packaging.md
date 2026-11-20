@@ -207,8 +207,8 @@ import libraries. A temporary cibuildwheel configuration preserves the resolved
 package environment and hooks without changing the checked-in package configuration
 or setting a single library path for the entire job.
 
-This opt-in does not provision Rust for source-installing test or analysis jobs.
-Prepare those jobs separately before enabling a Rust package,
+This opt-in also provisions Rust for analysis jobs, but not for source-installing
+test jobs. Prepare test jobs separately before enabling a Rust package,
 and keep real source-distribution testing. Packages with a static
 `[project].version` also need version synchronization with `_version.py` for
 nightly builds. No package is activated by adding this shared support.
