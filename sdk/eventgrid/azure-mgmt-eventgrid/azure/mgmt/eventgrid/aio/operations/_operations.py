@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -222,11 +222,10 @@ from .._configuration import EventGridManagementClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -292,7 +291,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -335,7 +337,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CaCertificatesOperations:
+class CaCertificatesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -434,7 +436,7 @@ class CaCertificatesOperations:
         resource_group_name: str,
         namespace_name: str,
         ca_certificate_name: str,
-        ca_certificate_info: Union[_models.CaCertificate, JSON, IO[bytes]],
+        ca_certificate_info: Union[_models.CaCertificate, _types.CaCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -547,7 +549,7 @@ class CaCertificatesOperations:
         resource_group_name: str,
         namespace_name: str,
         ca_certificate_name: str,
-        ca_certificate_info: JSON,
+        ca_certificate_info: _types.CaCertificate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -564,7 +566,7 @@ class CaCertificatesOperations:
         :param ca_certificate_name: Name of the CA certificate. Required.
         :type ca_certificate_name: str
         :param ca_certificate_info: CA certificate information. Required.
-        :type ca_certificate_info: JSON
+        :type ca_certificate_info: ~azure.mgmt.eventgrid.types.CaCertificate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -613,7 +615,7 @@ class CaCertificatesOperations:
         resource_group_name: str,
         namespace_name: str,
         ca_certificate_name: str,
-        ca_certificate_info: Union[_models.CaCertificate, JSON, IO[bytes]],
+        ca_certificate_info: Union[_models.CaCertificate, _types.CaCertificate, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.CaCertificate]:
         """Create or update a CA certificate.
@@ -627,9 +629,10 @@ class CaCertificatesOperations:
         :type namespace_name: str
         :param ca_certificate_name: Name of the CA certificate. Required.
         :type ca_certificate_name: str
-        :param ca_certificate_info: CA certificate information. Is one of the following types:
-         CaCertificate, JSON, IO[bytes] Required.
-        :type ca_certificate_info: ~azure.mgmt.eventgrid.models.CaCertificate or JSON or IO[bytes]
+        :param ca_certificate_info: CA certificate information. Is either a CaCertificate type or a
+         IO[bytes] type. Required.
+        :type ca_certificate_info: ~azure.mgmt.eventgrid.models.CaCertificate or
+         ~azure.mgmt.eventgrid.types.CaCertificate or IO[bytes]
         :return: An instance of AsyncLROPoller that returns CaCertificate. The CaCertificate is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.CaCertificate]
@@ -893,7 +896,10 @@ class CaCertificatesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -936,7 +942,7 @@ class CaCertificatesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NamespacesOperations:
+class NamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1029,7 +1035,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_info: Union[_models.Namespace, JSON, IO[bytes]],
+        namespace_info: Union[_models.Namespace, _types.Namespace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1137,7 +1143,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_info: JSON,
+        namespace_info: _types.Namespace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1152,7 +1158,7 @@ class NamespacesOperations:
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
         :param namespace_info: Namespace information. Required.
-        :type namespace_info: JSON
+        :type namespace_info: ~azure.mgmt.eventgrid.types.Namespace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1197,7 +1203,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_info: Union[_models.Namespace, JSON, IO[bytes]],
+        namespace_info: Union[_models.Namespace, _types.Namespace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Namespace]:
         """Create or update a namespace.
@@ -1209,9 +1215,10 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
-        :param namespace_info: Namespace information. Is one of the following types: Namespace, JSON,
-         IO[bytes] Required.
-        :type namespace_info: ~azure.mgmt.eventgrid.models.Namespace or JSON or IO[bytes]
+        :param namespace_info: Namespace information. Is either a Namespace type or a IO[bytes] type.
+         Required.
+        :type namespace_info: ~azure.mgmt.eventgrid.models.Namespace or
+         ~azure.mgmt.eventgrid.types.Namespace or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Namespace. The Namespace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Namespace]
@@ -1273,7 +1280,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_update_parameters: Union[_models.NamespaceUpdateParameters, JSON, IO[bytes]],
+        namespace_update_parameters: Union[
+            _models.NamespaceUpdateParameters, _types.NamespaceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1382,7 +1391,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_update_parameters: JSON,
+        namespace_update_parameters: _types.NamespaceUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1397,7 +1406,7 @@ class NamespacesOperations:
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
         :param namespace_update_parameters: Namespace update information. Required.
-        :type namespace_update_parameters: JSON
+        :type namespace_update_parameters: ~azure.mgmt.eventgrid.types.NamespaceUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1442,7 +1451,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        namespace_update_parameters: Union[_models.NamespaceUpdateParameters, JSON, IO[bytes]],
+        namespace_update_parameters: Union[
+            _models.NamespaceUpdateParameters, _types.NamespaceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Namespace]:
         """Update a namespace.
@@ -1454,10 +1465,10 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
-        :param namespace_update_parameters: Namespace update information. Is one of the following
-         types: NamespaceUpdateParameters, JSON, IO[bytes] Required.
+        :param namespace_update_parameters: Namespace update information. Is either a
+         NamespaceUpdateParameters type or a IO[bytes] type. Required.
         :type namespace_update_parameters: ~azure.mgmt.eventgrid.models.NamespaceUpdateParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.types.NamespaceUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Namespace. The Namespace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Namespace]
@@ -1705,7 +1716,10 @@ class NamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1813,7 +1827,10 @@ class NamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1934,7 +1951,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        regenerate_key_request: Union[_models.NamespaceRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[
+            _models.NamespaceRegenerateKeyRequest, _types.NamespaceRegenerateKeyRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2041,7 +2060,7 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        regenerate_key_request: JSON,
+        regenerate_key_request: _types.NamespaceRegenerateKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2056,7 +2075,7 @@ class NamespacesOperations:
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
         :param regenerate_key_request: Request body to regenerate key. Required.
-        :type regenerate_key_request: JSON
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.types.NamespaceRegenerateKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2103,7 +2122,9 @@ class NamespacesOperations:
         self,
         resource_group_name: str,
         namespace_name: str,
-        regenerate_key_request: Union[_models.NamespaceRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[
+            _models.NamespaceRegenerateKeyRequest, _types.NamespaceRegenerateKeyRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NamespaceSharedAccessKeys]:
         """Regenerate key for a namespace.
@@ -2115,10 +2136,10 @@ class NamespacesOperations:
         :type resource_group_name: str
         :param namespace_name: Name of the namespace. Required.
         :type namespace_name: str
-        :param regenerate_key_request: Request body to regenerate key. Is one of the following types:
-         NamespaceRegenerateKeyRequest, JSON, IO[bytes] Required.
+        :param regenerate_key_request: Request body to regenerate key. Is either a
+         NamespaceRegenerateKeyRequest type or a IO[bytes] type. Required.
         :type regenerate_key_request: ~azure.mgmt.eventgrid.models.NamespaceRegenerateKeyRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.types.NamespaceRegenerateKeyRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NamespaceSharedAccessKeys. The
          NamespaceSharedAccessKeys is compatible with MutableMapping
         :rtype:
@@ -2148,14 +2169,10 @@ class NamespacesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NamespaceSharedAccessKeys, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2281,14 +2298,10 @@ class NamespacesOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.CustomDomainOwnershipValidationResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -2315,7 +2328,7 @@ class NamespacesOperations:
         )
 
 
-class ChannelsOperations:
+class ChannelsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2447,7 +2460,7 @@ class ChannelsOperations:
         resource_group_name: str,
         partner_namespace_name: str,
         channel_name: str,
-        channel_info: JSON,
+        channel_info: _types.Channel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2464,7 +2477,7 @@ class ChannelsOperations:
         :param channel_name: Name of the channel. Required.
         :type channel_name: str
         :param channel_info: Channel information. Required.
-        :type channel_info: JSON
+        :type channel_info: ~azure.mgmt.eventgrid.types.Channel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2511,7 +2524,7 @@ class ChannelsOperations:
         resource_group_name: str,
         partner_namespace_name: str,
         channel_name: str,
-        channel_info: Union[_models.Channel, JSON, IO[bytes]],
+        channel_info: Union[_models.Channel, _types.Channel, IO[bytes]],
         **kwargs: Any
     ) -> _models.Channel:
         """Create or update a channel.
@@ -2525,9 +2538,10 @@ class ChannelsOperations:
         :type partner_namespace_name: str
         :param channel_name: Name of the channel. Required.
         :type channel_name: str
-        :param channel_info: Channel information. Is one of the following types: Channel, JSON,
-         IO[bytes] Required.
-        :type channel_info: ~azure.mgmt.eventgrid.models.Channel or JSON or IO[bytes]
+        :param channel_info: Channel information. Is either a Channel type or a IO[bytes] type.
+         Required.
+        :type channel_info: ~azure.mgmt.eventgrid.models.Channel or ~azure.mgmt.eventgrid.types.Channel
+         or IO[bytes]
         :return: Channel. The Channel is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.Channel
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2638,7 +2652,7 @@ class ChannelsOperations:
         resource_group_name: str,
         partner_namespace_name: str,
         channel_name: str,
-        channel_update_parameters: JSON,
+        channel_update_parameters: _types.ChannelUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2655,7 +2669,7 @@ class ChannelsOperations:
         :param channel_name: Name of the channel. Required.
         :type channel_name: str
         :param channel_update_parameters: Channel update information. Required.
-        :type channel_update_parameters: JSON
+        :type channel_update_parameters: ~azure.mgmt.eventgrid.types.ChannelUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2702,7 +2716,7 @@ class ChannelsOperations:
         resource_group_name: str,
         partner_namespace_name: str,
         channel_name: str,
-        channel_update_parameters: Union[_models.ChannelUpdateParameters, JSON, IO[bytes]],
+        channel_update_parameters: Union[_models.ChannelUpdateParameters, _types.ChannelUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Update a Channel.
@@ -2716,10 +2730,10 @@ class ChannelsOperations:
         :type partner_namespace_name: str
         :param channel_name: Name of the channel. Required.
         :type channel_name: str
-        :param channel_update_parameters: Channel update information. Is one of the following types:
-         ChannelUpdateParameters, JSON, IO[bytes] Required.
-        :type channel_update_parameters: ~azure.mgmt.eventgrid.models.ChannelUpdateParameters or JSON
-         or IO[bytes]
+        :param channel_update_parameters: Channel update information. Is either a
+         ChannelUpdateParameters type or a IO[bytes] type. Required.
+        :type channel_update_parameters: ~azure.mgmt.eventgrid.models.ChannelUpdateParameters or
+         ~azure.mgmt.eventgrid.types.ChannelUpdateParameters or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2984,7 +2998,10 @@ class ChannelsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3105,7 +3122,7 @@ class ChannelsOperations:
         return deserialized  # type: ignore
 
 
-class PartnerNamespacesOperations:
+class PartnerNamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3200,7 +3217,7 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_info: Union[_models.PartnerNamespace, JSON, IO[bytes]],
+        partner_namespace_info: Union[_models.PartnerNamespace, _types.PartnerNamespace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3305,7 +3322,7 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_info: JSON,
+        partner_namespace_info: _types.PartnerNamespace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3320,7 +3337,7 @@ class PartnerNamespacesOperations:
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
         :param partner_namespace_info: PartnerNamespace information. Required.
-        :type partner_namespace_info: JSON
+        :type partner_namespace_info: ~azure.mgmt.eventgrid.types.PartnerNamespace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3365,7 +3382,7 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_info: Union[_models.PartnerNamespace, JSON, IO[bytes]],
+        partner_namespace_info: Union[_models.PartnerNamespace, _types.PartnerNamespace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerNamespace]:
         """Create a partner namespace.
@@ -3377,10 +3394,10 @@ class PartnerNamespacesOperations:
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param partner_namespace_info: PartnerNamespace information. Is one of the following types:
-         PartnerNamespace, JSON, IO[bytes] Required.
-        :type partner_namespace_info: ~azure.mgmt.eventgrid.models.PartnerNamespace or JSON or
-         IO[bytes]
+        :param partner_namespace_info: PartnerNamespace information. Is either a PartnerNamespace type
+         or a IO[bytes] type. Required.
+        :type partner_namespace_info: ~azure.mgmt.eventgrid.models.PartnerNamespace or
+         ~azure.mgmt.eventgrid.types.PartnerNamespace or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerNamespace. The PartnerNamespace is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
@@ -3446,7 +3463,9 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_update_parameters: Union[_models.PartnerNamespaceUpdateParameters, JSON, IO[bytes]],
+        partner_namespace_update_parameters: Union[
+            _models.PartnerNamespaceUpdateParameters, _types.PartnerNamespaceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3553,7 +3572,7 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_update_parameters: JSON,
+        partner_namespace_update_parameters: _types.PartnerNamespaceUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3568,7 +3587,8 @@ class PartnerNamespacesOperations:
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
         :param partner_namespace_update_parameters: Partner namespace update information. Required.
-        :type partner_namespace_update_parameters: JSON
+        :type partner_namespace_update_parameters:
+         ~azure.mgmt.eventgrid.types.PartnerNamespaceUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3613,7 +3633,9 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        partner_namespace_update_parameters: Union[_models.PartnerNamespaceUpdateParameters, JSON, IO[bytes]],
+        partner_namespace_update_parameters: Union[
+            _models.PartnerNamespaceUpdateParameters, _types.PartnerNamespaceUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerNamespace]:
         """Update a partner namespace.
@@ -3625,10 +3647,11 @@ class PartnerNamespacesOperations:
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param partner_namespace_update_parameters: Partner namespace update information. Is one of the
-         following types: PartnerNamespaceUpdateParameters, JSON, IO[bytes] Required.
+        :param partner_namespace_update_parameters: Partner namespace update information. Is either a
+         PartnerNamespaceUpdateParameters type or a IO[bytes] type. Required.
         :type partner_namespace_update_parameters:
-         ~azure.mgmt.eventgrid.models.PartnerNamespaceUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.PartnerNamespaceUpdateParameters or
+         ~azure.mgmt.eventgrid.types.PartnerNamespaceUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerNamespace. The PartnerNamespace is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerNamespace]
@@ -3878,7 +3901,10 @@ class PartnerNamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3986,7 +4012,10 @@ class PartnerNamespacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4138,7 +4167,7 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        regenerate_key_request: JSON,
+        regenerate_key_request: _types.PartnerNamespaceRegenerateKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4153,7 +4182,7 @@ class PartnerNamespacesOperations:
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
         :param regenerate_key_request: Request body to regenerate key. Required.
-        :type regenerate_key_request: JSON
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.types.PartnerNamespaceRegenerateKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4198,7 +4227,9 @@ class PartnerNamespacesOperations:
         self,
         resource_group_name: str,
         partner_namespace_name: str,
-        regenerate_key_request: Union[_models.PartnerNamespaceRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[
+            _models.PartnerNamespaceRegenerateKeyRequest, _types.PartnerNamespaceRegenerateKeyRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.PartnerNamespaceSharedAccessKeys:
         """Regenerate key for a partner namespace.
@@ -4210,10 +4241,10 @@ class PartnerNamespacesOperations:
         :type resource_group_name: str
         :param partner_namespace_name: Name of the partner namespace. Required.
         :type partner_namespace_name: str
-        :param regenerate_key_request: Request body to regenerate key. Is one of the following types:
-         PartnerNamespaceRegenerateKeyRequest, JSON, IO[bytes] Required.
+        :param regenerate_key_request: Request body to regenerate key. Is either a
+         PartnerNamespaceRegenerateKeyRequest type or a IO[bytes] type. Required.
         :type regenerate_key_request: ~azure.mgmt.eventgrid.models.PartnerNamespaceRegenerateKeyRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.eventgrid.types.PartnerNamespaceRegenerateKeyRequest or IO[bytes]
         :return: PartnerNamespaceSharedAccessKeys. The PartnerNamespaceSharedAccessKeys is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.PartnerNamespaceSharedAccessKeys
@@ -4287,7 +4318,7 @@ class PartnerNamespacesOperations:
         return deserialized  # type: ignore
 
 
-class ClientGroupsOperations:
+class ClientGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4386,7 +4417,7 @@ class ClientGroupsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_group_name: str,
-        client_group_info: Union[_models.ClientGroup, JSON, IO[bytes]],
+        client_group_info: Union[_models.ClientGroup, _types.ClientGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4499,7 +4530,7 @@ class ClientGroupsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_group_name: str,
-        client_group_info: JSON,
+        client_group_info: _types.ClientGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4516,7 +4547,7 @@ class ClientGroupsOperations:
         :param client_group_name: Name of the client group. Required.
         :type client_group_name: str
         :param client_group_info: Client group information. Required.
-        :type client_group_info: JSON
+        :type client_group_info: ~azure.mgmt.eventgrid.types.ClientGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4565,7 +4596,7 @@ class ClientGroupsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_group_name: str,
-        client_group_info: Union[_models.ClientGroup, JSON, IO[bytes]],
+        client_group_info: Union[_models.ClientGroup, _types.ClientGroup, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ClientGroup]:
         """Create or update a client group.
@@ -4579,9 +4610,10 @@ class ClientGroupsOperations:
         :type namespace_name: str
         :param client_group_name: Name of the client group. Required.
         :type client_group_name: str
-        :param client_group_info: Client group information. Is one of the following types: ClientGroup,
-         JSON, IO[bytes] Required.
-        :type client_group_info: ~azure.mgmt.eventgrid.models.ClientGroup or JSON or IO[bytes]
+        :param client_group_info: Client group information. Is either a ClientGroup type or a IO[bytes]
+         type. Required.
+        :type client_group_info: ~azure.mgmt.eventgrid.models.ClientGroup or
+         ~azure.mgmt.eventgrid.types.ClientGroup or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ClientGroup. The ClientGroup is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.ClientGroup]
@@ -4845,7 +4877,10 @@ class ClientGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4888,7 +4923,7 @@ class ClientGroupsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ClientsOperations:
+class ClientsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4987,7 +5022,7 @@ class ClientsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_name: str,
-        client_info: Union[_models.Client, JSON, IO[bytes]],
+        client_info: Union[_models.Client, _types.Client, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5100,7 +5135,7 @@ class ClientsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_name: str,
-        client_info: JSON,
+        client_info: _types.Client,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5117,7 +5152,7 @@ class ClientsOperations:
         :param client_name: Name of the client. Required.
         :type client_name: str
         :param client_info: Client information. Required.
-        :type client_info: JSON
+        :type client_info: ~azure.mgmt.eventgrid.types.Client
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5166,7 +5201,7 @@ class ClientsOperations:
         resource_group_name: str,
         namespace_name: str,
         client_name: str,
-        client_info: Union[_models.Client, JSON, IO[bytes]],
+        client_info: Union[_models.Client, _types.Client, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Client]:
         """Create or update a client.
@@ -5180,9 +5215,9 @@ class ClientsOperations:
         :type namespace_name: str
         :param client_name: Name of the client. Required.
         :type client_name: str
-        :param client_info: Client information. Is one of the following types: Client, JSON, IO[bytes]
-         Required.
-        :type client_info: ~azure.mgmt.eventgrid.models.Client or JSON or IO[bytes]
+        :param client_info: Client information. Is either a Client type or a IO[bytes] type. Required.
+        :type client_info: ~azure.mgmt.eventgrid.models.Client or ~azure.mgmt.eventgrid.types.Client or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Client. The Client is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Client]
@@ -5446,7 +5481,10 @@ class ClientsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5489,7 +5527,7 @@ class ClientsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DomainsOperations:
+class DomainsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5582,7 +5620,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_info: Union[_models.Domain, JSON, IO[bytes]],
+        domain_info: Union[_models.Domain, _types.Domain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5687,7 +5725,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_info: JSON,
+        domain_info: _types.Domain,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5702,7 +5740,7 @@ class DomainsOperations:
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
         :param domain_info: Domain information. Required.
-        :type domain_info: JSON
+        :type domain_info: ~azure.mgmt.eventgrid.types.Domain
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5747,7 +5785,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_info: Union[_models.Domain, JSON, IO[bytes]],
+        domain_info: Union[_models.Domain, _types.Domain, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Domain]:
         """Create or update a domain.
@@ -5759,9 +5797,9 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :param domain_info: Domain information. Is one of the following types: Domain, JSON, IO[bytes]
-         Required.
-        :type domain_info: ~azure.mgmt.eventgrid.models.Domain or JSON or IO[bytes]
+        :param domain_info: Domain information. Is either a Domain type or a IO[bytes] type. Required.
+        :type domain_info: ~azure.mgmt.eventgrid.models.Domain or ~azure.mgmt.eventgrid.types.Domain or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Domain. The Domain is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Domain]
@@ -5827,7 +5865,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_update_parameters: Union[_models.DomainUpdateParameters, JSON, IO[bytes]],
+        domain_update_parameters: Union[_models.DomainUpdateParameters, _types.DomainUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5933,7 +5971,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_update_parameters: JSON,
+        domain_update_parameters: _types.DomainUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5948,7 +5986,7 @@ class DomainsOperations:
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
         :param domain_update_parameters: Domain update information. Required.
-        :type domain_update_parameters: JSON
+        :type domain_update_parameters: ~azure.mgmt.eventgrid.types.DomainUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5993,7 +6031,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        domain_update_parameters: Union[_models.DomainUpdateParameters, JSON, IO[bytes]],
+        domain_update_parameters: Union[_models.DomainUpdateParameters, _types.DomainUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Domain]:
         """Update a domain.
@@ -6005,10 +6043,10 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :param domain_update_parameters: Domain update information. Is one of the following types:
-         DomainUpdateParameters, JSON, IO[bytes] Required.
-        :type domain_update_parameters: ~azure.mgmt.eventgrid.models.DomainUpdateParameters or JSON or
-         IO[bytes]
+        :param domain_update_parameters: Domain update information. Is either a DomainUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type domain_update_parameters: ~azure.mgmt.eventgrid.models.DomainUpdateParameters or
+         ~azure.mgmt.eventgrid.types.DomainUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Domain. The Domain is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Domain]
@@ -6254,7 +6292,10 @@ class DomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6362,7 +6403,10 @@ class DomainsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6512,7 +6556,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        regenerate_key_request: JSON,
+        regenerate_key_request: _types.DomainRegenerateKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6527,7 +6571,7 @@ class DomainsOperations:
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
         :param regenerate_key_request: Request body to regenerate key. Required.
-        :type regenerate_key_request: JSON
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.types.DomainRegenerateKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6570,7 +6614,7 @@ class DomainsOperations:
         self,
         resource_group_name: str,
         domain_name: str,
-        regenerate_key_request: Union[_models.DomainRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[_models.DomainRegenerateKeyRequest, _types.DomainRegenerateKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.DomainSharedAccessKeys:
         """Regenerate key for a domain.
@@ -6582,10 +6626,10 @@ class DomainsOperations:
         :type resource_group_name: str
         :param domain_name: Name of the domain. Required.
         :type domain_name: str
-        :param regenerate_key_request: Request body to regenerate key. Is one of the following types:
-         DomainRegenerateKeyRequest, JSON, IO[bytes] Required.
-        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.DomainRegenerateKeyRequest or JSON
-         or IO[bytes]
+        :param regenerate_key_request: Request body to regenerate key. Is either a
+         DomainRegenerateKeyRequest type or a IO[bytes] type. Required.
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.DomainRegenerateKeyRequest or
+         ~azure.mgmt.eventgrid.types.DomainRegenerateKeyRequest or IO[bytes]
         :return: DomainSharedAccessKeys. The DomainSharedAccessKeys is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.DomainSharedAccessKeys
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6658,7 +6702,7 @@ class DomainsOperations:
         return deserialized  # type: ignore
 
 
-class DomainTopicsOperations:
+class DomainTopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7092,7 +7136,10 @@ class DomainTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7135,7 +7182,7 @@ class DomainTopicsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EventSubscriptionsOperations:
+class EventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7222,7 +7269,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7347,7 +7397,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7463,7 +7516,7 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7568,7 +7621,7 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7584,7 +7637,7 @@ class EventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7630,7 +7683,7 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update an event subscription.
@@ -7643,9 +7696,9 @@ class EventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -7711,7 +7764,9 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7814,7 +7869,7 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7828,7 +7883,8 @@ class EventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7872,7 +7928,9 @@ class EventSubscriptionsOperations:
         self,
         scope: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update an event subscription.
@@ -7883,10 +7941,11 @@ class EventSubscriptionsOperations:
         :type scope: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -8129,7 +8188,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8258,7 +8320,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8515,7 +8580,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8636,7 +8704,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8747,7 +8818,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8869,7 +8943,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8990,7 +9067,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9117,7 +9197,10 @@ class EventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9160,7 +9243,7 @@ class EventSubscriptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TopicEventSubscriptionsOperations:
+class TopicEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9259,7 +9342,7 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9371,7 +9454,7 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9389,7 +9472,7 @@ class TopicEventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9439,7 +9522,7 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update an event subscription to a topic.
@@ -9454,9 +9537,9 @@ class TopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -9520,7 +9603,9 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9631,7 +9716,7 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9648,7 +9733,8 @@ class TopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9697,7 +9783,9 @@ class TopicEventSubscriptionsOperations:
         resource_group_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update an event subscription for a topic.
@@ -9711,10 +9799,11 @@ class TopicEventSubscriptionsOperations:
         :type topic_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -9982,7 +10071,10 @@ class TopicEventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10181,7 +10273,7 @@ class TopicEventSubscriptionsOperations:
         return deserialized  # type: ignore
 
 
-class DomainEventSubscriptionsOperations:
+class DomainEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10280,7 +10372,7 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10392,7 +10484,7 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10410,7 +10502,7 @@ class DomainEventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10460,7 +10552,7 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update an event subscription to a domain.
@@ -10475,9 +10567,9 @@ class DomainEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -10541,7 +10633,9 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -10651,7 +10745,7 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10668,7 +10762,8 @@ class DomainEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10717,7 +10812,9 @@ class DomainEventSubscriptionsOperations:
         resource_group_name: str,
         domain_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update an event subscription for a domain.
@@ -10731,10 +10828,11 @@ class DomainEventSubscriptionsOperations:
         :type domain_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -11001,7 +11099,10 @@ class DomainEventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11200,7 +11301,7 @@ class DomainEventSubscriptionsOperations:
         return deserialized  # type: ignore
 
 
-class SystemTopicEventSubscriptionsOperations:
+class SystemTopicEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11299,7 +11400,7 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11411,7 +11512,7 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11430,7 +11531,7 @@ class SystemTopicEventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11481,7 +11582,7 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update an event subscription for a system topic.
@@ -11497,9 +11598,9 @@ class SystemTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -11567,7 +11668,9 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -11678,7 +11781,7 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11695,7 +11798,8 @@ class SystemTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11744,7 +11848,9 @@ class SystemTopicEventSubscriptionsOperations:
         resource_group_name: str,
         system_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update event subscription of a system topic.
@@ -11758,10 +11864,11 @@ class SystemTopicEventSubscriptionsOperations:
         :type system_topic_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -12029,7 +12136,10 @@ class SystemTopicEventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12228,7 +12338,7 @@ class SystemTopicEventSubscriptionsOperations:
         return deserialized  # type: ignore
 
 
-class PartnerTopicEventSubscriptionsOperations:
+class PartnerTopicEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12327,7 +12437,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12440,7 +12550,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12459,7 +12569,7 @@ class PartnerTopicEventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12510,7 +12620,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update an event subscription of a partner topic.
@@ -12526,9 +12636,9 @@ class PartnerTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -12592,7 +12702,9 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -12703,7 +12815,7 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12720,7 +12832,8 @@ class PartnerTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12769,7 +12882,9 @@ class PartnerTopicEventSubscriptionsOperations:
         resource_group_name: str,
         partner_topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update event subscription of a partner topic.
@@ -12783,10 +12898,11 @@ class PartnerTopicEventSubscriptionsOperations:
         :type partner_topic_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -13054,7 +13170,10 @@ class PartnerTopicEventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13253,7 +13372,7 @@ class PartnerTopicEventSubscriptionsOperations:
         return deserialized  # type: ignore
 
 
-class NamespaceTopicsOperations:
+class NamespaceTopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13352,7 +13471,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_info: Union[_models.NamespaceTopic, JSON, IO[bytes]],
+        namespace_topic_info: Union[_models.NamespaceTopic, _types.NamespaceTopic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13465,7 +13584,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_info: JSON,
+        namespace_topic_info: _types.NamespaceTopic,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13482,7 +13601,7 @@ class NamespaceTopicsOperations:
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
         :param namespace_topic_info: Namespace topic information. Required.
-        :type namespace_topic_info: JSON
+        :type namespace_topic_info: ~azure.mgmt.eventgrid.types.NamespaceTopic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13531,7 +13650,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_info: Union[_models.NamespaceTopic, JSON, IO[bytes]],
+        namespace_topic_info: Union[_models.NamespaceTopic, _types.NamespaceTopic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NamespaceTopic]:
         """Create a namespace topic.
@@ -13545,9 +13664,10 @@ class NamespaceTopicsOperations:
         :type namespace_name: str
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
-        :param namespace_topic_info: Namespace topic information. Is one of the following types:
-         NamespaceTopic, JSON, IO[bytes] Required.
-        :type namespace_topic_info: ~azure.mgmt.eventgrid.models.NamespaceTopic or JSON or IO[bytes]
+        :param namespace_topic_info: Namespace topic information. Is either a NamespaceTopic type or a
+         IO[bytes] type. Required.
+        :type namespace_topic_info: ~azure.mgmt.eventgrid.models.NamespaceTopic or
+         ~azure.mgmt.eventgrid.types.NamespaceTopic or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NamespaceTopic. The NamespaceTopic is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.NamespaceTopic]
@@ -13611,7 +13731,9 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_update_parameters: Union[_models.NamespaceTopicUpdateParameters, JSON, IO[bytes]],
+        namespace_topic_update_parameters: Union[
+            _models.NamespaceTopicUpdateParameters, _types.NamespaceTopicUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -13726,7 +13848,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_update_parameters: JSON,
+        namespace_topic_update_parameters: _types.NamespaceTopicUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13743,7 +13865,8 @@ class NamespaceTopicsOperations:
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
         :param namespace_topic_update_parameters: Namespace topic update information. Required.
-        :type namespace_topic_update_parameters: JSON
+        :type namespace_topic_update_parameters:
+         ~azure.mgmt.eventgrid.types.NamespaceTopicUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13792,7 +13915,9 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        namespace_topic_update_parameters: Union[_models.NamespaceTopicUpdateParameters, JSON, IO[bytes]],
+        namespace_topic_update_parameters: Union[
+            _models.NamespaceTopicUpdateParameters, _types.NamespaceTopicUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NamespaceTopic]:
         """Update a namespace topic.
@@ -13806,10 +13931,11 @@ class NamespaceTopicsOperations:
         :type namespace_name: str
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
-        :param namespace_topic_update_parameters: Namespace topic update information. Is one of the
-         following types: NamespaceTopicUpdateParameters, JSON, IO[bytes] Required.
+        :param namespace_topic_update_parameters: Namespace topic update information. Is either a
+         NamespaceTopicUpdateParameters type or a IO[bytes] type. Required.
         :type namespace_topic_update_parameters:
-         ~azure.mgmt.eventgrid.models.NamespaceTopicUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.NamespaceTopicUpdateParameters or
+         ~azure.mgmt.eventgrid.types.NamespaceTopicUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NamespaceTopic. The NamespaceTopic is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.NamespaceTopic]
@@ -14073,7 +14199,10 @@ class NamespaceTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14197,7 +14326,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, _types.TopicRegenerateKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14308,7 +14437,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        regenerate_key_request: JSON,
+        regenerate_key_request: _types.TopicRegenerateKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14325,7 +14454,7 @@ class NamespaceTopicsOperations:
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
         :param regenerate_key_request: Request body to regenerate key. Required.
-        :type regenerate_key_request: JSON
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.types.TopicRegenerateKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14374,7 +14503,7 @@ class NamespaceTopicsOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_name: str,
-        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, _types.TopicRegenerateKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TopicSharedAccessKeys]:
         """Regenerate key for a namespace topic.
@@ -14388,10 +14517,10 @@ class NamespaceTopicsOperations:
         :type namespace_name: str
         :param topic_name: Name of the namespace topic. Required.
         :type topic_name: str
-        :param regenerate_key_request: Request body to regenerate key. Is one of the following types:
-         TopicRegenerateKeyRequest, JSON, IO[bytes] Required.
-        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.TopicRegenerateKeyRequest or JSON or
-         IO[bytes]
+        :param regenerate_key_request: Request body to regenerate key. Is either a
+         TopicRegenerateKeyRequest type or a IO[bytes] type. Required.
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.TopicRegenerateKeyRequest or
+         ~azure.mgmt.eventgrid.types.TopicRegenerateKeyRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TopicSharedAccessKeys. The
          TopicSharedAccessKeys is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]
@@ -14421,14 +14550,10 @@ class NamespaceTopicsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.TopicSharedAccessKeys, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -14455,7 +14580,7 @@ class NamespaceTopicsOperations:
         )
 
 
-class PartnerConfigurationsOperations:
+class PartnerConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14544,7 +14669,7 @@ class PartnerConfigurationsOperations:
     async def _create_or_update_initial(
         self,
         resource_group_name: str,
-        partner_configuration_info: Union[_models.PartnerConfiguration, JSON, IO[bytes]],
+        partner_configuration_info: Union[_models.PartnerConfiguration, _types.PartnerConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14645,7 +14770,7 @@ class PartnerConfigurationsOperations:
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        partner_configuration_info: JSON,
+        partner_configuration_info: _types.PartnerConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14658,7 +14783,7 @@ class PartnerConfigurationsOperations:
          Required.
         :type resource_group_name: str
         :param partner_configuration_info: Partner configuration information. Required.
-        :type partner_configuration_info: JSON
+        :type partner_configuration_info: ~azure.mgmt.eventgrid.types.PartnerConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14699,7 +14824,7 @@ class PartnerConfigurationsOperations:
     async def begin_create_or_update(
         self,
         resource_group_name: str,
-        partner_configuration_info: Union[_models.PartnerConfiguration, JSON, IO[bytes]],
+        partner_configuration_info: Union[_models.PartnerConfiguration, _types.PartnerConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerConfiguration]:
         """Create or update a partner configuration.
@@ -14709,10 +14834,10 @@ class PartnerConfigurationsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param partner_configuration_info: Partner configuration information. Is one of the following
-         types: PartnerConfiguration, JSON, IO[bytes] Required.
-        :type partner_configuration_info: ~azure.mgmt.eventgrid.models.PartnerConfiguration or JSON or
-         IO[bytes]
+        :param partner_configuration_info: Partner configuration information. Is either a
+         PartnerConfiguration type or a IO[bytes] type. Required.
+        :type partner_configuration_info: ~azure.mgmt.eventgrid.models.PartnerConfiguration or
+         ~azure.mgmt.eventgrid.types.PartnerConfiguration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerConfiguration. The
          PartnerConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerConfiguration]
@@ -14772,7 +14897,9 @@ class PartnerConfigurationsOperations:
     async def _update_initial(
         self,
         resource_group_name: str,
-        partner_configuration_update_parameters: Union[_models.PartnerConfigurationUpdateParameters, JSON, IO[bytes]],
+        partner_configuration_update_parameters: Union[
+            _models.PartnerConfigurationUpdateParameters, _types.PartnerConfigurationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14874,7 +15001,7 @@ class PartnerConfigurationsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        partner_configuration_update_parameters: JSON,
+        partner_configuration_update_parameters: _types.PartnerConfigurationUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14888,7 +15015,8 @@ class PartnerConfigurationsOperations:
         :type resource_group_name: str
         :param partner_configuration_update_parameters: Partner configuration update information.
          Required.
-        :type partner_configuration_update_parameters: JSON
+        :type partner_configuration_update_parameters:
+         ~azure.mgmt.eventgrid.types.PartnerConfigurationUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14930,7 +15058,9 @@ class PartnerConfigurationsOperations:
     async def begin_update(
         self,
         resource_group_name: str,
-        partner_configuration_update_parameters: Union[_models.PartnerConfigurationUpdateParameters, JSON, IO[bytes]],
+        partner_configuration_update_parameters: Union[
+            _models.PartnerConfigurationUpdateParameters, _types.PartnerConfigurationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerConfiguration]:
         """Update a partner configuration.
@@ -14941,9 +15071,10 @@ class PartnerConfigurationsOperations:
          Required.
         :type resource_group_name: str
         :param partner_configuration_update_parameters: Partner configuration update information. Is
-         one of the following types: PartnerConfigurationUpdateParameters, JSON, IO[bytes] Required.
+         either a PartnerConfigurationUpdateParameters type or a IO[bytes] type. Required.
         :type partner_configuration_update_parameters:
-         ~azure.mgmt.eventgrid.models.PartnerConfigurationUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.PartnerConfigurationUpdateParameters or
+         ~azure.mgmt.eventgrid.types.PartnerConfigurationUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerConfiguration. The
          PartnerConfiguration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerConfiguration]
@@ -15171,7 +15302,10 @@ class PartnerConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15280,7 +15414,10 @@ class PartnerConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15350,7 +15487,12 @@ class PartnerConfigurationsOperations:
 
     @overload
     async def authorize_partner(
-        self, resource_group_name: str, partner_info: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        partner_info: _types.Partner,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PartnerConfiguration:
         """Authorize a partner.
 
@@ -15360,7 +15502,7 @@ class PartnerConfigurationsOperations:
          Required.
         :type resource_group_name: str
         :param partner_info: The information of the partner to be authorized. Required.
-        :type partner_info: JSON
+        :type partner_info: ~azure.mgmt.eventgrid.types.Partner
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15397,7 +15539,7 @@ class PartnerConfigurationsOperations:
 
     @distributed_trace_async
     async def authorize_partner(
-        self, resource_group_name: str, partner_info: Union[_models.Partner, JSON, IO[bytes]], **kwargs: Any
+        self, resource_group_name: str, partner_info: Union[_models.Partner, _types.Partner, IO[bytes]], **kwargs: Any
     ) -> _models.PartnerConfiguration:
         """Authorize a partner.
 
@@ -15406,9 +15548,10 @@ class PartnerConfigurationsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param partner_info: The information of the partner to be authorized. Is one of the following
-         types: Partner, JSON, IO[bytes] Required.
-        :type partner_info: ~azure.mgmt.eventgrid.models.Partner or JSON or IO[bytes]
+        :param partner_info: The information of the partner to be authorized. Is either a Partner type
+         or a IO[bytes] type. Required.
+        :type partner_info: ~azure.mgmt.eventgrid.models.Partner or ~azure.mgmt.eventgrid.types.Partner
+         or IO[bytes]
         :return: PartnerConfiguration. The PartnerConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.PartnerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15507,7 +15650,12 @@ class PartnerConfigurationsOperations:
 
     @overload
     async def unauthorize_partner(
-        self, resource_group_name: str, partner_info: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_group_name: str,
+        partner_info: _types.Partner,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.PartnerConfiguration:
         """Unauthorize a partner.
 
@@ -15517,7 +15665,7 @@ class PartnerConfigurationsOperations:
          Required.
         :type resource_group_name: str
         :param partner_info: The information of the partner to be unauthorized. Required.
-        :type partner_info: JSON
+        :type partner_info: ~azure.mgmt.eventgrid.types.Partner
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15554,7 +15702,7 @@ class PartnerConfigurationsOperations:
 
     @distributed_trace_async
     async def unauthorize_partner(
-        self, resource_group_name: str, partner_info: Union[_models.Partner, JSON, IO[bytes]], **kwargs: Any
+        self, resource_group_name: str, partner_info: Union[_models.Partner, _types.Partner, IO[bytes]], **kwargs: Any
     ) -> _models.PartnerConfiguration:
         """Unauthorize a partner.
 
@@ -15563,9 +15711,10 @@ class PartnerConfigurationsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param partner_info: The information of the partner to be unauthorized. Is one of the following
-         types: Partner, JSON, IO[bytes] Required.
-        :type partner_info: ~azure.mgmt.eventgrid.models.Partner or JSON or IO[bytes]
+        :param partner_info: The information of the partner to be unauthorized. Is either a Partner
+         type or a IO[bytes] type. Required.
+        :type partner_info: ~azure.mgmt.eventgrid.models.Partner or ~azure.mgmt.eventgrid.types.Partner
+         or IO[bytes]
         :return: PartnerConfiguration. The PartnerConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.PartnerConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15637,7 +15786,7 @@ class PartnerConfigurationsOperations:
         return deserialized  # type: ignore
 
 
-class PartnerDestinationsOperations:
+class PartnerDestinationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15732,7 +15881,7 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination: Union[_models.PartnerDestination, JSON, IO[bytes]],
+        partner_destination: Union[_models.PartnerDestination, _types.PartnerDestination, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -15840,7 +15989,7 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination: JSON,
+        partner_destination: _types.PartnerDestination,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15855,7 +16004,7 @@ class PartnerDestinationsOperations:
         :param partner_destination_name: Name of the partner destination. Required.
         :type partner_destination_name: str
         :param partner_destination: Partner destination create information. Required.
-        :type partner_destination: JSON
+        :type partner_destination: ~azure.mgmt.eventgrid.types.PartnerDestination
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15900,7 +16049,7 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination: Union[_models.PartnerDestination, JSON, IO[bytes]],
+        partner_destination: Union[_models.PartnerDestination, _types.PartnerDestination, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerDestination]:
         """Create a partner destination.
@@ -15912,9 +16061,10 @@ class PartnerDestinationsOperations:
         :type resource_group_name: str
         :param partner_destination_name: Name of the partner destination. Required.
         :type partner_destination_name: str
-        :param partner_destination: Partner destination create information. Is one of the following
-         types: PartnerDestination, JSON, IO[bytes] Required.
-        :type partner_destination: ~azure.mgmt.eventgrid.models.PartnerDestination or JSON or IO[bytes]
+        :param partner_destination: Partner destination create information. Is either a
+         PartnerDestination type or a IO[bytes] type. Required.
+        :type partner_destination: ~azure.mgmt.eventgrid.models.PartnerDestination or
+         ~azure.mgmt.eventgrid.types.PartnerDestination or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerDestination. The PartnerDestination
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerDestination]
@@ -15976,7 +16126,9 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination_update_parameters: Union[_models.PartnerDestinationUpdateParameters, JSON, IO[bytes]],
+        partner_destination_update_parameters: Union[
+            _models.PartnerDestinationUpdateParameters, _types.PartnerDestinationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16089,7 +16241,7 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination_update_parameters: JSON,
+        partner_destination_update_parameters: _types.PartnerDestinationUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16104,7 +16256,8 @@ class PartnerDestinationsOperations:
         :param partner_destination_name: Name of the partner destination. Required.
         :type partner_destination_name: str
         :param partner_destination_update_parameters: Partner destination update information. Required.
-        :type partner_destination_update_parameters: JSON
+        :type partner_destination_update_parameters:
+         ~azure.mgmt.eventgrid.types.PartnerDestinationUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16149,7 +16302,9 @@ class PartnerDestinationsOperations:
         self,
         resource_group_name: str,
         partner_destination_name: str,
-        partner_destination_update_parameters: Union[_models.PartnerDestinationUpdateParameters, JSON, IO[bytes]],
+        partner_destination_update_parameters: Union[
+            _models.PartnerDestinationUpdateParameters, _types.PartnerDestinationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerDestination]:
         """Update a partner destination.
@@ -16161,10 +16316,11 @@ class PartnerDestinationsOperations:
         :type resource_group_name: str
         :param partner_destination_name: Name of the partner destination. Required.
         :type partner_destination_name: str
-        :param partner_destination_update_parameters: Partner destination update information. Is one of
-         the following types: PartnerDestinationUpdateParameters, JSON, IO[bytes] Required.
+        :param partner_destination_update_parameters: Partner destination update information. Is either
+         a PartnerDestinationUpdateParameters type or a IO[bytes] type. Required.
         :type partner_destination_update_parameters:
-         ~azure.mgmt.eventgrid.models.PartnerDestinationUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.PartnerDestinationUpdateParameters or
+         ~azure.mgmt.eventgrid.types.PartnerDestinationUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerDestination. The PartnerDestination
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerDestination]
@@ -16415,7 +16571,10 @@ class PartnerDestinationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16524,7 +16683,10 @@ class PartnerDestinationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16641,7 +16803,7 @@ class PartnerDestinationsOperations:
         return deserialized  # type: ignore
 
 
-class PartnerRegistrationsOperations:
+class PartnerRegistrationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16736,7 +16898,7 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_info: Union[_models.PartnerRegistration, JSON, IO[bytes]],
+        partner_registration_info: Union[_models.PartnerRegistration, _types.PartnerRegistration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -16842,7 +17004,7 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_info: JSON,
+        partner_registration_info: _types.PartnerRegistration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16857,7 +17019,7 @@ class PartnerRegistrationsOperations:
         :param partner_registration_name: Name of the partner registration. Required.
         :type partner_registration_name: str
         :param partner_registration_info: PartnerRegistration information. Required.
-        :type partner_registration_info: JSON
+        :type partner_registration_info: ~azure.mgmt.eventgrid.types.PartnerRegistration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16902,7 +17064,7 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_info: Union[_models.PartnerRegistration, JSON, IO[bytes]],
+        partner_registration_info: Union[_models.PartnerRegistration, _types.PartnerRegistration, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerRegistration]:
         """Create a partner registration.
@@ -16914,10 +17076,10 @@ class PartnerRegistrationsOperations:
         :type resource_group_name: str
         :param partner_registration_name: Name of the partner registration. Required.
         :type partner_registration_name: str
-        :param partner_registration_info: PartnerRegistration information. Is one of the following
-         types: PartnerRegistration, JSON, IO[bytes] Required.
-        :type partner_registration_info: ~azure.mgmt.eventgrid.models.PartnerRegistration or JSON or
-         IO[bytes]
+        :param partner_registration_info: PartnerRegistration information. Is either a
+         PartnerRegistration type or a IO[bytes] type. Required.
+        :type partner_registration_info: ~azure.mgmt.eventgrid.models.PartnerRegistration or
+         ~azure.mgmt.eventgrid.types.PartnerRegistration or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerRegistration. The
          PartnerRegistration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerRegistration]
@@ -16979,7 +17141,9 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_update_parameters: Union[_models.PartnerRegistrationUpdateParameters, JSON, IO[bytes]],
+        partner_registration_update_parameters: Union[
+            _models.PartnerRegistrationUpdateParameters, _types.PartnerRegistrationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -17087,7 +17251,7 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_update_parameters: JSON,
+        partner_registration_update_parameters: _types.PartnerRegistrationUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17103,7 +17267,8 @@ class PartnerRegistrationsOperations:
         :type partner_registration_name: str
         :param partner_registration_update_parameters: Partner registration update information.
          Required.
-        :type partner_registration_update_parameters: JSON
+        :type partner_registration_update_parameters:
+         ~azure.mgmt.eventgrid.types.PartnerRegistrationUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17149,7 +17314,9 @@ class PartnerRegistrationsOperations:
         self,
         resource_group_name: str,
         partner_registration_name: str,
-        partner_registration_update_parameters: Union[_models.PartnerRegistrationUpdateParameters, JSON, IO[bytes]],
+        partner_registration_update_parameters: Union[
+            _models.PartnerRegistrationUpdateParameters, _types.PartnerRegistrationUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PartnerRegistration]:
         """Update a partner registration.
@@ -17161,10 +17328,11 @@ class PartnerRegistrationsOperations:
         :type resource_group_name: str
         :param partner_registration_name: Name of the partner registration. Required.
         :type partner_registration_name: str
-        :param partner_registration_update_parameters: Partner registration update information. Is one
-         of the following types: PartnerRegistrationUpdateParameters, JSON, IO[bytes] Required.
+        :param partner_registration_update_parameters: Partner registration update information. Is
+         either a PartnerRegistrationUpdateParameters type or a IO[bytes] type. Required.
         :type partner_registration_update_parameters:
-         ~azure.mgmt.eventgrid.models.PartnerRegistrationUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.PartnerRegistrationUpdateParameters or
+         ~azure.mgmt.eventgrid.types.PartnerRegistrationUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PartnerRegistration. The
          PartnerRegistration is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PartnerRegistration]
@@ -17415,7 +17583,10 @@ class PartnerRegistrationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17524,7 +17695,10 @@ class PartnerRegistrationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17567,7 +17741,7 @@ class PartnerRegistrationsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PartnerTopicsOperations:
+class PartnerTopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17690,7 +17864,7 @@ class PartnerTopicsOperations:
         self,
         resource_group_name: str,
         partner_topic_name: str,
-        partner_topic_info: JSON,
+        partner_topic_info: _types.PartnerTopic,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17705,7 +17879,7 @@ class PartnerTopicsOperations:
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
         :param partner_topic_info: Partner Topic information. Required.
-        :type partner_topic_info: JSON
+        :type partner_topic_info: ~azure.mgmt.eventgrid.types.PartnerTopic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17748,7 +17922,7 @@ class PartnerTopicsOperations:
         self,
         resource_group_name: str,
         partner_topic_name: str,
-        partner_topic_info: Union[_models.PartnerTopic, JSON, IO[bytes]],
+        partner_topic_info: Union[_models.PartnerTopic, _types.PartnerTopic, IO[bytes]],
         **kwargs: Any
     ) -> _models.PartnerTopic:
         """Create a partner topic.
@@ -17760,9 +17934,10 @@ class PartnerTopicsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param partner_topic_info: Partner Topic information. Is one of the following types:
-         PartnerTopic, JSON, IO[bytes] Required.
-        :type partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopic or JSON or IO[bytes]
+        :param partner_topic_info: Partner Topic information. Is either a PartnerTopic type or a
+         IO[bytes] type. Required.
+        :type partner_topic_info: ~azure.mgmt.eventgrid.models.PartnerTopic or
+         ~azure.mgmt.eventgrid.types.PartnerTopic or IO[bytes]
         :return: PartnerTopic. The PartnerTopic is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.PartnerTopic
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17869,7 +18044,7 @@ class PartnerTopicsOperations:
         self,
         resource_group_name: str,
         partner_topic_name: str,
-        partner_topic_update_parameters: JSON,
+        partner_topic_update_parameters: _types.PartnerTopicUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17884,7 +18059,7 @@ class PartnerTopicsOperations:
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
         :param partner_topic_update_parameters: PartnerTopic update information. Required.
-        :type partner_topic_update_parameters: JSON
+        :type partner_topic_update_parameters: ~azure.mgmt.eventgrid.types.PartnerTopicUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17927,7 +18102,9 @@ class PartnerTopicsOperations:
         self,
         resource_group_name: str,
         partner_topic_name: str,
-        partner_topic_update_parameters: Union[_models.PartnerTopicUpdateParameters, JSON, IO[bytes]],
+        partner_topic_update_parameters: Union[
+            _models.PartnerTopicUpdateParameters, _types.PartnerTopicUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Optional[_models.PartnerTopic]:
         """Update a partner topic.
@@ -17939,10 +18116,11 @@ class PartnerTopicsOperations:
         :type resource_group_name: str
         :param partner_topic_name: Name of the partner topic. Required.
         :type partner_topic_name: str
-        :param partner_topic_update_parameters: PartnerTopic update information. Is one of the
-         following types: PartnerTopicUpdateParameters, JSON, IO[bytes] Required.
+        :param partner_topic_update_parameters: PartnerTopic update information. Is either a
+         PartnerTopicUpdateParameters type or a IO[bytes] type. Required.
         :type partner_topic_update_parameters:
-         ~azure.mgmt.eventgrid.models.PartnerTopicUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.PartnerTopicUpdateParameters or
+         ~azure.mgmt.eventgrid.types.PartnerTopicUpdateParameters or IO[bytes]
         :return: PartnerTopic or None. The PartnerTopic is compatible with MutableMapping
         :rtype: ~azure.mgmt.eventgrid.models.PartnerTopic or None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18208,7 +18386,10 @@ class PartnerTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18316,7 +18497,10 @@ class PartnerTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18505,7 +18689,7 @@ class PartnerTopicsOperations:
         return deserialized  # type: ignore
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18682,7 +18866,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18852,14 +19039,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkSecurityPerimeterConfiguration, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -18886,7 +19069,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         )
 
 
-class PermissionBindingsOperations:
+class PermissionBindingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18985,7 +19168,7 @@ class PermissionBindingsOperations:
         resource_group_name: str,
         namespace_name: str,
         permission_binding_name: str,
-        permission_binding_info: Union[_models.PermissionBinding, JSON, IO[bytes]],
+        permission_binding_info: Union[_models.PermissionBinding, _types.PermissionBinding, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19098,7 +19281,7 @@ class PermissionBindingsOperations:
         resource_group_name: str,
         namespace_name: str,
         permission_binding_name: str,
-        permission_binding_info: JSON,
+        permission_binding_info: _types.PermissionBinding,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19115,7 +19298,7 @@ class PermissionBindingsOperations:
         :param permission_binding_name: Name of the permission binding. Required.
         :type permission_binding_name: str
         :param permission_binding_info: Permission binding information. Required.
-        :type permission_binding_info: JSON
+        :type permission_binding_info: ~azure.mgmt.eventgrid.types.PermissionBinding
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19164,7 +19347,7 @@ class PermissionBindingsOperations:
         resource_group_name: str,
         namespace_name: str,
         permission_binding_name: str,
-        permission_binding_info: Union[_models.PermissionBinding, JSON, IO[bytes]],
+        permission_binding_info: Union[_models.PermissionBinding, _types.PermissionBinding, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PermissionBinding]:
         """Create or update a permission binding.
@@ -19178,10 +19361,10 @@ class PermissionBindingsOperations:
         :type namespace_name: str
         :param permission_binding_name: Name of the permission binding. Required.
         :type permission_binding_name: str
-        :param permission_binding_info: Permission binding information. Is one of the following types:
-         PermissionBinding, JSON, IO[bytes] Required.
-        :type permission_binding_info: ~azure.mgmt.eventgrid.models.PermissionBinding or JSON or
-         IO[bytes]
+        :param permission_binding_info: Permission binding information. Is either a PermissionBinding
+         type or a IO[bytes] type. Required.
+        :type permission_binding_info: ~azure.mgmt.eventgrid.models.PermissionBinding or
+         ~azure.mgmt.eventgrid.types.PermissionBinding or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PermissionBinding. The PermissionBinding is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.PermissionBinding]
@@ -19445,7 +19628,10 @@ class PermissionBindingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19488,7 +19674,7 @@ class PermissionBindingsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19602,7 +19788,9 @@ class PrivateEndpointConnectionsOperations:
         parent_type: Union[str, _models.PrivateEndpointConnectionsParentType],
         parent_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -19723,7 +19911,7 @@ class PrivateEndpointConnectionsOperations:
         parent_type: Union[str, _models.PrivateEndpointConnectionsParentType],
         parent_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19746,7 +19934,7 @@ class PrivateEndpointConnectionsOperations:
          \\'topics\\', \\'domains\\', or \\'partnerNamespaces\\' or \\'namespaces\\'. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection object to update. Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection: ~azure.mgmt.eventgrid.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19805,7 +19993,9 @@ class PrivateEndpointConnectionsOperations:
         parent_type: Union[str, _models.PrivateEndpointConnectionsParentType],
         parent_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateEndpointConnection]:
         """Update a specific private endpoint connection.
@@ -19825,10 +20015,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The type of the parent resource. This can be either
          \\'topics\\', \\'domains\\', or \\'partnerNamespaces\\' or \\'namespaces\\'. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection object to update. Is one of
-         the following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+        :param private_endpoint_connection: The private endpoint connection object to update. Is either
+         a PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection: ~azure.mgmt.eventgrid.models.PrivateEndpointConnection or
-         JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -20121,7 +20311,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20164,7 +20357,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20355,7 +20548,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20398,7 +20594,7 @@ class PrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SystemTopicsOperations:
+class SystemTopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20491,7 +20687,7 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_info: Union[_models.SystemTopic, JSON, IO[bytes]],
+        system_topic_info: Union[_models.SystemTopic, _types.SystemTopic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20597,7 +20793,7 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_info: JSON,
+        system_topic_info: _types.SystemTopic,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20612,7 +20808,7 @@ class SystemTopicsOperations:
         :param system_topic_name: Name of the system topic. Required.
         :type system_topic_name: str
         :param system_topic_info: System Topic information. Required.
-        :type system_topic_info: JSON
+        :type system_topic_info: ~azure.mgmt.eventgrid.types.SystemTopic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20657,7 +20853,7 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_info: Union[_models.SystemTopic, JSON, IO[bytes]],
+        system_topic_info: Union[_models.SystemTopic, _types.SystemTopic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SystemTopic]:
         """Create a system topic.
@@ -20669,9 +20865,10 @@ class SystemTopicsOperations:
         :type resource_group_name: str
         :param system_topic_name: Name of the system topic. Required.
         :type system_topic_name: str
-        :param system_topic_info: System Topic information. Is one of the following types: SystemTopic,
-         JSON, IO[bytes] Required.
-        :type system_topic_info: ~azure.mgmt.eventgrid.models.SystemTopic or JSON or IO[bytes]
+        :param system_topic_info: System Topic information. Is either a SystemTopic type or a IO[bytes]
+         type. Required.
+        :type system_topic_info: ~azure.mgmt.eventgrid.models.SystemTopic or
+         ~azure.mgmt.eventgrid.types.SystemTopic or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SystemTopic. The SystemTopic is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
@@ -20733,7 +20930,9 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_update_parameters: Union[_models.SystemTopicUpdateParameters, JSON, IO[bytes]],
+        system_topic_update_parameters: Union[
+            _models.SystemTopicUpdateParameters, _types.SystemTopicUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -20839,7 +21038,7 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_update_parameters: JSON,
+        system_topic_update_parameters: _types.SystemTopicUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20854,7 +21053,7 @@ class SystemTopicsOperations:
         :param system_topic_name: Name of the system topic. Required.
         :type system_topic_name: str
         :param system_topic_update_parameters: SystemTopic update information. Required.
-        :type system_topic_update_parameters: JSON
+        :type system_topic_update_parameters: ~azure.mgmt.eventgrid.types.SystemTopicUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20899,7 +21098,9 @@ class SystemTopicsOperations:
         self,
         resource_group_name: str,
         system_topic_name: str,
-        system_topic_update_parameters: Union[_models.SystemTopicUpdateParameters, JSON, IO[bytes]],
+        system_topic_update_parameters: Union[
+            _models.SystemTopicUpdateParameters, _types.SystemTopicUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.SystemTopic]:
         """Update a system topic.
@@ -20911,10 +21112,10 @@ class SystemTopicsOperations:
         :type resource_group_name: str
         :param system_topic_name: Name of the system topic. Required.
         :type system_topic_name: str
-        :param system_topic_update_parameters: SystemTopic update information. Is one of the following
-         types: SystemTopicUpdateParameters, JSON, IO[bytes] Required.
+        :param system_topic_update_parameters: SystemTopic update information. Is either a
+         SystemTopicUpdateParameters type or a IO[bytes] type. Required.
         :type system_topic_update_parameters: ~azure.mgmt.eventgrid.models.SystemTopicUpdateParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.eventgrid.types.SystemTopicUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns SystemTopic. The SystemTopic is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.SystemTopic]
@@ -21164,7 +21365,10 @@ class SystemTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -21272,7 +21476,10 @@ class SystemTopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -21315,7 +21522,7 @@ class SystemTopicsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TopicsOperations:
+class TopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21408,7 +21615,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_info: Union[_models.Topic, JSON, IO[bytes]],
+        topic_info: Union[_models.Topic, _types.Topic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21513,7 +21720,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_info: JSON,
+        topic_info: _types.Topic,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21528,7 +21735,7 @@ class TopicsOperations:
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
         :param topic_info: Topic information. Required.
-        :type topic_info: JSON
+        :type topic_info: ~azure.mgmt.eventgrid.types.Topic
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21573,7 +21780,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_info: Union[_models.Topic, JSON, IO[bytes]],
+        topic_info: Union[_models.Topic, _types.Topic, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Topic]:
         """Create a topic.
@@ -21585,9 +21792,9 @@ class TopicsOperations:
         :type resource_group_name: str
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
-        :param topic_info: Topic information. Is one of the following types: Topic, JSON, IO[bytes]
-         Required.
-        :type topic_info: ~azure.mgmt.eventgrid.models.Topic or JSON or IO[bytes]
+        :param topic_info: Topic information. Is either a Topic type or a IO[bytes] type. Required.
+        :type topic_info: ~azure.mgmt.eventgrid.models.Topic or ~azure.mgmt.eventgrid.types.Topic or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Topic. The Topic is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Topic]
@@ -21653,7 +21860,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_update_parameters: Union[_models.TopicUpdateParameters, JSON, IO[bytes]],
+        topic_update_parameters: Union[_models.TopicUpdateParameters, _types.TopicUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -21759,7 +21966,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_update_parameters: JSON,
+        topic_update_parameters: _types.TopicUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21774,7 +21981,7 @@ class TopicsOperations:
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
         :param topic_update_parameters: Topic update information. Required.
-        :type topic_update_parameters: JSON
+        :type topic_update_parameters: ~azure.mgmt.eventgrid.types.TopicUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21819,7 +22026,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        topic_update_parameters: Union[_models.TopicUpdateParameters, JSON, IO[bytes]],
+        topic_update_parameters: Union[_models.TopicUpdateParameters, _types.TopicUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Topic]:
         """Update a topic.
@@ -21831,10 +22038,10 @@ class TopicsOperations:
         :type resource_group_name: str
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
-        :param topic_update_parameters: Topic update information. Is one of the following types:
-         TopicUpdateParameters, JSON, IO[bytes] Required.
-        :type topic_update_parameters: ~azure.mgmt.eventgrid.models.TopicUpdateParameters or JSON or
-         IO[bytes]
+        :param topic_update_parameters: Topic update information. Is either a TopicUpdateParameters
+         type or a IO[bytes] type. Required.
+        :type topic_update_parameters: ~azure.mgmt.eventgrid.models.TopicUpdateParameters or
+         ~azure.mgmt.eventgrid.types.TopicUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Topic. The Topic is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Topic]
@@ -22080,7 +22287,10 @@ class TopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22188,7 +22398,10 @@ class TopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22308,7 +22521,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, _types.TopicRegenerateKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22414,7 +22627,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        regenerate_key_request: JSON,
+        regenerate_key_request: _types.TopicRegenerateKeyRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22429,7 +22642,7 @@ class TopicsOperations:
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
         :param regenerate_key_request: Request body to regenerate key. Required.
-        :type regenerate_key_request: JSON
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.types.TopicRegenerateKeyRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22474,7 +22687,7 @@ class TopicsOperations:
         self,
         resource_group_name: str,
         topic_name: str,
-        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, JSON, IO[bytes]],
+        regenerate_key_request: Union[_models.TopicRegenerateKeyRequest, _types.TopicRegenerateKeyRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TopicSharedAccessKeys]:
         """Regenerate key for a topic.
@@ -22486,10 +22699,10 @@ class TopicsOperations:
         :type resource_group_name: str
         :param topic_name: Name of the topic. Required.
         :type topic_name: str
-        :param regenerate_key_request: Request body to regenerate key. Is one of the following types:
-         TopicRegenerateKeyRequest, JSON, IO[bytes] Required.
-        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.TopicRegenerateKeyRequest or JSON or
-         IO[bytes]
+        :param regenerate_key_request: Request body to regenerate key. Is either a
+         TopicRegenerateKeyRequest type or a IO[bytes] type. Required.
+        :type regenerate_key_request: ~azure.mgmt.eventgrid.models.TopicRegenerateKeyRequest or
+         ~azure.mgmt.eventgrid.types.TopicRegenerateKeyRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TopicSharedAccessKeys. The
          TopicSharedAccessKeys is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.TopicSharedAccessKeys]
@@ -22518,14 +22731,10 @@ class TopicsOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.TopicSharedAccessKeys, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -22621,7 +22830,10 @@ class TopicsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22664,7 +22876,7 @@ class TopicsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtensionTopicsOperations:
+class ExtensionTopicsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22749,7 +22961,7 @@ class ExtensionTopicsOperations:
         return deserialized  # type: ignore
 
 
-class TopicSpacesOperations:
+class TopicSpacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22848,7 +23060,7 @@ class TopicSpacesOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_space_name: str,
-        topic_space_info: Union[_models.TopicSpace, JSON, IO[bytes]],
+        topic_space_info: Union[_models.TopicSpace, _types.TopicSpace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -22961,7 +23173,7 @@ class TopicSpacesOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_space_name: str,
-        topic_space_info: JSON,
+        topic_space_info: _types.TopicSpace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22978,7 +23190,7 @@ class TopicSpacesOperations:
         :param topic_space_name: Name of the Topic space. Required.
         :type topic_space_name: str
         :param topic_space_info: Topic space information. Required.
-        :type topic_space_info: JSON
+        :type topic_space_info: ~azure.mgmt.eventgrid.types.TopicSpace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23027,7 +23239,7 @@ class TopicSpacesOperations:
         resource_group_name: str,
         namespace_name: str,
         topic_space_name: str,
-        topic_space_info: Union[_models.TopicSpace, JSON, IO[bytes]],
+        topic_space_info: Union[_models.TopicSpace, _types.TopicSpace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.TopicSpace]:
         """Create or update a topic space.
@@ -23041,9 +23253,10 @@ class TopicSpacesOperations:
         :type namespace_name: str
         :param topic_space_name: Name of the Topic space. Required.
         :type topic_space_name: str
-        :param topic_space_info: Topic space information. Is one of the following types: TopicSpace,
-         JSON, IO[bytes] Required.
-        :type topic_space_info: ~azure.mgmt.eventgrid.models.TopicSpace or JSON or IO[bytes]
+        :param topic_space_info: Topic space information. Is either a TopicSpace type or a IO[bytes]
+         type. Required.
+        :type topic_space_info: ~azure.mgmt.eventgrid.models.TopicSpace or
+         ~azure.mgmt.eventgrid.types.TopicSpace or IO[bytes]
         :return: An instance of AsyncLROPoller that returns TopicSpace. The TopicSpace is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.TopicSpace]
@@ -23307,7 +23520,10 @@ class TopicSpacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23350,7 +23566,7 @@ class TopicSpacesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VerifiedPartnersOperations:
+class VerifiedPartnersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23499,7 +23715,10 @@ class VerifiedPartnersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -23542,7 +23761,7 @@ class VerifiedPartnersOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DomainTopicEventSubscriptionsOperations:
+class DomainTopicEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23645,7 +23864,7 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -23762,7 +23981,7 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.EventSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23782,7 +24001,7 @@ class DomainTopicEventSubscriptionsOperations:
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
          filter information. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.EventSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23836,7 +24055,7 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.EventSubscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.EventSubscription, _types.EventSubscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Create or update a nested event subscription to a domain topic.
@@ -23853,9 +24072,9 @@ class DomainTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the destination and
-         filter information. Is one of the following types: EventSubscription, JSON, IO[bytes] Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or JSON or
-         IO[bytes]
+         filter information. Is either a EventSubscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.EventSubscription or
+         ~azure.mgmt.eventgrid.types.EventSubscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -23921,7 +24140,9 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24037,7 +24258,7 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.EventSubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24056,7 +24277,8 @@ class DomainTopicEventSubscriptionsOperations:
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24109,7 +24331,9 @@ class DomainTopicEventSubscriptionsOperations:
         domain_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.EventSubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.EventSubscriptionUpdateParameters, _types.EventSubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.EventSubscription]:
         """Update a nested event subscription for a domain topic.
@@ -24125,10 +24349,11 @@ class DomainTopicEventSubscriptionsOperations:
         :type topic_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: EventSubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a EventSubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.EventSubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.EventSubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns EventSubscription. The EventSubscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.EventSubscription]
@@ -24405,7 +24630,10 @@ class DomainTopicEventSubscriptionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24610,7 +24838,7 @@ class DomainTopicEventSubscriptionsOperations:
         return deserialized  # type: ignore
 
 
-class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-long
+class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24718,7 +24946,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.Subscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.Subscription, _types.Subscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -24838,7 +25066,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: JSON,
+        event_subscription_info: _types.Subscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -24859,7 +25087,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the delivery mode,
          filter information, and others. Required.
-        :type event_subscription_info: JSON
+        :type event_subscription_info: ~azure.mgmt.eventgrid.types.Subscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24914,7 +25142,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_info: Union[_models.Subscription, JSON, IO[bytes]],
+        event_subscription_info: Union[_models.Subscription, _types.Subscription, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Subscription]:
         """Create or update an event subscription of a namespace topic.
@@ -24932,9 +25160,9 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_info: Event subscription properties containing the delivery mode,
-         filter information, and others. Is one of the following types: Subscription, JSON, IO[bytes]
-         Required.
-        :type event_subscription_info: ~azure.mgmt.eventgrid.models.Subscription or JSON or IO[bytes]
+         filter information, and others. Is either a Subscription type or a IO[bytes] type. Required.
+        :type event_subscription_info: ~azure.mgmt.eventgrid.models.Subscription or
+         ~azure.mgmt.eventgrid.types.Subscription or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Subscription. The Subscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Subscription]
@@ -25000,7 +25228,9 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.SubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.SubscriptionUpdateParameters, _types.SubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -25120,7 +25350,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: JSON,
+        event_subscription_update_parameters: _types.SubscriptionUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25139,7 +25369,8 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
         :param event_subscription_update_parameters: Updated event subscription information. Required.
-        :type event_subscription_update_parameters: JSON
+        :type event_subscription_update_parameters:
+         ~azure.mgmt.eventgrid.types.SubscriptionUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25192,7 +25423,9 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         namespace_name: str,
         topic_name: str,
         event_subscription_name: str,
-        event_subscription_update_parameters: Union[_models.SubscriptionUpdateParameters, JSON, IO[bytes]],
+        event_subscription_update_parameters: Union[
+            _models.SubscriptionUpdateParameters, _types.SubscriptionUpdateParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Subscription]:
         """Update event subscription of a namespace topic.
@@ -25208,10 +25441,11 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         :type topic_name: str
         :param event_subscription_name: Name of the event subscription to be found. Required.
         :type event_subscription_name: str
-        :param event_subscription_update_parameters: Updated event subscription information. Is one of
-         the following types: SubscriptionUpdateParameters, JSON, IO[bytes] Required.
+        :param event_subscription_update_parameters: Updated event subscription information. Is either
+         a SubscriptionUpdateParameters type or a IO[bytes] type. Required.
         :type event_subscription_update_parameters:
-         ~azure.mgmt.eventgrid.models.SubscriptionUpdateParameters or JSON or IO[bytes]
+         ~azure.mgmt.eventgrid.models.SubscriptionUpdateParameters or
+         ~azure.mgmt.eventgrid.types.SubscriptionUpdateParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Subscription. The Subscription is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.eventgrid.models.Subscription]
@@ -25494,7 +25728,10 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25708,7 +25945,7 @@ class NamespaceTopicEventSubscriptionsOperations:  # pylint: disable=name-too-lo
         return deserialized  # type: ignore
 
 
-class TopicTypesOperations:
+class TopicTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25841,7 +26078,10 @@ class TopicTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -25935,7 +26175,10 @@ class TopicTypesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

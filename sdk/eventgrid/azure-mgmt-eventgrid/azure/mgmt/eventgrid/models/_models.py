@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdvancedFilter(_Model):
+class AdvancedFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the base type that represents an advanced filter. To configure an advanced filter, do
     not directly instantiate an object of this class. Instead, instantiate an object of a derived
     class such as BoolEqualsAdvancedFilter, NumberInAdvancedFilter, StringEqualsAdvancedFilter etc.
@@ -86,7 +86,57 @@ class AdvancedFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerClientAuthentication(_Model):
+class AutoScaleConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Auto-scale configuration for the namespace resource.
+
+    :ivar enable_auto_scale: Indicates whether auto-scaling is enabled for the namespace. When
+     enabled, the namespace will automatically scale between minimumThroughputUnits and
+     maximumThroughputUnits based on usage patterns.
+    :vartype enable_auto_scale: bool
+    :ivar minimum_throughput_units: Minimum number of Throughput Units for auto-scaling. Valid only
+     when EnableAutoScale is true.
+    :vartype minimum_throughput_units: int
+    :ivar maximum_throughput_units: Maximum number of Throughput Units for auto-scaling. Valid only
+     when EnableAutoScale is true.
+    :vartype maximum_throughput_units: int
+    """
+
+    enable_auto_scale: Optional[bool] = rest_field(
+        name="enableAutoScale", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether auto-scaling is enabled for the namespace. When enabled, the namespace will
+     automatically scale between minimumThroughputUnits and maximumThroughputUnits based on usage
+     patterns."""
+    minimum_throughput_units: Optional[int] = rest_field(
+        name="minimumThroughputUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of Throughput Units for auto-scaling. Valid only when EnableAutoScale is true."""
+    maximum_throughput_units: Optional[int] = rest_field(
+        name="maximumThroughputUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of Throughput Units for auto-scaling. Valid only when EnableAutoScale is true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_auto_scale: Optional[bool] = None,
+        minimum_throughput_units: Optional[int] = None,
+        maximum_throughput_units: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PartnerClientAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner client authentication.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -121,7 +171,9 @@ class PartnerClientAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureADPartnerClientAuthentication(PartnerClientAuthentication, discriminator="AzureAD"):
+class AzureADPartnerClientAuthentication(
+    PartnerClientAuthentication, discriminator="AzureAD"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Entra ID Partner Client Authentication.
 
     :ivar properties: Microsoft Entra ID ClientAuthentication Properties.
@@ -175,7 +227,9 @@ class AzureADPartnerClientAuthentication(PartnerClientAuthentication, discrimina
             super().__setattr__(key, value)
 
 
-class AzureADPartnerClientAuthenticationProperties(_Model):  # pylint: disable=name-too-long
+class AzureADPartnerClientAuthenticationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a Microsoft Entra ID Partner Client Authentication.
 
     :ivar azure_active_directory_tenant_id: The Microsoft Entra ID Tenant ID to get the access
@@ -216,7 +270,7 @@ class AzureADPartnerClientAuthenticationProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class EventSubscriptionDestination(_Model):
+class EventSubscriptionDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the destination for an event subscription.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -261,7 +315,7 @@ class EventSubscriptionDestination(_Model):
 
 class AzureFunctionEventSubscriptionDestination(
     EventSubscriptionDestination, discriminator="AzureFunction"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the azure function destination for an event subscription.
 
     :ivar properties: Azure Function Properties of the event subscription destination.
@@ -322,7 +376,9 @@ class AzureFunctionEventSubscriptionDestination(
             super().__setattr__(key, value)
 
 
-class AzureFunctionEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class AzureFunctionEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties that represent the Azure Function destination of an event subscription.
 
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Azure Function
@@ -376,7 +432,9 @@ class AzureFunctionEventSubscriptionDestinationProperties(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class BoolEqualsAdvancedFilter(AdvancedFilter, discriminator="BoolEquals"):
+class BoolEqualsAdvancedFilter(
+    AdvancedFilter, discriminator="BoolEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BoolEquals Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -414,7 +472,7 @@ class BoolEqualsAdvancedFilter(AdvancedFilter, discriminator="BoolEquals"):
         self.operator_type = AdvancedFilterOperatorType.BOOL_EQUALS  # type: ignore
 
 
-class Filter(_Model):
+class Filter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the base type that represents a filter. To configure a filter, do not directly
     instantiate an object of this class. Instead, instantiate an object of a derived class such as
     BoolEqualsFilter, NumberInFilter etc depending on the type of the key based on which you want
@@ -470,7 +528,9 @@ class Filter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BoolEqualsFilter(Filter, discriminator="BoolEquals"):
+class BoolEqualsFilter(
+    Filter, discriminator="BoolEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BoolEquals Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -553,7 +613,7 @@ class ProxyResource(Resource):
     """
 
 
-class CaCertificate(ProxyResource):
+class CaCertificate(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CA Certificate resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -620,7 +680,7 @@ class CaCertificate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class CaCertificateProperties(_Model):
+class CaCertificateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of CA certificate.
 
     :ivar description: Description for the CA Certificate resource.
@@ -675,7 +735,7 @@ class CaCertificateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Channel(ProxyResource):
+class Channel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Channel info.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -744,7 +804,7 @@ class Channel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ChannelProperties(_Model):
+class ChannelProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Channel.
 
     :ivar channel_type: The type of the event channel which represents the direction flow of
@@ -835,7 +895,7 @@ class ChannelProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChannelUpdateParameters(_Model):
+class ChannelUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Channel update.
 
     :ivar properties: Properties of the channel update parameters.
@@ -885,7 +945,7 @@ class ChannelUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class ChannelUpdateParametersProperties(_Model):
+class ChannelUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the channel update parameters.
 
     :ivar expiration_time_if_not_activated_utc: Expiration time of the channel. If this timer
@@ -938,7 +998,7 @@ class ChannelUpdateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Client(ProxyResource):
+class Client(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Client resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1006,7 +1066,7 @@ class Client(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientAuthenticationSettings(_Model):
+class ClientAuthenticationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Client authentication settings for namespace resource.
 
     :ivar alternative_authentication_name_sources: Alternative authentication name sources related
@@ -1059,7 +1119,7 @@ class ClientAuthenticationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientCertificateAuthentication(_Model):
+class ClientCertificateAuthentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The certificate authentication properties for the client.
 
     :ivar validation_scheme: The validation scheme used to authenticate the client. Default value
@@ -1105,7 +1165,7 @@ class ClientCertificateAuthentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientGroup(ProxyResource):
+class ClientGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Client group resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1166,7 +1226,7 @@ class ClientGroup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ClientGroupProperties(_Model):
+class ClientGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of client group.
 
     :ivar description: Description for the Client Group resource.
@@ -1208,7 +1268,7 @@ class ClientGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientProperties(_Model):
+class ClientProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of client.
 
     :ivar description: Description for the Client resource.
@@ -1277,7 +1337,7 @@ class ClientProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfidentialCompute(_Model):
+class ConfidentialCompute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Confidential Compute properties of the resource.
 
     :ivar mode: This property specifies the mode of the Azure Confidential Compute configuration.
@@ -1315,7 +1375,7 @@ class ConfidentialCompute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionState(_Model):
+class ConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ConnectionState information.
 
     :ivar status: Status of the connection. Known values are: "Pending", "Approved", "Rejected",
@@ -1359,7 +1419,7 @@ class ConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainConfiguration(_Model):
+class CustomDomainConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom domain configuration that allows users to publish to their own domain name.
 
     :ivar fully_qualified_domain_name: Fully Qualified Domain Name (FQDN) for the custom domain.
@@ -1456,7 +1516,7 @@ class CustomDomainConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainIdentity(_Model):
+class CustomDomainIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity information for retrieving the certificate for the custom domain.
 
     :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
@@ -1495,7 +1555,7 @@ class CustomDomainIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomDomainOwnershipValidationResult(_Model):
+class CustomDomainOwnershipValidationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace custom domain ownership validation result.
 
     :ivar custom_domains_for_topics_configuration: List of custom domain configurations for the
@@ -1536,7 +1596,7 @@ class CustomDomainOwnershipValidationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomerManagedKeyEncryption(_Model):
+class CustomerManagedKeyEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """All Customer-managed key encryption properties for the resource.
 
     :ivar key_encryption_key_url: Key encryption key URL. This URL can be either versioned (e.g.,
@@ -1619,7 +1679,7 @@ class CustomerManagedKeyEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomJwtAuthenticationManagedIdentity(_Model):
+class CustomJwtAuthenticationManagedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity information for retrieving the certificate for custom JWT authentication.
 
     :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
@@ -1658,7 +1718,7 @@ class CustomJwtAuthenticationManagedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomJwtAuthenticationSettings(_Model):
+class CustomJwtAuthenticationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom JWT authentication settings for namespace resource.
 
     :ivar token_issuer: Expected JWT token issuer.
@@ -1706,7 +1766,9 @@ class CustomJwtAuthenticationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CustomWebhookAuthenticationManagedIdentity(_Model):  # pylint: disable=name-too-long
+class CustomWebhookAuthenticationManagedIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The identity configuration required for authenticating a custom webhook.
 
     :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
@@ -1746,7 +1808,7 @@ class CustomWebhookAuthenticationManagedIdentity(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class DeadLetterDestination(_Model):
+class DeadLetterDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the dead letter destination for an event subscription. To configure a
     deadletter destination, do not directly instantiate an object of this class. Instead,
     instantiate an object of a derived class. Currently, StorageBlobDeadLetterDestination is the
@@ -1784,7 +1846,7 @@ class DeadLetterDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeadLetterWithResourceIdentity(_Model):
+class DeadLetterWithResourceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the deadletter destination with resource identity.
 
     :ivar identity: The identity to use when dead-lettering events.
@@ -1826,7 +1888,7 @@ class DeadLetterWithResourceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryAttributeListResult(_Model):
+class DeliveryAttributeListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the Get delivery attributes operation.
 
     :ivar value: A collection of DeliveryAttributeMapping.
@@ -1856,7 +1918,7 @@ class DeliveryAttributeListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryAttributeMapping(_Model):
+class DeliveryAttributeMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delivery attribute mapping details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1895,7 +1957,7 @@ class DeliveryAttributeMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryConfiguration(_Model):
+class DeliveryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the delivery configuration information of the event subscription.
 
     :ivar delivery_mode: Delivery mode of the event subscription. Known values are: "Queue" and
@@ -1940,7 +2002,7 @@ class DeliveryConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeliveryWithResourceIdentity(_Model):
+class DeliveryWithResourceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the delivery for an event subscription with resource identity.
 
     :ivar identity: The identity to use when delivering events.
@@ -1981,7 +2043,7 @@ class DeliveryWithResourceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2025,7 +2087,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Domain(TrackedResource):
+class Domain(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventGrid Domain.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2117,7 +2179,7 @@ class Domain(TrackedResource):
             super().__setattr__(key, value)
 
 
-class DomainProperties(_Model):
+class DomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Event Grid Domain Resource.
 
     :ivar private_endpoint_connections: List of private endpoint connections.
@@ -2127,7 +2189,7 @@ class DomainProperties(_Model):
      are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.eventgrid.models.DomainProvisioningState
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this domain. Known values are: "1.0", "1.1", and "1.2".
+     this domain. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar endpoint: Endpoint for the Event Grid Domain Resource which is used for publishing the
      events.
@@ -2199,7 +2261,7 @@ class DomainProperties(_Model):
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this domain. Known values are:
-     \"1.0\", \"1.1\", and \"1.2\"."""
+     \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
     """Endpoint for the Event Grid Domain Resource which is used for publishing the events."""
     input_schema: Optional[Union[str, "_models.InputSchema"]] = rest_field(
@@ -2296,7 +2358,7 @@ class DomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DomainRegenerateKeyRequest(_Model):
+class DomainRegenerateKeyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Domain regenerate share access key request.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
@@ -2324,7 +2386,7 @@ class DomainRegenerateKeyRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DomainSharedAccessKeys(_Model):
+class DomainSharedAccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared access keys of the Domain.
 
     :ivar key1: Shared access key1 for the domain.
@@ -2396,7 +2458,7 @@ class DomainTopicProperties(_Model):
      \"Deleting\", \"Succeeded\", \"Canceled\", and \"Failed\"."""
 
 
-class DomainUpdateParameterProperties(_Model):
+class DomainUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of domain update parameter properties.
 
     :ivar public_network_access: This determines if traffic is allowed over public network. By
@@ -2408,7 +2470,7 @@ class DomainUpdateParameterProperties(_Model):
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this domain. Known values are: "1.0", "1.1", and "1.2".
+     this domain. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only Microsoft Entra ID token will be used to
@@ -2461,7 +2523,7 @@ class DomainUpdateParameterProperties(_Model):
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this domain. Known values are:
-     \"1.0\", \"1.1\", and \"1.2\"."""
+     \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2529,7 +2591,7 @@ class DomainUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DomainUpdateParameters(_Model):
+class DomainUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Domain update.
 
     :ivar tags: Tags of the domains resource.
@@ -2603,7 +2665,9 @@ class DomainUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping, discriminator="Dynamic"):
+class DynamicDeliveryAttributeMapping(
+    DeliveryAttributeMapping, discriminator="Dynamic"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic delivery attribute mapping details.
 
     :ivar name: Name of the delivery attribute or header.
@@ -2660,7 +2724,9 @@ class DynamicDeliveryAttributeMapping(DeliveryAttributeMapping, discriminator="D
             super().__setattr__(key, value)
 
 
-class DynamicDeliveryAttributeMappingProperties(_Model):  # pylint: disable=name-too-long
+class DynamicDeliveryAttributeMappingProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of dynamic delivery attribute mapping.
 
     :ivar source_field: JSON path in the event which contains attribute value.
@@ -2690,7 +2756,7 @@ class DynamicDeliveryAttributeMappingProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class DynamicRoutingEnrichment(_Model):
+class DynamicRoutingEnrichment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DynamicRoutingEnrichment.
 
     :ivar key: Dynamic routing enrichment key.
@@ -2723,7 +2789,7 @@ class DynamicRoutingEnrichment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EncodedIssuerCertificateInfo(_Model):
+class EncodedIssuerCertificateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the public certificate that is used for custom authentication.
 
     :ivar kid: Identifier for the certificate. Required.
@@ -2802,7 +2868,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2830,7 +2896,9 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventHubEventSubscriptionDestination(EventSubscriptionDestination, discriminator="EventHub"):
+class EventHubEventSubscriptionDestination(
+    EventSubscriptionDestination, discriminator="EventHub"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the event hub destination for an event subscription.
 
     :ivar properties: Event Hub Properties of the event subscription destination.
@@ -2886,7 +2954,9 @@ class EventHubEventSubscriptionDestination(EventSubscriptionDestination, discrim
             super().__setattr__(key, value)
 
 
-class EventHubEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class EventHubEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties for a event hub destination.
 
     :ivar resource_id: The Azure Resource Id that represents the endpoint of an Event Hub
@@ -2926,7 +2996,7 @@ class EventHubEventSubscriptionDestinationProperties(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class EventSubscription(ProxyResource):
+class EventSubscription(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Subscription.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2999,7 +3069,7 @@ class EventSubscription(ProxyResource):
             super().__setattr__(key, value)
 
 
-class EventSubscriptionFilter(_Model):
+class EventSubscriptionFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filter for the Event Subscription.
 
     :ivar subject_begins_with: An optional string to filter events for an event subscription based
@@ -3078,7 +3148,7 @@ class EventSubscriptionFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSubscriptionFullUrl(_Model):
+class EventSubscriptionFullUrl(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full endpoint URL of an event subscription.
 
     :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
@@ -3109,7 +3179,7 @@ class EventSubscriptionFullUrl(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSubscriptionIdentity(_Model):
+class EventSubscriptionIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity information with the event subscription.
 
     :ivar type: The type of managed identity used. Can be either 'SystemAssigned' or
@@ -3157,7 +3227,7 @@ class EventSubscriptionIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSubscriptionProperties(_Model):
+class EventSubscriptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Event Subscription.
 
     :ivar topic: Name of the topic of the event subscription.
@@ -3281,7 +3351,7 @@ class EventSubscriptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSubscriptionUpdateParameters(_Model):
+class EventSubscriptionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Event Subscription update.
 
     :ivar destination: Information about the destination where events have to be delivered for the
@@ -3391,7 +3461,7 @@ class EventSubscriptionUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventType(Resource):
+class EventType(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Type for a subject under a topic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3452,7 +3522,7 @@ class EventType(Resource):
             super().__setattr__(key, value)
 
 
-class EventTypeInfo(_Model):
+class EventTypeInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The event type information for Channels.
 
     :ivar kind: The kind of event type used. "Inline"
@@ -3495,7 +3565,7 @@ class EventTypeInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventTypeProperties(_Model):
+class EventTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the event type.
 
     :ivar display_name: Display name of the event type.
@@ -3542,7 +3612,7 @@ class EventTypeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Definition of an Extended Location.
 
     :ivar name: Fully qualified name of the extended location.
@@ -3592,7 +3662,7 @@ class ExtensionResource(Resource):
     """
 
 
-class ExtensionTopic(ExtensionResource):
+class ExtensionTopic(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event grid Extension Topic. This is used for getting Event Grid related metrics for Azure
     resources.
 
@@ -3654,7 +3724,7 @@ class ExtensionTopic(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class ExtensionTopicProperties(_Model):
+class ExtensionTopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Extension Topic.
 
     :ivar description: Description of the extension topic.
@@ -3689,7 +3759,7 @@ class ExtensionTopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FederatedIdentityCredentialInfo(_Model):
+class FederatedIdentityCredentialInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of the Federated Identity Credential (FIC) used with the resource.
 
     :ivar federated_client_id: The Multi-Tenant Microsoft Entra ID Application where the Federated
@@ -3721,7 +3791,7 @@ class FederatedIdentityCredentialInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FiltersConfiguration(_Model):
+class FiltersConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Filters configuration for the Event Subscription.
 
     :ivar included_event_types: A list of applicable event types that need to be part of the event
@@ -3761,7 +3831,7 @@ class FiltersConfiguration(_Model):
 
 class HybridConnectionEventSubscriptionDestination(
     EventSubscriptionDestination, discriminator="HybridConnection"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the HybridConnection destination for an event subscription.
 
     :ivar properties: Hybrid connection Properties of the event subscription destination.
@@ -3817,7 +3887,9 @@ class HybridConnectionEventSubscriptionDestination(
             super().__setattr__(key, value)
 
 
-class HybridConnectionEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class HybridConnectionEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties for a hybrid connection destination.
 
     :ivar resource_id: The Azure Resource ID of an hybrid connection that is the destination of an
@@ -3856,7 +3928,7 @@ class HybridConnectionEventSubscriptionDestinationProperties(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class IdentityInfo(_Model):
+class IdentityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The identity information for the resource.
 
     :ivar type: The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes
@@ -3918,7 +3990,7 @@ class IdentityInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InboundIpRule(_Model):
+class InboundIpRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InboundIpRule.
 
     :ivar ip_mask: IP Address in CIDR notation e.g., 10.0.0.0/8.
@@ -3953,7 +4025,7 @@ class InboundIpRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InlineEventProperties(_Model):
+class InlineEventProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional information about every inline event.
 
     :ivar description: The description for the inline event.
@@ -4002,7 +4074,7 @@ class InlineEventProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputSchemaMapping(_Model):
+class InputSchemaMapping(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """By default, Event Grid expects events to be in the Event Grid event schema. Specifying an input
     schema mapping enables publishing to Event Grid using a custom input schema. Currently, the
     only supported type of InputSchemaMapping is 'JsonInputSchemaMapping'.
@@ -4038,7 +4110,9 @@ class InputSchemaMapping(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsNotNullAdvancedFilter(AdvancedFilter, discriminator="IsNotNull"):
+class IsNotNullAdvancedFilter(
+    AdvancedFilter, discriminator="IsNotNull"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IsNotNull Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -4071,7 +4145,7 @@ class IsNotNullAdvancedFilter(AdvancedFilter, discriminator="IsNotNull"):
         self.operator_type = AdvancedFilterOperatorType.IS_NOT_NULL  # type: ignore
 
 
-class IsNotNullFilter(Filter, discriminator="IsNotNull"):
+class IsNotNullFilter(Filter, discriminator="IsNotNull"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IsNotNull Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -4104,7 +4178,9 @@ class IsNotNullFilter(Filter, discriminator="IsNotNull"):
         self.operator_type = FilterOperatorType.IS_NOT_NULL  # type: ignore
 
 
-class IsNullOrUndefinedAdvancedFilter(AdvancedFilter, discriminator="IsNullOrUndefined"):
+class IsNullOrUndefinedAdvancedFilter(
+    AdvancedFilter, discriminator="IsNullOrUndefined"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IsNullOrUndefined Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -4137,7 +4213,9 @@ class IsNullOrUndefinedAdvancedFilter(AdvancedFilter, discriminator="IsNullOrUnd
         self.operator_type = AdvancedFilterOperatorType.IS_NULL_OR_UNDEFINED  # type: ignore
 
 
-class IsNullOrUndefinedFilter(Filter, discriminator="IsNullOrUndefined"):
+class IsNullOrUndefinedFilter(
+    Filter, discriminator="IsNullOrUndefined"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IsNullOrUndefined Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -4170,7 +4248,7 @@ class IsNullOrUndefinedFilter(Filter, discriminator="IsNullOrUndefined"):
         self.operator_type = FilterOperatorType.IS_NULL_OR_UNDEFINED  # type: ignore
 
 
-class IssuerCertificateInfo(_Model):
+class IssuerCertificateInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the certificate that is used for token validation.
 
     :ivar certificate_url: Keyvault certificate URL in
@@ -4211,7 +4289,7 @@ class IssuerCertificateInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonField(_Model):
+class JsonField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is used to express the source of an input schema mapping for a single target field in the
     Event Grid Event schema. This is currently used in the mappings for the 'id', 'topic' and
     'eventtime' properties. This represents a field in the input event schema.
@@ -4244,7 +4322,7 @@ class JsonField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonFieldWithDefault(_Model):
+class JsonFieldWithDefault(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is used to express the source of an input schema mapping for a single target field in the
     Event Grid Event schema. This is currently used in the mappings for the 'subject', 'eventtype'
     and 'dataversion' properties. This represents a field in the input event schema along with a
@@ -4287,7 +4365,9 @@ class JsonFieldWithDefault(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonInputSchemaMapping(InputSchemaMapping, discriminator="Json"):
+class JsonInputSchemaMapping(
+    InputSchemaMapping, discriminator="Json"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This enables publishing to Event Grid using a custom input schema. This can be used to map
     properties from a custom input JSON schema to the Event Grid event schema.
 
@@ -4342,7 +4422,7 @@ class JsonInputSchemaMapping(InputSchemaMapping, discriminator="Json"):
             super().__setattr__(key, value)
 
 
-class JsonInputSchemaMappingProperties(_Model):
+class JsonInputSchemaMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This can be used to map properties of a source schema (or default values, for certain supported
     properties) to properties of the EventGridEvent schema.
 
@@ -4405,7 +4485,7 @@ class JsonInputSchemaMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyEncryption(_Model):
+class KeyEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Encryption settings.
 
     :ivar customer_managed_key_encryption: List of all customer-managed key encryption properties
@@ -4438,7 +4518,7 @@ class KeyEncryption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyEncryptionKeyIdentity(_Model):
+class KeyEncryptionKeyIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """KeyEncryptionKeyIdentity.
 
     :ivar type: The type of managed identity used. Only UserAssigned or SystemAssigned Identity are
@@ -4482,7 +4562,9 @@ class KeyEncryptionKeyIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MonitorAlertEventSubscriptionDestination(EventSubscriptionDestination, discriminator="MonitorAlert"):
+class MonitorAlertEventSubscriptionDestination(
+    EventSubscriptionDestination, discriminator="MonitorAlert"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the Monitor Alert destination for an event subscription.
 
     :ivar properties: Monitor Alert properties of the event subscription destination.
@@ -4538,7 +4620,9 @@ class MonitorAlertEventSubscriptionDestination(EventSubscriptionDestination, dis
             super().__setattr__(key, value)
 
 
-class MonitorAlertEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class MonitorAlertEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties that represent the Monitor Alert destination of an event subscription.
 
     :ivar severity: The severity that will be attached to every Alert fired through this event
@@ -4588,7 +4672,7 @@ class MonitorAlertEventSubscriptionDestinationProperties(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class Namespace(TrackedResource):
+class Namespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4632,6 +4716,8 @@ class Namespace(TrackedResource):
         "public_network_access",
         "inbound_ip_rules",
         "minimum_tls_version_allowed",
+        "ip_address_type",
+        "auto_scale_configuration",
     ]
 
     @overload
@@ -4674,7 +4760,7 @@ class Namespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NamespaceProperties(_Model):
+class NamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the namespace resource.
 
     :ivar private_endpoint_connections: List of private endpoint connections.
@@ -4705,8 +4791,14 @@ class NamespaceProperties(_Model):
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this namespace. Only TLS version 1.2 is supported. Known values are: "1.0", "1.1", and "1.2".
+     this namespace. The TlsVersion values are shared with topics and domains; for namespaces, only
+     TLS version 1.2 is currently supported. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
+    :ivar ip_address_type: IP address type for the namespace resource. Known values are: "IPv4" and
+     "DualStack".
+    :vartype ip_address_type: str or ~azure.mgmt.eventgrid.models.IpAddressType
+    :ivar auto_scale_configuration: Auto-scale configuration for the namespace resource.
+    :vartype auto_scale_configuration: ~azure.mgmt.eventgrid.models.AutoScaleConfiguration
     """
 
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
@@ -4751,8 +4843,17 @@ class NamespaceProperties(_Model):
     minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = rest_field(
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Minimum TLS version of the publisher allowed to publish to this namespace. Only TLS version 1.2
-     is supported. Known values are: \"1.0\", \"1.1\", and \"1.2\"."""
+    """Minimum TLS version of the publisher allowed to publish to this namespace. The TlsVersion
+     values are shared with topics and domains; for namespaces, only TLS version 1.2 is currently
+     supported. Known values are: \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
+    ip_address_type: Optional[Union[str, "_models.IpAddressType"]] = rest_field(
+        name="ipAddressType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP address type for the namespace resource. Known values are: \"IPv4\" and \"DualStack\"."""
+    auto_scale_configuration: Optional["_models.AutoScaleConfiguration"] = rest_field(
+        name="autoScaleConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Auto-scale configuration for the namespace resource."""
 
     @overload
     def __init__(
@@ -4765,6 +4866,8 @@ class NamespaceProperties(_Model):
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[list["_models.InboundIpRule"]] = None,
         minimum_tls_version_allowed: Optional[Union[str, "_models.TlsVersion"]] = None,
+        ip_address_type: Optional[Union[str, "_models.IpAddressType"]] = None,
+        auto_scale_configuration: Optional["_models.AutoScaleConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -4778,7 +4881,7 @@ class NamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceRegenerateKeyRequest(_Model):
+class NamespaceRegenerateKeyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace regenerate share access key request.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
@@ -4806,7 +4909,7 @@ class NamespaceRegenerateKeyRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceSharedAccessKeys(_Model):
+class NamespaceSharedAccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared access keys of the Namespace.
 
     :ivar key1: Shared access key1 for the namespace.
@@ -4839,7 +4942,7 @@ class NamespaceSharedAccessKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceSku(_Model):
+class NamespaceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents available Sku pricing tiers.
 
     :ivar name: The name of the SKU. "Standard"
@@ -4878,7 +4981,7 @@ class NamespaceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceTopic(ProxyResource):
+class NamespaceTopic(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace topic details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4941,7 +5044,7 @@ class NamespaceTopic(ProxyResource):
 
 class NamespaceTopicEventSubscriptionDestination(
     EventSubscriptionDestination, discriminator="NamespaceTopic"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the Namespace Topic destination for an event subscription.
 
     :ivar properties: Namespace Topic properties of the event subscription destination.
@@ -4997,7 +5100,9 @@ class NamespaceTopicEventSubscriptionDestination(
             super().__setattr__(key, value)
 
 
-class NamespaceTopicEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class NamespaceTopicEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties that represent the Event Grid Namespace Topic destination of an event
     subscription.
 
@@ -5034,7 +5139,7 @@ class NamespaceTopicEventSubscriptionDestinationProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class NamespaceTopicProperties(_Model):
+class NamespaceTopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the namespace topic.
 
     :ivar provisioning_state: Provisioning state of the namespace topic. Known values are:
@@ -5094,7 +5199,7 @@ class NamespaceTopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceTopicUpdateParameterProperties(_Model):
+class NamespaceTopicUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of namespace topic update parameter properties.
 
     :ivar event_retention_in_days: Event retention for the namespace topic expressed in days. The
@@ -5127,7 +5232,7 @@ class NamespaceTopicUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceTopicUpdateParameters(_Model):
+class NamespaceTopicUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the namespace topic update.
 
     :ivar properties: Properties of the namespace topic resource.
@@ -5177,7 +5282,7 @@ class NamespaceTopicUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class NamespaceUpdateParameterProperties(_Model):
+class NamespaceUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of namespace update parameter properties.
 
     :ivar topic_spaces_configuration: Topic spaces configuration properties that can be updated.
@@ -5193,6 +5298,11 @@ class NamespaceUpdateParameterProperties(_Model):
     :ivar inbound_ip_rules: This can be used to restrict traffic from specific IPs instead of all
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
+    :ivar ip_address_type: IP address type for the namespace resource. Known values are: "IPv4" and
+     "DualStack".
+    :vartype ip_address_type: str or ~azure.mgmt.eventgrid.models.IpAddressType
+    :ivar auto_scale_configuration: Auto-scale configuration for the namespace resource.
+    :vartype auto_scale_configuration: ~azure.mgmt.eventgrid.models.UpdateAutoScaleConfiguration
     """
 
     topic_spaces_configuration: Optional["_models.UpdateTopicSpacesConfigurationInfo"] = rest_field(
@@ -5215,6 +5325,14 @@ class NamespaceUpdateParameterProperties(_Model):
     )
     """This can be used to restrict traffic from specific IPs instead of all IPs. Note: These are
      considered only if PublicNetworkAccess is enabled."""
+    ip_address_type: Optional[Union[str, "_models.IpAddressType"]] = rest_field(
+        name="ipAddressType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IP address type for the namespace resource. Known values are: \"IPv4\" and \"DualStack\"."""
+    auto_scale_configuration: Optional["_models.UpdateAutoScaleConfiguration"] = rest_field(
+        name="autoScaleConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Auto-scale configuration for the namespace resource."""
 
     @overload
     def __init__(
@@ -5224,6 +5342,8 @@ class NamespaceUpdateParameterProperties(_Model):
         topics_configuration: Optional["_models.UpdateTopicsConfigurationInfo"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         inbound_ip_rules: Optional[list["_models.InboundIpRule"]] = None,
+        ip_address_type: Optional[Union[str, "_models.IpAddressType"]] = None,
+        auto_scale_configuration: Optional["_models.UpdateAutoScaleConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -5237,7 +5357,7 @@ class NamespaceUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceUpdateParameters(_Model):
+class NamespaceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to update namespace.
 
     :ivar tags: Tags of the namespace resource.
@@ -5266,6 +5386,8 @@ class NamespaceUpdateParameters(_Model):
         "topics_configuration",
         "public_network_access",
         "inbound_ip_rules",
+        "ip_address_type",
+        "auto_scale_configuration",
     ]
 
     @overload
@@ -5307,7 +5429,9 @@ class NamespaceUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5375,7 +5499,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterConfigurationIssues(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationIssues(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration issues.
 
     :ivar name: Provisioning issue name.
@@ -5431,7 +5557,9 @@ class NetworkSecurityPerimeterConfigurationIssues(_Model):  # pylint: disable=na
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterConfigurationIssuesProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationIssuesProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration issues properties.
 
     :ivar issue_type: Provisioning issue type. Known values are: "MissingPerimeterConfiguration",
@@ -5493,7 +5621,9 @@ class NetworkSecurityPerimeterConfigurationIssuesProperties(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProfile(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Nsp configuration with profile information.
 
     :ivar name: Nsp configuration profile name.
@@ -5550,7 +5680,9 @@ class NetworkSecurityPerimeterConfigurationProfile(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration information to reflect latest association and nsp
     profile configuration.
 
@@ -5616,7 +5748,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterInfo(_Model):
+class NetworkSecurityPerimeterInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter info.
 
     :ivar id: Arm id for network security perimeter.
@@ -5656,7 +5788,9 @@ class NetworkSecurityPerimeterInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterProfileAccessRule(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterProfileAccessRule(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security perimeter profile access rule.
 
     :ivar fully_qualified_arm_id: Fully Qualified Arm id for network security perimeter profile
@@ -5733,7 +5867,9 @@ class NetworkSecurityPerimeterProfileAccessRule(_Model):  # pylint: disable=name
             super().__setattr__(key, value)
 
 
-class NetworkSecurityPerimeterProfileAccessRuleProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterProfileAccessRuleProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security perimeter profile access rule properties.
 
     :ivar direction: NSP access rule direction. Known values are: "Inbound" and "Outbound".
@@ -5807,7 +5943,7 @@ class NetworkSecurityPerimeterProfileAccessRuleProperties(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterSubscription(_Model):
+class NetworkSecurityPerimeterSubscription(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter subscription inbound access rule.
 
     :ivar id: Subscription id.
@@ -5835,7 +5971,9 @@ class NetworkSecurityPerimeterSubscription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NumberGreaterThanAdvancedFilter(AdvancedFilter, discriminator="NumberGreaterThan"):
+class NumberGreaterThanAdvancedFilter(
+    AdvancedFilter, discriminator="NumberGreaterThan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberGreaterThan Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -5873,7 +6011,9 @@ class NumberGreaterThanAdvancedFilter(AdvancedFilter, discriminator="NumberGreat
         self.operator_type = AdvancedFilterOperatorType.NUMBER_GREATER_THAN  # type: ignore
 
 
-class NumberGreaterThanFilter(Filter, discriminator="NumberGreaterThan"):
+class NumberGreaterThanFilter(
+    Filter, discriminator="NumberGreaterThan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberGreaterThan Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -5911,7 +6051,9 @@ class NumberGreaterThanFilter(Filter, discriminator="NumberGreaterThan"):
         self.operator_type = FilterOperatorType.NUMBER_GREATER_THAN  # type: ignore
 
 
-class NumberGreaterThanOrEqualsAdvancedFilter(AdvancedFilter, discriminator="NumberGreaterThanOrEquals"):
+class NumberGreaterThanOrEqualsAdvancedFilter(
+    AdvancedFilter, discriminator="NumberGreaterThanOrEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberGreaterThanOrEquals Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -5949,7 +6091,9 @@ class NumberGreaterThanOrEqualsAdvancedFilter(AdvancedFilter, discriminator="Num
         self.operator_type = AdvancedFilterOperatorType.NUMBER_GREATER_THAN_OR_EQUALS  # type: ignore
 
 
-class NumberGreaterThanOrEqualsFilter(Filter, discriminator="NumberGreaterThanOrEquals"):
+class NumberGreaterThanOrEqualsFilter(
+    Filter, discriminator="NumberGreaterThanOrEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberGreaterThanOrEquals Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -5987,7 +6131,9 @@ class NumberGreaterThanOrEqualsFilter(Filter, discriminator="NumberGreaterThanOr
         self.operator_type = FilterOperatorType.NUMBER_GREATER_THAN_OR_EQUALS  # type: ignore
 
 
-class NumberInAdvancedFilter(AdvancedFilter, discriminator="NumberIn"):
+class NumberInAdvancedFilter(
+    AdvancedFilter, discriminator="NumberIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberIn Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6027,7 +6173,7 @@ class NumberInAdvancedFilter(AdvancedFilter, discriminator="NumberIn"):
         self.operator_type = AdvancedFilterOperatorType.NUMBER_IN  # type: ignore
 
 
-class NumberInFilter(Filter, discriminator="NumberIn"):
+class NumberInFilter(Filter, discriminator="NumberIn"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberIn Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6067,7 +6213,9 @@ class NumberInFilter(Filter, discriminator="NumberIn"):
         self.operator_type = FilterOperatorType.NUMBER_IN  # type: ignore
 
 
-class NumberInRangeAdvancedFilter(AdvancedFilter, discriminator="NumberInRange"):
+class NumberInRangeAdvancedFilter(
+    AdvancedFilter, discriminator="NumberInRange"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberInRange Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6107,7 +6255,9 @@ class NumberInRangeAdvancedFilter(AdvancedFilter, discriminator="NumberInRange")
         self.operator_type = AdvancedFilterOperatorType.NUMBER_IN_RANGE  # type: ignore
 
 
-class NumberInRangeFilter(Filter, discriminator="NumberInRange"):
+class NumberInRangeFilter(
+    Filter, discriminator="NumberInRange"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberInRange Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6147,7 +6297,9 @@ class NumberInRangeFilter(Filter, discriminator="NumberInRange"):
         self.operator_type = FilterOperatorType.NUMBER_IN_RANGE  # type: ignore
 
 
-class NumberLessThanAdvancedFilter(AdvancedFilter, discriminator="NumberLessThan"):
+class NumberLessThanAdvancedFilter(
+    AdvancedFilter, discriminator="NumberLessThan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberLessThan Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6185,7 +6337,9 @@ class NumberLessThanAdvancedFilter(AdvancedFilter, discriminator="NumberLessThan
         self.operator_type = AdvancedFilterOperatorType.NUMBER_LESS_THAN  # type: ignore
 
 
-class NumberLessThanFilter(Filter, discriminator="NumberLessThan"):
+class NumberLessThanFilter(
+    Filter, discriminator="NumberLessThan"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberLessThan Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6223,7 +6377,9 @@ class NumberLessThanFilter(Filter, discriminator="NumberLessThan"):
         self.operator_type = FilterOperatorType.NUMBER_LESS_THAN  # type: ignore
 
 
-class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter, discriminator="NumberLessThanOrEquals"):
+class NumberLessThanOrEqualsAdvancedFilter(
+    AdvancedFilter, discriminator="NumberLessThanOrEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberLessThanOrEquals Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6261,7 +6417,9 @@ class NumberLessThanOrEqualsAdvancedFilter(AdvancedFilter, discriminator="Number
         self.operator_type = AdvancedFilterOperatorType.NUMBER_LESS_THAN_OR_EQUALS  # type: ignore
 
 
-class NumberLessThanOrEqualsFilter(Filter, discriminator="NumberLessThanOrEquals"):
+class NumberLessThanOrEqualsFilter(
+    Filter, discriminator="NumberLessThanOrEquals"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberLessThanOrEquals Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6299,7 +6457,9 @@ class NumberLessThanOrEqualsFilter(Filter, discriminator="NumberLessThanOrEquals
         self.operator_type = FilterOperatorType.NUMBER_LESS_THAN_OR_EQUALS  # type: ignore
 
 
-class NumberNotInAdvancedFilter(AdvancedFilter, discriminator="NumberNotIn"):
+class NumberNotInAdvancedFilter(
+    AdvancedFilter, discriminator="NumberNotIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberNotIn Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6339,7 +6499,9 @@ class NumberNotInAdvancedFilter(AdvancedFilter, discriminator="NumberNotIn"):
         self.operator_type = AdvancedFilterOperatorType.NUMBER_NOT_IN  # type: ignore
 
 
-class NumberNotInFilter(Filter, discriminator="NumberNotIn"):
+class NumberNotInFilter(
+    Filter, discriminator="NumberNotIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberNotIn Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6379,7 +6541,9 @@ class NumberNotInFilter(Filter, discriminator="NumberNotIn"):
         self.operator_type = FilterOperatorType.NUMBER_NOT_IN  # type: ignore
 
 
-class NumberNotInRangeAdvancedFilter(AdvancedFilter, discriminator="NumberNotInRange"):
+class NumberNotInRangeAdvancedFilter(
+    AdvancedFilter, discriminator="NumberNotInRange"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberNotInRange Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6419,7 +6583,9 @@ class NumberNotInRangeAdvancedFilter(AdvancedFilter, discriminator="NumberNotInR
         self.operator_type = AdvancedFilterOperatorType.NUMBER_NOT_IN_RANGE  # type: ignore
 
 
-class NumberNotInRangeFilter(Filter, discriminator="NumberNotInRange"):
+class NumberNotInRangeFilter(
+    Filter, discriminator="NumberNotInRange"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NumberNotInRange Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -6459,7 +6625,7 @@ class NumberNotInRangeFilter(Filter, discriminator="NumberNotInRange"):
         self.operator_type = FilterOperatorType.NUMBER_NOT_IN_RANGE  # type: ignore
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an operation returned by the GetOperations request.
 
     :ivar name: Name of the operation.
@@ -6530,7 +6696,7 @@ class Operation(_Model):
             super().__setattr__(key, value)
 
 
-class OperationInfo(_Model):
+class OperationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about an operation.
 
     :ivar provider: Name of the provider.
@@ -6573,7 +6739,7 @@ class OperationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Partner(_Model):
+class Partner(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the partner.
 
     :ivar partner_registration_immutable_id: The immutableId of the corresponding partner
@@ -6630,7 +6796,7 @@ class Partner(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerAuthorization(_Model):
+class PartnerAuthorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner authorization details.
 
     :ivar default_maximum_expiration_time_in_days: Time used to validate the authorization
@@ -6671,7 +6837,7 @@ class PartnerAuthorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerConfiguration(Resource):
+class PartnerConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partner configuration information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6687,9 +6853,9 @@ class PartnerConfiguration(Resource):
     :vartype system_data: ~azure.mgmt.eventgrid.models.SystemData
     :ivar properties: Properties of the partner configuration.
     :vartype properties: ~azure.mgmt.eventgrid.models.PartnerConfigurationProperties
-    :ivar tags: Resource tags.
+    :ivar tags: Tags of the resource.
     :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives.
+    :ivar location: Location of the resource.
     :vartype location: str
     """
 
@@ -6698,9 +6864,9 @@ class PartnerConfiguration(Resource):
     )
     """Properties of the partner configuration."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
+    """Tags of the resource."""
     location: Optional[str] = rest_field(visibility=["read", "create", "update"])
-    """The geo-location where the resource lives."""
+    """Location of the resource."""
 
     __flattened_items = ["partner_authorization", "provisioning_state"]
 
@@ -6742,7 +6908,7 @@ class PartnerConfiguration(Resource):
             super().__setattr__(key, value)
 
 
-class PartnerConfigurationProperties(_Model):
+class PartnerConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the partner configuration.
 
     :ivar partner_authorization: The details of authorized partners.
@@ -6782,7 +6948,9 @@ class PartnerConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerConfigurationUpdateParameterProperties(_Model):  # pylint: disable=name-too-long
+class PartnerConfigurationUpdateParameterProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information of partner configuration update parameter properties.
 
     :ivar default_maximum_expiration_time_in_days: The default time used to validate the maximum
@@ -6814,7 +6982,7 @@ class PartnerConfigurationUpdateParameterProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class PartnerConfigurationUpdateParameters(_Model):
+class PartnerConfigurationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the partner configuration update.
 
     :ivar tags: Tags of the partner configuration resource.
@@ -6869,7 +7037,7 @@ class PartnerConfigurationUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PartnerDestination(TrackedResource):
+class PartnerDestination(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Grid Partner Destination.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6944,7 +7112,7 @@ class PartnerDestination(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PartnerDestinationInfo(_Model):
+class PartnerDestinationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the corresponding partner destination of a Channel.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -7016,7 +7184,7 @@ class PartnerDestinationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerDestinationProperties(_Model):
+class PartnerDestinationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Destination.
 
     :ivar partner_registration_immutable_id: The immutable Id of the corresponding partner
@@ -7102,7 +7270,7 @@ class PartnerDestinationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerDestinationUpdateParameters(_Model):
+class PartnerDestinationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Destination that can be updated.
 
     :ivar tags: Tags of the Partner Destination resource.
@@ -7130,7 +7298,7 @@ class PartnerDestinationUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerDetails(_Model):
+class PartnerDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the partner.
 
     :ivar description: This is short description about the partner. The length of this description
@@ -7176,7 +7344,9 @@ class PartnerDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerEventSubscriptionDestination(EventSubscriptionDestination, discriminator="PartnerDestination"):
+class PartnerEventSubscriptionDestination(
+    EventSubscriptionDestination, discriminator="PartnerDestination"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PartnerEventSubscriptionDestination.
 
     :ivar properties: Partner Destination Properties of the event subscription destination.
@@ -7231,7 +7401,9 @@ class PartnerEventSubscriptionDestination(EventSubscriptionDestination, discrimi
             super().__setattr__(key, value)
 
 
-class PartnerEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class PartnerEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """PartnerEventSubscriptionDestinationProperties.
 
     :ivar resource_id: The Azure Resource Id that represents the endpoint of a Partner Destination
@@ -7263,7 +7435,7 @@ class PartnerEventSubscriptionDestinationProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class PartnerNamespace(TrackedResource):
+class PartnerNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventGrid Partner Namespace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7340,7 +7512,7 @@ class PartnerNamespace(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PartnerNamespaceProperties(_Model):
+class PartnerNamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the partner namespace.
 
     :ivar private_endpoint_connections: List of private endpoint connections.
@@ -7356,7 +7528,7 @@ class PartnerNamespaceProperties(_Model):
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventGrid/partnerRegistrations/{partnerRegistrationName}.
     :vartype partner_registration_fully_qualified_id: str
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this partner namespace. Known values are: "1.0", "1.1", and "1.2".
+     this partner namespace. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar endpoint: Endpoint for the partner namespace.
     :vartype endpoint: str
@@ -7399,7 +7571,7 @@ class PartnerNamespaceProperties(_Model):
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this partner namespace. Known values
-     are: \"1.0\", \"1.1\", and \"1.2\"."""
+     are: \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     endpoint: Optional[str] = rest_field(visibility=["read"])
     """Endpoint for the partner namespace."""
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
@@ -7451,7 +7623,7 @@ class PartnerNamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerNamespaceRegenerateKeyRequest(_Model):
+class PartnerNamespaceRegenerateKeyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PartnerNamespace regenerate shared access key request.
 
     :ivar key_name: Key name to regenerate (key1 or key2). Required.
@@ -7479,7 +7651,7 @@ class PartnerNamespaceRegenerateKeyRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerNamespaceSharedAccessKeys(_Model):
+class PartnerNamespaceSharedAccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared access keys of the partner namespace.
 
     :ivar key1: Shared access key1 for the partner namespace.
@@ -7512,7 +7684,9 @@ class PartnerNamespaceSharedAccessKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerNamespaceUpdateParameterProperties(_Model):  # pylint: disable=name-too-long
+class PartnerNamespaceUpdateParameterProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information of Partner Namespace update parameter properties.
 
     :ivar public_network_access: This determines if traffic is allowed over public network. By
@@ -7524,7 +7698,7 @@ class PartnerNamespaceUpdateParameterProperties(_Model):  # pylint: disable=name
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this domain. Known values are: "1.0", "1.1", and "1.2".
+     this domain. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only Microsoft Entra ID token will be used to
@@ -7548,7 +7722,7 @@ class PartnerNamespaceUpdateParameterProperties(_Model):  # pylint: disable=name
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this domain. Known values are:
-     \"1.0\", \"1.1\", and \"1.2\"."""
+     \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7577,7 +7751,7 @@ class PartnerNamespaceUpdateParameterProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class PartnerNamespaceUpdateParameters(_Model):
+class PartnerNamespaceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Namespace update.
 
     :ivar tags: Tags of the Partner Namespace.
@@ -7637,7 +7811,7 @@ class PartnerNamespaceUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class PartnerRegistration(TrackedResource):
+class PartnerRegistration(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a partner registration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7704,7 +7878,7 @@ class PartnerRegistration(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PartnerRegistrationProperties(_Model):
+class PartnerRegistrationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the partner registration.
 
     :ivar provisioning_state: Provisioning state of the partner registration. Known values are:
@@ -7746,7 +7920,7 @@ class PartnerRegistrationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerRegistrationUpdateParameters(_Model):
+class PartnerRegistrationUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Registration update.
 
     :ivar tags: Tags of the partner registration resource.
@@ -7774,7 +7948,7 @@ class PartnerRegistrationUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerTopic(TrackedResource):
+class PartnerTopic(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Grid Partner Topic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7855,7 +8029,7 @@ class PartnerTopic(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PartnerTopicInfo(_Model):
+class PartnerTopicInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the corresponding partner topic of a Channel.
 
     :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner topic
@@ -7920,7 +8094,7 @@ class PartnerTopicInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerTopicProperties(_Model):
+class PartnerTopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Topic.
 
     :ivar partner_registration_immutable_id: The immutableId of the corresponding partner
@@ -8015,7 +8189,7 @@ class PartnerTopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerTopicUpdateParameters(_Model):
+class PartnerTopicUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Partner Topic update.
 
     :ivar tags: Tags of the Partner Topic resource.
@@ -8048,7 +8222,7 @@ class PartnerTopicUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerUpdateDestinationInfo(_Model):
+class PartnerUpdateDestinationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the corresponding partner destination of a Channel.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8082,7 +8256,7 @@ class PartnerUpdateDestinationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerUpdateTopicInfo(_Model):
+class PartnerUpdateTopicInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update properties for the corresponding partner topic of a channel.
 
     :ivar event_type_info: Event type info for the partner topic.
@@ -8112,7 +8286,7 @@ class PartnerUpdateTopicInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PermissionBinding(ProxyResource):
+class PermissionBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Permission binding resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8173,7 +8347,7 @@ class PermissionBinding(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PermissionBindingProperties(_Model):
+class PermissionBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of permission binding.
 
     :ivar description: Description for the Permission Binding resource.
@@ -8237,7 +8411,7 @@ class PermissionBindingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformCapabilities(_Model):
+class PlatformCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Platform capabilities properties of the resource.
 
     :ivar confidential_compute: Represents the Azure Confidential Compute properties of the
@@ -8268,7 +8442,7 @@ class PlatformCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateEndpoint information.
 
     :ivar id: The ARM identifier for Private Endpoint.
@@ -8296,7 +8470,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -8358,7 +8532,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection resource.
 
     :ivar private_endpoint: The Private Endpoint resource for this Connection.
@@ -8411,7 +8585,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of the private link resource.
 
     :ivar properties: Properties of the private link resource.
@@ -8481,7 +8655,7 @@ class PrivateLinkResource(_Model):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PrivateLinkResourceProperties.
 
     :ivar group_id:
@@ -8526,7 +8700,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PushInfo(_Model):
+class PushInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the destination info for event subscription supporting push.
 
     :ivar max_delivery_count: The maximum delivery count of the events.
@@ -8639,7 +8813,7 @@ class PushInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueueInfo(_Model):
+class QueueInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Queue info for event subscription.
 
     :ivar receive_lock_duration_in_seconds: Maximum period in seconds in which once the message is
@@ -8744,7 +8918,7 @@ class QueueInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nsp resource association.
 
     :ivar name: Association name.
@@ -8782,7 +8956,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceMoveChangeHistory(_Model):
+class ResourceMoveChangeHistory(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The change history of the resource move.
 
     :ivar azure_subscription_id: Azure subscription ID of the resource.
@@ -8826,7 +9000,7 @@ class ResourceMoveChangeHistory(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceSku(_Model):
+class ResourceSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an EventGrid Resource Sku.
 
     :ivar name: The Sku name of the resource. The possible values are: Basic or Premium. Known
@@ -8856,7 +9030,7 @@ class ResourceSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RetryPolicy(_Model):
+class RetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the retry policy for an event subscription.
 
     :ivar max_delivery_attempts: Maximum number of delivery retry attempts for events.
@@ -8893,7 +9067,7 @@ class RetryPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingEnrichments(_Model):
+class RoutingEnrichments(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RoutingEnrichments.
 
     :ivar static:
@@ -8928,7 +9102,7 @@ class RoutingEnrichments(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutingIdentityInfo(_Model):
+class RoutingIdentityInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Routing identity info for topic spaces configuration.
 
     :ivar type: Routing identity type for topic spaces configuration. Known values are: "None",
@@ -8968,7 +9142,7 @@ class RoutingIdentityInfo(_Model):
 
 class ServiceBusQueueEventSubscriptionDestination(
     EventSubscriptionDestination, discriminator="ServiceBusQueue"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the service bus destination for an event subscription.
 
     :ivar properties: Service Bus Properties of the event subscription destination.
@@ -9024,7 +9198,9 @@ class ServiceBusQueueEventSubscriptionDestination(
             super().__setattr__(key, value)
 
 
-class ServiceBusQueueEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class ServiceBusQueueEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties that represent the Service Bus destination of an event subscription.
 
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Service Bus
@@ -9066,7 +9242,7 @@ class ServiceBusQueueEventSubscriptionDestinationProperties(_Model):  # pylint: 
 
 class ServiceBusTopicEventSubscriptionDestination(
     EventSubscriptionDestination, discriminator="ServiceBusTopic"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the service bus topic destination for an event subscription.
 
     :ivar properties: Service Bus Topic Properties of the event subscription destination.
@@ -9122,7 +9298,9 @@ class ServiceBusTopicEventSubscriptionDestination(
             super().__setattr__(key, value)
 
 
-class ServiceBusTopicEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class ServiceBusTopicEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties that represent the Service Bus Topic destination of an event subscription.
 
     :ivar resource_id: The Azure Resource Id that represents the endpoint of the Service Bus Topic
@@ -9162,7 +9340,9 @@ class ServiceBusTopicEventSubscriptionDestinationProperties(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class StaticDeliveryAttributeMapping(DeliveryAttributeMapping, discriminator="Static"):
+class StaticDeliveryAttributeMapping(
+    DeliveryAttributeMapping, discriminator="Static"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static delivery attribute mapping details.
 
     :ivar name: Name of the delivery attribute or header.
@@ -9219,7 +9399,7 @@ class StaticDeliveryAttributeMapping(DeliveryAttributeMapping, discriminator="St
             super().__setattr__(key, value)
 
 
-class StaticDeliveryAttributeMappingProperties(_Model):
+class StaticDeliveryAttributeMappingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of static delivery attribute mapping.
 
     :ivar value: Value of the delivery attribute.
@@ -9252,7 +9432,7 @@ class StaticDeliveryAttributeMappingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRoutingEnrichment(_Model):
+class StaticRoutingEnrichment(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static routing enrichment details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -9291,7 +9471,9 @@ class StaticRoutingEnrichment(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticStringRoutingEnrichment(StaticRoutingEnrichment, discriminator="String"):
+class StaticStringRoutingEnrichment(
+    StaticRoutingEnrichment, discriminator="String"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StaticStringRoutingEnrichment.
 
     :ivar key: Static routing enrichment key.
@@ -9329,7 +9511,9 @@ class StaticStringRoutingEnrichment(StaticRoutingEnrichment, discriminator="Stri
         self.value_type = StaticRoutingEnrichmentType.STRING  # type: ignore
 
 
-class StorageBlobDeadLetterDestination(DeadLetterDestination, discriminator="StorageBlob"):
+class StorageBlobDeadLetterDestination(
+    DeadLetterDestination, discriminator="StorageBlob"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the storage blob based dead letter destination.
 
     :ivar properties: The properties of the Storage Blob based deadletter destination.
@@ -9384,7 +9568,9 @@ class StorageBlobDeadLetterDestination(DeadLetterDestination, discriminator="Sto
             super().__setattr__(key, value)
 
 
-class StorageBlobDeadLetterDestinationProperties(_Model):  # pylint: disable=name-too-long
+class StorageBlobDeadLetterDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of the storage blob based dead letter destination.
 
     :ivar resource_id: The Azure Resource ID of the storage account that is the destination of the
@@ -9423,7 +9609,9 @@ class StorageBlobDeadLetterDestinationProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination, discriminator="StorageQueue"):
+class StorageQueueEventSubscriptionDestination(
+    EventSubscriptionDestination, discriminator="StorageQueue"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the storage queue destination for an event subscription.
 
     :ivar properties: Storage Queue Properties of the event subscription destination.
@@ -9479,7 +9667,9 @@ class StorageQueueEventSubscriptionDestination(EventSubscriptionDestination, dis
             super().__setattr__(key, value)
 
 
-class StorageQueueEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class StorageQueueEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties for a storage queue destination.
 
     :ivar resource_id: The Azure Resource ID of the storage account that contains the queue that is
@@ -9528,7 +9718,9 @@ class StorageQueueEventSubscriptionDestinationProperties(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class StringBeginsWithAdvancedFilter(AdvancedFilter, discriminator="StringBeginsWith"):
+class StringBeginsWithAdvancedFilter(
+    AdvancedFilter, discriminator="StringBeginsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringBeginsWith Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9568,7 +9760,9 @@ class StringBeginsWithAdvancedFilter(AdvancedFilter, discriminator="StringBegins
         self.operator_type = AdvancedFilterOperatorType.STRING_BEGINS_WITH  # type: ignore
 
 
-class StringBeginsWithFilter(Filter, discriminator="StringBeginsWith"):
+class StringBeginsWithFilter(
+    Filter, discriminator="StringBeginsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringBeginsWith Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9608,7 +9802,9 @@ class StringBeginsWithFilter(Filter, discriminator="StringBeginsWith"):
         self.operator_type = FilterOperatorType.STRING_BEGINS_WITH  # type: ignore
 
 
-class StringContainsAdvancedFilter(AdvancedFilter, discriminator="StringContains"):
+class StringContainsAdvancedFilter(
+    AdvancedFilter, discriminator="StringContains"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringContains Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9648,7 +9844,9 @@ class StringContainsAdvancedFilter(AdvancedFilter, discriminator="StringContains
         self.operator_type = AdvancedFilterOperatorType.STRING_CONTAINS  # type: ignore
 
 
-class StringContainsFilter(Filter, discriminator="StringContains"):
+class StringContainsFilter(
+    Filter, discriminator="StringContains"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringContains Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9688,7 +9886,9 @@ class StringContainsFilter(Filter, discriminator="StringContains"):
         self.operator_type = FilterOperatorType.STRING_CONTAINS  # type: ignore
 
 
-class StringEndsWithAdvancedFilter(AdvancedFilter, discriminator="StringEndsWith"):
+class StringEndsWithAdvancedFilter(
+    AdvancedFilter, discriminator="StringEndsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringEndsWith Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9728,7 +9928,9 @@ class StringEndsWithAdvancedFilter(AdvancedFilter, discriminator="StringEndsWith
         self.operator_type = AdvancedFilterOperatorType.STRING_ENDS_WITH  # type: ignore
 
 
-class StringEndsWithFilter(Filter, discriminator="StringEndsWith"):
+class StringEndsWithFilter(
+    Filter, discriminator="StringEndsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringEndsWith Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9768,7 +9970,9 @@ class StringEndsWithFilter(Filter, discriminator="StringEndsWith"):
         self.operator_type = FilterOperatorType.STRING_ENDS_WITH  # type: ignore
 
 
-class StringInAdvancedFilter(AdvancedFilter, discriminator="StringIn"):
+class StringInAdvancedFilter(
+    AdvancedFilter, discriminator="StringIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringIn Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9808,7 +10012,7 @@ class StringInAdvancedFilter(AdvancedFilter, discriminator="StringIn"):
         self.operator_type = AdvancedFilterOperatorType.STRING_IN  # type: ignore
 
 
-class StringInFilter(Filter, discriminator="StringIn"):
+class StringInFilter(Filter, discriminator="StringIn"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringIn Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9848,7 +10052,9 @@ class StringInFilter(Filter, discriminator="StringIn"):
         self.operator_type = FilterOperatorType.STRING_IN  # type: ignore
 
 
-class StringNotBeginsWithAdvancedFilter(AdvancedFilter, discriminator="StringNotBeginsWith"):
+class StringNotBeginsWithAdvancedFilter(
+    AdvancedFilter, discriminator="StringNotBeginsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotBeginsWith Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9888,7 +10094,9 @@ class StringNotBeginsWithAdvancedFilter(AdvancedFilter, discriminator="StringNot
         self.operator_type = AdvancedFilterOperatorType.STRING_NOT_BEGINS_WITH  # type: ignore
 
 
-class StringNotBeginsWithFilter(Filter, discriminator="StringNotBeginsWith"):
+class StringNotBeginsWithFilter(
+    Filter, discriminator="StringNotBeginsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotBeginsWith Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9928,7 +10136,9 @@ class StringNotBeginsWithFilter(Filter, discriminator="StringNotBeginsWith"):
         self.operator_type = FilterOperatorType.STRING_NOT_BEGINS_WITH  # type: ignore
 
 
-class StringNotContainsAdvancedFilter(AdvancedFilter, discriminator="StringNotContains"):
+class StringNotContainsAdvancedFilter(
+    AdvancedFilter, discriminator="StringNotContains"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotContains Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -9968,7 +10178,9 @@ class StringNotContainsAdvancedFilter(AdvancedFilter, discriminator="StringNotCo
         self.operator_type = AdvancedFilterOperatorType.STRING_NOT_CONTAINS  # type: ignore
 
 
-class StringNotContainsFilter(Filter, discriminator="StringNotContains"):
+class StringNotContainsFilter(
+    Filter, discriminator="StringNotContains"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotContains Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -10008,7 +10220,9 @@ class StringNotContainsFilter(Filter, discriminator="StringNotContains"):
         self.operator_type = FilterOperatorType.STRING_NOT_CONTAINS  # type: ignore
 
 
-class StringNotEndsWithAdvancedFilter(AdvancedFilter, discriminator="StringNotEndsWith"):
+class StringNotEndsWithAdvancedFilter(
+    AdvancedFilter, discriminator="StringNotEndsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotEndsWith Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -10048,7 +10262,9 @@ class StringNotEndsWithAdvancedFilter(AdvancedFilter, discriminator="StringNotEn
         self.operator_type = AdvancedFilterOperatorType.STRING_NOT_ENDS_WITH  # type: ignore
 
 
-class StringNotEndsWithFilter(Filter, discriminator="StringNotEndsWith"):
+class StringNotEndsWithFilter(
+    Filter, discriminator="StringNotEndsWith"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotEndsWith Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -10088,7 +10304,9 @@ class StringNotEndsWithFilter(Filter, discriminator="StringNotEndsWith"):
         self.operator_type = FilterOperatorType.STRING_NOT_ENDS_WITH  # type: ignore
 
 
-class StringNotInAdvancedFilter(AdvancedFilter, discriminator="StringNotIn"):
+class StringNotInAdvancedFilter(
+    AdvancedFilter, discriminator="StringNotIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotIn Advanced Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -10128,7 +10346,9 @@ class StringNotInAdvancedFilter(AdvancedFilter, discriminator="StringNotIn"):
         self.operator_type = AdvancedFilterOperatorType.STRING_NOT_IN  # type: ignore
 
 
-class StringNotInFilter(Filter, discriminator="StringNotIn"):
+class StringNotInFilter(
+    Filter, discriminator="StringNotIn"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringNotIn Filter.
 
     :ivar key: The field/property in the event based on which you want to filter.
@@ -10168,7 +10388,7 @@ class StringNotInFilter(Filter, discriminator="StringNotIn"):
         self.operator_type = FilterOperatorType.STRING_NOT_IN  # type: ignore
 
 
-class Subscription(ProxyResource):
+class Subscription(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Event Subscription.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10236,7 +10456,7 @@ class Subscription(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SubscriptionFullUrl(_Model):
+class SubscriptionFullUrl(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Full endpoint URL of an event subscription.
 
     :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
@@ -10267,7 +10487,7 @@ class SubscriptionFullUrl(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionProperties(_Model):
+class SubscriptionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the event subscription.
 
     :ivar provisioning_state: Provisioning state of the event subscription. Known values are:
@@ -10335,7 +10555,7 @@ class SubscriptionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionUpdateParameters(_Model):
+class SubscriptionUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Event Subscription update.
 
     :ivar properties: Properties of the Event Subscription update parameters.
@@ -10391,7 +10611,7 @@ class SubscriptionUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class SubscriptionUpdateParametersProperties(_Model):
+class SubscriptionUpdateParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Event Subscription update parameters.
 
     :ivar delivery_configuration: Information about the delivery configuration of the event
@@ -10449,7 +10669,7 @@ class SubscriptionUpdateParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -10516,7 +10736,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemTopic(TrackedResource):
+class SystemTopic(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventGrid System Topic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10595,7 +10815,7 @@ class SystemTopic(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SystemTopicProperties(_Model):
+class SystemTopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the System Topic.
 
     :ivar provisioning_state: Provisioning state of the system topic. Known values are: "Creating",
@@ -10658,7 +10878,7 @@ class SystemTopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemTopicUpdateParameters(_Model):
+class SystemTopicUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the System Topic update.
 
     :ivar tags: Tags of the system topic.
@@ -10691,7 +10911,7 @@ class SystemTopicUpdateParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Topic(TrackedResource):
+class Topic(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EventGrid Topic.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10797,7 +11017,7 @@ class Topic(TrackedResource):
             super().__setattr__(key, value)
 
 
-class TopicProperties(_Model):
+class TopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Topic.
 
     :ivar private_endpoint_connections: List of private endpoint connections.
@@ -10813,7 +11033,7 @@ class TopicProperties(_Model):
      published.
     :vartype event_type_info: ~azure.mgmt.eventgrid.models.EventTypeInfo
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this topic. Known values are: "1.0", "1.1", and "1.2".
+     this topic. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar input_schema: This determines the format that Event Grid should expect for incoming
      events published to the topic. Known values are: "EventGridSchema", "CustomEventSchema", and
@@ -10868,7 +11088,7 @@ class TopicProperties(_Model):
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this topic. Known values are:
-     \"1.0\", \"1.1\", and \"1.2\"."""
+     \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     input_schema: Optional[Union[str, "_models.InputSchema"]] = rest_field(
         name="inputSchema", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10944,7 +11164,7 @@ class TopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicRegenerateKeyRequest(_Model):
+class TopicRegenerateKeyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Topic regenerate share access key request.
 
     :ivar key_name: Key name to regenerate key1 or key2. Required.
@@ -10972,7 +11192,7 @@ class TopicRegenerateKeyRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicsConfiguration(_Model):
+class TopicsConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Topics Configuration.
 
     :ivar hostname: The hostname for the topics configuration. This is a read-only property.
@@ -11006,7 +11226,7 @@ class TopicsConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicSharedAccessKeys(_Model):
+class TopicSharedAccessKeys(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Shared access keys of the Topic.
 
     :ivar key1: Shared access key1 for the topic.
@@ -11039,7 +11259,7 @@ class TopicSharedAccessKeys(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicSpace(ProxyResource):
+class TopicSpace(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Topic space resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11100,7 +11320,7 @@ class TopicSpace(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TopicSpaceProperties(_Model):
+class TopicSpaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of topic space.
 
     :ivar description: Description for the Topic Space resource.
@@ -11146,7 +11366,7 @@ class TopicSpaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicSpacesConfiguration(_Model):
+class TopicSpacesConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Topic Spaces Configuration.
 
     :ivar state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
@@ -11243,7 +11463,7 @@ class TopicSpacesConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicTypeAdditionalEnforcedPermission(_Model):
+class TopicTypeAdditionalEnforcedPermission(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TopicTypeAdditionalEnforcedPermission.
 
     :ivar permission_name:
@@ -11278,7 +11498,7 @@ class TopicTypeAdditionalEnforcedPermission(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicTypeInfo(ProxyResource):
+class TopicTypeInfo(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a topic type info.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11350,7 +11570,7 @@ class TopicTypeInfo(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TopicTypeProperties(_Model):
+class TopicTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a topic type.
 
     :ivar provider: Namespace of the provider of the topic type.
@@ -11446,7 +11666,7 @@ class TopicTypeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicUpdateParameterProperties(_Model):
+class TopicUpdateParameterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of topic update parameter properties.
 
     :ivar public_network_access: This determines if traffic is allowed over public network. By
@@ -11458,7 +11678,7 @@ class TopicUpdateParameterProperties(_Model):
      IPs. Note: These are considered only if PublicNetworkAccess is enabled.
     :vartype inbound_ip_rules: list[~azure.mgmt.eventgrid.models.InboundIpRule]
     :ivar minimum_tls_version_allowed: Minimum TLS version of the publisher allowed to publish to
-     this domain. Known values are: "1.0", "1.1", and "1.2".
+     this domain. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     :ivar disable_local_auth: This boolean is used to enable or disable local auth. Default value
      is false. When the property is set to true, only Microsoft Entra ID token will be used to
@@ -11487,7 +11707,7 @@ class TopicUpdateParameterProperties(_Model):
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version of the publisher allowed to publish to this domain. Known values are:
-     \"1.0\", \"1.1\", and \"1.2\"."""
+     \"1.0\", \"1.1\", \"1.2\", and \"1.3\"."""
     disable_local_auth: Optional[bool] = rest_field(
         name="disableLocalAuth", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -11527,7 +11747,7 @@ class TopicUpdateParameterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicUpdateParameters(_Model):
+class TopicUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Topic update.
 
     :ivar tags: Tags of the Topic resource.
@@ -11599,7 +11819,57 @@ class TopicUpdateParameters(_Model):
             super().__setattr__(key, value)
 
 
-class UpdateTopicsConfigurationInfo(_Model):
+class UpdateAutoScaleConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """UpdateAutoScaleConfiguration definition.
+
+    :ivar enable_auto_scale: Indicates whether auto-scaling is enabled for the namespace. When
+     enabled, the namespace will automatically scale between minimumThroughputUnits and
+     maximumThroughputUnits based on usage patterns.
+    :vartype enable_auto_scale: bool
+    :ivar minimum_throughput_units: Minimum number of Throughput Units for auto-scaling. Valid only
+     when EnableAutoScale is true.
+    :vartype minimum_throughput_units: int
+    :ivar maximum_throughput_units: Maximum number of Throughput Units for auto-scaling. Valid only
+     when EnableAutoScale is true.
+    :vartype maximum_throughput_units: int
+    """
+
+    enable_auto_scale: Optional[bool] = rest_field(
+        name="enableAutoScale", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether auto-scaling is enabled for the namespace. When enabled, the namespace will
+     automatically scale between minimumThroughputUnits and maximumThroughputUnits based on usage
+     patterns."""
+    minimum_throughput_units: Optional[int] = rest_field(
+        name="minimumThroughputUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Minimum number of Throughput Units for auto-scaling. Valid only when EnableAutoScale is true."""
+    maximum_throughput_units: Optional[int] = rest_field(
+        name="maximumThroughputUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum number of Throughput Units for auto-scaling. Valid only when EnableAutoScale is true."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_auto_scale: Optional[bool] = None,
+        minimum_throughput_units: Optional[int] = None,
+        maximum_throughput_units: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpdateTopicsConfigurationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the topics configuration info of a namespace.
 
     :ivar custom_domains: Custom domain info for topics configuration.
@@ -11629,7 +11899,7 @@ class UpdateTopicsConfigurationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateTopicSpacesConfigurationInfo(_Model):
+class UpdateTopicSpacesConfigurationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the topic spaces configuration info of a namespace.
 
     :ivar state: Indicate if Topic Spaces Configuration is enabled for the namespace. Default is
@@ -11717,7 +11987,7 @@ class UpdateTopicSpacesConfigurationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserIdentityProperties(_Model):
+class UserIdentityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The information about the user identity.
 
     :ivar principal_id: The principal id of user assigned identity.
@@ -11752,7 +12022,7 @@ class UserIdentityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VerifiedPartner(ProxyResource):
+class VerifiedPartner(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Verified partner information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11820,7 +12090,7 @@ class VerifiedPartner(ProxyResource):
             super().__setattr__(key, value)
 
 
-class VerifiedPartnerProperties(_Model):
+class VerifiedPartnerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the verified partner.
 
     :ivar partner_registration_immutable_id: ImmutableId of the corresponding partner registration.
@@ -11888,7 +12158,7 @@ class VerifiedPartnerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookAuthenticationSettings(_Model):
+class WebhookAuthenticationSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authentication settings for a webhook endpoint within a Namespace resource.
 
     :ivar identity: The identity configuration required for authenticating a custom webhook.
@@ -11953,7 +12223,9 @@ class WebhookAuthenticationSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebHookEventSubscriptionDestination(EventSubscriptionDestination, discriminator="WebHook"):
+class WebHookEventSubscriptionDestination(
+    EventSubscriptionDestination, discriminator="WebHook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the webhook destination for an event subscription.
 
     :ivar properties: WebHook Properties of the event subscription destination.
@@ -12017,7 +12289,9 @@ class WebHookEventSubscriptionDestination(EventSubscriptionDestination, discrimi
             super().__setattr__(key, value)
 
 
-class WebHookEventSubscriptionDestinationProperties(_Model):  # pylint: disable=name-too-long
+class WebHookEventSubscriptionDestinationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Information about the webhook destination properties for an event subscription.
 
     :ivar endpoint_url: The URL that represents the endpoint of the destination of an event
@@ -12040,7 +12314,7 @@ class WebHookEventSubscriptionDestinationProperties(_Model):  # pylint: disable=
     :vartype delivery_attribute_mappings:
      list[~azure.mgmt.eventgrid.models.DeliveryAttributeMapping]
     :ivar minimum_tls_version_allowed: Minimum TLS version that should be supported by webhook
-     endpoint. Known values are: "1.0", "1.1", and "1.2".
+     endpoint. Known values are: "1.0", "1.1", "1.2", and "1.3".
     :vartype minimum_tls_version_allowed: str or ~azure.mgmt.eventgrid.models.TlsVersion
     """
 
@@ -12076,7 +12350,7 @@ class WebHookEventSubscriptionDestinationProperties(_Model):  # pylint: disable=
         name="minimumTlsVersionAllowed", visibility=["read", "create", "update", "delete", "query"]
     )
     """Minimum TLS version that should be supported by webhook endpoint. Known values are: \"1.0\",
-     \"1.1\", and \"1.2\"."""
+     \"1.1\", \"1.2\", and \"1.3\"."""
 
     @overload
     def __init__(
@@ -12102,7 +12376,9 @@ class WebHookEventSubscriptionDestinationProperties(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class WebhookPartnerDestinationInfo(PartnerDestinationInfo, discriminator="WebHook"):
+class WebhookPartnerDestinationInfo(
+    PartnerDestinationInfo, discriminator="WebHook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the WebHook of the partner destination.
 
     :ivar azure_subscription_id: Azure subscription ID of the subscriber. The partner destination
@@ -12174,7 +12450,7 @@ class WebhookPartnerDestinationInfo(PartnerDestinationInfo, discriminator="WebHo
             super().__setattr__(key, value)
 
 
-class WebhookPartnerDestinationProperties(_Model):
+class WebhookPartnerDestinationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a partner destination webhook.
 
     :ivar endpoint_url: The URL that represents the endpoint of the partner destination.
@@ -12218,7 +12494,9 @@ class WebhookPartnerDestinationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WebhookUpdatePartnerDestinationInfo(PartnerUpdateDestinationInfo, discriminator="WebHook"):
+class WebhookUpdatePartnerDestinationInfo(
+    PartnerUpdateDestinationInfo, discriminator="WebHook"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the update of the WebHook of the partner destination.
 
     :ivar properties: WebHook Properties of the partner destination.
