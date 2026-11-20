@@ -94,47 +94,45 @@ async def _run_turn_with_tool_support(client: AIProjectClient, agent_name: str, 
         )
         await conn.response.create()
 
-        # Tool outputs collected from the current turn's function-call(s). These are held back
-        # and only sent once this turn's own response.done arrives (below) -- calling
-        # response.create() while the function-call response is still finishing can otherwise
-        # race with the service and produce a concurrent-response error.
-        pending_tool_outputs: List[Tuple[str, str]] = []
+        # Function calls are held until response.done confirms this response completed. The
+        # service also emits function-call events for cancelled or incomplete responses.
+        pending_tool_calls: List[Tuple[str, str, str]] = []
         while True:
             try:
                 event = await asyncio.wait_for(conn.recv(), timeout=_RESPONSE_TIMEOUT)
-            except TimeoutError:
+            except asyncio.TimeoutError:
                 print("Timed out waiting for the agent's reply.")
                 await conn.response.cancel()
                 return
             if isinstance(event, dict) and event.get("type") in ("response.output_text.done", "response.text.done"):
                 event = RealtimeServerEventResponseTextDone(event)
             if isinstance(event, RealtimeServerEventResponseFunctionCallArgumentsDone):
-                # The service forwards the call to us; execute it locally now, but defer sending
-                # the result until this response's own response.done arrives.
-                args = json.loads(event.arguments)
-                print(f"Tool call: {event.name}({args})")
-                if event.name == "get_weather":
-                    result = get_weather(**args)
-                else:
-                    result = json.dumps({"error": f"Unknown tool: {event.name}"})
-                pending_tool_outputs.append((event.call_id, result))
+                pending_tool_calls.append((event.call_id, event.name, event.arguments))
             elif isinstance(event, RealtimeServerEventResponseTextDone):
                 # The sample agent uses a text-only output modality, so the
                 # reply arrives as output text rather than an audio transcript.
                 _safe_print(f"Agent: {event.text}")
             elif isinstance(event, RealtimeServerEventResponseDone):
+                if event.response.status != "completed":
+                    raise RuntimeError(f"Realtime response finished with status {event.response.status!r}.")
                 # A response.done that isn't a function call is the final answer for this turn.
                 # Output items are typed models in the tested scenarios here, but the underlying
                 # union is open (forward-compatible with item kinds this SDK doesn't map yet), so
                 # an unrecognized kind could still surface as a plain mapping; check both.
-                if pending_tool_outputs:
+                if pending_tool_calls:
                     # The function-call response has now fully completed, so it's safe to submit
                     # its tool output(s) and ask for a new response.
-                    for call_id, result in pending_tool_outputs:
+                    for call_id, name, arguments in pending_tool_calls:
+                        args = json.loads(arguments)
+                        print(f"Tool call: {name}({args})")
+                        if name == "get_weather":
+                            result = get_weather(**args)
+                        else:
+                            result = json.dumps({"error": f"Unknown tool: {name}"})
                         await conn.conversation.item.create(
                             item=RealtimeConversationItemFunctionCallOutput(call_id=call_id, output=result)
                         )
-                    pending_tool_outputs = []
+                    pending_tool_calls = []
                     await conn.response.create()
                 elif not any(
                     (item.get("type") if isinstance(item, dict) else getattr(item, "type", None)) == "function_call"
