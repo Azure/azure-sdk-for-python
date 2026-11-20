@@ -49,8 +49,8 @@ def query_setup(recording, query, monkeypatch):  # pylint: disable=unused-argume
         drained=False,
         transform=lambda value: value,
     )
-    query.proxy._item_context = replace(
-        query.proxy._item_context,
+    query.proxy._client_context = replace(
+        query.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append),),
     )
     module = async_binding if query.async_mode else sync_binding
@@ -135,8 +135,8 @@ def test_each_internal_fetch_owns_query_progress_and_final_hook(
         settings.tracing_enabled = False
     if mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -307,8 +307,8 @@ def test_diagnostic_failures_do_not_change_query_outcomes(querying, recording, m
             "emit_attempts",
             Mock(side_effect=RuntimeError("reporting failed")),
         )
-        f.proxy._item_context = replace(
-            f.proxy._item_context,
+        f.proxy._client_context = replace(
+            f.proxy._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=ValueError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -358,7 +358,7 @@ def test_pinned_backend_and_partial_iteration_use_consumption_settings(querying,
     f.pages[0] = [{"id": "a"}, {"id": "b"}]
     settings.tracing_enabled = False
     iterable = f.proxy.query_items("SELECT * FROM c")
-    f.proxy._item_context = replace(f.proxy._item_context, adapter=Mock(), telemetry_handlers=())
+    f.proxy._client_context = replace(f.proxy._client_context, adapter=Mock(), telemetry_handlers=())
     settings.tracing_enabled = True
     first = asyncio.run(iterable.__anext__()) if f.async_mode else next(iterable)
     assert first == {"id": "a"} and h.states[0].closed
@@ -395,7 +395,7 @@ def test_stateless_query_does_not_receive_attempt_flag(querying):
 def test_disabled_query_recording_does_not_import_opentelemetry(querying, monkeypatch):
     h, f = querying, querying.feed
     settings.tracing_enabled = False
-    f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+    f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
     original_import = builtins.__import__
 
     def guarded_import(name, *args, **kwargs):
@@ -412,7 +412,7 @@ def test_query_fetch_masks_outer_state(querying, recording, enabled):
     h, f = querying, querying.feed
     with telemetry._operation_scope(f.proxy, "outer", {}, "query_items"):
         outer = telemetry._OPERATION.get()
-        f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+        f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
         settings.tracing_enabled = enabled
         f.next_page(f.proxy.query_items("SELECT * FROM c").by_page())
         assert telemetry._OPERATION.get() is outer and outer.collector.contributions == 0
@@ -424,8 +424,8 @@ def test_nested_query_hook_keeps_completion_state_separate(querying, recording):
     h, f = querying, querying.feed
     if f.async_mode:
         pytest.skip("Synchronous nested query inside a synchronous hook")
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
 

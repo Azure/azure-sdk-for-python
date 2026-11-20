@@ -33,7 +33,7 @@ from ..._backend.contracts import PreparedRequest
 from ..._constants import _Constants as Constants
 from ..._cosmos_responses import CosmosDict
 from ..._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout, run_with_deadline
-from ..._helpers._item_context import ClientLastResponseHeaders
+from ..._helpers._client_context import ClientLastResponseHeaders
 from ..._helpers._resource_validation import validate_resource
 from ..._helpers._request_database import (
     build_create_database_prepared,

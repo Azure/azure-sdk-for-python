@@ -167,7 +167,7 @@ def test_target_ownership_returns_and_rust_dispatch_rust(replace_case, kind, ret
     proxy = result[0] if return_properties else result
     assert proxy.id == "c1" and proxy.container_link == "dbs/db1/colls/c1"
     assert proxy.client_connection is case.connection
-    assert proxy._item_context is case.database._item_context
+    assert proxy._client_context is case.database._client_context
     if return_properties:
         assert isinstance(result[1], CosmosDict)
         assert result[1]["defaultTtl"] == 3600

@@ -35,7 +35,7 @@ from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos._backend.errors import BindingProtocolError, UnsupportedQueryError
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos.aio._backend import binding_adapter as async_binding
@@ -56,7 +56,7 @@ def container_operation_setup(request):
 def test_metadata_page_tracing_options_reach_owned_spans(listing, recording, enabled):
     h = listing
     settings.tracing_enabled = not enabled
-    h.database._item_context = replace(h.database._item_context, tracing_attributes={"bank.component": "orders"})
+    h.database._client_context = replace(h.database._client_context, tracing_attributes={"bank.component": "orders"})
     pager = h.create_iterable(
         tracing_attributes={"bank.component": "catalog"},
         tracing_options={"enabled": enabled, "attributes": {"bank.page": "first"}},
@@ -96,7 +96,7 @@ def container_listing_setup(request, recording, monkeypatch, container_operation
     database = (AsyncDatabaseProxy if asynchronous else DatabaseProxy)(
         connection,
         "sales",
-        _item_context=ItemClientContext(
+        _client_context=CosmosClientContext(
             backend,
             response_state=connection._response_state,
             telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
@@ -211,8 +211,8 @@ def test_container_listing_telemetry_owns_fetch_and_hook(listing, recording, mod
     if mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
     collect = mode in ("enabled", "handler-only", "no-handlers")
-    h.database._item_context = replace(
-        h.database._item_context,
+    h.database._client_context = replace(
+        h.database._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -352,8 +352,8 @@ def test_container_listing_telemetry_diagnostics_fail_independently(listing, rec
             "emit_attempts",
             Mock(side_effect=RuntimeError("recording failed")),
         )
-        h.database._item_context = replace(
-            h.database._item_context,
+        h.database._client_context = replace(
+            h.database._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=ValueError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -404,7 +404,7 @@ def test_container_listing_telemetry_keeps_other_paths(listing, recording, monke
         assert len(fetch_spans(recording)) == 1
     else:
         settings.tracing_enabled = False
-        h.database._item_context = replace(h.database._item_context, telemetry_handlers=())
+        h.database._client_context = replace(h.database._client_context, telemetry_handlers=())
         original_import = builtins.__import__
 
         def guarded_import(name, *args, **kwargs):
@@ -419,13 +419,13 @@ def test_container_listing_telemetry_keeps_other_paths(listing, recording, monke
 @pytest.mark.parametrize("enabled", [False, True])
 def test_container_listing_telemetry_masks_outer_state(listing, recording, enabled):
     h = listing
-    h.database._item_context = replace(
-        h.database._item_context,
+    h.database._client_context = replace(
+        h.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
     with telemetry._operation_scope(h.database, "outer", {}, h.operation):
         outer = telemetry._OPERATION.get()
-        h.database._item_context = replace(h.database._item_context, telemetry_handlers=())
+        h.database._client_context = replace(h.database._client_context, telemetry_handlers=())
         settings.tracing_enabled = enabled
         assert h.next(h.create_iterable().by_page()) == [{"id": "orders"}]
         assert telemetry._OPERATION.get() is outer
@@ -441,8 +441,8 @@ def test_container_listing_telemetry_nested_hook_owns_separate_state(listing, re
     h = listing
     if h.asynchronous:
         pytest.skip("Synchronous nested listing in a synchronous hook")
-    h.database._item_context = replace(
-        h.database._item_context,
+    h.database._client_context = replace(
+        h.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=collect_attempts),),
     )
 

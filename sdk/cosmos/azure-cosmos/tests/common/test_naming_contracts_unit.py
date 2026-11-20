@@ -70,7 +70,7 @@ from azure.cosmos.aio._helpers._query_items import AsyncQueryPageIterator
 from azure.cosmos import _operation_deadline
 from azure.cosmos import _query_rust_routing as page_helpers
 from azure.cosmos._helpers._document import serialize_document
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders, CosmosClientContext
 from azure.cosmos._helpers._response_parse import (
     parse_backend_response,
     process_backend_response,
@@ -127,17 +127,17 @@ def test_shared_adapter_module_identifies_which_implementations_share_it_rust():
     assert not Path(shared_rust.__file__).with_name("_rust_backend_shared.py").exists()
 
 
-def test_item_client_context_names_its_execution_reference_adapter_rust():
-    assert [field.name for field in fields(ItemClientContext)] == [
+def test_cosmos_client_context_names_its_execution_reference_adapter_rust():
+    assert [field.name for field in fields(CosmosClientContext)] == [
         "adapter", "defaults", "response_state", "telemetry_handlers",
     ]
     adapter = MagicMock(spec=CosmosBackend)
-    context = ItemClientContext(adapter=adapter)
+    context = CosmosClientContext(adapter=adapter)
     assert context.adapter is adapter
     assert context.telemetry_handlers == ()
     assert not hasattr(context, "backend")
     with pytest.raises(TypeError, match="backend"):
-        ItemClientContext(backend=adapter)
+        CosmosClientContext(backend=adapter)
 
 
 @pytest.mark.parametrize(

@@ -95,7 +95,7 @@ rather than skipping the whole file.
 
 | Contents | Reviewer guidance |
 |---|---|
-| `_item_context.py` | **Review focus:** check how one client shares its adapter, defaults, latest response headers, and telemetry handlers. Shared client data must not be mistaken for data belonging to one operation |
+| `_client_context.py` | **Review focus:** check how one client shares its adapter, defaults, latest response headers, and telemetry handlers. Shared client data must not be mistaken for data belonging to one operation |
 | `_item_arguments.py` | **Review focus:** check how public arguments are combined and how the already-selected Python adapter is retrieved. **Temporary—planned removal:** the legacy `build_*_request_options` functions, not the shared argument helpers |
 | `_item_operations.py`, `_item_prep.py`, `_document.py`, `_request_item.py` | **Review focus:** check arguments, copies of caller data, request body bytes, timeout budgets, adapter calls, and results. A failed Rust operation must not be run again through legacy Python |
 | `_database_operations.py`, `_container_operations.py`, `_request_database.py`, `_request_container.py` | **Review focus:** check request building, adapter calls, returned results, and create-if-not-exists behavior. **Temporary—planned removal:** calls to the legacy connection inside the operation helpers |

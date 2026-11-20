@@ -106,8 +106,8 @@ def native(request, monkeypatch):
         return asyncio.run(result) if asynchronous else result
 
     def configure(**kwargs):
-        context = replace(client._item_context, diagnostic_logging=DiagnosticLogging(**kwargs))
-        client._item_context = h.container._item_context = context
+        context = replace(client._client_context, diagnostic_logging=DiagnosticLogging(**kwargs))
+        client._client_context = h.container._client_context = context
 
     h.read, h.configure = read, configure
     try:

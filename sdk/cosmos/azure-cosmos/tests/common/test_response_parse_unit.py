@@ -47,7 +47,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._response_parse import process_backend_response, process_delete_response
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 from azure.cosmos.exceptions import (
     CosmosHttpResponseError,
     CosmosResourceExistsError,

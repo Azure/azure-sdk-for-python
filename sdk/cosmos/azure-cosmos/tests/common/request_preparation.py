@@ -13,7 +13,7 @@ supply ordinary keyword arguments and still see what the code under test would s
 from functools import partial
 
 from azure.cosmos._helpers._item_operations import normalize_item_arguments, build_item_request
-from azure.cosmos._helpers._item_context import ItemClientDefaults
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from azure.cosmos._helpers._item_prep import prepare_create_item_kwargs
 
 
@@ -62,7 +62,7 @@ def prepare_item_request(op, *, partition_key_value, container_rid, kwargs=None,
         options["containerRID"] = container_rid
     return build_item_request(
         op, args, options,
-        ItemClientDefaults(no_response_on_write_default, compact_utf8),
+        ClientOperationDefaults(no_response_on_write_default, compact_utf8),
     )
 
 

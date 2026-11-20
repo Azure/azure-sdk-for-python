@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from ..._cosmos_responses import CosmosList
-from ..._helpers._item_context import ItemClientContext
+from ..._helpers._client_context import CosmosClientContext
 from ..._helpers._read_many import ReadManyRequest
 from ..._operation_deadline import run_with_deadline
 from ..._telemetry import trace_operation_async
@@ -31,7 +31,7 @@ async def _fetch_page(request: ReadManyRequest[AsyncCosmosBackend], **_tracing_k
 
 
 async def read_items(
-    context: Optional[ItemClientContext[AsyncCosmosBackend]],
+    context: Optional[CosmosClientContext[AsyncCosmosBackend]],
     container_link: str,
     items: Any,
     kwargs: dict[str, Any],

@@ -27,7 +27,7 @@ import pytest
 from azure.cosmos import _synchronized_request
 from azure.cosmos._helpers import _document, _item_prep, _legacy_item_operations
 from azure.cosmos._helpers._document import SerializedDocument, serialize_document
-from azure.cosmos._helpers._item_context import ItemClientDefaults
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from azure.cosmos._helpers._item_operations import (
     ItemHelper,
     build_item_request,
@@ -116,7 +116,7 @@ def test_encoding_matches_core_python_rust(operation, compact, text):
     args, options = normalize_item_arguments(
         operation, arguments(operation, body), compact_utf8=compact
     )
-    request = build_item_request(operation, args, options, ItemClientDefaults())
+    request = build_item_request(operation, args, options, ClientOperationDefaults())
     payload = (
         {"operations": [{"op": "set", "path": "/value", "value": body}]}
         if operation == "patch_item"
@@ -196,7 +196,7 @@ def test_builders_only_reuse_snapshots_rust(operation, monkeypatch):
     monkeypatch.setattr(_document, "serialize_body_to_bytes", forbidden)
     monkeypatch.setattr(_item_prep, "serialize_body_to_bytes", forbidden)
     for _ in range(2):
-        prepared = build_item_request(operation, args, options, ItemClientDefaults())
+        prepared = build_item_request(operation, args, options, ClientOperationDefaults())
         assert prepared.body_bytes is snapshot
         assert b"after" not in prepared.body_bytes
         assert prepared.item_id == (
@@ -328,7 +328,7 @@ def test_generated_id_is_resolved_once_without_mutating_a_mapping_rust(monkeypat
     assert original == {"nested": {"value": 1}}
     assert document.body_id == json.loads(document.body_bytes)["id"] == "generated"
     for _ in range(2):
-        request = build_item_request("create_item", args, options, ItemClientDefaults())
+        request = build_item_request("create_item", args, options, ClientOperationDefaults())
         assert request.item_id == "generated"
         assert request.partition_key.kind == "extract"
     generated.assert_called_once()
@@ -480,6 +480,6 @@ def test_replacement_keeps_existing_preencoded_body_support_rust(body):
     args, options = normalize_item_arguments(
         "replace_item", arguments("replace_item", body)
     )
-    prepared = build_item_request("replace_item", args, options, ItemClientDefaults())
+    prepared = build_item_request("replace_item", args, options, ClientOperationDefaults())
     assert prepared.item_id == "target"
     assert prepared.body_bytes == (b"" if body is None else b'{"id":"body"}')

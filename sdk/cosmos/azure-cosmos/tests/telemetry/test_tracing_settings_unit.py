@@ -291,7 +291,7 @@ def test_concurrent_calls_keep_their_own_attribute_values(native, recording):
 
 def test_core_python_operation_does_not_inherit_rust_attribute_defaults(recording):
     owner = SimpleNamespace(
-        _item_context=SimpleNamespace(
+        _client_context=SimpleNamespace(
             adapter=SimpleNamespace(name="core-python"),
             tracing_attributes={"bank.component": "not-a-legacy-operation-default"},
         )

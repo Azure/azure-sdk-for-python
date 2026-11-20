@@ -48,7 +48,7 @@ from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._helpers import _feed_paging
 from azure.cosmos._constants import _Constants as Constants
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
@@ -420,8 +420,8 @@ def query(request, monkeypatch):
         connection,
         "dbs/db",
         "c",
-        _item_context=ItemClientContext(
-            backend, ItemClientDefaults(priority="Low", throughput_bucket=3)
+        _client_context=CosmosClientContext(
+            backend, ClientOperationDefaults(priority="Low", throughput_bucket=3)
         ),
     )
     context.connection, context.binding, context.backend = connection, binding, backend
@@ -1157,7 +1157,7 @@ def test_hook_failure_does_not_advance_public_bookmark_rust(query):
 
 @pytest.fixture(name="legacy_query")
 def _legacy_query(query):
-    query.proxy._item_context = None
+    query.proxy._client_context = None
     query.connection._backend = SimpleNamespace(name="core-python")
     query.proxy._get_properties_with_options = MagicMock(
         return_value={
@@ -1343,7 +1343,7 @@ def test_query_advice_and_index_headers_are_decoded_before_hooks_rust(query, mon
     assert calls[0]["x-ms-cosmos-index-utilization"] == "index:raw"
     assert calls[0]["x-ms-cosmos-query-advice"] == "advice:raw"
     assert (
-        query.proxy._item_context.response_state.last_response_headers[
+        query.proxy._client_context.response_state.last_response_headers[
             "x-ms-cosmos-query-advice"
         ]
         == "advice:raw"

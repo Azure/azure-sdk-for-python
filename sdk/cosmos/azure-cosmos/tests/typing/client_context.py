@@ -6,7 +6,7 @@
 """Static regression checks for the item dependency handoff.
 
 Run from the package root:
-python -m mypy tests/typing/item_context.py --follow-imports=silent
+python -m mypy tests/typing/client_context.py --follow-imports=silent
     --ignore-missing-imports --warn-unused-ignores
 """
 from typing import Optional, Union
@@ -19,7 +19,7 @@ from azure.cosmos._backend.contracts import BackendResponse, PreparedRequest, Pr
 from azure.cosmos._backend.capabilities import OperationRouting
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._cosmos_client_connection import CosmosClientConnection
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders, CosmosClientContext
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos._helpers._legacy_item_operations import LegacyItemHelper
 from azure.cosmos.container import ContainerProxy
@@ -34,16 +34,16 @@ from azure.cosmos.aio._helpers._legacy_item_operations import AsyncLegacyItemHel
 
 
 def check_client_propagation(client: CosmosClient, async_client: AsyncCosmosClient) -> None:
-    assert_type(client._item_context, ItemClientContext[CosmosBackend])
-    assert_type(async_client._item_context, ItemClientContext[AsyncCosmosBackend])
+    assert_type(client._client_context, CosmosClientContext[CosmosBackend])
+    assert_type(async_client._client_context, CosmosClientContext[AsyncCosmosBackend])
     database = client.get_database_client("db")
     async_database = async_client.get_database_client("db")
-    assert_type(database._item_context, Optional[ItemClientContext[CosmosBackend]])
-    assert_type(async_database._item_context, Optional[ItemClientContext[AsyncCosmosBackend]])
+    assert_type(database._client_context, Optional[CosmosClientContext[CosmosBackend]])
+    assert_type(async_database._client_context, Optional[CosmosClientContext[AsyncCosmosBackend]])
     container = database.get_container_client("orders")
     async_container = async_database.get_container_client("orders")
-    assert_type(container._item_context, Optional[ItemClientContext[CosmosBackend]])
-    assert_type(async_container._item_context, Optional[ItemClientContext[AsyncCosmosBackend]])
+    assert_type(container._client_context, Optional[CosmosClientContext[CosmosBackend]])
+    assert_type(async_container._client_context, Optional[CosmosClientContext[AsyncCosmosBackend]])
     assert_type(container._get_item_helper(), Union[ItemHelper, LegacyItemHelper])
     assert_type(async_container._get_item_helper(), Union[AsyncItemHelper, AsyncLegacyItemHelper])
 
@@ -54,27 +54,27 @@ def check_backend_separation(
     connection: CosmosClientConnection,
     async_connection: AsyncCosmosClientConnection,
 ) -> None:
-    context = ItemClientContext(backend)
-    async_context = ItemClientContext(async_backend)
+    context = CosmosClientContext(backend)
+    async_context = CosmosClientContext(async_backend)
     assert_type(context.adapter, CosmosBackend)
     assert_type(async_context.adapter, AsyncCosmosBackend)
     assert_type(context.response_state, ClientLastResponseHeaders)
     assert_type(async_context.response_state, ClientLastResponseHeaders)
-    DatabaseProxy(connection, "db", _item_context=context)
-    AsyncDatabaseProxy(async_connection, "db", _item_context=async_context)
-    ContainerProxy(connection, "dbs/db", "orders", _item_context=context)
-    AsyncContainerProxy(async_connection, "dbs/db", "orders", _item_context=async_context)
+    DatabaseProxy(connection, "db", _client_context=context)
+    AsyncDatabaseProxy(async_connection, "db", _client_context=async_context)
+    ContainerProxy(connection, "dbs/db", "orders", _client_context=context)
+    AsyncContainerProxy(async_connection, "dbs/db", "orders", _client_context=async_context)
     ItemHelper(context.adapter)
     AsyncItemHelper(async_context.adapter)
 
     # These ignores must remain necessary: mixing the two modes is a type error.
-    DatabaseProxy(connection, "db", _item_context=async_context)  # type: ignore[arg-type]
-    AsyncDatabaseProxy(async_connection, "db", _item_context=context)  # type: ignore[arg-type]
-    ContainerProxy(connection, "dbs/db", "orders", _item_context=async_context)  # type: ignore[arg-type]
-    AsyncContainerProxy(async_connection, "dbs/db", "orders", _item_context=context)  # type: ignore[arg-type]
+    DatabaseProxy(connection, "db", _client_context=async_context)  # type: ignore[arg-type]
+    AsyncDatabaseProxy(async_connection, "db", _client_context=context)  # type: ignore[arg-type]
+    ContainerProxy(connection, "dbs/db", "orders", _client_context=async_context)  # type: ignore[arg-type]
+    AsyncContainerProxy(async_connection, "dbs/db", "orders", _client_context=context)  # type: ignore[arg-type]
     ItemHelper(async_context.adapter)  # type: ignore[arg-type]
     AsyncItemHelper(context.adapter)  # type: ignore[arg-type]
-    ItemClientContext(object())  # type: ignore[type-var]
+    CosmosClientContext(object())  # type: ignore[type-var]
 
     ItemHelper(backend).create_item(deadline=None, container_link="dbs/d/colls/c", body={"id": "item"})
     awaitable = AsyncItemHelper(async_backend).create_item(

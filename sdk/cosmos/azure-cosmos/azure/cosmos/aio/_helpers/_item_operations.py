@@ -19,7 +19,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Optional
 
-from ..._helpers._item_context import ItemClientDefaults, ClientLastResponseHeaders
+from ..._helpers._client_context import ClientOperationDefaults, ClientLastResponseHeaders
 from ..._helpers._item_operations import (
     normalize_item_arguments, validate_rust_item_options,
     build_item_request,
@@ -38,15 +38,15 @@ class AsyncItemHelper:
     """
 
     def __init__(
-        self, backend: AsyncCosmosBackend, defaults: Optional[ItemClientDefaults] = None,
+        self, backend: AsyncCosmosBackend, defaults: Optional[ClientOperationDefaults] = None,
         response_state: Optional[ClientLastResponseHeaders] = None,
     ) -> None:
-        if defaults is not None and not isinstance(defaults, ItemClientDefaults):
-            raise TypeError("defaults must be ItemClientDefaults, not a client connection")
+        if defaults is not None and not isinstance(defaults, ClientOperationDefaults):
+            raise TypeError("defaults must be ClientOperationDefaults, not a client connection")
         if response_state is not None and not isinstance(response_state, ClientLastResponseHeaders):
             raise TypeError("response_state must be ClientLastResponseHeaders")
         self._backend = backend
-        self._defaults = defaults if defaults is not None else ItemClientDefaults()
+        self._defaults = defaults if defaults is not None else ClientOperationDefaults()
         self._response_state = response_state
 
     async def _run(

@@ -36,7 +36,7 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import CosmosDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers import _item_prep, _response_parse
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos._helpers._item_operations import ItemHelper, normalize_item_arguments
 from azure.cosmos._helpers._legacy_item_operations import (
     LegacyItemHelper,
@@ -193,8 +193,8 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     helper_type = AsyncItemHelper if async_mode else ItemHelper
     construct = MagicMock(wraps=helper_type)
     monkeypatch.setattr(inspect.getmodule(proxy_type), helper_type.__name__, construct)
-    context = ItemClientContext(backend)
-    proxy = proxy_type(None, "dbs/d", "c", _item_context=context)
+    context = CosmosClientContext(backend)
+    proxy = proxy_type(None, "dbs/d", "c", _client_context=context)
     helper = proxy._get_item_helper()
     finish(proxy.create_item({"id": "one"}))
     finish(proxy.create_item({"id": "two"}))
@@ -203,8 +203,8 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     assert len(backend.events) == 2
     assert not hasattr(proxy, "_create_item_helper")
 
-    proxy._item_context = replace(
-        context, defaults=ItemClientDefaults(no_response_on_write=True)
+    proxy._client_context = replace(
+        context, defaults=ClientOperationDefaults(no_response_on_write=True)
     )
     replacement = proxy._get_item_helper()
     assert replacement is not helper
@@ -212,7 +212,7 @@ def test_rust_helper_reuse_is_context_scoped_and_does_not_retain_proxy_rust(asyn
     assert proxy._get_item_helper() is replacement
     assert construct.call_count == 2
     construct.assert_called_with(
-        backend, proxy._item_context.defaults, proxy._item_context.response_state
+        backend, proxy._client_context.defaults, proxy._client_context.response_state
     )
     reference = weakref.ref(proxy)
     del proxy
@@ -274,7 +274,7 @@ def test_cached_helper_keeps_concurrent_request_and_result_state_local_rust(asyn
 
     backend.execute = execute_async if async_mode else execute
     proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(
-        None, "dbs/d", "c", _item_context=ItemClientContext(backend)
+        None, "dbs/d", "c", _client_context=CosmosClientContext(backend)
     )
     helper = proxy._get_item_helper()
     documents = [{"id": name, "nested": [name]} for name in ("first", "second")]

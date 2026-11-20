@@ -49,8 +49,8 @@ def read_all_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argu
         local_exhaustion=False,
         transform=lambda value: value,
     )
-    feed.proxy._item_context = replace(
-        feed.proxy._item_context,
+    feed.proxy._client_context = replace(
+        feed.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append),),
     )
     module = async_binding if feed.async_mode else sync_binding
@@ -129,8 +129,8 @@ def test_internal_fetch_owns_diagnostics_and_final_hook(
         settings.tracing_enabled = False
     if mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -300,8 +300,8 @@ def test_diagnostics_failure_does_not_change_paging(reading, recording, monkeypa
             "emit_attempts",
             Mock(side_effect=RuntimeError("recording failed")),
         )
-        f.proxy._item_context = replace(
-            f.proxy._item_context,
+        f.proxy._client_context = replace(
+            f.proxy._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=ValueError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -325,8 +325,8 @@ def test_replay_pins_backend_and_handlers_but_uses_consumption_settings(reading,
     h, f = reading, reading.feed
     settings.tracing_enabled = False
     iterable = f.proxy.read_all_items()
-    original = f.proxy._item_context
-    f.proxy._item_context = replace(original, adapter=Mock(name="replacement"), telemetry_handlers=())
+    original = f.proxy._client_context
+    f.proxy._client_context = replace(original, adapter=Mock(name="replacement"), telemetry_handlers=())
     settings.tracing_enabled = True
     pages = iterable.by_page()
     assert f.next_page(pages) == [{"id": "a", "nested": [1]}]
@@ -344,7 +344,7 @@ def test_replay_pins_backend_and_handlers_but_uses_consumption_settings(reading,
 def test_disabled_recording_does_not_import_opentelemetry(reading, monkeypatch):
     h, f = reading, reading.feed
     settings.tracing_enabled = False
-    f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+    f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
     original_import = builtins.__import__
 
     def guarded_import(name, *args, **kwargs):
@@ -394,8 +394,8 @@ def test_nested_hook_does_not_contribute_to_outer_fetch(reading, recording):
     h, f = reading, reading.feed
     if f.async_mode:
         pytest.skip("Synchronous nested fetch in a synchronous hook")
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
 
@@ -425,7 +425,7 @@ def test_fetch_masks_unrelated_outer_operation(reading, recording, enabled):
     h, f = reading, reading.feed
     with telemetry._operation_scope(f.proxy, "outer", {}, "read_all_items"):
         outer = telemetry._OPERATION.get()
-        f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+        f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
         settings.tracing_enabled = enabled
         assert f.next_page(f.proxy.read_all_items().by_page()) == [{"id": "a", "nested": [1]}]
         assert telemetry._OPERATION.get() is outer

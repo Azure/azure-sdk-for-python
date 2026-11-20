@@ -60,7 +60,7 @@ def prepare_operation_kwargs(
 ) -> None:
     """Validate inputs and apply defaults before metadata, paging, or coordinators."""
     reject_removed_options(kwargs)
-    context = getattr(proxy, "_item_context", None)
+    context = getattr(proxy, "_client_context", None)
     backend = context.adapter if context is not None else getattr(
         proxy.client_connection, "__dict__", {}
     ).get("_backend")

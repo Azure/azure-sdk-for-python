@@ -26,7 +26,7 @@ from .._backend.partition_key_input import BindingPartitionKey
 from .._backend.request_settings import ResourceSettings
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
-from ._item_context import ItemClientDefaults
+from ._client_context import ClientOperationDefaults
 from ._request_settings import (
     account_request_settings,
     build_customer_headers,
@@ -75,7 +75,7 @@ _CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
 def prepare_create_database_options(
     kwargs: dict[str, Any], offer: Optional[int | ThroughputProperties],
     *, operation_name: str = "create_database",
-    defaults: Optional[ItemClientDefaults] = None,
+    defaults: Optional[ClientOperationDefaults] = None,
 ) -> tuple[dict[str, Any], Optional[float]]:
     """Snapshot creation inputs and establish one budget before driver setup."""
     started = time.monotonic()

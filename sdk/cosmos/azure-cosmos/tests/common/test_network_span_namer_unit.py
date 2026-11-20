@@ -127,7 +127,7 @@ def test_core_python_constructor_retains_callback(construct_client, client_modul
 def test_core_python_operation_preserves_callback_and_rust_omission_is_supported():
     callback = Mock(return_value="orders-get")
     kwargs = {"network_span_namer": callback}
-    legacy = SimpleNamespace(_item_context=SimpleNamespace(adapter=SimpleNamespace(name="core-python")))
+    legacy = SimpleNamespace(_client_context=SimpleNamespace(adapter=SimpleNamespace(name="core-python")))
     prepare_operation_kwargs(legacy, kwargs)
     assert kwargs == {"network_span_namer": callback}
     callback.assert_not_called()

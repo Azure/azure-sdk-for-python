@@ -73,7 +73,7 @@ def get_selected_backend(client_connection: Any) -> Any:
     """Retrieve the already-selected Python backend from the client connection.
 
     Unmigrated connection-owned coordinators use this accessor. Public point
-    operations instead receive their backend directly through ItemClientContext.
+    operations instead receive their backend directly through CosmosClientContext.
     This function does not select or construct a backend.
 
     Read ``_backend`` from the connection's ``__dict__`` (its stored instance

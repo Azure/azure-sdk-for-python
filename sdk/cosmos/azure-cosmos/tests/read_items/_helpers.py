@@ -7,7 +7,7 @@ from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
 
 from azure.cosmos._backend.contracts import BackendPage, ContainerMetadata
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 
@@ -59,5 +59,5 @@ def make_proxy(asynchronous=False, pages=None, *, paths=("/pk",), kind="Hash", d
     proxy.container_link = LINK
     proxy.id = "testcontainer"
     proxy.client_connection = ForbiddenConnection()
-    proxy._item_context = ItemClientContext(backend, defaults=defaults or ItemClientDefaults())
+    proxy._client_context = CosmosClientContext(backend, defaults=defaults or ClientOperationDefaults())
     return proxy, backend

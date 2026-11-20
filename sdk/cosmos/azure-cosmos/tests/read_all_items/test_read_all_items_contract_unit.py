@@ -18,7 +18,7 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._helpers import _feed_paging
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 
 
@@ -80,9 +80,9 @@ def feed(request, monkeypatch):
     )
     connection = MagicMock()
     connection._backend = backend
-    context.item_context = ItemClientContext(backend)
+    context.client_context = CosmosClientContext(backend)
     context.proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(
-        connection, "dbs/db", "c", _item_context=context.item_context,
+        connection, "dbs/db", "c", _client_context=context.client_context,
     )
     context.binding, context.connection, context.backend = binding, connection, backend
 
@@ -112,8 +112,8 @@ class ForbiddenConnection:
     ({}, "Low", 3), ({"priority": "High", "throughput_bucket": 5}, "High", 5),
 ])
 def test_read_all_inherits_client_defaults_rust(feed, kwargs, priority, bucket):
-    feed.proxy._item_context = ItemClientContext(
-        feed.backend, ItemClientDefaults(priority="Low", throughput_bucket=3, operation_timeout_seconds=10)
+    feed.proxy._client_context = CosmosClientContext(
+        feed.backend, ClientOperationDefaults(priority="Low", throughput_bucket=3, operation_timeout_seconds=10)
     )
     feed.collect(feed.proxy.read_all_items(**kwargs))
     assert all(p.settings.priority == priority for p, _, _ in feed.calls)
@@ -143,12 +143,12 @@ def test_complete_enumeration_is_lazy_and_connection_free_rust(feed):
 
 @pytest.mark.parametrize("context", [
     None,
-    ItemClientContext(SimpleNamespace(name="core-python")),
-    ItemClientContext(SimpleNamespace(name="unknown")),
+    CosmosClientContext(SimpleNamespace(name="core-python")),
+    CosmosClientContext(SimpleNamespace(name="unknown")),
 ])
 def test_missing_rust_context_never_consults_connection_rust(feed, context):
     feed.proxy.client_connection = ForbiddenConnection()
-    feed.proxy._item_context = context
+    feed.proxy._client_context = context
     with pytest.raises(NotImplementedError, match="client-owned Rust"):
         feed.proxy.read_all_items()
     assert not feed.calls
@@ -365,7 +365,7 @@ def test_empty_pages_cannot_restart_budget_rust(feed):
 
 def test_backend_is_pinned_at_iterator_creation_rust(feed):
     pager = feed.proxy.read_all_items()
-    feed.proxy._item_context = ItemClientContext(MagicMock())
+    feed.proxy._client_context = CosmosClientContext(MagicMock())
     feed.connection._backend = MagicMock()
     assert len(feed.collect(pager)) == 2
 

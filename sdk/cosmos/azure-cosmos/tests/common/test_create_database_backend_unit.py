@@ -87,7 +87,7 @@ from azure.cosmos._helpers._request_database import (
     is_read_database_rust_eligible,
 )
 from azure.cosmos._helpers._database_operations import DatabaseHelper
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.aio._cosmos_client_connection_async import (
@@ -1613,8 +1613,8 @@ def test_sync_public_create_database_returns_proxy_and_properties_rust():
     client.client_connection = SimpleNamespace(last_response_headers={})
     client._inference_client = MagicMock()
     client._adapter = _BindingAdapter()
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    client._item_context = ItemClientContext(client._adapter)
+    from azure.cosmos._helpers._client_context import CosmosClientContext
+    client._client_context = CosmosClientContext(client._adapter)
     hook_calls = []
 
     proxy, properties = client.create_database(
@@ -1639,8 +1639,8 @@ def test_sync_public_create_database_preserves_zero_autoscale_increment_rust():
     client._inference_client = None
     backend = _BindingAdapter()
     client._adapter = backend
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    client._item_context = ItemClientContext(backend)
+    from azure.cosmos._helpers._client_context import CosmosClientContext
+    client._client_context = CosmosClientContext(backend)
 
     client.create_database(
         "db1",
@@ -1665,8 +1665,8 @@ def test_async_public_create_database_returns_proxy_and_properties_rust():
         client.client_connection = SimpleNamespace(last_response_headers={})
         client._inference_client = MagicMock()
         client._adapter = _AsyncBindingAdapter()
-        from azure.cosmos._helpers._item_context import ItemClientContext
-        client._item_context = ItemClientContext(client._adapter)
+        from azure.cosmos._helpers._client_context import CosmosClientContext
+        client._client_context = CosmosClientContext(client._adapter)
         hook_calls = []
 
         proxy, properties = await client.create_database(
@@ -1708,8 +1708,8 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         )
     )
     sync_client._adapter = sync_backend
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    sync_client._item_context = ItemClientContext(sync_backend)
+    from azure.cosmos._helpers._client_context import CosmosClientContext
+    sync_client._client_context = CosmosClientContext(sync_backend)
 
     proxy, properties = sync_client.create_database_if_not_exists(
         "db1",
@@ -1737,7 +1737,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
             )
         )
         async_client._adapter = async_backend
-        async_client._item_context = ItemClientContext(async_backend)
+        async_client._client_context = CosmosClientContext(async_backend)
         async_proxy, async_properties = await async_client.create_database_if_not_exists(
             "db1",
             return_properties=True,
@@ -1770,8 +1770,8 @@ def create_database_client(request):
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
     )
     client._adapter = _AsyncBindingAdapter() if request.param else _BindingAdapter()
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    client._item_context = ItemClientContext(client._adapter)
+    from azure.cosmos._helpers._client_context import CosmosClientContext
+    client._client_context = CosmosClientContext(client._adapter)
     return client
 
 
@@ -1787,7 +1787,7 @@ def native_create_database_client_fixture(create_database_client):  # pylint: di
     adapter_type = AsyncBindingAdapter if isinstance(client, AsyncCosmosClient) else BindingAdapter
     adapter = adapter_type("https://example.documents.azure.com", master_key="unused")
     client._adapter = adapter
-    client._item_context = replace(client._item_context, adapter=adapter)
+    client._client_context = replace(client._client_context, adapter=adapter)
     client.client_connection._backend = adapter
     try:
         yield client
@@ -1808,11 +1808,11 @@ def _call_create_database(client, *args, method_name="create_database", **kwargs
 
 
 def test_create_database_hedging_true_retains_client_threshold_rust(create_database_client):
-    from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+    from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 
     client = create_database_client
-    client._item_context = ItemClientContext(
-        client._adapter, ItemClientDefaults(hedging_threshold_ms=20),
+    client._client_context = CosmosClientContext(
+        client._adapter, ClientOperationDefaults(hedging_threshold_ms=20),
     )
     _call_create_database(client, "db1", availability_strategy=True)
     hedging = client._adapter.prepared_requests[-1].settings.hedging
@@ -2006,7 +2006,7 @@ def test_create_hook_owns_headers_and_nested_body_rust(create_database_client):
     assert proxy.id == "db1"
     assert result["nested"]["value"] == "original"
     assert result.get_response_headers()["x-ms-activity-id"] == "own"
-    assert client._item_context.response_state.last_response_headers["x-ms-activity-id"] == "own"
+    assert client._client_context.response_state.last_response_headers["x-ms-activity-id"] == "own"
 
 
 def test_create_hook_uses_result_not_latest_client_headers_rust(create_database_client, monkeypatch):
@@ -2031,7 +2031,7 @@ def test_create_hook_uses_result_not_latest_client_headers_rust(create_database_
     def parse_with_interleaved_response(*args, **kwargs):
         result = original(*args, **kwargs)
         client.client_connection.last_response_headers = {"x-ms-request-charge": "99"}
-        client._item_context.response_state.last_response_headers = CaseInsensitiveDict(
+        client._client_context.response_state.last_response_headers = CaseInsensitiveDict(
             {"x-ms-request-charge": "99"}
         )
         return result
@@ -2540,7 +2540,7 @@ def test_if_not_exists_recovery_is_bounded_and_preserves_errors_rust(create_data
     assert [p.op for p in client._adapter.prepared_requests] == [
         OP_READ_DATABASE, OP_CREATE_DATABASE, OP_READ_DATABASE
     ][:len(statuses)]
-    assert client._item_context.response_state.last_response_headers["x-ms-activity-id"] == f"step-{len(statuses) - 1}"
+    assert client._client_context.response_state.last_response_headers["x-ms-activity-id"] == f"step-{len(statuses) - 1}"
     hook.assert_not_called()
     client.client_connection.ReadDatabase.assert_not_called()
     client.client_connection.CreateDatabase.assert_not_called()
@@ -2909,7 +2909,7 @@ def test_if_not_exists_rejects_invalid_id_before_read_rust(
     if use_legacy:
         asynchronous = isinstance(client, AsyncCosmosClient)
         client._adapter = ASYNC_LEGACY_BACKEND if asynchronous else LEGACY_BACKEND
-        client._item_context = replace(client._item_context, adapter=client._adapter)
+        client._client_context = replace(client._client_context, adapter=client._adapter)
         mock_type = AsyncMock if asynchronous else MagicMock
         client.client_connection.ReadDatabase = mock_type(
             return_value=CosmosDict({"id": "db1"}, response_headers={}),
@@ -3067,7 +3067,7 @@ def test_if_not_exists_hook_has_independent_final_response_rust(create_database_
 
     def interleaved_response(*args, **kwargs):
         result = parse(*args, **kwargs)
-        client._item_context.response_state.last_response_headers = {"x-ms-activity-id": "another-call"}
+        client._client_context.response_state.last_response_headers = {"x-ms-activity-id": "another-call"}
         return result
 
     class Hook:
@@ -3336,11 +3336,11 @@ def test_if_not_exists_core_python_receives_remaining_budget_and_isolated_hook_r
     reach the caller's result.
     """
     from azure.cosmos._helpers import _request_database
-    from azure.cosmos._helpers._item_context import ItemClientContext
+    from azure.cosmos._helpers._client_context import CosmosClientContext
     client = create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
     client._adapter = ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND
-    client._item_context = ItemClientContext(client._adapter)
+    client._client_context = CosmosClientContext(client._adapter)
     clock = [100.0]
     monkeypatch.setattr(_request_database.time, "monotonic", lambda: clock[0])
     replies = iter(_get_or_create_responses(statuses))
@@ -3461,7 +3461,7 @@ def test_database_defaults_and_overrides_are_stable_across_every_step_rust(
     create_database_client, method_name, statuses, use_legacy, reverse, typed, raw, explicit, expected,
 ):
     from copy import deepcopy
-    from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+    from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
     from azure.cosmos import documents
     client = create_database_client
     is_async = isinstance(client, AsyncCosmosClient)
@@ -3495,8 +3495,8 @@ def test_database_defaults_and_overrides_are_stable_across_every_step_rust(
         mock = AsyncMock if is_async else MagicMock
         client.client_connection.ReadDatabase = mock(side_effect=dispatch)
         client.client_connection.CreateDatabase = mock(side_effect=dispatch)
-    client._item_context = ItemClientContext(
-        client._adapter, ItemClientDefaults(priority="Low", throughput_bucket=7, no_response_on_write=True),
+    client._client_context = CosmosClientContext(
+        client._adapter, ClientOperationDefaults(priority="Low", throughput_bucket=7, no_response_on_write=True),
     )
     entries = [*typed.items(), ("initialHeaders", raw), ("offerThroughput", 1000)]
     options = dict(reversed(entries) if reverse else entries)
@@ -3626,7 +3626,7 @@ def delete_database_client(request):
     )
     client._adapter = _AsyncBindingAdapter(response) if is_async else _BindingAdapter(response)
     client._adapter.execute = delete_mock(wraps=client._adapter.execute)
-    client._item_context = ItemClientContext(client._adapter)
+    client._client_context = CosmosClientContext(client._adapter)
     return client
 
 
@@ -3649,8 +3649,8 @@ def test_delete_database_preserves_client_defaults_and_overrides_rust(
     delete_database_client, options, expected,
 ):
     client = delete_database_client
-    client._item_context = ItemClientContext(
-        client._adapter, ItemClientDefaults(priority="Low", throughput_bucket=7),
+    client._client_context = CosmosClientContext(
+        client._adapter, ClientOperationDefaults(priority="Low", throughput_bucket=7),
     )
     assert _call_delete_database(client, "db1", **options) is None
     headers = wire_headers(client._adapter.prepared)
@@ -4314,7 +4314,7 @@ def test_public_sync_delete_database_accepts_every_argument_form_rust(database_a
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
-    client._item_context = ItemClientContext(backend)
+    client._client_context = CosmosClientContext(backend)
 
     assert client.delete_database(database_argument) is None
     assert backend.prepared.op == OP_DELETE_DATABASE
@@ -4330,7 +4330,7 @@ def test_public_sync_delete_database_accepts_a_proxy_rust():
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
-    client._item_context = ItemClientContext(backend)
+    client._client_context = CosmosClientContext(backend)
 
     client.delete_database(DatabaseProxy(client.client_connection, "db1"))
 
@@ -4346,7 +4346,7 @@ def test_public_sync_delete_database_fires_response_hook_with_headers_only_rust(
         last_response_headers={},
     )
     client._adapter = _BindingAdapter(_deleted_response())
-    client._item_context = ItemClientContext(client._adapter)
+    client._client_context = CosmosClientContext(client._adapter)
     hook_calls = []
 
     client.delete_database("db1", response_hook=lambda headers: hook_calls.append(headers))
@@ -4364,7 +4364,7 @@ def test_sync_delete_database_preserves_access_conditions_without_warnings_rust(
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
-    client._item_context = ItemClientContext(backend)
+    client._client_context = CosmosClientContext(backend)
 
     with warnings.catch_warnings(record=True) as warnings_seen:
         warnings.simplefilter("always")
@@ -4392,7 +4392,7 @@ def test_sync_delete_database_preserves_wildcard_guard_without_fallback_rust():
     )
     backend = _BindingAdapter(_deleted_response())
     client._adapter = backend
-    client._item_context = ItemClientContext(backend)
+    client._client_context = CosmosClientContext(backend)
 
     with warnings.catch_warnings(record=True) as warnings_seen:
         warnings.simplefilter("always")
@@ -4418,7 +4418,7 @@ def test_async_delete_database_preserves_access_conditions_without_warnings_rust
         )
         backend = _AsyncBindingAdapter(_deleted_response())
         client._adapter = backend
-        client._item_context = ItemClientContext(backend)
+        client._client_context = CosmosClientContext(backend)
 
         with warnings.catch_warnings(record=True) as warnings_seen:
             warnings.simplefilter("always")

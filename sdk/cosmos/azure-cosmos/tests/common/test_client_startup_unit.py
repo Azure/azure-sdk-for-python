@@ -860,8 +860,8 @@ def test_client_priority_defaults_are_captured_rust(module):
     client = module.CosmosClient(
         "https://account.invalid", "ZmFrZQ==", _backend="rust", priority="Low", throughput_bucket=3
     )
-    assert client._item_context.defaults.priority == "Low"
-    assert client._item_context.defaults.throughput_bucket == 3
+    assert client._client_context.defaults.priority == "Low"
+    assert client._client_context.defaults.throughput_bucket == 3
     close_backend(client._adapter)
 
 
@@ -871,7 +871,7 @@ def test_client_and_proxies_share_the_adapter_field_rust(module, backend_name):
         "https://account.invalid", "ZmFrZQ==", _backend=backend_name
     )
     try:
-        context = client._item_context
+        context = client._client_context
         assert context.adapter is client._adapter
         assert "_backend" not in vars(client)
         assert not hasattr(context, "backend")
@@ -879,9 +879,9 @@ def test_client_and_proxies_share_the_adapter_field_rust(module, backend_name):
 
         database = client.get_database_client("sales")
         container = database.get_container_client("orders")
-        assert database._item_context is context
-        assert container._item_context is context
-        assert container._item_context.adapter is client._adapter
+        assert database._client_context is context
+        assert container._client_context is context
+        assert container._client_context.adapter is client._adapter
     finally:
         close_backend(client._adapter)
 

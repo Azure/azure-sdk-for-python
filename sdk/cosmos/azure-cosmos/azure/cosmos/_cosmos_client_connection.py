@@ -82,7 +82,7 @@ from ._auth_policy import CosmosBearerTokenCredentialPolicy
 from ._availability_strategy_config import validate_client_hedging_strategy, CrossRegionHedgingStrategy
 from ._backend.cosmos_backend import CosmosBackend
 from ._backend.constants import is_rust_backend
-from ._helpers._item_context import ClientLastResponseHeaders
+from ._helpers._client_context import ClientLastResponseHeaders
 from ._backend.operations import (
     OP_LIST_CONTAINERS,
     OP_LIST_DATABASES,

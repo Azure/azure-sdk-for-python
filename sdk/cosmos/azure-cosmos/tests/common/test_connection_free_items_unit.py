@@ -34,7 +34,7 @@ from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults, ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults, ClientLastResponseHeaders
 from azure.cosmos._helpers import _request_item
 from azure.cosmos._helpers._item_operations import ItemHelper, build_item_request, normalize_item_arguments
 from common.request_preparation import call_item_helper
@@ -230,7 +230,7 @@ def test_independent_items_inherit_client_defaults_rust(async_mode, op, kwargs, 
     """
     backend = AsyncBackend() if async_mode else Backend()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(
-        backend, ItemClientDefaults(priority="Low", throughput_bucket=3)
+        backend, ClientOperationDefaults(priority="Low", throughput_bucket=3)
     )
     invoke(helper, op, **kwargs)
     request = backend.events[-1]
@@ -276,7 +276,7 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monke
     builder = MagicMock(return_value=prepared)
     monkeypatch.setattr(_request_item, f"build_{op}_request", builder)
 
-    result = build_item_request(op, args, options, ItemClientDefaults(False))
+    result = build_item_request(op, args, options, ClientOperationDefaults(False))
 
     expected = {
         "container_link": args["container_link"],
@@ -314,7 +314,7 @@ def test_standalone_item_execution_rust(async_mode, op):
     backend = AsyncBackend() if async_mode else Backend()
     state = ClientLastResponseHeaders()
     hook = MagicMock()
-    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, ItemClientDefaults(True), state)
+    helper = (AsyncItemHelper if async_mode else ItemHelper)(backend, ClientOperationDefaults(True), state)
     result = invoke(helper, op, response_hook=hook)
     assert len(backend.events) == 1
     request = backend.events[0]
@@ -371,7 +371,7 @@ def test_options_defaults_errors_and_hooks_rust(async_mode):
     backend = AsyncBackend() if async_mode else Backend()
     helper_type = AsyncItemHelper if async_mode else ItemHelper
     state = ClientLastResponseHeaders()
-    helper = helper_type(backend, ItemClientDefaults(True), state)
+    helper = helper_type(backend, ClientOperationDefaults(True), state)
     invoke(helper, "create_item", no_response=False)
     assert settings_options(backend.events[-1])["responsePayloadOnWriteDisabled"] is False
     backend.events.clear()
@@ -410,9 +410,9 @@ def test_public_item_sentinels_do_not_read_connection_rust(async_mode, key):
     succeeds in a single request.
     """
     backend = AsyncBackend() if async_mode else Backend()
-    context = ItemClientContext(backend)
+    context = CosmosClientContext(backend)
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
-    proxy = proxy_type(None, "dbs/d", "c", _item_context=context)
+    proxy = proxy_type(None, "dbs/d", "c", _client_context=context)
     result = proxy.read_item("x", partition_key=key)
     if async_mode:
         result = asyncio.run(result)
@@ -445,7 +445,7 @@ def test_all_public_point_methods_work_with_no_connection_rust(async_mode, op):
     proxy_type = AsyncContainerProxy if async_mode else ContainerProxy
     proxy = proxy_type(
         None, "dbs/d", "c", properties={"_rid": "python-properties"},
-        _item_context=ItemClientContext(backend),
+        _client_context=CosmosClientContext(backend),
     )
     arguments = {}
     if op in ("create_item", "upsert_item", "replace_item"):
@@ -525,7 +525,7 @@ def test_rust_helper_rejects_old_connection_argument_rust(helper_type, backend_t
 
     The message names the type that is expected, which is the whole fix.
     """
-    with pytest.raises(TypeError, match="ItemClientDefaults"):
+    with pytest.raises(TypeError, match="ClientOperationDefaults"):
         helper_type(backend_type(), object())
 
 
@@ -702,11 +702,11 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
     created_contexts = []
 
     def create_context(*args, **kwargs):
-        context = ItemClientContext(*args, **kwargs)
+        context = CosmosClientContext(*args, **kwargs)
         created_contexts.append(context)
         return context
 
-    monkeypatch.setattr(module + ".ItemClientContext", create_context)
+    monkeypatch.setattr(module + ".CosmosClientContext", create_context)
     # Bypass transport initialization only; exercise the real connection's header property.
     connection_type = __import__(
         "azure.cosmos.aio._cosmos_client_connection_async" if async_mode else
@@ -729,7 +729,7 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
     )
     database = client.get_database_client("d")
     container = database.get_container_client("c")
-    assert container._item_context is database._item_context is client._item_context
+    assert container._client_context is database._client_context is client._client_context
     connection = client.client_connection
     connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
 
@@ -746,11 +746,11 @@ def test_public_context_and_compatibility_bridge_rust(monkeypatch, async_mode, c
     assert result["id"] == "x"
     assert settings_options(backend.events[-2])["responsePayloadOnWriteDisabled"] is True
     assert backend.events[-1] == "hook"
-    assert connection.last_response_headers is client._item_context.response_state.last_response_headers
+    assert connection.last_response_headers is client._client_context.response_state.last_response_headers
     connection.last_response_headers = {"legacy": "headers"}
-    assert client._item_context.response_state.last_response_headers == {"legacy": "headers"}
+    assert client._client_context.response_state.last_response_headers == {"legacy": "headers"}
     with pytest.raises(FrozenInstanceError):
-        client._item_context.defaults.no_response_on_write = False
+        client._client_context.defaults.no_response_on_write = False
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
@@ -785,7 +785,7 @@ def test_direct_proxy_compatibility_is_explicit_core_python_only_rust(async_mode
         container = database.get_container_client("c")
     else:
         container = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c")
-    assert container._item_context is None
+    assert container._client_context is None
     result = container.read_item("x", partition_key=NonePartitionKeyValue)
     if async_mode:
         result = asyncio.run(result)
@@ -813,7 +813,7 @@ def test_read_many_never_recovers_backend_from_connection_rust(async_mode, with_
     connection._backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
     proxy.client_connection = connection
     if not with_context:
-        proxy._item_context = None
+        proxy._client_context = None
         with pytest.raises(NotImplementedError, match="client-owned Rust context"):
             result = proxy.read_items([("x", "p")])
             if async_mode:
@@ -824,7 +824,7 @@ def test_read_many_never_recovers_backend_from_connection_rust(async_mode, with_
     if async_mode:
         result = asyncio.run(result)
     assert result == [{"id": "x", "pk": "p"}]
-    assert result.get_response_headers() == proxy._item_context.response_state.last_response_headers
+    assert result.get_response_headers() == proxy._client_context.response_state.last_response_headers
     assert backend.calls[-1].op == "read_items"
     assert connection.mock_calls == []
 
@@ -850,8 +850,8 @@ def test_explicit_parity_adapter_keeps_core_python_call_rust(async_mode, op, met
     connection._container_properties_cache = {"dbs/d/colls/c": {"_rid": "legacy-rid"}}
     call = AsyncMock(return_value={"legacy": True}) if async_mode else MagicMock(return_value={"legacy": True})
     setattr(connection, method, call)
-    context = ItemClientContext(ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
-    proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c", _item_context=context)
+    context = CosmosClientContext(ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
+    proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(connection, "dbs/d", "c", _client_context=context)
     helper = proxy._get_item_helper()
     result = invoke(helper, op, **({"filter_predicate": "FROM c"} if op == "patch_item" else {}))
     assert result == {"legacy": True}

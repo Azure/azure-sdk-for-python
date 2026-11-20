@@ -34,7 +34,7 @@ def test_typed_selection_is_immutable_and_not_a_sql_query_rust():
 def test_read_items_never_falls_back_to_core_python_rust(backend):
     proxy, adapter = make_proxy()
     if backend == "missing-context":
-        proxy._item_context = None
+        proxy._client_context = None
     else:
         adapter.name = "core-python"
     with pytest.raises(NotImplementedError, match="Rust"):

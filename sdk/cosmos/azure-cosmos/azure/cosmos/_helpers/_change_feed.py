@@ -227,7 +227,7 @@ class ChangeFeedConfig(FeedConfig):
                     stacklevel=4,
                 )
         self.connection = proxy.client_connection
-        context = proxy._item_context
+        context = proxy._client_context
         backend = context.adapter if context is not None else self.connection._backend
         super().__init__(
             proxy, kwargs, operation=OP_QUERY_ITEMS_CHANGE_FEED,

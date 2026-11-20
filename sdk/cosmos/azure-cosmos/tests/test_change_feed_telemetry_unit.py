@@ -50,8 +50,8 @@ def polling_setup(recording, feed, monkeypatch):  # pylint: disable=unused-argum
         drained=False,
         transform=lambda value: value,
     )
-    feed.proxy._item_context = replace(
-        feed.proxy._item_context,
+    feed.proxy._client_context = replace(
+        feed.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append),),
     )
     module = async_binding if feed.async_mode else sync_binding
@@ -134,8 +134,8 @@ def test_caught_up_poll_and_resume_keep_per_fetch_ownership(
         settings.tracing_enabled = False
     if recording_mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(
             ()
             if recording_mode == "no-handlers"
@@ -281,8 +281,8 @@ def test_diagnostic_failure_does_not_change_poll_result(polling, recording, monk
             "emit_attempts",
             Mock(side_effect=RuntimeError("reporting failed")),
         )
-        f.proxy._item_context = replace(
-            f.proxy._item_context,
+        f.proxy._client_context = replace(
+            f.proxy._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=ValueError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -334,7 +334,7 @@ def test_pinned_backend_and_consumption_settings(polling, recording):
     f.pages[0] = ([{"current": {"id": "a"}}, {"current": {"id": "b"}}], "c1.a")
     settings.tracing_enabled = False
     pager = f.proxy.query_items_change_feed(partition_key="private-customer")
-    f.proxy._item_context = replace(f.proxy._item_context, adapter=Mock(), telemetry_handlers=())
+    f.proxy._client_context = replace(f.proxy._client_context, adapter=Mock(), telemetry_handlers=())
     settings.tracing_enabled = True
     assert (asyncio.run(pager.__anext__()) if f.async_mode else next(pager)) == {"id": "a"}
     assert (asyncio.run(pager.__anext__()) if f.async_mode else next(pager)) == {"id": "b"}
@@ -347,7 +347,7 @@ def test_pinned_backend_and_consumption_settings(polling, recording):
 def test_disabled_poll_does_not_import_opentelemetry(polling, monkeypatch):
     h, f = polling, polling.feed
     settings.tracing_enabled = False
-    f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+    f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
     original_import = builtins.__import__
 
     def guarded_import(name, *args, **kwargs):
@@ -389,7 +389,7 @@ def test_poll_masks_outer_completion_state(polling, recording, enabled):
     h, f = polling, polling.feed
     with telemetry._operation_scope(f.proxy, "outer", {}, "query_items_change_feed"):
         outer = telemetry._OPERATION.get()
-        f.proxy._item_context = replace(f.proxy._item_context, telemetry_handlers=())
+        f.proxy._client_context = replace(f.proxy._client_context, telemetry_handlers=())
         settings.tracing_enabled = enabled
         f.next_page(f.proxy.query_items_change_feed().by_page())
         assert telemetry._OPERATION.get() is outer and outer.collector.contributions == 0
@@ -401,8 +401,8 @@ def test_nested_poll_hook_keeps_completion_state_separate(polling, recording):
     h, f = polling, polling.feed
     if f.async_mode:
         pytest.skip("Synchronous nested poll inside a synchronous hook")
-    f.proxy._item_context = replace(
-        f.proxy._item_context,
+    f.proxy._client_context = replace(
+        f.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
 

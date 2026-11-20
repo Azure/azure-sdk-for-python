@@ -81,7 +81,7 @@ class ListDatabasesConfig:
         self.telemetry_owner = client
         self.backend = client._adapter
         self.rust = is_rust_backend(self.backend)
-        self.response_state = client._item_context.response_state
+        self.response_state = client._client_context.response_state
         self.connection = None if self.rust else client.client_connection
 
     def deadline(self) -> Optional[float]:

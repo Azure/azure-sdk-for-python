@@ -58,7 +58,7 @@ from azure.cosmos._cosmos_client_connection import CosmosClientConnection as Syn
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection as AsyncConnection
 from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders, CosmosClientContext
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
     build_list_databases_prepared_page_request,
@@ -222,7 +222,7 @@ def listing_client(request):
     backend.execute_pages = MagicMock(wraps=backend.execute_pages)
     conn._backend = backend
     client._adapter = backend
-    client._item_context = ItemClientContext(backend, response_state=conn._response_state)
+    client._client_context = CosmosClientContext(backend, response_state=conn._response_state)
     conn.last_response_headers = CaseInsensitiveDict({"x-ms-activity-id": "stale"})
     legacy_get = AsyncMock if is_async else MagicMock
     conn._CosmosClientConnection__Get = legacy_get(side_effect=AssertionError("legacy replay"))
@@ -2182,7 +2182,7 @@ def test_sync_list_databases_capability_error_never_replays_core_python_rust(mon
     client = object.__new__(CosmosClient)
     client.client_connection = conn
     client._adapter = conn._backend
-    client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
+    client._client_context = CosmosClientContext(conn._backend, response_state=conn._response_state)
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     legacy_get = MagicMock(side_effect=AssertionError("legacy replay"))
     monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
@@ -2226,7 +2226,7 @@ def test_async_list_databases_capability_error_never_replays_core_python_rust(mo
         client = object.__new__(AsyncCosmosClient)
         client.client_connection = conn
         client._adapter = conn._backend
-        client._item_context = ItemClientContext(conn._backend, response_state=conn._response_state)
+        client._client_context = CosmosClientContext(conn._backend, response_state=conn._response_state)
         monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
         legacy_get = AsyncMock(side_effect=AssertionError("legacy replay"))
         monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)

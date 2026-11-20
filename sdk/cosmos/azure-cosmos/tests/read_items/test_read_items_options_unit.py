@@ -7,7 +7,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from azure.cosmos._helpers._item_context import ItemClientDefaults
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from ._helpers import make_proxy, page
 
 
@@ -44,7 +44,7 @@ async def test_consistency_and_routing_options_reach_typed_request_rust(asynchro
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True])
-@pytest.mark.parametrize("defaults", [None, ItemClientDefaults(priority="Low", throughput_bucket=4)])
+@pytest.mark.parametrize("defaults", [None, ClientOperationDefaults(priority="Low", throughput_bucket=4)])
 async def test_omitted_options_and_client_defaults_rust(asynchronous, defaults):
     proxy, backend = make_proxy(asynchronous, defaults=defaults)
     result = proxy.read_items([("a", "p")])

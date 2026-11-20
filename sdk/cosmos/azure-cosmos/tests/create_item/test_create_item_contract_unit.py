@@ -36,7 +36,7 @@ from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._helpers import _item_prep, _document
-from azure.cosmos._helpers._item_context import ItemClientDefaults
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from azure.cosmos._helpers._response_parse import process_backend_response
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
@@ -320,8 +320,8 @@ def test_explicit_body_response_overrides_client_default_rust(point_create):
     The client default is switched on, then overridden per call. The created
     item must come back with its ``id``, proving the per-call value wins.
     """
-    context = point_create.proxy._item_context
-    point_create.proxy._item_context = replace(context, defaults=ItemClientDefaults(no_response_on_write=True))
+    context = point_create.proxy._client_context
+    point_create.proxy._client_context = replace(context, defaults=ClientOperationDefaults(no_response_on_write=True))
     point_create.default_no_response = True
     assert point_create.call({"id": "item"}, no_response=False)["id"] == "item"
 
@@ -481,7 +481,7 @@ def test_compact_utf8_applies_to_all_singleton_write_bodies_rust(async_mode, com
     """
     backend = AsyncBackend() if async_mode else Backend()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(
-        backend, ItemClientDefaults(enable_compact_utf8_item_writes=compact)
+        backend, ClientOperationDefaults(enable_compact_utf8_item_writes=compact)
     )
     kwargs = (
         {"patch_operations": [{"op": "set", "path": "/label", "value": "\u00e9"}]}

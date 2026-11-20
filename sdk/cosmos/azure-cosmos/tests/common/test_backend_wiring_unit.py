@@ -2662,7 +2662,7 @@ def test_public_constructor_preserves_hedging_choice_rust(module, extra_options,
     try:
         config = client._adapter._client_config
         assert (config.hedging_threshold_ms if config is not None else None) == threshold
-        assert client._item_context.defaults.hedging_threshold_ms == threshold
+        assert client._client_context.defaults.hedging_threshold_ms == threshold
         if isinstance(options.get("availability_strategy"), dict):
             strategy_validator.assert_called_once_with(options["availability_strategy"])
         assert client._adapter._driver_handle is None
@@ -3250,8 +3250,8 @@ def _make_sync_container_with_backend(backend):
     """Construct the real, connection-free proxy around a selected test backend."""
     mock_cc = MagicMock()
     mock_cc._backend = backend
-    from azure.cosmos._helpers._item_context import ItemClientContext
-    return ContainerProxy(mock_cc, "dbs/test", "test", _item_context=ItemClientContext(backend))
+    from azure.cosmos._helpers._client_context import CosmosClientContext
+    return ContainerProxy(mock_cc, "dbs/test", "test", _client_context=CosmosClientContext(backend))
 
 
 def _new_rust_backend():
@@ -3279,7 +3279,7 @@ def test_container_dispatch_routes_to_rust_backend_rust(monkeypatch):
         container.create_item(body={"id": "x", "pk": "a"})
         assert fake_module.create_item.called, "Rust path should have been taken"
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_dispatch_rejects_missing_backend_rust():
@@ -3301,9 +3301,9 @@ def test_async_container_dispatch_routes_to_async_rust_backend_rust(monkeypatch)
     mock_cc = MagicMock()
     mock_cc._backend = _new_async_rust_backend()
     try:
-        from azure.cosmos._helpers._item_context import ItemClientContext
+        from azure.cosmos._helpers._client_context import CosmosClientContext
         container = AsyncContainerProxy(
-            mock_cc, "dbs/test", "test", _item_context=ItemClientContext(mock_cc._backend)
+            mock_cc, "dbs/test", "test", _client_context=CosmosClientContext(mock_cc._backend)
         )
 
         async def _run():
@@ -3345,7 +3345,7 @@ def test_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
         assert prepared.container_link == "dbs/test/colls/test"
         assert prepared.body_bytes == b'{"forceRefresh":true}'
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_read_feed_ranges_with_kwargs_rejects_core_python_fallback_rust(monkeypatch):
@@ -3380,7 +3380,7 @@ def test_container_read_feed_ranges_with_kwargs_rejects_core_python_fallback_rus
         container.client_connection.refresh_routing_map_provider.assert_not_called()
         container.client_connection._routing_map_provider.get_overlapping_ranges.assert_not_called()
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_read_feed_ranges_rust_payload_must_include_partition_key_ranges_rust(monkeypatch):
@@ -3395,7 +3395,7 @@ def test_container_read_feed_ranges_rust_payload_must_include_partition_key_rang
         with pytest.raises(ValueError, match="PartitionKeyRanges"):
             list(container.read_feed_ranges())
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_async_container_read_feed_ranges_routes_to_rust_backend_rust(monkeypatch):
@@ -3544,7 +3544,7 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend_rust(mon
         assert legacy_partition_key_from_request(prepared) == '["pk-a"]'
         assert prepared.body_bytes == b""
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload_rust(monkeypatch):
@@ -3560,7 +3560,7 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload_
         with pytest.raises(ValueError, match="Range"):
             container.feed_range_from_partition_key("pk-a")
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend_rust(monkeypatch):
@@ -3593,7 +3593,7 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
         prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
         assert legacy_partition_key_from_request(prepared) == "[]"
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend_rust(monkeypatch):
@@ -3627,7 +3627,7 @@ def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_b
         prepared = fake_module.feed_range_from_partition_key.call_args.args[1]
         assert legacy_partition_key_from_request(prepared) == "[[]]"
     finally:
-        container._item_context.adapter.close()
+        container._client_context.adapter.close()
 
 
 def test_async_container_feed_range_from_partition_key_routes_to_rust_backend_rust(monkeypatch):

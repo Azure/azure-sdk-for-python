@@ -3167,7 +3167,7 @@
               "line": 48,
               "end_line": 172,
               "column": 0,
-              "ast_sha256": "e18f7f48befa051c256e2585bc99b97e97c51aa51956770283761406970663d0",
+              "ast_sha256": "fc64541ef3bc4be1bd4b11cd1b109ec3b9f1d22264a70ac3b2dcf659902ade7c",
               "snippet": "point_read"
             },
             "decorators": [
@@ -12670,7 +12670,7 @@
         "line": 48,
         "end_line": 172,
         "column": 0,
-        "ast_sha256": "e18f7f48befa051c256e2585bc99b97e97c51aa51956770283761406970663d0",
+        "ast_sha256": "fc64541ef3bc4be1bd4b11cd1b109ec3b9f1d22264a70ac3b2dcf659902ade7c",
         "snippet": "point_read"
       },
       {
@@ -21313,7 +21313,7 @@
           "line": 317,
           "end_line": 326,
           "column": 0,
-          "ast_sha256": "75a0d50da464e11459c5da02c0731ba89f2b609c7dd5b53e758586116acd1274",
+          "ast_sha256": "009d50760c0cee81771f21c3399c43934989ec0f2dcb99e77002237d0f1809e8",
           "snippet": "test_explicit_body_response_overrides_client_default_rust"
         },
         "source": null,
@@ -21425,7 +21425,7 @@
           "line": 470,
           "end_line": 494,
           "column": 0,
-          "ast_sha256": "98c11510bf12c31628d8f5ecee29205923c1c766e56109c3c2df7c3a253f68b9",
+          "ast_sha256": "5c1ca3611728591342cfca1b57bb10ae59b70ba60762ace5bcc711263afccb71",
           "snippet": "test_compact_utf8_applies_to_all_singleton_write_bodies_rust"
         },
         "source": null,

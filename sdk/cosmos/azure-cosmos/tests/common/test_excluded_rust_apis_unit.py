@@ -22,7 +22,7 @@ from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._backend.request_settings import ItemSettings, ResourceSettings
 from azure.cosmos._availability_strategy_config import CrossRegionHedgingStrategy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos._helpers._request_settings import build_request_headers_and_settings
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue, _Undefined
 from common.test_connection_free_items_unit import Backend, AsyncBackend
@@ -38,12 +38,12 @@ def api_case(request):
     backend = AsyncBackend() if asynchronous else Backend()
     connection = MagicMock()
     connection._backend = backend
-    context = ItemClientContext(backend)
+    context = CosmosClientContext(backend)
     container = (AsyncContainerProxy if asynchronous else ContainerProxy)(
-        connection, "dbs/sales", "orders", _item_context=context,
+        connection, "dbs/sales", "orders", _client_context=context,
     )
     database = (AsyncDatabaseProxy if asynchronous else DatabaseProxy)(
-        connection, "sales", _item_context=context,
+        connection, "sales", _client_context=context,
     )
     return SimpleNamespace(
         asynchronous=asynchronous, backend=backend, connection=connection,
@@ -78,7 +78,7 @@ def test_removed_raw_hooks_never_send_on_either_backend_rust(
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
         api.connection._backend = backend
-        api.container._item_context = ItemClientContext(backend)
+        api.container._client_context = CosmosClientContext(backend)
     options = {option: value}
     kwargs = {nested: options} if nested else options
     with pytest.raises(TypeError, match=rf"{option} has been removed"):
@@ -132,14 +132,14 @@ def test_removed_raw_hooks_reject_resource_and_compound_calls_rust(
     backend = api.backend
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
-    context = ItemClientContext(backend)
+    context = CosmosClientContext(backend)
     api.connection._backend = backend
-    api.container._item_context = context
-    api.database._item_context = context
+    api.container._client_context = context
+    api.database._client_context = context
     client = object.__new__(AsyncCosmosClient if api.asynchronous else CosmosClient)
     client.client_connection = api.connection
     client._adapter = backend
-    client._item_context = context
+    client._client_context = context
     proxy = client if target == "client" else getattr(api, target)
     options = {option: None}
     kwargs = {nested: options} if nested else options
@@ -191,7 +191,7 @@ def test_removed_container_properties_are_absent_on_both_backends_rust(api, lega
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
         api.connection._backend = backend
-        api.container._item_context = ItemClientContext(backend)
+        api.container._client_context = CosmosClientContext(backend)
     assert not hasattr(type(api.container), name)
     assert not hasattr(api.container, "_scripts")
     with pytest.raises(AttributeError, match=name):
@@ -343,7 +343,7 @@ def test_user_management_is_removed_on_both_backends_rust(api, method, legacy):
     if legacy:
         backend = ASYNC_LEGACY_BACKEND if api.asynchronous else LEGACY_BACKEND
         api.connection._backend = backend
-        api.database._item_context = ItemClientContext(backend)
+        api.database._client_context = CosmosClientContext(backend)
     with pytest.raises(AttributeError, match=method):
         getattr(api.database, method)
     assert api.connection.mock_calls == []
@@ -585,7 +585,7 @@ def test_supported_constructor_preserves_backend_and_threshold_rust(
         availability_strategy=strategy,
     )
     assert client._adapter.name == backend
-    assert client._item_context.defaults.hedging_threshold_ms == (
+    assert client._client_context.defaults.hedging_threshold_ms == (
         100 if backend == "rust" else None
     )
     assert client_constructor.connection.call_args.kwargs["availability_strategy"] == strategy

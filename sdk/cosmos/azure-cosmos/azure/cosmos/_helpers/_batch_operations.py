@@ -44,11 +44,11 @@ def prepare_batch(
     deadline = prepare_item_deadline(kwargs, OP_EXECUTE_ITEM_BATCH, started)
     options = compose_item_options(kwargs)
     validate_rust_item_options({"kwargs": kwargs}, options)
-    proxy._item_context.defaults.apply_to_options(options)
+    proxy._client_context.defaults.apply_to_options(options)
     headers, settings = build_request_headers_and_settings(options)
     body = _format_batch_operations(deepcopy(operations))
     # Match legacy: read/delete-only batches carry no item body and stay escaped.
-    compact_utf8 = proxy._item_context.defaults.enable_compact_utf8_item_writes and any(
+    compact_utf8 = proxy._client_context.defaults.enable_compact_utf8_item_writes and any(
         isinstance(operation, dict) and "resourceBody" in operation for operation in body
     )
     prepared = PreparedRequest(
@@ -72,7 +72,7 @@ def complete_batch(
 ) -> CosmosList:
     """Preserve batch error indices, operation results, response headers and hooks."""
     headers = build_response_headers(response)
-    proxy._item_context.response_state.last_response_headers = CaseInsensitiveDict(headers)
+    proxy._client_context.response_state.last_response_headers = CaseInsensitiveDict(headers)
     results = parse_response_body(replace(response, headers=headers))
     if not isinstance(results, list) or any(
         not isinstance(result, dict) or "statusCode" not in result for result in results
@@ -117,7 +117,7 @@ def complete_batch(
 
 def execute_batch(proxy: Any, operations: Any, partition_key: Any, kwargs: dict[str, Any]) -> CosmosList:
     prepared, deadline, hook = prepare_batch(proxy, operations, partition_key, kwargs)
-    return proxy._item_context.adapter.run_operation(
+    return proxy._client_context.adapter.run_operation(
         routing=OperationRouting(OP_EXECUTE_ITEM_BATCH),
         build_request=lambda: prepared,
         process_response=lambda response: complete_batch(proxy, response, hook, deadline),
@@ -129,7 +129,7 @@ async def execute_batch_async(
     proxy: Any, operations: Any, partition_key: Any, kwargs: dict[str, Any]
 ) -> CosmosList:
     prepared, deadline, hook = prepare_batch(proxy, operations, partition_key, kwargs)
-    return await proxy._item_context.adapter.run_operation(
+    return await proxy._client_context.adapter.run_operation(
         routing=OperationRouting(OP_EXECUTE_ITEM_BATCH),
         build_request=lambda: prepared,
         process_response=lambda response: complete_batch(proxy, response, hook, deadline),

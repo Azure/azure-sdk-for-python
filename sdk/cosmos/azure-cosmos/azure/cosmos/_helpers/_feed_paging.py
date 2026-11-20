@@ -93,8 +93,8 @@ class FeedConfig:
         if operation != "query_items" and "populateQueryMetrics" in self.options:
             raise TypeError(f"{operation}() does not accept query metrics.")
         self.proxy = proxy
-        context = proxy._item_context
-        self._item_context = context
+        context = proxy._client_context
+        self._client_context = context
         self.response_state = context.response_state if context is not None else None
         self.backend = backend
         self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
@@ -234,7 +234,7 @@ class RustFeedConfig(FeedConfig):
     """Prepare shared query and read-all settings using the client's Rust adapter."""
 
     def __init__(self, proxy: Any, kwargs: dict[str, Any], *, operation: str) -> None:
-        context = proxy._item_context
+        context = proxy._client_context
         if context is None or not is_rust_backend(context.adapter):
             raise NotImplementedError(f"{operation} requires a client-owned Rust backend; no legacy fallback.")
         context.defaults.apply_timeout(kwargs)

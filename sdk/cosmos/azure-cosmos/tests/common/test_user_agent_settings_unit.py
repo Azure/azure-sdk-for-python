@@ -67,7 +67,7 @@ def test_user_agent_rejection_depends_on_presence_and_preserves_core_python_opti
     with pytest.raises(TypeError, match=f"{name} is not supported by Rust-backed APIs"):
         reject_rust_arguments(kwargs)
 
-    legacy = SimpleNamespace(_item_context=SimpleNamespace(adapter=SimpleNamespace(name="core-python")))
+    legacy = SimpleNamespace(_client_context=SimpleNamespace(adapter=SimpleNamespace(name="core-python")))
     prepare_operation_kwargs(legacy, kwargs)
     assert options == {name: value}
     if location != "keyword":

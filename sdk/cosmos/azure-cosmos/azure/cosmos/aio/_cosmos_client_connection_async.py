@@ -109,7 +109,7 @@ from .._query_rust_routing import build_list_databases_prepared_page_request, bu
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from ._backend.cosmos_backend import AsyncCosmosBackend
-from .._helpers._item_context import ClientLastResponseHeaders
+from .._helpers._client_context import ClientLastResponseHeaders
 from ._backend.legacy import ASYNC_LEGACY_BACKEND
 from .. import _runtime_constants as runtime_constants
 from .. import _request_object

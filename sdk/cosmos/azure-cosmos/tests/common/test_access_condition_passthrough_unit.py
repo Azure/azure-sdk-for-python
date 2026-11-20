@@ -31,7 +31,7 @@ from azure.cosmos import PartitionKey
 from azure.cosmos._helpers._request_container import is_create_container_rust_eligible
 from azure.cosmos._helpers._request_database import is_delete_database_rust_eligible
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 
 
 @pytest.mark.cosmosEmulator
@@ -46,7 +46,7 @@ class TestAccessConditionPassthroughUnit(unittest.TestCase):
         client.client_connection.last_response_headers = {}
         client._adapter = mock.MagicMock()
         client._adapter.name = "rust"
-        client._item_context = ItemClientContext(client._adapter)
+        client._client_context = CosmosClientContext(client._adapter)
         return client
 
     def test_delete_database_forwards_access_condition_rust(self):

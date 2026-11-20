@@ -22,7 +22,7 @@ from azure.cosmos.aio import _retry_utility_async
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos._helpers._change_feed import ChangeFeedPageState
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
 from read_all_items.test_read_all_items_contract_unit import feed as base_feed
@@ -675,7 +675,7 @@ def legacy(request, monkeypatch):
     backend = SimpleNamespace(name="core-python")
     connection._backend = backend
     proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(
-        connection, "dbs/db", "c", _item_context=ItemClientContext(backend)
+        connection, "dbs/db", "c", _client_context=CosmosClientContext(backend)
     )
     properties = {
         "_rid": "rid",

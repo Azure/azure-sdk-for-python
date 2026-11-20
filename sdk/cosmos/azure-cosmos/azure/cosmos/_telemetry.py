@@ -527,7 +527,7 @@ def delegate_operation(owner: object, operation: str) -> Iterator[None]:
         and not state.closed
         and state.owns_execution()
         and isinstance(state.binding_operation, (tuple, BindingAlternatives))
-        and state.backend is getattr(getattr(owner, "_item_context", None), "adapter", None)
+        and state.backend is getattr(getattr(owner, "_client_context", None), "adapter", None)
     ):
         call = _DelegatedCall(state, owner, operation, _current_task())
     token = _DELEGATED_CALL.set(call)
@@ -546,7 +546,7 @@ def _consume_delegated_call(owner: object, operation: str) -> bool:
         or call.state is not _OPERATION.get()
         or call.state.closed
         or not call.state.owns_execution()
-        or call.state.backend is not getattr(getattr(owner, "_item_context", None), "adapter", None)
+        or call.state.backend is not getattr(getattr(owner, "_client_context", None), "adapter", None)
     ):
         return False
     call.consumed = True
@@ -608,7 +608,7 @@ def _new_operation(
     binding_operation: Optional[_BindingOperation] = None,
     args: tuple[Any, ...] = (),
 ) -> Optional[_Operation]:
-    context = getattr(owner, "_item_context", None)
+    context = getattr(owner, "_client_context", None)
     handlers = getattr(context, "telemetry_handlers", ())
     logging_defaults = getattr(context, "diagnostic_logging", None) or DiagnosticLogging()
     diagnostic_logging = logging_defaults.for_operation(kwargs)

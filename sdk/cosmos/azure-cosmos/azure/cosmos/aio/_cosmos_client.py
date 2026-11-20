@@ -66,7 +66,7 @@ from .._telemetry import trace_operation_async
 from .._diagnostic_logging import DiagnosticLogging
 from ..documents import ConnectionPolicy
 from ._backend.cosmos_backend import AsyncCosmosBackend
-from .._helpers._item_context import ItemClientContext, ItemClientDefaults
+from .._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from .._utils import _validate_enable_compact_utf8_item_writes, get_user_agent_async
 from .._inference_client import InferenceClient, InferenceClientSettings
 from ._inference_service_async import _InferenceService
@@ -353,9 +353,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         client_config = chosen._client_config if isinstance(chosen, AsyncBindingAdapter) else None
         self._adapter: AsyncCosmosBackend = chosen
-        self._item_context: ItemClientContext[AsyncCosmosBackend] = ItemClientContext(
+        self._client_context: CosmosClientContext[AsyncCosmosBackend] = CosmosClientContext(
             chosen,
-            ItemClientDefaults(
+            ClientOperationDefaults(
                 operation_timeout_seconds=kwargs.get("timeout") if chosen.name != "core-python" else None,
                 priority=kwargs.get("priority"),
                 throughput_bucket=kwargs.get("throughput_bucket"),
@@ -396,7 +396,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self.client_connection = CosmosClientConnection(
             _backend=chosen,
-            _response_state=self._item_context.response_state,
+            _response_state=self._client_context.response_state,
             url_connection=url,
             auth=auth,
             consistency_level=consistency_level,
@@ -406,7 +406,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             enable_compact_utf8_item_writes=enable_compact_utf8_item_writes,
             **kwargs
         )
-        # Retained item/feed paths use _item_context directly. Attach the adapter
+        # Retained item/feed paths use _client_context directly. Attach the adapter
         # under the legacy connection's _backend field for remaining coordinators.
         self.client_connection._backend = self._adapter  # pylint: disable=protected-access
 
@@ -652,13 +652,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         response_hook = kwargs.pop("response_hook", None)
 
         request_options, deadline = prepare_create_database_options(
-            kwargs, offer_throughput, defaults=self._item_context.defaults,
+            kwargs, offer_throughput, defaults=self._client_context.defaults,
         )
 
         database = {"id": id}
         result = await AsyncDatabaseHelper(
             self.client_connection, self._adapter,
-            response_state=self._item_context.response_state,
+            response_state=self._client_context.response_state,
         ).create_database(
             database,
             request_options,
@@ -668,9 +668,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                                 _item_context=self._item_context, _inference_client=self._inference_client)
+                                 _client_context=self._client_context, _inference_client=self._inference_client)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                             _item_context=self._item_context, _inference_client=self._inference_client), result
+                             _client_context=self._client_context, _inference_client=self._inference_client), result
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin
@@ -827,13 +827,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options, deadline = prepare_create_database_options(
             kwargs, offer_throughput,
             operation_name="create_database_if_not_exists",
-            defaults=self._item_context.defaults,
+            defaults=self._client_context.defaults,
         )
         database = {"id": id}
         result = await AsyncDatabaseHelper(
             self.client_connection,
             self._adapter,
-            response_state=self._item_context.response_state,
+            response_state=self._client_context.response_state,
         ).create_database_if_not_exists(
             database,
             request_options,
@@ -842,7 +842,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             deadline=deadline,
         )
         database_proxy = DatabaseProxy(self.client_connection, id=result["id"], properties=result,
-                                       _item_context=self._item_context, _inference_client=self._inference_client)
+                                       _client_context=self._client_context, _inference_client=self._inference_client)
         if return_properties:
             return database_proxy, result
         return database_proxy
@@ -869,7 +869,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             id_value = database.id
         else:
             id_value = str(database['id'])
-        return DatabaseProxy(self.client_connection, id_value, _item_context=self._item_context,
+        return DatabaseProxy(self.client_connection, id_value, _client_context=self._client_context,
                              _inference_client=self._inference_client)
 
     @distributed_trace
@@ -1044,8 +1044,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # A wildcard match condition does not need an etag, so one may be left
         # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
-        if self._item_context.adapter.name != "core-python":
-            self._item_context.defaults.apply_to_options(request_options)
+        if self._client_context.adapter.name != "core-python":
+            self._client_context.defaults.apply_to_options(request_options)
         database_link = _get_database_link(database)
         await AsyncDatabaseHelper(self.client_connection, self._adapter).delete_database(
             database_link,

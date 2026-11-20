@@ -7,8 +7,8 @@
 telemetry registrations available to database, container, and operation helpers.
 
 The customer app configures CosmosClient once. Its database and container
-objects then retain the same ItemClientContext, which groups references
-to the existing Python adapter, ItemClientDefaults, and
+objects then retain the same CosmosClientContext, which groups references
+to the existing Python adapter, ClientOperationDefaults, and
 ClientLastResponseHeaders. The immutable telemetry handler registrations
 default to empty; they contain no per-operation state and are not public
 client constructor options.
@@ -36,7 +36,7 @@ _BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
 
 @dataclass(frozen=True)
-class ItemClientDefaults:
+class ClientOperationDefaults:
     """Operation defaults, including the overall budget used when a call omits it."""
 
     no_response_on_write: bool = False
@@ -87,7 +87,7 @@ class ClientLastResponseHeaders:
 
 
 @dataclass(frozen=True)
-class ItemClientContext(Generic[_BackendT]):
+class CosmosClientContext(Generic[_BackendT]):
     """Group one client's adapter, defaults, header state and telemetry registrations.
 
     Database and container proxies share this context and the client's existing
@@ -100,7 +100,7 @@ class ItemClientContext(Generic[_BackendT]):
     """
 
     adapter: _BackendT
-    defaults: ItemClientDefaults = field(default_factory=ItemClientDefaults)
+    defaults: ClientOperationDefaults = field(default_factory=ClientOperationDefaults)
     response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)
     # SDK-internal consumers share configuration, never per-operation mutable data.
     telemetry_handlers: tuple[CompletionHandler, ...] = ()

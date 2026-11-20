@@ -27,7 +27,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.http_constants import HttpHeaders
 from query_items.test_query_backend_routing_unit import _new_sync_connection
@@ -40,7 +40,7 @@ def test_deprecated_query_metrics_warn_and_do_not_reach_delete_headers_rust(popu
     connection._container_properties_cache["dbs/db/colls/c"] = {"_rid": "cached-rid"}
     send = MagicMock(return_value=(None, CaseInsensitiveDict()))
     connection._CosmosClientConnection__Delete = send
-    container = ContainerProxy(connection, "dbs/db", "c", _item_context=ItemClientContext(LEGACY_BACKEND))
+    container = ContainerProxy(connection, "dbs/db", "c", _client_context=CosmosClientContext(LEGACY_BACKEND))
 
     with pytest.warns(DeprecationWarning, match="populate_query_metrics"):
         assert container.delete_item("order", "customer", populate_query_metrics=populate_query_metrics) is None
@@ -72,7 +72,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.DeleteItem = MagicMock(return_value=None)
 
-    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
+    proxy = ContainerProxy(cc, "dbs/db", "c", _client_context=CosmosClientContext(cc._backend))
 
     def _fake_read(**kwargs):
         cache[container_link] = {"_rid": rid, "_read_kwargs": kwargs}
@@ -211,7 +211,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
             with self.subTest(include_id=include_id):
                 proxy, cc, _ = _make_proxy_with_mock_connection()
                 backend = _CapturingBackend()
-                proxy._item_context = ItemClientContext(backend)
+                proxy._client_context = CosmosClientContext(backend)
                 target = {"_self": "dbs/old-db/colls/old-container/docs/old-item/"}
                 if include_id:
                     target["id"] = "same-id"
@@ -223,7 +223,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
     def test_non_string_self_link_fails_before_dispatch_rust(self):
         proxy, _, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
         with self.assertRaisesRegex(TypeError, "target _self must be a string"):
             proxy.delete_item({"id": "same-id", "_self": None}, "a")
         self.assertFalse(backend.executed)
@@ -234,7 +234,7 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         result = proxy.delete_item("delete_item", "a")
 

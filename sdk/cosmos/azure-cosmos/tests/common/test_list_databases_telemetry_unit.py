@@ -33,7 +33,7 @@ from azure.core.settings import settings
 from azure.cosmos import _telemetry as telemetry
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos._backend.errors import BindingProtocolError, UnsupportedQueryError
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos.exceptions import (
     CosmosClientTimeoutError,
@@ -64,7 +64,7 @@ def listing_telemetry_setup(
     monkeypatch.setattr(module, "_UNSUPPORTED_QUERY_ERROR", DriverUnsupportedQueryError)
     client._adapter = connection._backend = backend
     seen = []
-    client._item_context = ItemClientContext(
+    client._client_context = CosmosClientContext(
         backend,
         response_state=connection._response_state,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
@@ -171,7 +171,7 @@ def fetch_spans(recording):
 def test_metadata_page_tracing_options_reach_owned_spans(listing_telemetry, recording, enabled):
     h = listing_telemetry
     settings.tracing_enabled = not enabled
-    h.client._item_context = replace(h.client._item_context, tracing_attributes={"bank.component": "orders"})
+    h.client._client_context = replace(h.client._client_context, tracing_attributes={"bank.component": "orders"})
     pager = h.create_iterable(
         tracing_attributes={"bank.component": "catalog"},
         tracing_options={"enabled": enabled, "attributes": {"bank.page": "first"}},
@@ -196,8 +196,8 @@ def test_listing_page_telemetry_parent_boundary_and_replay(listing_telemetry, re
     if mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
     collect = mode in ("enabled", "handler-only", "no-handlers")
-    h.client._item_context = replace(
-        h.client._item_context,
+    h.client._client_context = replace(
+        h.client._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -340,8 +340,8 @@ def test_listing_page_telemetry_optional_detail_never_repeats_fetch(listing_tele
         h.transform = lambda value: value[0]
     else:
         monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("report failed")))
-        h.client._item_context = replace(
-            h.client._item_context,
+        h.client._client_context = replace(
+            h.client._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=ValueError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -371,14 +371,14 @@ def test_listing_page_telemetry_is_selected_at_consumption(listing_telemetry, re
 @pytest.mark.parametrize("enabled", [False, True])
 def test_listing_page_telemetry_masks_outer_state_and_restores_it(listing_telemetry, recording, enabled):
     h = listing_telemetry
-    h.client._item_context = replace(
-        h.client._item_context,
+    h.client._client_context = replace(
+        h.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(h.seen.append, collect_attempts=True),),
     )
     with telemetry._operation_scope(h.client, "outer", {}, h.operation):
         outer = telemetry._OPERATION.get()
         assert outer is not None
-        h.client._item_context = replace(h.client._item_context, telemetry_handlers=())
+        h.client._client_context = replace(h.client._client_context, telemetry_handlers=())
         settings.tracing_enabled = enabled
         assert h.next(h.create_iterable().by_page()) == [{"id": "sales"}]
         assert telemetry._OPERATION.get() is outer
@@ -433,7 +433,7 @@ def test_listing_page_telemetry_leaves_other_paths_unchanged(listing_telemetry, 
         assert len(fetch_spans(recording)) == 1
         return
     settings.tracing_enabled = False
-    h.client._item_context = replace(h.client._item_context, telemetry_handlers=())
+    h.client._client_context = replace(h.client._client_context, telemetry_handlers=())
     original_import = builtins.__import__
 
     def import_without_telemetry(name, *args, **kwargs):

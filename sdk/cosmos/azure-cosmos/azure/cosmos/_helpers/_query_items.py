@@ -52,7 +52,7 @@ _QUERY_OPTIONS = {
 
 
 def uses_rust(proxy: Any) -> bool:
-    context = proxy._item_context
+    context = proxy._client_context
     backend = context.adapter if context is not None else proxy.client_connection._backend
     return is_rust_backend(backend)
 

@@ -9,7 +9,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from azure.cosmos._base import _format_batch_operations
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from execute_item_batch.test_batch_unit import AsyncBatchBackend, BatchBackend
@@ -43,15 +43,15 @@ def test_original_batch_serialization_vectors_rust(
     asynchronous, compact, operations, has_body
 ):
     backend = AsyncBatchBackend() if asynchronous else BatchBackend()
-    context = ItemClientContext(
-        backend, defaults=ItemClientDefaults(enable_compact_utf8_item_writes=compact)
+    context = CosmosClientContext(
+        backend, defaults=ClientOperationDefaults(enable_compact_utf8_item_writes=compact)
     )
     connection = MagicMock()
     connection.Batch.side_effect = AssertionError(
         "Native serialization used legacy Batch"
     )
     proxy = AsyncContainerProxy if asynchronous else ContainerProxy
-    container = proxy(connection, "dbs/db", "orders", _item_context=context)
+    container = proxy(connection, "dbs/db", "orders", _client_context=context)
     result = container.execute_item_batch(operations, "p")
     if asynchronous:
         asyncio.run(result)

@@ -74,7 +74,7 @@ from azure.cosmos._helpers._request_container import (
 )
 from azure.cosmos._helpers._container_operations import ContainerHelper
 from azure.cosmos._helpers._response_parse import parse_backend_response
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders, ItemClientContext
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders, CosmosClientContext
 from common.typed_requests import flatten_options_to_headers
 from azure.cosmos._query_rust_routing import (
     build_list_containers_prepared_page_request,
@@ -177,12 +177,12 @@ def container_create_case(request):
         _set_container_properties_cache=MagicMock(),
     )
     proxy_type = AsyncDatabaseProxy if is_async else DatabaseProxy
-    item_context = ItemClientContext(backend)
+    client_context = CosmosClientContext(backend)
     return SimpleNamespace(
-        database=proxy_type(connection, "db1", _item_context=item_context),
+        database=proxy_type(connection, "db1", _client_context=client_context),
         connection=connection,
         backend=backend,
-        item_context=item_context,
+        client_context=client_context,
         legacy_backend=ASYNC_LEGACY_BACKEND if is_async else LEGACY_BACKEND,
     )
 
@@ -193,9 +193,9 @@ def _call_container_create(case, *args, method="create_container", **kwargs):
     The method name is an argument because plain create and get-or-create share
     almost all of their rules, so most tests here run against both.
     """
-    if case.item_context.adapter is not case.connection._backend:
-        case.item_context = ItemClientContext(case.connection._backend)
-        case.database._item_context = case.item_context
+    if case.client_context.adapter is not case.connection._backend:
+        case.client_context = CosmosClientContext(case.connection._backend)
+        case.database._client_context = case.client_context
     result = getattr(case.database, method)(*args, **kwargs)
     return asyncio.run(result) if inspect.isawaitable(result) else result
 
@@ -399,7 +399,7 @@ def test_container_create_preserves_required_arguments_and_return_shapes_rust(
     )
     proxy = result[0] if return_properties else result
     assert proxy.id == "c1"
-    assert proxy._item_context is case.item_context
+    assert proxy._client_context is case.client_context
     assert proxy.container_link == "dbs/db1/colls/c1"
     if return_properties:
         assert len(result) == 2
@@ -914,7 +914,7 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings_rust(
     )
     proxy = result[0] if return_properties else result
     assert proxy.id == "c1"
-    assert proxy._item_context is case.item_context
+    assert proxy._client_context is case.client_context
     assert proxy.container_link == "dbs/db1/colls/c1"
     hook.assert_called_once()
     properties = hook.call_args.args[1]
@@ -1199,7 +1199,7 @@ def test_container_get_or_create_recovers_create_conflict_once_rust(
         result = _call_get_or_create(case, **options)
         proxy = result[0] if return_properties else result
         assert proxy.id == "c1"
-        assert proxy._item_context is case.item_context
+        assert proxy._client_context is case.client_context
         if return_properties:
             assert result[1] == winner
         assert len(seen) == 1
@@ -1286,8 +1286,8 @@ def test_concurrent_container_get_or_create_returns_winner_rust(container_create
     asynchronous = isinstance(case.database, AsyncDatabaseProxy)
     if use_legacy:
         case.connection._backend = case.legacy_backend
-        case.item_context = ItemClientContext(case.legacy_backend)
-        case.database._item_context = case.item_context
+        case.client_context = CosmosClientContext(case.legacy_backend)
+        case.database._client_context = case.client_context
     thread_gate = Barrier(8)
     async_gate = asyncio.Event()
     lock = Lock()

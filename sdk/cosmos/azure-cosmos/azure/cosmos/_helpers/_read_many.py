@@ -16,7 +16,7 @@ from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosList
 from .._operation_deadline import remaining_timeout
 from .._telemetry import RecordingOptions, trace_operation
-from ._item_context import ItemClientContext
+from ._client_context import CosmosClientContext
 from ._read_items import (
     ResponseHeaderAccumulator,
     complete_read_items_response,
@@ -45,11 +45,11 @@ class ReadManyRequest(Generic[_BackendT]):
     """Keep the requested items, paging state and timeout without a legacy connection."""
 
     def __init__(
-        self, context: ItemClientContext[_BackendT], container_link: str, items: Any, kwargs: dict[str, Any]
+        self, context: CosmosClientContext[_BackendT], container_link: str, items: Any, kwargs: dict[str, Any]
     ) -> None:
         if context is None or context.adapter.name == "core-python":
             raise NotImplementedError("read_items requires the Rust backend; no legacy fallback is available.")
-        self._item_context: ItemClientContext[_BackendT] = context
+        self._client_context: CosmosClientContext[_BackendT] = context
         self.backend: _BackendT = context.adapter
         self.container_link = container_link
         context.defaults.apply_timeout(kwargs)
@@ -127,7 +127,7 @@ class ReadManyRequest(Generic[_BackendT]):
 
     def consume(self, page: BackendPage) -> bool:
         envelope = process_backend_response(
-            page_to_backend_response(page), response_state=self._item_context.response_state
+            page_to_backend_response(page), response_state=self._client_context.response_state
         )
         rows = envelope.get("Documents")
         if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
@@ -149,7 +149,7 @@ class ReadManyRequest(Generic[_BackendT]):
         if not self.has_charge:
             headers.pop("x-ms-request-charge", None)
         result = CosmosList([item for _, item in indexed], response_headers=headers)
-        self._item_context.response_state.last_response_headers = CaseInsensitiveDict(headers)
+        self._client_context.response_state.last_response_headers = CaseInsensitiveDict(headers)
         return complete_read_items_response(result, self.hook, self.deadline)
 
 
@@ -170,7 +170,7 @@ def _fetch_page(request: ReadManyRequest[CosmosBackend], **_tracing_kwargs: Any)
 
 
 def read_items(
-    context: Optional[ItemClientContext[CosmosBackend]],
+    context: Optional[CosmosClientContext[CosmosBackend]],
     container_link: str,
     items: Any,
     kwargs: dict[str, Any],

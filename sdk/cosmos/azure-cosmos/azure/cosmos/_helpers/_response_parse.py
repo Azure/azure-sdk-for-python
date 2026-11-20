@@ -18,7 +18,7 @@ from ._exceptions import (
     is_success_status,
     map_backend_response_to_exception,
 )
-from ._item_context import ClientLastResponseHeaders
+from ._client_context import ClientLastResponseHeaders
 from ._wire_encoding import format_ru_charge
 from .._backend.contracts import BackendPage, BackendResponse
 from .._cosmos_responses import CosmosDict

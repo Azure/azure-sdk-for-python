@@ -39,7 +39,7 @@ from ..partition_key import (
     _return_undefined_or_empty_partition_key,
 )
 from . import _request_item
-from ._item_context import ItemClientDefaults, ClientLastResponseHeaders
+from ._client_context import ClientOperationDefaults, ClientLastResponseHeaders
 from ._request_settings import compose_item_options, is_supported_operation_timeout, overrides_driver_owned_header
 from ._item_prep import (
     prepare_patch_item_kwargs,
@@ -155,7 +155,7 @@ def normalize_item_partition_key(value: Any, system_key: bool) -> Any:
 
 def build_item_request(
     op: str, args: Dict[str, Any], options: Dict[str, Any],
-    defaults: ItemClientDefaults,
+    defaults: ClientOperationDefaults,
 ) -> PreparedRequest:
     """Build the prepared request for one item operation.
 
@@ -222,15 +222,15 @@ class ItemHelper:
     """
 
     def __init__(
-        self, backend: CosmosBackend, defaults: Optional[ItemClientDefaults] = None,
+        self, backend: CosmosBackend, defaults: Optional[ClientOperationDefaults] = None,
         response_state: Optional[ClientLastResponseHeaders] = None,
     ) -> None:
-        if defaults is not None and not isinstance(defaults, ItemClientDefaults):
-            raise TypeError("defaults must be ItemClientDefaults, not a client connection")
+        if defaults is not None and not isinstance(defaults, ClientOperationDefaults):
+            raise TypeError("defaults must be ClientOperationDefaults, not a client connection")
         if response_state is not None and not isinstance(response_state, ClientLastResponseHeaders):
             raise TypeError("response_state must be ClientLastResponseHeaders")
         self._backend = backend
-        self._defaults = defaults if defaults is not None else ItemClientDefaults()
+        self._defaults = defaults if defaults is not None else ClientOperationDefaults()
         self._response_state = response_state
 
     def _process_response(

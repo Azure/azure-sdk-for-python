@@ -45,8 +45,8 @@ async def test_native_full_container_live_paging_and_empty_container_rust(native
         container = client.get_database_client(native_database.id).get_container_client("items")
         container.client_connection = ForbiddenConnection()
         completed, captured, hooks = [], [], []
-        container._item_context = replace(
-            container._item_context, telemetry_handlers=(CompletionHandler(completed.append),)
+        container._client_context = replace(
+            container._client_context, telemetry_handlers=(CompletionHandler(completed.append),)
         )
         adapter = client._adapter
         original = adapter.execute_pages
@@ -97,7 +97,7 @@ async def test_native_full_container_live_paging_and_empty_container_rust(native
 @pytest.mark.parametrize("token", ["", "legacy-bookmark", "c1.driver", "c2.driver"])
 async def test_compiled_read_all_rejects_resume_tokens_rust(native_database, method, token):
     container = native_database.get_container_client("items")
-    handle = container._item_context.adapter._ensure_driver_handle()
+    handle = container._client_context.adapter._ensure_driver_handle()
     prepared = PreparedRequest(
         op="read_all_items", container_link=container.container_link, body_bytes=b"",
         partition_key=BindingPartitionKey("cross_partition"),

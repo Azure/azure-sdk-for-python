@@ -21,7 +21,7 @@ from azure.cosmos import (
 
 from azure.cosmos.aio import _asynchronous_request, _cosmos_client
 from azure.cosmos.documents import _OperationType
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.http_constants import HttpHeaders

@@ -19,7 +19,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_DELETE_ITEM
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -35,7 +35,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._backend = ASYNC_LEGACY_BACKEND
     cc.DeleteItem = AsyncMock(return_value=None)
 
-    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
+    proxy = ContainerProxy(cc, "dbs/db", "c", _client_context=CosmosClientContext(cc._backend))
     return proxy, cc
 
 
@@ -70,7 +70,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
             with self.subTest(include_id=include_id):
                 proxy, cc = _make_async_proxy()
                 backend = _CapturingAsyncBackend()
-                proxy._item_context = ItemClientContext(backend)
+                proxy._client_context = CosmosClientContext(backend)
                 target = {"_self": "dbs/old-db/colls/old-container/docs/old-item/"}
                 if include_id:
                     target["id"] = "same-id"
@@ -82,7 +82,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
     async def test_non_string_self_link_fails_before_dispatch_rust(self):
         proxy, _ = _make_async_proxy()
         backend = _CapturingAsyncBackend()
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
         with self.assertRaisesRegex(TypeError, "target _self must be a string"):
             await proxy.delete_item({"id": "same-id", "_self": None}, "a")
         self.assertFalse(backend.executed)
@@ -119,7 +119,7 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         result = await proxy.delete_item("delete_item", "a")
 

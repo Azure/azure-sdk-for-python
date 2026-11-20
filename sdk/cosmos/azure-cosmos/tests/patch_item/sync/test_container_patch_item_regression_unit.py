@@ -27,7 +27,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 
 
@@ -57,7 +57,7 @@ def _make_proxy_with_mock_connection(rid="rid-cached", precached=True):
     cc._backend = LEGACY_BACKEND
     cc.PatchItem = MagicMock(return_value={"id": "patch_item", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
+    proxy = ContainerProxy(cc, "dbs/db", "c", _client_context=CosmosClientContext(cc._backend))
 
     def _fake_read(**kwargs):
         cache[container_link] = {"_rid": rid, "_read_kwargs": kwargs}
@@ -228,7 +228,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -252,7 +252,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         proxy.patch_item(
             "patch_item", "a", _OPERATIONS,
@@ -273,7 +273,7 @@ class TestContainerPatchItemBackendRouting(unittest.TestCase):
         proxy, cc, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         proxy.patch_item(
             "patch_item", "a", _OPERATIONS,

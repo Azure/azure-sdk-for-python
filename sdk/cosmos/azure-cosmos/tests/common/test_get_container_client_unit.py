@@ -26,7 +26,7 @@ import pytest
 from azure.cosmos import ContainerProxy, DatabaseProxy
 from azure.cosmos.aio import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.aio import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 
 
 @pytest.fixture(
@@ -46,8 +46,8 @@ def database_and_proxy_type(request, backend_name):
     connection = MagicMock()
     backend = MagicMock()
     backend.name = backend_name
-    context = ItemClientContext(backend)
-    database = database_type(connection, "sales", _item_context=context)
+    context = CosmosClientContext(backend)
+    database = database_type(connection, "sales", _client_context=context)
     yield database, proxy_type
     assert connection.mock_calls == []
     assert backend.mock_calls == []
@@ -88,7 +88,7 @@ def test_properties_id_is_converted_to_string_rust(database_and_proxy_type, mapp
     assert isinstance(container.id, str)
     assert container.container_link == f"dbs/sales/colls/{container_id}"
     assert container.client_connection is database.client_connection
-    assert container._item_context is database._item_context
+    assert container._client_context is database._client_context
     assert properties == original
 
 
@@ -112,7 +112,7 @@ def test_string_name_is_preserved_without_checking_existence_rust(database_and_p
     assert isinstance(container, proxy_type)
     assert container.id == name
     assert container.container_link == f"dbs/sales/colls/{name}"
-    assert container._item_context is database._item_context
+    assert container._client_context is database._client_context
     assert not inspect.isawaitable(container)
     assert not inspect.iscoroutinefunction(database.get_container_client)
 
@@ -132,8 +132,8 @@ def test_existing_proxy_creates_new_proxy_under_current_database_rust(database_a
     """
     database, proxy_type = database_and_proxy_type
     original_connection = MagicMock()
-    original_context = ItemClientContext(MagicMock())
-    original = proxy_type(original_connection, "dbs/other", "orders", _item_context=original_context)
+    original_context = CosmosClientContext(MagicMock())
+    original = proxy_type(original_connection, "dbs/other", "orders", _client_context=original_context)
 
     container = database.get_container_client(original)
 
@@ -142,10 +142,10 @@ def test_existing_proxy_creates_new_proxy_under_current_database_rust(database_a
     assert container.id == original.id
     assert container.container_link == "dbs/sales/colls/orders"
     assert container.client_connection is database.client_connection
-    assert container._item_context is database._item_context
+    assert container._client_context is database._client_context
     assert original.container_link == "dbs/other/colls/orders"
     assert original.client_connection is original_connection
-    assert original._item_context is original_context
+    assert original._client_context is original_context
     assert original_connection.mock_calls == []
     assert original_context.adapter.mock_calls == []
 

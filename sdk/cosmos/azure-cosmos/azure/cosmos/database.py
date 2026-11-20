@@ -77,7 +77,7 @@ from ._backend.capabilities import prepare_operation_kwargs
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from ._backend.cosmos_backend import CosmosBackend
-    from ._helpers._item_context import ItemClientContext
+    from ._helpers._client_context import CosmosClientContext
     from ._inference_client import InferenceClient
     from ._inference_service import _InferenceService
 
@@ -126,7 +126,7 @@ class DatabaseProxy(object):
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
+        _client_context: "Optional[CosmosClientContext[CosmosBackend]]" = None,
         _inference_client: "Optional[InferenceClient[TokenCredential, _InferenceService]]" = None,
     ) -> None:
         """
@@ -135,7 +135,7 @@ class DatabaseProxy(object):
         :param str id: ID (name) of the database.
         """
         self.client_connection = client_connection
-        self._item_context = _item_context
+        self._client_context = _client_context
         self._inference_client = _inference_client
         self.id = id
         self.database_link: str = "dbs/{}".format(self.id)
@@ -518,9 +518,9 @@ class DatabaseProxy(object):
 
         if not return_properties:
             return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result,
-                                  _item_context=self._item_context, _inference_client=self._inference_client)
+                                  _client_context=self._client_context, _inference_client=self._inference_client)
         return ContainerProxy(self.client_connection, self.database_link, result["id"], properties=result,
-                              _item_context=self._item_context, _inference_client=self._inference_client), result
+                              _client_context=self._client_context, _inference_client=self._inference_client), result
 
     @overload
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param
@@ -902,7 +902,7 @@ class DatabaseProxy(object):
             id_value = container
         else:
             id_value = str(container["id"])
-        return ContainerProxy(self.client_connection, self.database_link, id_value, _item_context=self._item_context,
+        return ContainerProxy(self.client_connection, self.database_link, id_value, _client_context=self._client_context,
                               _inference_client=self._inference_client)
 
     def _resolve_gsi_definition(
@@ -1301,12 +1301,12 @@ class DatabaseProxy(object):
             return ContainerProxy(
                 self.client_connection,
                 self.database_link, container_properties["id"],
-                properties=container_properties, _item_context=self._item_context,
+                properties=container_properties, _client_context=self._client_context,
                 _inference_client=self._inference_client)
         return ContainerProxy(
             self.client_connection,
             self.database_link, container_properties["id"],
-            properties=container_properties, _item_context=self._item_context,
+            properties=container_properties, _client_context=self._client_context,
             _inference_client=self._inference_client), container_properties
 
     @trace_operation(binding_operation=BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",))))

@@ -79,8 +79,8 @@ async def test_read_all_items_excluded_locations_rust(
         container = client.get_database_client(
             regional_container[0]
         ).get_container_client(regional_container[1])
-        container._item_context = replace(
-            container._item_context,
+        container._client_context = replace(
+            container._client_context,
             telemetry_handlers=(
                 _telemetry.CompletionHandler(completions.append, collect_attempts=True),
             ),

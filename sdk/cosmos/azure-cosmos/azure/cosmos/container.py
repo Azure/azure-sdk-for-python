@@ -79,7 +79,7 @@ from ._backend.capabilities import prepare_operation_kwargs
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
     from ._backend.cosmos_backend import CosmosBackend
-    from ._helpers._item_context import ItemClientContext
+    from ._helpers._client_context import CosmosClientContext
     from ._helpers._legacy_item_operations import LegacyItemHelper
     from ._inference_client import InferenceClient
     from ._inference_service import _InferenceService
@@ -119,15 +119,15 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: "Optional[ItemClientContext[CosmosBackend]]" = None,
+        _client_context: "Optional[CosmosClientContext[CosmosBackend]]" = None,
         _inference_client: "Optional[InferenceClient[TokenCredential, _InferenceService]]" = None,
     ) -> None:
         self.id = id
         self.container_link = "{}/colls/{}".format(database_link, self.id)
         self.client_connection = client_connection
-        self._item_context = _item_context
+        self._client_context = _client_context
         self._inference_client = _inference_client
-        self._item_helper_cache: "Optional[tuple[ItemClientContext[CosmosBackend], ItemHelper]]" = None
+        self._item_helper_cache: "Optional[tuple[CosmosClientContext[CosmosBackend], ItemHelper]]" = None
         self.container_cache_lock = threading.Lock()
         if properties and client_connection is not None:
             self.client_connection._set_container_properties_cache(self.container_link,
@@ -139,7 +139,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _get_item_helper(self) -> "Union[ItemHelper, LegacyItemHelper]":
         """Reuse Rust helpers; keep container-bound legacy adapters short-lived."""
-        context = self._item_context
+        context = self._client_context
         cached = self._item_helper_cache
         if cached is not None:
             if cached[0] is context:
@@ -157,9 +157,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
     def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         """Leave Rust sentinel resolution to its own metadata provider."""
-        if self._item_context is not None and self._item_context.adapter.name != "core-python":
+        if self._client_context is not None and self._client_context.adapter.name != "core-python":
             return partition_key
-        if self._item_context is None:
+        if self._client_context is None:
             from ._helpers._legacy_item_operations import require_legacy_item_connection
             require_legacy_item_connection(self.client_connection)
         return self._set_partition_key(partition_key)
@@ -428,7 +428,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         if consistency_level is not None:
             kwargs["consistency_level"] = consistency_level
-        return _read_items(self._item_context, self.container_link, items, kwargs)
+        return _read_items(self._client_context, self.container_link, items, kwargs)
 
 
 

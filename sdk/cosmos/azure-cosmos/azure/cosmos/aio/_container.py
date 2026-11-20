@@ -82,7 +82,7 @@ from ..partition_key import (_get_partition_key_from_partition_key_definition, P
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
-    from .._helpers._item_context import ItemClientContext
+    from .._helpers._client_context import CosmosClientContext
     from ._backend.cosmos_backend import AsyncCosmosBackend
     from ._helpers._legacy_item_operations import AsyncLegacyItemHelper
     from .._inference_client import InferenceClient
@@ -119,13 +119,13 @@ class ContainerProxy:
         id: str,
         properties: Optional[dict[str, Any]] = None,
         *,
-        _item_context: "Optional[ItemClientContext[AsyncCosmosBackend]]" = None,
+        _client_context: "Optional[CosmosClientContext[AsyncCosmosBackend]]" = None,
         _inference_client: "Optional[InferenceClient[AsyncTokenCredential, _InferenceService]]" = None,
     ) -> None:
         self.client_connection = client_connection
-        self._item_context = _item_context
+        self._client_context = _client_context
         self._inference_client = _inference_client
-        self._item_helper_cache: "Optional[tuple[ItemClientContext[AsyncCosmosBackend], AsyncItemHelper]]" = None
+        self._item_helper_cache: "Optional[tuple[CosmosClientContext[AsyncCosmosBackend], AsyncItemHelper]]" = None
         self.container_cache_lock = asyncio.Lock()
         self.id = id
         self.database_link = database_link
@@ -140,7 +140,7 @@ class ContainerProxy:
 
     def _get_item_helper(self) -> "Union[AsyncItemHelper, AsyncLegacyItemHelper]":
         """Reuse Rust helpers; keep container-bound legacy adapters short-lived."""
-        context = self._item_context
+        context = self._client_context
         cached = self._item_helper_cache
         if cached is not None:
             if cached[0] is context:
@@ -158,9 +158,9 @@ class ContainerProxy:
 
     async def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
         """Rust resolves sentinel values using its backend metadata."""
-        if self._item_context is not None and self._item_context.adapter.name != "core-python":
+        if self._client_context is not None and self._client_context.adapter.name != "core-python":
             return partition_key
-        if self._item_context is None:
+        if self._client_context is None:
             from .._helpers._legacy_item_operations import require_legacy_item_connection
             require_legacy_item_connection(self.client_connection)
         return await self._set_partition_key(partition_key)
@@ -599,7 +599,7 @@ class ContainerProxy:
 
         if consistency_level is not None:
             kwargs["consistency_level"] = consistency_level
-        return await _read_items(self._item_context, self.container_link, items, kwargs)
+        return await _read_items(self._client_context, self.container_link, items, kwargs)
 
     @overload
     def query_items(

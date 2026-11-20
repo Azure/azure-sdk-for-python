@@ -29,7 +29,7 @@ from azure.cosmos import _telemetry as telemetry
 from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos._backend.errors import BindingProtocolError
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.exceptions import (
@@ -70,10 +70,10 @@ def batch_setup(request, recording, monkeypatch):  # pylint: disable=unused-argu
             None,
         ),
     )
-    context = ItemClientContext(backend, telemetry_handlers=(telemetry.CompletionHandler(h.seen.append),))
+    context = CosmosClientContext(backend, telemetry_handlers=(telemetry.CompletionHandler(h.seen.append),))
     h.connection = Mock()
     h.proxy = (AsyncContainerProxy if asynchronous else ContainerProxy)(
-        h.connection, "dbs/sales", "orders", _item_context=context
+        h.connection, "dbs/sales", "orders", _client_context=context
     )
     monkeypatch.setattr(
         backend,
@@ -147,8 +147,8 @@ def test_batch_span_owns_preparation_result_and_hook_rust(batch, recording, mode
         settings.tracing_enabled = False
     if mode == "sampled-out":
         recording.provider.sampler = ALWAYS_OFF
-    h.proxy._item_context = replace(
-        h.proxy._item_context,
+    h.proxy._client_context = replace(
+        h.proxy._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -234,7 +234,7 @@ def test_errors_keep_type_cause_headers_and_no_replay_rust(batch, recording, fai
     elif failure == "metadata":
         h.error = DriverResponseError((404, 0, {"x-ms-activity-id": "metadata"}, b'{"message":"missing"}', None))
         expected = CosmosResourceNotFoundError
-        h.proxy._item_context.response_state.last_response_headers = {"old": "preserved"}
+        h.proxy._client_context.response_state.last_response_headers = {"old": "preserved"}
     elif failure == "transport":
         h.error, expected = DriverTransportError("failed"), ServiceResponseError
     elif failure == "timeout":
@@ -257,7 +257,7 @@ def test_errors_keep_type_cause_headers_and_no_replay_rust(batch, recording, fai
         assert caught.value.__cause__ is h.error
     if failure == "metadata":
         assert caught.value.headers["x-ms-activity-id"] == "metadata"
-        assert h.proxy._item_context.response_state.last_response_headers == {"old": "preserved"}
+        assert h.proxy._client_context.response_state.last_response_headers == {"old": "preserved"}
     if failure == "hook":
         assert caught.value is hook.side_effect
     else:
@@ -279,8 +279,8 @@ def test_reporting_failure_does_not_replace_batch_result_rust(batch, recording, 
         h.transform = lambda _: ("invalid",)
     else:
         monkeypatch.setattr(telemetry, "emit_attempts", Mock(side_effect=RuntimeError("emit failed")))
-        h.proxy._item_context = replace(
-            h.proxy._item_context,
+        h.proxy._client_context = replace(
+            h.proxy._client_context,
             telemetry_handlers=(
                 telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failed"))),
                 telemetry.CompletionHandler(h.seen.append),
@@ -306,7 +306,7 @@ def test_invalid_input_creates_no_attempts_rust(batch, recording):
 
 def test_disabled_batch_does_not_import_opentelemetry_rust(batch, monkeypatch):
     settings.tracing_enabled = False
-    batch.proxy._item_context = replace(batch.proxy._item_context, telemetry_handlers=())
+    batch.proxy._client_context = replace(batch.proxy._client_context, telemetry_handlers=())
     original_import = builtins.__import__
 
     def guarded_import(name, *args, **kwargs):
@@ -328,8 +328,8 @@ def test_batch_does_not_export_item_body_or_partition_key_rust(batch, recording)
 def test_nested_hook_keeps_separate_completion_rust(batch, recording):
     if batch.asynchronous:
         pytest.skip("Synchronous nested batch inside a synchronous hook")
-    batch.proxy._item_context = replace(
-        batch.proxy._item_context,
+    batch.proxy._client_context = replace(
+        batch.proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(batch.seen.append, collect_attempts=True),),
     )
 

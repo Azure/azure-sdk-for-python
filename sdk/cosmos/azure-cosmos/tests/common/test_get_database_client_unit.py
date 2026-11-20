@@ -27,7 +27,7 @@ import pytest
 from azure.cosmos import CosmosClient, DatabaseProxy
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.aio import DatabaseProxy as AsyncDatabaseProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 
 
 @pytest.fixture(
@@ -49,12 +49,12 @@ def client_and_proxy_type(request):
     client = client_type.__new__(client_type)
     client.client_connection = MagicMock()
     client.client_connection.url_connection = "https://example.invalid"
-    client._item_context = ItemClientContext(MagicMock())
+    client._client_context = CosmosClientContext(MagicMock())
     client._inference_client = MagicMock()
     yield client, proxy_type
 
     assert client.client_connection.mock_calls == []
-    assert client._item_context.adapter.mock_calls == []
+    assert client._client_context.adapter.mock_calls == []
     assert client._inference_client.mock_calls == []
 
 
@@ -135,10 +135,10 @@ def test_existing_proxy_creates_new_proxy_on_calling_client_rust(client_and_prox
     """
     client, proxy_type = client_and_proxy_type
     original_connection = MagicMock()
-    original_context = ItemClientContext(MagicMock())
+    original_context = CosmosClientContext(MagicMock())
     original_properties = {"id": "sales", "_rid": "unused"}
     original = proxy_type(
-        original_connection, "sales", properties=original_properties, _item_context=original_context
+        original_connection, "sales", properties=original_properties, _client_context=original_context
     )
 
     database = client.get_database_client(original)
@@ -147,11 +147,11 @@ def test_existing_proxy_creates_new_proxy_on_calling_client_rust(client_and_prox
     assert database is not original
     assert database.id == original.id
     assert database.client_connection is client.client_connection
-    assert database._item_context is client._item_context
+    assert database._client_context is client._client_context
     assert database._inference_client is client._inference_client
     assert database._properties is None
     assert original.client_connection is original_connection
-    assert original._item_context is original_context
+    assert original._client_context is original_context
     assert original._properties is original_properties
     assert client.client_connection.mock_calls == []
     assert original_connection.mock_calls == []
@@ -195,15 +195,15 @@ def test_calling_client_context_reaches_container_rust(client_and_proxy_type, in
     elif input_form == "properties":
         source = {"id": "sales"}
     else:
-        source = proxy_type(MagicMock(), "sales", _item_context=ItemClientContext(MagicMock()))
+        source = proxy_type(MagicMock(), "sales", _client_context=CosmosClientContext(MagicMock()))
 
     database = client.get_database_client(source)
     container = database.get_container_client("orders")
 
     assert not inspect.isawaitable(database)
     assert not inspect.isawaitable(container)
-    assert database._item_context is client._item_context
-    assert container._item_context is client._item_context
+    assert database._client_context is client._client_context
+    assert container._client_context is client._client_context
     assert database._inference_client is client._inference_client
     assert container._inference_client is client._inference_client
     assert container.client_connection is client.client_connection
@@ -236,8 +236,8 @@ def test_opposite_proxy_family_is_not_accepted_rust(client_and_proxy_type):
     client, proxy_type = client_and_proxy_type
     other_proxy_type = AsyncDatabaseProxy if proxy_type is DatabaseProxy else DatabaseProxy
     other_connection = MagicMock()
-    other_context = ItemClientContext(MagicMock())
-    other_database = other_proxy_type(other_connection, "sales", _item_context=other_context)
+    other_context = CosmosClientContext(MagicMock())
+    other_database = other_proxy_type(other_connection, "sales", _client_context=other_context)
 
     with pytest.raises(TypeError):
         client.get_database_client(other_database)

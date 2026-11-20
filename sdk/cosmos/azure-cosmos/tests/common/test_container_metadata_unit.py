@@ -24,7 +24,7 @@ from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend._binding_conversions import build_container_metadata
 from azure.cosmos._backend.contracts import ContainerMetadata
 from azure.cosmos._backend.errors import BindingProtocolError
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 from azure.cosmos._helpers._pk_extract import extract_partition_key_value
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper

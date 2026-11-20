@@ -14,7 +14,7 @@ from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._helpers import _item_prep
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.core import MatchConditions
 from azure.cosmos.exceptions import (
     CosmosAccessConditionFailedError, CosmosClientTimeoutError, CosmosResourceNotFoundError,
@@ -57,7 +57,7 @@ def replacement(request, monkeypatch):
     connection = MagicMock()
     connection._backend = backend
     proxy = (AsyncContainerProxy if asynchronous else ContainerProxy)(
-        connection, "dbs/sales", "orders", _item_context=ItemClientContext(backend)
+        connection, "dbs/sales", "orders", _client_context=CosmosClientContext(backend)
     )
 
     def call(body=None, *, item="order-42", **kwargs):

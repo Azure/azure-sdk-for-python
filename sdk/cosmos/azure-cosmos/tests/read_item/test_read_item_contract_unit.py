@@ -37,7 +37,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._helpers import _item_prep
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos._helpers._response_parse import process_backend_response
 from azure.cosmos.exceptions import CosmosAccessConditionFailedError, CosmosClientTimeoutError
 from azure.cosmos.partition_key import NonePartitionKeyValue, NullPartitionKeyValue
@@ -131,9 +131,9 @@ def point_read(request, monkeypatch):
         backend = ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND
 
     cc._backend = backend
-    item_context = ItemClientContext(backend)
+    client_context = CosmosClientContext(backend)
     proxy = (AsyncContainerProxy if async_mode else ContainerProxy)(
-        cc, "dbs/db", "c", _item_context=item_context,
+        cc, "dbs/db", "c", _client_context=client_context,
     )
 
     def legacy_metadata(**kwargs):
@@ -162,7 +162,7 @@ def point_read(request, monkeypatch):
         return asyncio.run(result) if inspect.isawaitable(result) else result
 
     context.resolve_for_item = resolve_for_item
-    context.call, context.proxy, context.cc, context.state = call, proxy, cc, item_context.response_state
+    context.call, context.proxy, context.cc, context.state = call, proxy, cc, client_context.response_state
     yield context
     if rust:
         binding.get_container_metadata.assert_not_called()

@@ -19,7 +19,7 @@ from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_PATCH_ITEM
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 
 
@@ -41,7 +41,7 @@ def _make_async_proxy(rid="rid-cached"):
     cc._backend = ASYNC_LEGACY_BACKEND
     cc.PatchItem = AsyncMock(return_value={"id": "patch_item", "_rid": rid})
 
-    proxy = ContainerProxy(cc, "dbs/db", "c", _item_context=ItemClientContext(cc._backend))
+    proxy = ContainerProxy(cc, "dbs/db", "c", _client_context=CosmosClientContext(cc._backend))
     return proxy, cc
 
 
@@ -91,7 +91,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         await proxy.patch_item("patch_item", "a", _OPERATIONS)
 
@@ -105,7 +105,7 @@ class TestAsyncContainerPatchItemRouting(unittest.IsolatedAsyncioTestCase):
         proxy, cc = _make_async_proxy()
         backend = _CapturingAsyncBackend()
         cc._backend = backend
-        proxy._item_context = ItemClientContext(backend)
+        proxy._client_context = CosmosClientContext(backend)
 
         await proxy.patch_item(
             "patch_item", "a", _OPERATIONS,

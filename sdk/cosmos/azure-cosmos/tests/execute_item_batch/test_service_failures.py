@@ -301,7 +301,7 @@ async def test_batch_cold_metadata_failure_and_recovery_rust(fault_client, obser
 
 
 async def regional_case(fault_client, observer, transaction, case, *, require_multiple):
-    handle = await invoke(observer._item_context.adapter._ensure_driver_handle)
+    handle = await invoke(observer._client_context.adapter._ensure_driver_handle)
     writes, reads = _rust._debug_cached_account_regions(handle)
     assert writes, "Native account topology has no writable regions"
     if require_multiple and len(reads) < 2:

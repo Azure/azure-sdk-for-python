@@ -40,7 +40,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos._backend.binding_adapter import BindingAdapter
 from azure.cosmos._backend import binding_adapter as sync_binding_adapter
 from azure.cosmos._backend.errors import BindingProtocolError
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.container import ContainerProxy as SyncContainerProxy
 from azure.cosmos.database import DatabaseProxy as SyncDatabaseProxy
@@ -106,7 +106,7 @@ def recording_setup(request, monkeypatch):
 @pytest.fixture(name="create")
 def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
     backend = binding_adapter.AsyncBindingAdapter("https://example.documents.azure.com", master_key="unused")
-    container = ContainerProxy(None, "dbs/sales", "orders", _item_context=ItemClientContext(backend))
+    container = ContainerProxy(None, "dbs/sales", "orders", _client_context=CosmosClientContext(backend))
     harness = SimpleNamespace(
         backend=backend,
         container=container,
@@ -269,7 +269,7 @@ def attempt_spans(recording):
 )
 @pytest.mark.usefixtures("recording")
 def test_non_rust_calls_do_not_create_rust_telemetry_state_rust(backend, operation):
-    container = SimpleNamespace(_item_context=SimpleNamespace(adapter=backend))
+    container = SimpleNamespace(_client_context=SimpleNamespace(adapter=backend))
     assert telemetry._new_operation(container, operation, {}) is None
     assert telemetry._OPERATION.get() is None
 
@@ -1022,7 +1022,7 @@ def test_child_task_read_has_its_own_public_operation_rust(create, recording):
 @pytest.fixture(name="sync_create")
 def sync_item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
     backend = BindingAdapter("https://example.documents.azure.com", master_key="unused")
-    container = SyncContainerProxy(None, "dbs/sales", "orders", _item_context=ItemClientContext(backend))
+    container = SyncContainerProxy(None, "dbs/sales", "orders", _client_context=CosmosClientContext(backend))
     harness = SimpleNamespace(
         backend=backend,
         container=container,
@@ -1565,7 +1565,7 @@ def test_completion_handlers_are_independent_of_trace_recording_rust(
     harness.response_status = status
     seen = []
     registration = telemetry.CompletionHandler(seen.append, collect_attempts=collect)
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=(registration,))
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=(registration,))
     if mode == "disabled":
         settings.tracing_enabled = False
     else:
@@ -1606,8 +1606,8 @@ def test_disabled_recording_does_not_inspect_backend_rust(sync_create, monkeypat
 def test_handler_only_completion_does_not_import_opentelemetry_rust(sync_create, monkeypatch):
     settings.tracing_enabled = False
     seen = []
-    sync_create.container._item_context = replace(
-        sync_create.container._item_context,
+    sync_create.container._client_context = replace(
+        sync_create.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
     )
     original_import = builtins.__import__
@@ -1632,8 +1632,8 @@ def test_handler_failure_does_not_replace_hook_failure_or_stop_other_handlers_ru
         clock[0] = 1000
         raise RuntimeError("PRIVATE handler failure")
 
-    sync_create.container._item_context = replace(
-        sync_create.container._item_context,
+    sync_create.container._client_context = replace(
+        sync_create.container._client_context,
         telemetry_handlers=(
             telemetry.CompletionHandler(bad_handler),
             telemetry.CompletionHandler(seen.append),
@@ -1658,8 +1658,8 @@ def test_handler_failure_does_not_replace_hook_failure_or_stop_other_handlers_ru
 
 def test_cancelled_public_call_notifies_independent_handlers_rust(create):
     seen = []
-    create.container._item_context = replace(
-        create.container._item_context,
+    create.container._client_context = replace(
+        create.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -1684,12 +1684,12 @@ def test_public_identity_can_differ_from_binding_operation_rust(sync_create, rec
     prepared = sync_create.calls[0][2]
     seen = []
     context = replace(
-        sync_create.container._item_context,
+        sync_create.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
     class PublicOperation:
-        _item_context = context
+        _client_context = context
 
         @telemetry.trace_operation(binding_operation="create_item")
         def save_order(self):
@@ -1843,8 +1843,8 @@ def test_feed_range_discovery_belongs_to_consumer_and_finishes_once(range_discov
     harness = range_discovery
     seen = []
     collect = mode != "disabled"
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(
             () if mode == "no-handlers" else (telemetry.CompletionHandler(seen.append, collect_attempts=collect),)
         ),
@@ -1909,8 +1909,8 @@ def test_feed_range_discovery_belongs_to_consumer_and_finishes_once(range_discov
 def test_feed_range_discovery_partial_consumption_has_no_open_operation(range_discovery, recording):
     harness = range_discovery
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     pager = harness.container.read_feed_ranges()
@@ -1930,8 +1930,8 @@ def test_feed_range_discovery_partial_consumption_has_no_open_operation(range_di
 def test_feed_range_discovery_failure_preserves_attempts_and_public_error(range_discovery, recording, failure):
     harness = range_discovery
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     _, harness.payload = contribution_response(5, time.time_ns())
@@ -1983,8 +1983,8 @@ def test_feed_range_discovery_failure_preserves_attempts_and_public_error(range_
 def test_feed_range_discovery_does_not_run_for_construction_or_rejected_inputs(range_discovery, recording, case):
     harness = range_discovery
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     if case == "bad-refresh":
@@ -2032,7 +2032,7 @@ def test_feed_range_discovery_reporting_never_repeats_fetch(range_discovery, rec
             return importer(name, *args, **kwargs)
 
         monkeypatch.setattr(builtins, "__import__", without_otel)
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=handlers)
     pager = harness.container.read_feed_ranges()
     expected = harness.collect(pager)
     assert harness.replay(pager) == expected
@@ -2079,8 +2079,8 @@ def test_feed_range_discovery_async_cancellation_allows_explicit_retry(range_dis
     if not harness.asynchronous:
         pytest.skip("Async cancellation")
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -2199,8 +2199,8 @@ def test_range_subset_records_operation_without_request_spans(range_subset, reco
     seen = []
     has_handlers = not mode.endswith("no-handlers")
     collect = mode in ("enabled", "handler-only", "sampled-out")
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(
             (telemetry.CompletionHandler(seen.append, collect_attempts=collect),) if has_handlers else ()
         ),
@@ -2260,8 +2260,8 @@ def test_range_subset_rejects_unsupported_input_before_binding(range_subset, rec
         )
     )
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
@@ -2297,8 +2297,8 @@ def test_range_subset_rejects_unsupported_input_before_binding(range_subset, rec
 def test_range_subset_error_completion_does_not_replay(range_subset, recording, failure):
     harness = range_subset
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     expected = ValueError
@@ -2361,7 +2361,7 @@ def test_range_subset_reporting_preserves_original_outcome(range_subset, monkeyp
             return importer(name, *args, **kwargs)
 
         monkeypatch.setattr(builtins, "__import__", without_otel)
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=handlers)
     if raises:
         harness.error = ValueError("original")
         with pytest.raises(ValueError) as caught:
@@ -2379,8 +2379,8 @@ def test_range_subset_completion_includes_result_parsing(range_subset, monkeypat
 
     harness = range_subset
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     original = _feed_range_operations.parse_is_feed_range_subset_payload
@@ -2445,8 +2445,8 @@ def test_range_subset_async_cancellation(range_subset):
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async cancellation")
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -2556,8 +2556,8 @@ def test_partition_key_range_owns_executed_steps(partition_key_range, recording,
     if key_shape == "undefined-cached":
         harness.connection._container_properties_cache[harness.container.container_link] = harness.properties
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(
             ()
             if mode == "no-handlers"
@@ -2616,8 +2616,8 @@ def test_partition_key_range_failure_keeps_prior_diagnostics(partition_key_range
     payload["incomplete_reasons"] = ["metadata_diagnostics_unavailable"]
     harness.range_payload = payload
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     expected = None
@@ -2668,8 +2668,8 @@ def test_partition_key_range_stops_at_failure(partition_key_range, monkeypatch, 
 
     harness = partition_key_range
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     error = ValueError("controlled failure")
@@ -2725,7 +2725,7 @@ def test_partition_key_range_reporting_does_not_replay(partition_key_range, monk
             return importer(name, *args, **kwargs)
 
         monkeypatch.setattr(builtins, "__import__", without_otel)
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=handlers)
     if raises:
         harness.error = ValueError("original calculation failure")
         with pytest.raises(ValueError) as caught:
@@ -2772,8 +2772,8 @@ def test_partition_key_range_cancellation_preserves_completed_metadata(
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async cancellation")
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -2853,8 +2853,8 @@ def test_latest_session_token_records_only_local_execution(  # pylint: disable=t
         ]
     before = deepcopy((harness.pairs, harness.target, harness.connection.last_response_headers))
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(
             () if mode == "no-handlers" else (telemetry.CompletionHandler(seen.append, collect_attempts=True),)
         ),
@@ -2940,7 +2940,7 @@ def test_latest_session_token_reporting_preserves_original(local_token, recordin
             return importer(name, *args, **kwargs)
 
         monkeypatch.setattr(builtins, "__import__", without_otel)
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=handlers)
     cause = ValueError("private-cause")
     original = CosmosHttpResponseError(status_code=500, message="private-token")
     original.__cause__ = cause
@@ -2969,8 +2969,8 @@ def test_latest_session_token_masks_and_restores_outer_operation(local_token, mo
     harness = local_token
     settings.tracing_enabled = enabled
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
     )
     helper = harness.module.get_latest_session_token
@@ -3037,8 +3037,8 @@ def test_async_latest_session_token_cancellation_preserves_identity(local_token,
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async cancellation")
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     original = asyncio.CancelledError()
@@ -3093,7 +3093,7 @@ def container_delete_harness(item_runtime):
     item_runtime.database = proxy(
         item_runtime.connection,
         "sales",
-        _item_context=item_runtime.container._item_context,
+        _client_context=item_runtime.container._client_context,
     )
     item_runtime.delete_container = lambda **kwargs: item_runtime.invoke(
         item_runtime.database.delete_container, "orders", **kwargs
@@ -3116,7 +3116,7 @@ def database_read_harness(item_runtime):
         item_runtime.connection,
         "sales",
         {"id": "prior-cache"},
-        _item_context=item_runtime.container._item_context,
+        _client_context=item_runtime.container._client_context,
     )
     item_runtime.read_properties = lambda **kwargs: item_runtime.invoke(item_runtime.database.read, **kwargs)
     return item_runtime
@@ -3276,8 +3276,8 @@ def test_database_throughput_replace_owns_all_executed_steps_rust(  # pylint: di
         harness.statuses[operation] = 403
     before = deepcopy(harness.offers)
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -3446,7 +3446,7 @@ def test_database_throughput_replace_reporting_never_replays_rust(
             return response, payload
 
         harness.transform = malformed_write
-    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    harness.database._client_context = replace(harness.database._client_context, telemetry_handlers=handlers)
     original = ValueError("customer callback error")
     hook = Mock(side_effect=original if hook_error else None)
     with trace.get_tracer("customer").start_as_current_span("set_capacity") as parent:
@@ -3496,8 +3496,8 @@ def test_async_database_throughput_replace_drains_interrupted_step_rust(
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async interruption")
     seen = []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -3649,8 +3649,8 @@ def test_database_throughput_replace_sequence_is_bounded_and_owned_rust(database
             ("get_throughput", "replace_throughput"),
         )
     )
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
     path = alternatives.paths[int(cached)]
@@ -3903,8 +3903,8 @@ def test_container_throughput_owns_lookup_and_recovery_rust(  # pylint: disable=
     harness = container_throughput
     configure_container_throughput(harness, cached, flow)
     seen, hooks = [], []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -4054,7 +4054,7 @@ def test_container_throughput_reporting_does_not_replay_rust(container_throughpu
     original = ValueError("cache failure")
     if failure == "cache":
         harness.connection._set_container_properties_cache.side_effect = original
-    harness.container._item_context = replace(harness.container._item_context, telemetry_handlers=handlers)
+    harness.container._client_context = replace(harness.container._client_context, telemetry_handlers=handlers)
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         if failure == "cache":
             with pytest.raises(ValueError) as caught:
@@ -4088,9 +4088,9 @@ def test_async_container_throughput_drains_interruption_rust(container_throughpu
     if stage >= len(harness.plan):
         pytest.skip("No replacement step in a read")
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
-        defaults=replace(harness.container._item_context.defaults, operation_timeout_seconds=1),
+    harness.container._client_context = replace(
+        harness.container._client_context,
+        defaults=replace(harness.container._client_context.defaults, operation_timeout_seconds=1),
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -4150,9 +4150,9 @@ def test_container_throughput_preserves_shared_budget_rust(container_throughput,
     configure_container_throughput(harness, flow="recreated")
     if isinstance(expire_stage, int) and expire_stage >= len(harness.plan):
         pytest.skip("No replacement step in a read")
-    harness.container._item_context = replace(
-        harness.container._item_context,
-        defaults=replace(harness.container._item_context.defaults, operation_timeout_seconds=7),
+    harness.container._client_context = replace(
+        harness.container._client_context,
+        defaults=replace(harness.container._client_context.defaults, operation_timeout_seconds=7),
     )
     clock = [100.0]
     clock_module = SimpleNamespace(monotonic=lambda: clock[0])
@@ -4270,8 +4270,8 @@ def test_container_throughput_sequence_rejects_unrelated_execution_rust(containe
         )
     alternatives = telemetry.BindingAlternatives(paths)
     path = paths[2 * int(cached) + int(recovered)] if harness.operation == "replace_throughput" else paths[int(cached)]
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
 
@@ -4341,8 +4341,8 @@ def test_container_throughput_write_failure_never_replays_rust(
     else:
         monkeypatch.setattr(_throughput_replace, "_deserialize_throughput", Mock(side_effect=original))
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -4390,8 +4390,8 @@ def test_binding_alternatives_shared_prefix_is_bounded_and_not_speculative_rust(
     harness = item_runtime
     paths = (("a",), ("a", "b", "c"), ("a", "b", "d"), ("a", "a", "c"))
     alternatives = telemetry.BindingAlternatives(paths)
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
     with telemetry._operation_scope(harness.container, "replace_throughput", {}, alternatives):
@@ -4446,8 +4446,8 @@ def test_database_throughput_owns_only_executed_steps_rust(  # pylint: disable=t
     elif outcome == "forbidden":
         harness.statuses["get_throughput"] = 403
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -4596,7 +4596,7 @@ def test_database_throughput_reporting_never_replays_rust(database_throughput, r
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("reporter"))),) + handlers
     elif failure == "malformed-body":
         harness.offers = "not an offer list"
-    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    harness.database._client_context = replace(harness.database._client_context, telemetry_handlers=handlers)
     with trace.get_tracer("customer").start_as_current_span("read_budget") as parent:
         if failure == "malformed-body":
             with pytest.raises(ValueError):
@@ -4665,9 +4665,9 @@ def test_async_database_throughput_drains_interrupted_step_rust(database_through
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async interruption")
     seen = []
-    harness.database._item_context = replace(
-        harness.database._item_context,
-        defaults=replace(harness.database._item_context.defaults, operation_timeout_seconds=1),
+    harness.database._client_context = replace(
+        harness.database._client_context,
+        defaults=replace(harness.database._client_context.defaults, operation_timeout_seconds=1),
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -4704,8 +4704,8 @@ def test_async_database_throughput_drains_interrupted_step_rust(database_through
 @pytest.mark.parametrize("path", [("read_database", "get_throughput"), ("get_throughput",)])
 def test_database_throughput_alternatives_are_bounded_and_owned_rust(database_throughput, path):
     harness = database_throughput
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
     alternatives = telemetry.BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",)))
@@ -4748,9 +4748,9 @@ def test_database_throughput_shares_metadata_and_offer_budget_rust(database_thro
     from azure.cosmos._helpers import _database_throughput
 
     harness = database_throughput
-    harness.database._item_context = replace(
-        harness.database._item_context,
-        defaults=replace(harness.database._item_context.defaults, operation_timeout_seconds=7),
+    harness.database._client_context = replace(
+        harness.database._client_context,
+        defaults=replace(harness.database._client_context.defaults, operation_timeout_seconds=7),
     )
     clock = [100.0]
     clock_module = SimpleNamespace(monotonic=lambda: clock[0])
@@ -5123,7 +5123,7 @@ def database_create_harness(item_runtime):
     )
     client = object.__new__(client_type)
     client._adapter = item_runtime.backend
-    client._item_context = item_runtime.container._item_context
+    client._client_context = item_runtime.container._client_context
     client._inference_client = None
     client.client_connection = item_runtime.connection
     item_runtime.client = client
@@ -5204,7 +5204,7 @@ def container_create_harness(item_runtime):
     item_runtime.database = proxy(
         item_runtime.connection,
         "sales",
-        _item_context=item_runtime.container._item_context,
+        _client_context=item_runtime.container._client_context,
     )
     item_runtime.create_container = lambda **kwargs: item_runtime.invoke(
         item_runtime.database.create_container,
@@ -5376,8 +5376,8 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
     harness = container_create
     harness.response_status = status
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10, "return_properties": return_properties}
@@ -5398,7 +5398,7 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
     def hook(headers, body):
         state = telemetry._OPERATION.get()
         assert state is not None and not state.closed
-        assert state.backend is harness.database._item_context.adapter is harness.connection._backend
+        assert state.backend is harness.database._client_context.adapter is harness.connection._backend
         assert state.binding_operation == "create_container" and state.collector.received == int(collect)
         assert not seen and not attempt_spans(recording)
         assert body["partitionKey"]["paths"] == ["/customerId"]
@@ -5419,7 +5419,7 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
             result = harness.create_container(response_hook=hook, **kwargs)
             container = result[0] if return_properties else result
             assert isinstance(container, (ContainerProxy, SyncContainerProxy))
-            assert container.id == "orders" and container._item_context is harness.database._item_context
+            assert container.id == "orders" and container._client_context is harness.database._client_context
             if return_properties:
                 assert result[1] is hooks[0] and result[1]["defaultTtl"] == 42
             harness.connection._set_container_properties_cache.assert_called_once()
@@ -5486,8 +5486,8 @@ def test_container_replace_owns_hook_snapshots_and_proxy_completion_rust(  # pyl
     harness = container_replace
     harness.response_status = status
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10, "return_properties": return_properties, "default_ttl": 600}
@@ -5508,7 +5508,7 @@ def test_container_replace_owns_hook_snapshots_and_proxy_completion_rust(  # pyl
     def hook(headers, body):
         state = telemetry._OPERATION.get()
         assert state is not None and not state.closed
-        assert state.backend is harness.database._item_context.adapter is harness.connection._backend
+        assert state.backend is harness.database._client_context.adapter is harness.connection._backend
         assert state.binding_operation == "replace_container" and state.collector.received == int(collect)
         assert not seen and not attempt_spans(recording)
         assert body["defaultTtl"] == 600 and body["partitionKey"]["paths"] == ["/customerId"]
@@ -5530,7 +5530,7 @@ def test_container_replace_owns_hook_snapshots_and_proxy_completion_rust(  # pyl
             result = harness.replace_container(response_hook=hook, **kwargs)
             container = result[0] if return_properties else result
             assert isinstance(container, (ContainerProxy, SyncContainerProxy))
-            assert container.id == "orders" and container._item_context is harness.database._item_context
+            assert container.id == "orders" and container._client_context is harness.database._client_context
             if return_properties:
                 assert result[1] is not hooks[0] and result[1]["defaultTtl"] == 600
                 assert result[1]["partitionKey"]["paths"] == ["/customerId"]
@@ -5642,7 +5642,7 @@ def test_container_write_preserves_errors_when_reporting_fails_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    harness.database._client_context = replace(harness.database._client_context, telemetry_handlers=handlers)
     if outcome == "success":
         assert harness.write_container(response_hook=hook, **kwargs).id == "orders"
     else:
@@ -5677,10 +5677,10 @@ def test_async_container_write_cancellation_closes_database_operation_rust(creat
         ReplaceContainer=Mock(side_effect=AssertionError("Unexpected legacy replacement")),
         _set_container_properties_cache=Mock(),
     )
-    database = DatabaseProxy(connection, "sales", _item_context=harness.container._item_context)
+    database = DatabaseProxy(connection, "sales", _client_context=harness.container._client_context)
     seen = []
-    database._item_context = replace(
-        database._item_context,
+    database._client_context = replace(
+        database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -5733,8 +5733,8 @@ def test_container_delete_owns_database_context_until_completion_rust(  # pylint
     harness = container_delete
     harness.response_status = status
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -5756,7 +5756,7 @@ def test_container_delete_owns_database_context_until_completion_rust(  # pylint
     def hook(headers, body):
         state = telemetry._OPERATION.get()
         assert state is not None and not state.closed
-        assert state.backend is harness.database._item_context.adapter is harness.connection._backend
+        assert state.backend is harness.database._client_context.adapter is harness.connection._backend
         assert state.binding_operation == "delete_container"
         assert state.collector.received == int(collect)
         assert not seen and not attempt_spans(recording)
@@ -5841,7 +5841,7 @@ def test_container_delete_preserves_errors_when_reporting_fails_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    harness.database._client_context = replace(harness.database._client_context, telemetry_handlers=handlers)
     if outcome == "success":
         assert harness.delete_container(response_hook=hook, **kwargs) is None
     else:
@@ -5899,10 +5899,10 @@ def test_async_container_delete_cancellation_closes_database_operation_rust(crea
         _backend=harness.backend,
         DeleteContainer=Mock(side_effect=AssertionError("Unexpected legacy delete")),
     )
-    harness.database = DatabaseProxy(harness.connection, "sales", _item_context=harness.container._item_context)
+    harness.database = DatabaseProxy(harness.connection, "sales", _client_context=harness.container._client_context)
     seen = []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -5946,8 +5946,8 @@ def test_container_read_owns_diagnostics_through_hook_and_cache_rust(  # pylint:
     harness = container_read
     harness.response_status = status
     seen, hooks = [], []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {}
@@ -6048,7 +6048,7 @@ def test_metadata_read_reporting_failures_preserve_execution_rust(metadata_read,
         )
     else:
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.read_proxy._item_context = replace(harness.read_proxy._item_context, telemetry_handlers=handlers)
+    harness.read_proxy._client_context = replace(harness.read_proxy._client_context, telemetry_handlers=handlers)
     if outcome == "success":
         assert harness.read_properties(response_hook=hook) == harness.expected_properties
     else:
@@ -6108,11 +6108,11 @@ def test_async_metadata_read_cancellation_completes_without_diagnostics_rust(cre
         proxy = DatabaseProxy(
             create.container.client_connection,
             "sales",
-            _item_context=create.container._item_context,
+            _client_context=create.container._client_context,
         )
     seen = []
-    proxy._item_context = replace(
-        proxy._item_context,
+    proxy._client_context = replace(
+        proxy._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -6166,8 +6166,8 @@ def test_database_read_owns_diagnostics_through_hook_and_properties_rust(  # pyl
         completed_properties.append(harness.database._properties)
         seen.append(completion)
 
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(complete, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -6252,8 +6252,8 @@ def test_database_read_timeout_keeps_cause_and_only_available_diagnostics_rust(
     else:
         harness.error = TimeoutError("binding deadline elapsed before a result")
     seen = []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -6291,8 +6291,8 @@ def test_database_create_owns_diagnostics_through_hook_and_proxy_rust(  # pylint
     harness = database_create
     harness.response_status = status
     seen, hooks = [], []
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10, "return_properties": return_properties}
@@ -6327,7 +6327,7 @@ def test_database_create_owns_diagnostics_through_hook_and_proxy_rust(  # pylint
             result = harness.create_database(response_hook=hook, **kwargs)
             proxy = result[0] if return_properties else result
             assert proxy.id == "sales" and proxy._properties == DATABASE_PROPERTIES
-            assert proxy._item_context is harness.client._item_context
+            assert proxy._client_context is harness.client._client_context
             assert proxy._properties.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
             if return_properties:
                 assert result[1] is proxy._properties
@@ -6398,7 +6398,7 @@ def test_database_create_reporting_preserves_public_outcome_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.client._item_context = replace(harness.client._item_context, telemetry_handlers=handlers)
+    harness.client._client_context = replace(harness.client._client_context, telemetry_handlers=handlers)
     if outcome == "success":
         assert harness.create_database(timeout=10, response_hook=hook).id == "sales"
     elif outcome.endswith("timeout"):
@@ -6485,8 +6485,8 @@ def test_database_get_or_create_collects_each_executed_step_once_rust(  # pylint
     harness = database_get_or_create
     harness.statuses = statuses
     seen, hooks = [], []
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10, "return_properties": return_properties}
@@ -6527,7 +6527,7 @@ def test_database_get_or_create_collects_each_executed_step_once_rust(  # pylint
             result = harness.get_or_create(response_hook=hook, **kwargs)
             proxy = result[0] if return_properties else result
             assert proxy.id == "sales" and proxy._properties == DATABASE_PROPERTIES
-            assert proxy._item_context is harness.client._item_context
+            assert proxy._client_context is harness.client._client_context
             assert proxy._properties.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
             if return_properties:
                 assert result[1] is proxy._properties
@@ -6576,8 +6576,8 @@ def test_database_get_or_create_failure_keeps_earlier_diagnostics_rust(
     else:
         harness.driver_error_type = TimeoutError if failure == "returned-timeout" else DriverTransportError
     seen = []
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -6626,7 +6626,7 @@ def test_database_get_or_create_reporting_never_replays_work_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.client._item_context = replace(harness.client._item_context, telemetry_handlers=handlers)
+    harness.client._client_context = replace(harness.client._client_context, telemetry_handlers=handlers)
     with trace.get_tracer("customer").start_as_current_span("ensure_database") as parent:
         if outcome == "success":
             assert harness.get_or_create(timeout=10, response_hook=hook).id == "sales"
@@ -6723,8 +6723,8 @@ def test_async_database_get_or_create_drains_interrupted_step_rust(
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async task cancellation")
     seen, drained = [], []
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     native = getattr(binding_adapter._rust_module, "read_database_async")
@@ -6777,8 +6777,8 @@ def test_async_database_get_or_create_drains_interrupted_step_rust(
 def test_composed_binding_sequence_is_bounded_and_owned_rust(database_get_or_create):
     harness = database_get_or_create
     sequence = ("read_database", "create_database", "read_database")
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
     with telemetry._operation_scope(harness.client, "create_database_if_not_exists", {}, sequence):
@@ -6813,8 +6813,8 @@ def test_composed_sequence_rejects_inherited_tasks_and_masks_nested_calls_rust(
 ):
     harness = database_get_or_create
     sequence = ("read_database", "create_database", "read_database")
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(Mock(), collect_attempts=True),),
     )
 
@@ -6875,8 +6875,8 @@ def test_container_get_or_create_owns_read_and_delegated_creation_rust(  # pylin
     harness = container_get_or_create
     harness.statuses = statuses
     seen, hooks = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10, "return_properties": return_properties}
@@ -6921,7 +6921,7 @@ def test_container_get_or_create_owns_read_and_delegated_creation_rust(  # pylin
         else:
             result = harness.get_or_create(response_hook=hook, **kwargs)
             proxy = result[0] if return_properties else result
-            assert proxy.id == "orders" and proxy._item_context is harness.database._item_context
+            assert proxy.id == "orders" and proxy._client_context is harness.database._client_context
             assert len(hooks) == 1
             if return_properties:
                 assert result[1] is hooks[0]
@@ -6997,7 +6997,7 @@ def test_container_get_or_create_reporting_preserves_completion_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.database._item_context = replace(harness.database._item_context, telemetry_handlers=handlers)
+    harness.database._client_context = replace(harness.database._client_context, telemetry_handlers=handlers)
     with trace.get_tracer("customer").start_as_current_span("ensure_container") as parent:
         if outcome == "success":
             assert harness.get_or_create(timeout=10, response_hook=hook).id == "orders"
@@ -7044,8 +7044,8 @@ def test_container_get_or_create_failure_retains_available_diagnostics_rust(
     else:
         harness.driver_error_type = TimeoutError if failure == "returned-timeout" else DriverTransportError
     seen = []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     hook = Mock()
@@ -7163,8 +7163,8 @@ def test_async_container_get_or_create_cancellation_closes_outer_operation_rust(
     if not isinstance(harness.backend, binding_adapter.AsyncBindingAdapter):
         pytest.skip("Async cancellation")
     seen, drained = [], []
-    harness.database._item_context = replace(
-        harness.database._item_context,
+    harness.database._client_context = replace(
+        harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     native = getattr(binding_adapter._rust_module, "read_container_async")
@@ -7263,8 +7263,8 @@ def test_async_database_mutation_cancellation_closes_operation_rust(create, reco
     client = object.__new__(AsyncCosmosClient)
     client._adapter = create.backend
     seen = []
-    client._item_context = replace(
-        create.container._item_context,
+    client._client_context = replace(
+        create.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     client.client_connection = SimpleNamespace(
@@ -7314,8 +7314,8 @@ def test_database_delete_owns_diagnostics_through_headers_only_hook_rust(  # pyl
     harness = database_delete
     harness.response_status = status
     seen, hooks = [], []
-    harness.client._item_context = replace(
-        harness.client._item_context,
+    harness.client._client_context = replace(
+        harness.client._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     kwargs = {"timeout": 10}
@@ -7413,7 +7413,7 @@ def test_database_delete_reporting_preserves_public_outcome_rust(
         )
     elif failure == "handler":
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("handler failure"))),) + handlers
-    harness.client._item_context = replace(harness.client._item_context, telemetry_handlers=handlers)
+    harness.client._client_context = replace(harness.client._client_context, telemetry_handlers=handlers)
     if outcome == "success":
         assert harness.delete_database(timeout=10, response_hook=hook) is None
     elif outcome.endswith("timeout"):
@@ -7483,7 +7483,7 @@ def test_delete_preserves_outcome_and_records_only_its_owned_attempts_rust(delet
     assert delete.calls[0][0] is (mode == "enabled")
     assert delete.calls[0][1] is None
     if status != 408:
-        headers = delete.container._item_context.response_state.last_response_headers
+        headers = delete.container._client_context.response_state.last_response_headers
         assert headers["x-ms-request-charge"] == "5.0"
         assert headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
     if mode == "enabled":
@@ -7517,7 +7517,7 @@ def test_point_write_telemetry_failures_cannot_replace_public_execution_rust(
         )
     else:
         handlers = (telemetry.CompletionHandler(Mock(side_effect=RuntimeError("PRIVATE handler failure"))),) + handlers
-    point_write.container._item_context = replace(point_write.container._item_context, telemetry_handlers=handlers)
+    point_write.container._client_context = replace(point_write.container._client_context, telemetry_handlers=handlers)
     logger = telemetry._LOGGER
     monkeypatch.setattr(logger, "level", logging.WARNING)
     handler = FailingTelemetryLogHandler()
@@ -7556,8 +7556,8 @@ def test_point_write_telemetry_failures_cannot_replace_public_execution_rust(
 def test_point_write_completion_handler_does_not_require_tracing_rust(point_write, collect):
     settings.tracing_enabled = False
     seen = []
-    point_write.container._item_context = replace(
-        point_write.container._item_context,
+    point_write.container._client_context = replace(
+        point_write.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=collect),),
     )
     assert point_write.write() == point_write.expected_result
@@ -7595,8 +7595,8 @@ def test_point_write_without_tracing_does_not_import_opentelemetry_rust(point_wr
 def test_point_write_cancellation_completes_once_without_inventing_attempts_rust(create, recording, operation, timeout):
     seen = []
     hook = Mock()
-    create.container._item_context = replace(
-        create.container._item_context,
+    create.container._client_context = replace(
+        create.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
 
@@ -7781,8 +7781,8 @@ def test_body_write_empty_response_keeps_headers_and_completion_rust(
 
 def test_upsert_invalid_body_finishes_without_binding_execution_rust(upsert, recording):
     seen = []
-    upsert.container._item_context = replace(
-        upsert.container._item_context,
+    upsert.container._client_context = replace(
+        upsert.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     with pytest.raises(ValueError):
@@ -7812,8 +7812,8 @@ def test_replace_telemetry_preserves_target_and_body_rust(replacement, mapping):
 @pytest.mark.parametrize("defect", ["body-id", "target-link", "target-id"])
 def test_replace_invalid_input_completes_before_binding_rust(replacement, defect):
     seen = []
-    replacement.container._item_context = replace(
-        replacement.container._item_context,
+    replacement.container._client_context = replace(
+        replacement.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     kwargs = {
@@ -7862,8 +7862,8 @@ def test_point_write_telemetry_preserves_deadline_and_hook_boundary_rust(
         harness.transform = expire
     hook = Mock()
     seen = []
-    harness.container._item_context = replace(
-        harness.container._item_context,
+    harness.container._client_context = replace(
+        harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     if stage == "within-budget":
@@ -7923,8 +7923,8 @@ def test_patch_telemetry_preserves_target_guard_filter_and_snapshot_rust(patch, 
 )
 def test_patch_invalid_input_completes_without_binding_rust(patch, kwargs, error):
     seen = []
-    patch.container._item_context = replace(
-        patch.container._item_context,
+    patch.container._client_context = replace(
+        patch.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
     with pytest.raises(error):
@@ -8105,8 +8105,8 @@ def timeout_item_harness(request, item_runtime):
 def test_driver_returned_timeout_keeps_diagnostics_and_original_exception_rust(timeout_item, recording, budget, mode):
     seen = []
     hook = Mock()
-    timeout_item.container._item_context = replace(
-        timeout_item.container._item_context,
+    timeout_item.container._client_context = replace(
+        timeout_item.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
     )
     if mode in ("global-disabled", "handler-only"):

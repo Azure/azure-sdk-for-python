@@ -21,7 +21,7 @@ from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
 from azure.cosmos.aio import CosmosClient  # noqa: F401 - needed to resolve circular imports
 from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (

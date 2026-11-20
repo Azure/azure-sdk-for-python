@@ -61,10 +61,10 @@ async def test_native_collection_paging_keys_and_read_all_live_cursor_rust(nativ
         container.client_connection = ForbiddenConnection()
         container._get_properties_with_options = MagicMock(side_effect=AssertionError("legacy metadata"))
         completed = []
-        container._item_context = replace(
-            container._item_context, telemetry_handlers=(CompletionHandler(completed.append),)
+        container._client_context = replace(
+            container._client_context, telemetry_handlers=(CompletionHandler(completed.append),)
         )
-        adapter = container._item_context.adapter
+        adapter = container._client_context.adapter
         original = adapter.execute_pages
         captured = []
 
@@ -272,7 +272,7 @@ async def test_native_read_many_cancellation_releases_cursor_rust(native_databas
 @pytest.mark.parametrize("invalid", ["prefix", "continuation", "untyped"])
 async def test_compiled_read_many_rejects_invalid_selection_rust(native_database, method, invalid):
     container = native_database.get_container_client("hpk")
-    handle = container._item_context.adapter._ensure_driver_handle()
+    handle = container._client_context.adapter._ensure_driver_handle()
     key = BindingPartitionKey("components", ("t",) if invalid == "prefix" else ("t", "u"))
     request = PreparedRequest(
         op="read_items", container_link=container.container_link, body_bytes=b"",

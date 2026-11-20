@@ -33,7 +33,7 @@ from azure.cosmos._routing.feed_range_continuation import (
     _hash_query_spec,
 )
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes, SubStatusCodes
-from azure.cosmos._helpers._item_context import ClientLastResponseHeaders
+from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 
 # tracemalloc is not available in PyPy, so we import conditionally
 try:

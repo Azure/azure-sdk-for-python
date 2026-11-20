@@ -17,7 +17,7 @@ from azure.cosmos._backend.cosmos_backend import CosmosBackend
 from azure.cosmos._backend.errors import BindingProtocolError
 from azure.cosmos._backend.operations import OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._cosmos_responses import CosmosList
-from azure.cosmos._helpers._item_context import ItemClientContext, ItemClientDefaults
+from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults
 from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
@@ -56,14 +56,14 @@ def _batch_client_fixture(request):
     backend = AsyncBatchBackend() if asynchronous else BatchBackend()
     connection = MagicMock()
     connection.Batch.side_effect = AssertionError("Legacy batch must not run")
-    context = ItemClientContext(
+    context = CosmosClientContext(
         backend,
-        defaults=ItemClientDefaults(
+        defaults=ClientOperationDefaults(
             priority="High", throughput_bucket=7, operation_timeout_seconds=15
         ),
     )
     cls = AsyncContainerProxy if asynchronous else ContainerProxy
-    container = cls(connection, "dbs/db", "orders", _item_context=context)
+    container = cls(connection, "dbs/db", "orders", _client_context=context)
     container._get_properties_with_options = MagicMock(
         side_effect=AssertionError("Legacy metadata must not run")
     )
@@ -140,10 +140,10 @@ def test_conditions_patch_and_caller_snapshot_rust(batch_client):
 def test_compact_utf8_batch_escapes_only_bodyless_batches_rust(operations, escaped):
     """Compact UTF-8 applies only when a batch carries an item body, as in legacy."""
     backend = BatchBackend()
-    context = ItemClientContext(
-        backend, defaults=ItemClientDefaults(enable_compact_utf8_item_writes=True)
+    context = CosmosClientContext(
+        backend, defaults=ClientOperationDefaults(enable_compact_utf8_item_writes=True)
     )
-    container = ContainerProxy(MagicMock(), "dbs/db", "orders", _item_context=context)
+    container = ContainerProxy(MagicMock(), "dbs/db", "orders", _client_context=context)
     container.execute_item_batch(operations, "bank")
     body = backend.send.call_args.args[0].body_bytes
     assert (b"caf\\u00e9" in body) is escaped

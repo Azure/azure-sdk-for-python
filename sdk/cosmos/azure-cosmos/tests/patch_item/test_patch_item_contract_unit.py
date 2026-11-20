@@ -39,7 +39,7 @@ from azure.cosmos import CosmosDict
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._helpers import _item_prep
-from azure.cosmos._helpers._item_context import ItemClientDefaults
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from azure.cosmos.exceptions import (
     CosmosAccessConditionFailedError,
     CosmosClientTimeoutError,
@@ -520,10 +520,10 @@ def test_client_defaults_and_per_call_overrides_rust(rust_patch):
     This is checked on the wire headers rather than on the options dict, so a
     default that is recorded but never sent would still fail.
     """
-    context = rust_patch.proxy._item_context
-    rust_patch.proxy._item_context = replace(
+    context = rust_patch.proxy._client_context
+    rust_patch.proxy._client_context = replace(
         context,
-        defaults=ItemClientDefaults(
+        defaults=ClientOperationDefaults(
             no_response_on_write=True,
             priority="Low",
             throughput_bucket=2,

@@ -40067,8 +40067,8 @@
         "line": 24,
         "end_line": 24,
         "column": 0,
-        "ast_sha256": "0a843541ba68853dd00d6e73776211e6f81c9a8c8e060f6b3d0a9b444209aacd",
-        "snippet": "from azure.cosmos._helpers._item_context import ClientLastResponseHeaders"
+        "ast_sha256": "83bbe9845ba95de23d2b8cd2264b81c98b4ca574a2329273828213db3ee643a1",
+        "snippet": "from azure.cosmos._helpers._client_context import ClientLastResponseHeaders"
       },
       {
         "path": "tests\\test_item_body_serialization.py",
@@ -44100,15 +44100,15 @@
   "replacement_modules": {
     "tests\\execute_item_batch\\aio\\test_transactional_batch_async.py": "076b1bf08557de9e918cfde6141fe2e599e6001c78da74d2dbf886878ed0aef5",
     "tests\\execute_item_batch\\sync\\test_transactional_batch.py": "caa7e5dd834a410ec2b53bcdfbe989981fbb9b2c4ac44ce76586e8f81761658f",
-    "tests\\execute_item_batch\\test_serialization_compatibility_unit.py": "83b097175347ce3cf38fd941b245a27555c68badf2cf392df66430045200e98e",
-    "tests\\execute_item_batch\\test_service_failures.py": "c2e3a9dce115dd90f076a10e350ecf03fc3868d409a7c56e79c2b4c1c7c4d330",
+    "tests\\execute_item_batch\\test_serialization_compatibility_unit.py": "d489738387269b31742ea24ad023a6d34b92753a952efd8d733cd750ca2dd43d",
+    "tests\\execute_item_batch\\test_service_failures.py": "734e5ac15cae8ca038ce3e04c9bd8fab6003577ba4d97b0dfeb4007534add9b4",
     "tests\\execute_item_batch\\test_shared_contracts.py": "4d2d9333ce3f5ed9140d7c749a371ac7d06a11ada8c8eb43562fdb3635928e18",
     "tests\\response_hook\\aio\\test_query_response_headers_async.py": "71632dbce7d83972ca6f570de8354214803b119077c10c28ca50012769755423",
     "tests\\response_hook\\sync\\test_query_response_headers.py": "2ae726e3f59a221f3a8916a218d25f6253f4d7684edf9c4f4b90bf6e4de19f99"
   },
   "fixture_boundary": {
     "path": "tests\\execute_item_batch\\test_service_failures.py",
-    "ast_sha256": "c2e3a9dce115dd90f076a10e350ecf03fc3868d409a7c56e79c2b4c1c7c4d330",
+    "ast_sha256": "734e5ac15cae8ca038ce3e04c9bd8fab6003577ba4d97b0dfeb4007534add9b4",
     "meaning": "Shared replacements use configured key/AAD clients, key-owned resources, real native spies and legacy Batch failure guards. AAD collection is not execution."
   }
 }

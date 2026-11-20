@@ -38,7 +38,7 @@ from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.errors import BindingProtocolError
-from azure.cosmos._helpers._item_context import ItemClientContext
+from azure.cosmos._helpers._client_context import CosmosClientContext
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from query_items.test_query_backend_routing_unit import (
     listing_client,
@@ -522,7 +522,7 @@ async def test_real_rust_backend_deducts_setup_before_binding_rust(listing_clien
     backend_type = module.AsyncBindingAdapter if is_async else module.BindingAdapter
     backend = backend_type("https://listing.invalid", master_key="unused")
     client._adapter = connection._backend = backend
-    client._item_context = ItemClientContext(backend, response_state=connection._response_state)
+    client._client_context = CosmosClientContext(backend, response_state=connection._response_state)
     driver_handle = object()
 
     def acquire(*, deadline=None):
