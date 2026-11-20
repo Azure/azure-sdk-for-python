@@ -4,6 +4,9 @@
 
 ### Bugs Fixed
 
+- Fixed pyAMQP session-window exhaustion on long-lived connections and rejected negative unsigned AMQP values. ([#49232](https://github.com/Azure/azure-sdk-for-python/issues/49232))
+- Fixed pyAMQP receive-window recovery after a link handler raises or is cancelled. Replenishment happens after delivery and only while the session is mapped, so closing sessions do not advertise new receive capacity.
+
 - Fixed a leak of `aiohttp.ClientSession` instances when the async `AmqpOverWebsocket` transport could not connect or its WebSocket failed while closing. ([#49131](https://github.com/Azure/azure-sdk-for-python/issues/49131))
 - Bounded the nesting depth of AMQP compound types (lists, maps, arrays, and described types) in the pyAMQP decoder to a maximum of 64. A payload nested deeper than that is now rejected early with a `ValueError`; previously such payloads were bounded only by the Python recursion limit and raised `RecursionError`.
 - Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. Also fixed the async transport to apply default TCP socket settings even when no custom `socket_settings` are provided. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
