@@ -11,13 +11,14 @@ from typing import (
     Mapping,
     Optional,
     Tuple,
+    Union,
     overload,
 )
 from azure.core.credentials import TokenCredential
 from ._constants import (
     DEFAULT_STARTUP_TIMEOUT,
 )
-from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
+from ._models import AzureAppConfigurationKeyVaultOptions, FeatureFlagSelector, SettingSelector
 from ._utils import (
     delay_failure,
     process_load_parameters,
@@ -48,7 +49,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
-    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = None,
     feature_flag_refresh_enabled: bool = False,
     startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
@@ -86,9 +87,11 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_enabled: bool
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
-     feature flags without a label.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. Either a list of
+     ~azure.appconfiguration.provider.SettingSelector or a list of
+     ~azure.appconfiguration.provider.FeatureFlagSelector (the two types cannot be mixed in the same list).
+     By default will load all feature flags without a label.
+    :paramtype feature_flag_selectors: Union[List[SettingSelector], List[FeatureFlagSelector]]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool
@@ -123,7 +126,7 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     on_refresh_success: Optional[Callable] = None,
     on_refresh_error: Optional[Callable[[Exception], None]] = None,
     feature_flag_enabled: bool = False,
-    feature_flag_selectors: Optional[List[SettingSelector]] = None,
+    feature_flag_selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]] = None,
     feature_flag_refresh_enabled: bool = False,
     startup_timeout: int = DEFAULT_STARTUP_TIMEOUT,
     **kwargs,
@@ -160,9 +163,11 @@ def load(  # pylint: disable=docstring-keyword-should-match-keyword-only
     :paramtype on_refresh_error: Optional[Callable[[Exception], None]]
     :keyword feature_flag_enabled: Optional flag to enable or disable the loading of feature flags. Default is False.
     :paramtype feature_flag_enabled: bool
-    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. By default will load all
-     feature flags without a label.
-    :paramtype feature_flag_selectors: List[SettingSelector]
+    :keyword feature_flag_selectors: Optional list of selectors to filter feature flags. Either a list of
+     ~azure.appconfiguration.provider.SettingSelector or a list of
+     ~azure.appconfiguration.provider.FeatureFlagSelector (the two types cannot be mixed in the same list).
+     By default will load all feature flags without a label.
+    :paramtype feature_flag_selectors: Union[List[SettingSelector], List[FeatureFlagSelector]]
     :keyword feature_flag_refresh_enabled: Optional flag to enable or disable the refresh of feature flags. Default is
      False.
     :paramtype feature_flag_refresh_enabled: bool

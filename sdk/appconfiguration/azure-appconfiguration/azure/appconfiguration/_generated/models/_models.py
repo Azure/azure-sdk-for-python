@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Error(_Model):
+class Error(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure App Configuration error object.
 
     :ivar type: The type of the error.
@@ -66,6 +66,331 @@ class Error(_Model):
         super().__init__(*args, **kwargs)
 
 
+class FeatureFlag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A feature flag.
+
+    :ivar name: The name of the feature flag. Required.
+    :vartype name: str
+    :ivar enabled: The enabled state of the feature flag. Required.
+    :vartype enabled: bool
+    :ivar label: The label the feature flag belongs to.
+    :vartype label: str
+    :ivar description: The description of the feature flag.
+    :vartype description: str
+    :ivar conditions: The conditions of the feature flag.
+    :vartype conditions: ~azure.appconfiguration._generated.models.FeatureFlagConditions
+    :ivar variants: The variants of the feature flag.
+    :vartype variants: list[~azure.appconfiguration._generated.models.FeatureFlagVariantDefinition]
+    :ivar allocation: The allocation of the feature flag.
+    :vartype allocation: ~azure.appconfiguration._generated.models.FeatureFlagAllocation
+    :ivar telemetry: The telemetry settings of the feature flag.
+    :vartype telemetry: ~azure.appconfiguration._generated.models.FeatureFlagTelemetryConfiguration
+    :ivar tags: The tags of the feature flag.
+    :vartype tags: dict[str, str]
+    :ivar last_modified: A date representing the last time the feature flag was modified.
+    :vartype last_modified: ~datetime.datetime
+    :ivar etag: A value representing the current state of the resource.
+    :vartype etag: str
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """The name of the feature flag. Required."""
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The enabled state of the feature flag. Required."""
+    label: Optional[str] = rest_field(visibility=["read"])
+    """The label the feature flag belongs to."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The description of the feature flag."""
+    conditions: Optional["_models.FeatureFlagConditions"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The conditions of the feature flag."""
+    variants: Optional[list["_models.FeatureFlagVariantDefinition"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The variants of the feature flag."""
+    allocation: Optional["_models.FeatureFlagAllocation"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The allocation of the feature flag."""
+    telemetry: Optional["_models.FeatureFlagTelemetryConfiguration"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The telemetry settings of the feature flag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The tags of the feature flag."""
+    last_modified: Optional[datetime.datetime] = rest_field(visibility=["read"], format="rfc3339")
+    """A date representing the last time the feature flag was modified."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A value representing the current state of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        description: Optional[str] = None,
+        conditions: Optional["_models.FeatureFlagConditions"] = None,
+        variants: Optional[list["_models.FeatureFlagVariantDefinition"]] = None,
+        allocation: Optional["_models.FeatureFlagAllocation"] = None,
+        telemetry: Optional["_models.FeatureFlagTelemetryConfiguration"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defines how to allocate variants based on context.
+
+    :ivar default_when_disabled: The default variant to use when disabled.
+    :vartype default_when_disabled: str
+    :ivar default_when_enabled: The default variant to use when enabled but not allocated.
+    :vartype default_when_enabled: str
+    :ivar percentile: Allocates percentiles to variants.
+    :vartype percentile: list[~azure.appconfiguration._generated.models.PercentileAllocation]
+    :ivar user: Allocates users to variants.
+    :vartype user: list[~azure.appconfiguration._generated.models.UserAllocation]
+    :ivar group: Allocates groups to variants.
+    :vartype group: list[~azure.appconfiguration._generated.models.GroupAllocation]
+    :ivar seed: The seed used for random allocation.
+    :vartype seed: str
+    """
+
+    default_when_disabled: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The default variant to use when disabled."""
+    default_when_enabled: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The default variant to use when enabled but not allocated."""
+    percentile: Optional[list["_models.PercentileAllocation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allocates percentiles to variants."""
+    user: Optional[list["_models.UserAllocation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allocates users to variants."""
+    group: Optional[list["_models.GroupAllocation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Allocates groups to variants."""
+    seed: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The seed used for random allocation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        default_when_disabled: Optional[str] = None,
+        default_when_enabled: Optional[str] = None,
+        percentile: Optional[list["_models.PercentileAllocation"]] = None,
+        user: Optional[list["_models.UserAllocation"]] = None,
+        group: Optional[list["_models.GroupAllocation"]] = None,
+        seed: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The conditions that must be met for the feature flag to be enabled.
+
+    :ivar requirement_type: The requirement type for the conditions. Known values are: "Any" and
+     "All".
+    :vartype requirement_type: str or ~azure.appconfiguration.models.RequirementType
+    :ivar filters: The filters that will conditionally enable or disable the flag.
+    :vartype filters: list[~azure.appconfiguration._generated.models.FeatureFlagFilter]
+    """
+
+    requirement_type: Optional[Union[str, "_models.RequirementType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requirement type for the conditions. Known values are: \"Any\" and \"All\"."""
+    filters: Optional[list["_models.FeatureFlagFilter"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The filters that will conditionally enable or disable the flag."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        requirement_type: Optional[Union[str, "_models.RequirementType"]] = None,
+        filters: Optional[list["_models.FeatureFlagFilter"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag Filter object.
+
+    :ivar name: The name of the filter. Required.
+    :vartype name: str
+    :ivar parameters: The parameters used by the filter.
+    :vartype parameters: dict[str, str]
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the filter. Required."""
+    parameters: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The parameters used by the filter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        parameters: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagTelemetryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag Telemetry object.
+
+    :ivar enabled: The enabled state of the telemetry. Required.
+    :vartype enabled: bool
+    :ivar metadata: The metadata to include on outbound telemetry.
+    :vartype metadata: dict[str, str]
+    """
+
+    enabled: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The enabled state of the telemetry. Required."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The metadata to include on outbound telemetry."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: bool,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagVariantDefinition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag Variants object.
+
+    :ivar name: The name of the variant. Required.
+    :vartype name: str
+    :ivar value: The value of the variant.
+    :vartype value: str
+    :ivar content_type: The content type of the value stored within the key-value.
+    :vartype content_type: str
+    :ivar status_override: Determines if the variant should override the status of the flag. Known
+     values are: "None", "Enabled", and "Disabled".
+    :vartype status_override: str or ~azure.appconfiguration.models.StatusOverride
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the variant. Required."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value of the variant."""
+    content_type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The content type of the value stored within the key-value."""
+    status_override: Optional[Union[str, "_models.StatusOverride"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines if the variant should override the status of the flag. Known values are: \"None\",
+     \"Enabled\", and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        value: Optional[str] = None,
+        content_type: Optional[str] = None,
+        status_override: Optional[Union[str, "_models.StatusOverride"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GroupAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag GroupAllocation object.
+
+    :ivar variant: The variant to allocate these percentiles to. Required.
+    :vartype variant: str
+    :ivar groups: The groups to get this variant. Required.
+    :vartype groups: list[str]
+    """
+
+    variant: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The variant to allocate these percentiles to. Required."""
+    groups: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The groups to get this variant. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        variant: str,
+        groups: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Key(_Model):
     """Keys serve as identifiers for key-values and are used to store and retrieve corresponding
     values.
@@ -78,7 +403,7 @@ class Key(_Model):
     """The name of the key. Required."""
 
 
-class KeyValue(_Model):
+class KeyValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair representing application settings.
 
     :ivar key: The key of the key-value. Required.
@@ -147,7 +472,7 @@ class KeyValue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KeyValueFilter(_Model):
+class KeyValueFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Enables filtering of key-values. Syntax reference:
     `https://aka.ms/azconfig/docs/restapisnapshots
     <https://aka.ms/azconfig/docs/restapisnapshots>`_.
@@ -187,7 +512,7 @@ class KeyValueFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Label(_Model):
+class Label(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Labels are used to group key-values.
 
     :ivar name: The name of the label.
@@ -215,7 +540,7 @@ class Label(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDetails(_Model):
+class OperationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a long running operation.
 
     :ivar id: The unique id of the operation. Required.
@@ -258,7 +583,45 @@ class OperationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(_Model):
+class PercentileAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag PercentileAllocation object.
+
+    :ivar variant: The variant to allocate these percentiles to. Required.
+    :vartype variant: str
+    :ivar from_property: The lower bounds for this percentile allocation. Required.
+    :vartype from_property: float
+    :ivar to: The upper bounds for this percentile allocation. Required.
+    :vartype to: float
+    """
+
+    variant: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The variant to allocate these percentiles to. Required."""
+    from_property: float = rest_field(name="from", visibility=["read", "create", "update", "delete", "query"])
+    """The lower bounds for this percentile allocation. Required."""
+    to: float = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The upper bounds for this percentile allocation. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        variant: str,
+        from_property: float,
+        to: float,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Snapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A snapshot is a named, immutable subset of an App Configuration store's key-values.
 
     :ivar name: The name of the snapshot. Required.
@@ -349,7 +712,7 @@ class Snapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SnapshotUpdateParameters(_Model):
+class SnapshotUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters used to update a snapshot.
 
     :ivar status: The desired status of the snapshot. Known values are: "provisioning", "ready",
@@ -368,6 +731,39 @@ class SnapshotUpdateParameters(_Model):
         self,
         *,
         status: Optional[Union[str, "_models.SnapshotStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserAllocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Feature Flag UserAllocation object.
+
+    :ivar variant: The variant to allocate these percentiles to. Required.
+    :vartype variant: str
+    :ivar users: The users to get this variant. Required.
+    :vartype users: list[str]
+    """
+
+    variant: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The variant to allocate these percentiles to. Required."""
+    users: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The users to get this variant. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        variant: str,
+        users: list[str],
     ) -> None: ...
 
     @overload

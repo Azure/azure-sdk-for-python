@@ -7,6 +7,7 @@ from ._load import load
 from ._azureappconfigurationprovider import AzureAppConfigurationProvider
 from ._models import (
     AzureAppConfigurationKeyVaultOptions,
+    FeatureFlagSelector,
     SettingSelector,
     WatchKey,
 )
@@ -18,6 +19,7 @@ __all__ = [
     "load",
     "AzureAppConfigurationProvider",
     "AzureAppConfigurationKeyVaultOptions",
+    "FeatureFlagSelector",
     "SettingSelector",
     "WatchKey",
 ]

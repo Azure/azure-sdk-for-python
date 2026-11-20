@@ -10,6 +10,7 @@
 # --------------------------------------------------------------------------
 
 from ._azure_appconfiguration_client import AzureAppConfigurationClient
+from ._feature_flag_client import FeatureFlagClient
 from ._constants import FILTER_PERCENTAGE, FILTER_TARGETING, FILTER_TIME_WINDOW
 from ._models import (
     ConfigurationSetting,
@@ -20,13 +21,27 @@ from ._models import (
     ConfigurationSettingLabel,
     ConfigurationSettingPaged,
     AsyncConfigurationSettingPaged,
+    FeatureFlag,
+    FeatureFlagConditions,
+    FeatureFilter,
+    FeatureFlagVariantDefinition,
+    FeatureFlagAllocation,
+    FeatureFlagTelemetryConfiguration,
+    FeatureFlagPaged,
+    AsyncFeatureFlagPaged,
+    PercentileAllocation,
+    UserAllocation,
+    GroupAllocation,
 )
 from ._generated.models import (
     SnapshotStatus,
+    FeatureFlagFields,
     LabelFields,
+    RequirementType,
     SnapshotFields,
     ConfigurationSettingFields,
     SnapshotComposition,
+    StatusOverride,
 )
 from ._version import VERSION
 from ._azure_appconfiguration_error import ResourceReadOnlyError
@@ -34,6 +49,7 @@ from ._azure_appconfiguration_error import ResourceReadOnlyError
 __version__ = VERSION
 __all__ = [
     "AzureAppConfigurationClient",
+    "FeatureFlagClient",
     "ConfigurationSetting",
     "ResourceReadOnlyError",
     "FeatureFlagConfigurationSetting",
@@ -42,12 +58,26 @@ __all__ = [
     "SnapshotStatus",
     "SnapshotFields",
     "SnapshotComposition",
+    "FeatureFlagFields",
     "LabelFields",
+    "RequirementType",
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",
     "ConfigurationSettingLabel",
     "ConfigurationSettingPaged",
     "AsyncConfigurationSettingPaged",
+    "FeatureFlag",
+    "FeatureFlagConditions",
+    "FeatureFilter",
+    "FeatureFlagVariantDefinition",
+    "FeatureFlagAllocation",
+    "FeatureFlagTelemetryConfiguration",
+    "FeatureFlagPaged",
+    "AsyncFeatureFlagPaged",
+    "PercentileAllocation",
+    "UserAllocation",
+    "GroupAllocation",
+    "StatusOverride",
     "FILTER_PERCENTAGE",
     "FILTER_TARGETING",
     "FILTER_TIME_WINDOW",

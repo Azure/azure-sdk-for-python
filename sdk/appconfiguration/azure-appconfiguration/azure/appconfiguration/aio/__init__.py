@@ -10,5 +10,6 @@
 # --------------------------------------------------------------------------
 
 from ._azure_appconfiguration_client_async import AzureAppConfigurationClient
+from ._feature_flag_client_async import FeatureFlagClient
 
-__all__ = ["AzureAppConfigurationClient"]
+__all__ = ["AzureAppConfigurationClient", "FeatureFlagClient"]

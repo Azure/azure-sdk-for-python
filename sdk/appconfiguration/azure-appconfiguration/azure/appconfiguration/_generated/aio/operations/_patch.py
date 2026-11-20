@@ -29,8 +29,9 @@ from ._operations import (
     ClsType,
     build_azure_app_configuration_get_key_values_request,
     build_azure_app_configuration_check_key_values_request,
+    build_feature_flag_client_get_feature_flags_request,
 )
-from ..._operations._operations import prep_if_match, prep_if_none_match
+from ...operations._operations import prep_if_match, prep_if_none_match
 from ... import models as _models
 from ..._utils.model_base import _deserialize
 from ..._utils.serialization import Serializer
@@ -339,6 +340,119 @@ class _AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerate
         result["@nextLink"] = next_link
         if response.status_code != 304:
             result["items"] = []
+
+        if cls:
+            return cls(pipeline_response, result, response_headers)
+
+        return result
+
+    @distributed_trace_async
+    async def get_feature_flags_in_one_page(
+        self,
+        *,
+        name: Optional[str] = None,
+        label: Optional[str] = None,
+        sync_token: Optional[str] = None,
+        after: Optional[str] = None,
+        accept_datetime: Optional[str] = None,
+        select: Optional[List[Union[str, _models.FeatureFlagFields]]] = None,
+        tags: Optional[List[str]] = None,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        continuation_token: Optional[str] = None,
+        **kwargs: Any,
+    ) -> dict:
+        """Gets a list of feature flags in one page.
+
+        Gets a list of feature flags in one page.
+
+        :keyword name: A filter used to match feature flag names. Default value is None.
+        :paramtype name: str
+        :keyword label: A filter used to match labels. Default value is None.
+        :paramtype label: str
+        :keyword sync_token: Used to guarantee real-time consistency between requests. Default value is
+         None.
+        :paramtype sync_token: str
+        :keyword after: Instructs the server to return elements that appear after the element referred
+         to by the specified token. Default value is None.
+        :paramtype after: str
+        :keyword accept_datetime: Requests the server to respond with the state of the resource at the
+         specified time. Default value is None.
+        :paramtype accept_datetime: str
+        :keyword select: Used to select what fields are present in the returned resource(s). Default
+         value is None.
+        :paramtype select: list[str or ~azure.appconfiguration.models.FeatureFlagFields]
+        :keyword tags: A filter used to query by tags. Default value is None.
+        :paramtype tags: list[str]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :param str continuation_token: An opaque continuation token.
+        :return: A dict containing ``items`` (list of feature flags) and ``@nextLink`` (pagination URL or None).
+        :rtype: dict
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.FeatureFlag]] = kwargs.pop("cls", None)
+
+        error_map = self._build_kv_error_map(match_condition)
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        if continuation_token:
+            _request = self._prepare_continuation_request(
+                "GET",
+                continuation_token,
+                sync_token=sync_token,
+                accept_datetime=accept_datetime,
+                etag=etag,
+                match_condition=match_condition,
+                headers=_headers,
+            )
+        else:
+            _request = build_feature_flag_client_get_feature_flags_request(
+                name=name,
+                label=label,
+                sync_token=sync_token,
+                after=after,
+                accept_datetime=accept_datetime,
+                select=select,
+                tags=tags,
+                etag=etag,
+                match_condition=match_condition,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            _request = self._format_request(_request)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            _request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+
+        valid_status_codes = [200]
+        if etag is not None and match_condition is MatchConditions.IfModified:
+            valid_status_codes.append(304)
+
+        if response.status_code not in valid_status_codes:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _deserialize(_models.Error, response.json())
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = response.headers
+        result = json.loads("{}")
+        if response.status_code != 304:
+            result = pipeline_response.http_response.json()
+        else:
+            unparsed_link = pipeline_response.http_response.headers.get("Link")
+            next_link = None
+            if unparsed_link:
+                next_link = unparsed_link[1 : unparsed_link.index(">")]
+            result["@nextLink"] = next_link
 
         if cls:
             return cls(pipeline_response, result, response_headers)

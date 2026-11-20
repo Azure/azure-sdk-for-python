@@ -4,17 +4,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import os
 from typing import List
-from testcase import AppConfigTestCase
-from azure.appconfiguration.aio import AzureAppConfigurationClient
+from testcase import AppConfigTestCase, _AUDIENCE_UNSET
+from azure.appconfiguration.aio import AzureAppConfigurationClient, FeatureFlagClient
 from azure.core.async_paging import AsyncItemPaged
 
 
 # pylint: disable=invalid-overridden-method
 class AsyncAppConfigTestCase(AppConfigTestCase):
-    def create_client(self, appconfiguration_endpoint_string, audience=None):
+    def create_client(self, appconfiguration_endpoint_string, audience=_AUDIENCE_UNSET):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
+        if audience is _AUDIENCE_UNSET:
+            audience = os.environ.get("APPCONFIGURATION_AUDIENCE")
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, audience=audience)
+
+    def create_feature_flag_client(self, appconfiguration_endpoint_string, audience=_AUDIENCE_UNSET):
+        cred = self.get_credential(FeatureFlagClient, is_async=True)
+        if audience is _AUDIENCE_UNSET:
+            audience = os.environ.get("APPCONFIGURATION_AUDIENCE")
+        return FeatureFlagClient(appconfiguration_endpoint_string, cred, audience=audience)
 
     async def convert_to_list(self, items: AsyncItemPaged) -> List:
         list = []

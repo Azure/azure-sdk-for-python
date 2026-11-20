@@ -35,8 +35,8 @@ class TestAudienceErrorHandlingLiveAsync(AsyncAppConfigTestCase):
     @recorded_by_proxy_async
     async def test_async_client_has_audience_policy_with_no_audience(self, appconfiguration_endpoint_string):
         """Test that async client created without audience has policy with has_audience=False."""
-        # Create client without audience
-        client = self.create_client(appconfiguration_endpoint_string)
+        # Create client without audience (explicit None bypasses the env-var fallback)
+        client = self.create_client(appconfiguration_endpoint_string, audience=None)
 
         # Check that audience error handling policy is in the pipeline
         policies = client._impl._client._pipeline._impl_policies

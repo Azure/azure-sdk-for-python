@@ -1,5 +1,30 @@
 # Release History
 
+## 1.11.0 (Unreleased)
+
+### Features Added
+
+- Added `FeatureFlagClient` (sync and async) and feature flag models for managing feature flags through the dedicated endpoint.
+
+### Other Changes
+
+- Promoted the package from preview to general availability.
+- Updated the default service API version to `2026-05-01-preview`.
+
+## 1.10.0b1 (2026-08-19)
+
+### Features Added
+
+- Added `FeatureFlagClient` (sync and async) for managing feature flags through a dedicated endpoint (requires API version `2026-05-01-preview` or later):
+  - Exposes `set_feature_flag()`, `get_feature_flag()`, `list_feature_flags()`, `delete_feature_flag()`, `add_feature_flag()`, `list_feature_flag_revisions()`, and `list_labels()`.
+  - `FeatureFlagClient` is available from `azure.appconfiguration` (sync) and `azure.appconfiguration.aio` (async).
+  - Added the `FeatureFlag` model along with `FeatureFlagConditions`, `FeatureFilter`, `FeatureFlagVariantDefinition`, `FeatureFlagAllocation`, `FeatureFlagTelemetryConfiguration`, `PercentileAllocation`, `UserAllocation`, and `GroupAllocation`, plus the `RequirementType` and `StatusOverride` enums.
+  - `FeatureFlagClient.list_labels()` always lists feature-flag labels, while `AzureAppConfigurationClient.list_labels()` always lists key-value labels.
+
+### Other Changes
+
+- Updated the default service API version to `2026-05-01-preview`.
+
 ## 1.10.1 (2026-11-19)
 
 ### Other Changes
