@@ -38,10 +38,45 @@ class TestDeviceRegistryMgmtNamespacesOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
-                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
-                    "messaging": {"endpoints": {"str": {"address": "str", "endpointType": "str", "resourceId": "str"}}},
+                    "management": {
+                        "endpoints": {
+                            "str": {"address": "str", "endpointType": "str", "resourceId": "str", "scopeId": "str"}
+                        }
+                    },
+                    "messaging": {
+                        "endpoints": {
+                            "str": {
+                                "address": "str",
+                                "deviceAddress": "str",
+                                "endpointType": "str",
+                                "inboundCallerIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                                "linkingError": {"code": "str", "message": "str"},
+                                "linkingState": "str",
+                                "provisioning": {"allocationWeight": 0, "availability": "str"},
+                                "resourceId": "str",
+                            }
+                        }
+                    },
+                    "outboundIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                    "provisioning": {
+                        "endpoints": {
+                            "str": {
+                                "endpointType": "str",
+                                "inboundCallerIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                                "resourceId": "str",
+                                "linkingError": {"code": "str", "message": "str"},
+                                "linkingState": "str",
+                            }
+                        }
+                    },
                     "provisioningState": "str",
                     "uuid": "str",
                 },
@@ -68,9 +103,44 @@ class TestDeviceRegistryMgmtNamespacesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             namespace_name="str",
             properties={
-                "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
-                    "messaging": {"endpoints": {"str": {"address": "str", "endpointType": "str", "resourceId": "str"}}}
+                    "management": {
+                        "endpoints": {
+                            "str": {"address": "str", "endpointType": "str", "resourceId": "str", "scopeId": "str"}
+                        }
+                    },
+                    "messaging": {
+                        "endpoints": {
+                            "str": {
+                                "address": "str",
+                                "deviceAddress": "str",
+                                "endpointType": "str",
+                                "inboundCallerIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                                "linkingError": {"code": "str", "message": "str"},
+                                "linkingState": "str",
+                                "provisioning": {"allocationWeight": 0, "availability": "str"},
+                                "resourceId": "str",
+                            }
+                        }
+                    },
+                    "outboundIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                    "provisioning": {
+                        "endpoints": {
+                            "str": {
+                                "endpointType": "str",
+                                "inboundCallerIdentity": {"type": "str", "userAssignedIdentity": "str"},
+                                "resourceId": "str",
+                                "linkingError": {"code": "str", "message": "str"},
+                                "linkingState": "str",
+                            }
+                        }
+                    },
                 },
                 "tags": {"str": "str"},
             },
