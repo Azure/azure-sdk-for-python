@@ -44,7 +44,7 @@ voiceOutboundServicePreparer = partial(
     foundry_voice_test_destination_phone_number="+12025550101",
 )
 
-MISSING_BINDING_PHONE_NUMBER = "+12025550183"  # Reserved NANP fictional number.
+MISSING_BINDING_PHONE_NUMBER = "+12025550183"  # Reserved fictional number in the North American Numbering Plan.
 MISSING_CALL_ID = "00000000-0000-4000-8000-000000000001"
 TERMINAL_CALL_JOB_STATES = frozenset({"completed", "blocked", "expired", "failed", "cancelled"})
 TERMINAL_CAMPAIGN_STATES = frozenset({"completed", "failed", "cancelled"})
