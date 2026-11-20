@@ -210,6 +210,7 @@ class SamplingParams(_models.SamplingParams):
         seed: Optional[int] = None,
         stop_criteria: Optional[_unions.StopCriteria] = None,
         response_format: Optional[Dict[str, Any]] = None,
+        score_centering_head_size: Optional[int] = None,
     ) -> None: ...
 
     @overload

@@ -80,6 +80,8 @@ class Response:
 class RecordingClient:
     def __init__(self):
         self.requests = []
+        self._session_resource_ids = {}
+        self._completion_feed_enabled = {}
 
     def send_request(self, request):
         self.requests.append(request)

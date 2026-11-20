@@ -54,6 +54,77 @@ def test_legacy_string_engine_dead_offers_cft(status_code: int) -> None:
     _assert_recovery_guidance(exc)
 
 
+@pytest.mark.parametrize(
+    "body",
+    [
+        None,
+        [],
+        "Conflict",
+        {},
+        {"detail": None},
+        {"detail": []},
+        {"detail": {"reason": "model_busy"}},
+        {"detail": "Conflict"},
+        {"detail": "The engine is busy"},
+        {"detail": "The request deadline expired"},
+        {"reason": "model_busy", "message": "A previous engine died"},
+        {"reason": "model_busy", "error_code": "engine_dead"},
+        {"reason": "engine_dead", "error_code": "model_busy"},
+        {"error_code": "engine_dead", "code": "unknown"},
+        {"error_code": ["engine_dead"], "message": "Engine died"},
+        {"reason": "engine_dead", "message": []},
+    ],
+)
+def test_unrecognized_409_does_not_infer_engine_death(body) -> None:
+    assert _classify_http_error(409, body, session_id="session_12345678") is None
+
+
+@pytest.mark.parametrize("code", ["engine_dead", "worker_crashed"])
+@pytest.mark.parametrize("field", ["reason", "error_code", "code"])
+@pytest.mark.parametrize("nested", [False, True])
+def test_explicit_terminal_error_without_message_keeps_fallback_guidance(code: str, field: str, nested: bool) -> None:
+    detail = {field: code}
+    body = {"detail": detail} if nested else detail
+    exc = _classify_http_error(409, body, session_id="session_12345678")
+    assert isinstance(exc, TrainingEngineError)
+    assert exc.error_code == code
+    assert exc.session_id == "session_12345678"
+    _assert_recovery_guidance(exc)
+
+
+@pytest.mark.parametrize(
+    "body,expected",
+    [
+        ({"reason": "engine_dead", "error_code": None, "code": None}, "engine_dead"),
+        ({"reason": None, "error_code": "engine_dead", "code": None}, "engine_dead"),
+        ({"reason": None, "error_code": None, "code": "worker_crashed"}, "worker_crashed"),
+    ],
+)
+def test_terminal_409_tolerates_absent_optional_discriminators(body, expected: str) -> None:
+    exc = _classify_http_error(409, body, session_id="session_12345678")
+    assert isinstance(exc, TrainingEngineError)
+    assert exc.error_code == expected
+    assert exc.session_id == "session_12345678"
+
+
+@pytest.mark.parametrize(
+    "message",
+    [
+        "Engine died.",
+        "The engine has died.",
+        "The engine is dead.",
+        "The engine crashed.",
+        "The ENGINE   has\nDIED.",
+    ],
+)
+def test_uncoded_409_preserves_explicit_legacy_engine_death(message: str) -> None:
+    exc = _classify_http_error(409, {"detail": message}, session_id="session_12345678")
+    assert isinstance(exc, TrainingEngineError)
+    assert exc.error_code == "engine_dead"
+    assert exc.session_id == "session_12345678"
+    _assert_recovery_guidance(exc)
+
+
 @pytest.mark.parametrize("code_field", ["error_code", "code"])
 @pytest.mark.parametrize("message_field", ["message", "error_message"])
 @pytest.mark.parametrize("nested", [False, True])

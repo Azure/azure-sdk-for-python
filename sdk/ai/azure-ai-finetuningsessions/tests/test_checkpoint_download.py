@@ -409,7 +409,13 @@ def test_manifest_cannot_adopt_a_different_successful_request_location(changed_u
 def test_maintained_download_runtime_matches_provenance():
     package = Path(__file__).resolve().parents[1]
     verifier = runpy.run_path(str(package / "scripts" / "verify_generation.py"))
-    for module in ("_checkpoint_download.py", "_checkpoint_files.py", "_text_only.py", "models/_text_only.py"):
+    for module in (
+        "_capabilities.py",
+        "_checkpoint_download.py",
+        "_checkpoint_files.py",
+        "_text_only.py",
+        "models/_text_only.py",
+    ):
         assert module in verifier["HANDWRITTEN_MODULES"]
         assert module in verifier["MAINTAINED_MODULES"]
         assert all(not name.endswith(f"/{module}") for name in verifier["generated_files"](package))

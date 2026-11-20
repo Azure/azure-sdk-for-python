@@ -845,6 +845,27 @@ namespace azure.ai.finetuningsessions.aio.operations
             ) -> AsyncLROPoller[OperationResult]: ...
 
 
+namespace azure.ai.finetuningsessions.experimental
+
+    @dataclass(frozen=True, kw_only=True)
+    class azure.ai.finetuningsessions.experimental.ExperimentalSettings:
+        enable_score_centering: bool = False
+
+        def __delattr__() -> None: ...
+
+        def __eq__() -> None: ...
+
+        def __hash__() -> None: ...
+
+        def __init__(enable_score_centering: bool) -> None: ...
+
+        def __post_init__(self) -> None: ...
+
+        def __repr__() -> None: ...
+
+        def __setattr__() -> None: ...
+
+
 namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.AdamParams(_Model):
@@ -912,7 +933,11 @@ namespace azure.ai.finetuningsessions.models
     class azure.ai.finetuningsessions.models.Checkpoint(_Model):
         checkpoint_id: str
         checkpoint_type: Union[str, CheckpointType]
-        time: datetime
+        deployment_eligible: Optional[bool]
+        publication: Optional[CheckpointPublicationState]
+        publication_required: Optional[bool]
+        status: Optional[str]
+        time: Optional[datetime]
 
 
     class azure.ai.finetuningsessions.models.CheckpointInfo(_Model):
@@ -945,6 +970,17 @@ namespace azure.ai.finetuningsessions.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.finetuningsessions.models.CheckpointPublicationState(_Model):
+        debug_ref: Optional[str]
+        error_code: Optional[str]
+        message: Optional[str]
+        operation_id: str
+        phase: str
+        reason: Optional[str]
+        should_retry: Optional[bool]
+        status: str
 
 
     class azure.ai.finetuningsessions.models.CheckpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1201,6 +1237,8 @@ namespace azure.ai.finetuningsessions.models
         IMPORTANCE_SAMPLING = "importance_sampling"
         PPO = "ppo"
         SAPO = "sapo"
+        SCORE_CENTERING = "score_centering"
+        TIS = "tis"
 
 
     class azure.ai.finetuningsessions.models.LossFnConfig(_Model):
@@ -1226,6 +1264,9 @@ namespace azure.ai.finetuningsessions.models
     class azure.ai.finetuningsessions.models.LossFnInputs(_Model):
         advantages: Optional[TensorData]
         logprobs: Optional[TensorData]
+        score_centering_head_logprobs: Optional[TensorData]
+        score_centering_head_mask: Optional[TensorData]
+        score_centering_head_tokens: Optional[TensorData]
         target_tokens: TensorData
         weights: TensorData
 
@@ -1235,6 +1276,9 @@ namespace azure.ai.finetuningsessions.models
                 *,
                 advantages: Optional[TensorData] = ...,
                 logprobs: Optional[TensorData] = ...,
+                score_centering_head_logprobs: Optional[TensorData] = ...,
+                score_centering_head_mask: Optional[TensorData] = ...,
+                score_centering_head_tokens: Optional[TensorData] = ...,
                 target_tokens: TensorData,
                 weights: TensorData
             ) -> None: ...
@@ -1383,6 +1427,9 @@ namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.SampledSequence(_Model):
         logprobs: Optional[list[float]]
+        score_centering_head_logprobs: Optional[list[list[float]]]
+        score_centering_head_tokens: Optional[list[list[int]]]
+        score_centering_provenance: Optional[dict[str, str]]
         text: Optional[str]
         tokens: list[int]
 
@@ -1391,6 +1438,9 @@ namespace azure.ai.finetuningsessions.models
                 self,
                 *,
                 logprobs: Optional[list[float]] = ...,
+                score_centering_head_logprobs: Optional[list[list[float]]] = ...,
+                score_centering_head_tokens: Optional[list[list[int]]] = ...,
+                score_centering_provenance: Optional[dict[str, str]] = ...,
                 text: Optional[str] = ...,
                 tokens: list[int]
             ) -> None: ...
@@ -1427,6 +1477,7 @@ namespace azure.ai.finetuningsessions.models
                 *,
                 max_tokens: int,
                 response_format: Optional[Dict[str, Any]] = ...,
+                score_centering_head_size: Optional[int] = ...,
                 seed: Optional[int] = ...,
                 stop_criteria: Optional[StopCriteria] = ...,
                 temperature: float,
@@ -1598,12 +1649,14 @@ namespace azure.ai.finetuningsessions.models
 
     class azure.ai.finetuningsessions.models.TensorData(_Model):
         data: list[float]
+        shape: Optional[list[int]]
 
         @overload
         def __init__(
                 self,
                 *,
-                data: list[float]
+                data: list[float],
+                shape: Optional[list[int]] = ...
             ) -> None: ...
 
         @overload
@@ -1686,7 +1739,7 @@ namespace azure.ai.finetuningsessions.models
 
 
     class azure.ai.finetuningsessions.models.TextOnlyTrainingInput(TypedDict):
-        key "loss_fn": NotRequired[Literal["importance_sampling", "ppo", "cispo", "sapo"]]
+        key "loss_fn": NotRequired[Literal["importance_sampling", "tis", "ppo", "cispo", "sapo"]]
         key "loss_fn_config": NotRequired[Dict[str, Any]]
         key "samples": List[TextOnlyTrainingSample]
 

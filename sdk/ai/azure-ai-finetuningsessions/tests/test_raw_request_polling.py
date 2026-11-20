@@ -15,6 +15,7 @@ import math
 import os
 from pathlib import Path
 import threading
+import warnings
 from typing import Any
 from urllib.parse import parse_qs, quote, urlencode, urlsplit
 
@@ -38,8 +39,19 @@ from azure.core.polling.base_polling import LROBasePolling
 from azure.core.utils import case_insensitive_dict
 
 from azure.ai.finetuningsessions import FineTuningSessionClient, _exceptions, _operation_compat
+import azure.ai.finetuningsessions as sdk
+from azure.ai.finetuningsessions._experimental import ExperimentalWarning
 from azure.ai.finetuningsessions.aio import FineTuningSessionClient as AsyncFineTuningSessionClient
-from azure.ai.finetuningsessions.models import TextOnlySampleOperationResult
+from azure.ai.finetuningsessions.experimental import ExperimentalSettings
+from azure.ai.finetuningsessions.models import (
+    ForwardBackwardInput,
+    ForwardBackwardRequest,
+    LossFn,
+    LossFnConfig,
+    SampleRequest,
+    SamplingParams,
+    TextOnlySampleOperationResult,
+)
 
 ENDPOINT = "https://unit.invalid/api/projects/p"
 COMMON = {"api_version": "v1", "foundry_features": "FineTuningSessions=V1Preview"}
@@ -291,15 +303,29 @@ def test_public_source_import() -> None:
         }
 
     expected = inventory(source)
-    assert len(expected) == 33
+    assert len(expected) == 38
     assert {
+        "_capabilities.py",
         "_text_only.py",
         "models/_text_only.py",
         "_checkpoint_download.py",
         "_checkpoint_files.py",
         "_scalar_serialization.py",
+        "_experimental.py",
+        "experimental.py",
     } <= expected.keys()
     assert inventory(imported.parent) == expected
+    provenance = json.loads((source.parents[2] / "eng/generation/provenance.json").read_text())
+    assembly = provenance["assembly"]
+    assert assembly["runtime_files"] == len(expected)
+    assert assembly["runtime_python_modules"] == sum(name.endswith(".py") for name in expected)
+    assert "aio/_completion_feed.py" in assembly["maintained_modules"]
+    assert "_completion_feed.py" in assembly["maintained_modules"]
+    runtime_hashes = {f"azure/ai/finetuningsessions/{name}": value for name, value in expected.items()}
+    assert (
+        assembly["runtime_fingerprint_sha256"]
+        == hashlib.sha256(json.dumps(runtime_hashes, sort_keys=True).encode()).hexdigest()
+    )
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
@@ -600,6 +626,207 @@ OPERATIONS = [
     ("checkpoints", "begin_save_sampler_weights", "/checkpoint_sample", "pending"),
     ("sampling", "begin_sample", "/sample", "pending"),
 ]
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_native_cispo_bounds_reach_the_wire(asynchronous):
+    script = Script(Reply({"request_id": "request_test", "session_id": "session_test", "status": "pending"}))
+    client = client_for(script, asynchronous)
+    request = ForwardBackwardRequest(
+        forward_backward_input=ForwardBackwardInput(
+            data=[],
+            loss_fn=LossFn.CISPO,
+            loss_fn_config=LossFnConfig(clip_low_threshold=0.0, clip_high_threshold=2.0),
+        )
+    )
+    try:
+        poller = client.training.begin_forward_backward("session_test", request, polling=False, **COMMON)
+        if asynchronous:
+            await poller
+        assert len(script.requests) == 1
+        assert script.requests[0]["body"] == {
+            "forward_backward_input": {
+                "data": [],
+                "loss_fn": "cispo",
+                "loss_fn_config": {"clip_low_threshold": 0.0, "clip_high_threshold": 2.0},
+            }
+        }
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("shape", ["model", "dict", "bytes"])
+async def test_native_tis_warns_without_settings_and_preserves_wire_request(asynchronous, shape):
+    payload = {
+        "forward_backward_input": {
+            "data": [],
+            "loss_fn": "tis",
+            "loss_fn_config": {"clip_high_threshold": 3.0},
+        }
+    }
+    request = payload
+    if shape == "model":
+        request = ForwardBackwardRequest(
+            forward_backward_input=ForwardBackwardInput(
+                data=[],
+                loss_fn=LossFn.TIS,
+                loss_fn_config=LossFnConfig(clip_high_threshold=3.0),
+            )
+        )
+    elif shape == "bytes":
+        request = json.dumps(payload).encode()
+    script = Script(Reply({"request_id": "request_test", "session_id": "session_test", "status": "pending"}))
+    client = client_for(script, asynchronous)
+    try:
+        with pytest.warns(ExperimentalWarning, match="at your own risk"):
+            poller = client.training.begin_forward_backward("session_test", request, polling=False, **COMMON)
+            if asynchronous:
+                await poller
+        assert len(script.requests) == 1
+        assert script.requests[0]["body"] == payload
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_experimental_tis_warning_does_not_mask_backend_validation(asynchronous):
+    message = "This deployment does not support loss 'tis'; use a compatible API and trainer."
+    script = Script(Reply({"error": {"code": "invalid_request", "message": message}}, status=400))
+    client = client_for(script, asynchronous)
+    try:
+        with pytest.warns(ExperimentalWarning, match="compatible API and trainer"):
+            with pytest.raises(HttpResponseError, match="does not support loss 'tis'"):
+                poller = client.training.begin_forward_backward(
+                    "session_test",
+                    {"forward_backward_input": {"data": [], "loss_fn": "tis"}},
+                    polling=False,
+                    **COMMON,
+                )
+                if asynchronous:
+                    await poller
+        assert len(script.requests) == 1
+        assert script.requests[0]["body"]["forward_backward_input"]["loss_fn"] == "tis"
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_experimental_warning_is_emitted_before_training_post(asynchronous):
+    script = Script()
+    client = client_for(script, asynchronous)
+    try:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", ExperimentalWarning)
+            with pytest.raises(ExperimentalWarning):
+                poller = client.training.begin_forward_backward(
+                    "session_test",
+                    {"forward_backward_input": {"data": [], "loss_fn": "tis"}},
+                    polling=False,
+                    **COMMON,
+                )
+                if asynchronous:
+                    await poller
+        assert script.requests == []
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_client_construction_does_not_emit_experimental_warning(asynchronous):
+    with warnings.catch_warnings(record=True) as notices:
+        warnings.simplefilter("always", ExperimentalWarning)
+        client = client_for(Script(), asynchronous)
+        await close_client(client, asynchronous)
+    assert not any(isinstance(notice.message, ExperimentalWarning) for notice in notices)
+
+
+def test_experimental_warning_category_stays_private():
+    assert "ExperimentalWarning" not in sdk.__all__
+    assert not hasattr(sdk, "ExperimentalWarning")
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("shape", ["model", "dict", "bytes"])
+@pytest.mark.parametrize("operation", ["training", "sampling"])
+@pytest.mark.parametrize("enabled", [False, True])
+async def test_score_centering_settings_gate_before_raw_post_and_preserve_wire(
+    asynchronous,
+    shape,
+    operation,
+    enabled,
+):
+    if operation == "training":
+        payload = {"forward_backward_input": {"data": [], "loss_fn": "score_centering"}}
+        model = ForwardBackwardRequest(
+            forward_backward_input=ForwardBackwardInput(
+                data=[],
+                loss_fn=LossFn.SCORE_CENTERING,
+            )
+        )
+    else:
+        payload = {"sampling_params": {"max_tokens": 4, "score_centering_head_size": 2}}
+        model = SampleRequest(sampling_params=SamplingParams(max_tokens=4, score_centering_head_size=2))
+    body = model if shape == "model" else json.dumps(payload).encode() if shape == "bytes" else payload
+    script = Script(Reply({"request_id": "request_test", "status": "pending"}))
+    client = client_for(
+        script,
+        asynchronous,
+        experimental_settings=ExperimentalSettings(enable_score_centering=enabled),
+    )
+    try:
+        method = client.training.begin_forward_backward if operation == "training" else client.sampling.begin_sample
+        if not enabled:
+            with pytest.raises(ValueError, match="does not enable service support"):
+                pending = method("session_test", body, polling=False, **COMMON)
+                if asynchronous:
+                    await pending
+            assert script.requests == []
+        else:
+            with pytest.warns(ExperimentalWarning, match="Native score centering"):
+                pending = method("session_test", body, polling=False, **COMMON)
+                if asynchronous:
+                    await pending
+            assert len(script.requests) == 1
+            assert script.requests[0]["body"] == payload
+            assert "experimental_settings" not in script.requests[0]["options"]
+            assert not any("experimental" in key.lower() for key in script.requests[0]["headers"])
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+async def test_score_centering_opt_in_does_not_mask_backend_failure(asynchronous):
+    message = "This trainer does not support score_centering with SP=8."
+    script = Script(Reply({"error": {"code": "invalid_request", "message": message}}, status=400))
+    client = client_for(
+        script,
+        asynchronous,
+        experimental_settings=ExperimentalSettings(enable_score_centering=True),
+    )
+    try:
+        with pytest.warns(ExperimentalWarning):
+            with pytest.raises(HttpResponseError, match=message):
+                pending = client.training.begin_forward_backward(
+                    "session_test",
+                    {"forward_backward_input": {"data": [], "loss_fn": "score_centering"}},
+                    polling=False,
+                    **COMMON,
+                )
+                if asynchronous:
+                    await pending
+        assert len(script.requests) == 1
+    finally:
+        await close_client(client, asynchronous)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("settings", [True, {"enable_score_centering": True}])
+async def test_clients_reject_untyped_experimental_settings(asynchronous, settings):
+    script = Script()
+    with pytest.raises(TypeError, match="experimental_settings must be an ExperimentalSettings"):
+        client_for(script, asynchronous, experimental_settings=settings)
+    assert script.requests == []
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])

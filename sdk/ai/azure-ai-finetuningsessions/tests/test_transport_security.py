@@ -175,6 +175,7 @@ async def test_redirect_does_not_forward_sdk_api_key(asynchronous, status, locat
         _URL + "?redirected=1",
         "https://UNIT.INVALID" + _PATH,
         "https://unit.invalid:443" + _PATH,
+        _ENDPOINT + "/fine_tuning_sessions/s/retrieve_futures",
         _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/checkpoint_c/download",
         _ENDPOINT + "/fine_tuning_sessions/session_s/checkpoints/checkpoint_c/download/files/" + "a" * 64,
         *[
@@ -245,6 +246,8 @@ async def test_redirect_removes_only_sdk_direct_context(asynchronous, direct_hea
             for suffix in ("A" * 64, "a" * 64 + "/extra", "%61" + "a" * 63)
         ],
         _ENDPOINT + "/fine_tuning_sessions/session_s/not-a-session-operation",
+        _ENDPOINT + "/fine_tuning_sessions/session_s/retrieve_futures-extra",
+        _ENDPOINT + "/fine_tuning_sessions/session_s/retrieve_futures/extra",
         "https://unit.invalid/api/projects/other/fine_tuning_sessions/session_s/checkpoints/c/download",
         "https://other.invalid/api/projects/p/fine_tuning_sessions/session_s/checkpoints/c/download",
         "https://unit.invalid/api/projects/other/fine_tuning_sessions/session_s/checkpoints/c/download/files/"

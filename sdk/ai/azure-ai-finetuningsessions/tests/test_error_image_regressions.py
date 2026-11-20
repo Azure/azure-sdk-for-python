@@ -84,7 +84,7 @@ _RETRY_HINTS = [
     "status_code, expected_type, expected_message",
     [
         (400, None, None),
-        (409, errors.TrainingEngineError, "The model's engine has died"),
+        (409, None, None),
         (413, errors.BatchTooLargeError, "Batch too large"),
         (422, None, None),
         (429, errors.RateLimitedError, "Rate limited"),
