@@ -81,13 +81,11 @@ class NotSerializeableClass:
 class TestAzureLogExporter(unittest.TestCase):
     _exporter_class = AzureMonitorLogExporter
 
-    def test_envelope_sample_rate_from_log_attribute(self):
-        for value, expected in ((5, 5), (0.5, 0.5), (0, None), (101, None), ("5", None), (True, None)):
-            with self.subTest(value=value):
-                log = _logs.ReadWriteLogRecord(LogRecord(attributes={_SAMPLE_RATE_KEY: value}))
-                envelope = self._exporter._log_to_envelope(log)
-                self.assertEqual(envelope.sample_rate, expected)
-                self.assertNotIn(_SAMPLE_RATE_KEY, envelope.data.base_data.properties)
+    def test_log_attribute_alone_does_not_set_envelope_sample_rate(self):
+        log = _logs.ReadWriteLogRecord(LogRecord(attributes={_SAMPLE_RATE_KEY: 5}))
+        envelope = self._exporter._log_to_envelope(log)
+        self.assertIsNone(envelope.sample_rate)
+        self.assertNotIn(_SAMPLE_RATE_KEY, envelope.data.base_data.properties)
 
     @classmethod
     def setUpClass(cls):

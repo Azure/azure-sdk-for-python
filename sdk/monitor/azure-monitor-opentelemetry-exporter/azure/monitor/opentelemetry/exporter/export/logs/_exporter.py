@@ -215,10 +215,7 @@ def _convert_log_to_envelope(
     time_stamp = log_record.timestamp if log_record.timestamp is not None else log_record.observed_timestamp
     envelope = _utils._create_telemetry_item(time_stamp)
     sample_rate = getattr(log_record, _LOG_SAMPLE_RATE_ATTR, None)
-    if sample_rate is None and log_record.attributes:
-        sample_rate = log_record.attributes.get(_SAMPLE_RATE_KEY)
-    sample_rate = _utils._get_valid_sample_rate(sample_rate)
-    if sample_rate is not None and sample_rate < 100:
+    if sample_rate is not None:
         envelope.sample_rate = sample_rate
     tags = envelope.tags or {}
     tags.update(_utils._populate_part_a_fields(readable_log_record.resource))  # type: ignore
