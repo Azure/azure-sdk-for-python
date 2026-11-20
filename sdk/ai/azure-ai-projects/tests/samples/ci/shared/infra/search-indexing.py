@@ -3,6 +3,7 @@
 """Execute the data-plane definitions supplied by the Bicep deployment script."""
 
 import json
+import logging
 import os
 import re
 import time
@@ -35,7 +36,10 @@ class ThrottlingRetryPolicy(RetryPolicy):
     """Retry only HTTP 429 within the time budget for the request."""
 
     def __init__(self):
-        super().__init__(retry_total=WAIT_LIMIT // POLL_INTERVAL, retry_connect=0, retry_read=0, timeout=WAIT_LIMIT)
+        retry_limit = WAIT_LIMIT // POLL_INTERVAL
+        super().__init__(
+            retry_total=retry_limit, retry_status=retry_limit, retry_connect=0, retry_read=0, timeout=WAIT_LIMIT
+        )
 
     def configure_retries(self, options):
         settings = super().configure_retries(options)
@@ -145,7 +149,15 @@ def provision(configuration, credential):
 
 def main():
     # ARM signs Azure CLI in as the deployment script's assigned identity before running this code.
+    identity_loggers = [
+        logging.getLogger("azure.identity._internal.decorators"),
+        logging.getLogger("azure.identity._credentials.azure_cli"),
+    ]
+    previous_states = [logger.disabled for logger in identity_loggers]
     try:
+        # Identity logs raw CLI diagnostics before raising; report only the sanitized error below.
+        for logger in identity_loggers:
+            logger.disabled = True
         provision(json.loads(os.environ["SEARCH_INDEXING_CONFIGURATION"]), AzureCliCredential())
     except AzureError as error:
         if isinstance(error, HttpResponseError) and error.status_code is not None:
@@ -153,6 +165,9 @@ def main():
                 f"Search provisioning failed with HTTP {error.status_code}; response body suppressed."
             ) from None
         raise RuntimeError(f"Search provisioning failed ({type(error).__name__}); details suppressed.") from None
+    finally:
+        for logger, disabled in zip(identity_loggers, previous_states):
+            logger.disabled = disabled
 
 
 if __name__ == "__main__":

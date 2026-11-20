@@ -4,6 +4,8 @@
 
 import importlib.util
 from io import BytesIO
+import json
+import logging
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -11,6 +13,7 @@ from unittest.mock import Mock
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import RequestsTransport
+from azure.identity._credentials import azure_cli
 import pytest
 from requests import Response, Session
 from urllib3 import HTTPResponse
@@ -126,6 +129,51 @@ def test_deployment_error_details_are_suppressed(error, message, monkeypatch):
         indexing.main()
     assert "sensitive-" not in str(result.value)
     assert result.value.__suppress_context__
+
+
+def test_real_credential_failure_does_not_log_cli_details(monkeypatch, caplog, capsys):
+    configuration = {
+        "searchEndpoint": "https://unit.search.windows.net",
+        "storageEndpoint": "https://unit.blob.core.windows.net",
+        "containerName": "sample",
+        "blobs": [{"name": "doc.md", "content": "content"}],
+        "index": {"name": "sample"},
+    }
+    monkeypatch.setenv("SEARCH_INDEXING_CONFIGURATION", json.dumps(configuration))
+    monkeypatch.setattr(
+        azure_cli, "_run_command", Mock(side_effect=ClientAuthenticationError(message="sensitive-cli-diagnostic"))
+    )
+    loggers = [
+        logging.getLogger("azure.identity._internal.decorators"),
+        logging.getLogger("azure.identity._credentials.azure_cli"),
+    ]
+    initial_states = [logger.disabled for logger in loggers]
+    with caplog.at_level(logging.DEBUG):
+        with pytest.raises(RuntimeError, match="details suppressed") as result:
+            indexing.main()
+    assert "sensitive-cli-diagnostic" not in str(result.value)
+    assert "sensitive-cli-diagnostic" not in caplog.text
+    assert "sensitive-cli-diagnostic" not in capsys.readouterr().err
+    assert [logger.disabled for logger in loggers] == initial_states
+
+
+def test_search_retries_more_than_three_throttling_responses(monkeypatch):
+    request = Mock(side_effect=[wire_response(429) for _ in range(5)] + [wire_response(201, b'{"name":"sample"}')])
+    sleep = Mock()
+    monkeypatch.setattr(Session, "request", request)
+    monkeypatch.setattr(RequestsTransport, "sleep", sleep)
+    credential = Mock(spec=["get_token"])
+    credential.get_token.return_value = AccessToken("offline-token", 4_000_000_000)
+    with indexing.SearchIndexClient(
+        "https://unit.search.windows.net",
+        credential,
+        **indexing.CLIENT_OPTIONS,
+        retry_policy=indexing.ThrottlingRetryPolicy(),
+        api_version=indexing.SEARCH_API_VERSION,
+    ) as client:
+        assert client.create_or_update_index(indexing.SearchIndex({"name": "sample"})).name == "sample"
+    assert request.call_count == 6
+    assert sleep.call_count == 5
 
 
 def test_status_throttling_does_not_retry_past_readiness_deadline(monkeypatch):

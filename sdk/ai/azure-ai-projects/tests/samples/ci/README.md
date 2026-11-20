@@ -334,7 +334,7 @@ for source uploads. The deployment container installs these dependencies separat
 the SDK under test. It uses only binary wheels from PyPI, ignores ambient pip configuration,
 and verifies SHA-256 hashes for every direct and transitive dependency before installation.
 It needs outbound access to `pypi.org` and `files.pythonhosted.org`. When updating
-[the lock file](shared/infra/requirements-search-indexing.txt) or the CLI image, verify the
+[the lock file](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/infra/requirements-search-indexing.txt) or the CLI image, verify the
 wheel hashes and test installation against the deployment image's Python version and platform.
 Azure Identity uses
 ARM's existing CLI sign-in for the assigned identity; the clients manage token lifetime.
