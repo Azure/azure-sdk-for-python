@@ -164,8 +164,9 @@ class BundleAssetTests(unittest.TestCase):
             SearchIndexerStatus({"lastResult": {"status": "inProgress", "itemsProcessed": 0}}),
             SearchIndexerStatus({"lastResult": {"status": "success", "itemsProcessed": 1}}),
         ]
-        with patch.object(module.time, "sleep") as sleep:
-            module.wait_for_indexer(client, "indexer")
+        with patch.object(module.time, "monotonic", side_effect=[0, 10, 20, 30, 40, 50]):
+            with patch.object(module.time, "sleep") as sleep:
+                module.wait_for_indexer(client, "indexer")
         self.assertEqual(client.get_indexer_status.call_count, 3)
         for call in client.get_indexer_status.call_args_list:
             self.assertEqual(call.args, ("indexer",))
