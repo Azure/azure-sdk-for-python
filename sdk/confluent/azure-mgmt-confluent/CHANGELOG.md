@@ -1,5 +1,23 @@
 # Release History
 
+## 3.0.0b3 (2026-11-19)
+
+### Features Added
+
+  - Client `ConfluentManagementClient` added operation group `monitor_resources`
+  - Client `ConfluentManagementClient` added operation group `monitor_tag_rules`
+  - Added model `FilteringTag`
+  - Added model `LogRules`
+  - Added model `MonitorProperties`
+  - Added model `MonitorResource`
+  - Added model `MonitorResourceUpdateParameters`
+  - Added model `MonitorTagRule`
+  - Added model `MonitorTagRuleProperties`
+  - Added enum `MonitoringStatus`
+  - Added enum `TagAction`
+  - Added operation group `MonitorResourcesOperations`
+  - Added operation group `MonitorTagRulesOperations`
+
 ## 3.0.0b2 (2026-07-16)
 
 ### Features Added

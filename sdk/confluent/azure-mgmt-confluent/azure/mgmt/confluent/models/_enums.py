@@ -97,6 +97,15 @@ class DataFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PROTOBUF."""
 
 
+class MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether a monitor is currently sending Azure logs to its configured Confluent topic."""
+
+    ENABLED = "Enabled"
+    """The monitor is sending logs selected by its configured rule sets."""
+    DISABLED = "Disabled"
+    """The monitor is not currently sending Azure logs."""
+
+
 class Package(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Stream Governance Package. Supported values are ESSENTIALS and ADVANCED."""
 
@@ -167,3 +176,13 @@ class SaaSOfferStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNSUBSCRIBED."""
     UPDATING = "Updating"
     """UPDATING."""
+
+
+class TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether activity logs from Azure resources matching a tag are included or excluded."""
+
+    INCLUDE = "Include"
+    """Includes activity logs from Azure resources matching the tag filter."""
+    EXCLUDE = "Exclude"
+    """Excludes activity logs from Azure resources matching the tag filter. Exclusion takes precedence
+    over inclusion."""

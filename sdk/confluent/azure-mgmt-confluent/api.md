@@ -8,6 +8,8 @@ namespace azure.mgmt.confluent
         connector: ConnectorOperations
         environment: EnvironmentOperations
         marketplace_agreements: MarketplaceAgreementsOperations
+        monitor_resources: MonitorResourcesOperations
+        monitor_tag_rules: MonitorTagRulesOperations
         network_gateway_resources: NetworkGatewayResourcesOperations
         organization: OrganizationOperations
         organization_operations: OrganizationOperationsOperations
@@ -46,6 +48,8 @@ namespace azure.mgmt.confluent.aio
         connector: ConnectorOperations
         environment: EnvironmentOperations
         marketplace_agreements: MarketplaceAgreementsOperations
+        monitor_resources: MonitorResourcesOperations
+        monitor_tag_rules: MonitorTagRulesOperations
         network_gateway_resources: NetworkGatewayResourcesOperations
         organization: OrganizationOperations
         organization_operations: OrganizationOperationsOperations
@@ -443,7 +447,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> AsyncLROPoller[AccessPointResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -455,7 +459,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -467,7 +471,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> AccessPointResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -715,6 +719,196 @@ namespace azure.mgmt.confluent.aio.operations
         def list(self, **kwargs: Any) -> AsyncItemPaged[ConfluentAgreementResource]: ...
 
 
+    class azure.mgmt.confluent.aio.operations.MonitorResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: MonitorResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: MonitorResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name']}, api_versions_list=['2026-10-21-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: MonitorResourceUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: MonitorResourceUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MonitorResource]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> MonitorResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def list_by_organization(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MonitorResource]: ...
+
+
+    class azure.mgmt.confluent.aio.operations.MonitorTagRulesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: MonitorTagRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: MonitorTagRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'rule_set_name']}, api_versions_list=['2026-10-21-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'rule_set_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def list_by_monitor(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MonitorTagRule]: ...
+
+
     class azure.mgmt.confluent.aio.operations.NetworkGatewayResourcesOperations:
 
         def __init__(
@@ -763,7 +957,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> AsyncLROPoller[NetworkGatewayResource]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -774,7 +968,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -785,7 +979,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> NetworkGatewayResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -999,7 +1193,7 @@ namespace azure.mgmt.confluent.aio.operations
             ) -> SchemaRegistryClusterRecord: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-10-21-preview'])
         async def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -2205,6 +2399,24 @@ namespace azure.mgmt.confluent.models
         target: Optional[str]
 
 
+    class azure.mgmt.confluent.models.FilteringTag(_Model):
+        action: Union[str, TagAction]
+        name: str
+        value: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Union[str, TagAction], 
+                name: str, 
+                value: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.confluent.models.InvitationRecord(_Model):
         accepted_at: Optional[str]
         auth_type: Optional[str]
@@ -2484,6 +2696,26 @@ namespace azure.mgmt.confluent.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.confluent.models.LogRules(_Model):
+        filtering_tags: Optional[list[FilteringTag]]
+        send_aad_logs: Optional[bool]
+        send_activity_logs: Optional[bool]
+        send_subscription_logs: Optional[bool]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                filtering_tags: Optional[list[FilteringTag]] = ..., 
+                send_aad_logs: Optional[bool] = ..., 
+                send_activity_logs: Optional[bool] = ..., 
+                send_subscription_logs: Optional[bool] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.confluent.models.MetadataEntity(_Model):
         created_at: Optional[str]
         deleted_at: Optional[str]
@@ -2504,6 +2736,110 @@ namespace azure.mgmt.confluent.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitorProperties(_Model):
+        cluster_id: str
+        cluster_name: Optional[str]
+        dictionary: Optional[list[KeyValuePair]]
+        environment_id: str
+        environment_name: Optional[str]
+        monitoring_status: Optional[Union[str, MonitoringStatus]]
+        organization_id: Optional[str]
+        provisioning_state: Optional[Union[str, ProvisionState]]
+        topic_id: Optional[str]
+        topic_name: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                cluster_id: str, 
+                cluster_name: Optional[str] = ..., 
+                dictionary: Optional[list[KeyValuePair]] = ..., 
+                environment_id: str, 
+                environment_name: Optional[str] = ..., 
+                organization_id: Optional[str] = ..., 
+                topic_id: Optional[str] = ..., 
+                topic_name: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitorResource(TrackedResource):
+        id: str
+        location: str
+        name: str
+        properties: MonitorProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                properties: MonitorProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitorResourceUpdateParameters(_Model):
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitorTagRule(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[MonitorTagRuleProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[MonitorTagRuleProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitorTagRuleProperties(_Model):
+        log_rules: Optional[LogRules]
+        provisioning_state: Optional[Union[str, ProvisionState]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                log_rules: Optional[LogRules] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.confluent.models.MonitoringStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
 
 
     class azure.mgmt.confluent.models.NetworkGatewayProperties(_Model):
@@ -3181,6 +3517,11 @@ namespace azure.mgmt.confluent.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.confluent.models.TagAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXCLUDE = "Exclude"
+        INCLUDE = "Include"
+
+
     class azure.mgmt.confluent.models.TopicMetadataEntity(_Model):
         resource_name: Optional[str]
         self_property: Optional[str]
@@ -3747,7 +4088,7 @@ namespace azure.mgmt.confluent.operations
             ) -> LROPoller[AccessPointResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3759,7 +4100,7 @@ namespace azure.mgmt.confluent.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'access_point_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3771,7 +4112,7 @@ namespace azure.mgmt.confluent.operations
             ) -> AccessPointResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4019,6 +4360,196 @@ namespace azure.mgmt.confluent.operations
         def list(self, **kwargs: Any) -> ItemPaged[ConfluentAgreementResource]: ...
 
 
+    class azure.mgmt.confluent.operations.MonitorResourcesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: MonitorResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: MonitorResource, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name']}, api_versions_list=['2026-10-21-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: MonitorResourceUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: MonitorResourceUpdateParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MonitorResource]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> MonitorResource: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def list_by_organization(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[MonitorResource]: ...
+
+
+    class azure.mgmt.confluent.operations.MonitorTagRulesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: MonitorTagRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: MonitorTagRule, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'rule_set_name']}, api_versions_list=['2026-10-21-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'rule_set_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                rule_set_name: str, 
+                **kwargs: Any
+            ) -> MonitorTagRule: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-10-21-preview', params_added_on={'2026-10-21-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'monitor_name', 'accept']}, api_versions_list=['2026-10-21-preview'])
+        def list_by_monitor(
+                self, 
+                resource_group_name: str, 
+                organization_name: str, 
+                monitor_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[MonitorTagRule]: ...
+
+
     class azure.mgmt.confluent.operations.NetworkGatewayResourcesOperations:
 
         def __init__(
@@ -4067,7 +4598,7 @@ namespace azure.mgmt.confluent.operations
             ) -> LROPoller[NetworkGatewayResource]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -4078,7 +4609,7 @@ namespace azure.mgmt.confluent.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'network_gateway_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4089,7 +4620,7 @@ namespace azure.mgmt.confluent.operations
             ) -> NetworkGatewayResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'environment_id', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-06-02-preview', '2026-10-21-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -4303,7 +4834,7 @@ namespace azure.mgmt.confluent.operations
             ) -> SchemaRegistryClusterRecord: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-06-02-preview'])
+        @api_version_validation(method_added_on='2026-06-02-preview', params_added_on={'2026-06-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'organization_name', 'accept']}, api_versions_list=['2026-06-02-preview', '2026-10-21-preview'])
         def latest_linked_saa_s(
                 self, 
                 resource_group_name: str, 
@@ -4613,8 +5144,8 @@ namespace azure.mgmt.confluent.types
         key "organizationId": str
         key "upn": str
         email: str
-        invited_user_details: AccessInvitedUserDetails
-        organization_id: str
+        invitedUserDetails: AccessInvitedUserDetails
+        organizationId: str
         upn: str
 
 
@@ -4622,7 +5153,7 @@ namespace azure.mgmt.confluent.types
         key "auth_type": str
         key "invitedEmail": str
         auth_type: str
-        invited_email: str
+        invitedEmail: str
 
 
     class azure.mgmt.confluent.types.AccessPointProperties(TypedDict, total=False):
@@ -4631,14 +5162,13 @@ namespace azure.mgmt.confluent.types
         key "provisioningState": Union[str, ProvisionState]
         key "region": Required[str]
         key "vnetInjection": Required[VnetInjectionDetails]
-        access_point_name: str
+        accessPointName: str
         dictionary: list[KeyValuePair]
         egressRoutes: list[str]
-        egress_routes: list[str]
         metadata: SCMetadataEntity
-        provisioning_state: Union[str, ProvisionState]
+        provisioningState: Union[str, ProvisionState]
         region: str
-        vnet_injection: VnetInjectionDetails
+        vnetInjection: VnetInjectionDetails
 
 
     class azure.mgmt.confluent.types.AccessPointResource(ProxyResource):
@@ -4650,15 +5180,15 @@ namespace azure.mgmt.confluent.types
         id: str
         name: str
         properties: AccessPointProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.confluent.types.ActivateSaaSParameterRequest(TypedDict, total=False):
         key "publisherId": str
         key "saasGuid": Required[str]
-        publisher_id: str
-        saas_guid: str
+        publisherId: str
+        saasGuid: str
 
 
     class azure.mgmt.confluent.types.AzureBlobStorageSinkConnectorServiceInfo(TypedDict, total=False):
@@ -4666,10 +5196,10 @@ namespace azure.mgmt.confluent.types
         key "storageAccountKey": str
         key "storageAccountName": str
         key "storageContainerName": str
-        connector_service_type: Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SINK_CONNECTOR]
-        storage_account_key: str
-        storage_account_name: str
-        storage_container_name: str
+        connectorServiceType: Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SINK_CONNECTOR]
+        storageAccountKey: str
+        storageAccountName: str
+        storageContainerName: str
 
 
     class azure.mgmt.confluent.types.AzureBlobStorageSourceConnectorServiceInfo(TypedDict, total=False):
@@ -4677,10 +5207,10 @@ namespace azure.mgmt.confluent.types
         key "storageAccountKey": str
         key "storageAccountName": str
         key "storageContainerName": str
-        connector_service_type: Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SOURCE_CONNECTOR]
-        storage_account_key: str
-        storage_account_name: str
-        storage_container_name: str
+        connectorServiceType: Literal[ConnectorServiceType.AZURE_BLOB_STORAGE_SOURCE_CONNECTOR]
+        storageAccountKey: str
+        storageAccountName: str
+        storageContainerName: str
 
 
     class azure.mgmt.confluent.types.AzureCosmosDBSinkConnectorServiceInfo(TypedDict, total=False):
@@ -4691,13 +5221,13 @@ namespace azure.mgmt.confluent.types
         key "cosmosIdStrategy": str
         key "cosmosMasterKey": str
         key "cosmosWriteDetails": str
-        connector_service_type: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SINK_CONNECTOR]
-        cosmos_connection_endpoint: str
-        cosmos_containers_topic_mapping: str
-        cosmos_database_name: str
-        cosmos_id_strategy: str
-        cosmos_master_key: str
-        cosmos_write_details: str
+        connectorServiceType: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SINK_CONNECTOR]
+        cosmosConnectionEndpoint: str
+        cosmosContainersTopicMapping: str
+        cosmosDatabaseName: str
+        cosmosIdStrategy: str
+        cosmosMasterKey: str
+        cosmosWriteDetails: str
 
 
     class azure.mgmt.confluent.types.AzureCosmosDBSourceConnectorServiceInfo(TypedDict, total=False):
@@ -4709,14 +5239,14 @@ namespace azure.mgmt.confluent.types
         key "cosmosMasterKey": str
         key "cosmosMessageKeyEnabled": bool
         key "cosmosMessageKeyField": str
-        connector_service_type: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SOURCE_CONNECTOR]
-        cosmos_connection_endpoint: str
-        cosmos_containers_topic_mapping: str
-        cosmos_database_name: str
-        cosmos_include_all_containers: str
-        cosmos_master_key: str
-        cosmos_message_key_enabled: bool
-        cosmos_message_key_field: str
+        connectorServiceType: Literal[ConnectorServiceType.AZURE_COSMOS_DB_SOURCE_CONNECTOR]
+        cosmosConnectionEndpoint: str
+        cosmosContainersTopicMapping: str
+        cosmosDatabaseName: str
+        cosmosIncludeAllContainers: str
+        cosmosMasterKey: str
+        cosmosMessageKeyEnabled: bool
+        cosmosMessageKeyField: str
 
 
     class azure.mgmt.confluent.types.AzureSynapseAnalyticsSinkConnectorServiceInfo(TypedDict, total=False):
@@ -4725,11 +5255,11 @@ namespace azure.mgmt.confluent.types
         key "synapseSqlPassword": str
         key "synapseSqlServerName": str
         key "synapseSqlUser": str
-        connector_service_type: Literal[ConnectorServiceType.AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR]
-        synapse_sql_database_name: str
-        synapse_sql_password: str
-        synapse_sql_server_name: str
-        synapse_sql_user: str
+        connectorServiceType: Literal[ConnectorServiceType.AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR]
+        synapseSqlDatabaseName: str
+        synapseSqlPassword: str
+        synapseSqlServerName: str
+        synapseSqlUser: str
 
 
     class azure.mgmt.confluent.types.ClusterConfigEntity(TypedDict, total=False):
@@ -4763,12 +5293,12 @@ namespace azure.mgmt.confluent.types
         key "retrieveDatetime": str
         key "signature": str
         accepted: bool
-        license_text_link: str
+        licenseTextLink: str
         plan: str
-        privacy_policy_link: str
+        privacyPolicyLink: str
         product: str
         publisher: str
-        retrieve_datetime: str
+        retrieveDatetime: str
         signature: str
 
 
@@ -4781,7 +5311,7 @@ namespace azure.mgmt.confluent.types
         id: str
         name: str
         properties: ConfluentAgreementProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4791,11 +5321,11 @@ namespace azure.mgmt.confluent.types
         key "connectorName": str
         key "connectorState": Union[str, ConnectorStatus]
         key "connectorType": Union[str, ConnectorType]
-        connector_class: Union[str, ConnectorClass]
-        connector_id: str
-        connector_name: str
-        connector_state: Union[str, ConnectorStatus]
-        connector_type: Union[str, ConnectorType]
+        connectorClass: Union[str, ConnectorClass]
+        connectorId: str
+        connectorName: str
+        connectorState: Union[str, ConnectorStatus]
+        connectorType: Union[str, ConnectorType]
 
 
     class azure.mgmt.confluent.types.ConnectorResource(ProxyResource):
@@ -4807,7 +5337,7 @@ namespace azure.mgmt.confluent.types
         id: str
         name: str
         properties: ConnectorResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -4815,9 +5345,9 @@ namespace azure.mgmt.confluent.types
         key "connectorBasicInfo": ForwardRef('ConnectorInfoBase', module='types')
         key "connectorServiceTypeInfo": ForwardRef('ConnectorServiceTypeInfoBase', module='types')
         key "partnerConnectorInfo": ForwardRef('PartnerInfoBase', module='types')
-        connector_basic_info: ConnectorInfoBase
-        connector_service_type_info: ConnectorServiceTypeInfoBase
-        partner_connector_info: PartnerInfoBase
+        connectorBasicInfo: ConnectorInfoBase
+        connectorServiceTypeInfo: ConnectorServiceTypeInfoBase
+        partnerConnectorInfo: PartnerInfoBase
 
 
     class azure.mgmt.confluent.types.ConnectorServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4839,7 +5369,16 @@ namespace azure.mgmt.confluent.types
         key "metadata": ForwardRef('SCMetadataEntity', module='types')
         key "streamGovernanceConfig": ForwardRef('StreamGovernanceConfig', module='types')
         metadata: SCMetadataEntity
-        stream_governance_config: StreamGovernanceConfig
+        streamGovernanceConfig: StreamGovernanceConfig
+
+
+    class azure.mgmt.confluent.types.FilteringTag(TypedDict, total=False):
+        key "action": Required[Union[str, TagAction]]
+        key "name": Required[str]
+        key "value": str
+        action: Union[str, TagAction]
+        name: str
+        value: str
 
 
     class azure.mgmt.confluent.types.KafkaAzureBlobStorageSinkConnectorInfo(TypedDict, total=False):
@@ -4855,19 +5394,19 @@ namespace azure.mgmt.confluent.types
         key "serviceAccountName": str
         key "timeInterval": str
         key "topicsDir": str
-        api_key: str
-        api_secret: str
-        auth_type: Union[str, AuthType]
-        flush_size: str
-        input_format: Union[str, DataFormatType]
-        max_tasks: str
-        output_format: Union[str, DataFormatType]
-        partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SINK]
-        service_account_id: str
-        service_account_name: str
-        time_interval: str
+        apiKey: str
+        apiSecret: str
+        authType: Union[str, AuthType]
+        flushSize: str
+        inputFormat: Union[str, DataFormatType]
+        maxTasks: str
+        outputFormat: Union[str, DataFormatType]
+        partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SINK]
+        serviceAccountId: str
+        serviceAccountName: str
+        timeInterval: str
         topics: list[str]
-        topics_dir: str
+        topicsDir: str
 
 
     class azure.mgmt.confluent.types.KafkaAzureBlobStorageSourceConnectorInfo(TypedDict, total=False):
@@ -4882,17 +5421,17 @@ namespace azure.mgmt.confluent.types
         key "serviceAccountName": str
         key "topicRegex": str
         key "topicsDir": str
-        api_key: str
-        api_secret: str
-        auth_type: Union[str, AuthType]
-        input_format: Union[str, DataFormatType]
-        max_tasks: str
-        output_format: Union[str, DataFormatType]
-        partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SOURCE]
-        service_account_id: str
-        service_account_name: str
-        topic_regex: str
-        topics_dir: str
+        apiKey: str
+        apiSecret: str
+        authType: Union[str, AuthType]
+        inputFormat: Union[str, DataFormatType]
+        maxTasks: str
+        outputFormat: Union[str, DataFormatType]
+        partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SOURCE]
+        serviceAccountId: str
+        serviceAccountName: str
+        topicRegex: str
+        topicsDir: str
 
 
     class azure.mgmt.confluent.types.KafkaAzureCosmosDBSinkConnectorInfo(TypedDict, total=False):
@@ -4908,19 +5447,19 @@ namespace azure.mgmt.confluent.types
         key "serviceAccountName": str
         key "timeInterval": str
         key "topicsDir": str
-        api_key: str
-        api_secret: str
-        auth_type: Union[str, AuthType]
-        flush_size: str
-        input_format: Union[str, DataFormatType]
-        max_tasks: str
-        output_format: Union[str, DataFormatType]
-        partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SINK]
-        service_account_id: str
-        service_account_name: str
-        time_interval: str
+        apiKey: str
+        apiSecret: str
+        authType: Union[str, AuthType]
+        flushSize: str
+        inputFormat: Union[str, DataFormatType]
+        maxTasks: str
+        outputFormat: Union[str, DataFormatType]
+        partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SINK]
+        serviceAccountId: str
+        serviceAccountName: str
+        timeInterval: str
         topics: list[str]
-        topics_dir: str
+        topicsDir: str
 
 
     class azure.mgmt.confluent.types.KafkaAzureCosmosDBSourceConnectorInfo(TypedDict, total=False):
@@ -4935,17 +5474,17 @@ namespace azure.mgmt.confluent.types
         key "serviceAccountName": str
         key "topicRegex": str
         key "topicsDir": str
-        api_key: str
-        api_secret: str
-        auth_type: Union[str, AuthType]
-        input_format: Union[str, DataFormatType]
-        max_tasks: str
-        output_format: Union[str, DataFormatType]
-        partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SOURCE]
-        service_account_id: str
-        service_account_name: str
-        topic_regex: str
-        topics_dir: str
+        apiKey: str
+        apiSecret: str
+        authType: Union[str, AuthType]
+        inputFormat: Union[str, DataFormatType]
+        maxTasks: str
+        outputFormat: Union[str, DataFormatType]
+        partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SOURCE]
+        serviceAccountId: str
+        serviceAccountName: str
+        topicRegex: str
+        topicsDir: str
 
 
     class azure.mgmt.confluent.types.KafkaAzureSynapseAnalyticsSinkConnectorInfo(TypedDict, total=False):
@@ -4961,19 +5500,19 @@ namespace azure.mgmt.confluent.types
         key "serviceAccountName": str
         key "timeInterval": str
         key "topicsDir": str
-        api_key: str
-        api_secret: str
-        auth_type: Union[str, AuthType]
-        flush_size: str
-        input_format: Union[str, DataFormatType]
-        max_tasks: str
-        output_format: Union[str, DataFormatType]
-        partner_connector_type: Literal[PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK]
-        service_account_id: str
-        service_account_name: str
-        time_interval: str
+        apiKey: str
+        apiSecret: str
+        authType: Union[str, AuthType]
+        flushSize: str
+        inputFormat: Union[str, DataFormatType]
+        maxTasks: str
+        outputFormat: Union[str, DataFormatType]
+        partnerConnectorType: Literal[PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK]
+        serviceAccountId: str
+        serviceAccountName: str
+        timeInterval: str
         topics: list[str]
-        topics_dir: str
+        topicsDir: str
 
 
     class azure.mgmt.confluent.types.KeyValuePair(TypedDict, total=False):
@@ -4990,7 +5529,78 @@ namespace azure.mgmt.confluent.types
 
     class azure.mgmt.confluent.types.ListAccessRequestModel(TypedDict, total=False):
         searchFilters: dict[str, str]
-        search_filters: dict[str, str]
+
+
+    class azure.mgmt.confluent.types.LogRules(TypedDict, total=False):
+        key "sendAadLogs": bool
+        key "sendActivityLogs": bool
+        key "sendSubscriptionLogs": bool
+        filteringTags: list[FilteringTag]
+        sendAadLogs: bool
+        sendActivityLogs: bool
+        sendSubscriptionLogs: bool
+
+
+    class azure.mgmt.confluent.types.MonitorProperties(TypedDict, total=False):
+        key "clusterId": Required[str]
+        key "clusterName": str
+        key "environmentId": Required[str]
+        key "environmentName": str
+        key "monitoringStatus": Union[str, MonitoringStatus]
+        key "organizationId": str
+        key "provisioningState": Union[str, ProvisionState]
+        key "topicId": str
+        key "topicName": Required[str]
+        clusterId: str
+        clusterName: str
+        dictionary: list[KeyValuePair]
+        environmentId: str
+        environmentName: str
+        monitoringStatus: Union[str, MonitoringStatus]
+        organizationId: str
+        provisioningState: Union[str, ProvisionState]
+        topicId: str
+        topicName: str
+
+
+    class azure.mgmt.confluent.types.MonitorResource(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[MonitorProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: MonitorProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.confluent.types.MonitorResourceUpdateParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.confluent.types.MonitorTagRule(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('MonitorTagRuleProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: MonitorTagRuleProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.confluent.types.MonitorTagRuleProperties(TypedDict, total=False):
+        key "logRules": ForwardRef('LogRules', module='types')
+        key "provisioningState": Union[str, ProvisionState]
+        logRules: LogRules
+        provisioningState: Union[str, ProvisionState]
 
 
     class azure.mgmt.confluent.types.NetworkGatewayProperties(TypedDict, total=False):
@@ -5000,8 +5610,8 @@ namespace azure.mgmt.confluent.types
         key "region": Required[str]
         dictionary: list[KeyValuePair]
         metadata: SCMetadataEntity
-        network_gateway_name: str
-        provisioning_state: Union[str, ProvisionState]
+        networkGatewayName: str
+        provisioningState: Union[str, ProvisionState]
         region: str
 
 
@@ -5014,7 +5624,7 @@ namespace azure.mgmt.confluent.types
         id: str
         name: str
         properties: NetworkGatewayProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5028,15 +5638,14 @@ namespace azure.mgmt.confluent.types
         key "termId": str
         key "termUnit": Required[str]
         id: str
-        plan_id: str
-        plan_name: str
+        planId: str
+        planName: str
+        privateOfferId: str
         privateOfferIds: list[str]
-        private_offer_id: str
-        private_offer_ids: list[str]
-        publisher_id: str
+        publisherId: str
         status: Union[str, SaaSOfferStatus]
-        term_id: str
-        term_unit: str
+        termId: str
+        termUnit: str
 
 
     class azure.mgmt.confluent.types.OrganizationResource(TrackedResource):
@@ -5050,7 +5659,7 @@ namespace azure.mgmt.confluent.types
         location: str
         name: str
         properties: OrganizationResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5063,13 +5672,13 @@ namespace azure.mgmt.confluent.types
         key "provisioningState": Union[str, ProvisionState]
         key "ssoUrl": str
         key "userDetail": Required[UserDetail]
-        created_time: str
-        link_organization: LinkOrganization
-        offer_detail: OfferDetail
-        organization_id: str
-        provisioning_state: Union[str, ProvisionState]
-        sso_url: str
-        user_detail: UserDetail
+        createdTime: str
+        linkOrganization: LinkOrganization
+        offerDetail: OfferDetail
+        organizationId: str
+        provisioningState: Union[str, ProvisionState]
+        ssoUrl: str
+        userDetail: UserDetail
 
 
     class azure.mgmt.confluent.types.OrganizationResourceUpdate(TypedDict, total=False):
@@ -5091,7 +5700,7 @@ namespace azure.mgmt.confluent.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5102,7 +5711,7 @@ namespace azure.mgmt.confluent.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5112,7 +5721,7 @@ namespace azure.mgmt.confluent.types
         key "resourceName": str
         id: str
         related: str
-        resource_name: str
+        resourceName: str
 
 
     class azure.mgmt.confluent.types.SCClusterNetworkEnvironmentEntity(TypedDict, total=False):
@@ -5123,7 +5732,7 @@ namespace azure.mgmt.confluent.types
         environment: str
         id: str
         related: str
-        resource_name: str
+        resourceName: str
 
 
     class azure.mgmt.confluent.types.SCClusterRecord(ProxyResource):
@@ -5137,7 +5746,7 @@ namespace azure.mgmt.confluent.types
         kind: str
         name: str
         properties: ClusterProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5155,14 +5764,14 @@ namespace azure.mgmt.confluent.types
         key "package": Union[str, Package]
         key "region": str
         key "zone": str
-        api_endpoint: str
+        apiEndpoint: str
         availability: str
         byok: SCClusterByokEntity
         cloud: str
         config: ClusterConfigEntity
         environment: SCClusterNetworkEnvironmentEntity
-        http_endpoint: str
-        kafka_bootstrap_endpoint: str
+        httpEndpoint: str
+        kafkaBootstrapEndpoint: str
         name: str
         network: SCClusterNetworkEnvironmentEntity
         package: Union[str, Package]
@@ -5181,7 +5790,7 @@ namespace azure.mgmt.confluent.types
         kind: str
         name: str
         properties: EnvironmentProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5191,16 +5800,16 @@ namespace azure.mgmt.confluent.types
         key "resourceName": str
         key "self": str
         key "updatedTimestamp": str
-        created_timestamp: str
-        deleted_timestamp: str
-        resource_name: str
-        self_property: str
-        updated_timestamp: str
+        createdTimestamp: str
+        deletedTimestamp: str
+        resourceName: str
+        self: str
+        updatedTimestamp: str
 
 
     class azure.mgmt.confluent.types.SaaSData(TypedDict, total=False):
         key "saaSResourceId": str
-        saa_s_resource_id: str
+        saaSResourceId: str
 
 
     class azure.mgmt.confluent.types.StreamGovernanceConfig(TypedDict, total=False):
@@ -5215,19 +5824,19 @@ namespace azure.mgmt.confluent.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.confluent.types.TopicMetadataEntity(TypedDict, total=False):
         key "resourceName": str
         key "self": str
-        resource_name: str
-        self_property: str
+        resourceName: str
+        self: str
 
 
     class azure.mgmt.confluent.types.TopicProperties(TypedDict, total=False):
@@ -5241,14 +5850,13 @@ namespace azure.mgmt.confluent.types
         key "topicId": str
         configs: TopicsRelatedLink
         inputConfigs: list[TopicsInputConfig]
-        input_configs: list[TopicsInputConfig]
         kind: str
         metadata: TopicMetadataEntity
         partitions: TopicsRelatedLink
-        partitions_count: str
-        partitions_reassignments: TopicsRelatedLink
-        replication_factor: str
-        topic_id: str
+        partitionsCount: str
+        partitionsReassignments: TopicsRelatedLink
+        replicationFactor: str
+        topicId: str
 
 
     class azure.mgmt.confluent.types.TopicRecord(ProxyResource):
@@ -5260,7 +5868,7 @@ namespace azure.mgmt.confluent.types
         id: str
         name: str
         properties: TopicProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -5285,7 +5893,7 @@ namespace azure.mgmt.confluent.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -5296,18 +5904,18 @@ namespace azure.mgmt.confluent.types
         key "firstName": str
         key "lastName": str
         key "userPrincipalName": str
-        aad_email: str
-        email_address: str
-        first_name: str
-        last_name: str
-        user_principal_name: str
+        aadEmail: str
+        emailAddress: str
+        firstName: str
+        lastName: str
+        userPrincipalName: str
 
 
     class azure.mgmt.confluent.types.VnetInjectionDetails(TypedDict, total=False):
         key "subnetResourceId": Required[str]
         key "virtualNetworkResourceId": Required[str]
-        subnet_resource_id: str
-        virtual_network_resource_id: str
+        subnetResourceId: str
+        virtualNetworkResourceId: str
 
 
 ```
