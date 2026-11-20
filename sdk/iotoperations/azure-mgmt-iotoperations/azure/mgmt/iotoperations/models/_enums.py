@@ -306,6 +306,17 @@ class DataflowGraphDestinationHeaderActionType(str, Enum, metaclass=CaseInsensit
     """Add or Replace type."""
 
 
+class DataflowGraphDestinationSchemaSerializationFormat(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Serialization format for dataflow graph."""
+
+    PARQUET = "Parquet"
+    """Parquet serialization format."""
+    DELTA = "Delta"
+    """Delta serialization format."""
+
+
 class DataflowGraphNodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowGraph node types."""
 
@@ -429,6 +440,15 @@ class InstanceFeatureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Opt in to enable a preview feature."""
     DISABLED = "Disabled"
     """Opt out of a feature."""
+
+
+class InstanceSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The set of supported SKU names for an AIO Instance."""
+
+    ESSENTIALS = "Essentials"
+    """Essentials SKU. Reduced feature set targeted at constrained edge and entry-level workloads."""
+    STANDARD = "Standard"
+    """Standard SKU. Full feature set. Default when sku is not specified."""
 
 
 class KafkaAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):

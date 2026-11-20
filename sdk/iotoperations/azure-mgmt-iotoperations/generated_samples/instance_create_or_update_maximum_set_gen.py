@@ -47,12 +47,13 @@ def main():
                     "resourceId": "/subscriptions/0000000-0000-0000-0000-000000000000/resourceGroups/resourceGroup123/providers/Microsoft.DeviceRegistry/schemaRegistries/resource-name123"
                 },
             },
+            "sku": {"name": "Standard"},
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/Instance_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/Instance_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

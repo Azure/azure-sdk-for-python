@@ -1,5 +1,16 @@
 # Release History
 
+## 1.3.0 (2026-10-02)
+
+### Features Added
+
+  - Model `DataflowGraphDestinationNodeSettings` added property `output_schema_settings`
+  - Model `InstanceResource` added property `sku`
+  - Added enum `DataflowGraphDestinationSchemaSerializationFormat`
+  - Added model `DataflowGraphDestinationSchemaSettings`
+  - Added model `InstanceSku`
+  - Added enum `InstanceSkuName`
+
 ## 1.2.0 (2026-07-28)
 
 ### Features Added
