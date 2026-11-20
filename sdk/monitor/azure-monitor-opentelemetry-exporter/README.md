@@ -209,8 +209,11 @@ and the current span do not automatically supply routing attributes to other
 records or child spans. Span events are the exception: they inherit the parent
 span's route. For observable metrics, set the attributes on each observation.
 If a metric view filters attributes, retain the routing attributes.
-Automatically collected application telemetry without valid routing attributes
-is dropped, not sent to the host connection string. Statsbeat and customer SDK
+Exporters in multi-endpoint routing mode drop application telemetry without valid
+routing attributes instead of sending it to the host connection string.
+This does not apply to Live Metrics: when enabled with a host connection string,
+it can still show log and span samples in the host resource without routing
+attributes. Statsbeat and customer SDK
 statistics do not use per-item routing and are not copied to every destination;
 their host-configuration requirements are described above.
 
