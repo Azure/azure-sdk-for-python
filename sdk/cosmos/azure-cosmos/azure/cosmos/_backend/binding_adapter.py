@@ -33,7 +33,7 @@ from typing import TYPE_CHECKING, Any, Iterator, Optional
 from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from .._operation_deadline import remaining_timeout
 from ..exceptions import CosmosClientTimeoutError
-from .._telemetry import get_operation, log_response_diagnostics
+from .._telemetry import get_operation, log_error_diagnostics, log_response_diagnostics, record_failed_lookup
 from ..runtime import CosmosRuntime
 
 from .cosmos_backend import CosmosBackend
@@ -54,6 +54,7 @@ from ._binding_adapter_shared import (
     driver_transport_error_type,
     driver_unsupported_query_error_type,
     finalize_adapter_resources,
+    is_credential_error,
     page_binding_call_errors,
     release_driver_handle_quietly,
     validate_page_request,
@@ -289,7 +290,13 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             )
         operation = get_operation(self, prepared.op)
         contribution = operation.begin_contribution() if operation is not None else None
-        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        try:
+            driver_handle = self._ensure_driver_handle(deadline=deadline)
+        except Exception as exc:
+            if contribution is not None:
+                contribution.setup_error(exc)
+            log_error_diagnostics(self, exc, prepared.op)
+            raise
         # This records the chosen function, not proof that a request was sent.
         # Do not include the driver handle in logs.
         _LOGGER.debug(
@@ -309,7 +316,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         except TimeoutError as exc:
             if contribution is not None:
                 contribution.error(exc)
-            if deadline is None:
+            if deadline is None or is_credential_error(exc):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
         except ClientAuthenticationError as exc:
@@ -323,7 +330,15 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         except _DRIVER_RESPONSE_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
-            raise response_exception_from_binding(exc) from exc
+            error = response_exception_from_binding(exc)
+            log_error_diagnostics(self, error, prepared.op)
+            raise error from exc
+        except Exception as exc:
+            # Match the binding contract: only validation errors and binding-marked
+            # credential errors carry attempt diagnostics.
+            if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
+                contribution.error(exc)
+            raise
         if raw_response is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
@@ -346,7 +361,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         )
 
     def get_container_metadata(
-        self, container_link: str, *, deadline: Optional[float] = None
+        self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
     ) -> ContainerMetadata:
         """Obtain container properties needed to prepare an item operation.
 
@@ -360,6 +375,9 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         rid is the service-assigned container ID, not the name "orders".
         The driver may fetch missing properties rather than use cached ones.
         This returns properties, not order rows or a BackendResponse.
+        ``op`` names the operation that needs the lookup, such as
+        ``"read_items"``. When that call is traced, a failed lookup's
+        diagnostics are recorded as that call's binding result.
         """
         deadline = self._request_deadline(deadline)
         if _rust_module is None:
@@ -370,21 +388,42 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         binding_function = getattr(_rust_module, "get_container_metadata", None)
         if binding_function is None:
             raise NotImplementedError("The Rust binding does not expose get_container_metadata")
-        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        operation = get_operation(self, op) if op is not None else None
         try:
-            raw_response = (
-                binding_function(driver_handle, container_link)
-                if deadline is None
-                else binding_function(driver_handle, container_link, timeout_seconds=remaining_timeout(deadline))
-            )
+            driver_handle = self._ensure_driver_handle(deadline=deadline)
+        except Exception as exc:
+            record_failed_lookup(operation, exc, setup=True)
+            log_error_diagnostics(self, exc)
+            raise
+        binding_kwargs: dict[str, Any] = {}
+        if deadline is not None:
+            binding_kwargs["timeout_seconds"] = remaining_timeout(deadline)
+        if operation is not None:
+            binding_kwargs["include_attempts"] = True
+        try:
+            raw_response = binding_function(driver_handle, container_link, **binding_kwargs)
         except TimeoutError as exc:
-            if deadline is None:
+            record_failed_lookup(operation, exc)
+            if deadline is None or is_credential_error(exc):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
+        except ClientAuthenticationError as exc:
+            record_failed_lookup(operation, exc)
+            raise
         except _DRIVER_TRANSPORT_ERROR as exc:
+            record_failed_lookup(operation, exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
-            raise response_exception_from_binding(exc) from exc
+            record_failed_lookup(operation, exc)
+            error = response_exception_from_binding(exc)
+            log_error_diagnostics(self, error)
+            raise error from exc
+        except Exception as exc:
+            # Match the binding contract: only validation errors and binding-marked
+            # credential errors carry attempt diagnostics.
+            if isinstance(exc, ValueError) or is_credential_error(exc):
+                record_failed_lookup(operation, exc)
+            raise
         return build_container_metadata(raw_response)
 
     def execute_pages(
@@ -421,7 +460,13 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             else None
         )
         contribution = operation.begin_contribution() if operation is not None else None
-        driver_handle = self._ensure_driver_handle(deadline=deadline)
+        try:
+            driver_handle = self._ensure_driver_handle(deadline=deadline)
+        except Exception as exc:
+            if contribution is not None:
+                contribution.setup_error(exc)
+            log_error_diagnostics(self, exc, prepared.op)
+            raise
         binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
         _LOGGER.debug(
             "cosmos backend=%s op=%s binding_function=%s",
@@ -451,8 +496,10 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 if contribution is not None:
                     contribution.error(exc)
                 raise
-            except ValueError as exc:
-                if contribution is not None:
+            except Exception as exc:
+                # Match the binding contract: only validation errors and binding-marked
+                # credential errors carry attempt diagnostics.
+                if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
                     contribution.error(exc)
                 raise
             if contribution is not None:

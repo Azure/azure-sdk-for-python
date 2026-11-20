@@ -90,23 +90,61 @@ def requests(listing):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("operation", ["list_databases", "query_databases"])
-@pytest.mark.parametrize("name,value,error", [
-    ("max_itm_count", 10, TypeError),
-    ("unknown_option", None, TypeError),
-    ("connection_timeout", None, NotImplementedError),
-    ("retry_total", 0, NotImplementedError),
+@pytest.mark.parametrize("name,value,hint", [
+    ("max_itm_count", 10, "max_itm_count"),
+    ("unknown_option", None, "unknown_option"),
+    ("connection_timeout", None, "ConnectionPoolOptions.connection_timeout"),
+    ("retry_total", 0, "retry_throttle_total"),
+    ("retry_backoff_max", 0, "throttle_retry_wait_threshold_seconds"),
+    ("retry_connect", 0, "Remove these options"),
+    ("retry_read", 0, "Remove these options"),
+    ("retry_status", 0, "Remove these options"),
+    ("retry_backoff_factor", 0, "Remove these options"),
+    ("retry_on_methods", None, "Remove these options"),
+    ("stream", False, "Remove these options"),
+    ("proxy", None, "ConnectionPoolOptions.proxy_allowed"),
+    ("feed_range", None, "Remove these options"),
 ])
 async def test_rejected_database_feed_keywords_are_named_before_dispatch_rust(
-    listing_client, operation, name, value, error,
+    listing_client, operation, name, value, hint,
 ):
-    """A typo is not a missing feature; both errors name the input without sending a page."""
+    """Unsupported inputs raise TypeError with actionable guidance without sending a page."""
     client, connection, backend, is_async = listing_client
     kwargs = {name: value, "logging_enable": True}
     if operation == "query_databases":
         kwargs["query"] = "SELECT * FROM c"
     pager = getattr(client, operation)(**kwargs).by_page()
-    with pytest.raises(error, match=name):
+    with pytest.raises(TypeError, match=name) as raised:
         await _next_listing_page(pager, is_async)
+    assert hint in str(raised.value)
+    backend.execute_pages.assert_not_called()
+    connection._CosmosClientConnection__Get.assert_not_called()
+    connection._CosmosClientConnection__Post.assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("operation", ["list_databases", "query_databases"])
+@pytest.mark.parametrize("source", ["request_options", "feed_options"])
+@pytest.mark.parametrize("options,name,hint", [
+    ({"connection_timeout": None}, "connection_timeout", "ConnectionPoolOptions.connection_timeout"),
+    ({"retry_total": 0}, "retry_total", "retry_throttle_total"),
+    ({"changeFeedState": {}}, "changeFeedState", "do not support change feed state"),
+    ({"initialHeaders": {"USER-AGENT": "custom"}}, "user-agent", "user_agent_suffix"),
+    ({"initialHeaders": {"x-ms-version": "custom"}}, "x-ms-version", "remove these headers"),
+])
+async def test_rejected_database_feed_dictionary_options_are_named_rust(
+    listing_client, operation, source, options, name, hint,
+):
+    client, connection, backend, is_async = listing_client
+    original = deepcopy(options)
+    kwargs = {source: options}
+    if operation == "query_databases":
+        kwargs["query"] = "SELECT * FROM c"
+    pager = getattr(client, operation)(**kwargs).by_page()
+    with pytest.raises(TypeError, match=name) as raised:
+        await _next_listing_page(pager, is_async)
+    assert hint in str(raised.value)
+    assert options == original
     backend.execute_pages.assert_not_called()
     connection._CosmosClientConnection__Get.assert_not_called()
     connection._CosmosClientConnection__Post.assert_not_called()
@@ -217,7 +255,6 @@ def test_invalid_hook_rejected_without_request_rust(listing, hook):
         ("populate_query_metrics", "populateQueryMetrics"),
         ("availability_strategy", "availabilityStrategy"),
         ("no_response", "responsePayloadOnWriteDisabled"),
-        ("content_type", "contentType"),
     ],
 )
 @pytest.mark.parametrize("value", [None, False, True, "customer-value"])
@@ -228,6 +265,38 @@ def test_inapplicable_options_rejected_through_each_input_route_rust(listing, so
         listing[0].list_databases(**kwargs)
     assert kwargs == original
     requests(listing).assert_not_called()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("content_type", [None, "", "application/json", "application/vnd.alpha-bank+json"])
+async def test_content_type_forwarded_without_mutating_options_rust(listing, source, content_type):
+    client, _, backend, is_async, legacy = listing
+    kwargs = {"content_type": content_type} if source == "keyword" else {source: {"contentType": content_type}}
+    original = deepcopy(kwargs)
+    assert await _next_listing_page(client.list_databases(**kwargs).by_page(), is_async)
+    if legacy:
+        actual = CaseInsensitiveDict(requests(listing).call_args.args[2]).get("content-type")
+    else:
+        actual = backend.prepared.settings.resource.content_type
+    assert actual == (content_type or None)
+    assert kwargs == original
+
+
+@pytest.mark.asyncio
+async def test_named_content_type_overrides_dictionary_and_header_rust(listing):
+    client, _, backend, is_async, legacy = listing
+    options = {"contentType": "text/plain", "initialHeaders": {"Content-Type": "application/xml"}}
+    original = deepcopy(options)
+    pager = client.list_databases(content_type="application/json", request_options=options).by_page()
+    options["contentType"] = "application/octet-stream"
+    assert await _next_listing_page(pager, is_async)
+    if legacy:
+        assert CaseInsensitiveDict(requests(listing).call_args.args[2])["content-type"] == "application/json"
+    else:
+        assert backend.prepared.settings.resource.content_type == "application/json"
+        assert "content-type" not in backend.prepared.headers
+    assert options == {**original, "contentType": "application/octet-stream"}
 
 
 @pytest.mark.parametrize("source", ["initial_headers", "request_options", "feed_options", "raw_option", "default"])

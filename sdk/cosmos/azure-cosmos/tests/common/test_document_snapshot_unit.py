@@ -82,22 +82,13 @@ def arguments(operation, body):
     ],
 )
 def test_encoding_matches_core_python_rust(operation, compact, text):
-    """The bytes are identical to the older encoder's, for text and numbers that are easy
-    to get wrong.
+    """Compare prepared request bytes with the legacy encoder in both encoding modes.
 
-    Same byte for byte, not merely the same meaning. Two encoders that agree on meaning
-    can still disagree on spacing or on which characters get escaped, and a customer
-    comparing stored items written before and after the change would see the difference.
+    Byte equality catches spacing and escaping differences that decoded JSON
+    equality could miss. Cases include Unicode text, control characters,
+    paired and unpaired surrogates, and numeric edge cases.
 
-    The text covers nothing, plain text, an accented letter, characters outside the Latin
-    alphabet, an emoji, a letter with a combining mark, every character JSON has to
-    escape, and several lone halves of a surrogate pair. That last group is the awkward
-    one: they are not valid text on their own, and an encoder that tries to repair them
-    silently changes the customer's data.
-
-    The numbers alongside are equally awkward on purpose: negative zero, an integer far
-    past what a double can hold, the smallest number that is not zero, and a very large
-    one. Both escaping settings are run.
+    This checks local serialization, not how the service backend stores items.
     """
     body = {
         "id": "item",
@@ -144,19 +135,14 @@ def test_encoding_matches_core_python_rust(operation, compact, text):
     ],
 )
 def test_encoding_has_independent_golden_bytes_rust(text, escaped, compact):
-    """The same cases again, against bytes written out by hand rather than a second encoder.
+    """Check exact encoded bytes against literal expectations in both encoding modes.
 
-    The test above compares one encoder to another. If both were changed together the
-    comparison would still pass while every stored item changed. These bytes were written
-    down once and are not produced by any code, so they catch exactly that.
+    Independent expectations catch request-byte changes even if the new and
+    legacy encoders change together. Valid surrogate pairs use UTF-8 in compact
+    mode; unpaired surrogates remain escaped in both modes.
 
-    Both settings are listed for each case. They differ for characters that have a
-    shorter form outside the Latin alphabet, and are the same for the broken surrogate
-    halves, which are escaped either way because there is no valid shorter form to use.
-
-    The last case is a string that merely looks like an escape sequence. It must come out
-    with its backslash doubled, as ordinary text, and not be read as the character it
-    resembles.
+    Text resembling an escape sequence retains its literal backslash through
+    JSON escaping. No service storage behavior is exercised.
     """
     body = {"id": "item", "value": text}
     for enabled, expected in ((False, escaped), (True, compact)):
@@ -337,7 +323,7 @@ def test_generated_id_is_resolved_once_without_mutating_a_mapping_rust(monkeypat
 
 
 @pytest.mark.parametrize("operation", ("upsert_item", "replace_item"))
-@pytest.mark.parametrize("body_id", [None, "", False, 42, "body-id"])
+@pytest.mark.parametrize("body_id", [None, "", False, "body-id"])
 def test_upsert_and_replace_do_not_generate_or_rewrite_ids_rust(
     operation, body_id, monkeypatch
 ):
@@ -348,8 +334,8 @@ def test_upsert_and_replace_do_not_generate_or_rewrite_ids_rust(
     somewhere the caller did not intend. The request asks for generation anyway and the
     generator is replaced with one that fails if called.
 
-    The encoded bytes must read back as exactly the body that was passed in, whatever was
-    in the identifier field -- absent, empty, the word false, a number, or real text. The
+    The encoded bytes must read back as exactly the body that was passed in, with
+    the identifier field set to None, empty text, False, or nonempty text. The
     identifier reported alongside is only set when the body held real text; everything
     else reports nothing rather than being repaired into something.
     """
@@ -364,6 +350,20 @@ def test_upsert_and_replace_do_not_generate_or_rewrite_ids_rust(
     assert document.body_id == (
         body_id if isinstance(body_id, str) and body_id else None
     )
+    forbidden.assert_not_called()
+
+
+@pytest.mark.parametrize("operation", ("upsert_item", "replace_item"))
+def test_upsert_and_replace_reject_numeric_ids_without_rewriting_rust(operation, monkeypatch):
+    """Reject a numeric ID rather than generating one or coercing it to a string."""
+    forbidden = MagicMock(side_effect=AssertionError("ID generation was called"))
+    monkeypatch.setattr("azure.cosmos._helpers._document.uuid.uuid4", forbidden)
+    body = {"id": 42}
+    call = arguments(operation, body)
+    call["enable_automatic_id_generation"] = True
+    with pytest.raises(TypeError, match="Id type must be a string"):
+        normalize_item_arguments(operation, call)
+    assert body == {"id": 42}
     forbidden.assert_not_called()
 
 

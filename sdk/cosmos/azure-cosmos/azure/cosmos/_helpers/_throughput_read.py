@@ -18,7 +18,7 @@ from ._response_parse import with_response_header_snapshot
 from ._throughput_rust_routing import offer_response_headers
 
 
-def prepare_read_kwargs(
+def prepare_throughput_kwargs(
     kwargs: Mapping[str, Any],
     response_hook: Optional[Callable[..., None]],
 ) -> dict[str, Any]:
@@ -54,7 +54,7 @@ def read_routing(
     return routing
 
 
-def legacy_read_kwargs(
+def legacy_throughput_kwargs(
     options: dict[str, Any], transport_kwargs: Mapping[str, Any], original_kwargs: Mapping[str, Any],
     *, deadline: Optional[float] = None,
 ) -> dict[str, Any]:

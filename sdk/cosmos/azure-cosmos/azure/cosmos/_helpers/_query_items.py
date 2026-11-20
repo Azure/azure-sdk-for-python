@@ -292,7 +292,7 @@ class QueryPageState(FeedPageState):
             error.continuation_token = self.last_delivered_continuation_token
         super().invalidate(error)
 
-    def check(self) -> None:
+    def acquire_fetch_lock(self) -> None:
         if self.failed:
             raise RuntimeError("Query pager failed; create a new pager from the last delivered bookmark.")
         if not self.lock.acquire(blocking=False):
@@ -355,7 +355,7 @@ class QueryPageIterator(Iterator[Iterator[Any]]):
         state = self.state
         if state.done:
             raise StopIteration
-        state.check()
+        state.acquire_fetch_lock()
         try:
             deadline = state.config.deadline()
             state.begin()

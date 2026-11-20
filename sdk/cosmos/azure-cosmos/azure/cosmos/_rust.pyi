@@ -124,9 +124,11 @@ def query_items_async(
 
 def get_container_metadata(
     driver_handle: _DriverHandle, container_link: str, *, timeout_seconds: float | None = None,
+    include_attempts: bool = False,
 ) -> tuple[Any, ...]: ...
 def get_container_metadata_async(
     driver_handle: _DriverHandle, container_link: str, *, timeout_seconds: float | None = None,
+    include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]: ...
 
 # Point operations that can also report fault-injection diagnostics.

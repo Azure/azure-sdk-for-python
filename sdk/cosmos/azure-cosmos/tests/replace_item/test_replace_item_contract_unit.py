@@ -34,8 +34,9 @@ def replacement(request, monkeypatch):
         headers={"etag": '"new"', "x-ms-request-charge": "5.25"},
     )
 
-    def initialize():
+    def initialize(*, deadline=None):
         clock.now += context.initialization_delay
+        _operation_deadline.remaining_timeout(deadline)
         return "replacement-test"
 
     def replace(_handle, prepared, *, timeout_seconds=None):

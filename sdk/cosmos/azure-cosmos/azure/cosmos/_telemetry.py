@@ -14,7 +14,7 @@ from contextlib import contextmanager
 from contextvars import ContextVar
 from copy import deepcopy
 from dataclasses import dataclass, field
-from functools import wraps
+from functools import lru_cache, wraps
 import logging
 import sys
 from threading import Lock, get_ident
@@ -57,7 +57,18 @@ class BindingAlternatives:
             raise ValueError("Binding alternatives require distinct paths")
 
 
-_BindingOperation = str | tuple[str, ...] | BindingAlternatives
+@dataclass(frozen=True)
+class RepeatedBinding:
+    """One binding operation that a call runs once per page, for an unknown number of pages."""
+
+    operation: str
+
+    def __post_init__(self) -> None:
+        if not self.operation:
+            raise ValueError("A repeated binding requires an operation name")
+
+
+_BindingOperation = str | tuple[str, ...] | BindingAlternatives | RepeatedBinding
 
 
 def _report(message: str, level: int = logging.WARNING) -> None:
@@ -90,13 +101,6 @@ class _Attempt:  # pylint: disable=too-many-instance-attributes
     operation_name: Optional[str] = None
 
 
-def _bounded(values: tuple[str, ...], limit: Optional[int]) -> tuple[str, ...]:
-    if limit is None or len(values) <= limit:
-        return values
-    head = (limit + 1) // 2
-    tail = limit - head
-    return values[:head] + (values[-tail:] if tail else ())
-
 
 @dataclass(frozen=True)
 class _Summary:  # pylint: disable=too-many-instance-attributes
@@ -116,13 +120,11 @@ class _Summary:  # pylint: disable=too-many-instance-attributes
     responded_regions: tuple[str, ...] = ()
     responded_regions_total: int = 0
 
-    def merge(self, later: _Summary, limit: Optional[int] = None) -> _Summary:
+    def merge(self, later: _Summary) -> _Summary:
         """Combine ordered contributions; the later step supplies the final status.
 
         :param later: The next contribution's summary.
         :type later: _Summary
-        :param limit: Optional bound on region histories.
-        :type limit: int or None
         :return: The combined summary.
         :rtype: _Summary
         """
@@ -138,9 +140,9 @@ class _Summary:  # pylint: disable=too-many-instance-attributes
             hedging_started=self.hedging_started or later.hedging_started,
             hedge_region=hedge.hedge_region,
             hedge_terminal_state=hedge.hedge_terminal_state,
-            requested_regions=_bounded(self.requested_regions + later.requested_regions, limit),
+            requested_regions=self.requested_regions + later.requested_regions,
             requested_regions_total=self.requested_regions_total + later.requested_regions_total,
-            responded_regions=_bounded(self.responded_regions + later.responded_regions, limit),
+            responded_regions=self.responded_regions + later.responded_regions,
             responded_regions_total=self.responded_regions_total + later.responded_regions_total,
         )
 
@@ -175,7 +177,10 @@ class CompletionHandler:
 
 @dataclass(frozen=True)
 class RecordingOptions:
-    """Snapshot recording configuration, never execution context or logger objects."""
+    """Snapshot of one call's recording options: tracing options and attributes, logger, and logging flag.
+
+    It never holds execution context.
+    """
 
     kwargs: Mapping[str, Any]
 
@@ -244,25 +249,22 @@ class _AttemptSpanRecorder:
                 namespace=self.namespace,
                 collection=self.collection,
             )
-            summary = completion.diagnostics.summary if completion.diagnostics is not None else None
-            if completion.outcome == "error" and summary is not None and summary.failed:
-                _pin_error_type(parent, "_OTHER" if summary.status_code is None else str(summary.status_code))
 
 
 @dataclass
 class _DiagnosticCollector:
-    retained_limit: Optional[int] = None
     contribution_limit: Optional[int] = None
     closed: bool = False
     diagnostics: Optional[_Diagnostics] = None
     contributions: int = 0
     received: int = 0
     incomplete_reasons: set[str] = field(default_factory=set)
+    # Attempts are kept in a list until close. A read_items call adds one
+    # result per page, and adding to a tuple would copy every earlier attempt.
+    _attempts: list[_Attempt] = field(default_factory=list, repr=False)
     _lock: LockType = field(default_factory=Lock, repr=False)
 
     def __post_init__(self) -> None:
-        if self.retained_limit is not None:
-            _integer(self.retained_limit)
         if self.contribution_limit is not None:
             _integer(self.contribution_limit)
 
@@ -276,12 +278,15 @@ class _DiagnosticCollector:
             allowed = not self.closed and (
                 self.contributions < self.contribution_limit
                 if self.contribution_limit is not None
-                else self.contributions == 0 or self.retained_limit is not None
+                else self.contributions == 0
             )
-            if not self.closed:
-                self.contributions += 1
             if allowed:
+                self.contributions += 1
                 return _Contribution(self)
+            # A rejected extra call drops data, so mark the totals partial with
+            # its own reason instead of counting it as a missing result.
+            if not self.closed:
+                self.incomplete_reasons.add("excess_contribution")
         _report("Rust telemetry rejected a closed, excess, or unbounded additional contribution")
         return None
 
@@ -308,19 +313,14 @@ class _DiagnosticCollector:
                 if diagnostics is not None:
                     self.received += 1
                     previous = self.diagnostics
-                    attempts = (previous.attempts if previous else ()) + diagnostics.attempts
-                    if self.retained_limit is not None and len(attempts) > self.retained_limit:
-                        attempts = tuple(sorted(attempts, key=lambda attempt: attempt.start_ns))
-                        head = (self.retained_limit + 1) // 2
-                        tail = self.retained_limit - head
-                        attempts = attempts[:head] + (attempts[-tail:] if tail else ())
+                    self._attempts.extend(diagnostics.attempts)
                     if previous is not None and previous.summary is not None and diagnostics.summary is not None:
-                        summary = previous.summary.merge(diagnostics.summary, self.retained_limit)
+                        summary = previous.summary.merge(diagnostics.summary)
                     else:
                         summary = diagnostics.summary or (previous.summary if previous else None)
                     self.diagnostics = _Diagnostics(
                         (previous.request_count if previous else 0) + diagnostics.request_count,
-                        attempts,
+                        (),
                         complete=diagnostics.complete and (previous is None or previous.complete),
                         incomplete_reasons=tuple(
                             sorted(
@@ -341,15 +341,17 @@ class _DiagnosticCollector:
             diagnostics = self.diagnostics
             if self.received != self.contributions:
                 self.incomplete_reasons.add("missing_contribution")
-            if diagnostics is not None and self.incomplete_reasons:
+            if diagnostics is not None:
+                incomplete = bool(self.incomplete_reasons)
                 diagnostics = _Diagnostics(
                     diagnostics.request_count,
-                    diagnostics.attempts,
-                    complete=False,
+                    tuple(self._attempts),
+                    complete=diagnostics.complete and not incomplete,
                     incomplete_reasons=tuple(sorted(set(diagnostics.incomplete_reasons) | self.incomplete_reasons)),
                     summary=diagnostics.summary,
                 )
             self.diagnostics = None
+            self._attempts = []
             return True, diagnostics
 
 
@@ -489,6 +491,55 @@ class _Contribution:
             payload = None
             _report("Rust telemetry could not read error diagnostics; operation error is unchanged")
         self._complete(payload)
+
+    def setup_error(self, error: BaseException) -> None:
+        """Retain a driver-setup failure's diagnostics for one call only.
+
+        Calls that wait for the same driver setup receive the same error
+        object, so only the first call takes the attempt payload. Later calls
+        record ``diagnostics_unavailable`` instead of counting the setup
+        requests again. The payload is on the error, or on its cause when the
+        adapter converted a binding error.
+
+        :param error: The error raised while acquiring the driver.
+        :type error: BaseException
+        """
+        payload = None
+        try:
+            for source in (error, error.__cause__):
+                if source is not None:
+                    # dict.pop is atomic, so two calls cannot both take the payload.
+                    payload = vars(source).pop("_cosmos_attempt_payload", None)
+                    if payload is not None:
+                        break
+        except Exception:  # pylint: disable=broad-except
+            payload = None
+            _report("Rust telemetry could not read error diagnostics; operation error is unchanged")
+        self._complete(payload)
+
+
+def record_failed_lookup(operation: Optional[_Operation], error: BaseException, *, setup: bool = False) -> None:
+    """Record a failed container lookup or driver setup as the call's binding result.
+
+    Reserve the result only on failure. After a successful lookup, the binding
+    call that follows delivers the result. After a failed lookup, that binding
+    call never runs.
+
+    :param operation: The call's operation state, or None when not recording.
+    :type operation: _Operation or None
+    :param error: The error raised by the lookup.
+    :type error: BaseException
+    :keyword bool setup: Whether the error came from acquiring the driver.
+    """
+    if operation is None:
+        return
+    contribution = operation.begin_contribution()
+    if contribution is None:
+        return
+    if setup:
+        contribution.setup_error(error)
+    else:
+        contribution.error(error)
 
 
 _OPERATION: ContextVar[Optional[_Operation]] = ContextVar("cosmos_operation_telemetry", default=None)
@@ -698,11 +749,29 @@ def _record_operation() -> Iterator[None]:
 
 
 class _LocalOperationError(Exception):
-    """A tracing-only error; the original exception is restored outside the SDK span."""
+    """A tracing-only error; the original exception is restored outside the SDK span.
+
+    It hides the original message, which may contain session tokens, from the span.
+    """
 
     def __init__(self, error: Exception) -> None:
         super().__init__(f"Local SDK operation failed ({type(error).__name__})")
         self.original = error
+
+
+@lru_cache(maxsize=None)
+def _local_error_type(error_type: type[Exception]) -> type[_LocalOperationError]:
+    # Azure Core builds the span's error.type from the exception class's module and
+    # qualified name. Copy them so error.type names the original error, not this wrapper.
+    return type(
+        error_type.__name__,
+        (_LocalOperationError,),
+        {"__module__": error_type.__module__, "__qualname__": error_type.__qualname__},
+    )
+
+
+def _hide_local_error(error: Exception) -> _LocalOperationError:
+    return _local_error_type(type(error))(error)
 
 
 def trace_operation(
@@ -716,8 +785,9 @@ def trace_operation(
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
         BindingAlternatives narrows permitted paths with each actual binding call.
+        RepeatedBinding allows one operation once per page, for any number of pages.
         An empty tuple records local execution without accepting binding contributions.
-    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
+    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives or RepeatedBinding
     :keyword str operation_name: Completion identity for a deferred callback; defaults to the method name.
     :keyword str name_of_span: Explicit span name for deferred execution; defaults to the qualified method name.
     :return: A decorator with operation-scoped diagnostic collection.
@@ -732,7 +802,7 @@ def trace_operation(
                     return func(*args, **kwargs)
             except Exception as error:
                 if binding_operation == ():
-                    raise _LocalOperationError(error) from None
+                    raise _hide_local_error(error) from None
                 raise
 
         traced = distributed_trace(name_of_span=name_of_span)(record)
@@ -767,8 +837,9 @@ def trace_operation_async(
     :keyword binding_operation: One binding operation, or the ordered steps of a bounded
         composed call. A tuple allows a prefix of that sequence, not arbitrary repeated calls.
         BindingAlternatives narrows permitted paths with each actual binding call.
+        RepeatedBinding allows one operation once per page, for any number of pages.
         An empty tuple records local execution without accepting binding contributions.
-    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives
+    :paramtype binding_operation: str or tuple[str, ...] or BindingAlternatives or RepeatedBinding
     :keyword str operation_name: Completion identity for a deferred callback; defaults to the method name.
     :keyword str name_of_span: Explicit span name for deferred execution; defaults to the qualified method name.
     :return: A decorator with operation-scoped diagnostic collection.
@@ -783,7 +854,7 @@ def trace_operation_async(
                     return await func(*args, **kwargs)
             except Exception as error:
                 if binding_operation == ():
-                    raise _LocalOperationError(error) from None
+                    raise _hide_local_error(error) from None
                 raise
 
         traced = distributed_trace_async(name_of_span=name_of_span)(record)
@@ -837,6 +908,11 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
     elif isinstance(expected, tuple):
         index = state.collector.contributions
         matched = index < len(expected) and expected[index] == operation
+    elif isinstance(expected, RepeatedBinding):
+        matched = expected.operation == operation
+        if matched:
+            # Allow one more result: the binding call about to run.
+            state.collector.contribution_limit = state.collector.contributions + 1
     else:
         matched = expected == operation
     if not matched:
@@ -846,13 +922,43 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
     return state
 
 
-def log_response_diagnostics(backend: object, operation: str, response: BackendResponse) -> None:
-    """Log only a supplied summary belonging to the active native call or page."""
+def _logging_operation(backend: object) -> Optional[_Operation]:
+    """Return the active operation only when this backend call belongs to it."""
     state = _OPERATION.get()
     if state is None or state.closed or state.backend is not backend or not state.owns_execution():
+        return None
+    return state
+
+
+def log_response_diagnostics(backend: object, operation: str, response: BackendResponse) -> None:
+    """Log only a supplied summary belonging to the active native call or page."""
+    state = _logging_operation(backend)
+    if state is None:
         return
     try:
         state.diagnostic_logging.record(operation, response)
+    except Exception:  # pylint: disable=broad-except
+        _report("Rust diagnostic logging failed; operation result is unchanged")
+
+
+def log_error_diagnostics(backend: object, error: BaseException, operation: Optional[str] = None) -> None:
+    """Log the summary inside a failure that never became a returned response.
+
+    Examples are a container-lookup 404 and a driver-setup 401. Without an
+    operation name, use the active operation's name. Errors that wrap no
+    service response, such as a client timeout, are not logged.
+    """
+    # pylint: disable-next=import-outside-toplevel
+    from ._helpers._exceptions import backend_response_from_exception
+
+    state = _logging_operation(backend)
+    if state is None:
+        return
+    response = backend_response_from_exception(error)
+    if response is None:
+        return
+    try:
+        state.diagnostic_logging.record(operation or state.operation, response)
     except Exception:  # pylint: disable=broad-except
         _report("Rust diagnostic logging failed; operation result is unchanged")
 
@@ -1051,29 +1157,6 @@ def _set_summary(parent: Span, summary: _Summary, attempts: tuple[_Attempt, ...]
         parent.set_attribute("server.address", server)
     if summary.machine_id is not None:
         parent.set_attribute("azure.cosmosdb.machine_id", summary.machine_id)
-
-
-def _pin_error_type(span: Span, value: str) -> None:
-    """Record the Rust SDK's status-based ``error.type`` on the operation span.
-
-    Azure Core writes the exception class to ``error.type`` after this callback and
-    before it ends the span; this span instance keeps the driver status instead.
-
-    :param span: Owned public operation span.
-    :type span: ~opentelemetry.trace.Span
-    :param str value: The failing status code, or ``_OTHER`` when none was reported.
-    """
-    try:
-        span.set_attribute("error.type", value)
-        original = span.set_attribute
-
-        def set_attribute(key: str, attribute: Any) -> None:
-            if key != "error.type":
-                original(key, attribute)
-
-        span.set_attribute = set_attribute  # type: ignore[method-assign]
-    except Exception:  # pylint: disable=broad-except
-        _report("Rust telemetry could not record the operation error type; operation result is unchanged")
 
 
 def _attempt_attributes(attempt: _Attempt, operation: Optional[str]) -> dict[str, Any]:

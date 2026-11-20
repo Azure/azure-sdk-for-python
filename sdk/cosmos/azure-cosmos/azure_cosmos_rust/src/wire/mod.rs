@@ -34,7 +34,7 @@ pub use errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryF
 
 // Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
 pub(crate) use container_metadata::{
-    get_container_metadata, get_container_metadata_async, metadata_error,
+    driver_setup_error, get_container_metadata, get_container_metadata_async,
 };
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
@@ -132,7 +132,6 @@ mod containers;
 mod databases;
 mod feed_range;
 pub(crate) mod item_feed;
-mod legacy_change_feed;
 mod items;
 pub(crate) mod batch;
 mod offers;

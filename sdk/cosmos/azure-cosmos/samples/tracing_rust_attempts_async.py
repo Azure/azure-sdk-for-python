@@ -238,8 +238,8 @@ async def run_proof(exporter, *, conflict=False, read=False, not_found=False, az
             expected_status = trace.StatusCode.ERROR if failed else trace.StatusCode.UNSET
             if operation.status.status_code is not expected_status:
                 raise AssertionError("The operation span status differs from the public outcome")
-            if failed and operation.attributes.get("error.type") != str(expected_driver_status):
-                raise AssertionError("The operation error type differs from the driver status")
+            if failed and operation.attributes.get("db.response.status_code") != str(expected_driver_status):
+                raise AssertionError("The operation status code differs from the driver status")
             complete = operation.attributes.get("azure.cosmosdb.operation.diagnostics_complete")
             if not isinstance(complete, bool):
                 raise AssertionError("The operation span has no request diagnostics")

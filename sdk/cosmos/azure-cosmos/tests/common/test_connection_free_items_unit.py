@@ -124,6 +124,8 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
     thing on each.
     """
 
+    name = "rust"
+
     async def get_container_metadata(self, link):
         """Await-able container information lookup, recorded like the sync one."""
         return Backend.get_container_metadata(self, link)
@@ -212,21 +214,14 @@ def invoke(helper, op, **kwargs):
                          "x-ms-cosmos-throughput-bucket": "7"}}, "High", "7"),
 ])
 def test_independent_items_inherit_client_defaults_rust(async_mode, op, kwargs, priority, bucket):
-    """Priority and throughput bucket set on the client apply to every item call, and a
-    per-call value overrides them.
+    """Check priority and bucket selection for all six sync and async item helpers.
 
-    Four combinations run against all six operations on both clients: nothing
-    given, both given, both given as nothing, and both written directly as
-    headers.
+    Omitted values use client defaults; explicit High and bucket 5 override them.
+    Priority None and bucket zero also use defaults. Matching explicit headers
+    retain their values instead of receiving competing defaults.
 
-    The third is the one that needs care. A priority of nothing and a bucket of
-    zero both look like "not supplied" to a simple check, so the client defaults
-    correctly apply -- but zero is also a value someone might mean, and the
-    behavior should be deliberate rather than accidental.
-
-    These settings decide what the account throttles first. Losing them means a
-    customer's background work competes with their customer-facing traffic,
-    which is visible only as latency under load.
+    The fake backend captures prepared requests. This test does not establish
+    service-backend throttling or latency behavior.
     """
     backend = AsyncBackend() if async_mode else Backend()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(
@@ -252,8 +247,8 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monke
     does not.
 
     For each operation the full argument list is pinned. Writes get the prepared
-    body and are told not to extract the partition key again, since it was
-    already resolved; create additionally gets its indexing instruction; patch
+    body and are told not to extract the partition key because this test
+    supplies it explicitly; create additionally gets its indexing instruction; patch
     gets its changes as prepared bytes. Operations that name an item get the id.
 
     Passing an argument an operation does not take would fail loudly, but
@@ -294,7 +289,7 @@ def test_execute_item_builder_maps_arguments_and_returns_only_request_rust(monke
         expected["item_id"] = "order-42"
     if op == "create_item":
         expected.update(indexing_directive=None)
-    if op in ("read_item", "replace_item"):
+    if op in ("read_item", "replace_item", "delete_item", "patch_item"):
         expected["item_self_link"] = None
     if op == "patch_item":
         expected.update(body_bytes=args["body_bytes"])
@@ -340,31 +335,28 @@ def test_standalone_item_execution_rust(async_mode, op):
     CosmosResourceNotFoundError(status_code=404, message="missing"), AttributeError("lookup failed"),
 ])
 def test_native_preparation_failure_propagates_without_a_python_metadata_call_rust(async_mode, metadata):
-    """When the driver fails to resolve the container, the error comes straight back and
-    Python does not go looking itself.
+    """Propagate a fake backend's preparation error without invoking the success hook.
 
-    Five failures are covered, from malformed information to a missing container
-    to an unexpected internal error. Each surfaces unchanged, and exactly one
-    request was attempted.
-
-    Falling back to a lookup in Python on failure is the tempting repair and the
-    wrong one. It would turn one failed call into two, double the cost of every
-    outage, and replace a precise error with whatever the second attempt
-    produced.
+    Check the exact exception object and a single dispatch, with no Python
+    metadata lookup. Native container resolution is not executed by this test.
     """
     backend = AsyncBackend() if async_mode else Backend()
     backend.metadata = metadata
     helper = (AsyncItemHelper if async_mode else ItemHelper)(backend)
-    with pytest.raises((BindingProtocolError, CosmosResourceNotFoundError, AttributeError)):
-        invoke(helper, "create_item")
+    hook = MagicMock()
+    with pytest.raises(type(metadata)) as raised:
+        invoke(helper, "create_item", response_hook=hook)
+    assert raised.value is metadata
+    hook.assert_not_called()
     assert len(backend.events) == 1
     assert backend.events[0].op == "create_item"
 
 
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_options_defaults_errors_and_hooks_rust(async_mode):
-    """Check no-response override, listed patch rejections, and synthetic 404/304 hooks.
+    """Check no-response override, the patch filter, listed patch rejections, and synthetic 404/304 hooks.
 
+    A patch filter_predicate is sent in the patch body as ``condition``.
     The unsupported condition here is If-None-Match, not every access condition.
     Rejected calls leave the fake backend's event list empty.
     """
@@ -375,8 +367,14 @@ def test_options_defaults_errors_and_hooks_rust(async_mode):
     invoke(helper, "create_item", no_response=False)
     assert settings_options(backend.events[-1])["responsePayloadOnWriteDisabled"] is False
     backend.events.clear()
-    for kwargs in ({"filter_predicate": "FROM c WHERE c.x = 1"},
-                   {"retry_write": 1},
+    invoke(helper, "patch_item", filter_predicate="FROM c WHERE c.x = 1")
+    (patch,) = backend.events
+    assert json.loads(patch.body_bytes) == {
+        "operations": [{"op": "add", "path": "/a", "value": 1}],
+        "condition": "FROM c WHERE c.x = 1",
+    }
+    backend.events.clear()
+    for kwargs in ({"retry_write": 1},
                    {"initial_headers": {"User-Agent": "caller"}},
                    {"access_condition": {"type": "IfNoneMatch", "condition": '"e"'}}):
         with pytest.raises(NotImplementedError):

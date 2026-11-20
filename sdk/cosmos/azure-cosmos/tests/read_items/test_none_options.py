@@ -8,16 +8,17 @@ import pytest
 
 from azure.cosmos import PartitionKey
 from config.clients import create_data_client, create_data_client_async
-from read_items.test_fault_recovery import (
+from read_items.test_fault_recovery import (  # pylint: disable=unused-import
+    legacy_fault_data_database,
     legacy_fault_database,
-)  # pylint: disable=unused-import
+)
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 async def test_container_read_items_none_options_rust(
-    legacy_fault_database, asynchronous
+    legacy_fault_database, legacy_fault_data_database, asynchronous
 ):
     # Source: tests/test_none_options.py::TestNoneOptions.test_container_read_items_none_options
     # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_read_items_none_options_async
@@ -26,7 +27,7 @@ async def test_container_read_items_none_options_rust(
     )
     try:
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}
-        owned.create_item(item)
+        legacy_fault_data_database.get_container_client(owned.id).create_item(item)
         options = dict(
             consistency_level=None,
             session_token=None,

@@ -101,7 +101,7 @@ def test_retired_query_markers_cannot_validate_against_the_replacement_rust(monk
         encoding="utf-8",
     )
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [replacement])
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: [replacement])
     check = enforcer.LegacyMigrationEnforcerTests("test_every_copy_keeps_original_lane_markers_rust")
     with pytest.raises(AssertionError, match="lane markers differ"):
         check.test_every_copy_keeps_original_lane_markers_rust()
@@ -228,7 +228,7 @@ def test_query_retirement_does_not_hide_unknown_or_broken_sources_rust(monkeypat
         encoding="utf-8",
     )
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [copied])
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: [copied])
     check = enforcer.LegacyMigrationEnforcerTests("test_every_source_reference_resolves_rust")
     with pytest.raises(AssertionError, match="lineage no longer resolves"):
         check.test_every_source_reference_resolves_rust()

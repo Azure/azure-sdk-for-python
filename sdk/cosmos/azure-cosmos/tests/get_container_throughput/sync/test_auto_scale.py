@@ -14,7 +14,7 @@ from common.throughput_fixtures import owned_database
 from azure.cosmos import CosmosClient, PartitionKey, ThroughputProperties, exceptions
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestAutoScale(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

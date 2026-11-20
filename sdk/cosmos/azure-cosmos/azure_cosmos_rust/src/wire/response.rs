@@ -2,7 +2,8 @@
 // Licensed under the MIT License.
 
 use pyo3::exceptions::{
-    PyAttributeError, PyRuntimeError, PyRuntimeWarning, PyTimeoutError, PyValueError,
+    PyAttributeError, PyBaseException, PyRuntimeError, PyRuntimeWarning, PyTimeoutError,
+    PyValueError,
 };
 use pyo3::prelude::*;
 use pyo3::types::{PyBytes, PyDict, PyTuple};
@@ -62,7 +63,7 @@ pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
     }
 }
 
-/// Opt-in POC envelope: (unchanged response tuple, attempt payload).
+/// Opt-in telemetry envelope: (unchanged response tuple, attempt payload).
 /// A response-less driver exception carries the same payload privately.
 #[derive(Clone, Copy)]
 pub(super) enum AttemptCoverage {
@@ -162,7 +163,12 @@ pub(super) fn with_error_attempt_diagnostics(
         || error.is_instance_of::<PyTimeoutError>(py)
         || error.is_instance_of::<PyValueError>(py)
         || error.is_instance_of::<ClientAuthenticationError>(py)
-        || error.is_instance_of::<_UnsupportedQueryFeatureError>(py))
+        || error.is_instance_of::<_UnsupportedQueryFeatureError>(py)
+        || exception_dict(py, &error)
+            .and_then(|attributes| attributes.get_item("_cosmos_credential_error"))
+            .is_ok_and(|marker| {
+                marker.is_some_and(|value| value.extract::<bool>().is_ok_and(|v| v))
+            }))
         && !payload.is_none(py)
     {
         attach_attempt_payload(py, &error, payload);
@@ -177,7 +183,7 @@ fn attach_attempt_payload(py: Python<'_>, error: &PyErr, payload: PyObject) {
         .is_err()
     {
         const MESSAGE: &str =
-            "Rust attempt POC could not attach diagnostics; operation error is unchanged";
+            "Rust telemetry could not attach diagnostics; operation error is unchanged";
         if PyErr::warn_bound(py, &py.get_type_bound::<PyRuntimeWarning>(), MESSAGE, 1).is_err() {
             // Warning filters or hooks must not replace the original operation error.
             PyRuntimeWarning::new_err(MESSAGE).write_unraisable_bound(py, None);
@@ -967,7 +973,16 @@ fn record_diagnostics_for_responseless(error: &CosmosError) {
     }
 }
 
-fn restore_authentication_exception(py: Python<'_>, error: &CosmosError) -> PyResult<()> {
+fn exception_dict<'py>(py: Python<'py>, error: &PyErr) -> PyResult<Bound<'py, PyDict>> {
+    Ok(py
+        .get_type_bound::<PyBaseException>()
+        .getattr("__dict__")?
+        .get_item("__dict__")?
+        .call_method1("__get__", (error.value_bound(py),))?
+        .downcast_into::<PyDict>()?)
+}
+
+fn restore_credential_exception(py: Python<'_>, error: &CosmosError) -> PyResult<()> {
     if error.response().is_some()
         || error.status() != status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED
     {
@@ -977,11 +992,21 @@ fn restore_authentication_exception(py: Python<'_>, error: &CosmosError) -> PyRe
     // Match the driver's bound on source-chain walks, including cyclic sources.
     for _ in 0..64 {
         if let Some(original) = source.downcast_ref::<PyErr>() {
-            if original.is_instance_of::<ClientAuthenticationError>(py) {
-                record_diagnostics_for_responseless(error);
-                return Err(original.clone_ref(py));
+            // Preserve identity, including subclasses that override attribute access.
+            // Python must distinguish credential timeouts from operation deadlines.
+            if exception_dict(py, original)
+                .and_then(|attributes| attributes.set_item("_cosmos_credential_error", true))
+                .is_err()
+            {
+                const MESSAGE: &str = "Rust binding could not mark credential error provenance";
+                if PyErr::warn_bound(py, &py.get_type_bound::<PyRuntimeWarning>(), MESSAGE, 1)
+                    .is_err()
+                {
+                    PyRuntimeWarning::new_err(MESSAGE).write_unraisable_bound(py, None);
+                }
             }
-            return Ok(());
+            record_diagnostics_for_responseless(error);
+            return Err(original.clone_ref(py));
         }
         let Some(next) = source.source() else {
             break;
@@ -998,7 +1023,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
-    restore_authentication_exception(py, error)?;
+    restore_credential_exception(py, error)?;
     let response = match error.response() {
         Some(r) => r,
         None => return synthetic_terminal_error_tuple(py, error),
@@ -1027,7 +1052,7 @@ fn backend_response_tuple_from_cosmos_error_feed<'py>(
     py: Python<'py>,
     error: &CosmosError,
 ) -> PyResult<Option<Bound<'py, PyTuple>>> {
-    restore_authentication_exception(py, error)?;
+    restore_credential_exception(py, error)?;
     let response = match error.response() {
         Some(r) => r,
         None => return synthetic_terminal_error_tuple(py, error),
@@ -1158,16 +1183,23 @@ pub(crate) mod tests {
     use std::sync::atomic::Ordering;
 
     #[tokio::test]
-    async fn credential_authentication_errors_preserve_python_identity_across_response_paths() {
+    async fn credential_errors_preserve_python_identity_across_response_paths() {
         crate::test_support::prepare_python();
         let (_, _, conflict) = create_read_and_conflict().await;
         let diagnostics = conflict.diagnostics().unwrap();
         Python::with_gil(|py| {
             let exceptions = py.import_bound("azure.core.exceptions").unwrap();
-            for path in 0..8 {
-                let original = exceptions
-                    .getattr("ClientAuthenticationError")
-                    .unwrap()
+            let error_types = [
+                exceptions.getattr("ClientAuthenticationError").unwrap(),
+                py.get_type_bound::<PyValueError>().into_any(),
+                py.get_type_bound::<PyTimeoutError>().into_any(),
+                py.get_type_bound::<pyo3::exceptions::PyRuntimeError>()
+                    .into_any(),
+            ];
+            for (path, error_type) in
+                (0..8).flat_map(|path| error_types.iter().map(move |error_type| (path, error_type)))
+            {
+                let original = error_type
                     .call1(("AADSTS7000215: offline authentication failure",))
                     .unwrap();
                 let credential_error = azure_core::error::Error::new(
@@ -1191,13 +1223,20 @@ pub(crate) mod tests {
                         py,
                         Err(super::FeedRangeFromPartitionKeyError::Cosmos(error)),
                     ),
-                    _ => Err(crate::wire::metadata_error(py, error)),
+                    _ => Err(super::super::container_metadata::metadata_error(py, error)),
                 };
                 let actual = result.expect_err("authentication must fail");
                 assert!(
                     actual.value_bound(py).is(&original),
                     "path {path} replaced the credential exception: {actual}"
                 );
+                assert!(super::exception_dict(py, &actual)
+                    .unwrap()
+                    .get_item("_cosmos_credential_error")
+                    .unwrap()
+                    .unwrap()
+                    .extract::<bool>()
+                    .unwrap());
                 if path == 0 {
                     let payload = original.getattr("_cosmos_attempt_payload").unwrap();
                     assert_eq!(
@@ -1215,7 +1254,7 @@ pub(crate) mod tests {
                 PyTimeoutError::new_err("credential timed out"),
             ] {
                 let error = CosmosError::builder()
-                    .with_status(status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED)
+                    .with_status(conflict.status())
                     .with_source(azure_core::error::Error::new(
                         azure_core::error::ErrorKind::Credential,
                         original,
@@ -1224,6 +1263,13 @@ pub(crate) mod tests {
                 let actual = tuple_from_result(py, Err(error)).unwrap_err();
                 assert!(actual.is_instance_of::<_DriverTransportError>(py));
             }
+            let error = CosmosError::builder()
+                .with_status(status_codes::AUTHENTICATION_TOKEN_ACQUISITION_FAILED)
+                .with_source(std::io::Error::other("native credential failure"))
+                .build();
+            assert!(tuple_from_result(py, Err(error))
+                .unwrap_err()
+                .is_instance_of::<_DriverTransportError>(py));
             let original = exceptions
                 .getattr("ClientAuthenticationError")
                 .unwrap()
@@ -2405,9 +2451,6 @@ def record_unraisable(args):
 
     #[test]
     fn responseless_error_without_diagnostics_does_not_increment_counters() {
-        let before_attempts = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
-        let before_retries = BINDING_RETRY_COUNT.load(Ordering::Relaxed);
-
         // A pure synthetic error with no diagnostics attached.
         let error = CosmosError::builder()
             .with_status(CosmosStatus::new(
@@ -2415,18 +2458,27 @@ def record_unraisable(args):
             ))
             .with_message("synthetic timeout")
             .build();
+        assert!(error.diagnostics().is_none());
 
-        record_diagnostics_for_responseless(&error);
-
-        assert_eq!(
-            BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed),
-            before_attempts,
-            "no-diagnostics error must not increment attempt counter"
-        );
-        assert_eq!(
-            BINDING_RETRY_COUNT.load(Ordering::Relaxed),
-            before_retries,
-            "no-diagnostics error must not increment retry counter"
+        let counts = || {
+            (
+                BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed),
+                BINDING_RETRY_COUNT.load(Ordering::Relaxed),
+            )
+        };
+        // The counters are shared by the whole process, so other tests running
+        // in parallel can change them during one call. Try a few times: a call
+        // that counts this error changes them on every try and still fails.
+        let unchanged = (0..100).any(|_| {
+            let before = counts();
+            record_diagnostics_for_responseless(&error);
+            let after = counts();
+            std::thread::yield_now();
+            before == after
+        });
+        assert!(
+            unchanged,
+            "no-diagnostics error must not increment attempt or retry counters"
         );
     }
 

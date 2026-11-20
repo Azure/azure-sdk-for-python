@@ -41,15 +41,24 @@ pub(super) fn with_timeout<T>(
     timeout: Option<Duration>,
     operation: impl Future<Output = T>,
 ) -> impl Future<Output = Result<T, Elapsed>> {
-    let deadline = timeout.map(|duration| tokio::time::Instant::now() + duration);
-    async move {
-        match deadline {
-            Some(deadline) if deadline <= tokio::time::Instant::now() => {
-                tokio::time::timeout_at(deadline, std::future::pending()).await
-            }
-            Some(deadline) => tokio::time::timeout_at(deadline, operation).await,
-            None => Ok(operation.await),
+    with_deadline(
+        timeout.map(|duration| tokio::time::Instant::now() + duration),
+        operation,
+    )
+}
+
+/// Run `operation` until `deadline`; a deadline already passed does not poll it at all.
+/// Steps of one call share one deadline, so a later step gets only the time left.
+pub(super) async fn with_deadline<T>(
+    deadline: Option<tokio::time::Instant>,
+    operation: impl Future<Output = T>,
+) -> Result<T, Elapsed> {
+    match deadline {
+        Some(deadline) if deadline <= tokio::time::Instant::now() => {
+            tokio::time::timeout_at(deadline, std::future::pending()).await
         }
+        Some(deadline) => tokio::time::timeout_at(deadline, operation).await,
+        None => Ok(operation.await),
     }
 }
 

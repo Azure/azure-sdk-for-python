@@ -152,18 +152,11 @@ def test_absent_definition_is_explicit_rust():
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
 def metadata_case(request, monkeypatch):
-    """Build a real Rust backend whose driver is replaced by a stand-in, sync and async.
+    """Use real sync/async adapters and item helpers with a fake binding.
 
-    Everything above the driver is the shipping code; only the driver's own
-    entry points are swapped. That way the engine selection, error translation,
-    and header handling under test are the real ones.
-
-    The client's record of the last response headers is seeded with values from
-    an earlier call. Both stand-in entry points assert, as they are called, that
-    this record has not been replaced yet -- so a test can prove headers are
-    published only once a real item response arrives, not before.
-
-    Either step can be armed to fail: the metadata lookup or the write itself.
+    Both fake entry points check that prior response headers remain untouched
+    before returning or raising. The create stand-in can simulate a metadata
+    or write failure; neither native driver execution nor service I/O occurs.
     """
     asynchronous = request.param
     module = async_rust if asynchronous else sync_rust
@@ -398,8 +391,9 @@ def test_metadata_errors_keep_details_without_publishing_headers_rust(metadata_c
     )
     metadata_case.metadata_error = metadata_case.module._DRIVER_RESPONSE_ERROR(raw)
     expected = CosmosResourceNotFoundError if status == 404 else CosmosHttpResponseError
+    hook = MagicMock()
     with pytest.raises(expected) as raised:
-        metadata_case.create()
+        metadata_case.create(response_hook=hook)
     error = raised.value
     assert error.status_code == status
     assert error.sub_status == 1002
@@ -410,19 +404,18 @@ def test_metadata_errors_keep_details_without_publishing_headers_rust(metadata_c
         error.response.headers["x-ms-cosmos-sdk-diagnostics"] == '{"request_count":1}'
     )
     assert metadata_case.state.last_response_headers is metadata_case.original_headers
+    hook.assert_not_called()
+    metadata_case.item_call.assert_called_once()
+    metadata_case.getter.assert_not_called()
 
 
 @pytest.mark.parametrize("phase", ["metadata", "write"])
 def test_transport_failure_does_not_clear_previous_headers_rust(metadata_case, phase):
-    """A transport failure at either step leaves the previous headers intact.
+    """A fake binding transport error leaves the previous headers intact.
 
-    The failure is injected once while resolving the container and once during
-    the write itself, and it surfaces as a transport error both times.
-
-    In neither case is the client's record of the last response headers cleared
-    or replaced. A customer inspecting those headers after a failure should find
-    the last call that actually returned something, not an empty set standing in
-    for a request that never completed.
+    The fixture's two simulated failure points raise the same exception type.
+    This verifies Python error handling, not whether a real request was sent
+    or whether the service backend performed any work.
     """
     error = metadata_case.module._DRIVER_TRANSPORT_ERROR("transport failed")
     if phase == "metadata":

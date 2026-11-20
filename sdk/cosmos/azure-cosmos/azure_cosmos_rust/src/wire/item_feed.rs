@@ -551,6 +551,15 @@ async fn next_plan_page(
     mut request: FeedRequest,
     plan_options: PlanOptions,
 ) -> PyResult<PageResult> {
+    if matches!(&request, FeedRequest::ChangeFeed(_))
+        && continuation
+            .as_ref()
+            .is_some_and(|token| !token.starts_with("c1.") && !token.starts_with("c2."))
+    {
+        return Err(PyValueError::new_err(
+            "Rust-backed change feed requires a V5 continuation token; V4 tokens are not supported.",
+        ));
+    }
     let mut state = state
         .try_lock()
         .map_err(|_| PyRuntimeError::new_err("Concurrent use of a retained feed cursor"))?;
@@ -580,6 +589,7 @@ async fn next_plan_page(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         modifiers.custom_headers,
     );
     let container = if let Some(progress) = &progress {
@@ -701,14 +711,7 @@ async fn next_plan_page(
             }
             _ => plan_options,
         };
-        let token = continuation
-            .map(|token| match &request {
-                FeedRequest::ChangeFeed(request) => super::legacy_change_feed::continuation(
-                    token, &operation, request.partition_key.as_ref(),
-                ),
-                _ => Ok(ContinuationToken::from_string(token)),
-            })
-            .transpose()?;
+        let token = continuation.map(ContinuationToken::from_string);
         let plan = match driver
             .plan_operation(operation, &options, token.as_ref(), &plan_options)
             .await
@@ -1271,6 +1274,7 @@ mod tests {
             read_consistency_strategy: None,
             patch_strategy: None,
             throughput_control: None,
+            utf8_decoding_mode: None,
             custom_headers: HashMap::from([(
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),
@@ -1617,52 +1621,8 @@ mod tests {
         }
     }
 
-    fn legacy_checkpoint(operation: &CosmosOperation, etag: &str) -> serde_json::Value {
-        let rid = operation.container().unwrap().rid();
-        let point = operation.target().unwrap().min_inclusive().to_hex();
-        let start = match operation.change_feed_start().unwrap() {
-            ChangeFeedStartFrom::Beginning => serde_json::json!({"Type": "Beginning"}),
-            ChangeFeedStartFrom::Now => serde_json::json!({"Type": "Now"}),
-            ChangeFeedStartFrom::PointInTime(time) => serde_json::json!({
-                "Type": "PointInTime", "PointInTimeMs": time.unix_timestamp_nanos() / 1_000_000,
-            }),
-            _ => panic!("unsupported test start"),
-        };
-        serde_json::json!({
-            "v": "v2", "containerRid": rid, "startFrom": start,
-            "mode": if operation.request_headers().full_fidelity_feed {
-                "AllVersionsAndDeletes"
-            } else { "LatestVersion" },
-            "continuation": {
-                "v": "v2", "rid": rid, "PK": "key-0",
-                "continuation": [{
-                    "token": etag,
-                    "range": {
-                        "min": point, "max": format!("{point}FF"),
-                        "isMinInclusive": true, "isMaxInclusive": false,
-                    },
-                }],
-            },
-        })
-    }
-
-    fn encode_legacy_checkpoint(value: &serde_json::Value) -> String {
-        azure_core::base64::encode(serde_json::to_vec(value).unwrap())
-    }
-
     #[tokio::test]
-    async fn legacy_change_feed_import_preserves_position_and_native_checkpoint() {
-        let (_emulator, driver) = setup_with_partition_count(
-            3,
-            PartitionKeyDefinition::new(vec![Cow::Borrowed("/pk")]),
-            Vec::new(),
-            1,
-        )
-        .await;
-        let container = driver
-            .resolve_container("db", "c", Default::default())
-            .await
-            .unwrap();
+    async fn native_change_feed_checkpoint_preserves_position() {
         let options = PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly);
         for (index, (mode, start)) in [
             ("LatestVersion", "Beginning"),
@@ -1673,9 +1633,13 @@ mod tests {
         .into_iter()
         .enumerate()
         {
+            let (_emulator, driver) = setup(0).await;
+            let container = driver
+                .resolve_container("db", "c", Default::default())
+                .await
+                .unwrap();
             let mut request = change_request(mode, start);
             request.partition_key = Some(PartitionKey::from("key-0"));
-            let operation = request.operation(container.clone()).unwrap();
             let first = next_plan_page(
                 driver.clone(),
                 Arc::new(Mutex::new(CursorState::default())),
@@ -1687,18 +1651,7 @@ mod tests {
             )
             .await
             .unwrap();
-            let etag = first
-                .0
-                .as_ref()
-                .unwrap()
-                .as_ref()
-                .unwrap()
-                .headers()
-                .etag
-                .as_ref()
-                .unwrap()
-                .to_string();
-            let legacy = encode_legacy_checkpoint(&legacy_checkpoint(&operation, &etag));
+            let token = first.1.unwrap();
             let id = format!("new-{index}");
             driver
                 .execute_operation(
@@ -1714,99 +1667,58 @@ mod tests {
                 )
                 .await
                 .unwrap();
-            let mut results = Vec::new();
-            for token in [first.1.unwrap(), legacy] {
-                let result = next_plan_page(
-                    driver.clone(),
-                    Arc::new(Mutex::new(CursorState::default())),
-                    ("test".into(), "dbs/db/colls/c".into()),
-                    Some(token),
-                    modifiers(),
-                    FeedRequest::ChangeFeed(request.clone()),
-                    options.clone(),
-                )
-                .await
-                .unwrap();
-                let response = result.0.unwrap().unwrap();
-                let ResponseBody::Bytes(body) = response.body() else {
-                    panic!("expected change-feed body")
-                };
-                let documents =
-                    serde_json::from_slice::<serde_json::Value>(body).unwrap()["Documents"].clone();
-                assert!(!documents.as_array().unwrap().is_empty());
-                assert!(result.1.as_ref().unwrap().starts_with("c2."));
-                results.push((documents, result.1));
-            }
-            assert_eq!(results[0], results[1], "{mode} {start}");
+            let result = next_plan_page(
+                driver.clone(),
+                Arc::new(Mutex::new(CursorState::default())),
+                ("test".into(), "dbs/db/colls/c".into()),
+                Some(token),
+                modifiers(),
+                FeedRequest::ChangeFeed(request),
+                options.clone(),
+            )
+            .await
+            .unwrap();
+            let response = result.0.unwrap().unwrap();
+            let ResponseBody::Bytes(body) = response.body() else {
+                panic!("expected change-feed body")
+            };
+            let documents =
+                serde_json::from_slice::<serde_json::Value>(body).unwrap()["Documents"].clone();
+            let documents = documents.as_array().unwrap();
+            assert_eq!(documents.len(), 1, "{mode} {start}");
+            assert_eq!(documents[0]["current"]["id"], id);
+            assert!(result.1.as_ref().unwrap().starts_with("c2."));
         }
     }
 
     #[tokio::test]
-    async fn legacy_change_feed_import_rejects_mismatched_identity_scope_and_state() {
+    async fn legacy_change_feed_tokens_are_rejected_before_setup() {
         crate::test_support::prepare_python();
         let (_emulator, driver) = setup(0).await;
-        let container = driver
-            .resolve_container("db", "c", Default::default())
-            .await
-            .unwrap();
-        let mut request = change_request("LatestVersion", "Beginning");
-        request.partition_key = Some(PartitionKey::from("key-0"));
-        let operation = request.operation(container.clone()).unwrap();
-        let checkpoint = legacy_checkpoint(&operation, "\"42\"");
-        let imported = super::super::legacy_change_feed::continuation(
-            encode_legacy_checkpoint(&checkpoint),
-            &operation,
-            request.partition_key.as_ref(),
-        )
-        .unwrap();
-        assert_eq!(imported.as_str(), "\"42\"");
-        for (pointer, value) in [
-            ("/containerRid", serde_json::json!("different")),
-            ("/continuation/rid", serde_json::json!("different")),
-            ("/continuation/PK", serde_json::json!("other-key")),
-            ("/mode", serde_json::json!("AllVersionsAndDeletes")),
-            ("/startFrom/Type", serde_json::json!("Now")),
-            ("/continuation/continuation", serde_json::json!([])),
-            ("/continuation/continuation", serde_json::json!({})),
-            (
-                "/continuation/continuation/0/token",
-                serde_json::json!("c2.not-a-server-etag"),
-            ),
-            (
-                "/continuation/continuation/0/range/min",
-                serde_json::json!("FF"),
-            ),
-        ] {
-            let mut invalid = checkpoint.clone();
-            *invalid.pointer_mut(pointer).unwrap() = value;
-            let error = super::super::legacy_change_feed::continuation(
-                encode_legacy_checkpoint(&invalid),
-                &operation,
-                request.partition_key.as_ref(),
-            )
-            .unwrap_err();
-            Python::with_gil(|py| {
-                assert!(error.is_instance_of::<PyValueError>(py), "{pointer}");
-            });
+        let legacy = azure_core::base64::encode(
+            br#"{"v":"v2","mode":"LatestVersion","continuation":{"v":"v2"}}"#,
+        );
+        for mode in ["LatestVersion", "AllVersionsAndDeletes"] {
+            for token in ["42", "\"42\"", legacy.as_str(), "cf1.legacy"] {
+                let state = Arc::new(Mutex::new(CursorState::default()));
+                let error = next_plan_page(
+                    driver.clone(),
+                    state.clone(),
+                    ("test".into(), "dbs/missing/colls/missing".into()),
+                    Some(token.to_owned()),
+                    modifiers(),
+                    FeedRequest::ChangeFeed(change_request(mode, "Now")),
+                    PlanOptions::default(),
+                )
+                .await
+                .unwrap_err();
+                Python::with_gil(|py| {
+                    assert!(error.is_instance_of::<PyValueError>(py), "{token}");
+                });
+                assert!(error.to_string().contains("V4 tokens are not supported"));
+                assert!(!state.lock().await.started);
+            }
         }
-        request.partition_key = None;
-        let broad = request.operation(container).unwrap();
-        assert!(
-            super::super::legacy_change_feed::continuation("\"42\"".into(), &broad, None,)
-                .unwrap_err()
-                .to_string()
-                .contains("public driver API")
-        );
-        assert_eq!(
-            super::super::legacy_change_feed::continuation(
-                "\"42\"".into(),
-                &operation,
-                Some(&PartitionKey::from("key-0")),
-            )
-            .unwrap()
-            .as_str(),
-            "\"42\""
-        );
     }
     fn query_request(sql: &str) -> FeedRequest {
         FeedRequest::Query(QueryRequest {
@@ -2364,6 +2276,90 @@ mod tests {
             };
             assert!(error.is_instance_of::<PyTypeError>(py));
             assert!(error.to_string().contains("query_scope"));
+        });
+    }
+
+    #[test]
+    fn retained_read_all_rejects_untyped_components_before_execution() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let namespace = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap();
+            let key = namespace.call0().unwrap();
+            key.setattr("kind", "components").unwrap();
+            key.setattr("values", PyTuple::new_bound(py, [PyDict::new_bound(py)]))
+                .unwrap();
+            let prepared = namespace.call0().unwrap();
+            prepared.setattr("protocol_version", 3).unwrap();
+            prepared.setattr("op", "read_all_items").unwrap();
+            prepared.setattr("container_link", "dbs/d/colls/c").unwrap();
+            prepared.setattr("partition_key", key).unwrap();
+            prepared.setattr("headers", PyDict::new_bound(py)).unwrap();
+            prepared
+                .setattr("settings", super::super::settings::test_settings(py))
+                .unwrap();
+            let error = match inputs(&prepared) {
+                Err(error) => error,
+                Ok(_) => panic!("read-all accepted an untyped partition-key component"),
+            };
+            assert!(error.is_instance_of::<PyTypeError>(py));
+            assert!(error
+                .to_string()
+                .contains("Unsupported partition-key component"));
+        });
+    }
+
+    #[test]
+    fn retained_readers_reject_old_body_scope_contract_before_execution() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let request_type = py
+                .import_bound("azure.cosmos._backend.contracts")
+                .unwrap()
+                .getattr("PreparedRequest")
+                .unwrap();
+            let key = py
+                .import_bound("azure.cosmos._backend.partition_key_input")
+                .unwrap()
+                .getattr("BindingPartitionKey")
+                .unwrap()
+                .call1(("cross_partition",))
+                .unwrap();
+            for (op, body, message) in [
+                (
+                    "query_items",
+                    br#"{"query":{"query":"SELECT * FROM c"},"allow_cross_partition":true,"partition_key":"[\"tenant\"]"}"#.as_slice(),
+                    "typed query_scope",
+                ),
+                (
+                    "query_items_change_feed",
+                    br#"{"mode":"LatestVersion","start":"Now","partition_key":"[\"tenant\"]"}"#.as_slice(),
+                    "Invalid retained feed request",
+                ),
+            ] {
+                let prepared = request_type
+                    .call1((
+                        op,
+                        "dbs/d/colls/c",
+                        pyo3::types::PyBytes::new_bound(py, body),
+                        &key,
+                    ))
+                    .unwrap();
+                let (_, _, _, scope) = inputs(&prepared).unwrap();
+                let error = match feed_inputs(&prepared, scope) {
+                    Err(error) => error,
+                    Ok(_) => panic!("legacy body scope was accepted for {op}"),
+                };
+                if op == "query_items" {
+                    assert!(error.is_instance_of::<PyTypeError>(py));
+                } else {
+                    assert!(error.is_instance_of::<PyValueError>(py));
+                }
+                assert!(error.to_string().contains(message));
+            }
         });
     }
 
@@ -2938,7 +2934,7 @@ mod tests {
                 .insert(HeaderName::from(name), HeaderValue::from(value));
         }
         let driver_options =
-            build_operation_options(None, None, None, None, None, options.custom_headers.clone());
+            build_operation_options(None, None, None, None, None, None, options.custom_headers.clone());
         let mut plan = driver
             .plan_operation(
                 request.operation(container.clone()).unwrap(),

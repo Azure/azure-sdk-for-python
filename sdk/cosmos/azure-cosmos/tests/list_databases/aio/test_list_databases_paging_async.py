@@ -45,7 +45,8 @@ def database_ids():
         client.close()
 
 
-async def test_listed_databases_include_created_ones_with_system_properties_async_rust(database_ids):
+@pytest.mark.parametrize("content_type", [None, "application/vnd.alpha-bank+json"])
+async def test_listed_databases_include_created_ones_with_system_properties_async_rust(database_ids, content_type):
     """Every created database is listed with its id, _rid, _self, _etag and _ts properties."""
     async with _rust_client() as client:
         snapshots = []
@@ -55,6 +56,7 @@ async def test_listed_databases_include_created_ones_with_system_properties_asyn
             page_count = 0
             async for page in client.list_databases(
                 max_item_count=2,
+                content_type=content_type,
                 timeout=10,
                 throughput_bucket=1,
                 initial_headers={"x-list-databases-test": "async"},

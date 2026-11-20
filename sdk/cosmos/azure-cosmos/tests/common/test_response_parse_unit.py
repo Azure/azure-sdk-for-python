@@ -3,38 +3,26 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""In-process unit tests for ``_helpers/_response_parse.py`` -- no network, no Cosmos emulator.
+"""Offline tests of response parsing and header ownership using synthetic responses.
 
-``process_backend_response`` is the mirror image of the request-prep
-helpers: where prep turns a customer call into a request-byte request, parse
-turns the backend's request-byte response into the ``CosmosDict`` (or typed
-exception) that the customer sees.
+``process_backend_response`` turns a BackendResponse into a CosmosDict or
+raises an exception. The D-labels used below group these responsibilities:
 
-Every successful 2xx call has to do four things, and they're spread
-across the four "D-tasks" fixed by these tests:
+* **D1 build CosmosDict** -- decode a nonempty accepted body as JSON.
+* **D2 publish headers** -- update the supplied legacy client_connection
+  and/or shared response_state, independently of the result's headers.
+* **D3 empty body** -- return an empty CosmosDict for an accepted empty
+  response. Response-body suppression does not determine the status code.
+* **D4 response_hook** -- invoke the supplied hook once after successful
+  parsing and result construction. Callback exceptions propagate.
 
-* **D1 build CosmosDict** -- JSON-decode the body bytes and wrap them
-  in a ``CosmosDict`` (which subclasses ``dict`` so customer code
-  can index it like a normal dict).
-* **D2 stash last_response_headers** -- write the response headers to
-  ``client_connection.last_response_headers`` so existing customer
-  code that reads ``client.client_connection.last_response_headers``
-  after a call keeps working.
-* **D3 no-body 204 path** -- ``no_response=True`` calls return 204
-  with an empty body. ``json.loads(b"")`` would raise; the parser
-  must explicitly return an empty ``CosmosDict`` instead.
-* **D4 response_hook** -- fire the optional ``response_hook(headers,
-  parsed)`` exactly once on success, never on failure.
+The parser accepts 2xx and conditional-read 304 responses. Other statuses
+raise mapped service errors after headers are published, without invoking
+the hook. JSON parsing errors also prevent hook invocation.
 
-On the failure path (any non-2xx), the parser must raise the right
-typed ``CosmosHttpResponseError`` subclass via the exception-mapping
-helper, populate ``last_response_headers`` *before* raising (so the
-customer's ``except`` block can still read them), and **never**
-invoke the response hook.
-
-The function is pure modulo the one documented side effect (writing
-to ``client_connection.last_response_headers``). Both branches --
-with and without that side effect -- are covered.
+Header publication and callbacks are optional side effects. These tests
+check isolation between incoming headers, shared state, hooks, and retained
+results; they do not establish service-backend response contents.
 """
 import json
 import threading
@@ -46,7 +34,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._cosmos_responses import CosmosDict
-from azure.cosmos._helpers._response_parse import process_backend_response, process_delete_response
+from azure.cosmos._helpers._response_parse import complete_item_response, process_backend_response, process_delete_response
 from azure.cosmos._helpers._client_context import ClientLastResponseHeaders
 from azure.cosmos.exceptions import (
     CosmosHttpResponseError,
@@ -64,6 +52,31 @@ def _make_response(*, status_code=200, sub_status=0, headers=None, body=b"", dia
         body=body,
         diagnostics=diagnostics,
     )
+
+
+@pytest.mark.parametrize("body", [b"", b'{"id":"order-42"}'])
+def test_completion_uses_retained_response_after_later_publication_rust(body):
+    """Simulate another response publishing headers before the first call completes."""
+    state = ClientLastResponseHeaders()
+    result = process_backend_response(
+        _make_response(status_code=201, body=body, headers={"x-ms-request-charge": "5"}),
+        response_state=state,
+    )
+    process_backend_response(
+        _make_response(headers={"x-ms-request-charge": "1"}), response_state=state,
+    )
+    charges = []
+
+    def hook(headers, snapshot):
+        charges.append(float(headers["x-ms-request-charge"]))
+        assert snapshot == result
+        assert float(snapshot.get_response_headers()["x-ms-request-charge"]) == 5
+        return {"replacement": True}
+
+    assert complete_item_response(result, hook, None) is result
+    assert charges == [5]
+    assert float(result.get_response_headers()["x-ms-request-charge"]) == 5
+    assert float(state.last_response_headers["x-ms-request-charge"]) == 1
 
 
 @pytest.mark.parametrize("hook_fails", [False, True])
@@ -345,19 +358,18 @@ class TestSuccessWithBody(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
-# Success path: no_response=True -> 204 with empty body (D3)
+# Success path: accepted responses with empty bodies (D3)
 # ---------------------------------------------------------------------------
 
 
 class TestSuccessWithEmptyBody(unittest.TestCase):
-    """D3: the ``no_response=True`` path returns 204 with an empty body.
+    """Parse empty successful bodies without assuming a particular success status.
 
     ``json.loads(b"")`` would raise ``JSONDecodeError``; the parser
     must explicitly bypass the parse and return an empty
     ``CosmosDict``. The hook still fires (callers using the hook for
-    telemetry expect the invocation count to match the request
-    count). 2xx with a *malformed* body is a different case -- that
-    one does raise, matching legacy behaviour.
+    telemetry still need the response headers). A malformed nonempty body
+    raises instead. These tests use constructed backend responses.
     """
 
     def test_204_with_empty_body_returns_empty_cosmos_dict_rust(self):
@@ -370,6 +382,15 @@ class TestSuccessWithEmptyBody(unittest.TestCase):
         """200 + empty body is treated the same as 204 -- empty ``CosmosDict``, no parse attempted."""
         result = process_backend_response(_make_response(status_code=200, body=b""))
         self.assertEqual(dict(result), {})
+
+    def test_201_with_empty_body_preserves_response_headers_rust(self):
+        """A suppressed create body still exposes the response's request charge."""
+        result = process_backend_response(_make_response(
+            status_code=201, body=b"", headers={"x-ms-request-charge": "5.0"},
+        ))
+        self.assertIsInstance(result, CosmosDict)
+        self.assertEqual(dict(result), {})
+        self.assertEqual(float(result.get_response_headers()["x-ms-request-charge"]), 5.0)
 
     def test_response_hook_receives_empty_dict_for_no_body_path_rust(self):
         """Hook still fires on the 204 path; it sees an empty parsed body."""

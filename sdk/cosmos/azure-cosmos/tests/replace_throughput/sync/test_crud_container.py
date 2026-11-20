@@ -47,7 +47,7 @@ KEY = os.environ.get(
 )
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDContainerOperations(unittest.TestCase):
     """Runs the legacy throughput-change checks on the Rust engine (Rust-only).
 

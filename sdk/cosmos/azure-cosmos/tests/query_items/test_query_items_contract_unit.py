@@ -633,18 +633,18 @@ def test_nonresumable_queries_enumerate_but_bookmark_access_raises_rust(query):
     ],
 )
 def test_partition_scope_normalization_rust(query, key, expected):
-    """Every shape of partition key turns into the right wire value, and stays out of the body.
+    """Partition keys retain their typed meaning separately from the query body.
 
     Covers no key at all, a plain string, ``False`` and ``0`` (which must not
     be mistaken for "unset"), explicit null, the "no partition key" marker,
     and hierarchical keys including ones with null or missing components.
 
-    Each becomes its JSON wire form: ``false`` and ``0`` stay themselves,
+    The test helper renders the typed key as JSON: ``false`` and ``0`` stay themselves,
     null becomes ``[null]``, and the absent-key marker becomes ``[{}]`` --
     two distinct encodings that must not collapse into one.
 
-    The key is also never written into the request body. It belongs in the
-    routing header only, and a stray copy in the body would change the query.
+    The scope key stays in the prepared request's typed partition-key field,
+    not in the query body. This fake-binding test does not inspect network headers.
     """
     query.collect(query.proxy.query_items("SELECT * FROM c", partition_key=key))
     prepared = query.calls[0][0]
@@ -1417,6 +1417,61 @@ def test_async_query_cancellation_invalidates_cursor_without_replay_rust(query):
             await pages.__anext__()
         assert pages.continuation_token is None
         assert pages.state.cursor is None
+
+    asyncio.run(run())
+    query.connection.QueryItems.assert_not_called()
+
+
+@pytest.mark.parametrize("query", [True], ids=["async"], indirect=True)
+@pytest.mark.parametrize("after_empty_page", [False, True])
+def test_cancelled_second_query_page_preserves_resume_boundary_rust(query, after_empty_page):
+    """Keep delivered progress even when an empty response advances the pending fetch."""
+    query.pages = [[{"id": "alpha-bank-item"}], [], [{"id": "alpha-bank-item-2"}], None]
+
+    async def run():
+        pager = query.proxy.query_items("SELECT * FROM c")
+        pages = pager.by_page()
+        assert [row async for row in await pages.__anext__()] == query.pages[0]
+        bookmark = pages.continuation_token
+        cursor = pages.state.cursor
+        fetch = query.binding.fetch_page_with_cursor_async.side_effect
+        entered = asyncio.Event()
+        blocker = asyncio.Event()
+
+        async def blocked(handle, prepared, state, **kwargs):
+            if after_empty_page and state.index == 1:
+                return fetch(handle, prepared, state, **kwargs)
+            entered.set()
+            await blocker.wait()
+
+        query.binding.fetch_page_with_cursor_async.side_effect = blocked
+        pending = asyncio.create_task(pages.__anext__())
+        try:
+            await asyncio.wait_for(entered.wait(), 2)
+            assert pages.continuation_token == bookmark == "c1.1"
+            assert pages.state.token == ("c1.2" if after_empty_page else bookmark)
+            pending.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await pending
+        finally:
+            pending.cancel()
+            await asyncio.gather(pending, return_exceptions=True)
+            query.binding.fetch_page_with_cursor_async.side_effect = fetch
+
+        assert pages.continuation_token == bookmark
+        assert pages.state.cursor is None
+        assert not pages.state.lock.locked()
+        fetch_count = query.binding.fetch_page_with_cursor_async.call_count
+        with pytest.raises(RuntimeError, match="failed"):
+            await pages.__anext__()
+        assert query.binding.fetch_page_with_cursor_async.call_count == fetch_count
+
+        resumed = pager.by_page(continuation_token=bookmark)
+        assert [row async for row in await resumed.__anext__()] == query.pages[2]
+        assert resumed.state.cursor is not cursor
+        with pytest.raises(StopAsyncIteration):
+            await resumed.__anext__()
+        assert resumed.state.cursor is None
 
     asyncio.run(run())
     query.connection.QueryItems.assert_not_called()

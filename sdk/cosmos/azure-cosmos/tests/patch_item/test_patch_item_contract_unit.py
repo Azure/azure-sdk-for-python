@@ -166,13 +166,15 @@ def test_dictionary_patch_requires_resource_address_rust(point_patch):
 @pytest.mark.parametrize("method", ["patch_item", "patch_item_async"])
 @pytest.mark.parametrize("self_link,error,message", [
     ("dbs/AQAAAA==/colls/AQAAAIABAAA=/docs/AQAAAIABAAABAAAAAAAAAA==/",
-     RuntimeError, "no driver registered for handle"),
+     TypeError, "_DriverHandle"),
     (None, ValueError, "item_id is required"),
     ("", ValueError, "target _self"),
     ("dbs/db/colls/c", ValueError, "target _self"),
     (42, TypeError, None),
 ])
-def test_binding_patch_validates_resource_target_rust(point_read, method, self_link, error, message):
+def test_binding_patch_validates_target_before_rejecting_string_handle_rust(
+    point_read, method, self_link, error, message
+):
     from azure.cosmos._helpers._request_item import build_patch_item_request
 
     binding = pytest.importorskip("azure.cosmos._rust")

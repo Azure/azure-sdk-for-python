@@ -22,7 +22,7 @@ from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos._diagnostic_logging import DiagnosticLogging
 from azure.cosmos._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
-from azure.cosmos.exceptions import CosmosResourceNotFoundError
+from azure.cosmos.exceptions import CosmosHttpResponseError, CosmosResourceNotFoundError
 from common.rust_telemetry_payload import v2
 from read_all_items.test_read_all_items_contract_unit import feed  # pylint: disable=unused-import
 from test_cosmos_http_logging_policy import FilterStatusCode
@@ -285,6 +285,49 @@ def test_absent_summary_and_early_failure_do_not_invent_logs_rust(native):
     with pytest.raises(ValueError, match="binding rejected"):
         native.read()
     assert not native.capture.records
+    assert _telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("stage,status", [("lookup", 404), ("setup", 401)])
+def test_raised_response_failure_logs_its_summary_rust(native, stage, status):
+    # A container-lookup or driver-setup failure is raised, not returned, by the binding.
+    module = async_binding if native.asynchronous else sync_binding
+    failure = module._DRIVER_RESPONSE_ERROR((status, 0, {}, b'{"message":"failed"}', SUMMARY))
+    if stage == "lookup":
+        native.failure = failure
+    else:
+        native.backend._ensure_driver_handle.side_effect = module.response_exception_from_binding(failure)
+    with pytest.raises(CosmosHttpResponseError) as error:
+        native.read()
+    assert error.value.status_code == status
+    assert [(r.operation_type, r.status_code, r.diagnostics) for r in native.capture.records] == [
+        ("read_item", status, SUMMARY)
+    ]
+    assert len(native.calls) == (1 if stage == "lookup" else 0)
+    assert _telemetry._OPERATION.get() is None
+
+
+def test_read_items_lookup_failure_logs_its_summary_rust(native, monkeypatch):
+    module = async_binding if native.asynchronous else sync_binding
+    failure = module._DRIVER_RESPONSE_ERROR((404, 0, {}, b'{"message":"missing"}', SUMMARY))
+
+    def lookup(*_args, **_kwargs):
+        raise failure
+
+    async def lookup_async(*args, **kwargs):
+        lookup(*args, **kwargs)
+
+    name = "get_container_metadata_async" if native.asynchronous else "get_container_metadata"
+    monkeypatch.setattr(module._rust_module, name, lookup_async if native.asynchronous else lookup)
+    def read_many():
+        result = native.container.read_items([("order-42", "customer-17")])
+        return asyncio.run(result) if native.asynchronous else result
+
+    with pytest.raises(CosmosResourceNotFoundError):
+        read_many()
+    assert [(r.operation_type, r.status_code, r.diagnostics) for r in native.capture.records] == [
+        ("read_items", 404, SUMMARY)
+    ]
     assert _telemetry._OPERATION.get() is None
 
 

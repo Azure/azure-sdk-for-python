@@ -29,7 +29,7 @@ from typing_extensions import Literal
 from azure.core import MatchConditions
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from ._telemetry import BindingAlternatives, delegate_operation, trace_operation
+from ._telemetry import BindingAlternatives, RepeatedBinding, delegate_operation, trace_operation
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
@@ -44,7 +44,7 @@ from ._helpers._item_arguments import (
     merge_delete_item_explicit_kwargs,
     merge_patch_item_explicit_kwargs,
     merge_read_item_explicit_kwargs,
-    merge_upsert_item_explicit_kwargs,
+    merge_upsert_replace_item_explicit_kwargs,
     get_selected_backend,
 )
 from ._helpers._item_operations import ItemHelper
@@ -367,7 +367,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
         return complete_item_response(result, response_hook, deadline)
 
-    @distributed_trace
+    @trace_operation(binding_operation=RepeatedBinding("read_items"))
     def read_items(
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
@@ -710,11 +710,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         Rust currently rejects scopes spanning multiple physical partitions
         without falling back to Python. Explicit legacy execution retains both
-        modes and cross-partition polling. Legacy V2 bookmarks for one complete
-        partition key can resume through Rust. Older raw ETag checkpoints require
-        an explicit complete ``partition_key`` and use LatestVersion mode.
-        Legacy range/prefix bookmarks remain unsupported; Rust bookmarks cannot
-        resume on legacy Python.
+        modes and cross-partition polling. V4 continuation tokens and raw service
+        ETags passed as continuations raise ``ValueError`` on Rust-backed clients.
+        Resume with a bookmark returned by this Rust-backed API; no legacy-token
+        conversion or silent restart is performed. Rust bookmarks cannot resume
+        on legacy Python.
 
         :keyword str continuation: The continuation token retrieved from previous response. It contains chang feed mode.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
@@ -1257,8 +1257,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The replace operation failed or the item with
             given id does not exist.
-        :returns: A CosmosDict representing the item after replace went through. The dict will be empty if `no_response`
-            is specified.
+        :returns: A CosmosDict containing the returned item, or an empty CosmosDict
+            when write-response content is suppressed.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
@@ -1267,9 +1267,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # string id, or the ``id`` of a dict -- and not from the body. This
         # matches read_item and delete_item. That id goes in the URL.
         item_id = item if isinstance(item, str) else item["id"]
-        # Replace takes the same keywords as upsert, so it reuses upsert's
-        # merge and options build.
-        merge_upsert_item_explicit_kwargs(
+        merge_upsert_replace_item_explicit_kwargs(
             kwargs,
             session_token=session_token,
             initial_headers=initial_headers,
@@ -1343,7 +1341,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or a dict with key ``threshold_ms`` to override the client's configured availability strategy.
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The given item could not be upserted.
-        :returns: A CosmosDict representing the upserted item. The dict will be empty if `no_response` is specified.
+        :returns: A CosmosDict containing the returned item, or an empty CosmosDict
+            when write-response content is suppressed.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
@@ -1352,7 +1351,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # match_condition, which narrow it to insert-only or to a replace
         # guarded by version. populate_query_metrics is deprecated here: the
         # helper warns and then ignores it.
-        merge_upsert_item_explicit_kwargs(
+        merge_upsert_replace_item_explicit_kwargs(
             kwargs,
             session_token=session_token,
             initial_headers=initial_headers,
@@ -1410,6 +1409,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: Called once on success with independent header and CosmosDict snapshots.
             The body is empty with ``no_response=True``; callback exceptions propagate without replay.
+            Must be synchronous; async functions and async callable objects are rejected before dispatch.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword Literal["High", "Low"] priority: Priority based execution allows users to set a priority for each
             request. Once the user has reached their provisioned throughput, low priority requests are throttled
@@ -1429,10 +1429,12 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             This option cannot enable it for ``create_item``.
         :keyword float timeout: One metadata-plus-write budget, finite and at least one second.
         :raises NotImplementedError: A non-None ``retry_write`` was supplied on a Rust-backed client.
-        :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable response hook was supplied.
+        :raises TypeError: A retired keyword, invalid body type, non-string ID, or non-callable or async
+            response hook was supplied.
         :raises ValueError: The ID, JSON body, or timeout is invalid.
         :raises ~azure.cosmos.exceptions.CosmosResourceExistsError: The ID already exists in the logical partition.
-        :returns: A CosmosDict representing the new item. The dict will be empty if `no_response` is specified.
+        :returns: A CosmosDict containing the returned item, or an empty CosmosDict
+            when write-response content is suppressed.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)
@@ -1528,8 +1530,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The patch operations failed or the item with
             given id does not exist.
-        :returns: A CosmosDict representing the item after the patch operations went through. The dict will be empty
-            if `no_response` is specified.
+        :returns: A CosmosDict containing the returned item, or an empty CosmosDict
+            when write-response content is suppressed.
         :rtype: ~azure.cosmos.CosmosDict[str, Any]
         """
         prepare_operation_kwargs(self, kwargs, strategy=availability_strategy)

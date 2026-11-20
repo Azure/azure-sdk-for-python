@@ -8,11 +8,14 @@ call; a parsing or callback failure is not permission for legacy fallback.
 """
 
 from __future__ import annotations
+import inspect
 import json
-from dataclasses import replace
-from azure.core.utils import CaseInsensitiveDict
 from copy import deepcopy
+from dataclasses import replace
+from functools import partial
 from typing import Any, Callable, Mapping, Optional
+
+from azure.core.utils import CaseInsensitiveDict
 from ._exceptions import (
     error_message_from_body,
     is_success_status,
@@ -39,6 +42,26 @@ def page_to_backend_response(page: BackendPage) -> BackendResponse:
         body=page.body,
         diagnostics=page.diagnostics,
     )
+
+
+def validate_response_hook_is_synchronous(response_hook: Any, operation: str) -> None:
+    """Reject declared async hooks before an operation dispatches.
+
+    :param Any response_hook: The customer callback, or None.
+    :param str operation: Public operation name used in the error.
+    :raises TypeError: The callback is an async function or callable object.
+    :rtype: None
+    """
+    if response_hook is None:
+        return
+    hook = response_hook
+    while isinstance(hook, partial):
+        hook = hook.func
+    if any(
+        inspect.iscoroutinefunction(candidate) or inspect.isasyncgenfunction(candidate)
+        for candidate in (hook, getattr(hook, "__call__", None))
+    ):
+        raise TypeError(f"{operation} response_hook must be synchronous; async hooks are not supported.")
 
 
 def with_response_header_snapshot(
@@ -122,7 +145,7 @@ def process_backend_response(
     :raises CosmosHttpResponseError: For statuses outside 2xx other than 304. The
         typed subclass is chosen by ``map_backend_response_to_exception``.
     """
-    headers = _take_response_headers(response)
+    headers = _copy_response_headers(response.headers or {})
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)
 
@@ -167,14 +190,10 @@ def parse_response_body(response: BackendResponse) -> Any:
         # This also handles an empty 304 body without synthesizing an ETag.
         parsed: Any = {}
     else:
-        parsed = json.loads(response.body)
+        # Lossy recovery, when selected, has already run in the Rust driver.
+        parsed = json.loads(response.body.decode("utf-8"))
 
     return parsed
-
-
-def _take_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
-    """Snapshot headers before normalization or publication to customer code."""
-    return _copy_response_headers(response.headers or {})
 
 
 def _copy_response_headers(headers: Mapping[str, Any]) -> CaseInsensitiveDict:

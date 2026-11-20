@@ -27,6 +27,7 @@ use azure_data_cosmos_driver::{
 fn metadata_result<'py>(
     py: Python<'py>,
     result: Result<ContainerReference, CosmosError>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     match result {
         Ok(container) => {
@@ -49,6 +50,7 @@ fn metadata_result<'py>(
                 ],
             ))
         }
+        Err(error) if include_attempts => Err(metadata_error_with_attempts(py, error)),
         Err(error) => Err(metadata_error(py, error)),
     }
 }
@@ -70,18 +72,36 @@ pub(super) fn metadata_error_with_attempts(py: Python<'_>, error: CosmosError) -
     )
 }
 
+/// Convert a failed driver setup and attach the diagnostics the driver kept.
+///
+/// The driver keeps diagnostics for one account read only. For example, after
+/// the primary endpoint and its backup endpoints all fail, only the primary
+/// endpoint's requests are described. So the attempt payload is always marked
+/// incomplete.
+pub(crate) fn driver_setup_error(py: Python<'_>, error: CosmosError) -> PyErr {
+    let diagnostics = error.diagnostics();
+    super::response::with_error_attempt_diagnostics(
+        py,
+        metadata_error(py, error),
+        diagnostics,
+        super::response::AttemptCoverage::Incomplete("setup_diagnostics_partial"),
+    )
+}
+
 /// Resolve a container and return its resource id and partition key definition.
 pub(crate) fn get_container_metadata<'py>(
     py: Python<'py>,
     driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let options = build_operation_options(
         None,
         None,
         timeout.map(EndToEndOperationLatencyPolicy::new),
+        None,
         None,
         None,
         Default::default(),
@@ -99,7 +119,7 @@ pub(crate) fn get_container_metadata<'py>(
             ),
         )
     })??;
-    catch_operation_panic(|| metadata_result(py, result))
+    catch_operation_panic(|| metadata_result(py, result, include_attempts))
 }
 
 /// Return an awaitable that resolves a container's metadata.
@@ -108,12 +128,14 @@ pub(crate) fn get_container_metadata_async<'py>(
     driver_handle: &crate::runtime::DriverHandle,
     container_link: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let options = build_operation_options(
         None,
         None,
         timeout.map(EndToEndOperationLatencyPolicy::new),
+        None,
         None,
         None,
         Default::default(),
@@ -147,7 +169,7 @@ pub(crate) fn get_container_metadata_async<'py>(
             })
         })??;
         Python::with_gil(|py| {
-            catch_operation_panic(|| metadata_result(py, result))
+            catch_operation_panic(|| metadata_result(py, result, include_attempts))
                 .map(|tuple| tuple.into_any().unbind())
         })
     })
@@ -216,7 +238,7 @@ mod tests {
                     .unwrap();
                 let rid = container.rid().to_owned();
                 Python::with_gil(|py| {
-                    let result = metadata_result(py, Ok(container)).unwrap();
+                    let result = metadata_result(py, Ok(container), false).unwrap();
                     assert_eq!(result.len(), 4);
                     assert_eq!(
                         result.get_item(0).unwrap().extract::<String>().unwrap(),
@@ -243,7 +265,7 @@ mod tests {
             .resolve_container("db", "missing", Default::default())
             .await;
         Python::with_gil(|py| {
-            let error = metadata_result(py, missing).unwrap_err();
+            let error = metadata_result(py, missing, false).unwrap_err();
             assert!(error.is_instance_of::<_DriverResponseError>(py));
             let response = error
                 .value_bound(py)
@@ -259,6 +281,54 @@ mod tests {
                 .extract::<Vec<u8>>()
                 .unwrap()
                 .is_empty());
+            assert!(!error
+                .value_bound(py)
+                .hasattr("_cosmos_attempt_payload")
+                .unwrap());
         });
+        // A traced lookup and a driver setup both attach a payload marked incomplete.
+        for (setup, reason) in [
+            (false, "metadata_diagnostics_unavailable"),
+            (true, "setup_diagnostics_partial"),
+        ] {
+            let missing = driver
+                .resolve_container("db", "missing", Default::default())
+                .await
+                .err()
+                .expect("the container does not exist");
+            Python::with_gil(|py| {
+                let error = if setup {
+                    driver_setup_error(py, missing)
+                } else {
+                    metadata_result(py, Err(missing), true).unwrap_err()
+                };
+                assert!(error.is_instance_of::<_DriverResponseError>(py));
+                let payload = error
+                    .value_bound(py)
+                    .getattr("_cosmos_attempt_payload")
+                    .unwrap();
+                assert!(!payload
+                    .get_item("complete")
+                    .unwrap()
+                    .extract::<bool>()
+                    .unwrap());
+                assert_eq!(
+                    payload
+                        .get_item("incomplete_reasons")
+                        .unwrap()
+                        .extract::<Vec<String>>()
+                        .unwrap(),
+                    vec![reason]
+                );
+                assert!(
+                    payload
+                        .get_item("request_count")
+                        .unwrap()
+                        .extract::<u64>()
+                        .unwrap()
+                        >= 1
+                );
+            });
+        }
     }
 }

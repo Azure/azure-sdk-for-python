@@ -326,6 +326,69 @@ RETIRED_CONNECTION_STRING_SOURCES = {
     ),
 }
 
+# Historical lanes at ed9fa78ef7b2e550e94da3448cda13a9f84bd58f for the other
+# retirements. Each of these sources resolves to the copy itself, so the copy's
+# own decorators cannot be used as the original lanes.
+_OTHER_RETIRED_SOURCE_LANES = (
+    (("cosmosLong",), (
+        "tests/test_auto_scale.py::TestAutoScale.test_autoscale_create_container",
+        "tests/test_auto_scale_async.py::TestAutoScaleAsync.test_autoscale_create_container_async",
+        "tests/test_crud_container.py::TestCRUDContainerOperations.test_offer_read_and_query",
+        "tests/test_crud_container.py::TestCRUDContainerOperations.test_offer_replace",
+        "tests/test_crud_container.py::TestCRUDContainerOperations.test_replace_throughput_offer_with_int",
+        "tests/test_crud_container.py::TestCRUDContainerOperations.test_replace_throughput_offer_with_object",
+        "tests/test_crud_container.py::TestCRUDContainerOperations.test_negative_replace_throughput_with_all_configs_set",
+    )),
+    (("cosmosLong", "cosmosAADLong"), (
+        "tests/test_container_properties_cache.py::TestContainerPropertiesCache"
+        ".test_offer_throughput_container_recreate",
+        "tests/test_container_properties_cache.py::TestContainerPropertiesCache"
+        ".test_offer_throughput_container_recreate_sub_partition",
+        "tests/test_container_properties_cache_async.py::TestContainerPropertiesCache"
+        ".test_offer_throughput_container_recreate_async",
+        "tests/test_container_properties_cache_async.py::TestContainerPropertiesCache"
+        ".test_offer_throughput_container_recreate_sub_partition_async",
+        "tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_offer_read_and_query_async",
+        "tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_offer_replace_async",
+        "tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_replace_throughput_offer_with_int",
+        "tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync.test_replace_throughput_offer_with_object",
+        "tests/test_crud_container_async.py::TestCRUDContainerOperationsAsync"
+        ".test_negative_replace_throughput_with_all_configs_set",
+        "tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled"
+        ".test_offer_read_and_query",
+        "tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled"
+        ".test_offer_replace",
+        "tests/test_crud_response_payload_on_write_disabled_async.py"
+        "::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_read_and_query_async",
+        "tests/test_crud_response_payload_on_write_disabled_async.py"
+        "::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_replace_async",
+    )),
+    (("cosmosEmulator",), (
+        "tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_offer_methods",
+        *RETIRED_SESSION_TOKEN_SOURCES,
+        "tests/test_utils.py::TestsUtils.test_connection_string",
+        "tests/test_item_body_serialization.py::TestClientOptionWiring.test_sync_connection_string_forwards_option",
+        "tests/test_item_body_serialization.py::TestClientOptionWiring.test_async_connection_string_forwards_option",
+    )),
+    (("cosmosEmulator", "cosmosAADLong"), (
+        "tests/test_cosmos_responses.py::TestCosmosResponses.test_container_replace_throughput",
+        "tests/test_cosmos_responses.py::TestCosmosResponses.test_database_replace_throughput",
+        "tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_container_replace_throughput_async",
+        "tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_database_replace_throughput_async",
+        "tests/test_user_agent_overwrite_regression.py"
+        "::TestUserAgentOverwriteRegression.test_overwrite_via_from_connection_string",
+        "tests/test_user_agent_overwrite_regression_async.py"
+        "::TestUserAgentOverwriteRegressionAsync.test_overwrite_via_from_connection_string_async",
+    )),
+)
+
+#: Original lanes for every retired source that resolves to its own copy.
+RETIRED_SOURCE_MARKERS = {
+    **RETIRED_DATABASE_SOURCE_MARKERS,
+    **RETIRED_QUERY_SOURCE_MARKERS,
+    **{reference: frozenset(lanes) for lanes, references in _OTHER_RETIRED_SOURCE_LANES for reference in references},
+}
+
 RETIRED_TEST_SOURCES = {
     **RETIRED_THROUGHPUT_SOURCES,
     **RETIRED_SESSION_TOKEN_SOURCES,

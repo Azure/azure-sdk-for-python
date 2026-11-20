@@ -72,6 +72,6 @@ class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
         requests = [operation.call_args.args[1]]
         assert requests[0].op == "delete_item"
         assert requests[0].item_id == created_item['id']
-        # Known gap 33: `CosmosClient(...)`: settings from first principles, bites 1-15. The binding receives the bucket, but the pinned driver omits it on Gateway V2, so this checks the native boundary, not the wire header.
+        # Known gap 36: Request options are not sent over Gateway V2. The binding receives the bucket, but the pinned driver omits it on Gateway V2, so this checks the native boundary, not the wire header.
         for request in requests:
             assert_request_throughput_bucket(request)

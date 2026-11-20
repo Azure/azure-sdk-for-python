@@ -58,7 +58,11 @@ class ClientOperationDefaults:
             kwargs["timeout"] = self.operation_timeout_seconds
 
     def apply_to_options(self, options: dict[str, Any]) -> None:
-        """Fill request defaults without overriding per-call options or headers."""
+        """Apply the saved hedging threshold and fill priority and bucket defaults.
+
+        Truthy per-call priority and bucket values or matching headers prevent
+        default insertion. A bucket of zero is treated as absent.
+        """
         if options.get("availabilityStrategy") is True and self.hedging_threshold_ms is not None:
             options["availabilityStrategy"] = CrossRegionHedgingStrategy(
                 {"threshold_ms": self.hedging_threshold_ms}
@@ -102,7 +106,8 @@ class CosmosClientContext(Generic[_BackendT]):
     adapter: _BackendT
     defaults: ClientOperationDefaults = field(default_factory=ClientOperationDefaults)
     response_state: ClientLastResponseHeaders = field(default_factory=ClientLastResponseHeaders)
-    # SDK-internal consumers share configuration, never per-operation mutable data.
+    # Test hook: no SDK code sets this. Tests add handlers here to receive each
+    # call's completion, including the attempt payload, outcome and reasons.
     telemetry_handlers: tuple[CompletionHandler, ...] = ()
     diagnostic_logging: DiagnosticLogging = field(default_factory=DiagnosticLogging)
     tracing_attributes: Mapping[str, Any] = field(default_factory=dict)

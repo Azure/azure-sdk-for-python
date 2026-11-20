@@ -2,9 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Sync ``read_items`` contract tests against the ``_backend="rust"`` path.
 
-Self-contained: builds its own database + container in ``setUp`` and deletes them
-in ``tearDown``; methods that need a different partition-key shape build (and
-delete) their own container. The class and method names match the source (apart from the
+Self-contained: a key client builds its own database + container in ``setUp`` and
+deletes them afterwards; methods that need a different partition-key shape build
+(and delete) their own container through the key client. Items are written and
+read through the data client (AAD in AAD lanes), as in the source. The class and
+method names match the source (apart from the
 method's ``_rust`` suffix) at
 ``tests/test_read_items.py`` so test IDs differ by path and method suffix.
 
@@ -24,20 +26,13 @@ Run with::
 
     pytest --import-mode=importlib tests/read_items/sync/test_read_items.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosEmulator
@@ -48,14 +43,18 @@ class TestReadItems(unittest.TestCase):
     come back, in what order, and the aggregated request-charge header)."""
 
     def setUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=20)
+        # Key client owns the database and containers; the data client (AAD in
+        # AAD lanes) writes and reads items, as in the original.
+        self.key_client = create_setup_client(_backend="rust", timeout=20)
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust", timeout=20)
         self.addCleanup(self.client.close)
         self._db_id = "rust_read_items_sync_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
-        self.key_database = self.database
+        self.key_database = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
+        self.database = self.client.get_database_client(self._db_id)
         self._container_id = "read_items_container_" + str(uuid.uuid4())
-        container_ref = self.database.create_container(
+        container_ref = self.key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/id"),
         )
@@ -98,7 +97,7 @@ class TestReadItems(unittest.TestCase):
         """Partition key on its own path (/pk, not /id) -> read_items still finds every requested item."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_different_partition_key
         container_id = 'read_items_pk_container_' + str(uuid.uuid4())
-        self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        self.key_database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
         container_pk = self.database.get_container_client(container_id)
         try:
             items_to_read = []
@@ -114,13 +113,13 @@ class TestReadItems(unittest.TestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_id)
+            self.key_database.delete_container(container_id)
 
     def test_read_items_fails_with_incomplete_hierarchical_pk_rust(self):
         """A hierarchical partition key with too few components makes read_items raise ValueError."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_fails_with_incomplete_hierarchical_pk
         container_id = 'read_items_hpk_incomplete_container_' + str(uuid.uuid4())
-        self.database.create_container(
+        self.key_database.create_container(
             id=container_id,
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash"),
         )
@@ -139,13 +138,13 @@ class TestReadItems(unittest.TestCase):
             self.assertIn("read_items requires every component of the container's partition key.",
                           str(context.exception))
         finally:
-            self.database.delete_container(container_id)
+            self.key_database.delete_container(container_id)
 
     def test_read_items_hierarchical_partition_key_rust(self):
         """Two-level (tenantId, userId) partition key -> read_items returns every requested item."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_hierarchical_partition_key
         container_id = 'read_hpk_container_' + str(uuid.uuid4())
-        self.database.create_container(
+        self.key_database.create_container(
             id=container_id,
             partition_key=PartitionKey(path=["/tenantId", "/userId"], kind="MultiHash"),
         )
@@ -165,7 +164,7 @@ class TestReadItems(unittest.TestCase):
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
         finally:
-            self.database.delete_container(container_id)
+            self.key_database.delete_container(container_id)
 
     def test_read_items_with_no_results_preserve_headers_rust(self):
         """All ids non-existent -> an empty result, but the aggregated x-ms-request-charge header is still present and non-zero."""
@@ -197,7 +196,7 @@ class TestReadItems(unittest.TestCase):
         """The returned items come back in the same order as the input (id, pk) list."""
         # Source: tests/test_read_items.py::TestReadItems.test_read_items_order_using_zip_comparison
         container_id = 'read_order_zip_container_' + str(uuid.uuid4())
-        self.database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
+        self.key_database.create_container(id=container_id, partition_key=PartitionKey(path="/pk"))
         container_pk = self.database.get_container_client(container_id)
         try:
             all_items = []
@@ -213,7 +212,7 @@ class TestReadItems(unittest.TestCase):
             self.assertTrue(all(matching),
                             "Order was not preserved. Input order doesn't match output order.")
         finally:
-            self.database.delete_container(container_id)
+            self.key_database.delete_container(container_id)
 
     def test_read_items_large_count_rust(self):
         """Tests read_items with a large number of items."""

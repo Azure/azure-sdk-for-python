@@ -13,14 +13,14 @@ from azure.cosmos import CosmosClient, PartitionKey, _rust
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.exceptions import CosmosClientTimeoutError
+from config.clients import create_data_client, create_setup_client
 from config.settings import TestSettings
 
 
 @pytest.fixture(scope="module")
 def legacy_fault_database():
-    with CosmosClient(
-        TestSettings.host, TestSettings.masterKey, _backend="rust"
-    ) as client:
+    """Key client database: creates and deletes the database and containers."""
+    with create_setup_client(_backend="rust") as client:
         database = client.create_database(
             "read-items-fault-original-" + uuid.uuid4().hex
         )
@@ -28,6 +28,13 @@ def legacy_fault_database():
             yield database
         finally:
             client.delete_database(database.id)
+
+
+@pytest.fixture(scope="module")
+def legacy_fault_data_database(legacy_fault_database):
+    """Data client handle to the same database: seeds items, like the legacy tests."""
+    with create_data_client(_backend="rust") as client:
+        yield client.get_database_client(legacy_fault_database.id)
 
 
 @pytest.mark.cosmosEmulator
@@ -51,6 +58,7 @@ def legacy_fault_database():
 )
 async def test_original_failure_and_retry_contracts_rust(
     legacy_fault_database,
+    legacy_fault_data_database,
     record_property,
     asynchronous,
     scenario,
@@ -73,11 +81,12 @@ async def test_original_failure_and_retry_contracts_rust(
     client = None
     handle = None
     rule_id = uuid.uuid4().hex
+    seed = legacy_fault_data_database.get_container_client(owned.id)
     try:
         pairs = []
         for index in range(count):
             item_id = f"{prefix}_{index}_{uuid.uuid4()}"
-            owned.create_item({"id": item_id, "data": index})
+            seed.create_item({"id": item_id, "data": index})
             pairs.append((item_id, item_id))
         headers = {"x-ms-retry-after-ms": "10"} if scenario == "throttle" else {}
         if scenario == "headers":
@@ -158,7 +167,7 @@ async def test_original_failure_and_retry_contracts_rust(
 @pytest.mark.asyncio
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 async def test_original_whole_call_timeout_rust(
-    legacy_fault_database, record_property, asynchronous
+    legacy_fault_database, legacy_fault_data_database, record_property, asynchronous
 ):
     # Source: tests/test_crud.py::TestCRUDOperations.test_timeout_for_read_items
     # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_timeout_for_read_items_async
@@ -170,6 +179,7 @@ async def test_original_whole_call_timeout_rust(
     client = None
     handle = None
     identifier = uuid.uuid4().hex
+    seed = legacy_fault_data_database.get_container_client(owned.id)
     try:
         assert (
             len(list(owned.read_feed_ranges())) > 1
@@ -177,7 +187,7 @@ async def test_original_whole_call_timeout_rust(
         pairs = []
         for index in range(200):
             item_id = f"item_{index}_{uuid.uuid4()}"
-            owned.create_item({"id": item_id, "pk": index % 10, "data": index})
+            seed.create_item({"id": item_id, "pk": index % 10, "data": index})
             pairs.append((item_id, index % 10))
         rule = {
             "id": identifier,
@@ -223,7 +233,7 @@ async def test_original_whole_call_timeout_rust(
         if not asynchronous:
             for index in range(500):
                 item_id = f"item_{index}_{uuid.uuid4()}"
-                owned.create_item({"id": item_id, "pk": index % 10, "data": index})
+                seed.create_item({"id": item_id, "pk": index % 10, "data": index})
                 pairs.append((item_id, index % 10))
             result = await read()
             assert {item["id"] for item in result} == {item_id for item_id, _ in pairs}

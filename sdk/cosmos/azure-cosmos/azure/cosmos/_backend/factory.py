@@ -85,6 +85,7 @@ def _make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    utf8_decoding_mode: Optional[str] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> Union[_BackendT, _LegacyBackendT]:
@@ -116,6 +117,7 @@ def _make_backend(
                 availability_strategy=availability_strategy,
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
+                utf8_decoding_mode=utf8_decoding_mode,
 
                 fault_injection_rules=fault_injection_rules,
                 headers=headers,
@@ -124,6 +126,8 @@ def _make_backend(
         )
     if runtime is not None:
         raise ValueError("runtime is supported only by the Rust backend.")
+    if utf8_decoding_mode is not None:
+        raise ValueError("utf8_decoding_mode is supported only by the Rust backend.")
     return legacy_backend
 
 
@@ -141,6 +145,7 @@ def make_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    utf8_decoding_mode: Optional[str] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> CosmosBackend:
@@ -160,6 +165,7 @@ def make_backend(
         availability_strategy=availability_strategy,
         user_agent_suffix=user_agent_suffix,
         consistency_level=consistency_level,
+        utf8_decoding_mode=utf8_decoding_mode,
 
         fault_injection_rules=fault_injection_rules,
         headers=headers,

@@ -250,6 +250,7 @@ async fn run_get_throughput_future(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         custom_headers,
     );
     let mut responses = Vec::new();
@@ -301,6 +302,7 @@ async fn run_replace_throughput_future(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         modifiers.custom_headers,
     );
     driver.execute_singleton_operation(op, options).await
@@ -395,6 +397,7 @@ mod tests {
             read_consistency_strategy: None,
             patch_strategy: None,
             throughput_control: None,
+            utf8_decoding_mode: None,
             custom_headers: HashMap::new(),
         }
     }

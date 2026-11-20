@@ -144,6 +144,7 @@ async fn run_query_future(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         modifiers.custom_headers,
     );
     driver.execute_operation(op, options).await

@@ -10,12 +10,13 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from azure.core.utils import CaseInsensitiveDict
 
+from .._backend.capabilities import reject_removed_options
 from .._backend.contracts import BackendPage, ContainerMetadata, PreparedPageRequest, ReadManyItem
 from .._backend.cosmos_backend import CosmosBackend
 from .._backend.partition_key_input import BindingPartitionKey
 from .._cosmos_responses import CosmosList
 from .._operation_deadline import remaining_timeout
-from .._telemetry import RecordingOptions, trace_operation
+from .._telemetry import RecordingOptions
 from ._client_context import CosmosClientContext
 from ._read_items import (
     ResponseHeaderAccumulator,
@@ -47,6 +48,7 @@ class ReadManyRequest(Generic[_BackendT]):
     def __init__(
         self, context: CosmosClientContext[_BackendT], container_link: str, items: Any, kwargs: dict[str, Any]
     ) -> None:
+        reject_removed_options(kwargs)
         if context is None or context.adapter.name == "core-python":
             raise NotImplementedError("read_items requires the Rust backend; no legacy fallback is available.")
         self._client_context: CosmosClientContext[_BackendT] = context
@@ -56,7 +58,8 @@ class ReadManyRequest(Generic[_BackendT]):
         self.items, self.deadline = prepare_read_items(items, kwargs)
         kwargs.pop("_item_operation_deadline", None)
         self.hook = kwargs.pop("response_hook", None)
-        self.recording = RecordingOptions.take(kwargs)
+        # The public read_items decorator already used these tracing and logging options.
+        RecordingOptions.take(kwargs)
         options = deepcopy(compose_options_from_kwargs(kwargs))
         for name, key in (("timeout", "timeout"), ("consistency_level", "consistencyLevel")):
             if name in kwargs:
@@ -65,6 +68,7 @@ class ReadManyRequest(Generic[_BackendT]):
             "timeout", "consistencyLevel", "sessionToken", "initialHeaders", "excludedLocations",
             "priorityLevel", "throughputBucket", "availabilityStrategy", "maxItemCount",
             "maxIntegratedCacheStaleness",
+            "utf8DecodingMode",
         }
         if kwargs or set(options) - allowed:
             names = sorted(set(kwargs) | (set(options) - allowed))
@@ -153,10 +157,12 @@ class ReadManyRequest(Generic[_BackendT]):
         return complete_read_items_response(result, self.hook, self.deadline)
 
 
-@trace_operation(
-    binding_operation="read_items", operation_name="read_items", name_of_span="ContainerProxy.read_items.fetch"
-)
-def _fetch_page(request: ReadManyRequest[CosmosBackend], **_tracing_kwargs: Any) -> bool:
+def _fetch_page(request: ReadManyRequest[CosmosBackend]) -> bool:
+    if request.cursor is None:
+        # Resolve the container before the first page, so a lookup failure is logged and traced.
+        request.initialize(
+            request.backend.get_container_metadata(request.container_link, deadline=request.deadline, op="read_items")
+        )
     pages = request.backend.execute_pages(request.prepared(), deadline=request.deadline)
     try:
         page = next(pages)
@@ -180,8 +186,7 @@ def read_items(
     request = ReadManyRequest(context, container_link, items, kwargs)
     try:
         if request.items:
-            request.initialize(request.backend.get_container_metadata(container_link, deadline=request.deadline))
-            while _fetch_page(request, **request.recording.kwargs):
+            while _fetch_page(request):
                 pass
         return request.finish()
     finally:

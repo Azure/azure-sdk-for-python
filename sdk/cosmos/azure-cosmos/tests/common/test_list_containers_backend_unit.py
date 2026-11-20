@@ -54,10 +54,9 @@ def _page(ids, continuation=None, status=200):
     """Build one fake feed page holding the named containers.
 
     The containers sit under the ``DocumentCollections`` key, which is what the
-    service really uses for a container feed. A database feed uses a different
-    key, and reading the wrong one yields an empty list rather than an error --
-    the worst kind of wrong, because the customer sees "no containers" instead
-    of a failure.
+    parser expects for a container feed. A database feed uses a different key.
+    The shared metadata parser rejects a missing or invalid configured array
+    rather than silently presenting the response as an empty result.
 
     The activity id is set from the container names so a test can tell the pages
     apart in the headers a hook receives.

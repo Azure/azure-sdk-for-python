@@ -65,6 +65,11 @@ def prepare_operation_kwargs(
         proxy.client_connection, "__dict__", {}
     ).get("_backend")
     if backend is not None and backend.name == "core-python":
+        for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options")):
+            if isinstance(options, Mapping) and (
+                "utf8_decoding_mode" in options or "utf8DecodingMode" in options
+            ):
+                raise ValueError("utf8_decoding_mode is supported only by the Rust backend.")
         return
     reject_rust_arguments(kwargs, strategy=strategy, headers=headers)
     if inherit_timeout and context is not None:
@@ -289,9 +294,7 @@ CAPABILITIES: dict[str, OpCapability] = {
         unsupported_message=(
             "create_database_if_not_exists cannot run on the Rust backend for this call: it was given "
             "a per-call option the Rust path cannot honor (an overridden standard request "
-            "header, or a transport keyword "
-            "such as connection_timeout). Remove the unsupported per-call option; configure "
-            "connection and HTTP-request limits through CosmosRuntime."
+            "header or another unsupported option). Remove the unsupported per-call option."
         ),
     ),
     GET_OR_CREATE_CONTAINER: OpCapability(

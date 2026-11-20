@@ -53,7 +53,8 @@ def client():
         rust_client.close()
 
 
-def test_listed_databases_include_created_ones_with_system_properties_rust(client, database_ids):
+@pytest.mark.parametrize("content_type", [None, "application/vnd.alpha-bank+json"])
+def test_listed_databases_include_created_ones_with_system_properties_rust(client, database_ids, content_type):
     """Every created database is listed with its id, _rid, _self, _etag and _ts properties."""
     snapshots = []
 
@@ -62,6 +63,7 @@ def test_listed_databases_include_created_ones_with_system_properties_rust(clien
         page_count = 0
         for page in client.list_databases(
             max_item_count=2,
+            content_type=content_type,
             timeout=10,
             throughput_bucket=1,
             initial_headers={"x-list-databases-test": "sync"},

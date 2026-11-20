@@ -40,7 +40,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         if expected_offer_type:
             self.assertEqual(expected_offer_type, offer.properties.get('offerType'))
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
+    @pytest.mark.cosmosAADLong
     def test_offer_read_and_query_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_offer_read_and_query
         collection = self.container
@@ -76,7 +77,8 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
         self.assertEqual(expected_offer.offer_throughput, offer_throughput)
         created_db.delete_container(created_collection.id)
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
+    @pytest.mark.cosmosAADLong
     def test_offer_replace_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_offer_replace
         collection = self.container

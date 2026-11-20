@@ -16,6 +16,14 @@ from typing import Any, ClassVar, Literal, NoReturn, Optional, Union
 from .partition_key_input import BindingPartitionKey
 
 
+def validate_utf8_decoding_mode(value: Optional[str]) -> None:
+    if value is not None:
+        if type(value) is not str:
+            raise TypeError("utf8_decoding_mode must be a string or None.")
+        if value not in ("Strict", "Lossy"):
+            raise ValueError("utf8_decoding_mode must be 'Strict' or 'Lossy'.")
+
+
 def reject_trigger_header(name: str) -> None:
     if name.lower() in (
         "x-ms-documentdb-pre-trigger-include",
@@ -161,6 +169,7 @@ class RequestSettings(_ValidatedSettings):
     hedging: Optional[HedgingSettings] = None
     timeout_seconds: Optional[float] = None
     consistency_level: Optional[str] = None
+    utf8_decoding_mode: Optional[Literal["Strict", "Lossy"]] = None
     item: ItemSettings = field(default_factory=ItemSettings)
     query: QuerySettings = field(default_factory=QuerySettings)
     resource: ResourceSettings = field(default_factory=ResourceSettings)
@@ -182,6 +191,7 @@ class RequestSettings(_ValidatedSettings):
         if self.timeout_seconds is not None:
             self._check_number("timeout_seconds", self.timeout_seconds)
         self._check_type("consistency_level", self.consistency_level, str)
+        validate_utf8_decoding_mode(self.utf8_decoding_mode)
         if not isinstance(self.item, ItemSettings):
             self._invalid_type("item")
         if not isinstance(self.query, QuerySettings):

@@ -123,6 +123,7 @@ def build_client_config(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    utf8_decoding_mode: Optional[str] = None,
     operation_timeout_seconds: Optional[float] = None,
     fault_injection_rules: Optional[Sequence[Mapping[str, Any]]] = None,
     headers: Optional[Mapping[str, str]] = None,
@@ -188,6 +189,7 @@ def build_client_config(
         and hedging_threshold_ms is None
         and suffix is None
         and consistency is None
+        and utf8_decoding_mode is None
         and operation_timeout_seconds is None
         and not prepared_fault_rules
         and not prepared_headers
@@ -201,6 +203,7 @@ def build_client_config(
         hedging_threshold_ms=hedging_threshold_ms,
         user_agent_suffix=suffix,
         consistency_level=consistency,
+        utf8_decoding_mode=utf8_decoding_mode,
         operation_timeout_seconds=operation_timeout_seconds,
         fault_injection_rules=prepared_fault_rules,
         headers=prepared_headers,

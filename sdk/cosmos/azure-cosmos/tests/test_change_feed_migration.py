@@ -382,7 +382,7 @@ def test_change_feed_point_range_matches_partition_key(asynchronous):
 @pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("hierarchical", [False, True], ids=["single-key", "complete-hpk"])
-def test_legacy_change_feed_checkpoints_resume_on_rust(asynchronous, hierarchical):
+def test_legacy_checkpoints_rejected_and_native_resume_preserved_rust(asynchronous, hierarchical):
     database_id = unique_database_id("ChangeFeedMigration")
     key = ["tenant", "customer"] if hierarchical else "customer"
     definition = (
@@ -425,20 +425,27 @@ def test_legacy_change_feed_checkpoints_resume_on_rust(asynchronous, hierarchica
             async def run_async():
                 async with create_data_client_async(_backend="rust") as client:
                     native = client.get_database_client(database_id).get_container_client("orders")
-                    for token, options, expected in checkpoints:
+                    for token, options, _ in checkpoints:
                         for channel in ("keyword", "by_page"):
                             for size in (1, 100):
-                                resumed = _pages(native, token, channel, size, **options)
-                                rows = [row async for page in resumed async for row in page]
-                                _assert_ids(rows, expected)
-                                assert resumed.continuation_token.startswith("cf1.")
+                                with pytest.raises(ValueError, match="V4 tokens are not supported"):
+                                    resumed = _pages(native, token, channel, size, **options)
+                                    async for page in resumed:
+                                        async for _ in page:
+                                            pass
+                    resumed = _pages(native, None, "keyword", 2, partition_key=key, start_time="Beginning")
+                    _assert_ids(
+                        [row async for page in resumed async for row in page],
+                        {f"old{index}" for index in range(6)} | expected_new,
+                    )
                     saved = resumed.continuation_token
+                    assert saved.startswith("cf1.")
                     await native.create_item({"id": "later", "tenant": "tenant", "pk": "customer"})
                     rows = [row async for row in native.query_items_change_feed(continuation=saved, timeout=30)]
                     _assert_ids(rows, {"later"})
                     other = client.get_database_client(database_id).get_container_client("other")
-                    with pytest.raises(ValueError, match="legacy change-feed checkpoint"):
-                        async for _ in other.query_items_change_feed(continuation=partial, timeout=30):
+                    with pytest.raises(ValueError, match="incompatible backend or container"):
+                        async for _ in other.query_items_change_feed(continuation=saved, timeout=30):
                             pass
 
             if asynchronous:
@@ -446,17 +453,23 @@ def test_legacy_change_feed_checkpoints_resume_on_rust(asynchronous, hierarchica
             else:
                 with create_data_client(_backend="rust") as client:
                     native = client.get_database_client(database_id).get_container_client("orders")
-                    for token, options, expected in checkpoints:
+                    for token, options, _ in checkpoints:
                         for channel in ("keyword", "by_page"):
                             for size in (1, 100):
-                                resumed = _pages(native, token, channel, size, **options)
-                                _assert_ids([row for page in resumed for row in page], expected)
-                                assert resumed.continuation_token.startswith("cf1.")
+                                with pytest.raises(ValueError, match="V4 tokens are not supported"):
+                                    resumed = _pages(native, token, channel, size, **options)
+                                    list(resumed)
+                    resumed = _pages(native, None, "keyword", 2, partition_key=key, start_time="Beginning")
+                    _assert_ids(
+                        [row for page in resumed for row in page],
+                        {f"old{index}" for index in range(6)} | expected_new,
+                    )
                     saved = resumed.continuation_token
+                    assert saved.startswith("cf1.")
                     native.create_item({"id": "later", "tenant": "tenant", "pk": "customer"})
                     _assert_ids(list(native.query_items_change_feed(continuation=saved, timeout=30)), {"later"})
                     other = client.get_database_client(database_id).get_container_client("other")
-                    with pytest.raises(ValueError, match="legacy change-feed checkpoint"):
-                        list(other.query_items_change_feed(continuation=partial, timeout=30))
+                    with pytest.raises(ValueError, match="incompatible backend or container"):
+                        list(other.query_items_change_feed(continuation=saved, timeout=30))
         finally:
             legacy.delete_database(database_id)

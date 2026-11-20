@@ -14,11 +14,20 @@ from azure.cosmos._helpers._container_operations import ContainerHelper
 from azure.cosmos.aio._helpers._container_operations import AsyncContainerHelper
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from config.clients import create_data_client, create_data_client_async
-from config.settings import unique_database_id
+from config.settings import TestSettings, unique_database_id
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
+@pytest.mark.skipif(
+    TestSettings.is_emulator,
+    reason=(
+        "emulator-gap: concurrent creates race while reserving an internal server; "
+        "ServiceStateManager.SetServiceStateTransactionallyAsync fails with "
+        "'The property check failed' (0x80071BD5) and returns HTTP 500. "
+        "Reproduced without either SDK; re-enable after the emulator allocation race is fixed."
+    ),
+)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
 def test_concurrent_container_creation_returns_same_resource_rust(asynchronous, use_legacy):

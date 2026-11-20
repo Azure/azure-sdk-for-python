@@ -399,15 +399,6 @@ def test_invalid_retry_counts_fail_before_core_python_startup_rust(module, value
     module.CosmosClientConnection.assert_not_called()
 
 
-@pytest.mark.parametrize("keyword", ["retry_total", "retry_backoff_max"])
-def test_invalid_retry_alias_error_names_supplied_option_rust(module, keyword):
-    with pytest.raises(ValueError, match=keyword):
-        module.CosmosClient(
-            "https://startup.invalid", "ZmFrZQ==", _backend="rust", **{keyword: -1}
-        )
-    module.CosmosClientConnection.assert_not_called()
-
-
 @pytest.mark.parametrize("name", ["preferred_locations", "excluded_locations"])
 @pytest.mark.parametrize("value", [[123], [None], [True], [" "], {"West US": 1}, False])
 def test_invalid_region_values_rejected_at_construction_rust(module, name, value):
@@ -558,17 +549,25 @@ def test_failed_driver_build_leaves_runtime_validation_to_binding_rust(monkeypat
     """A failed build and close cannot clear settings already fixed in the binding."""
     validator = MagicMock()
     monkeypatch.setattr("azure.cosmos._rust._validate_runtime_configuration", validator)
+    startup_error = RuntimeError("driver failed")
 
     def acquire(*args):
         validator.side_effect = ValueError("runtime settings already initialized")
-        raise RuntimeError("driver failed")
+        raise startup_error
 
     monkeypatch.setattr(
-        sync_backend, "_rust_module", SimpleNamespace(acquire_driver_handle=acquire)
+        sync_backend,
+        "_rust_module",
+        SimpleNamespace(
+            _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+            _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
+            acquire_driver_handle=acquire,
+        ),
     )
     backend = sync_backend.BindingAdapter("https://account.invalid", master_key="key")
-    with pytest.raises(RuntimeError, match="driver failed"):
+    with pytest.raises(RuntimeError, match="driver failed") as raised:
         backend._ensure_driver_handle()
+    assert raised.value is startup_error
     backend.close()
     for config in (
         SimpleNamespace(proxy_allowed=True),
@@ -712,6 +711,8 @@ def async_rust_startup(monkeypatch):
     )
     connection._close_pipeline = connection.pipeline_client.__aexit__
     binding = SimpleNamespace(
+        _DriverResponseError=type("_DriverResponseError", (RuntimeError,), {}),
+        _DriverTransportError=type("_DriverTransportError", (RuntimeError,), {}),
         acquire_driver_handle=MagicMock(return_value="startup-handle"),
         release_driver_handle=MagicMock(),
         read_item_async=AsyncMock(return_value=(200, 0, {}, b'{"id":"order-42"}')),

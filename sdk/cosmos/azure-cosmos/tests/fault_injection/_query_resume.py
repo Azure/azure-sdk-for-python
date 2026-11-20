@@ -44,8 +44,18 @@ def capture_query_calls(monkeypatch, *, asynchronous=False):
         assert prepared.op == "query_items"
         assert isinstance(cursor, _rust._ItemFeedCursor)
         budget = kwargs.get("timeout_seconds")
+        # Deadline subtraction can round just above the original budget.
         assert (
-            budget is not None and math.isfinite(budget) and 0 < budget <= PAGE_BUDGET
+            budget is not None
+            and math.isfinite(budget)
+            and budget > 0
+            and (
+                budget <= PAGE_BUDGET
+                or math.isclose(budget, PAGE_BUDGET, rel_tol=0, abs_tol=1e-6)
+            )
+        ), (
+            f"Unexpected query timeout budget: {budget!r}; "
+            f"expected 0 < budget <= {PAGE_BUDGET}s (1us rounding tolerance)"
         )
         calls.append((handle, cursor))
         return original(handle, prepared, cursor, **kwargs)

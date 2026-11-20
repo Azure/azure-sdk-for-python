@@ -12,20 +12,13 @@ Run with::
 
     pytest --noconftest tests/read_all_items/sync/test_crud.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -34,20 +27,27 @@ KEY = os.environ.get(
 class TestCRUDOperations(unittest.TestCase):
 
     def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        self.key_client = create_setup_client(_backend="rust", timeout=30)
+        self.client = create_data_client(_backend="rust", timeout=30)
         self._db_id = "rust_read_all_crud_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = self.client.create_database(self._db_id)
-        self.container = self.database.create_container(
+        key_database = self.key_client.create_database(self._db_id)
+        key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.container = self.client.get_database_client(
+            self._db_id
+        ).get_container_client(self._container_id)
 
     def tearDown(self) -> None:
         try:
-            self.client.delete_database(self._db_id)
+            self.key_client.delete_database(self._db_id)
         finally:
             self.client.close()
+            self.key_client.close()
 
     def test_query_iterable_functionality_rust(self):
         """Enumerating a whole container works item by item and page by page.

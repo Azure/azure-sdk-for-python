@@ -12,6 +12,7 @@ from azure.cosmos import CosmosClient, PartitionKey
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestCosmosResponses(unittest.TestCase):
     def setUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

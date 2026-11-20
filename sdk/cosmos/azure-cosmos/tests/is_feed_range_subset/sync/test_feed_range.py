@@ -87,6 +87,7 @@ def rust_container():
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.unittest
 class TestFeedRange:
 
     @pytest.mark.parametrize("parent_feed_range, child_feed_range, is_subset", test_subset_ranges)

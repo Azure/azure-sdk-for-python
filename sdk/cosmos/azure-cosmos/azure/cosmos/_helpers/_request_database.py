@@ -7,7 +7,9 @@
 
 Covers create, read and delete of a database, plus the checks that decide
 whether a given call can run on the Rust path at all. A database is
-account-scoped, so these requests carry no partition key and no container link.
+account-scoped, so these requests carry no item partition-key value and use
+an empty container link. The shared record's partition-key field is unused
+by database binding calls.
 
 The eligibility predicates screen known unsupported settings before execution.
 They do not prove service acceptance or exhaustively validate arbitrary internal
@@ -31,9 +33,11 @@ from ._request_settings import (
     account_request_settings,
     build_customer_headers,
     compose_options_from_kwargs,
+    OPTION_FIELDS,
     OPTION_HEADER_NAMES,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
+    reject_unknown_feed_kwargs,
     validate_operation_timeout,
 )
 from ._resource_validation import validate_resource
@@ -62,10 +66,9 @@ _CREATE_DATABASE_OPTIONS = frozenset({
     "priorityLevel", "excludedLocations", "availabilityStrategy",
     "correlatedActivityId", "contentType",
 })
-_CREATE_DATABASE_OWNED_HEADERS = frozenset({
-    "accept", "cache-control", "user-agent", "x-ms-version", "x-ms-client-id",
-    "x-ms-cosmos-sdk-supportedcapabilities", "authorization", "x-ms-date",
-})
+_CREATE_DATABASE_QUERY_OPTIONS = frozenset(
+    option for option, (group, _) in OPTION_FIELDS.items() if group == "query"
+)
 _CREATE_DATABASE_INAPPLICABLE_HEADERS = frozenset(
     header for option, header in OPTION_HEADER_NAMES.items()
     if option not in _CREATE_DATABASE_OPTIONS
@@ -86,6 +89,26 @@ def prepare_create_database_options(
     if "request_options" not in kwargs:
         kwargs["request_options"] = feed_options
     options = deepcopy(compose_options_from_kwargs(kwargs))
+    if "connection_timeout" in kwargs or "connection_timeout" in options:
+        raise TypeError(
+            f"{operation_name}() does not accept per-call connection_timeout; "
+            "configure ConnectionPoolOptions.connection_timeout on the client's CosmosRuntime instead."
+        )
+    if Constants.Kwargs.RETRY_WRITE in options:
+        raise TypeError(
+            f"{operation_name}() does not accept retry_write; the Rust driver manages write retries."
+        )
+    if "responsePayloadOnWriteDisabled" in options or "no_response" in options:
+        raise TypeError(
+            f"{operation_name}() does not accept no_response; full database properties are required."
+        )
+    for name in options:
+        if name in _CREATE_DATABASE_QUERY_OPTIONS:
+            raise TypeError(f"{operation_name}() does not support query or paging option '{name}'")
+    reject_unknown_feed_kwargs(
+        operation_name,
+        kwargs.keys() - {"timeout", "tracing_options", "tracing_attributes", "if_match", "if_none_match"},
+    )
     timeout = kwargs.get("timeout", options.pop("timeout", None))
     if not is_supported_operation_timeout(timeout):
         raise ValueError(f"{operation_name} timeout must be None or a finite number of seconds >= 1 and < 2**64.")
@@ -124,6 +147,10 @@ def prepare_create_database_options(
         else:
             raise TypeError("offer_throughput must be int or ThroughputProperties")
     initial = build_customer_headers(options.get("initialHeaders"))
+    if "prefer" in initial or any(isinstance(name, str) and name.lower() == "prefer" for name in options):
+        raise TypeError(
+            f"{operation_name}() does not accept the Prefer header; full database properties are required."
+        )
     has_manual = options.get("offerThroughput") is not None or "x-ms-offer-throughput" in initial
     has_autoscale = (
         options.get("autoUpgradePolicy") is not None
@@ -186,9 +213,7 @@ def is_create_database_rust_eligible(
         return False
     initial = request_options.get("initialHeaders")
     if isinstance(initial, Mapping) and any(
-        isinstance(name, str) and name.lower() in (
-            _CREATE_DATABASE_OWNED_HEADERS | _CREATE_DATABASE_INAPPLICABLE_HEADERS
-        )
+        isinstance(name, str) and name.lower() in _CREATE_DATABASE_INAPPLICABLE_HEADERS
         for name in initial
     ):
         return False
@@ -270,12 +295,10 @@ def is_read_database_rust_eligible(
 ) -> bool:
     """Screen database-read options for known Rust representation limits.
 
-    The single definition of "representable" for a database read, shared by
-    ``DatabaseProxy.read`` and the existence check in
-    ``create_database_if_not_exists``. Both ask the same question, so they must
-    not answer it differently: the same call would otherwise run on Rust in one
-    method and on legacy Python in the other, honoring a different set of the
-    caller's options each time.
+    Applies to standalone ``DatabaseProxy.read``. The existence read in
+    ``create_database_if_not_exists`` uses the creation contract, which allows
+    driver-owned header overrides on both steps with driver values taking
+    precedence.
 
     Returns ``False`` when the caller asked for
     something the Rust path would drop without saying so:

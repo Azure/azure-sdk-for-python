@@ -18,11 +18,15 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::CosmosError,
-    models::{ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken},
+    models::{
+        ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, ResponseBody, SessionToken,
+    },
     options::{ContentResponseOnWrite, OperationOptions},
 };
 
-use super::deadline::{parse_remaining_timeout, with_operation_timeout, with_timeout};
+use super::deadline::{
+    parse_remaining_timeout, with_deadline, with_operation_timeout, with_timeout,
+};
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::request::{build_operation_options, RequestHeadersAndOptions};
 use super::response::{
@@ -118,15 +122,7 @@ pub(crate) fn run_read_container_operation<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            let timed = with_timeout(
-                timeout,
-                run_read_container_future(driver, modifiers, database_id, container_id),
-            );
-            async move {
-                timed.await.map_err(|error| {
-                    PyTimeoutError::new_err(format!("Container read timed out: {error}"))
-                })
-            }
+            run_read_container_future(driver, modifiers, database_id, container_id, timeout)
         },
         if include_attempts {
             |py, result| tuple_from_result_with_attempts(py, result?)
@@ -153,15 +149,7 @@ pub(crate) fn run_read_container_operation_async<'py>(
         driver_handle,
         operation_name,
         move |driver| {
-            let timed = with_timeout(
-                timeout,
-                run_read_container_future(driver, modifiers, database_id, container_id),
-            );
-            async move {
-                timed.await.map_err(|error| {
-                    PyTimeoutError::new_err(format!("Container read timed out: {error}"))
-                })
-            }
+            run_read_container_future(driver, modifiers, database_id, container_id, timeout)
         },
         if include_attempts {
             |py, result| tuple_from_result_with_attempts(py, result?)
@@ -405,6 +393,7 @@ fn prepare_container_operation(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         modifiers.custom_headers,
     );
     (op, options)
@@ -425,16 +414,87 @@ async fn run_create_container_future(
 }
 
 /// Read a container directly by database and container name.
-async fn run_read_container_future(
+///
+/// The deadline is recorded now. The read gets the whole budget; the cache refresh
+/// gets only the time left, and running out there still returns the read.
+fn run_read_container_future(
     driver: Arc<CosmosDriver>,
     modifiers: RequestHeadersAndOptions,
     database_id: String,
     container_id: String,
-) -> Result<CosmosResponse, CosmosError> {
-    let database = DatabaseReference::from_name(driver.account().clone(), database_id);
-    let op = CosmosOperation::read_container_by_name(database, container_id);
-    let (op, options) = prepare_container_operation(op, modifiers, None);
-    driver.execute_singleton_operation(op, options).await
+    timeout: Option<Duration>,
+) -> impl Future<Output = PyResult<Result<CosmosResponse, CosmosError>>> {
+    let deadline = timeout.map(|duration| tokio::time::Instant::now() + duration);
+    async move {
+        let resolution_options = container_resolution_options(&modifiers);
+        let database = DatabaseReference::from_name(driver.account().clone(), database_id.clone());
+        let op = CosmosOperation::read_container_by_name(database, container_id.clone());
+        let (op, options) = prepare_container_operation(op, modifiers, None);
+        let response =
+            match with_deadline(deadline, driver.execute_singleton_operation(op, options)).await {
+                Ok(Ok(response)) => response,
+                Ok(Err(error)) => return Ok(Err(error)),
+                Err(error) => {
+                    return Err(PyTimeoutError::new_err(format!(
+                        "Container read timed out: {error}"
+                    )))
+                }
+            };
+        // Box::pin keeps the cache lookup's large future on the heap, not inside this one.
+        let _ = with_deadline(
+            deadline,
+            Box::pin(refresh_cached_container_if_recreated(
+                &driver,
+                &database_id,
+                &container_id,
+                &response,
+                resolution_options,
+            )),
+        )
+        .await;
+        Ok(Ok(response))
+    }
+}
+
+/// Update the Rust driver's container cache when `read()` finds a recreated container.
+///
+/// Example: "orders" was cached with partition key path "/pk", then deleted and
+/// recreated with "/id". Legacy `read()` refreshes its cached metadata, so the next
+/// write uses "/id". The driver only refreshes after a failed request, so we compare
+/// the `_rid` just read with the cached one and refresh only when they differ.
+/// The read already succeeded, so a failed refresh is ignored; the driver still
+/// recovers on its next stale-cache error.
+async fn refresh_cached_container_if_recreated(
+    driver: &CosmosDriver,
+    database_id: &str,
+    container_id: &str,
+    response: &CosmosResponse,
+    options: OperationOptions,
+) {
+    #[derive(serde::Deserialize)]
+    struct ContainerRid {
+        #[serde(rename = "_rid")]
+        rid: String,
+    }
+
+    let ResponseBody::Bytes(body) = response.body() else {
+        return;
+    };
+    let Ok(read) = serde_json::from_slice::<ContainerRid>(body) else {
+        return;
+    };
+    // Served from the cache when present; a cold cache fetches the current container.
+    let Ok(cached) = driver
+        .resolve_container_by_name(database_id, container_id, options.clone())
+        .await
+    else {
+        return;
+    };
+    if cached.rid() != read.rid {
+        let _ = driver
+            .refresh_container_if_recreated(&cached, options)
+            .await;
+    }
 }
 
 fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> OperationOptions {
@@ -445,6 +505,7 @@ fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> Operati
         modifiers.configured_driver_timeout_policy.clone(),
         modifiers.availability_strategy.clone(),
         None,
+        modifiers.utf8_decoding_mode,
         Default::default(),
     )
 }
@@ -562,6 +623,7 @@ mod tests {
             read_consistency_strategy: None,
             patch_strategy: None,
             throughput_control: None,
+            utf8_decoding_mode: None,
             custom_headers: [(
                 HeaderName::from_static("if-none-match"),
                 HeaderValue::from_static("*"),
@@ -591,6 +653,7 @@ mod tests {
             read_consistency_strategy: None,
             patch_strategy: None,
             throughput_control: None,
+            utf8_decoding_mode: None,
             custom_headers: Default::default(),
         };
         assert_eq!(container_operation_timeout(&modifiers), None);
@@ -749,6 +812,7 @@ mod tests {
                     read_consistency_strategy: None,
                     patch_strategy: None,
                     throughput_control: None,
+                    utf8_decoding_mode: None,
                     custom_headers: Default::default(),
                 };
                 // Each future is about 28 KB; Box::pin keeps it on the heap, not the stack.
@@ -794,5 +858,159 @@ mod tests {
                 assert_eq!(metadata.hit_count(), 1);
             }
         }
+    }
+
+    #[tokio::test]
+    async fn read_container_refreshes_driver_cache_after_recreation() {
+        use azure_data_cosmos_driver::{
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{AccountReference, PartitionKeyDefinition},
+            options::DriverOptions,
+        };
+        use url::Url;
+
+        let url = Url::parse("https://container-read-refresh.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        emulator.store().create_database("db");
+        emulator
+            .store()
+            .create_container("db", "orders", PartitionKeyDefinition::from("/pk"));
+        let runtime = emulator.runtime_builder().build().await.unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let old = driver
+            .resolve_container("db", "orders", OperationOptions::default())
+            .await
+            .unwrap();
+
+        // Same name, new RID and partition key path.
+        emulator
+            .store()
+            .create_container("db", "orders", PartitionKeyDefinition::from("/id"));
+        let stale = driver
+            .resolve_container("db", "orders", OperationOptions::default())
+            .await
+            .unwrap();
+        assert_eq!(stale.rid(), old.rid());
+
+        let modifiers = RequestHeadersAndOptions {
+            activity_header: None,
+            session_header: None,
+            content_response_on_write: ContentResponseOnWrite::Enabled,
+            excluded_regions_value: None,
+            configured_driver_timeout_policy: None,
+            remaining_binding_timeout: None,
+            availability_strategy: None,
+            read_consistency_strategy: None,
+            patch_strategy: None,
+            throughput_control: None,
+            utf8_decoding_mode: None,
+            custom_headers: Default::default(),
+        };
+        Box::pin(run_read_container_future(
+            driver.clone(),
+            modifiers,
+            "db".into(),
+            "orders".into(),
+            None,
+        ))
+        .await
+        .unwrap()
+        .unwrap();
+
+        let fresh = driver
+            .resolve_container("db", "orders", OperationOptions::default())
+            .await
+            .unwrap();
+        assert_ne!(fresh.rid(), old.rid());
+        assert_eq!(
+            fresh.partition_key_definition(),
+            &PartitionKeyDefinition::from("/id")
+        );
+    }
+
+    #[tokio::test(start_paused = true)]
+    async fn read_container_returns_read_when_cache_refresh_runs_out_of_time() {
+        use azure_data_cosmos_driver::{
+            fault_injection::{
+                FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+                FaultInjectionRuleBuilder, FaultOperationType,
+            },
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{AccountReference, PartitionKeyDefinition},
+            options::DriverOptions,
+        };
+        use url::Url;
+
+        crate::test_support::prepare_python();
+        let url = Url::parse("https://container-read-deadline.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        emulator.store().create_database("db");
+        emulator
+            .store()
+            .create_container("db", "orders", PartitionKeyDefinition::from("/pk"));
+        // A cold cache makes the refresh step load partition-key ranges; slow them down.
+        let slow_ranges = Arc::new(
+            FaultInjectionRuleBuilder::new(
+                "slow-partition-key-ranges",
+                FaultInjectionResultBuilder::new()
+                    .with_delay(Duration::from_secs(5))
+                    .with_probability(1.0)
+                    .build(),
+            )
+            .with_condition(
+                FaultInjectionConditionBuilder::new()
+                    .with_operation_type(FaultOperationType::MetadataPartitionKeyRanges)
+                    .build(),
+            )
+            .build(),
+        );
+        let runtime = emulator
+            .runtime_builder_with_fault_rules(vec![slow_ranges.clone()])
+            .build()
+            .await
+            .unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let modifiers = RequestHeadersAndOptions {
+            activity_header: None,
+            session_header: None,
+            content_response_on_write: ContentResponseOnWrite::Enabled,
+            excluded_regions_value: None,
+            configured_driver_timeout_policy: None,
+            remaining_binding_timeout: None,
+            availability_strategy: None,
+            read_consistency_strategy: None,
+            patch_strategy: None,
+            throughput_control: None,
+            utf8_decoding_mode: None,
+            custom_headers: Default::default(),
+        };
+        let response = Box::pin(run_read_container_future(
+            driver,
+            modifiers,
+            "db".into(),
+            "orders".into(),
+            Some(Duration::from_secs(1)),
+        ))
+        .await
+        .unwrap()
+        .unwrap();
+        assert_eq!(u16::from(response.status().status_code()), 200);
+        assert!(slow_ranges.hit_count() >= 1);
     }
 }

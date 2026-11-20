@@ -187,10 +187,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype runtime: ~azure.cosmos.CosmosRuntime
     :keyword float connection_timeout: Legacy-only connection timeout. Rust clients require runtime configuration.
     :keyword str connection_mode: The connection mode for the client - currently only supports 'Gateway'.
-    :keyword int retry_total: Maximum retry attempts.
+    :keyword int retry_total: Maximum retry attempts for throttle (429) and connection retries on the legacy
+        Python backend. Rust-backed clients reject this keyword with ``TypeError``; use ``retry_throttle_total``.
     :keyword object connection_retry_policy: Not an async custom-policy configuration route.
         Rust-backed clients reject this keyword with ``TypeError``, including ``None``.
-    :keyword int retry_backoff_max: Maximum retry wait time in seconds.
+    :keyword int retry_backoff_max: Maximum wait in seconds for throttle (429) and connection retries on the legacy
+        Python backend. Rust-backed clients reject this keyword with ``TypeError``;
+        use ``throttle_retry_wait_threshold_seconds``.
     :keyword float throttle_retry_wait_threshold_seconds: Threshold for ordinary throttle retry waiting,
         in seconds. This is not a fixed delay before each retry or an overall operation timeout.
         Rust can use remaining operation time for a final retry. Replaces ``retry_throttle_backoff_max``;
@@ -201,15 +204,18 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
     :keyword int retry_connect: Maximum number of connection error retry attempts on the legacy Python backend.
         Rust-backed clients currently reject this keyword with ``TypeError``, including ``None`` and zero.
-    :keyword int retry_status: Accepted for compatibility; does not configure Cosmos HTTP-status retries.
-    :keyword list[int] retry_on_status_codes: Accepted for compatibility; does not select Cosmos retryable status codes.
+    :keyword int retry_status: Accepted for compatibility on the legacy Python backend; does not configure Cosmos
+        HTTP-status retries. Rust-backed clients reject this keyword with ``TypeError``.
+    :keyword list[int] retry_on_status_codes: Accepted for compatibility on the legacy Python backend; does not
+        select Cosmos retryable status codes. Rust-backed clients reject this keyword with ``TypeError``.
     :keyword str retry_mode: Legacy connection retry delay mode, fixed or exponential.
         Rust-backed clients reject this keyword with ``TypeError``, including ``None``; omit it.
     :keyword float retry_backoff_factor: Legacy connection retry delay factor.
         Rust-backed clients reject this keyword with ``TypeError``, including ``None`` and zero; omit it.
     :keyword bool retry_write: Indicates whether the SDK should automatically retry write operations for items, even if
         the operation is not guaranteed to be idempotent. This should only be enabled if the application can
-        tolerate such risks or has logic to safely detect and handle duplicate operations.
+        tolerate such risks or has logic to safely detect and handle duplicate operations. Rust-backed clients
+        reject this keyword with ``TypeError``; the Rust driver chooses which write failures to retry.
     :keyword bool enable_endpoint_discovery: Enable endpoint discovery for
         geo-replicated database accounts on the legacy comparison backend (default: True).
         Explicit use is rejected on Rust-backed clients; Rust manages discovery.
@@ -278,6 +284,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     :keyword bool enable_compact_utf8_item_writes:
         Use compact UTF-8 when serializing item bodies for create, upsert, replace, patch, and transactional batch
         operations. The default is False.
+    :keyword str utf8_decoding_mode:
+        How Rust-backed operations handle invalid UTF-8 in response bodies.
+        ``"Strict"`` rejects invalid bytes (the default); ``"Lossy"`` replaces them with U+FFFD.
+        An operation's ``utf8_decoding_mode`` overrides this default. Lossy decoding does not repair malformed JSON.
 
     .. admonition:: Example:
 
@@ -348,6 +358,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             availability_strategy=availability_strategy,
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
+            utf8_decoding_mode=kwargs.pop("utf8_decoding_mode", None),
             fault_injection_rules=fault_injection_rules,
             headers=kwargs.get("headers"),
         )
@@ -812,6 +823,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         The success hook is an ordinary synchronous callable, given independent
         copies of the final response's headers and properties outside the request
         timeout and retry handling.
+        Async functions, async callable objects and their partials raise
+        ``TypeError`` before the existence read.
 
         Client priority and throughput-bucket defaults apply to each step.
         Nonempty per-call typed options override matching initial headers;
@@ -886,6 +899,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         :keyword int max_item_count: Maximum number of databases requested per page, not a total result limit.
             Use a positive integer below ``2**63``, ``-1`` to let the service choose, or ``None`` to leave unset.
+        :keyword str content_type: Content-Type request header. ``None`` or an empty string leaves it unset.
         :keyword float timeout: Timeout in seconds per public page fetch by default, not for
             draining the whole iterator. Rust supports finite numeric durations of at least
             one second within its duration range; ``None`` leaves the override unset.
@@ -899,8 +913,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         Unsupported Rust page options raise during iteration instead of using
         the legacy transport. All settings are keyword-only. ``session_token``,
-        ``populate_query_metrics``, ``availability_strategy``, ``no_response``,
-        and ``content_type`` do not apply to database listing and are rejected,
+        ``populate_query_metrics``, ``availability_strategy`` and ``no_response``
+        do not apply to database listing and are rejected,
         including explicit ``None`` or ``False`` and equivalent nested options.
         Settings are copied when this method is called. Each pager owns its bookmark.
         A page-fetch timeout includes driver setup and any empty service pages, but

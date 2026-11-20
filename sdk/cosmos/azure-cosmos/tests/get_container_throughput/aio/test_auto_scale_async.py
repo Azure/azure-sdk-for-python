@@ -15,7 +15,7 @@ from azure.cosmos import PartitionKey, ThroughputProperties, exceptions
 from azure.cosmos.aio import CosmosClient
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestAutoScaleAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

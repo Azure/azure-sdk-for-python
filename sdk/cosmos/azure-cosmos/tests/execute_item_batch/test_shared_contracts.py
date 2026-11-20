@@ -18,7 +18,6 @@ from azure.cosmos import PartitionKey, _rust, exceptions, partition_key
 pytest_plugins = ["execute_item_batch.test_service_failures"]
 pytestmark = [
     pytest.mark.cosmosEmulator,
-    pytest.mark.cosmosAADLong,
     pytest.mark.asyncio,
 ]
 
@@ -26,6 +25,9 @@ pytestmark = [
 async def test_batch_none_options_rust(fault_client):
     # Source: tests/test_none_options.py::TestNoneOptions.test_execute_item_batch_none_options
     # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_execute_item_batch_none_options_async
+    # The source also passes pre_trigger_include=None and
+    # post_trigger_include=None. Triggers are out of scope on the Rust path,
+    # so they are left out here.
     run = await fault_client()
     pk_value = "batch-pk"
     id1, id2 = str(uuid.uuid4()), str(uuid.uuid4())
@@ -48,6 +50,7 @@ async def test_batch_none_options_rust(fault_client):
     assert {item["resourceBody"]["id"] for item in batch_result} == {id1, id2}
 
 
+@pytest.mark.cosmosAADLong
 async def test_batch_headers_lsn_and_session_progression_rust(fault_client):
     run = await fault_client()
     container = run.container
@@ -72,6 +75,7 @@ async def test_batch_headers_lsn_and_session_progression_rust(fault_client):
     assert batch_response_token != response_session_token
 
 
+@pytest.mark.cosmosAADLong
 async def test_batch_ignored_top_level_conditions_rust(fault_client):
     run = await fault_client()
     item = await invoke(run.container.create_item, {"id": "first", "pk": 0})
@@ -95,6 +99,7 @@ async def test_batch_ignored_top_level_conditions_rust(fault_client):
         assert result["statusCode"] in (200, 201)
 
 
+@pytest.mark.cosmosAADLong
 async def test_batch_request_throughput_bucket_rust(
     asynchronous, batch_database, observer, monkeypatch
 ):
@@ -131,6 +136,7 @@ async def test_batch_request_throughput_bucket_rust(
     }
 
 
+@pytest.mark.cosmosAADLong
 @pytest.mark.cosmosLong
 async def test_batch_unicode_write_read_delete_rust(fault_client):
     run = await fault_client(enable_compact_utf8_item_writes=True)
@@ -165,6 +171,7 @@ async def test_batch_unicode_write_read_delete_rust(fault_client):
     assert run.native.call_count == 3
 
 
+@pytest.mark.cosmosAADLong
 @pytest.mark.cosmosLong
 async def test_batch_same_name_container_recreation_rust(fault_client, batch_database):
     run = await fault_client()
@@ -203,6 +210,7 @@ async def test_batch_same_name_container_recreation_rust(fault_client, batch_dat
             resources.retry_control_plane(batch_database.delete_container, identifier)
 
 
+@pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("version", [1, 2])
 @pytest.mark.parametrize("variant", ["none", "null-sentinel", "undefined"])
 @pytest.mark.unittest
@@ -247,6 +255,7 @@ async def test_batch_null_and_undefined_partition_keys_rust(
         resources.retry_control_plane(batch_database.delete_container, identifier)
 
 
+@pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("arity,supplied", [(2, 1), (2, 3), (3, 1), (3, 2)])
 async def test_batch_hierarchical_key_arity_rejection_and_recovery_rust(
     fault_client, batch_database, arity, supplied
@@ -309,6 +318,7 @@ async def test_batch_hierarchical_key_arity_rejection_and_recovery_rust(
         resources.retry_control_plane(batch_database.delete_container, identifier)
 
 
+@pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("arities", [(2, 3), (3, 2)])
 async def test_batch_recreated_hierarchical_key_definition_rust(
     fault_client, batch_database, arities

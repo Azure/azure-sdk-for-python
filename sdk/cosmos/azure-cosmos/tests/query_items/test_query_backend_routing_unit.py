@@ -838,9 +838,8 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
     Covers a sub-second timeout, a connection timeout, overriding the user
     agent or API version header, and an unrecognised keyword.
 
-    These database feeds reject unsupported transport options with a
-    ``NotImplementedError`` naming the legacy Python path. Unknown keywords
-    instead raise ``TypeError`` naming the keyword. The hook is never
+    These database feeds reject unsupported transport options and unknown
+    keywords with ``TypeError`` naming the input. The hook is never
     called, neither transport is used, and the fallback counter does not move.
 
     Both listing and query reject an invalid timeout while constructing the
@@ -856,10 +855,7 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
         return
     iterable = database_feed(response_hook=hook, **kwargs)
     hook.assert_not_called()
-    error, message = (
-        (TypeError, "unknown_option") if "unknown_option" in kwargs else (NotImplementedError, "legacy Python")
-    )
-    with pytest.raises(error, match=message):
+    with pytest.raises(TypeError, match=next(iter(kwargs))):
         await _next_listing_page(iterable.by_page(), is_async)
     hook.assert_not_called()
     backend.execute_pages.assert_not_called()

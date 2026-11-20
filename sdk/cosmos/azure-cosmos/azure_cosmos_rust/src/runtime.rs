@@ -69,6 +69,7 @@ use azure_data_cosmos_driver::{
         HedgeThreshold, HedgingStrategy, OperationOptions, OperationOptionsBuilder,
         PartitionFailoverOptions, PartitionFailoverOptionsBuilder, PartitionTopologyCacheMode,
         ReadConsistencyStrategy, Region, ThrottlingRetryOptionsBuilder, UserAgentSuffix,
+        Utf8DecodingMode,
     },
 };
 use tokio::runtime::Runtime as TokioRuntime;
@@ -218,6 +219,7 @@ struct ClientSettings {
     hedging_threshold_ms: Option<u64>,
     user_agent_suffix: Option<String>,
     consistency_level: Option<String>,
+    utf8_decoding_mode: Option<String>,
     aad_scope_override: Option<String>,
     operation_timeout_seconds: Option<f64>,
     fault_injection_rules: Vec<FaultRuleSettings>,
@@ -293,6 +295,7 @@ impl ClientSettings {
             user_agent_suffix: get_config_opt::<String>(config, "user_agent_suffix")?
                 .filter(|value| !value.is_empty()),
             consistency_level: get_config_opt(config, "consistency_level")?,
+            utf8_decoding_mode: get_config_opt(config, "utf8_decoding_mode")?,
             aad_scope_override: get_config_opt::<String>(config, "aad_scope_override")?
                 .filter(|value| !value.is_empty()),
             operation_timeout_seconds: finite(
@@ -629,7 +632,7 @@ pub(crate) fn acquire_driver_handle(
             .map_err(|join_error| {
                 PyRuntimeError::new_err(format!("driver init task failed: {join_error}"))
             })?
-            .map_err(|error| crate::wire::metadata_error(py, error))?;
+            .map_err(|error| crate::wire::driver_setup_error(py, error))?;
 
         Ok(DriverEntry {
             driver,
@@ -809,6 +812,9 @@ fn fault_rules_from_settings(settings: &ClientSettings) -> PyResult<Vec<Arc<Faul
 fn operation_options_from_settings(settings: &ClientSettings) -> PyResult<OperationOptions> {
     let mut builder =
         OperationOptionsBuilder::new().with_availability_strategy(AvailabilityStrategy::Disabled);
+    if let Some(mode) = settings.utf8_decoding_mode.as_deref() {
+        builder = builder.with_utf8_decoding_mode(utf8_decoding_mode_from_str(mode)?);
+    }
     if let Some(seconds) = settings.operation_timeout_seconds {
         let timeout = Duration::try_from_secs_f64(seconds)
             .map_err(|_| PyValueError::new_err("timeout must be finite seconds within range"))?;
@@ -917,6 +923,16 @@ fn client_headers_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<BTr
 /// selects the latest committed version in the read region; it does not
 /// configure account staleness bounds or wait for cross-region replication.
 /// Unknown names return `None` for the caller to reject.
+pub(crate) fn utf8_decoding_mode_from_str(mode: &str) -> PyResult<Utf8DecodingMode> {
+    match mode {
+        "Strict" => Ok(Utf8DecodingMode::Strict),
+        "Lossy" => Ok(Utf8DecodingMode::Lossy),
+        _ => Err(PyValueError::new_err(
+            "utf8_decoding_mode must be 'Strict' or 'Lossy'.",
+        )),
+    }
+}
+
 pub(crate) fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     match level {
         "Eventual" | "ConsistentPrefix" => Some(ReadConsistencyStrategy::Eventual),

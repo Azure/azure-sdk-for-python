@@ -53,20 +53,13 @@ def client_type(request):
 @pytest.mark.parametrize("suffix", ["", ";", ";;"])
 @pytest.mark.parametrize("level", ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"])
 def test_connection_string_passes_endpoint_key_and_options_rust(client_type, suffix, level):
-    """The address and key are pulled out of the string, any other arguments are passed
-    along untouched, and trailing semicolons are tolerated.
+    """Forward the parsed endpoint, key and supplied options to the constructor.
 
-    Portal and tooling output sometimes ends with a semicolon, and occasionally
-    two. None of that is a customer mistake, so none of it is an error.
+    Trailing semicolons are accepted, and equals signs within the synthetic key
+    are preserved. Both factories return a non-awaitable instance of their class.
 
-    The key here ends in equals signs, which is normal for a base64 key and the
-    exact case naive splitting gets wrong -- splitting on every equals sign
-    would truncate the key and produce an authentication failure that looks
-    nothing like the real cause.
-
-    The result is a real client instance and is not awaitable even for the async
-    client, because building one does not talk to the service. A caller must not
-    have to await it.
+    The constructor is mocked, so this checks factory forwarding and return
+    shape, not client initialization or network behavior.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         client = client_type.from_connection_string(
@@ -88,12 +81,10 @@ def test_connection_string_passes_endpoint_key_and_options_rust(client_type, suf
 
 
 def test_connection_string_uses_default_consistency_rust(client_type):
-    """With no consistency level given, one is still passed explicitly as "not set".
+    """Forward consistency_level=None when the factory call omits it.
 
-    Leaving the argument out entirely would let the client's own default apply,
-    and the two are not the same thing -- passing "not set" means the account's
-    configured level is used. Being explicit keeps that decision in one place
-    instead of depending on what the constructor happens to default to.
+    Both constructors also default to None. This checks the factory's explicit
+    forwarding, not a difference in consistency behavior or service enforcement.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         client_type.from_connection_string(CONNECTION_STRING)
@@ -180,18 +171,11 @@ def test_connection_string_rejects_non_strings_before_construction_rust(
     ],
 )
 def test_connection_string_malformed_errors_do_not_echo_values_rust(client_type, conn_str):
-    """A badly formed string produces one fixed message that never contains any part of
-    what was passed.
+    """Reject malformed strings with a fixed message before constructing a client.
 
-    This is the security test of the file. Five shapes are covered, and two of
-    them carry real secrets: a bare value with no setting name, which is what
-    happens when someone pastes only their key, and a valid connection string
-    with such a value appended.
-
-    The message is compared exactly rather than matched loosely, so no variation
-    can quietly start including the offending text. A key echoed into an
-    exception ends up in logs and bug reports, where it survives long after the
-    typo that caused it and has to be rotated to make safe.
+    Inputs include synthetic key-like placeholders, not real secrets. Exact
+    message comparison checks that errors do not echo the supplied values,
+    which could contain credentials in a customer app.
     """
     with patch.object(client_type, "__init__", return_value=None) as constructor:
         with pytest.raises(ValueError) as caught:

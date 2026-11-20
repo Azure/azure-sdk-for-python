@@ -368,6 +368,7 @@ fn prepare_database_operation(
         modifiers.configured_driver_timeout_policy,
         modifiers.availability_strategy,
         modifiers.throughput_control,
+        modifiers.utf8_decoding_mode,
         modifiers.custom_headers,
     );
     (op, options)

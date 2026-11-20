@@ -10,14 +10,19 @@ from ..._cosmos_responses import CosmosList
 from ..._helpers._client_context import CosmosClientContext
 from ..._helpers._read_many import ReadManyRequest
 from ..._operation_deadline import run_with_deadline
-from ..._telemetry import trace_operation_async
 from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
-@trace_operation_async(
-    binding_operation="read_items", operation_name="read_items", name_of_span="ContainerProxy.read_items.fetch"
-)
-async def _fetch_page(request: ReadManyRequest[AsyncCosmosBackend], **_tracing_kwargs: Any) -> bool:
+async def _fetch_page(request: ReadManyRequest[AsyncCosmosBackend]) -> bool:
+    if request.cursor is None:
+        # Resolve the container before the first page, so a lookup failure is logged and traced.
+        metadata = await run_with_deadline(
+            lambda: request.backend.get_container_metadata(
+                request.container_link, deadline=request.deadline, op="read_items"
+            ),
+            request.deadline,
+        )
+        request.initialize(metadata)
     pages = request.backend.execute_pages(request.prepared(), deadline=request.deadline)
     try:
         page = await run_with_deadline(pages.__anext__, request.deadline)
@@ -41,12 +46,7 @@ async def read_items(
     request = ReadManyRequest(context, container_link, items, kwargs)
     try:
         if request.items:
-            metadata = await run_with_deadline(
-                lambda: request.backend.get_container_metadata(container_link, deadline=request.deadline),
-                request.deadline,
-            )
-            request.initialize(metadata)
-            while await _fetch_page(request, **request.recording.kwargs):
+            while await _fetch_page(request):
                 pass
         return request.finish()
     finally:

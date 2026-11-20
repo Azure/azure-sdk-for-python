@@ -3,46 +3,43 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Single-item create contract through both public clients and their real dispatch adapters.
+"""Offline create-item contracts with controlled responses and clocks.
 
-Every test here runs four times -- sync/async crossed with legacy/Rust -- so a
-rule proved here is proved for all four combinations a customer can hit. The
-container, the proxies and the option-merge helpers are all real; only the
-network call at the bottom is faked, along with the clock, so the tests can
-assert on exact time budgets without sleeping.
+Tests using point_create exercise the public method in four combinations:
+sync/async and legacy/Rust. Rust binding calls and legacy connection methods
+are replaced by fakes; these tests do not send requests to the service backend.
+Other tests use item helpers directly with fake backends.
 
-The ``point_create.events`` list is the spine of most assertions. It records
-``("metadata", budget)`` and ``("write", budget)`` in the order the call made
-them, so a test can prove not just the outcome but that a bad argument was
-caught *before* anything was sent.
-
-Create adds three concerns a point read does not have: the client may generate
-the ``id`` itself, the body is serialized and sent, and the caller's dict must
-come back unchanged no matter what the response hook does to its copy.
+The point_create.events list records simulated metadata and write phases with
+their budgets. It checks local dispatch ordering, not network attempts or
+stored items. Coverage includes argument validation, prepared bodies,
+response conversion, callbacks, and isolation of customer-owned input.
 """
-from common.typed_requests import legacy_partition_key_from_request
-from common.typed_requests import wire_headers, settings_options, legacy_settings
 import asyncio
 import inspect
 import json
 from dataclasses import replace
+from functools import partial
 from types import MappingProxyType
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
+from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
+from read_item.test_read_item_contract_unit import point_read
+
 from azure.cosmos import CosmosDict
 from azure.cosmos._backend import binding_adapter as sync_rust
 from azure.cosmos.aio._backend import binding_adapter as async_rust
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._helpers import _item_prep, _document
+from azure.cosmos._helpers import _item_prep, _document, _response_parse
 from azure.cosmos._helpers._client_context import ClientOperationDefaults
 from azure.cosmos._helpers._response_parse import process_backend_response
 from azure.cosmos._helpers._item_operations import ItemHelper
 from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceExistsError
-from common.test_connection_free_items_unit import Backend, AsyncBackend, invoke
-from read_item.test_read_item_contract_unit import point_read
 
 
 @pytest.fixture
@@ -266,6 +263,54 @@ def test_invalid_hook_is_rejected_before_metadata_rust(point_create, hook):
     assert point_create.events == []
 
 
+@pytest.mark.parametrize("kind", [
+    "function", "method", "partial", "callable", "partial-callable", "async-generator",
+])
+def test_async_hook_is_rejected_before_create_dispatch_rust(point_create, kind):
+    async def hook(_headers, _body):
+        pytest.fail("An asynchronous response hook must not run")
+
+    class AsyncHook:
+        async def __call__(self, headers, body):
+            pytest.fail("An asynchronous response hook must not run")
+
+    async def generator_hook(_headers, body):
+        pytest.fail("An asynchronous generator hook must not run")
+        yield body
+
+    callable_hook = AsyncHook()
+    hooks = {
+        "function": hook,
+        "method": callable_hook.__call__,
+        "partial": partial(hook),
+        "callable": callable_hook,
+        "partial-callable": partial(callable_hook),
+        "async-generator": generator_hook,
+    }
+    with pytest.raises(TypeError, match="create_item response_hook must be synchronous"):
+        point_create.call({"id": "item"}, response_hook=hooks[kind])
+    assert point_create.events == []
+    point_create.cc.CreateItem.assert_not_called()
+    if point_create.rust:
+        point_create.proxy._client_context.adapter._ensure_driver_handle.assert_not_called()
+
+
+@pytest.mark.parametrize("callable_object", [False, True])
+def test_sync_partial_hook_still_runs_once_rust(point_create, callable_object):
+    calls = []
+
+    def hook(headers, body):
+        calls.append((headers["etag"], body["id"]))
+
+    class Hook:
+        def __call__(self, headers, body):
+            hook(headers, body)
+
+    result = point_create.call({"id": "item"}, response_hook=partial(Hook() if callable_object else hook))
+    assert result["id"] == "item"
+    assert calls == [('"current"', "item")]
+
+
 @pytest.mark.parametrize("option_name", ["feed_options", "request_options"])
 def test_nested_options_reach_create_without_mutation_rust(point_create, option_name):
     options = MappingProxyType({
@@ -326,13 +371,39 @@ def test_explicit_body_response_overrides_client_default_rust(point_create):
     assert point_create.call({"id": "item"}, no_response=False)["id"] == "item"
 
 
-def test_hook_failure_does_not_replay_create_rust(point_create):
-    """If the customer's hook raises, the item is not created a second time.
+@pytest.mark.parametrize("with_hook", [False, True])
+@pytest.mark.parametrize("parse_delay", [0.25, 0.5])
+def test_parsing_exhausts_create_budget_without_replay_rust(
+    point_create, monkeypatch, with_hook, parse_delay,
+):
+    """Expire during response parsing after a fake successful write, at or past the deadline."""
+    point_create.write_delay = 0.75
+    parse = _response_parse.parse_response_body
+    parsed = []
 
-    The hook runs after the write has already succeeded, so treating its failure
-    as a retryable error would create a duplicate. The exception must reach the
-    caller unchanged -- the same object, not a copy or a wrapper -- and the
-    recorded phases must show one metadata lookup and one write.
+    def delayed_parse(response):
+        result = parse(response)
+        parsed.append(result)
+        point_create.clock.now += parse_delay
+        return result
+
+    monkeypatch.setattr(_response_parse, "parse_response_body", delayed_parse)
+    hook = MagicMock()
+    with pytest.raises(CosmosClientTimeoutError):
+        point_create.call(
+            {"id": "item"}, timeout=1, response_hook=hook if with_hook else None,
+        )
+    assert parsed == [{"id": "item"}]
+    assert [phase for phase, _ in point_create.events] == ["metadata", "write"]
+    hook.assert_not_called()
+
+
+def test_hook_failure_does_not_replay_create_rust(point_create):
+    """Propagate a hook exception without repeating the simulated write.
+
+    After the fake write returns success, the hook raises the original exception
+    object. Recorded phases must contain one metadata lookup and one write;
+    no service-side creation or driver retry behavior is exercised.
     """
     error = NotImplementedError("customer hook")
     hook = MagicMock(side_effect=error)
@@ -344,12 +415,11 @@ def test_hook_failure_does_not_replay_create_rust(point_create):
 
 
 def test_service_conflict_remains_typed_and_does_not_invoke_success_hook_rust(point_create):
-    """A 409 from the service surfaces as ``CosmosResourceExistsError`` and skips the hook.
+    """Translate a synthetic 409 into CosmosResourceExistsError and skip the hook.
 
-    An item with that id already exists. The status must be translated into the
-    specific exception type customers catch, not a generic error, and the
-    response hook must not run for a failed write. The write was still attempted,
-    so both phases appear in ``events``.
+    The fake response supplies the conflict status; no existing item is created
+    in a service account. Recorded phases confirm dispatch reached the simulated
+    write before the public call raised.
     """
     point_create.status = 409
     hook = MagicMock()
@@ -378,14 +448,15 @@ def test_remaining_subsecond_budget_reaches_create_rust(point_create):
     (2, 0, ["metadata"]), (1, 0, ["metadata"]), (0.75, 0.5, ["metadata", "write"]),
 ])
 def test_metadata_and_write_share_one_budget_rust(point_create, metadata_delay, write_delay, phases):
-    """``timeout`` covers the whole call, not each phase, and expiry raises before the hook.
+    """Share one deadline across simulated metadata and write phases.
 
     Three cases: metadata alone overruns the budget; metadata consumes it
     exactly, leaving nothing for the write; metadata leaves too little for the
     write to finish. The recorded phases show how far the call got, which is
     what distinguishes a shared budget from a per-phase one.
 
-    In every case the hook must not run -- there is no response to hand it.
+    Each case raises CosmosClientTimeoutError without invoking the success hook.
+    The fake clock does not test wall-clock timing or service-side cancellation.
     """
     point_create.metadata_delay = metadata_delay
     point_create.write_delay = write_delay
@@ -397,14 +468,11 @@ def test_metadata_and_write_share_one_budget_rust(point_create, metadata_delay, 
 
 
 def test_create_charges_lazy_initialization_to_budget_rust(point_create):
-    """Rust only: starting the driver counts against the caller's timeout.
+    """Charge simulated driver acquisition to the Rust call's existing budget.
 
-    The Rust backend builds its driver on first use. If that setup were not
-    charged to the budget, a customer's one second timeout could be exceeded
-    before any work began. Setup here takes longer than the whole budget, so the
-    call must time out with nothing recorded in ``events``.
-
-    The legacy path has no such step, so it returns early.
+    The fake acquisition advances the clock beyond the one-second allowance.
+    The call must raise before simulated metadata or write dispatch. This does
+    not exercise real driver creation; legacy fixture cases return early.
     """
     if not point_create.rust:
         return
@@ -415,11 +483,11 @@ def test_create_charges_lazy_initialization_to_budget_rust(point_create):
 
 
 def test_create_serializes_once_before_metadata_rust(point_create, monkeypatch):
-    """Rust only: the body is turned into bytes exactly once per create.
+    """Count one document-encoder invocation for a Rust-path create.
 
-    The bytes are needed both to read the partition key and to send, so the easy
-    mistake is to serialize twice. For large items that doubles the cost of
-    every write. Wrapping the real function and counting calls catches it.
+    Wrapping the real encoder catches repeated serialization in the Python
+    wrapper. The binding is mocked, so this does not measure driver work or
+    end-to-end write cost. Legacy fixture cases return early.
     """
     if not point_create.rust:
         return
@@ -429,17 +497,36 @@ def test_create_serializes_once_before_metadata_rust(point_create, monkeypatch):
     serialize.assert_called_once()
 
 
+@pytest.mark.parametrize("point_read", [(True, True)], ids=["async-rust"], indirect=True)
+def test_async_create_snapshots_body_and_starts_budget_when_awaited_rust(point_create, monkeypatch):
+    """Unscheduled time consumes no create budget and precedes the request snapshot."""
+    serialize = MagicMock(wraps=_document.serialize_body_to_bytes)
+    monkeypatch.setattr(_document, "serialize_body_to_bytes", serialize)
+    body = {"id": "item", "pk": "pk", "total": 125.5}
+    pending = point_create.proxy.create_item(body, no_response=True, timeout=1)
+    try:
+        serialize.assert_not_called()
+        assert point_create.events == []
+        point_create.clock.now += 5
+        body["total"] = 200
+        result = asyncio.run(pending)
+    finally:
+        pending.close()
+
+    assert result == {}
+    serialize.assert_called_once()
+    assert json.loads(point_create.prepared.body_bytes)["total"] == 200
+    assert point_create.events == [("metadata", 1), ("write", 1)]
+
+
 def test_partition_key_and_wire_body_use_the_same_nested_snapshot_rust(point_create):
-    """The body is captured once up front, so a caller editing it mid-call cannot split the write.
+    """Retain the original nested value after mutation during simulated metadata lookup.
 
-    The partition key path points into a nested dict. Another thread -- or, as
-    here, a callback -- changes that nested value while the metadata lookup is
-    in flight. If the partition key and the sent body were each read from the
-    live dict at different moments, the item would be routed by one value and
-    stored with another, and it would be unfindable.
+    A test callback changes the caller's nested key to ``after``. The fake
+    response still contains ``before``; on Rust, the prepared body does too,
+    and partition-key extraction remains delegated to the binding.
 
-    Both must use the snapshot taken before the lookup: the sent body still says
-    ``before`` even though the caller's dict now says ``after``.
+    This does not execute native key extraction, routing, or service storage.
     """
     original = {"id": "item", "tenant": {"key": "before"}}
     point_create.properties["partitionKey"]["paths"] = ["/tenant/key"]
@@ -468,16 +555,14 @@ def test_partition_key_and_wire_body_use_the_same_nested_snapshot_rust(point_cre
 @pytest.mark.parametrize("compact", [False, True])
 @pytest.mark.parametrize("op", ["create_item", "upsert_item", "replace_item", "patch_item"])
 def test_compact_utf8_applies_to_all_singleton_write_bodies_rust(async_mode, compact, op):
-    """The compact UTF-8 setting reaches every single-item write, not just create.
+    """Check compact UTF-8 encoding in prepared sync and async single-item writes.
 
-    With the setting off, a non-ASCII character is sent as an escape sequence
-    (``\\u00e9``); with it on, it is sent as raw UTF-8 bytes, which is smaller.
-    The risk is that the setting is wired into create and forgotten elsewhere,
-    so upsert, replace and patch are all checked, sync and async.
+    The fake backend captures body bytes: the accented e uses ``\\u00e9``
+    with the setting off and its two UTF-8 bytes with it on.
 
-    Patch carries the character in an operation value rather than a body, which
-    is why it builds its arguments differently. Either way the result must still
-    parse as JSON.
+    Create, upsert and replace encode a document; patch encodes an operation
+    value inside its request body. Each prepared body must parse as JSON.
+    This test does not send requests to the service backend.
     """
     backend = AsyncBackend() if async_mode else Backend()
     helper = (AsyncItemHelper if async_mode else ItemHelper)(

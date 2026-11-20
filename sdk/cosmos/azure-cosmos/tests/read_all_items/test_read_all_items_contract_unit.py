@@ -141,6 +141,22 @@ def test_complete_enumeration_is_lazy_and_connection_free_rust(feed):
     feed.binding.read_all_items_async.assert_not_called()
 
 
+def test_first_page_fetch_starts_when_page_iterator_advances_rust(feed):
+    """Pager and page-iterator construction do not acquire a driver or fetch rows."""
+    feed.proxy.client_connection = ForbiddenConnection()
+    pager = feed.proxy.read_all_items(max_item_count=2)
+    pages = pager.by_page()
+
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+
+    assert feed.next_page(pages) == [{"id": "a", "nested": [1]}]
+    feed.backend._ensure_driver_handle.assert_called_once()
+    assert len(feed.calls) == 1
+    assert feed.calls[0][0].settings.query.max_item_count == 2
+
+
 @pytest.mark.parametrize("context", [
     None,
     CosmosClientContext(SimpleNamespace(name="core-python")),

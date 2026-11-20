@@ -181,7 +181,7 @@
     },
     {
       "filename": "docs/build_and_release.md",
-      "ignoreWords": ["jqlang", "setuppy"]
+      "ignoreWords": ["CELA", "CIBW", "cyclonedx", "devdiv", "jqlang", "rustls", "sboms", "setuppy", "zerovec"]
     }
   ]
 }

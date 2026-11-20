@@ -31,6 +31,8 @@ from common.typed_requests import flatten_options_to_headers
 #   * ``excludedLocations`` / ``availabilityStrategy`` -- routing and hedging
 #     controls passed to typed driver fields; they are not wire headers.
 #   * ``timeout`` -- a client-side deadline, not a header.
+#   * ``utf8DecodingMode`` -- response decoding passed to a typed driver field,
+#     not a header sent to the service.
 #   * ``initialHeaders`` -- the customer's own headers, forwarded as they are.
 _STRUCTURALLY_EXCLUDED_KEYS = frozenset({
     "sessionToken",
@@ -38,6 +40,7 @@ _STRUCTURALLY_EXCLUDED_KEYS = frozenset({
     "excludedLocations",
     "availabilityStrategy",
     "timeout",
+    "utf8DecodingMode",
     "initialHeaders",
 })
 
@@ -154,6 +157,11 @@ def test_empty_option_sends_no_header_rust(option_key, option_value):
 def test_no_options_send_no_headers_rust():
     """No options means no option headers."""
     assert _option_headers({}) == {}
+
+
+@pytest.mark.parametrize("mode", ["Strict", "Lossy"])
+def test_utf8_decoding_mode_sends_no_header_rust(mode):
+    assert _option_headers({"utf8DecodingMode": mode}) == {}
 
 
 # ---------------------------------------------------------------------------

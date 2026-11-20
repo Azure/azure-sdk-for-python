@@ -16,7 +16,8 @@ from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 class TestContainerPropertiesCacheAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

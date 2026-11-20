@@ -3,18 +3,20 @@
 """Owned fixture for the original non-split live token tests.
 
 The two test methods are copied from tests/test_partition_split_scenarios.py.
-Their original 100-write helpers are owned by the retained suite. The forced
-11000-RU split test is in a separate opt-in file, not the ordinary-account run.
+Their original 100-write helpers are owned by the retained suite. These tests
+do not split partitions; they keep the original's split-lane markers. The
+forced 11000-RU split test is in a separate file; it runs only in the CI
+split lane, or locally with COSMOS_SESSION_TOKEN_REAL_SPLIT=1.
 """
 
-import os
 import random
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 from get_latest_session_token._fixtures import create_items_logical_pk, create_items_physical_pk
 
 
@@ -25,12 +27,16 @@ class TestLatestSessionToken(unittest.TestCase):
         state = random.getstate()
         self.addCleanup(random.setstate, state)
         random.seed(0)
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Key client owns the database and containers; the data client (AAD in
+        # AAD lanes) writes items and reads tokens, as in the original.
+        self.key_client = create_setup_client(_backend="rust")
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database("token_parity_" + uuid.uuid4().hex)
-        self.addCleanup(self.client.delete_database, self.database.id)
-        self.key_database = self.database
-        print(f"\nOwned token-test database: {self.database.id}")
+        self.key_database = self.key_client.create_database("token_parity_" + uuid.uuid4().hex)
+        self.addCleanup(self.key_client.delete_database, self.key_database.id)
+        self.database = self.client.get_database_client(self.key_database.id)
+        print(f"\nOwned token-test database: {self.key_database.id}")
 
     create_items_logical_pk = staticmethod(create_items_logical_pk)
     create_items_physical_pk = staticmethod(create_items_physical_pk)

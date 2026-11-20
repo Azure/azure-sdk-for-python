@@ -146,11 +146,19 @@ Both synchronous and asynchronous clients, including their
 point to the replacement. This applies on both backends, even when the old
 value is `None` or the new name is also supplied. There is no deprecated alias.
 
-Existing precedence is unchanged: a non-`None` throttle-specific value takes
-precedence over `retry_backoff_max`, then the grouped retry-policy setting.
-Zero remains an explicit value; omission or `None` leaves those existing
-fallbacks in effect. This rename does not restore unrelated connection-retry
-controls on Rust.
+On legacy Python, a non-`None` throttle-specific value takes precedence over
+`retry_backoff_max`, then the grouped retry-policy setting. That legacy
+fallback does not apply to Rust-backed clients.
+
+**`retry_total` and `retry_backoff_max` are rejected on Rust.** Both affect
+connection retries as well as throttling on legacy Python; they are not
+equivalent aliases for the throttle-specific settings. Rust-backed sync/async
+clients, including connection-string factories, raise `TypeError` on explicit
+use, even for `None`, zero, or when a throttle-specific setting is also supplied.
+Use `retry_throttle_total` and `throttle_retry_wait_threshold_seconds` to
+configure only throttling (`429`) retries. Zero remains an explicit value;
+omission or `None` allows supported grouped settings or defaults to apply.
+This does not restore the unsupported connection-retry controls.
 
 **Fixed throttle retry delays are excluded on Rust.** Alpha Bank supplies
 `retry_fixed_interval=500` to request a 500-millisecond wait before each
@@ -576,6 +584,58 @@ The decision is whether to stop accepting arguments that do not apply to
 this API. This can require customer code changes even though the arguments
 never provided the requested behavior.
 
+Per-call `connection_timeout` also raises `TypeError`, including explicit
+`None` and values supplied through `request_options` or `feed_options`.
+Configure `ConnectionPoolOptions.connection_timeout` on `CosmosRuntime`
+instead. This public contract change requires API Review Board approval;
+the same rule applies to `create_database_if_not_exists`.
+
+Explicit `retry_write` also raises `TypeError`, including `None`, `False`,
+zero, and values supplied through `request_options` or `feed_options`.
+Omit it: the Rust driver manages write retries. This proposed Python contract
+applies to both clients and both database-creation APIs and still requires
+API Review Board approval. The
+closed driver retry decision
+does not constitute that approval.
+
+An unknown or misspelled keyword, such as `retry_wirte=True`, raises
+`TypeError` before any request is sent. The message names the API and the
+unexpected keyword: the customer app must correct the argument, not wait
+for Rust functionality. This proposed contract applies to both synchronous
+and asynchronous `create_database` and `create_database_if_not_exists`;
+API Review Board approval remains pending.
+
+For both APIs and both clients, page-size and query-only settings also raise
+`TypeError` before any request. Neither operation returns pages or executes
+a query. Remove settings such as `max_item_count`, continuation tokens,
+query/index metrics, and query-plan controls, including explicit `None`
+or `False`. This also covers their internal forms in `request_options` and
+`feed_options`, such as `maxItemCount` and `populateQueryMetrics`.
+This public contract change likewise requires API Review Board approval.
+
+**Full database properties and custom headers**
+
+Both APIs need the database properties to construct the returned
+`DatabaseProxy`. They do not offer a response-suppression mode.
+Supplying `no_response` raises `TypeError`, including `None` and `False`,
+whether passed directly or through `request_options` or `feed_options`
+as `no_response` or `responsePayloadOnWriteDisabled`.
+The `Prefer` header also raises `TypeError`, regardless of capitalization
+or value, including when nested in an options dictionary. These checks
+run before any request, including the get-or-create existence read.
+
+Supported `initial_headers` continue to reach the Rust driver. Supplying
+driver-owned headers no longer causes rejection for these two APIs:
+the driver supplies the final `Accept`, `Cache-Control`, `User-Agent`,
+`x-ms-version`, `x-ms-client-id`, `x-ms-cosmos-sdk-supportedcapabilities`,
+`Authorization`, and `x-ms-date` values. Customer values for those headers
+do not override the driver. This applies to every get-or-create step;
+it does not change standalone `DatabaseProxy.read` or permit unsupported
+query or conditional headers.
+
+These are proposed public-contract changes; API Review Board approval
+remains pending.
+
 A separate decision concerns `response_hook`: the customer function called
 after successful creation. Its arguments and its ability to affect the
 returned result need one clear contract across synchronous and asynchronous
@@ -671,6 +731,9 @@ def on_created(headers, properties):
 A hook that does not need the properties must still accept the second
 argument. The hook remains an ordinary synchronous function, including
 when supplied to the asynchronous client.
+
+Both clients reject asynchronous hooks with `TypeError` before sending the
+creation request. Use an ordinary `def` hook, not an `async def` hook.
 
 The Python wrapper must be able to call the supplied `response_hook`.
 Use `None` when no hook is needed. Supplying a value it cannot call, such as
@@ -790,10 +853,26 @@ recovery changes, not missing Rust-driver capabilities.
 The argument rules and response-hook contract explained in `CosmosClient.create_database` also
 apply here. They are not repeated below.
 
+**Per-call connection settings: proposed public contract**
+
+**API Review Board approval pending.** Reject per-call `connection_timeout`
+with `TypeError` before the existence read. The customer configures connection
+and whole HTTP-request limits through `CosmosRuntime` instead; per-call
+`timeout` controls the overall operation budget.
+
+This rejection includes explicit `None` and values supplied through
+`request_options` or `feed_options`. `TypeError` tells the customer that this
+argument is not accepted, rather than suggesting an unimplemented operation.
+The SDK must not silently ignore the option or switch to legacy Python.
+
+The closed Rust timeout-scope decision
+explains the driver design. It does not approve the Python public contract.
+
 **Database IDs: validate their format before checking existence**
 
-**Decision: Approved and implemented.** Both clients apply the same shared
-ID-format validation as `create_database` before the existence read.
+**API Review Board approval pending; behavior is implemented.** Both clients
+apply the same shared ID-format validation as `create_database` before the
+existence read.
 
 Previously, `create_database_if_not_exists("sales/")` could read and return
 `sales` if it existed, because the read removed the trailing slash. If
@@ -838,18 +917,6 @@ this particular call created it.
 This recovery does not suppress every failure. If the follow-up read fails,
 that error reaches the customer app. The Python wrapper does not start
 another creation attempt.
-
-**Verification coverage:** New sync and async integration tests in
-`tests\create_database_if_not_exists\sync\test_cosmos_responses.py` and
-`tests\create_database_if_not_exists\aio\test_cosmos_responses.py` exercise
-real `404 -> 409 -> 200` recovery and `404 -> 409 -> 404` failure using a
-competing client. They verify the winner's identity and throughput are
-preserved, the success hook describes only the final successful response,
-and a failed follow-up read does not trigger another creation attempt.
-These are new tests, not copies of legacy coverage. Their `_rust` names
-inherit the classes' `cosmosEmulator` and `cosmosAADLong` markers.
-All four race cases passed against the local emulator; Azure live-account
-execution has not been verified.
 
 **Invalid creation settings: reject them even when the database exists**
 
@@ -926,6 +993,25 @@ Customer supplies timeout=5
 The response hook runs outside the timed work. A timeout or cancellation
 does not undo creation already accepted by the service backend.
 
+**Timeout error details: proposed synchronous compatibility difference**
+
+**API Review Board approval pending.** The proposed synchronous Rust-backed
+contract preserves the outer timeout exception but does not guarantee its cause.
+When repeated HTTP 429 responses (requests to slow down) exhaust the operation
+timeout, the customer still receives `CosmosClientTimeoutError`. Code catching
+that exception continues to work.
+
+Unlike the synchronous legacy behavior, the Rust-backed call does not
+guarantee that `error.inner_exception` contains the preceding
+`CosmosHttpResponseError` with `status_code == 429`. It may contain a generic
+timeout instead.
+
+For example, Alpha Bank's setup job can still catch the timeout and report
+that `sales` could not be made available within the allotted time. It cannot
+rely on the inner exception to identify throttling as the reason. This is a
+proposed compatibility difference, not a change to the outer exception type.
+This proposal does not change the asynchronous contract.
+
 **The response hook describes the final successful result**
 
 As explained in `CosmosClient.create_database`, both clients use `response_hook(headers, properties)`
@@ -944,12 +1030,22 @@ The hook does not report every internal request. In particular, its
 of all requests in the operation.
 
 A hook exception is not treated as a missing database or a creation conflict.
+An `async def` hook is rejected with `TypeError` before the existence read,
+including when using the asynchronous client.
 
-**Other decisions requested; approval is not recorded**
+**API Review Board decisions requested**
 
-ID-format validation above is approved. Approval remains unrecorded for the
-early creation-option validation, rejection of conditional headers, recovery
-from concurrent creation, and single operation timeout.
+Approval is required for the public contract changes described here: early
+ID and creation-option validation, rejection of conditional headers and
+per-call connection settings and `retry_write`, query/paging-option rejection,
+unknown-keyword errors, rejection of `no_response` and `Prefer`,
+driver-owned header precedence,
+recovery from concurrent creation, the shared operation timeout,
+synchronous timeout error details, and the response-hook
+contract inherited from `create_database`.
+
+Implemented behavior and closed Rust-driver design decisions do not constitute
+API Review Board approval.
 
 
 
@@ -1088,11 +1184,16 @@ The page-size range also applies to the `x-ms-max-item-count` request header.
 A directly supplied, non-`None` `max_item_count` takes precedence.
 
 The current wrapper rejects `populate_query_metrics`, `session_token`,
-`availability_strategy`, `no_response` and `content_type`, including `None`,
+`availability_strategy` and `no_response`, including `None`,
 `False` and corresponding entries in the selected settings dictionary.
 Removal approval is limited to argument forms confirmed to have been ignored.
-In particular, legacy `content_type` could set a request header; its rejection
-is not included in the ignored-option cleanup.
+
+`content_type` remains supported on both clients. For example,
+`client.list_databases(content_type="application/json")` supplies the
+`Content-Type` request header; results are still database-property dictionaries.
+The selected settings dictionary can supply the same value as `contentType`.
+A nonempty direct `content_type` overrides the dictionary value and the
+corresponding initial header. `None` or an empty string supplies no override.
 
 **Approved change: reject `session_token` (November 12, 2026)**
 
@@ -1188,23 +1289,6 @@ Approve or revise the per-page response-hook timing, explicit handling of
 hook failures, named arguments, validation and fixed iterator settings.
 Agree on the shared `request_options` proposal and its deprecation schedule.
 Rejection of the remaining options is not approved merely by this decision.
-
-**Verification status**
-
-Maintained offline listing tests exercise the real sync/async adapters with
-controlled acquisition and native-call doubles: setup consumes the page
-budget, including fractional remainders, and no native request or legacy
-fallback occurs when setup exhausts that budget.
-
-The native duration regression now runs in
-`tests/binding/test_binding_contract_parity.py` with real driver handles against
-the Windows emulator, rather than failing early on a string handle. Both
-native listing exports returned service pages for `None`, `0.25`, and `2`
-seconds, and rejected invalid durations. The regression is retained in normal
-`cosmosEmulator` selection.
-
-Live Azure-account coverage and remaining driver gaps are still outstanding;
-these checks do not establish complete operation parity.
 
 **Asynchronous-client signature for review**
 
@@ -3324,14 +3408,12 @@ across multiple storage partitions described below.
 **Why migration needs an explicit decision**
 
 Legacy Python change-feed token compatibility is not required on the Rust path,
-following the Rust-team confirmation recorded in Gap 39. Existing complete-key
-import remains implemented, but does not establish general interchangeability.
-LR-24 tracks removal of that importer from the Python wrapper and binding;
-removal has not started. Closing the compatibility requirement does not mean
-legacy tokens are already rejected. The cleanup must preserve Rust-issued
-bookmarks and retained legacy execution, and reject unsupported tokens without
-silently restarting the feed.
-Legacy range/prefix checkpoints still cannot be imported, and Rust bookmarks
+following the Rust-team confirmation recorded in Gap 39. LR-24 removes the
+complete-key importer from the Python wrapper and binding. V4 tokens now
+raise `ValueError` on V5, including complete-key bookmarks and raw ETags
+passed as continuations. Rust-issued bookmarks and retained legacy execution
+keep their own resume behavior; rejection never silently restarts the feed.
+Legacy range/prefix checkpoints cannot be imported, and Rust bookmarks
 cannot resume on legacy Python. Separately, the current Rust-backed API rejects
 some scopes that legacy Python can poll. That polling restriction remains
 an open issue; the token-compatibility decision does not resolve it.
@@ -3393,15 +3475,11 @@ the resumed mode, start and scope before those settings are validated.
 A continuation supplied later through `by_page()` still restores its saved
 settings, but the initial API call must first have valid arguments.
 Rust bookmarks begin with `cf1.` and must be saved and passed back
-unchanged. A legacy V2 bookmark for one complete partition key restores its
-saved key, mode and start; the binding validates its container RID and position
-before passing the service ETag to the driver's public continuation API.
-An older raw ETag requires an explicit complete `partition_key` and resumes
-in `LatestVersion` mode. Its lack of container identity is not repaired by
-supplying that key. Subsequent pages publish Rust-backed bookmarks.
-Legacy whole-container, feed-range, partial-key and multiple-position imports
-remain unsupported; general legacy-token import is no longer a requirement
-under Gap 39. Item-query tokens cannot be substituted. `read_all_items`
+unchanged. V4 tokens, raw ETags and legacy-backend envelopes are rejected
+with `ValueError` on the Rust-backed path. A complete partition key does not
+enable import. This is the intentional cross-major compatibility boundary
+recorded in Gap 39, not an outstanding request for a driver import API.
+Item-query tokens cannot be substituted. `read_all_items`
 provides no saved bookmark.
 Invalid tokens raise an error rather than silently restarting the feed.
 

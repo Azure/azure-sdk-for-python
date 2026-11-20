@@ -43,6 +43,28 @@ def reject_rust_connection_policy_options(kwargs: Mapping[str, Any], *, is_async
                 f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
                 "The Rust driver does not expose an equivalent connection-retry delay control."
             )
+    # Legacy Python applied these two to both throttle and connection retries.
+    # Rust has no connection-retry control, so accepting them would apply only half.
+    for keyword, replacement in (
+        ("retry_total", "retry_throttle_total"),
+        ("retry_backoff_max", "throttle_retry_wait_threshold_seconds"),
+    ):
+        if keyword in kwargs:
+            raise TypeError(
+                f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
+                f"Use {replacement} to configure throttle (429) retries."
+            )
+    for keyword in ("retry_status", "retry_on_status_codes"):
+        if keyword in kwargs:
+            raise TypeError(
+                f"{keyword} is not supported by Rust-backed clients; omit this keyword. "
+                "The Rust driver chooses which status codes to retry."
+            )
+    if "retry_write" in kwargs:
+        raise TypeError(
+            "retry_write is not supported by Rust-backed clients; omit this keyword. "
+            "The Rust driver chooses which write failures to retry."
+        )
     hedging_keyword = "availability_strategy_max_concurrency" if is_async else "availability_strategy_executor"
     if hedging_keyword in kwargs:
         raise TypeError(

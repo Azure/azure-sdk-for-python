@@ -79,6 +79,15 @@ class _ResponseAdapter:
         return self._inner.body
 
 
+def backend_response_from_exception(error: BaseException) -> Optional[BackendResponse]:
+    """Return the BackendResponse wrapped by an error from map_backend_response_to_exception.
+
+    Other errors, such as a client timeout, wrap no response and return None.
+    """
+    response = getattr(error, "response", None)
+    return response._inner if isinstance(response, _ResponseAdapter) else None
+
+
 # Status code -> typed exception class.
 _STATUS_TO_EXCEPTION = {
     409: CosmosResourceExistsError,

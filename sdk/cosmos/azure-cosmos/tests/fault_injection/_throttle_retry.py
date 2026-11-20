@@ -2,10 +2,11 @@
 # Licensed under the MIT License.
 """F07: Public throttle limits control a persistently throttled Rust-backed order read.
 
-Select retry_throttle_total, its precedence over retry_total, and the cumulative
+Select retry_throttle_total and the cumulative
 waiting budget with a fixed Retry-After header from the paired retry_policy
 tests. Waiting follows the driver's accepted forced-final retry behavior.
 This does not claim wait-option precedence, connection retry, or query coverage.
+Rust clients reject the retry_total alias, so it has no case here.
 """
 import math
 
@@ -18,11 +19,6 @@ OPERATION_TIMEOUT = 30.0  # Also determines the driver's forced-final retry dela
 THROTTLE_RETRY_CASES = [
     pytest.param({"retry_throttle_total": 0}, 0, id="zero-retries"),
     pytest.param({"retry_throttle_total": 5}, 5, id="five-retries"),
-    # Expected retries are fixed independently of the SDK's configuration resolver.
-    pytest.param({"retry_total": 5}, 5, id="alias-only"),
-    pytest.param({"retry_total": 5, "retry_throttle_total": 2}, 2, id="specific-over-alias"),
-    pytest.param({"retry_total": 5, "retry_throttle_total": 0}, 0, id="zero-over-alias"),
-    pytest.param({"retry_total": 5, "retry_throttle_total": None}, 5, id="none-uses-alias"),
     pytest.param(
         {"retry_throttle_total": 5, "throttle_retry_wait_threshold_seconds": 2.5}, 3, id="wait-budget-limits-retries",
     ),

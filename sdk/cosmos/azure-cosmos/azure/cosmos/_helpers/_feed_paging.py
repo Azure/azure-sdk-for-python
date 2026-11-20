@@ -16,7 +16,7 @@ from typing import TYPE_CHECKING, Any, Mapping, Optional
 from azure.core.exceptions import AzureError
 from azure.core.utils import CaseInsensitiveDict
 
-from .._backend.capabilities import reject_rust_arguments
+from .._backend.capabilities import reject_removed_options, reject_rust_arguments
 from .._backend.constants import is_rust_backend
 from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._backend.partition_key_input import BindingPartitionKey
@@ -56,6 +56,90 @@ def normalize_feed_range(feed: Any) -> list[str]:
     if interval["min"] >= interval["max"] or interval.get("isMaxInclusive", False) is not False:
         raise ValueError("feed_range requires a nonempty min-inclusive, max-exclusive Range.")
     return [interval["min"], interval["max"]]
+
+
+def _validate_change_feed_options(options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> None:
+    """Reject unsupported Rust change-feed options in their established order.
+
+    :param options: Normalized request options.
+    :type options: Mapping[str, Any]
+    :param kwargs: Remaining operation keyword arguments.
+    :type kwargs: Mapping[str, Any]
+    """
+    if "disableRUPerMinuteUsage" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept disable_ru_per_minute_usage "
+            "(disableRUPerMinuteUsage) on Rust-backed clients; omit this option. "
+            "Per-request RU-per-minute usage control is not supported by this Rust-backed API."
+        )
+    if "offerEnableRUPerMinuteThroughput" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept offer_enable_ru_per_minute_throughput "
+            "(offerEnableRUPerMinuteThroughput) on Rust-backed clients; omit this option. "
+            "Change-feed reads do not configure container throughput."
+        )
+    if "retry_write" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept retry_write on Rust-backed clients; "
+            "omit this option. It applies to writes, not change-feed reads; "
+            "read retries remain driver-managed."
+        )
+    if "responsePayloadOnWriteDisabled" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept no_response (responsePayloadOnWriteDisabled) "
+            "on Rust-backed clients; omit this option. It applies to write responses, not change-feed reads."
+        )
+    if "queryVersion" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept query_version (queryVersion) "
+            "on Rust-backed clients; omit this option. Change feed does not use a SQL query version."
+        )
+    if "supportedQueryFeatures" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept supported_query_features (supportedQueryFeatures) "
+            "on Rust-backed clients; omit this option. Change feed does not use a SQL query plan."
+        )
+    if "isQueryPlanRequest" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept is_query_plan_request (isQueryPlanRequest) "
+            "on Rust-backed clients; omit this option. Change feed does not use a SQL query plan."
+        )
+    if "contentType" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept content_type (contentType) "
+            "on Rust-backed clients; omit this option. The Rust driver manages Content-Type."
+        )
+    if "accessCondition" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept access_condition (accessCondition) "
+            "on Rust-backed clients; omit this option. To resume, use continuation instead, "
+            "with a token returned by this Rust-backed API."
+        )
+    if "proxy" in kwargs or "proxy" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept per-call proxy on Rust-backed clients; "
+            "omit this option. Configure the proxy through environment variables and permit its use "
+            "with ConnectionPoolOptions.proxy_allowed on the client's CosmosRuntime."
+        )
+    if "stream" in kwargs or "stream" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept stream on Rust-backed clients; "
+            "response bodies are always buffered. Omit this option; pagination remains supported."
+        )
+    for name in (
+        "retry_total", "retry_connect", "retry_read", "retry_status",
+        "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
+    ):
+        if name in kwargs or name in options:
+            raise TypeError(
+                f"query_items_change_feed() does not accept per-call {name} on Rust-backed clients; "
+                "omit this option to use driver-managed retries."
+            )
+    if "connection_timeout" in kwargs or "connection_timeout" in options:
+        raise TypeError(
+            "query_items_change_feed() does not accept per-call connection_timeout; "
+            "configure ConnectionPoolOptions.connection_timeout on the client's CosmosRuntime instead."
+        )
 
 
 class FeedConfig:
@@ -99,45 +183,8 @@ class FeedConfig:
         self.backend = backend
         self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
         if self.rust:
-            if operation == "query_items_change_feed" and "contentType" in self.options:
-                raise TypeError(
-                    "query_items_change_feed() does not accept content_type (contentType) "
-                    "on Rust-backed clients; omit this option. The Rust driver manages Content-Type."
-                )
-            if operation == "query_items_change_feed" and "accessCondition" in self.options:
-                raise TypeError(
-                    "query_items_change_feed() does not accept access_condition (accessCondition) "
-                    "on Rust-backed clients; omit this option. To resume, use continuation instead; "
-                    "a raw legacy feed position requires a complete partition_key."
-                )
-            if operation == "query_items_change_feed" and ("proxy" in kwargs or "proxy" in self.options):
-                raise TypeError(
-                    "query_items_change_feed() does not accept per-call proxy on Rust-backed clients; "
-                    "omit this option. Configure the proxy through environment variables and permit its use "
-                    "with ConnectionPoolOptions.proxy_allowed on the client's CosmosRuntime."
-                )
-            if operation == "query_items_change_feed" and ("stream" in kwargs or "stream" in self.options):
-                raise TypeError(
-                    "query_items_change_feed() does not accept stream on Rust-backed clients; "
-                    "response bodies are always buffered. Omit this option; pagination remains supported."
-                )
             if operation == "query_items_change_feed":
-                for name in (
-                    "retry_total", "retry_connect", "retry_read", "retry_status",
-                    "retry_backoff_factor", "retry_backoff_max", "retry_on_methods",
-                ):
-                    if name in kwargs or name in self.options:
-                        raise TypeError(
-                            f"query_items_change_feed() does not accept per-call {name} on Rust-backed clients; "
-                            "omit this option to use driver-managed retries."
-                        )
-            if operation == "query_items_change_feed" and (
-                "connection_timeout" in kwargs or "connection_timeout" in self.options
-            ):
-                raise TypeError(
-                    "query_items_change_feed() does not accept per-call connection_timeout; "
-                    "configure ConnectionPoolOptions.connection_timeout on the client's CosmosRuntime instead."
-                )
+                _validate_change_feed_options(self.options, kwargs)
             if operation in ("read_all_items", "query_items_change_feed") and "availabilityStrategy" in self.options:
                 raise TypeError(
                     f"{operation}() does not accept availability_strategy (availabilityStrategy) "
@@ -153,6 +200,7 @@ class FeedConfig:
                 "timeout",
                 "continuation",
                 "consistencyLevel",
+                "utf8DecodingMode",
             }
             if supports_cache_staleness:
                 allowed.add("maxIntegratedCacheStaleness")
@@ -234,6 +282,7 @@ class RustFeedConfig(FeedConfig):
     """Prepare shared query and read-all settings using the client's Rust adapter."""
 
     def __init__(self, proxy: Any, kwargs: dict[str, Any], *, operation: str) -> None:
+        reject_removed_options(kwargs)
         context = proxy._client_context
         if context is None or not is_rust_backend(context.adapter):
             raise NotImplementedError(f"{operation} requires a client-owned Rust backend; no legacy fallback.")

@@ -3,22 +3,21 @@
 """Original sync CRUD tests that patch items, re-run on the Rust path.
 
 Source: ``tests/test_crud.py::TestCRUDOperations``. Each method keeps the
-original steps and assertions; only setup changed. The client uses
-``_backend="rust"`` and each test owns a uniquely named database with the
-``/pk`` multi-partition container the original class setup provided, deleted
-afterwards.
+original steps and assertions; only setup changed. Both clients use
+``_backend="rust"``. A key client creates a uniquely named database with the
+``/pk`` multi-partition container the original class setup provided, and
+deletes it afterwards; the data client (AAD in AAD lanes) does the item work.
 """
 
 import pytest
-import os
 from types import SimpleNamespace
 import unittest
 import uuid
 
 import azure.cosmos.exceptions as exceptions
-from azure.cosmos import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
 from azure.cosmos.partition_key import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -27,14 +26,19 @@ from azure.cosmos.partition_key import PartitionKey
 class TestCRUDOperations(unittest.TestCase):
 
     def setUp(self):
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        self.key_client = create_setup_client(_backend="rust")
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
         self._db_id = "patch_item_crud_" + uuid.uuid4().hex
-        self.databaseForTest = self.client.create_database(self._db_id)
-        self.addCleanup(self.client.delete_database, self._db_id)
+        key_database = self.key_client.create_database(self._db_id)
+        self.addCleanup(self.key_client.delete_database, self._db_id)
         self.configs = SimpleNamespace(TEST_MULTI_PARTITION_CONTAINER_ID="multi_partition_" + uuid.uuid4().hex[:8])
-        self.databaseForTest.create_container(
+        key_database.create_container(
             id=self.configs.TEST_MULTI_PARTITION_CONTAINER_ID, partition_key=PartitionKey(path="/pk"))
+        self.databaseForTest = self.client.get_database_client(self._db_id)
 
     def test_patch_operations_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_patch_operations

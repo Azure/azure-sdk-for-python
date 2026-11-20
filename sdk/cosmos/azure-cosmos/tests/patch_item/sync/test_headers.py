@@ -4,29 +4,22 @@
 
 Copied from ``tests/test_headers.py``; the class and method names match the
 source (apart from the method's ``_rust`` suffix) so the parity reporter can pair the
-core-python and Rust runs. Builds its
-own database + container and reads ``ACCOUNT_HOST`` / ``ACCOUNT_KEY`` from the
-environment. The single patch call exercises all six operation kinds
+core-python and Rust runs. A key client builds
+its own database + container; the data client (AAD in AAD lanes) does the
+item work, as in the source. The single patch call exercises all six operation kinds
 (add / remove / replace / set / incr / move) in one request.
 
 Run: ``pytest --noconftest tests/patch_item/sync/test_headers.py -v``
 """
 import importlib
-import os
 import unittest
 from unittest.mock import patch
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 # Same value as the source, so the wire bytes match core-python.
@@ -39,21 +32,22 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original. Class cleanups run in
+        # reverse order and still run if setup fails partway.
+        cls.key_client = create_setup_client(_backend="rust")
+        cls.addClassCleanup(cls.key_client.close)
+        cls.client = create_data_client(_backend="rust")
+        cls.addClassCleanup(cls.client.close)
         cls._db_id = "legacy_pi_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
-        cls.database = cls.client.create_database(cls._db_id)
-        cls.container = cls.database.create_container(
+        key_database = cls.key_client.create_database(cls._db_id)
+        cls.addClassCleanup(cls.key_client.delete_database, cls._db_id)
+        key_database.create_container(
             id=cls._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    @classmethod
-    def tearDownClass(cls):
-        try:
-            cls.client.delete_database(cls._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
+        cls.container = cls.client.get_database_client(cls._db_id).get_container_client(cls._container_id)
 
     def test_container_patch_item_throughput_bucket_rust(self):
         """Verify the operation prepares the requested throughput bucket."""

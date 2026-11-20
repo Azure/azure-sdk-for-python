@@ -8,13 +8,14 @@ import time
 from typing import Any, Mapping, Optional
 
 from ._request_settings import get_match_headers, is_supported_operation_timeout
+from ._response_parse import validate_response_hook_is_synchronous
 from ._wire_encoding import serialize_body_to_bytes
 
 
 def prepare_item_deadline(
     kwargs: dict[str, Any], method: str, started: float
 ) -> Optional[float]:
-    """Copy request options and return the budget owned by this public call."""
+    """Copy request options and return this call's deadline, or None if unset."""
     options = dict(kwargs.get("request_options") or {})
     kwargs["request_options"] = options
     timeout = kwargs.get("timeout", options.get("timeout"))
@@ -37,6 +38,7 @@ def prepare_create_item_kwargs(
             raise TypeError(f"create_item() does not accept '{name}'.")
     if response_hook is not None and not callable(response_hook):
         raise TypeError("create_item response_hook must be callable.")
+    validate_response_hook_is_synchronous(response_hook, "create_item")
     if "request_options" not in kwargs:
         kwargs["request_options"] = kwargs.get("feed_options")
     return prepare_item_deadline(kwargs, "create_item", time.monotonic())

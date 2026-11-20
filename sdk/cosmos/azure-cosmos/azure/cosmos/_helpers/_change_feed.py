@@ -20,7 +20,7 @@ import math
 import warnings
 from copy import deepcopy
 from dataclasses import replace
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from azure.core.paging import PageIterator
@@ -152,67 +152,6 @@ def _settings(values: dict[str, Any], *, rust: bool) -> dict[str, Any]:
     return result
 
 
-def _legacy_rust_settings(saved: dict[str, Any]) -> dict[str, Any]:
-    composite, start = saved.get("continuation"), saved.get("startFrom")
-    if (
-        saved.get("v") != "v2"
-        or not isinstance(saved.get("containerRid"), str)
-        or not saved["containerRid"]
-        or not isinstance(composite, dict)
-        or composite.get("v") != "v2"
-        or composite.get("rid") != saved["containerRid"]
-        or not isinstance(start, dict)
-    ):
-        raise ValueError("Invalid legacy change-feed continuation.")
-    if "PK" not in composite:
-        raise NotImplementedError(
-            "Legacy change-feed bookmarks require a complete partition key on the Rust path; "
-            "whole-container and feed-range bookmarks cannot be imported. No restart or fallback was performed."
-        )
-    positions = composite.get("continuation")
-    if not isinstance(positions, list) or not positions:
-        raise ValueError("Invalid legacy change-feed positions.")
-    if len(positions) != 1:
-        raise NotImplementedError("Importing legacy change-feed bookmarks with multiple range positions is not supported.")
-    position = positions[0]
-    if (
-        not isinstance(position, dict)
-        or not isinstance(position.get("range"), dict)
-        or not isinstance(position.get("token"), str)
-        or not position["token"]
-    ):
-        raise ValueError("Invalid legacy change-feed position.")
-    start_time: Any = start.get("Type")
-    if start_time == "PointInTime":
-        milliseconds = start.get("PointInTimeMs")
-        if isinstance(milliseconds, bool) or not isinstance(milliseconds, int):
-            raise ValueError("Invalid legacy change-feed start time.")
-        try:
-            start_time = datetime(1970, 1, 1, tzinfo=timezone.utc) + timedelta(milliseconds=milliseconds)
-        except (OverflowError, OSError, ValueError) as error:
-            raise ValueError("Invalid legacy change-feed start time.") from error
-    elif start_time not in ("Now", "Beginning"):
-        raise ValueError("Unsupported legacy change-feed start position.")
-    key = composite["PK"]
-    components = key if isinstance(key, list) else [key]
-    return _settings(
-        {
-            "mode": saved.get("mode"),
-            "start_time": start_time,
-            "partition_key": [_Undefined() if component == {} else component for component in components],
-        },
-        rust=True,
-    )
-
-
-def _require_legacy_key(settings: dict[str, Any]) -> None:
-    if settings["partition_key"] is None or settings.get("feed_range") is not None or "range_id" in settings:
-        raise NotImplementedError(
-            "A legacy ETag checkpoint requires an explicit complete partition_key on the Rust path. "
-            "No restart or fallback was performed."
-        )
-
-
 class ChangeFeedConfig(FeedConfig):
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
         self.requested = {key: deepcopy(kwargs.pop(key)) for key in _SETTINGS if key in kwargs}
@@ -249,9 +188,8 @@ class ChangeFeedConfig(FeedConfig):
         if token.startswith(_PREFIX):
             saved = _decode(token[len(_PREFIX) :], urlsafe=True)
             expected = "rust" if self.rust else "core-python"
-            legacy_etag = self.rust and saved.get("backend") == "core-python"
             if (
-                saved.get("backend") != expected and not legacy_etag
+                saved.get("backend") != expected
                 or saved.get("container") != self.proxy.container_link
             ):
                 raise ValueError("change-feed continuation belongs to an incompatible backend or container.")
@@ -261,7 +199,7 @@ class ChangeFeedConfig(FeedConfig):
             if (
                 settings.get("mode") not in ("LatestVersion", "AllVersionsAndDeletes")
                 or set(settings) - {"mode", "start", "partition_key", "feed_range", "range_id"}
-                or (not self.rust or legacy_etag)
+                or not self.rust
                 and not inner.strip('"').isdigit()
             ):
                 raise ValueError("Invalid change-feed continuation settings.")
@@ -292,9 +230,6 @@ class ChangeFeedConfig(FeedConfig):
             if "range_id" in settings:
                 values["partition_key_range_id"] = settings["range_id"]
             normalized = _settings(values, rust=self.rust)
-            if legacy_etag:
-                _require_legacy_key(normalized)
-                return normalized, inner
             if (
                 self.rust and not inner.startswith(("c1.", "c2."))
                 or not self.rust and inner.startswith(("c1.", "c2.", _PREFIX))
@@ -303,12 +238,14 @@ class ChangeFeedConfig(FeedConfig):
             return normalized, inner
         if token.startswith(("c1.", "c2.")):
             raise ValueError("change-feed continuation belongs to an incompatible backend or operation.")
+        if self.rust:
+            raise ValueError(
+                "Rust-backed change feed requires a V5 continuation token; V4 tokens are not supported."
+            )
         if token.strip('"').isdigit():
             values = dict(self.requested)
             values.update(mode="LatestVersion", start_time="Now", is_start_from_beginning=False)
             settings = _settings(values, rust=self.rust)
-            if self.rust:
-                _require_legacy_key(settings)
             return settings, token
         saved = _decode(token)
         if saved.get("v") != "v2" or saved.get("mode") not in (
@@ -316,11 +253,6 @@ class ChangeFeedConfig(FeedConfig):
             "AllVersionsAndDeletes",
         ):
             raise ValueError("Invalid legacy change-feed continuation.")
-        if self.rust:
-            settings = _legacy_rust_settings(saved)
-            # Normalize legacy base64 padding, not the driver's opaque token format.
-            inner = token + "=" * (-len(token) % 4)
-            return settings, inner
         # V2 restores and validates its own mode, start, scope and container RID.
         return _settings({"mode": saved["mode"]}, rust=False), token
 
@@ -378,7 +310,7 @@ class ChangeFeedPageState(FeedPageState):
             if any(not isinstance(row.get("current"), dict) for row in rows):
                 raise ValueError("LatestVersion change feed received a record without current.")
             rows = [row["current"] for row in rows]
-        self.capture(page.headers or {}, result)
+        self.capture(result.get_response_headers(), result)
         self.inner_token = page.continuation
         self.token = self.encode_continuation_token(self.inner_token)
         self.poll_again = self.initial_time_poll and not rows
@@ -436,6 +368,9 @@ class ChangeFeedPageState(FeedPageState):
     def finish(
         self, rows: list[dict[str, Any]], deadline: Optional[float], *, notify_hook: bool = True
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
+        # ETags describe the final response, not an earlier bootstrap poll.
+        if self.responses and "etag" not in self.captured:
+            self.accumulated.headers.pop("etag", None)
         result = super().finish(rows, deadline, notify_hook=notify_hook)
         self.done = not rows
         if self.done:

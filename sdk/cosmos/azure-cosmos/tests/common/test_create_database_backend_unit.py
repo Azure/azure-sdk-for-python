@@ -49,17 +49,19 @@ with driver setup and native dispatch mocked.
 """
 
 from __future__ import annotations
-from common.typed_requests import legacy_partition_key_from_request
-from common.typed_requests import wire_headers, settings_options, legacy_settings
 
 import asyncio
 import inspect
 import json
 import warnings
+from functools import partial
 from types import SimpleNamespace
 from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
+from common.typed_requests import legacy_partition_key_from_request
+from common.typed_requests import wire_headers, settings_options, legacy_settings
+
 from azure.core import MatchConditions
 from azure.core.exceptions import ServiceRequestError
 from azure.core.utils import CaseInsensitiveDict
@@ -328,8 +330,7 @@ def test_create_database_prepared_preserves_original_id_validation_rust(database
 
 
 class _BindingAdapter(CosmosBackend):
-    """Stand-in Rust backend: records the request it was handed and returns a canned
-    reply, so a test can check what would have gone on the wire without a network."""
+    """Record prepared inputs and return canned replies, without native execution or I/O."""
     name = "rust"
 
     def __init__(self, response=None, responses=None):
@@ -369,7 +370,7 @@ def test_sync_helper_routes_to_rust_and_parses_response_rust():
 
 
 def test_sync_read_database_routes_to_rust_and_parses_response_rust():
-    """A proxy database read uses the Rust read primitive and never calls legacy."""
+    """The database helper dispatches a read without a container lookup or legacy call."""
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         last_response_headers={},
@@ -382,6 +383,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response_rust():
         )
     )
     hook_calls = []
+    backend.get_container_metadata = MagicMock(side_effect=AssertionError("unexpected container lookup"))
 
     result = DatabaseHelper(connection, backend).read_database(
         "db1",
@@ -396,6 +398,7 @@ def test_sync_read_database_routes_to_rust_and_parses_response_rust():
     assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '7'
     assert settings_options(backend.prepared)["timeout_seconds"] == 3.5
     connection.ReadDatabase.assert_not_called()
+    backend.get_container_metadata.assert_not_called()
     assert hook_calls == [
         ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
     ]
@@ -993,7 +996,7 @@ def test_sync_if_not_exists_reads_through_rust_without_core_python_calls_rust():
 
 
 def test_sync_if_not_exists_rust_404_then_rust_create_without_core_python_calls_rust():
-    """The database is missing, so both requests run on the Rust path.
+    """A fake Rust backend returns not-found, then records the create request.
 
     Also checks the two legs carry different options: ``offerThroughput`` sets the
     throughput of a database being created, so sending it on the existence read
@@ -1027,9 +1030,11 @@ def test_sync_if_not_exists_rust_404_then_rust_create_without_core_python_calls_
         OP_READ_DATABASE,
         OP_CREATE_DATABASE,
     ]
-    assert "offerThroughput" not in backend.prepared_requests[0].headers
+    assert backend.prepared_requests[0].settings.resource.offer_throughput is None
+    assert "x-ms-offer-throughput" not in wire_headers(backend.prepared_requests[0])
     assert backend.prepared_requests[0].settings.throughput_bucket == 7
     assert backend.prepared_requests[1].settings.resource.offer_throughput == 400
+    assert wire_headers(backend.prepared_requests[1])["x-ms-offer-throughput"] == "400"
     assert hook_calls == [
         (
             {"x-ms-request-charge": "5.25"},
@@ -1199,7 +1204,7 @@ def test_async_helper_routes_to_rust():
 
 
 def test_async_read_database_routes_to_rust():
-    """Async database reads use the existing Rust read binding."""
+    """Async database reads dispatch without a container lookup or legacy call."""
     async def run():
         """Confirm the async read helper sends the read to the Rust engine and fires the hook with the returned database body."""
         connection = SimpleNamespace(
@@ -1214,6 +1219,7 @@ def test_async_read_database_routes_to_rust():
             )
         )
         hook_calls = []
+        backend.get_container_metadata = AsyncMock(side_effect=AssertionError("unexpected container lookup"))
 
         result = await AsyncDatabaseHelper(connection, backend).read_database(
             "db1",
@@ -1232,6 +1238,7 @@ def test_async_read_database_routes_to_rust():
         assert wire_headers(backend.prepared)["x-ms-cosmos-throughput-bucket"] == '9'
         assert settings_options(backend.prepared)["timeout_seconds"] == 3.5
         connection.ReadDatabase.assert_not_awaited()
+        backend.get_container_metadata.assert_not_called()
         assert hook_calls == [
             ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
         ]
@@ -1820,31 +1827,18 @@ def test_create_database_hedging_true_retains_client_threshold_rust(create_datab
 
 
 @pytest.mark.parametrize("options", [
-    {"connection_timeout": 1}, {"misspelled_setting": None},
-    {"no_response": True}, {"max_item_count": 5}, {"retry_write": True},
     {"request_options": {"sessionToken": "unused"}},
-    {"request_options": {"populateQueryMetrics": False}},
     {"request_options": {"operationStartTime": 123}},
-    {"request_options": {"maxItemCount": 1}},
     *[{"initial_headers": {name: "unused"}} for name in (
-        "Accept", "Cache-Control", "User-Agent", "X-MS-VERSION",
-        "x-ms-client-id", "x-ms-cosmos-sdk-supportedcapabilities",
-        "authorization", "x-ms-date", "if-match", "x-ms-session-token",
-        "x-ms-documentdb-populatequerymetrics", "prefer",
+        "if-match", "x-ms-session-token", "x-ms-documentdb-populatequerymetrics",
     )],
 ])
 def test_create_rejects_unhonored_options_without_dispatch_rust(create_database_client, options):
     """Anything the Rust engine cannot honor exactly stops the call before a request
     is built.
 
-    Three kinds of input are covered. First, options with no Rust equivalent: a
-    socket-level connect timeout, the raw request and response hooks, a
-    misspelled keyword, and paging or write-retry settings that do not apply to
-    creating a database. Second, the same retired settings passed the back way
-    in, nested inside a raw request-options dictionary, so the check cannot be
-    bypassed by burying them. Third, twelve headers the driver owns outright,
-    covering authentication, the API version, the client identity, and
-    conditional and session headers.
+    The inputs cover unsupported nested request options and conditional,
+    session, and query-metrics headers.
 
     Each raises ``NotImplementedError`` naming ``create_database``. Nothing is
     prepared and the legacy create is never called, so a customer is told their
@@ -1855,6 +1849,186 @@ def test_create_rejects_unhonored_options_without_dispatch_rust(create_database_
         _call_create_database(client, "db1", **options)
     assert not client._adapter.prepared_requests
     client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("options", [{"misspelled_setting": None}, {"retry_wirte": True}])
+def test_create_rejects_unknown_keywords_before_dispatch_rust(
+    create_database_client, method_name, options,  # pylint: disable=redefined-outer-name
+):
+    client = create_database_client
+    hook = MagicMock()
+    name = next(iter(options))
+    with pytest.raises(TypeError, match=rf"{method_name}\(\).*unexpected keyword.*'{name}'"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("options", [{"retry_total": 0}, {"proxy": "http://localhost:8888"}])
+def test_create_keeps_recognized_transport_options_unsupported_rust(
+    create_database_client, method_name, options,  # pylint: disable=redefined-outer-name
+):
+    client = create_database_client
+    with pytest.raises(NotImplementedError, match=method_name):
+        _call_create_database(client, "db1", method_name=method_name, **options)
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("mapping_name", [None, "request_options", "feed_options"])
+@pytest.mark.parametrize("setting_name,value,guidance", [
+    ("connection_timeout", None, "CosmosRuntime"),
+    ("connection_timeout", 1, "CosmosRuntime"),
+    ("retry_write", None, "Rust driver"),
+    ("retry_write", False, "Rust driver"),
+    ("retry_write", 0, "Rust driver"),
+    ("retry_write", True, "Rust driver"),
+    ("retry_write", 2, "Rust driver"),
+])
+def test_create_rejects_removed_per_call_controls_before_dispatch_rust(
+    create_database_client,  # pylint: disable=redefined-outer-name
+    method_name, mapping_name, setting_name, value, guidance,
+):
+    client = create_database_client
+    setting = {setting_name: value}
+    options = {mapping_name: setting} if mapping_name is not None else setting
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=rf"{method_name}.*{setting_name}.*{guidance}"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert setting == {setting_name: value}
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("mapping_name,setting_name", [
+    (None, "no_response"),
+    ("request_options", "responsePayloadOnWriteDisabled"),
+    ("feed_options", "responsePayloadOnWriteDisabled"),
+    ("request_options", "no_response"),
+    ("feed_options", "no_response"),
+])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_create_rejects_no_response_before_dispatch_rust(
+    create_database_client,  # pylint: disable=redefined-outer-name
+    method_name, mapping_name, setting_name, value,
+):
+    client = create_database_client
+    setting = {setting_name: value}
+    options = {mapping_name: setting} if mapping_name is not None else setting
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=rf"{method_name}.*no_response.*database properties"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert setting == {setting_name: value}
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("options", [
+    {"initial_headers": {"Prefer": "return=minimal"}},
+    {"initial_headers": {"pReFeR": "return=representation"}},
+    {"initial_headers": {"prefer": None}},
+    {"request_options": {"initialHeaders": {"PREFER": "return=minimal"}}},
+    {"feed_options": {"initialHeaders": {"prefer": "return=minimal"}}},
+    {"request_options": {"PrEfEr": "return=minimal"}},
+    {"feed_options": {"prefer": "return=minimal"}},
+])
+def test_create_rejects_prefer_before_dispatch_rust(
+    create_database_client, method_name, options,  # pylint: disable=redefined-outer-name
+):
+    client = create_database_client
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=rf"{method_name}.*Prefer.*database properties"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name,statuses", [
+    ("create_database", [201]),
+    ("create_database_if_not_exists", [200]),
+    ("create_database_if_not_exists", [404, 201]),
+    ("create_database_if_not_exists", [404, 409, 200]),
+])
+@pytest.mark.parametrize("mapping_name", [None, "request_options", "feed_options"])
+def test_create_forwards_driver_owned_headers_rust(
+    create_database_client, method_name, statuses, mapping_name,  # pylint: disable=redefined-outer-name
+):
+    client = create_database_client
+    client._adapter.responses = _get_or_create_responses(statuses)
+    headers = {
+        "Accept": "application/x-test",
+        "Cache-Control": "max-age=123",
+        "User-Agent": "test-override",
+        "X-MS-VERSION": "1900-01-01",
+        "x-ms-client-id": "test-client",
+        "x-ms-cosmos-sdk-supportedcapabilities": "0",
+        "Authorization": "not-a-valid-credential",
+        "x-ms-date": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "X-Application": "database-tests",
+    }
+    options = {mapping_name: {"initialHeaders": headers}} if mapping_name else {"initial_headers": headers}
+    database, properties = _call_create_database(
+        client, "db1", method_name=method_name, return_properties=True, **options,
+    )
+    assert database.id == properties["id"] == "db1"
+    assert len(client._adapter.prepared_requests) == len(statuses)
+    for prepared in client._adapter.prepared_requests:
+        assert dict(prepared.headers) == {name.lower(): value for name, value in headers.items()}
+        assert prepared.settings.no_response is None
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("mapping_name", [None, "request_options", "feed_options"])
+@pytest.mark.parametrize("keyword_name,option_name,value", [
+    ("max_item_count", "maxItemCount", 5),
+    ("max_item_count", "maxItemCount", None),
+    ("max_item_count", "maxItemCount", False),
+    ("max_item_count", "maxItemCount", 0),
+    ("populate_query_metrics", "populateQueryMetrics", True),
+    ("populate_query_metrics", "populateQueryMetrics", None),
+    ("populate_query_metrics", "populateQueryMetrics", False),
+    ("populate_index_metrics", "populateIndexMetrics", True),
+    ("populate_query_advice", "populateQueryAdvice", True),
+    ("enable_cross_partition_query", "enableCrossPartitionQuery", False),
+    ("enable_scan_in_query", "enableScanInQuery", False),
+    ("continuation", "continuation", "token"),
+    ("continuation_token_limit", "responseContinuationTokenLimitInKb", 1),
+    ("is_query_plan_request", "isQueryPlanRequest", False),
+    ("supported_query_features", "supportedQueryFeatures", "Aggregate"),
+    ("query_version", "queryVersion", "1.0"),
+])
+def test_create_rejects_query_options_before_dispatch_rust(
+    create_database_client,  # pylint: disable=redefined-outer-name
+    method_name, mapping_name, keyword_name, option_name, value,
+):
+    client = create_database_client
+    name = option_name if mapping_name is not None else keyword_name
+    setting = {name: value}
+    options = {mapping_name: setting} if mapping_name is not None else setting
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=rf"{method_name}.*({keyword_name}|{option_name})"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert setting == {name: value}
+    assert client._adapter.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
 
 
 @pytest.mark.parametrize("timeout", [0.25, 0, -1, True, "5", float("nan"), float("inf"), 2**64])
@@ -2501,8 +2675,7 @@ def test_create_database_signature_is_keyword_only_after_id_rust(client_type, me
     ],
 )
 def test_if_not_exists_recovery_is_bounded_and_preserves_errors_rust(create_database_client, statuses):
-    """Get-or-create gives up after at most three requests and reports the last real
-    failure.
+    """Bound the Python coordinator to three fake-backend dispatches and preserve errors.
 
     The workflow is read, then create if the read found nothing, then one final
     read if the create hit a conflict. The cases here stop it at each point: a
@@ -2510,8 +2683,9 @@ def test_if_not_exists_recovery_is_bounded_and_preserves_errors_rust(create_data
     followed by a failing create, and a full three-step sequence ending in a
     second not-found, a forbidden, another conflict, or a server error.
 
-    In every case the request sequence is a prefix of read, create, read -- never
-    a fourth attempt. A loop retrying until success could spin indefinitely
+    In every case the dispatch sequence is a prefix of read, create, read -- never
+    a fourth dispatch. This does not count driver retries or service requests.
+    A loop retrying until success could spin indefinitely
     against a database being repeatedly created and deleted.
 
     The error raised carries the status and message of the last step, not the
@@ -2553,16 +2727,16 @@ def test_if_not_exists_follow_up_read_preserves_transport_error_or_cancellation_
     """If the final read is interrupted, the interruption itself is what the customer
     sees.
 
-    The workflow reaches its third step -- read found nothing, create hit a
-    conflict, so another caller owns the database -- and that last read then
-    fails, either with a transport error or with cancellation.
+    The fake responses lead to a third step: read reports not found, create
+    reports conflict, and the recovery read raises a transport error or
+    cancellation. No real concurrent caller or service operation is involved.
 
     The original exception object comes back untouched. Cancellation especially
     must not be swallowed or converted: turning it into an ordinary error would
     stop it unwinding and leave a cancelled task looking like a failed request.
 
-    All three steps ran in order, nothing was retried, and the success hook did
-    not fire.
+    All three coordinator steps ran in order, no further dispatch occurred,
+    and the success hook did not fire.
     """
     client = create_database_client
     failure = failure_type("follow-up interrupted")
@@ -2659,7 +2833,7 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected_rust():
 
 
 def test_async_if_not_exists_rust_404_then_rust_create_without_core_python_calls_rust():
-    """Async twin: the database is missing, so both requests run on the Rust path.
+    """Async twin: a fake Rust backend records the read and create requests.
 
     Async clients are a separate code path with their own coordinator, so the same
     behavior has to be proven twice.
@@ -2697,9 +2871,11 @@ def test_async_if_not_exists_rust_404_then_rust_create_without_core_python_calls
             OP_READ_DATABASE,
             OP_CREATE_DATABASE,
         ]
-        assert "offerThroughput" not in backend.prepared_requests[0].headers
+        assert backend.prepared_requests[0].settings.resource.offer_throughput is None
+        assert "x-ms-offer-throughput" not in wire_headers(backend.prepared_requests[0])
         assert backend.prepared_requests[0].settings.throughput_bucket == 7
         assert backend.prepared_requests[1].settings.resource.offer_throughput == 400
+        assert wire_headers(backend.prepared_requests[1])["x-ms-offer-throughput"] == "400"
         assert hook_calls == [
             (
                 {"x-ms-request-charge": "5.25"},
@@ -2950,11 +3126,10 @@ def test_if_not_exists_rejects_invalid_id_before_read_rust(
     ({"request_options": {"accessCondition": {"type": "IfMatch", "condition": "*"}}}, TypeError),
     ({"if_none_match": '"version"'}, TypeError),
     ({"if_match": None}, TypeError),
-    ({"no_response": True}, NotImplementedError),
-    ({"request_options": {"maxItemCount": 1}}, NotImplementedError),
+    ({"no_response": True}, TypeError),
+    ({"request_options": {"maxItemCount": 1}}, TypeError),
     ({"initial_headers": {"x-ms-session-token": "unused"}}, NotImplementedError),
-    ({"initial_headers": {"Prefer": "return=minimal"}}, NotImplementedError),
-    ({"initial_headers": {"Authorization": "unused"}}, NotImplementedError),
+    ({"initial_headers": {"Prefer": "return=minimal"}}, TypeError),
 ])
 def test_if_not_exists_preflight_validates_the_complete_workflow_rust(create_database_client, options, error):
     """Get-or-create checks every option against the whole workflow before it sends
@@ -3040,6 +3215,74 @@ def test_if_not_exists_snapshots_settings_and_limits_throughput_to_create_rust(
             assert "x-ms-offer-throughput" not in headers
             assert "x-ms-cosmos-offer-autopilot-settings" not in headers
     assert set(options) == {"initialHeaders"}
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("kind", [
+    "function", "method", "partial", "callable", "partial-callable", "async-generator",
+])
+def test_creation_rejects_async_hook_before_dispatch_rust(create_database_client, use_legacy, method_name, kind):
+    async def hook(_headers, _body):
+        pytest.fail("An asynchronous response hook must not run")
+
+    class AsyncHook:
+        def __bool__(self):
+            return False
+
+        async def __call__(self, _headers, _body):
+            pytest.fail("An asynchronous response hook must not run")
+
+    async def generator_hook(_headers, body):
+        pytest.fail("An asynchronous generator hook must not run")
+        yield body
+
+    callable_hook = AsyncHook()
+    hooks = {
+        "function": hook,
+        "method": callable_hook.__call__,
+        "partial": partial(hook),
+        "callable": callable_hook,
+        "partial-callable": partial(callable_hook),
+        "async-generator": generator_hook,
+    }
+    client = create_database_client
+    backend = client._adapter
+    if use_legacy:
+        client._adapter = ASYNC_LEGACY_BACKEND if isinstance(client, AsyncCosmosClient) else LEGACY_BACKEND
+        client._client_context = CosmosClientContext(client._adapter)
+    with pytest.raises(TypeError, match=f"{method_name} response_hook must be synchronous"):
+        _call_create_database(
+            client, "db1", method_name=method_name, response_hook=hooks[kind],
+        )
+    assert backend.prepared_requests == []
+    client.client_connection.ReadDatabase.assert_not_called()
+    client.client_connection.CreateDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True])
+def test_if_not_exists_preserves_sync_partial_hook_rust(create_database_client, use_legacy):
+    client = create_database_client
+    calls = []
+
+    def hook(headers, body):
+        calls.append((headers["x-ms-activity-id"], body["id"]))
+
+    if use_legacy:
+        client._adapter = ASYNC_LEGACY_BACKEND if isinstance(client, AsyncCosmosClient) else LEGACY_BACKEND
+        client._client_context = CosmosClientContext(client._adapter)
+        read = AsyncMock if isinstance(client, AsyncCosmosClient) else MagicMock
+        client.client_connection.ReadDatabase = read(return_value=CosmosDict(
+            {"id": "db1"}, response_headers={"x-ms-activity-id": "step-0"},
+        ))
+    else:
+        client._adapter.responses = _get_or_create_responses([200])
+    proxy = _call_create_database(
+        client, "db1", method_name="create_database_if_not_exists", response_hook=partial(hook),
+    )
+    assert proxy.id == "db1"
+    assert calls == [("step-0", "db1")]
+    client.client_connection.CreateDatabase.assert_not_called()
 
 
 @pytest.mark.parametrize("statuses", [[200], [404, 201], [404, 409, 200]])
@@ -3131,16 +3374,12 @@ def test_if_not_exists_hook_errors_never_enter_recovery_rust(create_database_cli
 def test_if_not_exists_expiration_stops_requests_and_success_hooks_rust(
     create_database_client, monkeypatch, expire_after
 ):
-    """When the budget runs out mid-workflow, the remaining steps are not attempted.
+    """Stop the coordinator after a fake dispatch advances the clock to the deadline.
 
-    The clock is pinned and pushed past the deadline just before the first,
-    second, or third request. In each case a client timeout error is raised and
-    exactly that many requests were attempted -- the workflow stops where the
-    budget ran out instead of finishing on borrowed time.
-
-    Every step was handed the same deadline, confirming the budget is worked out
-    once for the whole call rather than renewed per leg. The success hook never
-    fires, since there was no successful result to report.
+    The selected first, second, or third dispatch still returns its arranged
+    response. The next coordinator check raises instead of dispatching another
+    step or invoking the success hook, even after the final synthetic 200.
+    Every recorded dispatch receives the same deadline. No network work runs.
     """
     from azure.cosmos._helpers import _request_database
     from azure.cosmos.exceptions import CosmosClientTimeoutError
@@ -3178,9 +3417,9 @@ def test_if_not_exists_expiration_stops_requests_and_success_hooks_rust(
 def test_if_not_exists_native_dispatch_gets_only_remaining_time_rust(native_create_database_client, monkeypatch):
     """Each leg of the workflow is given only the time left, not a fresh budget.
 
-    With a pinned clock, a five second budget, one second spent starting the
-    driver and one second per request, the driver is handed four, then three,
-    then two seconds.
+    With a controlled clock, a five second budget, one second of simulated
+    setup and one second per fake binding call, the binding receives four,
+    then three, then two seconds. No native driver execution occurs.
 
     Handing five seconds to each leg would let a three-step workflow run for
     fifteen seconds after the customer asked for five.

@@ -427,7 +427,7 @@ def test_listing_page_telemetry_leaves_other_paths_unchanged(listing_telemetry, 
         return
     if kind == "unsupported":
         pages = h.create_iterable(unknown_setting=True).by_page()
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(TypeError, match="unknown_setting"):
             h.next(pages)
         assert not h.calls and len(h.seen) == 1 and h.seen[0].outcome == "error"
         assert len(fetch_spans(recording)) == 1

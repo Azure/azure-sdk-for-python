@@ -3,8 +3,10 @@
 """Async ``test_container_create_item_none_options`` test against the
 ``_backend="rust"`` path.
 
-Self-contained: builds its own database + container in ``asyncSetUp``
-and deletes them in ``asyncTearDown``. The class name and method name
+Self-contained: a key client builds its own database + container in
+``asyncSetUp``; cleanups are registered as each resource is acquired, so
+they also run if setup fails. The data client (AAD in AAD lanes) does the
+item work, as in the source. The class name and method name
 match the source (apart from the method's ``_rust`` suffix) at
 ``tests/test_none_options_async.py`` so test IDs
 differ by path and method suffix.
@@ -13,46 +15,42 @@ Run with::
 
     pytest --noconftest tests/create_item/aio/test_none_options.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        self.key_client = create_setup_client_async(_backend="rust")
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
+        self.addAsyncCleanup(self.client.close)
         self._db_id = "legacy_none_options_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.container = await self.database.create_container(
+        key_database = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
+        await key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
-
-    async def asyncTearDown(self):
-        try:
-            await self.client.delete_database(self._db_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
+        self.database = self.client.get_database_client(self._db_id)
+        self.container = self.database.get_container_client(self._container_id)
 
     async def test_container_create_item_none_options_async_rust(self):
         # Source: tests/test_none_options_async.py::TestNoneOptionsAsync.test_container_create_item_none_options_async
+        # The source also passes pre_trigger_include=None and
+        # post_trigger_include=None. The Rust path rejects trigger arguments
+        # even when they are None (triggers are out of scope),
+        # so they are left out here.
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = await self.container.create_item(
             item,

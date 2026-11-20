@@ -51,11 +51,9 @@ def test_payload_wraps_operations_under_operations_key_rust():
 
 
 def test_incr_op_code_uses_canonical_service_spelling_rust():
-    """Both spellings of the increment operator produce the one the service accepts.
+    """Both increment spellings produce the same canonical payload dictionary.
 
-    Customers write either ``incr`` or ``increment``; the service only
-    understands ``incr``. The payload builder normalises ``increment`` down to
-    it, so the two calls must produce byte-identical payloads.
+    This checks Python preparation, not serialization or service acceptance.
     """
     payload = build_patch_operations_payload([{"op": "incr", "path": "/n", "value": 1}])
     assert payload == {"operations": [{"op": "incr", "path": "/n", "value": 1}]}
@@ -76,13 +74,14 @@ def test_other_op_codes_pass_through_unchanged_rust():
     assert payload["operations"] == ops
 
 
-def test_input_operations_are_not_mutated_rust():
-    """Preparing canonical instructions leaves the caller's list unchanged."""
-    original = [{"op": "incr", "path": "/n", "value": 1}]
+@pytest.mark.parametrize("operation", ["incr", "increment"])
+def test_input_operations_are_not_mutated_rust(operation):
+    """Canonicalization must not rewrite the caller's operation dictionary."""
+    original = [{"op": operation, "path": "/n", "value": 1}]
     snapshot = json.loads(json.dumps(original))
-    build_patch_operations_payload(original)
+    payload = build_patch_operations_payload(original)
     assert original == snapshot
-    assert original[0]["op"] == "incr"  # still the public spelling
+    assert payload["operations"][0]["op"] == "incr"
 
 
 def test_payload_omits_an_unspecified_condition_rust():

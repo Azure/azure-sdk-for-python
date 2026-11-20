@@ -102,7 +102,8 @@ def test_original_split_sources_remain_excluded_with_rust_copies_rust(asynchrono
     retained = TOKEN_TESTS / surface / f"test_latest_session_token{suffix}.py"
     assert not collection.exclude_module(retained)
     text = retained.read_text(encoding="utf-8")
-    assert text.count('_backend="rust"') == 1
+    # One key client sets up resources; one data client runs the test.
+    assert text.count('_backend="rust"') == 2
     originals = {method.name: method for _, method in enforcer._iter_test_functions(tree)}
     copies = {
         method.name: method
@@ -118,13 +119,19 @@ def test_original_split_sources_remain_excluded_with_rust_copies_rust(asynchrono
         )
 
 
+_ORIGINAL_SPLIT_MARKERS = "@pytest.mark.cosmosSplit\n@pytest.mark.cosmosAADSplit\n"
+
+
 @pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("markers", [
+    None,
     "",
-    "@pytest.mark.cosmosSplit",
-    "@pytest.mark.cosmosEmulator\n@pytest.mark.cosmosSplit",
+    "@pytest.mark.cosmosEmulator\n",
+    "@pytest.mark.cosmosSplit\n",
+    "@pytest.mark.cosmosEmulator\n" + _ORIGINAL_SPLIT_MARKERS,
 ])
-def test_non_split_copies_require_exact_emulator_markers_rust(monkeypatch, tmp_path, asynchronous, markers):
+def test_token_copies_require_exact_original_split_markers_rust(monkeypatch, tmp_path, asynchronous, markers):
+    # None keeps the copy unchanged, which must pass; every other value must fail.
     suffix = "_async" if asynchronous else ""
     original = Path("tests") / f"test_partition_split_scenarios{suffix}.py"
     surface = "aio" if asynchronous else "sync"
@@ -133,14 +140,19 @@ def test_non_split_copies_require_exact_emulator_markers_rust(monkeypatch, tmp_p
         destination = tmp_path / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         text = (ROOT / relative).read_text(encoding="utf-8")
-        if relative == copied:
-            text = text.replace("@pytest.mark.cosmosEmulator", markers)
+        assert text.count(_ORIGINAL_SPLIT_MARKERS) == 1
+        if relative == copied and markers is not None:
+            text = text.replace(_ORIGINAL_SPLIT_MARKERS, markers)
         destination.write_text(text, encoding="utf-8")
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [tmp_path / copied])
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: [tmp_path / copied])
     check_name = "test_every_copy_keeps_original_lane_markers_rust"
-    with pytest.raises(AssertionError, match="cosmos.*lane markers"):
-        getattr(enforcer.LegacyMigrationEnforcerTests(check_name), check_name)()
+    check = getattr(enforcer.LegacyMigrationEnforcerTests(check_name), check_name)
+    if markers is None:
+        check()
+    else:
+        with pytest.raises(AssertionError, match="cosmos.*lane markers"):
+            check()
 
 
 def test_retired_split_data_has_owned_provenance_not_an_extra_test_rust():
@@ -185,7 +197,7 @@ def test_token_retirement_does_not_hide_unknown_or_broken_sources_rust(monkeypat
         encoding="utf-8",
     )
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [copied])
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: [copied])
     check = enforcer.LegacyMigrationEnforcerTests("test_every_source_reference_resolves_rust")
     with pytest.raises(AssertionError, match="lineage no longer resolves"):
         check.test_every_source_reference_resolves_rust()

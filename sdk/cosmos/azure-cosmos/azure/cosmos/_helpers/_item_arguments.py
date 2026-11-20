@@ -259,7 +259,7 @@ def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return build_options(kwargs)
 
 
-def merge_upsert_item_explicit_kwargs(
+def merge_upsert_replace_item_explicit_kwargs(
     kwargs: Dict[str, Any],
     *,
     pre_trigger_include: Any = None,
@@ -275,16 +275,12 @@ def merge_upsert_item_explicit_kwargs(
     availability_strategy: Any = None,
     response_hook: Any = None,
 ) -> None:
-    """Copy every non-None explicit ``upsert_item`` kwarg into ``kwargs``.
+    """Merge non-None explicit kwargs shared by ``upsert_item`` and ``replace_item``.
 
-    Upsert is write-with-body like create, so it keeps ``no_response``
-    (an upsert returns a body worth suppressing). It also honours
-    ``etag`` / ``match_condition`` like delete -- an upsert can be
-    narrowed to insert-only or a version-guarded replace -- so those two
-    are merged here too. It has neither ``indexing_directive`` nor
-    ``enable_automatic_id_generation`` (neither is on the public
-    ``upsert_item`` signature). ``availability_strategy`` is passed
-    through the hedging-strategy validator.
+    Both operations support ``no_response``, ``etag`` and ``match_condition``.
+    This helper does not accept ``indexing_directive`` or
+    ``enable_automatic_id_generation``. ``availability_strategy`` is validated
+    before it is stored.
     """
     if pre_trigger_include is not None:
         kwargs['pre_trigger_include'] = pre_trigger_include

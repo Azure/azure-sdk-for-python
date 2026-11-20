@@ -13,6 +13,7 @@ from azure.cosmos import PartitionKey
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.cosmosAADLong
 class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

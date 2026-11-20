@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Real SIGINT checks in isolated processes, with no external service traffic."""
 import json
+import os
 import signal
 import subprocess
 import sys
@@ -13,7 +14,7 @@ from unittest.mock import MagicMock
 import pytest
 
 
-@pytest.mark.parametrize("phase", ["setup-reuse", "setup-close", "read-item", "metadata", "page", "offers"])
+@pytest.mark.parametrize("phase", ["setup-reuse", "setup-close", "read-item", "create-item", "metadata", "page", "offers"])
 def test_sync_wait_honors_sigint_rust(phase):
     result = subprocess.run(
         [sys.executable, __file__, phase], capture_output=True, text=True, timeout=30
@@ -21,7 +22,7 @@ def test_sync_wait_honors_sigint_rust(phase):
     assert result.returncode == 0, result.stdout + result.stderr
 
 
-@pytest.mark.parametrize("phase", ["setup-reuse", "read-item"])
+@pytest.mark.parametrize("phase", ["setup-reuse", "read-item", "create-item"])
 def test_sync_wait_preserves_returning_signal_handler_rust(phase):
     result = subprocess.run(
         [sys.executable, __file__, phase, "continue"], capture_output=True, text=True, timeout=30
@@ -30,6 +31,8 @@ def test_sync_wait_preserves_returning_signal_handler_rust(phase):
 
 
 def _interrupt_case(phase, continue_after_signal=False):
+    # This local test server supports HTTP/1.x only, not the driver's HTTP/2 probe.
+    os.environ["AZURE_COSMOS_CONNECTION_POOL_IS_HTTP2_ALLOWED"] = "false"
     from azure.cosmos import CosmosClient, exceptions
     from azure.cosmos._backend import binding_adapter
 
@@ -120,6 +123,10 @@ def _interrupt_case(phase, continue_after_signal=False):
         if phase == "read-item":
             return client.get_database_client("db").get_container_client("items").read_item(
                 "one", partition_key="A", timeout=4, response_hook=hook
+            )
+        if phase == "create-item":
+            return client.get_database_client("db").get_container_client("items").create_item(
+                {"id": "one", "pk": "A"}, timeout=4, response_hook=hook
             )
         if phase == "metadata":
             return adapter.get_container_metadata("dbs/db/colls/items", deadline=time.monotonic() + 4)

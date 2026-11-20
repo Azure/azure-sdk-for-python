@@ -69,9 +69,12 @@ class CosmosBackend(abc.ABC):
         ...
 
     def get_container_metadata(
-        self, container_link: str, *, deadline: Optional[float] = None
+        self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
     ) -> ContainerMetadata:
-        """Get the container ID and partition-key definition, or raise if unsupported."""
+        """Get the container ID and partition-key definition, or raise if unsupported.
+
+        ``op`` names the operation that needs the lookup, such as ``"read_items"``.
+        """
         raise NotImplementedError("This backend does not provide container metadata")
 
     def run_operation(

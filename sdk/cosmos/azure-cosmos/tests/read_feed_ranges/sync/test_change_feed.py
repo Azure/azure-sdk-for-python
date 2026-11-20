@@ -30,6 +30,7 @@ KEY = os.environ.get(
 @pytest.mark.cosmosCircuitBreaker
 @pytest.mark.cosmosQuery
 @pytest.mark.cosmosAADCircuitBreaker
+@pytest.mark.unittest
 class TestChangeFeed(unittest.TestCase):
 
     def setUp(self) -> None:

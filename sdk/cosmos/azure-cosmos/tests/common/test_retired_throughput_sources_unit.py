@@ -100,7 +100,7 @@ def test_lineage_enforcement_does_not_ignore_missing_tests_rust(monkeypatch, tmp
         encoding="utf-8",
     )
     monkeypatch.setattr(enforcer, "_PKG_ROOT", tmp_path)
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: [copied])
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: [copied])
     check = enforcer.LegacyMigrationEnforcerTests("test_every_source_reference_resolves_rust")
     with pytest.raises(AssertionError, match="lineage no longer resolves"):
         check.test_every_source_reference_resolves_rust()

@@ -21,21 +21,14 @@ Run with::
     pytest --noconftest tests/read_item/sync/test_headers.py -v
 """
 import importlib
-import os
 import unittest
 from unittest.mock import patch
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 # Constants kept identical to the source so the wire value is the same
@@ -51,17 +44,22 @@ class TestHeaders(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        cls.key_client = create_setup_client(_backend="rust")
+        cls.addClassCleanup(cls.key_client.close)
+        cls.client = create_data_client(_backend="rust")
         cls.addClassCleanup(cls.client.close)
         cls._db_id = "legacy_ri_headers_" + uuid.uuid4().hex[:8]
         cls._container_id = "c_" + uuid.uuid4().hex[:8]
-        cls.database = cls.client.create_database(cls._db_id)
-        cls.addClassCleanup(cls.client.delete_database, cls._db_id)
+        key_database = cls.key_client.create_database(cls._db_id)
+        cls.addClassCleanup(cls.key_client.delete_database, cls._db_id)
         print(f"\nOwned read-test database: {cls._db_id}")
-        cls.container = cls.database.create_container(
+        key_database.create_container(
             id=cls._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        cls.container = cls.client.get_database_client(cls._db_id).get_container_client(cls._container_id)
 
     def test_container_read_item_throughput_bucket_rust(self):
         """Verify the operation prepares the requested throughput bucket."""

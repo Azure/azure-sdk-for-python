@@ -14,6 +14,7 @@ from contextvars import copy_context
 from concurrent.futures import ThreadPoolExecutor
 import json
 import logging
+import re
 import sys
 import time
 from types import SimpleNamespace
@@ -169,7 +170,7 @@ def item_harness(recording, monkeypatch):  # pylint: disable=unused-argument
                     "start_ns": start,
                     "end_ns": end,
                     "driver_status_code": harness.response_status,
-                    "execution_context": "retry",
+                    "execution_context": "operation_retry",
                 },
             ],
         })
@@ -318,13 +319,15 @@ def test_create_preserves_result_and_records_exact_sibling_attempts_rust(create,
     assert telemetry._OPERATION.get() is None
 
 
-def test_failed_operation_without_driver_status_reports_other_error_type_rust(create, recording):
+def test_failed_operation_keeps_exception_class_error_type_rust(create, recording):
+    # Legacy parity: the operation span's error.type is the exception class, even without a driver status.
     create.response_status = 409
     create.transform = lambda result: (result[0], {**result[1], "status_code": None, "failed": True})
     with pytest.raises(CosmosResourceExistsError):
         asyncio.run(create.container.create_item(deepcopy(ORDER)))
     (operation,) = operation_spans(recording)
-    assert operation.attributes["error.type"] == "_OTHER"
+    assert operation.attributes["error.type"] == "azure.cosmos.exceptions.CosmosResourceExistsError"
+    assert "db.response.status_code" not in operation.attributes
 
 
 @pytest.mark.parametrize("mode", ["disabled", "global-disabled", "merged", "nested", "sampled-out"])
@@ -581,17 +584,31 @@ def test_response_hook_error_remains_the_public_failure_rust(create, recording):
     assert operation_spans(recording)[0].status.status_code is trace.StatusCode.ERROR
 
 
+class PreservedCredentialError(RuntimeError):
+    """A customer credential error that the binding preserved and marked, so it can carry attempt diagnostics."""
+
+    def __init__(self, *args):
+        super().__init__(*args)
+        self._cosmos_credential_error = True
+
+
 @pytest.mark.parametrize("has_diagnostics", [True, False])
 @pytest.mark.parametrize(
     "response_status, exception_type",
-    [(409, CosmosResourceExistsError), (408, ServiceResponseError), (408, ClientAuthenticationError)],
+    [
+        (409, CosmosResourceExistsError),
+        (408, ServiceResponseError),
+        (408, ClientAuthenticationError),
+        (408, ValueError),
+        (408, PreservedCredentialError),
+    ],
 )
 def test_failed_create_preserves_exception_and_diagnostics_rust(
     create, recording, has_diagnostics, response_status, exception_type
 ):
     create.response_status = response_status
-    if exception_type is ClientAuthenticationError:
-        create.driver_error_type = ClientAuthenticationError
+    if exception_type in (ClientAuthenticationError, ValueError, PreservedCredentialError):
+        create.driver_error_type = exception_type
     message = "conflict" if response_status == 409 else "driver failure"
     if not has_diagnostics:
         create.transform = lambda result: (result[0], None)
@@ -609,7 +626,7 @@ def test_failed_create_preserves_exception_and_diagnostics_rust(
         assert error.headers["x-ms-request-charge"] == "5.0"
         assert error.headers["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
     else:
-        if exception_type is ClientAuthenticationError:
+        if exception_type in (ClientAuthenticationError, ValueError, PreservedCredentialError):
             assert error is create.driver_error
         else:
             assert error.__cause__ is create.driver_error
@@ -668,6 +685,251 @@ def test_disabled_error_never_reads_private_diagnostics_rust(create, recording):
     assert error.value.__cause__ is create.error
     assert create.calls[0][0] is False
     assert not attempt_spans(recording)
+
+
+def failure_payload(reason, count):
+    stamp = time.time_ns()
+    return v2({
+        "schema_version": 2,
+        "complete": False,
+        "incomplete_reasons": [reason],
+        "request_count": count,
+        "retained_request_count": count,
+        "error": None,
+        "attempts": [
+            {
+                "start_ns": stamp + index,
+                "end_ns": stamp + index + 1,
+                "driver_status_code": 503,
+                "execution_context": "initial",
+            }
+            for index in range(count)
+        ],
+    })
+
+
+def converted_setup_error():
+    """Mirror the adapter: a binding setup error becomes the cause of an azure-core error."""
+    cause = DriverTransportError("driver setup failure")
+    cause._cosmos_attempt_payload = failure_payload("setup_diagnostics_partial", 2)
+    error = ServiceResponseError(message="driver setup failure")
+    error.__cause__ = cause
+    return error, cause
+
+
+def assert_setup_diagnostics(diagnostics):
+    assert diagnostics.request_count == 2
+    assert not diagnostics.complete
+    assert "setup_diagnostics_partial" in diagnostics.incomplete_reasons
+    assert "missing_contribution" not in diagnostics.incomplete_reasons
+
+
+def test_shared_driver_setup_failure_is_counted_once_rust(create, recording):
+    error, cause = converted_setup_error()
+    # Calls waiting for one driver setup receive the same error object.
+    create.backend._ensure_driver_handle.side_effect = error
+    seen = []
+    create.container._client_context = replace(
+        create.container._client_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
+    )
+
+    async def save_two_orders():
+        return await asyncio.gather(
+            create.container.create_item(ORDER),
+            create.container.create_item({**ORDER, "id": "order-18"}),
+            return_exceptions=True,
+        )
+
+    assert asyncio.run(save_two_orders()) == [error, error]
+    assert not create.calls
+    assert len(seen) == 2 and all(completion.outcome == "error" for completion in seen)
+    (owner,) = [completion for completion in seen if completion.diagnostics is not None]
+    assert_setup_diagnostics(owner.diagnostics)
+    assert len(attempt_spans(recording)) == 2
+    assert not hasattr(cause, "_cosmos_attempt_payload")
+    assert telemetry._OPERATION.get() is None
+
+
+def test_sync_driver_setup_failure_keeps_setup_diagnostics_rust(sync_create, recording):
+    error, _ = converted_setup_error()
+    sync_create.backend._ensure_driver_handle.side_effect = error
+    seen = []
+    sync_create.container._client_context = replace(
+        sync_create.container._client_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
+    )
+    with pytest.raises(ServiceResponseError) as caught:
+        sync_create.container.create_item(ORDER)
+    assert caught.value is error
+    assert not sync_create.calls
+    (completion,) = seen
+    assert_setup_diagnostics(completion.diagnostics)
+    assert len(attempt_spans(recording)) == 2
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("asynchronous", [True, False], ids=["async", "sync"])
+def test_read_items_lookup_failure_keeps_lookup_diagnostics_rust(request, monkeypatch, recording, asynchronous):
+    harness = request.getfixturevalue("create" if asynchronous else "sync_create")
+    module = binding_adapter if asynchronous else sync_binding_adapter
+    lookups = []
+
+    def fail(container_link, timeout_seconds, include_attempts):
+        lookups.append((container_link, include_attempts))
+        error = DriverTransportError("lookup failure")
+        if include_attempts:
+            error._cosmos_attempt_payload = failure_payload("metadata_diagnostics_unavailable", 3)
+        raise error
+
+    def lookup(_driver_handle, container_link, *, timeout_seconds=None, include_attempts=False):
+        fail(container_link, timeout_seconds, include_attempts)
+
+    async def lookup_async(_driver_handle, container_link, *, timeout_seconds=None, include_attempts=False):
+        fail(container_link, timeout_seconds, include_attempts)
+
+    name, fake = ("get_container_metadata_async", lookup_async) if asynchronous else ("get_container_metadata", lookup)
+    monkeypatch.setattr(module._rust_module, name, fake, raising=False)
+    seen = []
+    harness.container._client_context = replace(
+        harness.container._client_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
+    )
+    with pytest.raises(ServiceResponseError, match="lookup failure"):
+        result = harness.container.read_items([("order-17", "customer-17")])
+        if asynchronous:
+            asyncio.run(result)
+    assert lookups == [("dbs/sales/colls/orders", True)]
+    assert not harness.calls
+    (completion,) = seen
+    assert completion.operation == "read_items" and completion.outcome == "error"
+    assert completion.diagnostics.request_count == 3
+    assert completion.diagnostics.incomplete_reasons == ("metadata_diagnostics_unavailable",)
+    (operation,) = [span for span in recording.exporter.get_finished_spans() if span.name == "ContainerProxy.read_items"]
+    spans = attempt_spans(recording)
+    assert len(spans) == 3
+    assert all(span.parent.span_id == operation.context.span_id for span in spans)
+    assert telemetry._OPERATION.get() is None
+
+
+class FakeItemFeedCursor:
+    def __init__(self):
+        self.has_more = True
+        self.continuation_supported = True
+
+
+TWO_ORDERS = [("order-17", "customer-17"), ("order-18", "customer-18")]
+
+
+def page_payload(stamp, index, status):
+    return v2({
+        "schema_version": 2,
+        "complete": True,
+        "incomplete_reasons": [],
+        "request_count": 2,
+        "retained_request_count": 2,
+        "error": None,
+        "attempts": [
+            {
+                "start_ns": stamp + 10 * index + attempt,
+                "end_ns": stamp + 10 * index + attempt + 1,
+                "driver_status_code": status,
+                "execution_context": "initial",
+            }
+            for attempt in range(2)
+        ],
+    })
+
+
+def fake_read_items_pages(request, monkeypatch, asynchronous, fail_page=None):
+    """Serve each order as its own read_items page. The page at ``fail_page`` raises a driver error."""
+    harness = request.getfixturevalue("create" if asynchronous else "sync_create")
+    module = binding_adapter if asynchronous else sync_binding_adapter
+    pages = [[{"id": item_id, "customer": key}] for item_id, key in TWO_ORDERS]
+    fetches = []
+    stamp = time.time_ns()
+
+    def metadata(_driver_handle, _container_link, *, timeout_seconds=None, include_attempts=False):
+        return "rid", ("/customer",), "Hash", None
+
+    def fetch(_driver_handle, prepared, cursor, *, timeout_seconds=None, include_attempts=False):
+        index = len(fetches)
+        fetches.append((prepared.op, include_attempts))
+        cursor.has_more = index + 1 < len(pages)
+        if index == fail_page:
+            error = DriverTransportError("page failure")
+            if include_attempts:
+                error._cosmos_attempt_payload = page_payload(stamp, index, 503)
+            raise error
+        response = (200, 0, {"x-ms-request-charge": "1.0"}, json.dumps({"Documents": pages[index]}).encode(), None)
+        return (response, page_payload(stamp, index, 200)) if include_attempts else response
+
+    async def metadata_async(*args, **kwargs):
+        return metadata(*args, **kwargs)
+
+    async def fetch_async(*args, **kwargs):
+        return fetch(*args, **kwargs)
+
+    suffix = "_async" if asynchronous else ""
+    for name, fake in (
+        ("get_container_metadata" + suffix, metadata_async if asynchronous else metadata),
+        ("fetch_page_with_cursor" + suffix, fetch_async if asynchronous else fetch),
+        ("_ItemFeedCursor", FakeItemFeedCursor),
+    ):
+        monkeypatch.setattr(module._rust_module, name, fake, raising=False)
+    seen = []
+    harness.container._client_context = replace(
+        harness.container._client_context,
+        telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),),
+    )
+    return harness, fetches, seen
+
+
+def read_two_orders(harness, asynchronous):
+    result = harness.container.read_items(TWO_ORDERS)
+    return asyncio.run(result) if asynchronous else result
+
+
+@pytest.mark.parametrize("asynchronous", [True, False], ids=["async", "sync"])
+def test_read_items_pages_form_one_operation_rust(request, monkeypatch, recording, asynchronous):
+    harness, fetches, seen = fake_read_items_pages(request, monkeypatch, asynchronous)
+    result = read_two_orders(harness, asynchronous)
+    assert [item["id"] for item in result] == ["order-17", "order-18"]
+    assert fetches == [("read_items", True), ("read_items", True)]
+    # One call is one operation: both pages are added together.
+    (completion,) = seen
+    assert completion.operation == "read_items" and completion.outcome == "success"
+    assert completion.diagnostics.complete
+    assert completion.diagnostics.request_count == 4
+    finished = recording.exporter.get_finished_spans()
+    assert not [span for span in finished if span.name == "ContainerProxy.read_items.fetch"]
+    (operation,) = [span for span in finished if span.name == "ContainerProxy.read_items"]
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 4
+    spans = attempt_spans(recording)
+    assert len(spans) == 4
+    assert all(span.parent.span_id == operation.context.span_id for span in spans)
+    assert telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("asynchronous", [True, False], ids=["async", "sync"])
+def test_read_items_second_page_failure_keeps_both_pages_rust(request, monkeypatch, recording, asynchronous):
+    harness, fetches, seen = fake_read_items_pages(request, monkeypatch, asynchronous, fail_page=1)
+    with pytest.raises(ServiceResponseError, match="page failure"):
+        read_two_orders(harness, asynchronous)
+    assert fetches == [("read_items", True), ("read_items", True)]
+    # The failed call still reports the first page's requests with the failed page's requests.
+    (completion,) = seen
+    assert completion.operation == "read_items" and completion.outcome == "error"
+    assert completion.diagnostics.complete
+    assert completion.diagnostics.request_count == 4
+    assert [attempt.driver_status_code for attempt in completion.diagnostics.attempts] == [200, 200, 503, 503]
+    (operation,) = [span for span in recording.exporter.get_finished_spans() if span.name == "ContainerProxy.read_items"]
+    assert operation.status.status_code is trace.StatusCode.ERROR
+    assert operation.attributes["azure.cosmosdb.operation.request_count"] == 4
+    spans = attempt_spans(recording)
+    assert len(spans) == 4
+    assert all(span.parent.span_id == operation.context.span_id for span in spans)
+    assert telemetry._OPERATION.get() is None
 
 
 def test_timeout_preserves_exception_without_replaying_rust(create, recording):
@@ -1174,18 +1436,23 @@ def test_sync_public_success_preserves_hook_snapshots_and_span_lifetime_rust(syn
         ("read_item", 404, CosmosResourceNotFoundError),
         ("create_item", 408, ServiceResponseError),
         ("read_item", 408, ServiceResponseError),
+        ("create_item", 408, ValueError),
     ],
 )
 def test_sync_public_failures_preserve_errors_and_do_not_invoke_hook_rust(
     sync_create, recording, operation, status, exception
 ):
     sync_create.response_status = status
+    if exception is ValueError:
+        sync_create.driver_error_type = ValueError
     hook = Mock()
     with pytest.raises(exception) as error:
         sync_call(sync_create, operation, response_hook=hook)
     hook.assert_not_called()
     assert len(sync_create.calls) == 1
-    if status == 408:
+    if exception is ValueError:
+        assert error.value is sync_create.driver_error
+    elif status == 408:
         assert error.value.__cause__ is sync_create.driver_error
     else:
         assert error.value.status_code == status
@@ -1436,7 +1703,7 @@ def contribution_response(total, start, count=2):
     return (200, 0, {}, b"{}", None), payload
 
 
-def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery_rust(recording, caplog):
+def test_aggregation_counts_once_keeps_all_detail_and_rejects_late_delivery_rust(recording, caplog):
     received = []
     with trace.get_tracer("test").start_as_current_span("combined") as parent:
         state = telemetry._Operation(
@@ -1452,7 +1719,7 @@ def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery_rust(re
                     collect_attempts=True,
                 ),
             ),
-            collector=telemetry._DiagnosticCollector(retained_limit=3),
+            collector=telemetry._DiagnosticCollector(contribution_limit=2),
         )
         first, second = state.begin_contribution(), state.begin_contribution()
         stamp = time.time_ns()
@@ -1468,16 +1735,17 @@ def test_aggregation_counts_once_bounds_detail_and_rejects_late_delivery_rust(re
     assert completion.operation == "read_items"
     assert completion.diagnostics.complete
     assert completion.diagnostics.request_count == 12
-    assert [attempt.start_ns for attempt in completion.diagnostics.attempts] == [
+    assert sorted(attempt.start_ns for attempt in completion.diagnostics.attempts) == [
         stamp,
         stamp + 1,
+        stamp + 10,
         stamp + 11,
     ]
     spans = recording.exporter.get_finished_spans()
     operation = next(span for span in spans if span.name == "combined")
     assert operation.attributes["azure.cosmosdb.operation.request_count"] == 12
-    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 3
-    assert len(attempt_spans(recording)) == 3
+    assert operation.attributes["azure.cosmosdb.operation.retained_request_count"] == 4
+    assert len(attempt_spans(recording)) == 4
     assert "duplicate or late" in caplog.text
     assert state.closed and state.collector.diagnostics is None
     assert not state.handlers
@@ -1502,7 +1770,7 @@ def test_incomplete_contributions_do_not_publish_partial_counts_as_totals_rust(r
                     collect_attempts=True,
                 ),
             ),
-            collector=telemetry._DiagnosticCollector(retained_limit=None if defect == "unbounded" else 4),
+            collector=telemetry._DiagnosticCollector(contribution_limit=None if defect == "unbounded" else 2),
         )
         state.begin_contribution().response(contribution_response(5, time.time_ns()))
         second = state.begin_contribution()
@@ -1520,12 +1788,13 @@ def test_incomplete_contributions_do_not_publish_partial_counts_as_totals_rust(r
     operation = next(span for span in recording.exporter.get_finished_spans() if span.name == "combined")
     assert "azure.cosmosdb.operation.request_count" not in operation.attributes
     assert "azure.cosmosdb.operation.retained_request_count" not in operation.attributes
-    assert "missing_contribution" in completion.diagnostics.incomplete_reasons
+    expected_reason = "excess_contribution" if defect == "unbounded" else "missing_contribution"
+    assert expected_reason in completion.diagnostics.incomplete_reasons
     assert operation.attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
 
 
 def test_explicit_contributions_can_complete_on_other_threads_without_sharing_span_state_rust():
-    collector = telemetry._DiagnosticCollector(retained_limit=3)
+    collector = telemetry._DiagnosticCollector(contribution_limit=8)
     contributions = [collector.reserve() for _ in range(8)]
     gate = Barrier(4)
     stamp = time.time_ns()
@@ -1539,11 +1808,8 @@ def test_explicit_contributions_can_complete_on_other_threads_without_sharing_sp
     first, diagnostics = collector.close()
     assert first and diagnostics.complete
     assert diagnostics.request_count == 40
-    assert len(diagnostics.attempts) == 3
-    assert [attempt.start_ns for attempt in diagnostics.attempts] == [
-        stamp,
-        stamp + 1,
-        stamp + 71,
+    assert sorted(attempt.start_ns for attempt in diagnostics.attempts) == [
+        stamp + index * 10 + offset for index in range(8) for offset in range(2)
     ]
     assert collector.close() == (False, None)
 
@@ -1551,7 +1817,7 @@ def test_explicit_contributions_can_complete_on_other_threads_without_sharing_sp
 @pytest.mark.parametrize("limit", [-1, True, "3"])
 def test_invalid_aggregate_limits_fail_at_internal_configuration_rust(limit):
     with pytest.raises(ValueError):
-        telemetry._DiagnosticCollector(retained_limit=limit)
+        telemetry._DiagnosticCollector(contribution_limit=limit)
 
 
 @pytest.mark.parametrize("runtime", ["sync", "async"])
@@ -1701,9 +1967,8 @@ def test_public_identity_can_differ_from_binding_operation_rust(sync_create, rec
     assert len(attempt_spans(recording)) == 1
 
 
-@pytest.mark.parametrize("limit", [0, 1, 3])
-def test_collector_snapshots_input_and_honors_zero_or_small_limits_rust(limit):
-    collector = telemetry._DiagnosticCollector(retained_limit=limit)
+def test_collector_snapshots_input_rust():
+    collector = telemetry._DiagnosticCollector()
     payload = contribution_response(5, time.time_ns(), count=4)
     contribution = collector.reserve()
     contribution.response(payload)
@@ -1711,7 +1976,7 @@ def test_collector_snapshots_input_and_honors_zero_or_small_limits_rust(limit):
     first, diagnostics = collector.close()
     assert first and diagnostics.complete
     assert diagnostics.request_count == 5
-    assert len(diagnostics.attempts) == limit
+    assert len(diagnostics.attempts) == 4
 
 
 def test_contribution_cannot_be_completed_by_an_unrelated_collector_rust(caplog):
@@ -2264,7 +2529,14 @@ def test_range_subset_rejects_unsupported_input_before_binding(range_subset, rec
         harness.container._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append),),
     )
-    with pytest.raises(NotImplementedError, match="is_feed_range_subset requires supported"):
+    reason = {
+        "inverted": "must not have reversed bounds",
+        "nonhex": "must have hexadecimal string bounds of even length",
+        "missing": "must contain range bounds and inclusion flags",
+        "flag": "must have Boolean inclusion flags",
+    }.get(invalid, "must be an SDK-returned feed-range dictionary with only a 'Range' field")
+    name = side.replace("_range", "_feed_range")
+    with pytest.raises(ValueError, match=re.escape(f"{name} {reason}")):
         harness.compare()
     assert not harness.calls
     harness.backend._ensure_driver_handle.assert_not_called()
@@ -2655,8 +2927,8 @@ def test_partition_key_range_failure_keeps_prior_diagnostics(partition_key_range
     assert (span.status.status_code is trace.StatusCode.ERROR) == (expected is not None)
     assert "azure.cosmosdb.operation.request_count" not in span.attributes
     assert "azure.cosmosdb.operation.retained_request_count" not in span.attributes
-    # Validation errors have no attached diagnostic conversion; malformed telemetry is rejected.
-    expected_attempts = 2 * (metadata + (failure not in ("validation", "payload")))
+    # A validation ValueError carries its attempt diagnostics; only malformed telemetry is rejected.
+    expected_attempts = 2 * (metadata + (failure != "payload"))
     assert len(attempt_spans(recording)) == expected_attempts
     assert telemetry._OPERATION.get() is None
 
@@ -2908,6 +3180,11 @@ def test_latest_session_token_records_only_local_execution(  # pylint: disable=t
         assert span.parent.span_id == parent.get_span_context().span_id
         assert span.context.trace_id == parent.get_span_context().trace_id
         assert (span.status.status_code == trace.StatusCode.ERROR) is failed
+        if failed:
+            assert span.attributes["error.type"] == {
+                "type": "TypeError",
+                "regions": "azure.cosmos.exceptions.CosmosHttpResponseError",
+            }.get(outcome, "ValueError")
         assert not any(key.startswith("azure.cosmosdb.") for key in span.attributes)
         exported = repr((span.attributes, span.events, span.status.description))
         for value in (
@@ -5020,7 +5297,7 @@ def test_composite_summaries_sum_charge_and_keep_final_status_rust():
         requested_regions=("North Europe",),
         requested_regions_total=1,
     )
-    assert first.merge(later, limit=2) == telemetry._Summary(
+    assert first.merge(later) == telemetry._Summary(
         status_code=200,
         request_charge=3.5,
         contacted_regions=("West US 2", "East US"),
@@ -5028,7 +5305,7 @@ def test_composite_summaries_sum_charge_and_keep_final_status_rust():
         hedging_started=True,
         hedge_region="East US",
         hedge_terminal_state="hedged_success",
-        requested_regions=("West US 2", "North Europe"),
+        requested_regions=("West US 2", "East US", "North Europe"),
         requested_regions_total=3,
     )
 
@@ -5227,7 +5504,7 @@ def container_get_or_create_harness(container_create, monkeypatch):
     def select_status(prepared):
         index = len(harness.calls)
         assert index < len(harness.statuses), "Unexpected extra container request"
-        assert prepared.op == ("read_container", "create_container")[index]
+        assert prepared.op == ("read_container", "create_container", "read_container")[index]
         status = harness.statuses[index]
         if isinstance(status, BaseException):
             harness.error = status
@@ -5339,8 +5616,12 @@ def assert_item_attempts(harness, recording, parent, status, name, owner="Contai
     operation = operations[0]
     assert operation.parent.span_id == parent.get_span_context().span_id
     assert operation.status.status_code is (trace.StatusCode.UNSET if status < 400 else trace.StatusCode.ERROR)
-    # Rust SDK parity: a driver failure is classified by its status, not the exception class.
-    assert operation.attributes.get("error.type") == (str(status) if status >= 400 else None)
+    # Legacy parity: error.type is the raised exception's class; the status stays in db.response.status_code.
+    if status >= 400:
+        assert operation.attributes["error.type"] not in (str(status), "_OTHER")
+    else:
+        assert "error.type" not in operation.attributes
+    assert operation.attributes["db.response.status_code"] == str(status)
     assert operation.attributes["db.namespace"] == "sales"
     expected_collection = "orders" if owner == "ContainerProxy" or "container" in name else None
     assert operation.attributes.get("db.collection.name") == expected_collection
@@ -5375,7 +5656,7 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
 ):
     harness = container_create
     harness.response_status = status
-    seen, hooks = [], []
+    seen, hooks, received = [], [], []
     harness.database._client_context = replace(
         harness.database._client_context,
         telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=mode == "handler-only"),),
@@ -5402,9 +5683,10 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
         assert state.binding_operation == "create_container" and state.collector.received == int(collect)
         assert not seen and not attempt_spans(recording)
         assert body["partitionKey"]["paths"] == ["/customerId"]
+        received.append(deepcopy(body))
         hooks.append(body)
         headers.clear()
-        # Create hooks already receive the returned body, unlike read's body snapshot.
+        # The hook gets its own copy, so this edit must not reach the returned properties.
         body["defaultTtl"] = 42
 
     def cache(link, properties):
@@ -5421,7 +5703,9 @@ def test_container_create_owns_returned_proxy_and_properties_rust(  # pylint: di
             assert isinstance(container, (ContainerProxy, SyncContainerProxy))
             assert container.id == "orders" and container._client_context is harness.database._client_context
             if return_properties:
-                assert result[1] is hooks[0] and result[1]["defaultTtl"] == 42
+                # The returned properties are exactly what the service backend sent; the hook edited only its copy.
+                assert result[1] == received[0] and result[1] is not hooks[0]
+                assert hooks[0]["defaultTtl"] == 42
             harness.connection._set_container_properties_cache.assert_called_once()
         else:
             with pytest.raises(CosmosResourceExistsError if status == 409 else ServiceResponseError) as caught:
@@ -6417,12 +6701,12 @@ def test_database_create_reporting_preserves_public_outcome_rust(
         assert bool(attempts) is (outcome != "binding-timeout")
         if outcome in ("hook-error", "proxy-error"):
             assert attempts[-1].attributes["db.response.status_code"] == "201"
-            # The driver succeeded, so the root keeps Azure Core's exception classification.
             (operation,) = [s for s in recording.exporter.get_finished_spans() if s.name.endswith(".create_database")]
             assert operation.attributes["error.type"] == "ValueError"
         elif outcome == "returned-timeout":
             (operation,) = [s for s in recording.exporter.get_finished_spans() if s.name.endswith(".create_database")]
-            assert operation.attributes["error.type"] == "408"
+            assert operation.attributes["error.type"] == "azure.cosmos.exceptions.CosmosClientTimeoutError"
+            assert operation.attributes["db.response.status_code"] == "408"
     harness.connection.CreateDatabase.assert_not_called()
     harness.connection.ReadDatabase.assert_not_called()
     assert telemetry._OPERATION.get() is None
@@ -6851,10 +7135,13 @@ def test_composed_collector_rejects_excess_and_duplicate_results_rust(caplog):
     first, diagnostics = collector.close()
     assert first and diagnostics.request_count == 15 and len(diagnostics.attempts) == 6
     assert not diagnostics.complete
+    assert diagnostics.incomplete_reasons == ("excess_contribution",)
     assert "duplicate or late" in caplog.text and "excess" in caplog.text
 
 
-@pytest.mark.parametrize("statuses", [[200], [304], [404, 201], [403], [412], [404, 409], [404, 403]])
+@pytest.mark.parametrize(
+    "statuses", [[200], [304], [404, 201], [403], [412], [404, 409, 200], [404, 409, 404], [404, 403]]
+)
 @pytest.mark.parametrize("return_properties", [False, True])
 @pytest.mark.parametrize(
     "mode",
@@ -6924,10 +7211,11 @@ def test_container_get_or_create_owns_read_and_delegated_creation_rust(  # pylin
             assert proxy.id == "orders" and proxy._client_context is harness.database._client_context
             assert len(hooks) == 1
             if return_properties:
-                assert result[1] is hooks[0]
+                # The returned properties are exactly what the service backend sent; the hook edited only its copy.
+                assert result[1] == expected and result[1] is not hooks[0]
                 assert result[1].get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "diagnostic-text"
                 if expected:
-                    assert result[1]["indexingPolicy"]["indexingMode"] == "none"
+                    assert hooks[0]["indexingPolicy"]["indexingMode"] == "none"
             harness.connection._set_container_properties_cache.assert_called_once()
         assert trace.get_current_span() is parent
     assert len(harness.calls) == len(statuses) and len(seen) == 1
@@ -7072,34 +7360,37 @@ def test_container_get_or_create_failure_retains_available_diagnostics_rust(
 
 
 @pytest.mark.parametrize("expire_stage", [None, 0, 1])
-def test_container_get_or_create_preserves_per_step_budget_rust(
+def test_container_get_or_create_shares_one_budget_rust(
     container_get_or_create, recording, monkeypatch, expire_stage
 ):
     from azure.cosmos._backend import _binding_adapter_shared
+    from azure.cosmos._helpers import _request_container
 
     harness = container_get_or_create
     clock = [100.0]
     clock_module = SimpleNamespace(monotonic=lambda: clock[0])
     monkeypatch.setattr(_binding_adapter_shared, "time", clock_module)
     monkeypatch.setattr(_operation_deadline, "time", clock_module)
+    monkeypatch.setattr(_request_container, "time", clock_module)
     asynchronous = isinstance(harness.backend, binding_adapter.AsyncBindingAdapter)
     module = binding_adapter if asynchronous else sync_binding_adapter
     suffix = "_async" if asynchronous else ""
     native = getattr(module._rust_module, "read_container" + suffix)
 
     def setup(*, deadline=None):
-        assert deadline == (None if asynchronous else clock[0] + 5)
+        # The read and the create share the one deadline taken when the call starts.
+        assert deadline == (None if asynchronous else 105.0)
         clock[0] += 6 if len(harness.calls) == expire_stage else 1
         return "test-driver"
 
     def binding(handle, prepared, **kwargs):
         result = native(handle, prepared, **kwargs)
-        clock[0] += 2
+        clock[0] += 1
         return result
 
     async def binding_async(handle, prepared, **kwargs):
         result = await native(handle, prepared, **kwargs)
-        clock[0] += 2
+        clock[0] += 1
         return result
 
     monkeypatch.setattr(
@@ -7122,8 +7413,8 @@ def test_container_get_or_create_preserves_per_step_budget_rust(
             with pytest.raises(CosmosClientTimeoutError):
                 harness.get_or_create(timeout=5, response_hook=hook)
             hook.assert_not_called()
-    # Each existing step starts its own budget; setup consumes time before dispatch.
-    assert [call[1] for call in harness.calls] == [4.0, 4.0][:expire_stage]
+    # Each setup and each binding call takes 1 of the shared 5 seconds: the read gets 4, the create the 2 left.
+    assert [call[1] for call in harness.calls] == [4.0, 2.0][:expire_stage]
     assert all(call[0] for call in harness.calls)
     assert_composed_attempts(
         harness,

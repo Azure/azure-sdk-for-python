@@ -57,11 +57,12 @@ from azure.cosmos._backend.operations import (
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
+    OP_READ_ITEMS,
     OP_GET_THROUGHPUT,
     OP_TO_BINDING_FUNCTION_NAME,
     STATELESS_PAGE_BINDING_FUNCTION_NAMES,
 )
-from azure.cosmos._backend.errors import UnsupportedQueryError
+from azure.cosmos._backend.errors import PagePreflightError, UnsupportedQueryError
 from azure.cosmos._backend._binding_adapter_shared import (
     configure_packaged_query_plan_interop,
     driver_transport_error_type,
@@ -843,9 +844,11 @@ def test_paged_operations_are_not_single_response_operations_rust():
     """Feed operations live only in the paged dispatch map.
 
     This keeps query, read-all, and database-list pages out of the single-reply
-    ``execute`` path.
+    ``execute`` path. read_items and read_all_items both reach the driver's
+    read_many through a feed cursor, so they have no stateless entry.
     """
     assert OP_QUERY_ITEMS not in OP_TO_BINDING_FUNCTION_NAME
+    assert OP_READ_ITEMS not in OP_TO_BINDING_FUNCTION_NAME
     assert OP_READ_ALL_ITEMS not in OP_TO_BINDING_FUNCTION_NAME
     assert OP_LIST_DATABASES not in OP_TO_BINDING_FUNCTION_NAME
     assert OP_QUERY_DATABASES not in OP_TO_BINDING_FUNCTION_NAME
@@ -854,7 +857,6 @@ def test_paged_operations_are_not_single_response_operations_rust():
     assert "query_items_change_feed" not in OP_TO_BINDING_FUNCTION_NAME
     assert STATELESS_PAGE_BINDING_FUNCTION_NAMES == {
         OP_QUERY_ITEMS: "query_items",
-        OP_READ_ALL_ITEMS: "read_all_items",
         OP_LIST_DATABASES: "list_databases",
         OP_QUERY_DATABASES: "query_databases",
         OP_LIST_CONTAINERS: "list_containers",
@@ -863,6 +865,7 @@ def test_paged_operations_are_not_single_response_operations_rust():
     from azure.cosmos._backend.operations import RETAINED_PAGE_BINDING_FUNCTION_NAMES
     assert RETAINED_PAGE_BINDING_FUNCTION_NAMES == {
         OP_QUERY_ITEMS: "fetch_page_with_cursor",
+        OP_READ_ITEMS: "fetch_page_with_cursor",
         OP_READ_ALL_ITEMS: "fetch_page_with_cursor",
         "query_items_change_feed": "fetch_page_with_cursor",
     }
@@ -900,33 +903,28 @@ def test_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatc
         list(backend.execute_pages(prepared))
 
 
-def test_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
-    """A read_all_items prepared request routes to the binding's read_all_items entry point."""
+@pytest.mark.parametrize("op", [OP_READ_ITEMS, OP_READ_ALL_ITEMS])
+def test_rust_backend_rejects_read_many_feed_without_cursor_rust(monkeypatch, op):
+    """read_items and read_all_items reach the driver's read_many only through a feed cursor.
+
+    A stale binding that still exports a stateless entry point must not be called.
+    """
     fake_module = MagicMock()
-    fake_module.acquire_driver_handle.return_value = "handle-1"
-    fake_module.read_all_items.return_value = (
-        200,
-        0,
-        {"x-ms-continuation": "ct-read-all"},
-        b'{"Documents":[{"id":"x"}]}',
-    )
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
 
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
     prepared = PreparedPageRequest(
-        op=OP_READ_ALL_ITEMS,
+        op=op,
         container_link="dbs/d/colls/c",
         partition_key=key_from_legacy_header("[]", extract=False),
         headers={},
     )
-    pages = list(backend.execute_pages(prepared))
+    with pytest.raises(PagePreflightError, match=f"does not yet support op='{op}'"):
+        list(backend.execute_pages(prepared))
 
-    binding_request = fake_module.read_all_items.call_args.args[1]
-    assert binding_request.op == OP_READ_ALL_ITEMS
-    assert binding_request.body_bytes == b""
-    assert pages[0].status_code == 200
-    assert pages[0].continuation == "ct-read-all"
-    assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+    getattr(fake_module, op).assert_not_called()
+    fake_module.fetch_page_with_cursor.assert_not_called()
+    fake_module.acquire_driver_handle.assert_not_called()
 
 
 def test_rust_backend_dispatches_get_throughput_to_binding_rust(monkeypatch):
@@ -1010,7 +1008,8 @@ def test_rust_backend_dispatches_feed_range_from_partition_key_to_binding_rust(m
     assert b'"Range"' in resp.body
 
 
-def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch):
+@pytest.mark.parametrize("body", [b'{"id":"x"}', b""])
+def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch, body):
     """The backend accepts diagnostics returned by the binding."""
     fake_module = MagicMock()
     fake_module.acquire_driver_handle.return_value = "handle-1"
@@ -1018,7 +1017,7 @@ def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch
         201,
         0,
         {"etag": "v1"},
-        b'{"id":"x"}',
+        body,
         "activity=abc duration=8ms requests=1 charge=1RU status=201",
     )
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", fake_module)
@@ -1034,6 +1033,9 @@ def test_rust_backend_accepts_optional_diagnostics_from_binding_rust(monkeypatch
     resp = backend.execute(prepared)
 
     assert resp.status_code == 201
+    assert resp.sub_status == 0
+    assert resp.headers["etag"] == "v1"
+    assert resp.body == body
     assert resp.diagnostics == "activity=abc duration=8ms requests=1 charge=1RU status=201"
 
 
@@ -1284,32 +1286,29 @@ def test_async_rust_backend_dispatches_query_items_to_binding_rust(monkeypatch):
     asyncio.run(_run())
 
 
-def test_async_rust_backend_dispatches_read_all_items_to_binding_rust(monkeypatch):
-    """Async read_all_items prepared requests route to read_all_items_async."""
+@pytest.mark.parametrize("op", [OP_READ_ITEMS, OP_READ_ALL_ITEMS])
+def test_async_rust_backend_rejects_read_many_feed_without_cursor_rust(monkeypatch, op):
+    """Async twin: read_items and read_all_items need a feed cursor to reach read_many."""
     fake_module = MagicMock()
-    fake_module.acquire_driver_handle.return_value = "handle-1"
-    fake_module.read_all_items_async = AsyncMock(
-        return_value=(200, 0, {"x-ms-continuation": "ct-read-all-async"}, b'{"Documents":[{"id":"x"}]}')
-    )
+    setattr(fake_module, f"{op}_async", AsyncMock())
+    fake_module.fetch_page_with_cursor_async = AsyncMock()
     monkeypatch.setattr("azure.cosmos.aio._backend.binding_adapter._rust_module", fake_module)
 
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
         prepared = PreparedPageRequest(
-            op=OP_READ_ALL_ITEMS,
+            op=op,
             container_link="dbs/d/colls/c",
             partition_key=key_from_legacy_header("[]", extract=False),
             headers={},
         )
-        pages = [page async for page in backend.execute_pages(prepared)]
-        binding_request = fake_module.read_all_items_async.await_args.args[1]
-        assert binding_request.op == OP_READ_ALL_ITEMS
-        assert binding_request.body_bytes == b""
-        assert pages[0].status_code == 200
-        assert pages[0].continuation == "ct-read-all-async"
-        assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+        with pytest.raises(PagePreflightError, match=f"does not yet support op='{op}'"):
+            [page async for page in backend.execute_pages(prepared)]
 
     asyncio.run(_run())
+    getattr(fake_module, f"{op}_async").assert_not_awaited()
+    fake_module.fetch_page_with_cursor_async.assert_not_awaited()
+    fake_module.acquire_driver_handle.assert_not_called()
 
 
 def test_async_rust_backend_surfaces_driver_query_capability_rejection_rust(monkeypatch):
@@ -2636,22 +2635,14 @@ def test_build_client_config_hedging_none_carries_nothing_rust():
     ({"availability_strategy": {"threshold_ms": 25}}, 25),
 ])
 def test_public_constructor_preserves_hedging_choice_rust(module, extra_options, options, threshold, monkeypatch):
-    """The hedging choice survives the trip through the real client constructor, on both
-    clients and alongside other settings.
+    """Preserve the hedging threshold through sync and async client construction.
 
-    The tests just above check the setting is built correctly in isolation. This one
-    checks it actually arrives, because the constructor is where a setting gets dropped
-    by being read under the wrong name or overwritten by a later step.
+    Omitted, None and False inputs leave the Python threshold unset. The binding
+    uses an unset threshold to configure a disabled client strategy, not an
+    unspecified strategy.
 
-    Sending a second copy of a request early is a cost-for-latency trade, so both
-    directions matter: losing the choice makes requests slower than the customer asked
-    for, and inventing one makes them pay for requests they never asked to send. Asking
-    for nothing, asking for it off, and asking for it off by name must all end with
-    nothing pinned rather than an explicit off.
-
-    The second set of settings is there to check the two do not interfere -- a
-    constructor that builds the configuration afresh for one of them would drop the
-    other. No driver is acquired, so this never reaches the network.
+    Check that preferred locations remain intact and no driver is acquired.
+    This test covers saved settings, not the driver's eventual hedging behavior.
     """
     monkeypatch.setattr(module, "CosmosClientConnection", MagicMock())
     strategy_validator = MagicMock(wraps=client_config_module.CrossRegionHedgingStrategy)

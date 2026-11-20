@@ -27,7 +27,8 @@ fn epoch_nanos(
     u64::try_from(nanos).map_err(|_| "attempt timestamp exceeds u64 nanoseconds")
 }
 
-/// Internal fault-test evidence, separate from the endpoint-free telemetry POC.
+/// Internal fault-test evidence. Unlike the telemetry payload, it includes
+/// full endpoint URLs; only the fault-injection tests read it.
 pub(super) fn fault_payload<'py>(
     py: Python<'py>,
     diagnostics: &DiagnosticsContext,

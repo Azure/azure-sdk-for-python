@@ -53,7 +53,7 @@ from ._throughput_rust_routing import (
     build_get_throughput_from_connection,
     build_replace_throughput_from_connection,
 )
-from ._throughput_read import prepare_read_kwargs, finish_read, legacy_read_kwargs, read_routing
+from ._throughput_read import prepare_throughput_kwargs, finish_read, legacy_throughput_kwargs, read_routing
 from ._throughput_setup import gather_rust_call_inputs, offer_query
 from ._throughput_replace import finish_replacement, validate_replacement_throughput
 
@@ -186,7 +186,7 @@ def get_database_throughput(
 ) -> ThroughputProperties:
     """Return the provisioned throughput shared by a database's containers."""
     started = time.monotonic()
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -200,7 +200,7 @@ def get_database_throughput(
         backend=backend,
         rust_options=rust_options,
         routing=routing,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     _require_offers(offers, not_found_message)
@@ -218,7 +218,7 @@ async def get_database_throughput_async(
 ) -> ThroughputProperties:
     """Return a database's provisioned throughput asynchronously."""
     started = time.monotonic()
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -232,7 +232,7 @@ async def get_database_throughput_async(
         backend=backend,
         rust_options=rust_options,
         routing=routing,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     _require_offers(offers, not_found_message)
@@ -252,7 +252,7 @@ def replace_database_throughput(
     """Set a database's shared throughput and return the updated settings."""
     started = time.monotonic()
     validate_replacement_throughput(throughput)
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -273,7 +273,7 @@ def replace_database_throughput(
         backend=backend,
         rust_options=rust_options,
         routing=routing,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     _require_offers(offers, not_found_message)
@@ -292,7 +292,7 @@ def replace_database_throughput(
         legacy_call=lambda: client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,
-            **legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+            **legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         ),
         process_response=lambda response: process_replace_throughput_response(
             response, client_connection=client_connection
@@ -316,7 +316,7 @@ async def replace_database_throughput_async(
     """Set a database's shared throughput asynchronously."""
     started = time.monotonic()
     validate_replacement_throughput(throughput)
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -337,7 +337,7 @@ async def replace_database_throughput_async(
         backend=backend,
         rust_options=rust_options,
         routing=routing,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     _require_offers(offers, not_found_message)
@@ -349,7 +349,7 @@ async def replace_database_throughput_async(
         return await client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,
-            **legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+            **legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         )
 
     updated_offer = await run_with_deadline(

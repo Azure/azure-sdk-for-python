@@ -85,7 +85,7 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
         state = self.state
         if state.done:
             raise StopAsyncIteration
-        state.check()
+        state.acquire_fetch_lock()
         try:
             deadline = state.config.deadline()
             state.begin()

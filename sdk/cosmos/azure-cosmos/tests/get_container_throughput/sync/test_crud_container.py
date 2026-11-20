@@ -48,7 +48,7 @@ KEY = os.environ.get(
 )
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
 class TestCRUDContainerOperations(unittest.TestCase):
 
     def setUp(self) -> None:

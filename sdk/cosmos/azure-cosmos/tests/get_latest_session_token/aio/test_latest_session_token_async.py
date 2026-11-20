@@ -3,11 +3,12 @@
 """Original non-split async token assertions with owned, closed resources.
 
 Test methods and retained 100-write helpers were copied from
-tests/test_partition_split_scenarios_async.py. The forced 11000-RU split test
-is in a separate opt-in file, outside this ordinary-account run.
+tests/test_partition_split_scenarios_async.py. These tests do not split
+partitions; they keep the original's split-lane markers. The forced 11000-RU
+split test is in a separate file; it runs only in the CI split lane, or
+locally with COSMOS_SESSION_TOKEN_REAL_SPLIT=1.
 """
 
-import os
 import random
 import unittest
 import uuid
@@ -15,7 +16,7 @@ import uuid
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
 from get_latest_session_token._fixtures import create_items_logical_pk_async, create_items_physical_pk_async
 
 
@@ -26,13 +27,18 @@ class TestLatestSessionTokenAsync(unittest.IsolatedAsyncioTestCase):
         state = random.getstate()
         self.addCleanup(random.setstate, state)
         random.seed(0)
-        self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
-        self.addAsyncCleanup(self.client.close)
+        # Key client owns the database and containers; the data client (AAD in
+        # AAD lanes) writes items and reads tokens, as in the original.
+        self.key_client = create_setup_client_async(_backend="rust")
+        await self.key_client.__aenter__()
+        self.addAsyncCleanup(self.key_client.close)
+        self.client = create_data_client_async(_backend="rust")
         await self.client.__aenter__()
-        self.database = await self.client.create_database("token_parity_" + uuid.uuid4().hex)
-        self.addAsyncCleanup(self.client.delete_database, self.database.id)
-        self.key_database = self.database
-        print(f"\nOwned token-test database: {self.database.id}")
+        self.addAsyncCleanup(self.client.close)
+        self.key_database = await self.key_client.create_database("token_parity_" + uuid.uuid4().hex)
+        self.addAsyncCleanup(self.key_client.delete_database, self.key_database.id)
+        self.database = self.client.get_database_client(self.key_database.id)
+        print(f"\nOwned token-test database: {self.key_database.id}")
 
     create_items_logical_pk_async = staticmethod(create_items_logical_pk_async)
     create_items_physical_pk_async = staticmethod(create_items_physical_pk_async)

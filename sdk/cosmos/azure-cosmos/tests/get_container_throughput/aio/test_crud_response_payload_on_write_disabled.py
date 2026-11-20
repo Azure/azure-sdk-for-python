@@ -40,7 +40,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         if expected_offer_type:
             assert expected_offer_type == offer.properties.get('offerType')
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
+    @pytest.mark.cosmosAADLong
     async def test_offer_read_and_query_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_read_and_query_async
         collection = self.container
@@ -48,7 +49,8 @@ class TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled(unittest.IsolatedAsy
         collection_properties = await collection.read()
         self.__validate_offer_response_body(expected_offer, collection_properties.get('_self'), None)
 
-    @pytest.mark.cosmosEmulator
+    @pytest.mark.cosmosLong
+    @pytest.mark.cosmosAADLong
     async def test_offer_replace_async_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_offer_replace_async
         collection = self.container

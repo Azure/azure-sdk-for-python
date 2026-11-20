@@ -227,6 +227,7 @@ fn execute_item_on_driver(
             modifiers.configured_driver_timeout_policy.clone(),
             None,
             None,
+            modifiers.utf8_decoding_mode,
             Default::default(),
         );
         let container = match &item_target {
@@ -324,6 +325,7 @@ fn execute_item_on_driver(
             modifiers.configured_driver_timeout_policy,
             modifiers.availability_strategy,
             modifiers.throughput_control,
+            modifiers.utf8_decoding_mode,
             modifiers.custom_headers,
         );
         options.read_consistency_strategy = read_consistency;

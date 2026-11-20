@@ -61,7 +61,9 @@ def test_every_page_dispatch_preserves_cursor_and_deadline_arguments_rust(
         )
         assert page.continuation == "next"
         assert page.headers["x-custom"] == "value"
-        assert page.has_more is (False if uses_cursor and op == "query_items" else None)
+        assert page.has_more is (
+            False if uses_cursor and op in ("query_items", "read_items", "read_all_items") else None
+        )
         assert page.continuation_supported is True
         args, kwargs = dispatch.call_args
         assert args[0] == "handle"

@@ -549,7 +549,7 @@ def test_create_copies_pass_existing_enforcer_rust(monkeypatch, check):
             "test_headers.py", "test_contracts.py", "test_input_variants.py",
         }
     })
-    monkeypatch.setattr(enforcer, "_legacy_test_files", lambda: paths)
+    monkeypatch.setattr(enforcer, "_source_linked_test_files", lambda: paths)
     getattr(enforcer.LegacyMigrationEnforcerTests(check), check)()
 
 

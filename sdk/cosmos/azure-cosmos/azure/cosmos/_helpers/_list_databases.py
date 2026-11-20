@@ -12,7 +12,7 @@ from __future__ import annotations
 import time
 from copy import deepcopy
 from dataclasses import replace
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
@@ -33,11 +33,12 @@ from .._query_rust_routing import (
     can_use_rust_backend_for_query_databases_page,
 )
 from ._request_settings import (
+    HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE,
     compose_item_options,
     is_supported_operation_timeout,
     normalize_metadata_page_size,
     normalize_query_specification,
-    reject_unknown_feed_kwargs,
+    reject_unsupported_feed_options,
 )
 from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
 
@@ -52,7 +53,6 @@ class ListDatabasesConfig:
         ("populate_query_metrics", "populateQueryMetrics"),
         ("availability_strategy", "availabilityStrategy"),
         ("no_response", "responsePayloadOnWriteDisabled"),
-        ("content_type", "contentType"),
     )
 
     def __init__(self, client: Any, kwargs: dict[str, Any]) -> None:
@@ -94,6 +94,8 @@ class ListDatabasesConfig:
         return "list_databases" if self.query_payload is None else "query_databases"
 
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
+        remaining_kwargs = self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
+        reject_unsupported_feed_options(self.operation, remaining_kwargs, self.options)
         eligible = (
             can_use_rust_backend_for_list_databases_page(
                 options=self.options,
@@ -111,12 +113,29 @@ class ListDatabasesConfig:
             )
         )
         if not eligible:
-            remaining_kwargs = self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
-            reject_unknown_feed_kwargs(self.operation, remaining_kwargs)
-            detail = f": {', '.join(repr(name) for name in sorted(remaining_kwargs))}" if remaining_kwargs else ""
-            raise NotImplementedError(
-                f"{self.operation} cannot honor these options on Rust{detail}; "
-                "the request will not be sent through legacy Python."
+            if self.options.get("changeFeedState") is not None:
+                raise TypeError(
+                    f"{self.operation}() does not support 'changeFeedState'; "
+                    "database feeds do not support change feed state."
+                )
+            headers = self.options.get("initialHeaders")
+            if isinstance(headers, Mapping):
+                overridden = sorted(
+                    name for name in headers
+                    if isinstance(name, str) and name.lower() in HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE
+                )
+                if overridden:
+                    hint = (
+                        " To add an application label, set user_agent_suffix on CosmosClient."
+                        if any(name.lower() == "user-agent" for name in overridden) else ""
+                    )
+                    raise TypeError(
+                        f"{self.operation}() does not support 'initial_headers' overrides for "
+                        f"{', '.join(repr(name) for name in overridden)}; remove these headers.{hint}"
+                    )
+            raise TypeError(
+                f"{self.operation}() does not support the supplied request_options on Rust: "
+                f"{', '.join(repr(name) for name in sorted(self.options))}."
             )
         options = dict(self.options)
         if token is not None:
@@ -166,6 +185,7 @@ class QueryDatabasesConfig(ListDatabasesConfig):
     operation = "query_databases"
     unsupported_options = ListDatabasesConfig.unsupported_options + (
         ("enable_cross_partition_query", "enableCrossPartitionQuery"),
+        ("content_type", "contentType"),
     )
 
     def __init__(

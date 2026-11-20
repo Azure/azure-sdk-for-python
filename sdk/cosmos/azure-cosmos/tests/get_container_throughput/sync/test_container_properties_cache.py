@@ -15,9 +15,13 @@ from common.throughput_fixtures import owned_database
 from azure.cosmos import CosmosClient, PartitionKey
 
 
-@pytest.mark.cosmosEmulator
+@pytest.mark.cosmosLong
+@pytest.mark.cosmosAADLong
 class TestContainerPropertiesCache(unittest.TestCase):
     def setUp(self):
+        # Throughput calls need key auth, so a key client does all the work.
+        # The original sync test skips in AAD mode; the original async test runs
+        # with a key client there, and this copy follows the async one.
         self.client = CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
         self.addCleanup(self.client.close)
         cleanup = ExitStack()

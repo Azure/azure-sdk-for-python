@@ -6,7 +6,7 @@
 """Structural gate for migrated Rust copies of the original tests.
 
 The migration workflow copies each in-scope v4 test into a
-``tests/<op>/<surface>/`` folder, retaining a ``# Source:`` reference and
+``tests/<op>/<surface>/`` or ``tests/<op>/`` file, retaining a ``# Source:`` reference and
 selecting ``_backend="rust"``. The Rust column
 of every parity audit comes from running those copies. Two ways that can
 rot silently:
@@ -21,21 +21,23 @@ These checks parse the copies and their cited sources, then perform an
 isolated collection-only run. They do not execute service tests or fixtures.
 They check seven invariants:
 
-1. Every migrated surface folder is an importable package (has ``__init__.py``).
-2. Every ``test_*`` method carries a ``# Source:`` comment naming the
-   original it was copied from.
+1. Every folder below ``tests/`` that holds a copy is an importable package
+   (has ``__init__.py``).
+2. Every ``test_*`` method carries a ``# Source:`` comment, inside it or just
+   above it, naming the original it was copied from. A few named batch tests
+   are exempt because the batch assertion ledger records their sources.
 3. Every ``# Source:`` reference resolves to its original or an explicitly
    approved retained replacement, unless marked ``(new)`` for a test with
    no v4 ancestor.
 4. Every migrated test file pins the Rust backend with the literal
-   ``_backend="rust"``.
+   ``_backend="rust"``, except named files for features with no Rust path.
 5. No migrated test is skipped without a structured reason, so
    every skip names a category a reviewer can act on.
 6. Every copied test keeps the original's ``cosmos*`` lane markers (module,
    class and method combined), so it runs in the same pipeline lanes. A
    live-only or multi-region original is not made emulator-only by copying.
-   Four reviewed non-split session-token copies use the emulator lane instead
-   of inheriting split markers from their original shared class.
+   When an original was retired and its source now resolves to the copy
+   itself, the original's recorded lanes are used instead.
 7. Every test definition in a source-linked file ends in ``_rust``, including
    copied unit tests outside the surface folders and regressions marked ``(new)``.
 
@@ -54,9 +56,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from common._retired_test_sources import (
-    RETIRED_DATABASE_SOURCE_MARKERS, RETIRED_QUERY_SOURCE_MARKERS, RETIRED_TEST_SOURCES,
-)
+from common._retired_test_sources import RENAMED_TEST_SOURCES, RETIRED_SOURCE_MARKERS, RETIRED_TEST_SOURCES
 
 
 # tests/common/<this file> -> parents[1] is .../azure-cosmos/tests
@@ -67,26 +67,27 @@ _PKG_ROOT = _TESTS_DIR.parent
 #: The backend pin, in both quote styles a copy might use.
 _PIN_LITERALS = ('_backend="rust"', "_backend='rust'")
 
-# These cases do not split partitions; their originals inherit split markers
-# from a class shared with a real-split test.
-_LANE_MARKER_OVERRIDES = {
-    (
-        "tests/get_latest_session_token/sync/test_latest_session_token.py"
-        "::TestLatestSessionToken.test_latest_session_token_hpk_rust"
-    ): frozenset({"cosmosEmulator"}),
-    (
-        "tests/get_latest_session_token/sync/test_latest_session_token.py"
-        "::TestLatestSessionToken.test_latest_session_token_logical_hpk_rust"
-    ): frozenset({"cosmosEmulator"}),
-    (
-        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
-        "::TestLatestSessionTokenAsync.test_latest_session_token_hpk_rust"
-    ): frozenset({"cosmosEmulator"}),
-    (
-        "tests/get_latest_session_token/aio/test_latest_session_token_async.py"
-        "::TestLatestSessionTokenAsync.test_latest_session_token_logical_hpk_rust"
-    ): frozenset({"cosmosEmulator"}),
-}
+#: Copied files that test a feature with no Rust path, so no backend is pinned.
+_PIN_EXEMPT_FILES = frozenset({
+    "tests/semantic_rerank/test_semantic_reranker_unit.py",
+})
+
+#: Batch tests built from parts of several originals. The batch assertion
+#: ledger (``execute_item_batch/assertion_correspondence.json``) records their
+#: sources instead of a ``# Source:`` comment.
+_LEDGER_SOURCED_TESTS = frozenset(
+    "tests/execute_item_batch/test_shared_contracts.py::" + name
+    for name in (
+        "test_batch_headers_lsn_and_session_progression_rust",
+        "test_batch_ignored_top_level_conditions_rust",
+        "test_batch_unicode_write_read_delete_rust",
+        "test_batch_same_name_container_recreation_rust",
+        "test_batch_null_and_undefined_partition_keys_rust",
+        "test_batch_hierarchical_key_arity_rejection_and_recovery_rust",
+        "test_batch_recreated_hierarchical_key_definition_rust",
+    )
+)
+
 
 #: A migrated test may only be skipped if its reason string
 #: starts with one of these category tags, so every skip says which kind
@@ -105,7 +106,7 @@ _SKIP_NAMES = frozenset({"skip", "skipif", "skipIf", "skipUnless"})
 
 
 def _source_linked_test_files():
-    """Find copied service and unit files without neighboring unlinked tests."""
+    """Find every test file that contains a ``# Source:`` comment."""
     return sorted(
         path
         for path in _TESTS_DIR.rglob("test_*.py")
@@ -113,14 +114,15 @@ def _source_linked_test_files():
     )
 
 
-def _legacy_test_files():
-    """Find service copies governed by the backend and pipeline-lane checks."""
-    return [path for path in _source_linked_test_files() if path.parent.name in ("sync", "aio")]
-
-
 def _legacy_dirs():
-    """Surface packages containing migrated tests."""
-    return sorted({path.parent for path in _legacy_test_files()})
+    """Folders below ``tests/`` that hold migrated tests, with their parents."""
+    dirs = set()
+    for path in _source_linked_test_files():
+        folder = path.parent
+        while folder != _TESTS_DIR and _TESTS_DIR in folder.parents:
+            dirs.add(folder)
+            folder = folder.parent
+    return sorted(dirs)
 
 
 def _rel(path):
@@ -149,13 +151,15 @@ def _label(path, class_name, func_name):
 
 
 def _source_ref(func, lines):
-    """Return the text after ``# Source:`` inside the function, or None.
+    """Return the text after ``# Source:`` for one function, or None.
 
-    Scans the whole function (signature through last body line) so the
-    comment is found whether it is the first body line or sits just under
-    a docstring.
+    Scans the comment lines just above the function and its decorators, then
+    the whole function, so the comment is found above the decorators, as the
+    first body line, or just under a docstring.
     """
-    start = func.lineno - 1
+    start = min([func.lineno] + [dec.lineno for dec in func.decorator_list]) - 1
+    while start > 0 and lines[start - 1].lstrip().startswith("#"):
+        start -= 1
     end = getattr(func, "end_lineno", func.lineno)
     for line in lines[start:end]:
         stripped = line.strip()
@@ -279,9 +283,8 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         )
 
     def test_every_migrated_folder_is_a_package_rust(self):
-        """Invariant 1: each surface and operation has __init__.py."""
-        packages = {package for surface in _legacy_dirs() for package in (surface, surface.parent)}
-        missing = sorted(_rel(d) for d in packages if not (d / "__init__.py").is_file())
+        """Invariant 1: each folder below tests/ that holds a copy has __init__.py."""
+        missing = sorted(_rel(d) for d in _legacy_dirs() if not (d / "__init__.py").is_file())
         self.assertEqual(
             missing, [],
             "Migrated-test packages missing __init__.py:\n  - " + "\n  - ".join(missing),
@@ -290,13 +293,14 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
     def test_every_test_method_has_a_source_comment_rust(self):
         """Invariant 2: every test_* method names where it was copied from."""
         violations = []
-        for path in _legacy_test_files():
+        for path in _source_linked_test_files():
             text = path.read_text(encoding="utf-8")
             lines = text.splitlines()
             tree = ast.parse(text, filename=str(path))
             for class_name, func in _iter_test_functions(tree):
-                if _source_ref(func, lines) is None:
-                    violations.append(_label(path, class_name, func.name))
+                label = _label(path, class_name, func.name)
+                if _source_ref(func, lines) is None and label not in _LEDGER_SOURCED_TESTS:
+                    violations.append(label)
         self.assertEqual(
             violations, [],
             "migrated test methods without a `# Source:` comment:\n  - "
@@ -321,7 +325,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         """Invariant 3: each source has a live original or approved replacement."""
         violations = []
         src_cache = {}
-        for path in _legacy_test_files():
+        for path in _source_linked_test_files():
             text = path.read_text(encoding="utf-8")
             lines = text.splitlines()
             tree = ast.parse(text, filename=str(path))
@@ -353,9 +357,11 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         )
 
     def test_every_migrated_file_pins_rust_backend_rust(self):
-        """Invariant 4: each legacy file carries the literal _backend pin."""
+        """Invariant 4: each migrated file carries the literal _backend pin."""
         violations = []
-        for path in _legacy_test_files():
+        for path in _source_linked_test_files():
+            if _rel(path) in _PIN_EXEMPT_FILES:
+                continue
             text = path.read_text(encoding="utf-8")
             if not any(pin in text for pin in _PIN_LITERALS):
                 violations.append(_rel(path))
@@ -366,9 +372,9 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         )
 
     def test_no_unstructured_skips_rust(self):
-        """Invariant 5: every skip in a legacy file has a structured reason."""
+        """Invariant 5: every skip in a migrated file has a structured reason."""
         violations = []
-        for path in _legacy_test_files():
+        for path in _source_linked_test_files():
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
             targets = []
             for node in tree.body:
@@ -394,12 +400,22 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             "({}):\n  - ".format(", ".join(_STRUCTURED_SKIP_TAGS)) + "\n  - ".join(violations),
         )
 
+    def test_every_retired_source_has_original_lane_markers_rust(self):
+        """Invariant 6 support: a retired source that resolves to its own copy
+        needs recorded original lanes, or the lane check would compare the copy
+        with itself."""
+        missing = sorted(set(RETIRED_TEST_SOURCES) - set(RENAMED_TEST_SOURCES) - set(RETIRED_SOURCE_MARKERS))
+        self.assertEqual(
+            missing, [],
+            "retired sources without recorded original lanes in RETIRED_SOURCE_MARKERS:\n  - "
+            + "\n  - ".join(missing),
+        )
+
     def test_every_copy_keeps_original_lane_markers_rust(self):
         """Invariant 6: retain original lanes or the exact approved replacement."""
         violations = []
         src_cache = {}
-        historical_markers = {**RETIRED_QUERY_SOURCE_MARKERS, **RETIRED_DATABASE_SOURCE_MARKERS}
-        for path in _legacy_test_files():
+        for path in _source_linked_test_files():
             text = path.read_text(encoding="utf-8")
             lines = text.splitlines()
             tree = ast.parse(text, filename=str(path))
@@ -407,8 +423,8 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                 ref = _source_ref(func, lines)
                 if ref is None or ref.startswith("(new)") or "::" not in ref:
                     continue
-                if ref in historical_markers:
-                    original = historical_markers[ref]
+                if ref in RETIRED_SOURCE_MARKERS:
+                    original = RETIRED_SOURCE_MARKERS[ref]
                 else:
                     path_part, qualified = RETIRED_TEST_SOURCES.get(ref, ref).split("::", 1)
                     src_path = _PKG_ROOT / path_part
@@ -420,7 +436,6 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
                     original = _effective_lane_markers(src_cache[src_path], src_class, src_method)
                 if original is None:
                     continue  # reported by invariant 3
-                original = _LANE_MARKER_OVERRIDES.get(_label(path, class_name, func.name), original)
                 copy = _effective_lane_markers(tree, class_name, func.name)
                 if copy != original:
                     violations.append(
@@ -436,7 +451,7 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
 
     def test_every_migrated_test_collects_without_conftest_rust(self):
         """Every copied test definition collects without shared conftest hooks."""
-        files = _legacy_test_files()
+        files = _source_linked_test_files()
         expected = set()
         for path in files:
             tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
@@ -490,7 +505,32 @@ class RustSuffixEnforcerTests(unittest.TestCase):
         with patch.object(pathlib.Path, "rglob", return_value=list(contents)):
             with patch.object(pathlib.Path, "read_text", autospec=True, side_effect=lambda path, **_: contents[path]):
                 self.assertEqual(_source_linked_test_files(), sorted([service, unit]))
-                self.assertEqual(_legacy_test_files(), [service])
+
+
+class SourceCommentTests(unittest.TestCase):
+    """Check where a ``# Source:`` comment may sit relative to its test."""
+
+    def test_source_comment_is_found_above_or_inside_test_rust(self):
+        source = (
+            "import pytest\n"
+            "\n"
+            "# Source: (new) above the decorator\n"
+            "@pytest.mark.cosmosEmulator\n"
+            "def test_above_rust(): pass\n"
+            "\n"
+            "def test_inside_rust():\n"
+            "    # Source: tests/test_original.py::test_inside\n"
+            "    pass\n"
+            "\n"
+            "def test_missing_rust(): pass\n"
+        )
+        lines = source.splitlines()
+        refs = {func.name: _source_ref(func, lines) for _, func in _iter_test_functions(ast.parse(source))}
+        self.assertEqual(refs, {
+            "test_above_rust": "(new) above the decorator",
+            "test_inside_rust": "tests/test_original.py::test_inside",
+            "test_missing_rust": None,
+        })
 
     def test_missing_suffix_is_rejected_rust(self):
         path = _PKG_ROOT / "tests" / "query_items" / "sync" / "test_example.py"

@@ -20,7 +20,7 @@ use azure_data_cosmos_driver::{
     options::{
         AvailabilityStrategy, BinaryEncodingOptions, ContentResponseOnWrite,
         EndToEndOperationLatencyPolicy, ExcludedRegions, OperationOptionsBuilder, PatchStrategy,
-        ReadConsistencyStrategy, ThroughputControlOptions,
+        ReadConsistencyStrategy, ThroughputControlOptions, Utf8DecodingMode,
     },
 };
 
@@ -73,6 +73,7 @@ pub(crate) struct RequestHeadersAndOptions {
     pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
     pub(crate) patch_strategy: Option<PatchStrategy>,
     pub(crate) throughput_control: Option<ThroughputControlOptions>,
+    pub(crate) utf8_decoding_mode: Option<Utf8DecodingMode>,
     pub(crate) custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 
@@ -186,11 +187,15 @@ pub(super) fn build_operation_options(
     configured_driver_timeout_policy: Option<EndToEndOperationLatencyPolicy>,
     availability_strategy: Option<AvailabilityStrategy>,
     throughput_control: Option<ThroughputControlOptions>,
+    utf8_decoding_mode: Option<Utf8DecodingMode>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
     // Python consumes text JSON, so disable binary response negotiation.
     let mut builder = OperationOptionsBuilder::new()
         .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false));
+    if let Some(mode) = utf8_decoding_mode {
+        builder = builder.with_utf8_decoding_mode(mode);
+    }
     if let Some(cr) = content_response {
         builder = builder.with_content_response_on_write(cr);
     }
@@ -598,7 +603,7 @@ mod tests {
 
     #[test]
     fn operation_options_preserve_the_python_text_json_contract() {
-        let options = super::build_operation_options(None, None, None, None, None, Default::default());
+        let options = super::build_operation_options(None, None, None, None, None, None, Default::default());
         assert!(!options.binary_encoding.unwrap().enabled);
     }
 

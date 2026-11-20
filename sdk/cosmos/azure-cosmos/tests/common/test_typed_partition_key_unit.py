@@ -30,6 +30,8 @@ from azure.cosmos._backend.partition_key_input import (
     UNDEFINED_PARTITION_KEY,
 )
 from azure.cosmos._backend.request_settings import RequestSettings
+from azure.cosmos._helpers._client_context import ClientOperationDefaults
+from azure.cosmos._helpers._item_operations import build_item_request, normalize_item_arguments
 from azure.cosmos._helpers._partition_key import (
     normalize_partition_key,
     normalize_feed_range_partition_key,
@@ -70,6 +72,29 @@ def test_point_normalization_preserves_source_rust(value, kind, values):
     preserved rather than tidied up.
     """
     assert normalize_partition_key(value) == BindingPartitionKey(kind, values)
+
+
+@pytest.mark.parametrize("operation", ["create_item", "upsert_item", "replace_item"])
+@pytest.mark.parametrize(
+    "options,expected",
+    [
+        ({}, BindingPartitionKey("extract")),
+        ({"partitionKey": None}, BindingPartitionKey("components", (None,))),
+        ({"partitionKey": False}, BindingPartitionKey("components", (False,))),
+        ({"partitionKey": 0}, BindingPartitionKey("components", (0,))),
+        ({"partitionKey": ""}, BindingPartitionKey("components", ("",))),
+    ],
+)
+def test_write_key_presence_not_truthiness_selects_extraction_rust(operation, options, expected):
+    """Only omission requests extraction; explicit falsey keys must survive preparation."""
+    args, normalized_options = normalize_item_arguments(operation, {
+        "container_link": "dbs/db/colls/orders",
+        "item_id": "order-42",
+        "body": {"id": "order-42", "customerId": "customer-17"},
+        "request_options": options,
+    })
+    prepared = build_item_request(operation, args, normalized_options, ClientOperationDefaults())
+    assert prepared.partition_key == expected
 
 
 @pytest.mark.parametrize(
@@ -211,11 +236,11 @@ async def test_native_unicode_key_extraction_matches_core_python_rust(key_shape,
 
     Two keys are tried for each shape: one built from the value as the caller gave it, and
     one built from the text the old code would have produced. Both have to get past the
-    Rust side's own reading of the key and fail only at the point of looking for a driver,
-    which is the first thing after the key is accepted.
+    Rust side's own reading of the key and fail when the string handle is extracted as
+    a typed driver handle, after the key has been accepted.
 
-    Failing with "no driver registered" is therefore the success condition here -- it
-    proves the key was read without complaint and nothing was sent. Single values,
+    The specific "_DriverHandle" TypeError proves the key was read without complaint
+    and execution could not start. Single values,
     multi-part keys and query keys are each checked, for both call styles.
     """
     from azure.cosmos._helpers._legacy_partition_key import legacy_partition_key_header
@@ -241,9 +266,9 @@ async def test_native_unicode_key_extraction_matches_core_python_rust(key_shape,
         request_options={},
     )
     method = native.read_item_async if async_mode else native.read_item
-    # Both representations must pass extraction and reach driver lookup, without I/O.
+    # Both representations must pass key extraction before the invalid handle is rejected.
     for typed_key in (key, normalize_partition_key(legacy_values)):
-        with pytest.raises(RuntimeError, match="no driver registered for handle"):
+        with pytest.raises(TypeError, match="_DriverHandle"):
             result = method(
                 "unicode-partition-key-test-unused-handle",
                 replace(request, partition_key=typed_key),
@@ -420,13 +445,12 @@ def test_unused_raw_headers_are_not_parsed_rust(resource, options, expected):
         "delete_item",
         "patch_item",
         "query_items",
-        "read_all_items",
         "feed_range_from_partition_key",
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
 def test_native_consumers_reject_untyped_components_before_io_rust(method, async_mode):
-    """Nine Rust entry points refuse a key component they do not understand, before sending.
+    """Point and stateless-query bindings reject untyped key components before handles.
 
     The request here is deliberately not the real record -- it is a stand-in whose key
     holds a bare empty mapping. That shape could only arrive from code that went around
@@ -506,29 +530,26 @@ def test_prepared_records_require_typed_keys_rust():
 
 
 @pytest.mark.parametrize(
-    "op,payload,error,message",
+    "op,payload",
     [
         (
             "query_items",
             {"query": {"query": "SELECT * FROM c"}, "allow_cross_partition": True},
-            TypeError,
-            "typed query_scope",
         ),
         (
             "query_items_change_feed", {"mode": "LatestVersion", "start": "Now"},
-            ValueError, "Invalid retained feed request",
         ),
+        ("read_all_items", {}),
     ],
 )
 @pytest.mark.parametrize("async_mode", [False, True])
-def test_retained_native_readers_reject_old_body_scope_contract_rust(
-    op, payload, error, message, async_mode
+def test_retained_native_readers_reject_string_handle_before_body_validation_rust(
+    op, payload, async_mode
 ):
-    """Neither feed accepts the old body as a substitute for typed routing.
+    """Typed handles are required before retained-feed request validation runs.
 
-    Retained SQL now requires query_scope outside its service body. Change feed
-    still decodes its mode/start body and rejects an embedded legacy key.
-    Both failures occur before driver lookup.
+    Native binding unit tests separately check legacy query bodies and untyped
+    read-all keys through the shared validators, without a driver or I/O.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     request = PreparedRequest(
@@ -540,7 +561,7 @@ def test_retained_native_readers_reject_old_body_scope_contract_rust(
     method = (
         native.fetch_page_with_cursor_async if async_mode else native.fetch_page_with_cursor
     )
-    with pytest.raises(error, match=message):
+    with pytest.raises(TypeError, match="_DriverHandle"):
         method("unused-handle", request, native._ItemFeedCursor())
 
 

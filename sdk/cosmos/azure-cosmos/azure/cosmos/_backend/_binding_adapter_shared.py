@@ -116,6 +116,17 @@ def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingE
     return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
 
 
+def is_credential_error(error: BaseException) -> bool:
+    """Read binding provenance without invoking credential exception overrides.
+
+    :param error: Exception returned by a binding call.
+    :return: Whether the binding restored this Python credential exception.
+    :rtype: bool
+    """
+    attributes = BaseException.__dict__["__dict__"].__get__(error)
+    return attributes.get("_cosmos_credential_error") is True
+
+
 @contextmanager
 def page_binding_call_errors(
     deadline: Optional[float],
@@ -151,7 +162,7 @@ def page_binding_call_errors(
     try:
         yield
     except TimeoutError as exc:
-        if deadline is None:
+        if deadline is None or is_credential_error(exc):
             raise
         raise CosmosClientTimeoutError(error=exc) from exc
     except unsupported_query_error as exc:

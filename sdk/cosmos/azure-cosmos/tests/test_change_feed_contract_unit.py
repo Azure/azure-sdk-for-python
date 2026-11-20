@@ -174,6 +174,31 @@ def test_caught_up_page_publishes_bookmark_and_new_pager_polls_again(feed, prefi
     assert feed.calls[0][1] is not feed.calls[2][1]
 
 
+def test_change_feed_preserves_processed_diagnostics_on_data_and_empty_pages(feed):
+    fetch = feed.binding.fetch_page_with_cursor_async if feed.async_mode else feed.binding.fetch_page_with_cursor
+    original = fetch.side_effect
+
+    def with_diagnostics(*args, **kwargs):
+        status, sub_status, headers, body, _ = original(*args, **kwargs)
+        return status, sub_status, headers, body, f"page-{len(feed.calls)}"
+
+    fetch.side_effect = with_diagnostics
+    hooks = []
+    pager = feed.proxy.query_items_change_feed(response_hook=lambda h, b: hooks.append((h, b)))
+    pages = pager.by_page()
+    for index, expected in enumerate(([{"id": "a", "nested": [1]}], []), start=1):
+        feed.status = 200 if expected else 304
+        assert feed.next_page(pages) == expected
+        assert len(hooks) == index
+        for headers in (
+            hooks[-1][0], hooks[-1][1].get_response_headers(), pager.get_response_headers(),
+        ):
+            assert headers["x-ms-cosmos-sdk-diagnostics"] == f"page-{index}"
+            assert headers["x-ms-continuation"] == pages.continuation_token
+        assert float(pager.get_response_headers()["x-ms-request-charge"]) == 2
+    assert hooks[0][0]["x-ms-cosmos-sdk-diagnostics"] == "page-1"
+
+
 def test_existing_change_feed_bookmark_restores_a_typed_key(feed):
     payload = {
         "backend": "rust", "container": feed.proxy.container_link, "token": "c1.a",
@@ -288,7 +313,7 @@ def test_start_and_feed_range_roundtrip(feed, start):
         ({"request_options": {"availabilityStrategy": None}}, TypeError),
         ({"feed_options": {"availabilityStrategy": None}}, TypeError),
         ({"continuation": "c1.query"}, ValueError),
-        ({"continuation": "42"}, NotImplementedError),
+        ({"continuation": "42"}, ValueError),
         ({"continuation": "cf1.invalid"}, ValueError),
     ],
 )
@@ -434,6 +459,250 @@ def test_legacy_retry_on_methods_is_preserved(legacy, value):
 
 
 @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_disable_ru_per_minute_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"disable_ru_per_minute_usage": value}
+        if source == "keyword"
+        else {source: {"disableRUPerMinuteUsage": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept disable_ru_per_minute_usage.*omit this option",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_legacy_disable_ru_per_minute_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"disable_ru_per_minute_usage": value}
+        if source == "keyword"
+        else {source: {"disableRUPerMinuteUsage": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["disableRUPerMinuteUsage"] is value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_offer_ru_per_minute_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"offer_enable_ru_per_minute_throughput": value}
+        if source == "keyword"
+        else {source: {"offerEnableRUPerMinuteThroughput": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept offer_enable_ru_per_minute_throughput.*omit this option",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_legacy_offer_ru_per_minute_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"offer_enable_ru_per_minute_throughput": value}
+        if source == "keyword"
+        else {source: {"offerEnableRUPerMinuteThroughput": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["offerEnableRUPerMinuteThroughput"] is value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, False, 0, 2])
+def test_retry_write_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = {"retry_write": value} if source == "keyword" else {source: {"retry_write": value}}
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept retry_write.*omit this option.*writes, not change-feed reads",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, False, 0, 2])
+def test_legacy_retry_write_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = {"retry_write": value} if source == "keyword" else {source: {"retry_write": value}}
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["retry_write"] is value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_no_response_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"no_response": value}
+        if source == "keyword"
+        else {source: {"responsePayloadOnWriteDisabled": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept no_response.*omit this option.*write responses, not change-feed reads",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_legacy_no_response_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"no_response": value}
+        if source == "keyword"
+        else {source: {"responsePayloadOnWriteDisabled": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["responsePayloadOnWriteDisabled"] is value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, "", "1.0"])
+def test_query_version_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"query_version": value}
+        if source == "keyword"
+        else {source: {"queryVersion": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept query_version.*omit this option.*does not use a SQL query version",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, "", "1.0"])
+def test_legacy_query_version_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"query_version": value}
+        if source == "keyword"
+        else {source: {"queryVersion": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["queryVersion"] == value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, "", "OrderBy,Top"])
+def test_query_features_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"supported_query_features": value}
+        if source == "keyword"
+        else {source: {"supportedQueryFeatures": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept supported_query_features.*omit this option.*does not use a SQL query plan",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [None, "", "OrderBy,Top"])
+def test_legacy_query_features_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"supported_query_features": value}
+        if source == "keyword"
+        else {source: {"supportedQueryFeatures": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["supportedQueryFeatures"] == value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_query_plan_flag_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"is_query_plan_request": value}
+        if source == "keyword"
+        else {source: {"isQueryPlanRequest": value}}
+    )
+    original = deepcopy(kwargs)
+    with pytest.raises(
+        TypeError,
+        match=r"does not accept is_query_plan_request.*omit this option.*does not use a SQL query plan",
+    ):
+        feed.proxy.query_items_change_feed(**kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert feed.calls == []
+    assert not feed.connection.mock_calls
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+@pytest.mark.parametrize("value", [True, False, None])
+def test_legacy_query_plan_flag_is_preserved(legacy, source, value):  # pylint: disable=redefined-outer-name
+    kwargs = (
+        {"is_query_plan_request": value}
+        if source == "keyword"
+        else {source: {"isQueryPlanRequest": value}}
+    )
+    original = deepcopy(kwargs)
+    pages = legacy.proxy.query_items_change_feed(**kwargs).by_page()
+    assert legacy.next_page(pages) == [{"id": "a"}]
+    assert legacy.calls[-1]["isQueryPlanRequest"] is value
+    assert kwargs == original
+
+
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
 @pytest.mark.parametrize("value", [None, "", "application/json", "text/plain"])
 def test_content_type_is_rejected_before_io_rust(feed, source, value):  # pylint: disable=redefined-outer-name
     kwargs = (
@@ -484,7 +753,7 @@ def test_access_condition_is_rejected_before_io_rust(feed, source, value):  # py
     original = deepcopy(kwargs)
     with pytest.raises(
         TypeError,
-        match=r"does not accept access_condition.*use continuation instead.*complete partition_key",
+        match=r"does not accept access_condition.*use continuation instead.*token returned by this Rust-backed API",
     ):
         feed.proxy.query_items_change_feed(**kwargs)
     assert kwargs == original
@@ -788,7 +1057,9 @@ def test_core_python_modes_empty_checkpoint_and_authoritative_resume(legacy, mod
     assert state._feed_range._pk_value == key
 
 
-def test_rust_tokens_cannot_resume_on_legacy_and_broad_legacy_import_is_explicit(feed, legacy):
+def test_change_feed_tokens_cannot_resume_on_another_backend(
+    feed, legacy
+):  # pylint: disable=redefined-outer-name
     pages = feed.proxy.query_items_change_feed().by_page()
     feed.next_page(pages)
     with pytest.raises(ValueError, match="incompatible backend"):
@@ -797,46 +1068,42 @@ def test_rust_tokens_cannot_resume_on_legacy_and_broad_legacy_import_is_explicit
         ).by_page()
     core_pages = legacy.proxy.query_items_change_feed().by_page()
     legacy.next_page(core_pages)
-    with pytest.raises(NotImplementedError, match="complete partition key"):
+    with pytest.raises(ValueError, match="V4 tokens are not supported"):
         feed.proxy.query_items_change_feed(
             continuation=core_pages.continuation_token
         ).by_page()
 
 
-@pytest.mark.parametrize("channel", ["keyword", "by_page"])
+@pytest.mark.parametrize("channel", ["keyword", "request_options", "feed_options", "by_page"])
 @pytest.mark.parametrize("mode", ["LatestVersion", "AllVersionsAndDeletes"])
 @pytest.mark.parametrize("key", [None, False, 0, ""])
-def test_legacy_key_checkpoint_restores_scope_and_reaches_rust(feed, legacy, channel, mode, key):
+def test_legacy_key_checkpoint_rejected_before_io_rust(
+    feed, legacy, channel, mode, key
+):  # pylint: disable=redefined-outer-name
     core_pages = legacy.proxy.query_items_change_feed(mode=mode, partition_key=key).by_page()
     legacy.next_page(core_pages)
     token = core_pages.continuation_token
-    feed.pages.insert(0, ([], token))
-    kwargs = (
-        {"mode": "invalid", "partition_key": "ignored", "start_time": "invalid"}
-        if channel == "keyword"
-        else {"mode": "LatestVersion", "partition_key": "ignored", "start_time": "Beginning"}
-    )
-    pages = (
-        feed.proxy.query_items_change_feed(continuation=token, **kwargs).by_page()
-        if channel == "keyword"
-        else feed.proxy.query_items_change_feed(**kwargs).by_page(continuation_token=token)
-    )
-    feed.next_page(pages)
-    request = feed.calls[-1][0]
-    assert request.partition_key.values == (key,)
-    assert json.loads(request.body_bytes) == {"mode": mode, "start": "Now", "feed_range": None}
-    assert json.loads(base64.b64decode(request.settings.query.continuation)) == json.loads(base64.b64decode(token))
-    assert pages.continuation_token.startswith("cf1.")
-    resumed = feed.proxy.query_items_change_feed(continuation=pages.continuation_token).by_page()
-    feed.next_page(resumed)
-    assert feed.calls[-1][0].settings.query.continuation == "c1.a"
+    kwargs = {"continuation": token} if channel == "keyword" else {channel: {"continuation": token}}
+    original = deepcopy(kwargs)
+    with pytest.raises(ValueError, match="V4 tokens are not supported"):
+        if channel == "by_page":
+            feed.proxy.query_items_change_feed(partition_key=key).by_page(continuation_token=token)
+        else:
+            feed.proxy.query_items_change_feed(partition_key=key, **kwargs)
+    assert kwargs == original
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert not feed.connection.mock_calls
+    assert not feed.calls
     assert len(legacy.calls) == 1
 
 
 @pytest.mark.parametrize("wrapped", [False, True])
-def test_legacy_v1_etag_requires_and_preserves_explicit_key(feed, wrapped):
+@pytest.mark.parametrize("channel", ["keyword", "request_options", "feed_options", "by_page"])
+def test_legacy_v1_etag_rejected_even_with_complete_key_rust(
+    feed, wrapped, channel
+):  # pylint: disable=redefined-outer-name
     token = '"42"'
-    kwargs = {"partition_key": None}
     if wrapped:
         token = "cf1." + base64.urlsafe_b64encode(json.dumps({
             "backend": "core-python", "container": feed.proxy.container_link, "token": token,
@@ -845,55 +1112,16 @@ def test_legacy_v1_etag_requires_and_preserves_explicit_key(feed, wrapped):
                 "partition_key": "[null]", "feed_range": None,
             },
         }).encode()).decode().rstrip("=")
-        kwargs = {}
-    feed.pages.insert(0, ([], '"42"'))
-    pages = feed.proxy.query_items_change_feed(continuation=token, **kwargs).by_page()
-    feed.next_page(pages)
-    assert feed.calls[-1][0].partition_key.values == (None,)
-    assert feed.calls[-1][0].settings.query.continuation == '"42"'
-    with pytest.raises(NotImplementedError, match="complete partition_key"):
-        feed.proxy.query_items_change_feed(continuation='"42"').by_page()
-
-
-@pytest.mark.parametrize("start", ["Beginning", "Now", datetime(2025, 1, 2, 3, 4, 5, 123000, tzinfo=timezone.utc)])
-def test_legacy_v2_start_is_restored_without_changing_checkpoint(feed, legacy, start):
-    pages = legacy.proxy.query_items_change_feed(partition_key="customer", start_time=start).by_page()
-    legacy.next_page(pages)
-    token = pages.continuation_token
-    feed.pages.insert(0, ([], token))
-    feed.next_page(feed.proxy.query_items_change_feed(continuation=token).by_page())
-    expected = start.isoformat() if isinstance(start, datetime) else start
-    assert json.loads(feed.calls[-1][0].body_bytes)["start"] == expected
-
-
-@pytest.mark.parametrize("mutation", [
-    "rid", "empty_position", "no_positions", "missing_positions", "non_list_positions",
-    "missing_start", "bad_time", "bad_key",
-])
-def test_malformed_legacy_import_never_dispatches(feed, legacy, mutation):
-    pages = legacy.proxy.query_items_change_feed(partition_key="customer").by_page()
-    legacy.next_page(pages)
-    saved = json.loads(base64.b64decode(pages.continuation_token))
-    if mutation == "rid":
-        saved["continuation"]["rid"] = "different"
-    elif mutation == "empty_position":
-        saved["continuation"]["continuation"][0]["token"] = ""
-    elif mutation == "no_positions":
-        saved["continuation"]["continuation"] = []
-    elif mutation == "missing_positions":
-        del saved["continuation"]["continuation"]
-    elif mutation == "non_list_positions":
-        saved["continuation"]["continuation"] = {"token": "42"}
-    elif mutation == "missing_start":
-        del saved["startFrom"]
-    elif mutation == "bad_time":
-        saved["startFrom"] = {"Type": "PointInTime", "PointInTimeMs": True}
-    else:
-        saved["continuation"]["PK"] = {"unsupported": True}
-    token = base64.b64encode(json.dumps(saved).encode()).decode()
-    with pytest.raises(ValueError):
-        feed.proxy.query_items_change_feed(continuation=token).by_page()
-    assert feed.calls == []
+    kwargs = {"continuation": token} if channel == "keyword" else {channel: {"continuation": token}}
+    with pytest.raises(ValueError, match="incompatible backend|V4 tokens are not supported"):
+        if channel == "by_page":
+            feed.proxy.query_items_change_feed(partition_key=None).by_page(continuation_token=token)
+        else:
+            feed.proxy.query_items_change_feed(partition_key=None, **kwargs)
+    feed.backend._ensure_driver_handle.assert_not_called()
+    feed.binding._ItemFeedCursor.assert_not_called()
+    assert not feed.connection.mock_calls
+    assert not feed.calls
 
 
 def test_multiple_legacy_positions_remain_unsupported_rust(feed, legacy):
@@ -902,7 +1130,7 @@ def test_multiple_legacy_positions_remain_unsupported_rust(feed, legacy):
     saved = json.loads(base64.b64decode(pages.continuation_token))
     saved["continuation"]["continuation"] *= 2
     token = base64.b64encode(json.dumps(saved).encode()).decode()
-    with pytest.raises(NotImplementedError, match="multiple range positions"):
+    with pytest.raises(ValueError, match="V4 tokens are not supported"):
         feed.proxy.query_items_change_feed(continuation=token)
     assert feed.calls == []
 
@@ -1112,9 +1340,9 @@ def test_legacy_range_id_checkpoint_is_not_restarted_on_rust(feed, legacy):
     with pytest.warns(DeprecationWarning):
         pages = legacy.proxy.query_items_change_feed(partition_key_range_id="0").by_page()
     legacy.next_page(pages)
-    with pytest.raises(NotImplementedError, match="complete partition_key"):
+    with pytest.raises(ValueError, match="incompatible backend"):
         feed.proxy.query_items_change_feed(continuation=pages.continuation_token)
-    with pytest.warns(DeprecationWarning), pytest.raises(NotImplementedError, match="complete partition_key"):
+    with pytest.warns(DeprecationWarning), pytest.raises(ValueError, match="V4 tokens are not supported"):
         feed.proxy.query_items_change_feed(partition_key_range_id="0", continuation='"42"')
     assert not feed.calls
 
@@ -1163,20 +1391,48 @@ def test_split_intersection_preserves_scope_and_resets_empty_cycle():
     assert state._initial_no_result_range is None
 
 
-def test_time_start_initial_empty_is_polled_within_same_public_page(feed):
+@pytest.mark.parametrize("final_etag_name", [None, "ETag"])
+@pytest.mark.parametrize("final_rows", [[], [{"current": {"id": "after-start"}}]])
+def test_time_start_initial_empty_is_polled_within_same_public_page(feed, final_etag_name, final_rows):
     feed.pages = [
         ([], "c1.a"),
-        ([{"current": {"id": "after-start"}}], "c1.b"),
+        (final_rows, "c1.b"),
         ([], "c1.c"),
     ]
+    fetch = feed.binding.fetch_page_with_cursor_async if feed.async_mode else feed.binding.fetch_page_with_cursor
+    original = fetch.side_effect
+
+    def with_final_headers(*args, **kwargs):
+        if feed.calls:
+            feed.etag_name = final_etag_name
+            feed.status = 200 if final_rows else 304
+        status, sub_status, headers, body, _ = original(*args, **kwargs)
+        return status, sub_status, headers, body, f"fetch-{len(feed.calls)}"
+
+    fetch.side_effect = with_final_headers
     hooks = []
-    pages = feed.proxy.query_items_change_feed(
+    pager = feed.proxy.query_items_change_feed(
         start_time=datetime(2025, 1, 1, tzinfo=timezone.utc),
         response_hook=lambda h, b: hooks.append((h, b)),
         timeout=3,
-    ).by_page()
-    assert feed.next_page(pages) == [{"id": "after-start"}]
+    )
+    pages = pager.by_page()
+    assert feed.next_page(pages) == [row["current"] for row in final_rows]
     assert len(feed.calls) == 2 and len(hooks) == 1
-    assert float(hooks[0][0]["x-ms-request-charge"]) == 4
+    for headers in (hooks[0][0], hooks[0][1].get_response_headers(), pager.get_response_headers()):
+        if final_etag_name is None:
+            assert "etag" not in headers
+        else:
+            assert headers["etag"] == '"service-1"'
+        assert headers["x-ms-cosmos-sdk-diagnostics"] == "fetch-1; fetch-2"
+        assert float(headers["x-ms-request-charge"]) == 4
+        assert headers["x-ms-continuation"] == pages.continuation_token
     assert feed.calls[0][1] is feed.calls[1][1]
-    assert feed.next_page(pages) == []
+    if final_rows:
+        assert feed.next_page(pages) == []
+        assert pager.get_response_headers()["x-ms-cosmos-sdk-diagnostics"] == "fetch-3"
+        assert float(pager.get_response_headers()["x-ms-request-charge"]) == 2
+    else:
+        with pytest.raises((StopIteration, StopAsyncIteration)):
+            feed.next_page(pages)
+        assert len(feed.calls) == 2

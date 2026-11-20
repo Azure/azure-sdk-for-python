@@ -46,6 +46,40 @@ def reject_unknown_feed_kwargs(operation: str, names: Collection[str]) -> None:
         raise TypeError(f"{operation}() got unexpected keyword argument(s): {rejected}.")
 
 
+def reject_unsupported_feed_options(
+    operation: str, names: Collection[str], options: Mapping[str, Any],
+) -> None:
+    """Reject per-call legacy controls, including entries in settings dictionaries."""
+    reject_unknown_feed_kwargs(operation, names)
+    rejected = set(names) | (options.keys() & _LEGACY_FEED_KWARGS)
+    if not rejected:
+        return
+    hints = {
+        "connection_timeout": (
+            "Set ConnectionPoolOptions.connection_timeout on a CosmosRuntime "
+            "and pass runtime= to CosmosClient."
+        ),
+        "retry_total": (
+            "For HTTP 429 retries, set retry_throttle_total on CosmosClient; "
+            "general per-call retry control is not supported."
+        ),
+        "retry_backoff_max": (
+            "For HTTP 429 retry waiting, set throttle_retry_wait_threshold_seconds "
+            "on CosmosClient; this is not a general retry backoff limit."
+        ),
+        "proxy": (
+            "Custom proxy settings are not supported; ConnectionPoolOptions.proxy_allowed "
+            "on a CosmosRuntime controls use of the environment proxy."
+        ),
+    }
+    detail = " ".join(hints[name] for name in sorted(rejected) if name in hints)
+    rejected_names = ", ".join(repr(name) for name in sorted(rejected))
+    raise TypeError(
+        f"{operation}() does not support per-call option(s) on Rust: {rejected_names}. "
+        + (detail or "Remove these options.")
+    )
+
+
 def normalize_metadata_page_size(
     options: Dict[str, Any], default_headers: Mapping[str, Any], *, operation: str,
 ) -> None:
@@ -102,6 +136,7 @@ def normalize_query_specification(
 
 # snake_case kwarg name -> internal option-dict key.
 COMMON_OPTIONS: Dict[str, str] = {
+    "utf8_decoding_mode": "utf8DecodingMode",
     "initial_headers": "initialHeaders",
     "pre_trigger_include": "preTriggerInclude",
     "post_trigger_include": "postTriggerInclude",
@@ -428,6 +463,7 @@ def stamp_container_rid(
 
 # This table accepts historical request_options input. It is not a wire schema.
 OPTION_FIELDS = {
+    "utf8DecodingMode": ("", "utf8_decoding_mode"),
     "priorityLevel": ("", "priority"),
     "throughputBucket": ("", "throughput_bucket"),
     "sessionToken": ("", "session_token"),

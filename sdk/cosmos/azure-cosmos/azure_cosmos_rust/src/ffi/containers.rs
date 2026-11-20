@@ -28,26 +28,28 @@ const CREATE_CONTAINER_DATABASE_REQUIRED: &str =
 
 /// Resolve a container name to its resource id and partition key definition.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn get_container_metadata<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     container_link: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    run_get_container_metadata(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
+    run_get_container_metadata(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds, include_attempts)
 }
 
 /// Return an awaitable that resolves a container's metadata.
 #[pyfunction]
-#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None))]
+#[pyo3(signature = (driver_handle, container_link, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn get_container_metadata_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     container_link: &str,
     timeout_seconds: Option<f64>,
+    include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
-    run_get_container_metadata_async(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds)
+    run_get_container_metadata_async(py, &*driver_handle.extract::<PyRef<'_, crate::runtime::DriverHandle>>()?, container_link, timeout_seconds, include_attempts)
 }
 
 /// Create a container from the definition prepared by Python.

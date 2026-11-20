@@ -281,10 +281,12 @@ targets = [target for path in database_test_files("replace") for target in datab
 class Counts:
     def pytest_collection_finish(self, session):
         assert len(session.items) == 8
+        # Each copy keeps its original lane markers; the migration enforcer compares them with the original.
+        assert all(any(mark.name.startswith("cosmos") for mark in item.iter_markers()) for item in session.items)
 import pytest
 raise SystemExit(pytest.main([
     "--noconftest", "--import-mode=importlib", "--collect-only", "-q",
-    "-m", "cosmosEmulator", "-p", "no:cacheprovider", *targets,
+    "-p", "no:cacheprovider", *targets,
 ], plugins=[Counts()]))
 '''
     env = dict(os.environ)

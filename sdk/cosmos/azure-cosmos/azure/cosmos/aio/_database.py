@@ -705,7 +705,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @trace_operation_async(binding_operation=("read_container", "create_container"))
+    @trace_operation_async(binding_operation=("read_container", "create_container", "read_container"))
     async def create_container_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,

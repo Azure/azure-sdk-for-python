@@ -9,30 +9,35 @@ import pytest
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import PartitionKey, exceptions
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import StatusCodes
-from config.settings import TestSettings
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 class _OwnedReadAllTests(unittest.IsolatedAsyncioTestCase):
+    """The key client owns databases and containers; the data client (AAD in
+    AAD lanes) does item work, as in the originals."""
+
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            TestSettings.host, TestSettings.masterKey, _backend="rust"
-        )
+        self.key_client = create_setup_client_async(_backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust")
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
-        self.database = await self.client.create_database(
+        self.key_database = await self.key_client.create_database(
             "read-all-original-" + uuid.uuid4().hex
         )
-        self.addAsyncCleanup(self.client.delete_database, self.database.id)
+        self.addAsyncCleanup(self.key_client.delete_database, self.key_database.id)
+        self.test_database = self.client.get_database_client(self.key_database.id)
 
     async def _create_container_for_test(self, container_id, partition_key):
-        return await self.database.create_container(
+        await self.key_database.create_container(
             container_id, partition_key=partition_key
         )
+        return self.test_database.get_container_client(container_id)
 
     async def _delete_container_for_test(self, container_id):
-        await self.database.delete_container(container_id)
+        await self.key_database.delete_container(container_id)
 
 
 @pytest.mark.cosmosEmulator

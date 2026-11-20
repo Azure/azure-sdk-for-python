@@ -79,6 +79,15 @@ class TestAsyncContainerDeleteItemRouting(unittest.IsolatedAsyncioTestCase):
                 self.assertIsNone(backend.prepared.item_id)
                 cc.DeleteItem.assert_not_awaited()
 
+    async def test_mapping_without_self_link_does_not_fall_back_to_id_rust(self):
+        proxy, cc = _make_async_proxy()
+        backend = _CapturingAsyncBackend()
+        proxy._client_context = CosmosClientContext(backend)
+        with self.assertRaises(KeyError):
+            await proxy.delete_item({"id": "same-id"}, "a")
+        self.assertFalse(backend.executed)
+        cc.DeleteItem.assert_not_awaited()
+
     async def test_non_string_self_link_fails_before_dispatch_rust(self):
         proxy, _ = _make_async_proxy()
         backend = _CapturingAsyncBackend()

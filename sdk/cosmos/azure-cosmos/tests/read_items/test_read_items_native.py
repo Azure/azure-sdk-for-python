@@ -94,7 +94,8 @@ async def test_native_collection_paging_keys_and_read_all_live_cursor_rust(nativ
         assert float(result.get_response_headers()["x-ms-request-charge"]) == pytest.approx(charge)
         assert charge > 0
         hook.assert_called_once_with(result.get_response_headers(), result)
-        assert len(completed) == len(captured)
+        # One read_items call is one operation, whatever its page count.
+        assert len(completed) == 1
         assert all(event.operation == "read_items" and event.outcome == "success" for event in completed)
 
         keys = [True, 1, False, 0, None, NonePartitionKeyValue]

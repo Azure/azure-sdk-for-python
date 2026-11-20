@@ -814,7 +814,9 @@ the nature of the overall request - replace, set, and copy for example would be 
 not be idempotent unless combined with patch precondition checks. So, for patch we allow opting-in into automatic
 retries only on the request options level.
 
-The snippet below shows how to enable this feature at the client and request level:
+The snippet below shows how to enable this feature at the client and request level on legacy Python.
+Rust-backed clients reject both: client-level `retry_write` raises `TypeError` and per-call `retry_write`
+raises `NotImplementedError`. The Rust driver retries writes after timeouts and connectivity issues by default.
 ```python
 cosmos_client = CosmosClient(
     url=URL,
@@ -1356,6 +1358,3 @@ provided by the bot. You will only need to do this once across all repos using o
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
 contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
-To build this package from source and run its tests, see the
-[local development guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/local_development.md).

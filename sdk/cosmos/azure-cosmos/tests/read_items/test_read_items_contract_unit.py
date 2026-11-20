@@ -153,8 +153,9 @@ def test_null_or_absent_key_resolves_rust_metadata_before_paging_rust(mode, part
     proxy, backend = mode.make([respond])
     metadata = backend.get_container_metadata.return_value
 
-    def resolve(link, *, deadline):
+    def resolve(link, *, deadline, op):
         assert link == proxy.container_link
+        assert op == "read_items"
         assert not backend.calls
         backend.create_item_feed_cursor.assert_not_called()
         assert deadline is not None
@@ -255,8 +256,9 @@ def test_one_deadline_includes_metadata_and_every_page_rust(mode, monkeypatch, s
     proxy, backend = mode.make([response, response])
     metadata = backend.get_container_metadata.return_value
 
-    def resolve(_link, *, deadline):
+    def resolve(_link, *, deadline, op):
         assert deadline == 105
+        assert op == "read_items"
         clock.now += 6 if stage == "metadata" else 1
         return metadata
 

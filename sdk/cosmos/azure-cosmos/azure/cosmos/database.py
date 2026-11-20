@@ -680,7 +680,7 @@ class DatabaseProxy(object):
         """
         ...
 
-    @trace_operation(binding_operation=("read_container", "create_container"))
+    @trace_operation(binding_operation=("read_container", "create_container", "read_container"))
     def create_container_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,

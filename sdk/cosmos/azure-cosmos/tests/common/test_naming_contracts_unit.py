@@ -129,7 +129,7 @@ def test_shared_adapter_module_identifies_which_implementations_share_it_rust():
 
 def test_cosmos_client_context_names_its_execution_reference_adapter_rust():
     assert [field.name for field in fields(CosmosClientContext)] == [
-        "adapter", "defaults", "response_state", "telemetry_handlers",
+        "adapter", "defaults", "response_state", "telemetry_handlers", "diagnostic_logging", "tracing_attributes",
     ]
     adapter = MagicMock(spec=CosmosBackend)
     context = CosmosClientContext(adapter=adapter)
@@ -226,13 +226,13 @@ def test_helper_names_use_continuation_and_response_terms_rust(module, current, 
 @pytest.mark.parametrize("iterator_type", [_query_items.QueryPageIterator, AsyncQueryPageIterator])
 def test_query_iterator_exposes_last_delivered_continuation_not_pending_progress_rust(iterator_type):
     config = SimpleNamespace(operation="query_items", decode=lambda token: token)
-    iterator = iterator_type(config, CaseInsensitiveDict(), continuation_token="q1.saved")
-    assert iterator.state.last_delivered_continuation_token == "q1.saved"
+    iterator = iterator_type(config, CaseInsensitiveDict(), continuation_token="saved-token")
+    assert iterator.state.last_delivered_continuation_token == "saved-token"
     assert not hasattr(iterator.state, "bookmark")
-    iterator.state.token = "q1.pending"
-    assert iterator.continuation_token == "q1.saved"
-    iterator.state.last_delivered_continuation_token = "q1.delivered"
-    assert iterator.continuation_token == "q1.delivered"
+    iterator.state.token = "pending-token"
+    assert iterator.continuation_token == "saved-token"
+    iterator.state.last_delivered_continuation_token = "delivered-token"
+    assert iterator.continuation_token == "delivered-token"
 
 
 def test_response_header_accumulator_combines_charges_and_keeps_latest_headers_rust():
@@ -340,9 +340,10 @@ def executor(request, monkeypatch):
     backend_type = module.AsyncBindingAdapter if async_mode else module.BindingAdapter
     backend = object.__new__(backend_type)
     backend._client_config = None
-    state = SimpleNamespace(now=100.0, init_delay=0.0)
+    state = SimpleNamespace(now=100.0, init_delay=0.0, async_mode=async_mode)
 
-    def acquire():
+    def acquire(*, deadline=None):
+        state.acquisition_deadline = deadline
         state.now += state.init_delay
         return "handle"
 
@@ -437,6 +438,7 @@ def test_executor_converts_the_same_deadline_after_initialization_rust(
         assert executor.binding.call_args.kwargs["timeout_seconds"] == 0.25
         assert not hasattr(executor.binding.call_args.args[1], "deadline")
     executor.handle.assert_called_once()
+    assert executor.acquisition_deadline == (None if executor.async_mode else 101.0)
 
 
 def test_executor_rejects_none_before_acquiring_a_driver_rust(executor):
@@ -491,14 +493,11 @@ def test_executor_maps_only_budgeted_native_timeouts_rust(executor, deadline):
 
 
 def test_no_response_write_still_returns_a_response_record_rust(executor):
-    """Asking not to get the item back still returns everything except the item.
+    """Retain a response record for a write requesting no response body.
 
-    A caller who does not need the written item back can say so and save the service
-    sending it. What comes back is a normal reply with an empty body -- the status and
-    the headers are still there, including the version of what was just written, which
-    is what a caller needs for their next conditional write.
-
-    Returning nothing at all would make this option far more expensive than it looks.
+    The binding mock supplies an empty body and an ETag. Check that the adapter
+    returns a BackendResponse preserving both, not which headers the service
+    backend supplies.
     """
     executor.binding.return_value = (201, 0, {"etag": "written"}, b"", None)
     result = executor.run(

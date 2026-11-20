@@ -35,6 +35,7 @@ KEY = os.environ.get(
 
 
 @pytest.mark.cosmosEmulator
+@pytest.mark.unittest
 class TestFeedRange(unittest.TestCase):
 
     def setUp(self) -> None:

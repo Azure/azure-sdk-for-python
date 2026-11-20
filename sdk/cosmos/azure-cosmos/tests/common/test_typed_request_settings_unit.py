@@ -94,6 +94,14 @@ def _reflective_settings_values(cls, kwargs):
             values[name] = tuple(values[name])
     annotations = _reference_annotations(cls)
     for name, annotation in ((member.name, annotations[member.name]) for member in fields(cls)):
+        # This new field has an enum contract, not the former reflection-only validation.
+        if cls in (RequestSettings, PreparedClientConfig) and name == "utf8_decoding_mode":
+            value = values[name]
+            if value is not None:
+                if type(value) is not str:
+                    raise TypeError("utf8_decoding_mode must be a string or None.")
+                if value not in ("Strict", "Lossy"):
+                    raise ValueError("utf8_decoding_mode must be 'Strict' or 'Lossy'.")
         if not _reflective_matches(values[name], annotation):
             raise TypeError(f"{cls.__name__}.{name} has an invalid value type")
     if cls is HedgingSettings:
@@ -135,7 +143,7 @@ class _TupleSubclass(tuple):
 _VALIDATION_VALUES = (
     None, False, True, -1, 0, 1, 2**32 - 1, 2**32, 2**64 - 1, 2**64, 10**500,
     -0.5, 0.0, 0.5, float("nan"), float("inf"), float("-inf"), "",
-    "High", "Low", "Urgent", (), ("value",), ("value", 1), [], ["value"], {},
+    "High", "Low", "Urgent", "Strict", "Lossy", (), ("value",), ("value", 1), [], ["value"], {},
     _IntSubclass(1), _FloatSubclass(0.5), _StringSubclass("High"),
     _TupleSubclass(("value",)), (_StringSubclass("value"),),
     ItemSettings(), QuerySettings(), ResourceSettings(), HedgingSettings(False),

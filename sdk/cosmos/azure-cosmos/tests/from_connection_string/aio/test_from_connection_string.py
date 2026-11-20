@@ -9,7 +9,6 @@ import pytest
 
 from _client_transport import create_client_with_transport
 from config import settings
-from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.cosmos.aio import CosmosClient, _cosmos_client
 
 

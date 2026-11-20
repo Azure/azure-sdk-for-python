@@ -5,7 +5,7 @@
 import asyncio
 
 import pytest
-from azure.core.exceptions import HttpResponseError, ServiceResponseError
+from azure.core.exceptions import HttpResponseError
 
 from azure.cosmos import CosmosClient
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
@@ -32,14 +32,15 @@ def _set_override(monkeypatch, override):
 class _FailingCredential:
     def __init__(self, fallback):
         self.scopes = []
+        self.errors = []
         self.fallback = fallback
         self.closed = False
 
     def get_token(self, *scopes, **kwargs):
         self.scopes.append(scopes)
-        if self.fallback:
-            raise HttpResponseError(message="AADSTS500011: scope-test-stop")
-        raise HttpResponseError(message="scope-test-stop")
+        message = "AADSTS500011: scope-test-stop" if self.fallback else "scope-test-stop"
+        self.errors.append(HttpResponseError(message=message))
+        raise self.errors[-1]
 
     def close(self):
         self.closed = True
@@ -66,6 +67,14 @@ def _expected_scopes(endpoint, override, fallback):
     return scopes
 
 
+def _assert_credential_error_preserved(raised, credential):
+    # Like legacy, the customer app gets the credential's own exception, not a driver wrapper.
+    assert type(raised) is HttpResponseError
+    assert raised is credential.errors[-1]
+    assert len(credential.errors) == len(credential.scopes)
+    assert str(raised) == ("AADSTS500011: scope-test-stop" if credential.fallback else "scope-test-stop")
+
+
 @pytest.mark.parametrize("endpoint", _ENDPOINTS)
 @pytest.mark.parametrize("override", [None, "", _OVERRIDE_SCOPE])
 @pytest.mark.parametrize("fallback", [False, True])
@@ -77,9 +86,10 @@ def test_sync_scope_is_captured_before_native_acquisition_rust(monkeypatch, endp
         assert credential.scopes == []
         monkeypatch.setenv(_OVERRIDE_ENV, "https://later.example/.default")
         # The test credential fails before any service request is sent.
-        with pytest.raises(ServiceResponseError, match="failed to acquire AAD token for Cosmos DB"):
+        with pytest.raises(HttpResponseError) as raised:
             client.get_database_client("alpha-bank-db").read()
         assert credential.scopes == _expected_scopes(endpoint, override, fallback)
+        _assert_credential_error_preserved(raised.value, credential)
     finally:
         client.close()
     assert not credential.closed
@@ -99,9 +109,10 @@ def test_async_scope_preserves_owner_loop_rust(monkeypatch, endpoint, override, 
     async def run():
         try:
             # The test credential fails before any service request is sent.
-            with pytest.raises(ServiceResponseError, match="failed to acquire AAD token for Cosmos DB"):
+            with pytest.raises(HttpResponseError) as raised:
                 await client.get_database_client("alpha-bank-db").read()
             assert credential.scopes == _expected_scopes(endpoint, override, fallback)
+            _assert_credential_error_preserved(raised.value, credential)
             if async_credential:
                 assert credential.loops == [asyncio.get_running_loop()] * len(credential.scopes)
         finally:

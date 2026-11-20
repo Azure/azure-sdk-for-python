@@ -9,10 +9,9 @@ Cosmos -> back) for overwrite-only replace semantics:
    ``If-Match`` etag                            -> expect 412 (precondition)
 4. replace a non-existent id                  -> expect 404 (no insert,
                                                   unlike upsert)
-5. replace where the URL id (``item_id``) and
-   the body's own id disagree                  -> expect a 4xx, never a
-                                                  silent 200 overwriting the
-                                                  body's id (the parity fix)
+5. replace a missing URL id (``item_id``) with
+   a body naming an existing item              -> expect 404 and leave the
+                                                  existing item unchanged
 
 Steps 1-4 prove the overwrite-only semantics and the access-condition path
 the Python helper builds from ``etag`` + ``match_condition=IfNotModified``.
@@ -33,7 +32,7 @@ exists with the ``replace_item`` entry point.
 Exit codes:
 
 * 0 -- create(201) + replace(200) + guarded(412) + missing(404) + id-mismatch
-       (non-200) all as expected.
+       (404, existing item unchanged) all as expected.
 * 1 -- a request executed but an outcome was wrong, the backend returned
        None, or env vars are missing.
 * 2 -- the compiled ``_rust`` module (or its ``replace_item``) is missing.
@@ -46,7 +45,7 @@ import sys
 import uuid
 
 from azure.cosmos import CosmosClient, PartitionKey
-from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_REPLACE_ITEM
+from azure.cosmos._backend.operations import OP_CREATE_ITEM, OP_READ_ITEM, OP_REPLACE_ITEM
 from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 from azure.cosmos._backend.binding_adapter import BindingAdapter
@@ -157,7 +156,7 @@ def main() -> int:
             print(f"    body={r2.body[:300]!r}", file=sys.stderr)
         return 1
     # Prove the overwrite actually applied the new body.
-    if r2.body and json.loads(r2.body).get("value") != 2:
+    if not r2.body or json.loads(r2.body).get("value") != 2:
         print(f"FAIL: replace did not apply the new value. body={r2.body[:300]!r}", file=sys.stderr)
         return 1
 
@@ -192,14 +191,10 @@ def main() -> int:
     print(f"    status={r4.status_code} sub_status={r4.sub_status}")
 
     # ---- 5) id-mismatch parity check -----------------------------------
-    # The URL id (item_id) is the real, existing item; the body carries a
-    # *different* id. The binding takes the URL id from item_id (not the
-    # body), so the server sees a request to change the item's id and
-    # rejects it (an item's id is immutable). The critical property: it
-    # must NEVER be a silent 200 that overwrote the body's id instead.
-    print("[5] replace with item_id != body id (expect a 4xx, never 200) ...", flush=True)
+    # Using the body's id as the target would overwrite the existing item.
+    print("[5] replace a missing target with an existing body id (expect 404) ...", flush=True)
     try:
-        r5 = _replace(backend, item_id, 5, body_id="some-other-id")
+        r5 = _replace(backend, missing_id, 5, body_id=item_id)
     except Exception as e:  # pylint: disable=broad-except
         print(f"FAIL on id-mismatch replace: {type(e).__name__}: {e}", file=sys.stderr)
         return 1
@@ -207,21 +202,36 @@ def main() -> int:
         print("FAIL: id-mismatch replace returned None.", file=sys.stderr)
         return 1
     print(f"    status={r5.status_code} sub_status={r5.sub_status}")
-    if r5.status_code == 200:
-        print(
-            "FAIL: a body whose id disagreed with item_id was SILENTLY replaced "
-            "(200). The URL id must come from item_id, not the body.",
-            file=sys.stderr,
-        )
+    if r5.status_code != 404:
+        print(f"FAIL: expected 404 for the missing target, got {r5.status_code}.", file=sys.stderr)
         return 1
-    if not 400 <= r5.status_code < 500:
-        print(f"FAIL: expected a 4xx rejection for the id mismatch, got {r5.status_code}.", file=sys.stderr)
+
+    print("[6] read the existing item (expect unchanged body) ...", flush=True)
+    try:
+        r6 = backend.execute(PreparedRequest(
+            op=OP_READ_ITEM,
+            container_link=CONTAINER_LINK,
+            body_bytes=b"",
+            item_id=item_id,
+            partition_key=PARTITION_KEY,
+            headers={},
+        ))
+    except Exception as e:  # pylint: disable=broad-except
+        print(f"FAIL on read after id-mismatch replace: {type(e).__name__}: {e}", file=sys.stderr)
+        return 1
+    if r6 is None or r6.status_code != 200:
+        print(f"FAIL: expected 200 reading the existing item, got {r6 and r6.status_code}.", file=sys.stderr)
+        return 1
+    saved_item = json.loads(r2.body)
+    current_item = json.loads(r6.body) if r6.body else {}
+    if any(current_item.get(key) != saved_item.get(key) for key in ("id", "pk", "value", "_rid", "_etag")):
+        print(f"FAIL: the existing item changed. body={r6.body[:300]!r}", file=sys.stderr)
         return 1
 
     print(
         "\nOK -- Rust replace round trip succeeded: "
         "create(201) + replace(200) + guarded-stale-etag(412) + missing-id(404) + "
-        f"id-mismatch(non-200: {r5.status_code}), all as expected."
+        "id-mismatch(404, existing item unchanged), all as expected."
     )
     return 0
 

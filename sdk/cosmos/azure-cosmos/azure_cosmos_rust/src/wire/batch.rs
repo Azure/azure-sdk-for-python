@@ -125,6 +125,7 @@ impl BatchRequest {
                 self.modifiers.configured_driver_timeout_policy.clone(),
                 None,
                 None,
+                self.modifiers.utf8_decoding_mode,
                 Default::default(),
             );
             let mut container = match driver
@@ -165,6 +166,7 @@ impl BatchRequest {
                 self.modifiers.configured_driver_timeout_policy,
                 self.modifiers.availability_strategy,
                 self.modifiers.throughput_control,
+                self.modifiers.utf8_decoding_mode,
                 self.modifiers.custom_headers,
             );
             BatchResult::Executed(driver.execute_singleton_operation(operation, options).await)

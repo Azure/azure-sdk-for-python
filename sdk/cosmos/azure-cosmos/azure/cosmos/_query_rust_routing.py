@@ -406,13 +406,22 @@ def build_list_databases_prepared_page_request(
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
     """Build a prepared page request for listing databases, with no SQL query."""
-    return _build_prepared_page_request(
+    prepared = _build_prepared_page_request(
         op=OP_LIST_DATABASES,
         container_link="",
         resource_type="dbs",
         options=options,
         req_headers=req_headers,
     )
+    if options.get("contentType"):
+        prepared = replace(
+            prepared,
+            settings=replace(
+                prepared.settings,
+                resource=replace(prepared.settings.resource, content_type=options["contentType"]),
+            ),
+        )
+    return prepared
 
 
 def build_query_databases_prepared_page_request(

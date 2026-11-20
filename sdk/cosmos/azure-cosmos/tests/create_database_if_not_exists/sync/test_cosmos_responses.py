@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Legacy response assertions and new get-or-create regressions using Rust."""
 from contextlib import ExitStack
+from functools import partial
 import os
 import unittest
 import uuid
@@ -10,6 +11,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.cosmos import CosmosClient, exceptions
+from common._rust_checks import run_on_rust
 
 
 @pytest.mark.cosmosEmulator
@@ -20,6 +22,51 @@ class TestCosmosResponses(unittest.TestCase):
             os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
         )
         self.addCleanup(self.client.close)
+
+    def test_database_creation_header_contract_rust(self):
+        headers = {
+            "Accept": "application/x-test",
+            "Cache-Control": "max-age=123",
+            "User-Agent": "test-override",
+            "X-MS-VERSION": "1900-01-01",
+            "x-ms-client-id": "test-client",
+            "x-ms-cosmos-sdk-supportedcapabilities": "0",
+            "Authorization": "not-a-valid-credential",
+            "x-ms-date": "Thu, 01 Jan 1970 00:00:00 GMT",
+            "X-Application": "database-tests",
+        }
+        for method in ("create_database", "create_database_if_not_exists"):
+            database_id = "responses_headers_" + uuid.uuid4().hex
+            with self.subTest(method=method):
+                try:
+                    database, properties = run_on_rust(self.client, partial(
+                        getattr(self.client, method),
+                        database_id, initial_headers=headers, return_properties=True, timeout=30,
+                    ))
+                    assert database.id == properties["id"] == database_id
+                    assert properties["_rid"]
+                    existing, existing_properties = run_on_rust(
+                        self.client, partial(
+                            self.client.create_database_if_not_exists,
+                            database_id, initial_headers=headers, return_properties=True, timeout=30,
+                        ),
+                    )
+                    assert existing.id == database_id
+                    assert existing_properties["_rid"] == properties["_rid"]
+                    with patch.object(
+                        self.client._adapter, "execute", side_effect=AssertionError("request dispatched"),
+                    ):
+                        for rejected in (
+                            {"no_response": True}, {"no_response": False}, {"no_response": None},
+                            {"initial_headers": {"Prefer": "return=minimal"}},
+                        ):
+                            with pytest.raises(TypeError, match="database properties"):
+                                getattr(self.client, method)(database_id, **rejected)
+                finally:
+                    try:
+                        self.client.delete_database(database_id, timeout=30)
+                    except exceptions.CosmosResourceNotFoundError:
+                        pass
 
     def test_create_database_if_not_exists_creation_race_returns_winner_rust(self):
         """New test, not copied from legacy: recover a real conflict without changing the winner."""

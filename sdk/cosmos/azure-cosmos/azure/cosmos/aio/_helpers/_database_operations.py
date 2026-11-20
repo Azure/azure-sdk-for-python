@@ -48,6 +48,7 @@ from ..._helpers._response_parse import (
     process_backend_response,
     process_database_read_response,
     process_delete_response,
+    validate_response_hook_is_synchronous,
     with_response_header_snapshot,
 )
 from .._backend.cosmos_backend import AsyncCosmosBackend
@@ -85,6 +86,7 @@ class AsyncDatabaseHelper:
         operation_kwargs.pop("response_hook", None)
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "create_database")
         hook = with_response_header_snapshot(response_hook, copy_body=True)
         request_options = dict(request_options)
 
@@ -245,15 +247,14 @@ class AsyncDatabaseHelper:
         validate_resource(database)
         if response_hook is not None and not callable(response_hook):
             raise TypeError("create_database_if_not_exists response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "create_database_if_not_exists")
         hook = with_response_header_snapshot(response_hook, copy_body=True)
         request_options = dict(request_options)
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         read_options = database_existence_read_options(request_options, operation_kwargs)
-        rust_eligible = (
-            is_read_database_rust_eligible(read_options, operation_kwargs)
-            and is_create_database_rust_eligible(request_options, operation_kwargs)
-        )
+        # Both steps use the creation contract, including driver-owned header precedence.
+        rust_eligible = is_create_database_rust_eligible(request_options, operation_kwargs)
 
         def build_read_prepared() -> PreparedRequest:
             return build_read_database_prepared(

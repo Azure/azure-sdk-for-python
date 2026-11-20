@@ -60,8 +60,14 @@ Leave that grouped setting at its default `None`. This applies to sync/async
 clients and connection-string factories; legacy Python retains fixed-delay
 support.
 
-Previously, `retry_total` and `retry_backoff_max` were used to set both the throttle and connection retry policy configurations. 
-This option is backwards compatible though, the option remains to set both throttle and connection retry configurations with the same `retry_total` and `retry_backoff_max` value.
+On legacy Python, `retry_total` and `retry_backoff_max` set both the throttle
+retry settings and the connection retry settings. If `retry_throttle_total` or
+`throttle_retry_wait_threshold_seconds` is also set, that value wins for throttle retries.
+
+Rust-backed clients reject `retry_total` and `retry_backoff_max` with
+`TypeError`, even for `None` or zero. The Rust driver has no connection retry
+setting, so it could apply only the throttle half of each value. Use
+`retry_throttle_total` and `throttle_retry_wait_threshold_seconds` instead.
 
 Alpha Bank allows up to five throttle retries and sets the ordinary waiting
 threshold to 15 seconds. It does not request a fixed delay before each retry.
@@ -81,15 +87,19 @@ client = CosmosClient(URL, credential=KEY, retry_throttle_total=5, throttle_retr
 
 Alpha Bank wants to control retries after a connection failure or an interrupted
 response. On legacy Python, the settings below configure the connection-retry
-policy. Rust-backed clients currently reject `retry_connect` and `retry_read`
-with `TypeError` during construction, even for `None` or zero. This includes
-sync/async clients and connection-string factories.
+policy.
 
-Omit these keywords on Rust; omission keeps the driver's retry behavior,
-not a zero-retry guarantee. Rejection is an interim safeguard pending the
-retry-control review, rather than a permanent exclusion. The remaining
-settings below must not be assumed to configure equivalent Rust connection
-retries merely because they are accepted.
+Rust-backed clients reject every setting in this section with `TypeError`
+during construction, even for `None` or zero. This includes sync/async clients
+and connection-string factories. The Rust driver decides which network errors
+and status codes to retry, and it has no settings for them. Omit these keywords
+on Rust; omitting them keeps the driver's retry behavior, not a zero-retry
+guarantee. `retry_status` and `retry_on_status_codes` are also rejected,
+although they did not change retries on legacy Python either.
+
+The same applies to client-level `retry_write`. On legacy Python, writes are
+retried after a timeout only when `retry_write` is set. The Rust driver retries
+writes after a timeout by default, so Rust-backed clients reject `retry_write`.
 
 Legacy Python settings:
 - `Retry Total`: Represents the total amount of retries. Can be changed by passing the `retry_total` option. Default value is 9.
@@ -115,7 +125,7 @@ client = CosmosClient(URL, credential=KEY, retry_total = 7, retry_connect=5, ret
 Additionally, in the above example the throttle retry total will be 7, and throttle max backoff will be 20 seconds.
 
 
-To configure throttle and connection retries separately, both sets of parameters would need to be passed in as shown in the example below.
+To configure throttle and connection retries separately on legacy Python, both sets of parameters would need to be passed in as shown in the example below. Rust rejects it during construction.
 In this example, the connection retry backoff max time is 35 seconds, while setting the throttle backoff max to 25 seconds.
 Additionally, the total throttle retry attempts is 5, while the total connection retry attempts is 10.
 

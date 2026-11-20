@@ -137,6 +137,7 @@ const CORE_FIELDS: &[&str] = &[
     "hedging",
     "timeout_seconds",
     "consistency_level",
+    "utf8_decoding_mode",
     "item",
     "query",
     "resource",
@@ -308,6 +309,10 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
         read_consistency_strategy: None,
         patch_strategy: None,
         throughput_control,
+        utf8_decoding_mode: optional::<String>(&settings, "utf8_decoding_mode")?
+            .as_deref()
+            .map(crate::runtime::utf8_decoding_mode_from_str)
+            .transpose()?,
         custom_headers,
     })
 }
@@ -354,6 +359,50 @@ pub(crate) fn test_settings(py: Python<'_>) -> Bound<'_, PyAny> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn utf8_decoding_settings_reach_driver_options() {
+        use azure_data_cosmos_driver::options::Utf8DecodingMode;
+
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for (value, expected) in [
+                (None, None),
+                (Some("Strict"), Some(Utf8DecodingMode::Strict)),
+                (Some("Lossy"), Some(Utf8DecodingMode::Lossy)),
+            ] {
+                let request = prepared(py);
+                request
+                    .getattr("settings")
+                    .unwrap()
+                    .setattr("utf8_decoding_mode", value)
+                    .unwrap();
+                let result = extract_settings(&request).unwrap();
+                let options = super::super::request::build_operation_options(
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                    result.utf8_decoding_mode,
+                    HashMap::new(),
+                );
+                assert_eq!(options.utf8_decoding_mode, expected);
+            }
+            for value in ["IGNORE", "REPLACE", "lossy", ""] {
+                let request = prepared(py);
+                request
+                    .getattr("settings")
+                    .unwrap()
+                    .setattr("utf8_decoding_mode", value)
+                    .unwrap();
+                assert!(extract_settings(&request)
+                    .err()
+                    .unwrap()
+                    .is_instance_of::<PyValueError>(py));
+            }
+        });
+    }
 
     fn prepared(py: Python<'_>) -> Bound<'_, PyAny> {
         let kwargs = PyDict::new_bound(py);
@@ -507,6 +556,7 @@ mod tests {
                     result.configured_driver_timeout_policy,
                     result.availability_strategy,
                     result.throughput_control,
+                    result.utf8_decoding_mode,
                     result.custom_headers,
                 );
                 if priority.is_none() && bucket.is_none() {

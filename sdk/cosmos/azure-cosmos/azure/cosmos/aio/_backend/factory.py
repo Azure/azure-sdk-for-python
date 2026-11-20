@@ -40,6 +40,7 @@ def make_async_backend(
     availability_strategy: Any = None,
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
+    utf8_decoding_mode: Optional[str] = None,
     fault_injection_rules: Any = None,
     headers: Optional[Mapping[str, str]] = None,
 ) -> AsyncCosmosBackend:
@@ -65,6 +66,7 @@ def make_async_backend(
         availability_strategy=availability_strategy,
         user_agent_suffix=user_agent_suffix,
         consistency_level=consistency_level,
+        utf8_decoding_mode=utf8_decoding_mode,
         fault_injection_rules=fault_injection_rules,
         headers=headers,
     )

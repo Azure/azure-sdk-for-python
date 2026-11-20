@@ -388,6 +388,11 @@ class TestRetryableWritesAsync:
             if client_with_retry:
                 await client_with_retry.close()
 
+    @pytest.mark.skip(
+        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects upsert_item "
+        "to fail without retrying when retry_write is omitted. Rust decides which write "
+        "failures to retry automatically, so omitting retry_write does not disable retries."
+    )
     async def test_retryable_writes_hpk_request_level_async_rust(self, setup):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_hpk_request_level_async
         """Test retryable writes for a container with hierarchical partition keys."""

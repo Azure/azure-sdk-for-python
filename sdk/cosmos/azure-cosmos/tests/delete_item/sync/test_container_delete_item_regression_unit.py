@@ -220,6 +220,15 @@ class TestContainerDeleteItemBackendRouting(unittest.TestCase):
                 self.assertIsNone(backend.prepared.item_id)
                 cc.DeleteItem.assert_not_called()
 
+    def test_mapping_without_self_link_does_not_fall_back_to_id_rust(self):
+        proxy, cc, _ = _make_proxy_with_mock_connection()
+        backend = _CapturingBackend()
+        proxy._client_context = CosmosClientContext(backend)
+        with self.assertRaises(KeyError):
+            proxy.delete_item({"id": "same-id"}, "a")
+        self.assertFalse(backend.executed)
+        cc.DeleteItem.assert_not_called()
+
     def test_non_string_self_link_fails_before_dispatch_rust(self):
         proxy, _, _ = _make_proxy_with_mock_connection()
         backend = _CapturingBackend()

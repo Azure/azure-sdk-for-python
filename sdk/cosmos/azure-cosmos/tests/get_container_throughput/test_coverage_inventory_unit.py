@@ -103,7 +103,7 @@ def test_explicit_none_original_calls_and_assertions_are_preserved_rust():
 
 
 @pytest.mark.parametrize("selection,expected", [("get", 27), ("replace", 18)])
-def test_marker_selection_collects_without_original_test_sources_rust(selection, expected):
+def test_copies_collect_without_original_test_sources_rust(selection, expected):
     script = r'''
 import importlib.util
 import os
@@ -129,11 +129,12 @@ targets = [
 class Counts:
     def pytest_collection_finish(self, session):
         assert len(session.items) == expected
-        assert all(item.get_closest_marker("cosmosEmulator") is not None for item in session.items)
+        # Each copy keeps its original lane markers; the migration enforcer compares them with the original.
+        assert all(any(mark.name.startswith("cosmos") for mark in item.iter_markers()) for item in session.items)
 import pytest
 raise SystemExit(pytest.main([
     "--noconftest", "--import-mode=importlib", "--collect-only", "-q",
-    "-m", "cosmosEmulator", "-p", "no:cacheprovider", *targets,
+    "-p", "no:cacheprovider", *targets,
 ], plugins=[Counts()]))
 '''
     env = dict(os.environ)

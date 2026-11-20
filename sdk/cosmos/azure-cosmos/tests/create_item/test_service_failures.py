@@ -201,23 +201,31 @@ async def test_cold_metadata_failure_blocks_create_and_recovers_rust(
     await assert_recovery(client, container, observer, body, guard, native)
 
 
-async def test_service_applies_create_indexing_directive_rust(
+async def test_create_indexing_directive_matches_legacy_rust(
     asynchronous, fault_client, variant_database, observer, monkeypatch
 ):
+    async def create_items(container, marker):
+        diagnostics = {}
+        for mode, options in (
+            ("default", {}),
+            ("include", {"indexing_directive": "Include"}),
+            ("exclude", {"indexing_directive": "Exclude"}),
+        ):
+            body = {"id": mode, "pk": marker, "marker": marker}
+            created = await invoke(container.create_item, body, **options)
+            # Save the create's transport evidence before the observer performs a read.
+            diagnostics[mode] = created.get_response_headers().get(
+                "x-ms-cosmos-sdk-diagnostics", "<missing create diagnostics; transport unconfirmed>"
+            )
+            assert_fields(created, body)
+            assert_fields(await invoke(observer.read_item, mode, partition_key=marker), body)
+        return diagnostics
+
     client = await fault_client([])
     container = target(client, variant_database, observer)
     native = observe_native_create(monkeypatch, client, "rust", asynchronous=asynchronous)
     marker = uuid.uuid4().hex
-    bodies = [{"id": mode, "pk": marker, "marker": marker} for mode in ("default", "include", "exclude")]
-    create_diagnostics = {}
-    for body, options in zip(bodies, ({}, {"indexing_directive": "Include"}, {"indexing_directive": "Exclude"})):
-        created = await invoke(container.create_item, body, **options)
-        # Save the create's transport evidence before the observer performs a read.
-        create_diagnostics[body["id"]] = created.get_response_headers().get(
-            "x-ms-cosmos-sdk-diagnostics", "<missing create diagnostics; transport unconfirmed>"
-        )
-        assert_fields(created, body)
-        assert_fields(await invoke(observer.read_item, body["id"], partition_key=marker), body)
+    create_diagnostics = await create_items(container, marker)
     assert native.call_count == 3
     assert [call.args[1].settings.item.indexing_directive for call in native.call_args_list] == [
         None,
@@ -225,7 +233,7 @@ async def test_service_applies_create_indexing_directive_rust(
         "Exclude",
     ]
 
-    def indexed_ids():
+    def indexed_ids(marker):
         return {
             row["id"]
             for row in observer.query_items(
@@ -240,8 +248,18 @@ async def test_service_applies_create_indexing_directive_rust(
         f"{mode}: {create_diagnostics[mode]}" for mode in ("exclude", "include", "default")
     )
     print(transport_evidence)
-    actual = await asyncio.to_thread(indexed_ids)
-    assert actual == {
-        "default",
-        "include",
-    }, f"Exclude reached native create but the service query still returns the item\n{transport_evidence}"
+    # The local emulator can return Exclude items for legacy writes too.
+    # Compare separate partitions in the same container rather than assuming exclusion.
+    legacy_marker = uuid.uuid4().hex
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="core-python", timeout=20
+    ) as legacy_client:
+        await create_items(target(legacy_client, variant_database, observer), legacy_marker)
+    expected = await asyncio.to_thread(indexed_ids, legacy_marker)
+    actual = await asyncio.to_thread(indexed_ids, marker)
+    print(f"Indexing-directive query results: legacy={sorted(expected)}, rust={sorted(actual)}")
+    assert {"default", "include"} <= expected, f"Legacy control items are missing from the query: {expected}"
+    assert actual == expected, (
+        f"Rust indexing-directive query results differ from legacy: legacy={sorted(expected)}, rust={sorted(actual)}\n"
+        f"{transport_evidence}"
+    )

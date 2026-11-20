@@ -75,6 +75,12 @@ struct CachedToken {
     token: AccessToken,
 }
 
+impl CachedToken {
+    fn is_fresh_at(&self, now: OffsetDateTime) -> bool {
+        self.token.expires_on > now + Duration::minutes(5)
+    }
+}
+
 #[pyclass]
 struct TokenResultSender {
     sender: Mutex<Option<oneshot::Sender<PyResult<Py<PyAny>>>>>,
@@ -225,7 +231,7 @@ impl PyTokenCredential {
                     .iter()
                     .map(String::as_str)
                     .eq(scopes.iter().copied())
-                    && entry.token.expires_on > OffsetDateTime::now_utc() + Duration::minutes(5)
+                    && entry.is_fresh_at(OffsetDateTime::now_utc())
             })
             .map(|entry| entry.token.clone())
     }
@@ -618,6 +624,30 @@ class Credential:
     }
 
     #[test]
+    fn cached_token_expiry_requires_more_than_five_minutes() {
+        use super::{AccessToken, CachedToken, Duration, OffsetDateTime};
+
+        let now = OffsetDateTime::UNIX_EPOCH + Duration::hours(12);
+        for (remaining, expected) in [
+            (Duration::minutes(5) + Duration::nanoseconds(1), true),
+            (Duration::minutes(5), false),
+            (Duration::minutes(5) - Duration::nanoseconds(1), false),
+            (Duration::ZERO, false),
+            (-Duration::seconds(1), false),
+        ] {
+            let cached = CachedToken {
+                scopes: vec!["https://alpha-bank-account.documents.azure.com/.default".to_owned()],
+                token: AccessToken::new("example-token-not-for-use", now + remaining),
+            };
+            assert_eq!(
+                cached.is_fresh_at(now),
+                expected,
+                "remaining lifetime: {remaining:?}"
+            );
+        }
+    }
+
+    #[test]
     fn get_token_caches_fresh_result() {
         crate::test_support::prepare_python();
         Python::with_gil(|py| {
@@ -655,6 +685,108 @@ class Credential:
                 .expect("call counter should be readable");
             assert_eq!(1, calls);
         });
+    }
+
+    #[test]
+    fn parse_token_rejects_malformed_attributes_and_timestamp_overflow() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+from types import SimpleNamespace as Token
+
+cases = [
+    ("missing token", Token(expires_on=2000000000), "no string `token`"),
+    ("integer token", Token(token=123, expires_on=2000000000), "no string `token`"),
+    ("bytes token", Token(token=b"not-a-string", expires_on=2000000000), "no string `token`"),
+    ("whitespace token", Token(token=" \t\r\n\u00a0", expires_on=2000000000), "empty `token`"),
+    ("missing expiry", Token(token="example-token-not-for-use"), "no int `expires_on`"),
+    ("null expiry", Token(token="example-token-not-for-use", expires_on=None), "no int `expires_on`"),
+    ("string expiry", Token(token="example-token-not-for-use", expires_on="2000000000"), "no int `expires_on`"),
+    ("fractional expiry", Token(token="example-token-not-for-use", expires_on=2000000000.5), "no int `expires_on`"),
+    ("integer overflow", Token(token="example-token-not-for-use", expires_on=2**63), "no int `expires_on`"),
+    ("integer underflow", Token(token="example-token-not-for-use", expires_on=-(2**63)-1), "no int `expires_on`"),
+    ("date overflow", Token(token="example-token-not-for-use", expires_on=2**63-1), "`expires_on` out of range"),
+    ("date underflow", Token(token="example-token-not-for-use", expires_on=-(2**63)), "`expires_on` out of range"),
+]
+"#,
+                "token_validation.py",
+                "token_validation",
+            )
+            .unwrap();
+            let cases: Vec<(String, Py<PyAny>, String)> =
+                module.getattr("cases").unwrap().extract().unwrap();
+            for (name, token, expected) in cases {
+                let error = PyTokenCredential::parse_token(token.bind(py)).expect_err(&name);
+                assert!(
+                    matches!(error.kind(), super::AzureErrorKind::Credential),
+                    "{name}: {error}"
+                );
+                assert!(
+                    error.to_string().contains(&expected),
+                    "{name}: expected {expected:?}, got {error}"
+                );
+            }
+        });
+    }
+
+    #[tokio::test]
+    async fn newly_fetched_expired_token_is_returned_but_not_reused() {
+        use azure_core::credentials::TokenCredential;
+
+        crate::test_support::prepare_python();
+        for async_bridge in [false, true] {
+            let object = Python::with_gil(|py| {
+                let object = make_python_credential(
+                    py,
+                    r#"
+from concurrent.futures import Future
+from types import SimpleNamespace
+
+class Credential:
+    def __init__(self):
+        self.calls = 0
+    def get_token(self, *scopes):
+        self.calls += 1
+        return SimpleNamespace(token="expired-token-not-for-use", expires_on=0)
+    def _start_token_request(self, *scopes):
+        future = Future()
+        future.set_result(self.get_token(*scopes))
+        return future
+"#,
+                )
+                .unwrap();
+                if !async_bridge {
+                    object
+                        .bind(py)
+                        .get_type()
+                        .delattr("_start_token_request")
+                        .unwrap();
+                }
+                object
+            });
+            let credential = Python::with_gil(|py| PyTokenCredential::new(object.clone_ref(py)));
+            let scopes = ["https://alpha-bank-account.documents.azure.com/.default"];
+            for _ in 0..2 {
+                let token = credential.get_token(&scopes, None).await.unwrap();
+                assert_eq!(token.token.secret(), "expired-token-not-for-use");
+                assert_eq!(token.expires_on.unix_timestamp(), 0);
+                assert!(credential.cached_fresh_token(&scopes).is_none());
+            }
+            Python::with_gil(|py| {
+                assert_eq!(
+                    object
+                        .bind(py)
+                        .getattr("calls")
+                        .unwrap()
+                        .extract::<usize>()
+                        .unwrap(),
+                    2,
+                    "async_bridge={async_bridge}"
+                );
+            });
+        }
     }
 
     #[test]

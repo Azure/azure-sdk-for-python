@@ -19,22 +19,14 @@ Run with::
     pytest --noconftest tests/read_item/aio/test_headers.py -v
 """
 import importlib
-import os
 import unittest
 from unittest.mock import patch
 import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 # Constants kept identical to the source so the wire value is the same
@@ -47,18 +39,24 @@ request_throughput_bucket_number = 3
 class TestHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        self.key_client = create_setup_client_async(_backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust")
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
         self._db_id = "legacy_ri_headers_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.addAsyncCleanup(self.client.delete_database, self._db_id)
+        key_database = await self.key_client.create_database(self._db_id)
+        self.addAsyncCleanup(self.key_client.delete_database, self._db_id)
         print(f"\nOwned read-test database: {self._db_id}")
-        self.container = await self.database.create_container(
+        await key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.container = self.client.get_database_client(self._db_id).get_container_client(self._container_id)
 
     async def test_container_read_item_throughput_bucket_async_rust(self):
         """Verify the operation prepares the requested throughput bucket."""

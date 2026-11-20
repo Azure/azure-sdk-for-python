@@ -55,6 +55,7 @@ from azure.cosmos._backend._binding_adapter_shared import (
     driver_transport_error_type,
     driver_unsupported_query_error_type,
     finalize_adapter_resources,
+    is_credential_error,
     page_binding_call_errors,
     release_driver_handle_quietly,
     validate_page_request,
@@ -68,7 +69,7 @@ from ..._operation_deadline import remaining_timeout, run_with_deadline
 from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
-from ..._telemetry import get_operation, log_response_diagnostics
+from ..._telemetry import get_operation, log_error_diagnostics, log_response_diagnostics, record_failed_lookup
 from ...runtime import CosmosRuntime
 
 if TYPE_CHECKING:
@@ -353,7 +354,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         operation = get_operation(self, prepared.op)
         contribution = operation.begin_contribution() if operation is not None else None
         # Bound this caller's wait, not the shielded acquisition shared with other callers.
-        driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        try:
+            driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        except Exception as exc:
+            if contribution is not None:
+                contribution.setup_error(exc)
+            log_error_diagnostics(self, exc, prepared.op)
+            raise
         # Record the selected binding function, not successful execution or
         # service I/O. Omit the internal owning handle.
         _LOGGER.debug(
@@ -375,7 +382,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         except TimeoutError as exc:
             if contribution is not None:
                 contribution.error(exc)
-            if deadline is None:
+            if deadline is None or is_credential_error(exc):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
         except ClientAuthenticationError as exc:
@@ -389,7 +396,15 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         except _DRIVER_RESPONSE_ERROR as exc:
             if contribution is not None:
                 contribution.error(exc)
-            raise response_exception_from_binding(exc) from exc
+            error = response_exception_from_binding(exc)
+            log_error_diagnostics(self, error, prepared.op)
+            raise error from exc
+        except Exception as exc:
+            # Match the binding contract: only validation errors and binding-marked
+            # credential errors carry attempt diagnostics.
+            if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
+                contribution.error(exc)
+            raise
         if result is None:
             raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
         if contribution is not None:
@@ -399,12 +414,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         return response
 
     async def get_container_metadata(
-        self, container_link: str, *, deadline: Optional[float] = None
+        self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
     ) -> ContainerMetadata:
         """Obtain container properties needed to prepare an item operation.
 
-        Same result as the synchronous ``BindingAdapter.get_container_metadata``,
-        with one difference: the ``_async`` binding function is awaited.
+        Same result and ``op`` handling as the synchronous
+        ``BindingAdapter.get_container_metadata``, with one difference: the
+        ``_async`` binding function is awaited.
         """
         deadline = self._request_deadline(deadline)
         if _rust_module is None:
@@ -415,21 +431,42 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         binding_function = getattr(_rust_module, "get_container_metadata_async", None)
         if binding_function is None:
             raise NotImplementedError("The Rust binding does not expose get_container_metadata_async")
-        driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        operation = get_operation(self, op) if op is not None else None
         try:
-            result = (
-                await binding_function(driver_handle, container_link)
-                if deadline is None
-                else await binding_function(driver_handle, container_link, timeout_seconds=remaining_timeout(deadline))
-            )
+            driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        except Exception as exc:
+            record_failed_lookup(operation, exc, setup=True)
+            log_error_diagnostics(self, exc)
+            raise
+        binding_kwargs: dict[str, Any] = {}
+        if deadline is not None:
+            binding_kwargs["timeout_seconds"] = remaining_timeout(deadline)
+        if operation is not None:
+            binding_kwargs["include_attempts"] = True
+        try:
+            result = await binding_function(driver_handle, container_link, **binding_kwargs)
         except TimeoutError as exc:
-            if deadline is None:
+            record_failed_lookup(operation, exc)
+            if deadline is None or is_credential_error(exc):
                 raise
             raise CosmosClientTimeoutError(error=exc) from exc
+        except ClientAuthenticationError as exc:
+            record_failed_lookup(operation, exc)
+            raise
         except _DRIVER_TRANSPORT_ERROR as exc:
+            record_failed_lookup(operation, exc)
             raise ServiceResponseError(message=str(exc)) from exc
         except _DRIVER_RESPONSE_ERROR as exc:
-            raise response_exception_from_binding(exc) from exc
+            record_failed_lookup(operation, exc)
+            error = response_exception_from_binding(exc)
+            log_error_diagnostics(self, error)
+            raise error from exc
+        except Exception as exc:
+            # Match the binding contract: only validation errors and binding-marked
+            # credential errors carry attempt diagnostics.
+            if isinstance(exc, ValueError) or is_credential_error(exc):
+                record_failed_lookup(operation, exc)
+            raise
         return build_container_metadata(result)
 
     async def execute_pages(
@@ -460,7 +497,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             else None
         )
         contribution = operation.begin_contribution() if operation is not None else None
-        driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        try:
+            driver_handle = await run_with_deadline(self._ensure_driver_handle, deadline)
+        except Exception as exc:
+            if contribution is not None:
+                contribution.setup_error(exc)
+            log_error_diagnostics(self, exc, prepared.op)
+            raise
         binding_request = self._with_client_headers(build_binding_request_from_page(prepared))
         _LOGGER.debug(
             "cosmos backend=%s op=%s binding_function=%s_async",
@@ -490,8 +533,10 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 if contribution is not None:
                     contribution.error(exc)
                 raise
-            except ValueError as exc:
-                if contribution is not None:
+            except Exception as exc:
+                # Match the binding contract: only validation errors and binding-marked
+                # credential errors carry attempt diagnostics.
+                if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
                     contribution.error(exc)
                 raise
             if contribution is not None:

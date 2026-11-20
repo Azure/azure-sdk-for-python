@@ -239,16 +239,20 @@ def test_client_default_suppresses_echo_on_every_write_builder_rust():
 
 
 def test_no_default_emits_no_suppression_header_on_every_write_builder_rust():
-    """With the default off and no per-call value, no suppression header is
-    added -- the driver returns the body by default."""
+    """Leave the suppression option absent when the default is off and no override is given.
+
+    Check prepared options only; no driver or service response is involved.
+    """
     for make_headers in _BUILDERS:
         headers = make_headers(default=False, kwargs={})
         assert _NO_RESPONSE_KEY not in headers, make_headers.__name__
 
 
 def test_percall_no_response_false_beats_client_default_on_every_write_builder_rust():
-    """An explicit per-call ``no_response=False`` still gets the body back even
-    when the client default is on."""
+    """Keep the prepared suppression option False despite a True client default.
+
+    This checks per-call precedence, not whether a response contains a body.
+    """
     for make_headers in _BUILDERS:
         headers = make_headers(default=True, kwargs={"no_response": False})
         assert headers.get(_NO_RESPONSE_KEY) is False, make_headers.__name__

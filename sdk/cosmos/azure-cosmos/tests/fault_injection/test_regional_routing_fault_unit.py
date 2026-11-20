@@ -88,6 +88,44 @@ def test_worker_success_and_child_branch_remain_unchanged_rust(monkeypatch):
     run.assert_not_called()
 
 
+@pytest.mark.parametrize("sdk_location", ["installed", "source"])
+def test_worker_preserves_parent_sdk_import_rust(tmp_path, monkeypatch, sdk_location):
+    source = tmp_path / "source checkout"
+    installed = tmp_path / "installed sdk"
+    tests = source / "tests" / "fault_injection"
+    tests.mkdir(parents=True)
+    for location in (source, installed):
+        sdk = location / "worker_sdk"
+        sdk.mkdir(parents=True)
+        (sdk / "__init__.py").write_text("", encoding="utf-8")
+    selected = installed if sdk_location == "installed" else source
+    native = selected / "worker_sdk" / "_rust.py"
+    native.write_text("", encoding="utf-8")
+    (tests / "conftest.py").write_text(
+        'def pytest_addoption(parser):\n'
+        '    parser.addoption("--f02-worker", action="store_true")\n',
+        encoding="utf-8",
+    )
+    test = tests / "test_import.py"
+    test.write_text(
+        'def test_import():\n'
+        '    from worker_sdk import _rust\n'
+        f'    assert _rust.__file__ == {str(native)!r}\n',
+        encoding="utf-8",
+    )
+    monkeypatch.syspath_prepend(str(selected))
+    monkeypatch.setattr(_regional_routing, "__file__", str(tests / "_regional_routing.py"))
+    monkeypatch.setenv("PYTEST_DISABLE_PLUGIN_AUTOLOAD", "1")
+    monkeypatch.setenv("PYTEST_ADDOPTS", "-p no:cacheprovider")
+    request = SimpleNamespace(
+        config=SimpleNamespace(getoption=lambda option: False),
+        node=SimpleNamespace(path=test, name="test_import"),
+    )
+    assert _regional_routing.isolate(
+        request, ("fault_create_test", SimpleNamespace(id="orders_test"))
+    ) is True
+
+
 def test_regional_cases_only_select_enabled_rust_scenarios_rust():
     assert [(case.values, case.id) for case in REGIONAL_ROUTING_CASES] == [
         (("routing",), "routing-rust"),

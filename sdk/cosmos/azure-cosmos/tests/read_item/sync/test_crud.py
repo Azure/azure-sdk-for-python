@@ -8,13 +8,13 @@ are copied; database/container/script/conflict assertions belong to other APIs.
 The original source is unchanged. The fixture owns its database and client.
 """
 
-import os
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey
+from azure.cosmos import PartitionKey
+from config.clients import create_data_client, create_setup_client
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -22,14 +22,17 @@ from azure.cosmos import CosmosClient, PartitionKey
 @pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperations(unittest.TestCase):
     def setUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
-        )
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        self.key_client = create_setup_client(_backend="rust")
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(_backend="rust")
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database("read_dictionary_" + uuid.uuid4().hex)
-        self.addCleanup(self.client.delete_database, self.database.id)
-        print(f"\nOwned read-test database: {self.database.id}")
-        self.container = self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
+        key_database = self.key_client.create_database("read_dictionary_" + uuid.uuid4().hex)
+        self.addCleanup(self.key_client.delete_database, key_database.id)
+        print(f"\nOwned read-test database: {key_database.id}")
+        key_database.create_container("orders", partition_key=PartitionKey(path="/pk"))
+        self.container = self.client.get_database_client(key_database.id).get_container_client("orders")
 
     def test_get_resource_with_dictionary_and_object_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_get_resource_with_dictionary_and_object

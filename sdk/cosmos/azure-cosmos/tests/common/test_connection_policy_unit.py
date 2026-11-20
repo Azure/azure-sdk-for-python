@@ -323,6 +323,7 @@ def test_core_python_fixed_throttle_interval_still_selects_requested_delay_rust(
 @pytest.mark.parametrize("selection", ["keyword", "environment"])
 @pytest.mark.parametrize("keyword", [
     "retry_connect", "retry_read", "connection_retry_policy", "retry_mode", "retry_backoff_factor",
+    "retry_total", "retry_backoff_max", "retry_status", "retry_on_status_codes", "retry_write",
 ])
 @pytest.mark.parametrize("value", [None, 0, 2, False, "2", MagicMock()])
 def test_rust_connection_retry_controls_fail_before_policy_or_backend_creation_rust(
@@ -565,14 +566,10 @@ def test_old_throttle_wait_name_fails_before_startup_rust(
 
 
 def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_client):
-    """Asking for no retries at all means no retries, not the default number.
+    """Preserve zero throttling retry limits instead of substituting defaults.
 
-    Zero and "not set" look alike to code written in a hurry, and the mistake is quiet:
-    the customer asked to fail fast and instead the client keeps retrying, which is the
-    opposite of what they wanted and shows up as requests that hang far longer than the
-    limit they set.
-
-    Both limits are checked on both paths.
+    Check the prepared Rust settings and retained Python policy. These assertions
+    do not establish that other driver retry mechanisms are disabled.
     """
     policy = ConnectionPolicy()
     policy.RetryOptions = RetryOptions(max_retry_attempt_count=0, max_wait_time_in_seconds=0)
@@ -583,29 +580,31 @@ def test_policy_zero_retry_limits_are_not_replaced_by_defaults_rust(construct_cl
     assert legacy.RetryOptions.MaxWaitTimeInSeconds == 0
 
 
-@pytest.mark.parametrize("backend", ["rust", "core-python"])
-@pytest.mark.parametrize("overrides,count,wait", [
-    ({"retry_total": 7, "retry_backoff_max": 20}, 7, 20),
-    ({"retry_total": 0, "retry_backoff_max": 0}, 0, 0),
-    ({"retry_total": 7, "retry_backoff_max": 20,
-      "retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
-    ({"retry_total": 7, "retry_throttle_total": None,
-      "retry_backoff_max": 20, "throttle_retry_wait_threshold_seconds": None}, 7, 20),
-    ({"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
+@pytest.mark.parametrize("backend,overrides,count,wait", [
+    ("core-python", {"retry_total": 7, "retry_backoff_max": 20}, 7, 20),
+    ("core-python", {"retry_total": 0, "retry_backoff_max": 0}, 0, 0),
+    ("core-python", {"retry_total": 7, "retry_backoff_max": 20,
+                     "retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
+    ("core-python", {"retry_total": 7, "retry_throttle_total": None,
+                     "retry_backoff_max": 20, "throttle_retry_wait_threshold_seconds": None}, 7, 20),
+    ("rust", {"retry_throttle_total": 0, "throttle_retry_wait_threshold_seconds": 0}, 0, 0),
+    ("rust", {"retry_throttle_total": 7, "throttle_retry_wait_threshold_seconds": 20}, 7, 20),
+    ("rust", {"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
+    ("core-python", {"retry_throttle_total": None, "throttle_retry_wait_threshold_seconds": None}, 3, 12),
 ])
 def test_retry_precedence_includes_zero_rust(construct_client, backend, overrides, count, wait):
     """The specific retry keyword beats the general one, the general one beats the policy,
     and passing nothing means the keyword was not used.
 
-    Five combinations, each a different rung of that order. The general keywords alone
-    win over the policy. Zero through the general keywords is honored. The specific
-    keywords win over the general ones, including when they are zero. Passing the
-    specific ones as nothing steps down to the general ones rather than being treated as
-    a choice of nothing. Passing both as nothing falls all the way back to the policy.
+    The general keywords alone win over the policy. Zero through the general keywords
+    is honored. The specific keywords win over the general ones, including when they
+    are zero. Passing the specific ones as nothing steps down to the general ones rather
+    than being treated as a choice of nothing. Passing both as nothing falls all the way
+    back to the policy.
 
     That last distinction is the delicate one, and it is why the value meaning "absent"
-    has to be separate from zero. Run on both backends, since the same order has to hold
-    whichever one is chosen.
+    has to be separate from zero. Rust clients reject the general keywords, so the Rust
+    cases use only the specific keywords and the policy.
     """
     client, legacy = construct_client(
         _backend=backend, connection_policy=configured_policy(), **overrides

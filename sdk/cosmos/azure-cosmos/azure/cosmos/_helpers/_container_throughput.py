@@ -55,7 +55,7 @@ from ._throughput_rust_routing import (
     build_replace_throughput_from_connection,
 )
 from ._throughput_setup import gather_rust_call_inputs, offer_query
-from ._throughput_read import prepare_read_kwargs, finish_read, legacy_read_kwargs, read_routing
+from ._throughput_read import prepare_throughput_kwargs, finish_read, legacy_throughput_kwargs, read_routing
 from ._throughput_replace import finish_replacement, validate_replacement_throughput
 
 
@@ -241,7 +241,7 @@ def get_container_throughput(
 ) -> ThroughputProperties:
     """Read dedicated throughput within one metadata-and-offer deadline."""
     started = time.monotonic()
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
     routing = read_routing(
         backend, rust_options,
@@ -256,7 +256,7 @@ def get_container_throughput(
         client_connection=client_connection, container_link=container_link,
         backend=backend, rust_options=rust_options, routing=routing,
         get_properties=get_properties, refresh_properties=refresh_properties,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     remaining_timeout(deadline)
@@ -274,7 +274,7 @@ async def get_container_throughput_async(
 ) -> ThroughputProperties:
     """Read dedicated throughput asynchronously within the same deadline."""
     started = time.monotonic()
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
     routing = read_routing(
         backend, rust_options,
@@ -289,7 +289,7 @@ async def get_container_throughput_async(
         client_connection=client_connection, container_link=container_link,
         backend=backend, rust_options=rust_options, routing=routing,
         get_properties=get_properties, refresh_properties=refresh_properties,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     remaining_timeout(deadline)
@@ -314,7 +314,7 @@ def replace_container_throughput(
     """
     started = time.monotonic()
     validate_replacement_throughput(throughput)
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -332,7 +332,7 @@ def replace_container_throughput(
         client_connection=client_connection, container_link=container_link,
         backend=backend, rust_options=rust_options, routing=routing,
         get_properties=get_properties, refresh_properties=refresh_properties,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     remaining_timeout(deadline)
@@ -351,7 +351,7 @@ def replace_container_throughput(
         legacy_call=lambda: client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,
-            **legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+            **legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         ),
         process_response=lambda response: process_replace_throughput_response(
             response, client_connection=client_connection
@@ -375,7 +375,7 @@ async def replace_container_throughput_async(
     """Replace throughput, awaiting the offer read and replacement on the same path."""
     started = time.monotonic()
     validate_replacement_throughput(throughput)
-    kwargs = prepare_read_kwargs(kwargs, response_hook)
+    kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
@@ -393,7 +393,7 @@ async def replace_container_throughput_async(
         client_connection=client_connection, container_link=container_link,
         backend=backend, rust_options=rust_options, routing=routing,
         get_properties=get_properties, refresh_properties=refresh_properties,
-        legacy_kwargs=lambda: legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+        legacy_kwargs=lambda: legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         deadline=deadline,
     )
     remaining_timeout(deadline)
@@ -405,7 +405,7 @@ async def replace_container_throughput_async(
         return await client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,
-            **legacy_read_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
+            **legacy_throughput_kwargs(rust_options, rust_kwargs, kwargs, deadline=deadline),
         )
 
     updated_offer = await run_with_deadline(

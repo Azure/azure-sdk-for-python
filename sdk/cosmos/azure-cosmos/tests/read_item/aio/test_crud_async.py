@@ -9,14 +9,13 @@ are retained; the original source is unchanged.
 """
 
 from asyncio import sleep
-import os
 import unittest
 import uuid
 
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -24,15 +23,19 @@ from azure.cosmos.aio import CosmosClient
 @pytest.mark.cosmosAADCircuitBreaker
 class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self.client = CosmosClient(
-            os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust",
-        )
+        # Key client owns the database and container; the data client (AAD in
+        # AAD lanes) does item work, as in the original.
+        self.key_client = create_setup_client_async(_backend="rust")
+        self.addAsyncCleanup(self.key_client.close)
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust")
         self.addAsyncCleanup(self.client.close)
         await self.client.__aenter__()
-        self.database = await self.client.create_database("read_dictionary_" + uuid.uuid4().hex)
-        self.addAsyncCleanup(self.client.delete_database, self.database.id)
-        print(f"\nOwned read-test database: {self.database.id}")
-        self.container = await self.database.create_container("orders", partition_key=PartitionKey(path="/pk"))
+        key_database = await self.key_client.create_database("read_dictionary_" + uuid.uuid4().hex)
+        self.addAsyncCleanup(self.key_client.delete_database, key_database.id)
+        print(f"\nOwned read-test database: {key_database.id}")
+        await key_database.create_container("orders", partition_key=PartitionKey(path="/pk"))
+        self.container = self.client.get_database_client(key_database.id).get_container_client("orders")
 
     async def test_get_resource_with_dictionary_and_object_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_get_resource_with_dictionary_and_object_async

@@ -10,6 +10,7 @@ provided, deleted afterwards. Known Rust gaps are skipped at the failing step.
 """
 
 import asyncio
+import importlib.util
 import os
 import unittest
 import uuid
@@ -17,7 +18,6 @@ from types import SimpleNamespace
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.pipeline.transport import AioHttpTransport
 
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos.aio import CosmosClient
@@ -26,6 +26,12 @@ from common.priority_contract import assert_priority_contract_async
 from azure.cosmos.partition_key import PartitionKey
 from _client_transport import create_client_with_transport
 from config.clients import create_data_client_async, create_setup_client_async
+
+# The whl_no_aio CI check uninstalls aiohttp. Only the paged-timeout test needs it,
+# so the other tests in this file must still load and run without it.
+HAS_AIOHTTP = importlib.util.find_spec("aiohttp") is not None
+if HAS_AIOHTTP:
+    from azure.core.pipeline.transport import AioHttpTransport
 
 
 @pytest.mark.cosmosCircuitBreaker
@@ -276,6 +282,8 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_timeout_for_paged_request_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_timeout_for_paged_request_async
         """Test that timeout applies to each individual page request, not cumulatively"""
+        if not HAS_AIOHTTP:
+            pytest.skip("aiohttp is not installed; this test builds an aiohttp-based delayed transport.")
 
         # Create container and add items
         created_container = await self._create_container_for_test(

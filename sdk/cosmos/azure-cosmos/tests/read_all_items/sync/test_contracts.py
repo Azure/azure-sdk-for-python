@@ -8,33 +8,42 @@ import uuid
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos import CosmosClient, PartitionKey, exceptions
+from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos.http_constants import StatusCodes
-from config.settings import TestSettings
+from config.clients import create_data_client, create_setup_client
 
 
 class _OwnedReadAllTests(unittest.TestCase):
+    """The key client owns databases and containers; the data client (AAD in
+    AAD lanes) does item work, as in the originals."""
+
     no_response_on_write = False
 
     def setUp(self):
-        self.client = CosmosClient(
-            TestSettings.host,
-            TestSettings.masterKey,
-            _backend="rust",
-            no_response_on_write=self.no_response_on_write,
+        self.key_client = create_setup_client(
+            _backend="rust", no_response_on_write=self.no_response_on_write
+        )
+        self.addCleanup(self.key_client.close)
+        self.client = create_data_client(
+            _backend="rust", no_response_on_write=self.no_response_on_write
         )
         self.addCleanup(self.client.close)
-        self.database = self.client.create_database(
+        self.key_databaseForTest = self.key_client.create_database(
             "read-all-original-" + uuid.uuid4().hex
         )
-        self.addCleanup(self.client.delete_database, self.database.id)
-        self.key_databaseForTest = self.database
+        self.addCleanup(self.key_client.delete_database, self.key_databaseForTest.id)
+        self.databaseForTest = self.client.get_database_client(
+            self.key_databaseForTest.id
+        )
 
     def _create_container_for_test(self, container_id, partition_key):
-        return self.database.create_container(container_id, partition_key=partition_key)
+        self.key_databaseForTest.create_container(
+            container_id, partition_key=partition_key
+        )
+        return self.databaseForTest.get_container_client(container_id)
 
     def _delete_container_for_test(self, container_id):
-        self.database.delete_container(container_id)
+        self.key_databaseForTest.delete_container(container_id)
 
 
 @pytest.mark.cosmosEmulator

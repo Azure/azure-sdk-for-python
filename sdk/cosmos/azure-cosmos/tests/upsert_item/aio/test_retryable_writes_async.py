@@ -11,21 +11,28 @@ fault injection rules and count attempts from the ``requests=N`` value in the
 """
 
 import asyncio
+import importlib.util
 import os
 import re
 import uuid
-from typing import Callable
+from typing import Callable, TYPE_CHECKING
 
 import pytest
 import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
-from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 from azure.core.rest import HttpRequest
 
 from azure.cosmos import exceptions, ContainerProxy, DatabaseProxy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-from _fault_injection_transport_async import FaultInjectionTransportAsync
+
+# The whl_no_aio CI check uninstalls aiohttp. Only the two multi-write tests need it,
+# so the other tests in this file must still load and run without it.
+HAS_AIOHTTP = importlib.util.find_spec("aiohttp") is not None
+if HAS_AIOHTTP:
+    from _fault_injection_transport_async import FaultInjectionTransportAsync
+if TYPE_CHECKING:
+    from azure.core.pipeline.transport._aiohttp import AioHttpTransport
 
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
@@ -41,6 +48,16 @@ def _host():
 
 def _key():
     return os.environ["ACCOUNT_KEY"]
+
+
+def _injected_errors():
+    """Build the multi-write test errors, or one skipped case when aiohttp is missing."""
+    if not HAS_AIOHTTP:
+        return [pytest.param(None, marks=pytest.mark.skip(
+            reason="aiohttp is not installed; this test builds an aiohttp-based fault injection transport."))]
+    return [FaultInjectionTransportAsync.error_request_timeout(),
+            FaultInjectionTransportAsync.error_internal_server_error(),
+            FaultInjectionTransportAsync.error_service_response()]
 
 
 @pytest_asyncio.fixture()
@@ -87,7 +104,7 @@ class TestRetryableWritesAsync:
 
     @staticmethod
     async def setup_method_with_custom_transport(
-            custom_transport: AioHttpTransport,
+            custom_transport: "AioHttpTransport",
             default_endpoint: str = None,
             key: str = None,
             database_id: str = TEST_DATABASE_ID,
@@ -581,6 +598,8 @@ class TestRetryableWritesAsync:
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_hpk_client_level_async
         """Test retryable writes for a container with hierarchical partition keys and retry_write
         set at the client level."""
+        # Known gap 13: Closed: Rust owns automatic write retries. Rust-backed clients reject client-level retry_write with TypeError before any request is sent.
+        pytest.skip("accepted-vnext-change: client-level retry_write is not supported on the Rust backend (known gap 13).")
         # Create a client with retry_write enabled
         client_with_retry = CosmosClient(_host(), credential=_key(), retry_write=2, _backend="rust")
         await client_with_retry.__aenter__()
@@ -673,9 +692,7 @@ class TestRetryableWritesAsync:
                 await mock.close()
             await client_with_retry.close()
 
-    @pytest.mark.parametrize("injected_error", [FaultInjectionTransportAsync.error_request_timeout(),
-                             FaultInjectionTransportAsync.error_internal_server_error(),
-                             FaultInjectionTransportAsync.error_service_response()])
+    @pytest.mark.parametrize("injected_error", _injected_errors())
     async def test_retryable_writes_mrw_request_level_async_rust(self, injected_error):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_mrw_request_level_async
         first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")
@@ -747,9 +764,7 @@ class TestRetryableWritesAsync:
         finally:
             await self.cleanup_method(initialized_objects)
 
-    @pytest.mark.parametrize("injected_error", [FaultInjectionTransportAsync.error_request_timeout(),
-                             FaultInjectionTransportAsync.error_internal_server_error(),
-                             FaultInjectionTransportAsync.error_service_response()])
+    @pytest.mark.parametrize("injected_error", _injected_errors())
     async def test_retryable_writes_mrw_client_level_async_rust(self, injected_error):
         # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_mrw_client_level_async
         first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")

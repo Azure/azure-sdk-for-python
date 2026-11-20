@@ -368,8 +368,9 @@ publishes it to learn.microsoft.com (`eng\common\scripts\Package-Properties.ps1`
 and `Update-DocsMsMetadata.ps1`).
 
 So `README.md` contains customer information only. Building and testing the
-SDK is described in `docs\local_development.md`, and `README.md` links to it
-at the end.
+SDK is described in `docs\local_development.md`. `README.md` does not link to
+it yet. The link pointed to the guide on `main`, where it does not exist
+until this branch merges, so the pipeline's link check reported it as broken.
 
 We considered two other layouts:
 
@@ -1460,63 +1461,21 @@ wheel-building path.
 
 ### Inspect the archive, then install that exact file
 
-Before returning a built wheel, the SDK package builder checks the actual archive for
-exactly one nonempty `_rust` extension under `azure/cosmos`, with a `.pyd` or
-`.so` suffix, and rejects an `any`-platform wheel. A wheel containing only
-the `_rust.pyi` interface description, called a **type stub**, fails
-even if importing the Python wrapper would succeed. The check accepts
-target-platform extension names rather than relying on the build machine's
-Python suffix, so wheels built for another processor can be checked too.
+The package builder rejects wheels without exactly one nonempty compiled
+`_rust` extension, but file presence does not prove that the extension loads
+or that SDK operations work.
 
-This archive check does not prove that the binary has the right architecture
-or can load. Installation and native-import checks remain necessary.
+Follow [Validate a wheel locally and in the pipeline](wheel_validation.md):
 
-Choose the exact wheel produced by the build. Do not accidentally inspect an
-older wheel left in `dist`.
+- [Local validation](wheel_validation.md#validate-one-wheel-locally) follows
+  one exact wheel through archive inspection, clean installation, import
+  checks, offline suites, and sync/async emulator operations.
+- [Pipeline validation](wheel_validation.md#validate-the-release-wheels-in-the-pipeline)
+  identifies the final release files, checks each platform/Python combination,
+  and separates implemented checks from missing release evidence.
 
-The following PowerShell example uses a filename placeholder; replace it
-with the actual output:
-
-```powershell
-$wheel = (Resolve-Path ".\dist\<actual-wheel-name>.whl").Path
-python -m zipfile --list $wheel
-```
-
-This lists the archive's files. Section 9 explains what each group is for.
-File presence is useful evidence, but it does not prove compiled files can
-load on the machine.
-
-For that check, use a separate clean Python environment. The example assumes
-`.wheel-test` does not already exist. If it does, choose a new directory name
-and use that name in all three commands; creating a virtual environment over
-an existing one does not establish a clean installation.
-
-```powershell
-python -m venv .wheel-test
-.\.wheel-test\Scripts\python -m pip install $wheel
-.\.wheel-test\Scripts\python -I -c "from azure.cosmos import _rust; print(_rust.__file__)"
-```
-
-The printed path must point inside `.wheel-test`.
-
-Why use `-I`? It puts Python in an isolated mode that avoids using the current
-source directory or extra search directories configured through `PYTHONPATH`
-for this check. Otherwise, a test might import
-the developer's checkout and accidentally report success without testing
-the installed wheel.
-
-The sequence establishes increasingly useful evidence:
-
-```text
-Archive contains the files
-    -> pip can install it
-    -> Python can load the installed extension
-    -> SDK operations must still be tested
-```
-
-An import check does not create a database, run a query, or prove which query
-planner ran. Functional tests must exercise those operations against the
-installed wheel.
+Each local step supplies commands and expected results. A successful local
+check does not establish that the other platform wheels work.
 
 ## 9. What goes inside the wheel
 
@@ -2887,17 +2846,31 @@ works.**
 Internal documentation builds use the archive's README and source files, so
 we retain archive generation. Publication must be blocked separately.
 
-The SDK's package-output settings request that separation
-with `skipPublishSdist: true`. **The shared publishing templates do not
+Our Cosmos configuration in `sdk\cosmos\ci.yml` already requests that
+separation with `skipPublishSdist: true`. **The shared publishing templates do not
 read this setting.** They still select `.tar.gz` files for publication, so
 the SDK flag alone does not protect customers.
 
-Central must update the release publishers to exclude source archives from
-PyPI staging and source uploads to other
-release and development feeds. It must also reject source archives already
-present in a wheels-only staging directory. The daily alpha-package publisher
-must honor the same setting. Packages that do not opt in should retain
-their existing behavior.
+**The fix belongs in Central's shared pipeline files, not our Python wrapper
+or Rust binding.** These files are in the same `azure-sdk-for-python`
+repository, but fall under the `/eng/` ownership rule in `.github\CODEOWNERS`.
+
+| Owner | File | Required change |
+|---|---|---|
+| Our Cosmos team | `sdk\cosmos\ci.yml` | Keep `skipPublishSdist: true`; the setting is already present. |
+| Central team | `eng\pipelines\templates\stages\release-artifact.yml` | Read the setting and exclude source archives from PyPI staging and uploads to release and development feeds. |
+| Central team | `eng\pipelines\templates\steps\publish-alpha-package.yml` | Read the same setting and skip source-archive uploads for daily development packages. |
+
+Central must also reject source archives already present in a wheels-only
+staging directory. Packages that do not opt in should retain their existing
+publication behavior.
+
+Our Cosmos team must verify the result: start with a release folder containing
+both `azure_cosmos-<version>-cp310-abi3-win_amd64.whl` and
+`azure_cosmos-<version>.tar.gz`, then check that the publishing steps select
+only the wheel. Repeat the check for the release and daily development paths.
+This describes the required check, not a completed pipeline run or evidence
+that an unwanted source archive has already been published.
 
 Do not publish this Rust-backed package through those paths until the
 restriction is implemented and demonstrated.
@@ -2943,93 +2916,6 @@ above. Until then, every supported target needs a compatible prebuilt wheel.
 
 ## 15. What still needs to be decided or proved before release
 
-### Reuse the existing Python test job
-
-The copied tests are still Python tests under `tests/`. Calling the Rust-backed
-SDK does not make them Cargo tests or require a separate pipeline job.
-The normal wheel check installs the wheel and runs pytest. Its
-`cosmosEmulator` marker filter still selects the emulator tests; the package's
-collection rules exclude the preserved legacy originals.
-
-Three additional checks use the existing `AfterTestSteps` hook:
-
-- **Offline Python tests:** `run_rust_ci.py offline` selects the maintained unit
-  tests except those selected by the dedicated telemetry suite. It runs without
-  the emulator marker filter, checks that the installed native wheel is loaded,
-  and fails missing execution or unexpected skips.
-- **Native Rust tests:** `run_rust_ci.py native` first runs `cargo clippy`. Clippy
-  errors, such as a denied `large_futures` lint, fail the step; warnings don't.
-  It then runs `cargo test` twice: once with the shipped features, and once with
-  the `test-probes` feature (section 7), so the cancellation instrumentation's
-  Rust tests also run. Each time it checks that test bodies actually ran.
-  Building a wheel alone does not run them. Some Rust tests start Python inside
-  the test process and import `azure.cosmos`. They put this checkout's package
-  first on Python's search path (`test_support.rs`), so an older `azure-cosmos`
-  installed on the machine cannot be tested by mistake. Before that import,
-  they register the test program's own binding as `azure.cosmos._rust`, so
-  Python code uses the code under test rather than a previously built `_rust`
-  file in the checkout. The script requires
-  `--results <folder>` and writes `cargo-clippy.log`, `cargo-test.log` and
-  `cargo-test-probes.log` there.
-- **Native cancellation test:** customer wheels don't contain the probe the
-  cancellation test needs (section 7). So this step creates a separate Python
-  environment, builds a `test-probes` wheel into it, and runs
-  `run_rust_ci.py cancellation` against the emulator. The script refuses an
-  extension without the probe, and fails unless both cases ran and passed: the
-  cancelled read and the no-injection control. No other step uses this
-  environment, so the probe never reaches the wheels the other steps test.
-  This adds one more Rust build to the job.
-
-**The Rust tests use a different build from the shipped wheel.** `cargo test`
-adds the binding's `[dev-dependencies]` (`azure_cosmos_rust\Cargo.toml`), which
-switch on two test-only features. The wheel build never uses them:
-
-| Test-only feature | What the Rust tests gain |
-|---|---|
-| Driver `__internal_in_memory_emulator` | A fake Cosmos service inside the test process, so tests need no network or account |
-| Tokio `test-util` | Test control of the Tokio clock |
-
-The in-memory emulator is a simplified fake, not the real service. Passing Rust
-tests show that the binding passes requests and results correctly; they do
-not show real-service behaviour. That evidence comes from the Python tests,
-which run the installed wheel against the Cosmos emulator or a live account.
-`test_build_configuration_unit.py` fails if the emulator feature moves out of
-`[dev-dependencies]`, so it cannot reach the shipped wheel by mistake.
-
-These steps run only in the existing Windows Python 3.13 standard test job
-(`ChecksOverride=whl,sdist`). They reuse that job's checkout and downloaded
-wheels. The shared Rust installer prepares its compiler; Cargo tests compile
-test binaries from source, while the offline Python tests use the installed
-wheel. The test-job timeout is 240 minutes to allow this extra compilation;
-the other matrix jobs do not run these supplemental steps.
-
-The old standalone offline/service job definitions have been replaced with
-a step template. `rust-tests.yml` now groups the supplemental instructions;
-it is not needed to discover the copied Python tests and does not create jobs.
-It could be inlined into `ci.yml` without changing the execution model.
-
-The dedicated `telemetry-tests.yml` step retains its tracing dependencies,
-Rust backend setting, strict skip checks, and separate results. Its selected
-modules, including operation-specific files outside `tests/telemetry`, do not
-run again in the general offline suite. `toxiproxy-tests.yml` retains the proxy
-installation and required network-failure checks.
-
-Thirteen additional Rust-behavior files have been consolidated into existing
-unit suites: eight list/query response-hook files, two feed-range header files,
-two client-policy files, and one deprecated-delete-option file. Their Python
-checks now run without creating service resources. Real page activity IDs,
-request charges, diagnostics, returned resources, and continuation replay stay
-in the existing paging service tests; fake responses do not prove those
-service behaviors. No new YAML or marker is needed for the consolidated
-`test_*_unit.py` coverage.
-
-**Service-test scope is unchanged.** Unmarked service tests and tests selected
-only by other markers are not automatically included in the emulator job.
-Their account requirements and pipeline selection still need review. The
-`parity` suite of `run_rust_ci.py` is for local checks only and is not added
-to the pipeline; it is due for deletion (LR-20 in
-`docs\V5\api-review\LEGACY_CODE_RETIREMENT.md`).
-
 ### SDK pipeline wiring and Central ownership
 
 These paths start at the repository root. Cosmos owns the files under
@@ -3043,175 +2929,271 @@ named `templates` is not automatically Central-owned.
 | `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the built wheel and require their results. | Cosmos SDK team |
 | `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
 
-### Only Microsoft employees can build the package today
+<a id="only-microsoft-employees-can-build-the-package-today"></a>
 
-`azure-sdk-for-python` is a public repository, so anyone can clone it and try
-to build this package. Today, only Microsoft employees can.
+### A supported build procedure for external contributors
 
-`rust-toolchain.toml` selects `ms-prod-1.97`. Anyone who runs `cargo` in the
-package directory gets that toolchain, and public Rust cannot install it. A
-contributor with only public Rust sees this on their first command:
+Suppose an Alpha Bank developer wants to fix the SDK and test the changed
+Rust-backed code. Installing a ready-made wheel does not build their changes:
+they need to compile the Rust extension from the checkout.
 
-```text
-error: custom toolchain 'ms-prod-1.97' specified in override file
-'...\sdk\cosmos\azure-cosmos\rust-toolchain.toml' is not installed
-```
+The current setup selects Microsoft's Rust toolchain, the compiler and
+associated build tools:
 
-[Section 7](#install-the-microsoft-rust-toolchain-on-a-developer-machine)
-installs the toolchain with `scripts\install-msrustup.sh`. That script
-downloads from an internal DevDiv feed
-(`devdiv.pkgs.visualstudio.com/DevDiv/_packaging/Rust.Sdk%40Release`), which
-accepts only Microsoft corporate sign-ins. An external contributor cannot
-get past this step, so they cannot build the Rust extension.
+| File in the package directory | What the code establishes |
+|---|---|
+| `rust-toolchain.toml` | Selects `ms-prod-1.97` |
+| `scripts\install-msrustup.sh` | Requires authentication and defaults to an internal DevDiv package feed |
+| `Cargo.toml` | Declares Rust `1.97` as the minimum compiler version |
 
-Without the extension, `import azure.cosmos` still works. The SDK can send
-requests in two ways:
+These settings establish an internal-toolchain default. They do **not** prove
+that building with a public Rust compiler is impossible. A public-toolchain
+build has not been demonstrated by this review.
 
-- **By default**, it uses its existing Python code. That code does not need
-  the extension, so it still works against the emulator or an account.
-- **With `COSMOS_BACKEND=rust`**, it sends requests through the Python/Rust
-  binding. Without the extension, creating the client fails immediately with
-  `ImportError`. The message says that `azure.cosmos._rust` could not be
-  loaded and gives the original reason, such as a missing system library
-  (`azure\cosmos\_backend\_binding_adapter_shared.py`).
+**There is an existing pattern we can follow, but applying it needs work.**
+The inspected `azure-sdk-for-rust` checkout selects public Rust `1.95` in
+its root `rust-toolchain.toml`. Its internal native-artifact build instead
+uses `eng\templates\ms-rust-toolchain.toml`, selecting `ms-prod-1.95`.
+The pipeline step `eng\pipelines\templates\steps\use-ms-rust.yml` replaces
+the checkout's toolchain configuration for that build.
 
-So a contributor cannot run the Rust driver path against the emulator or an
-account, even for a Python change that never touches Rust. They can only run
-tests that replace the binding with a stand-in.
+That separates the compiler contributors use from the compiler used for
+internal release builds. We can adopt the same separation for the Python
+package; contributors need not use the release compiler merely because our
+pipeline uses it. However, copying the Rust SDK's `1.95` selection is not
+enough: this Python package currently declares a minimum Rust version of
+`1.97`. Its binding and dependencies still need a compatible, tested public
+compiler.
 
-This is a different question from customer source installation in
+**Decision needed:** the SDK team and Central must decide whether to provide
+a supported build procedure using publicly available Rust tools. If so, they
+must choose the compiler version and explain how contributors select it
+without changing the pipeline's compiler.
+
+**Proof needed:** build the extension and run the relevant tests on a clean
+machine without internal feed access. Record the working commands in
+`docs\local_development.md` and decide how CI will check that the procedure
+continues to work.
+
+This concerns contributing to the SDK, not installing a compatible prebuilt
+wheel. Supporting installation from a published source archive is a separate
+question in
 [section 14](#the-internal-compiler-choice-is-a-release-decision-not-a-customer-prerequisite).
-That question is about customers installing the package. This one is about
-people contributing to it.
-
-The SDK team and Central must decide together:
-
-- Is it acceptable that external contributors cannot build this package?
-- If not, which public Rust version gives them a supported path, and how is
-  it selected without changing the toolchain the pipeline uses?
-- Does a build with public Rust need to be tested in CI, so that the path
-  keeps working?
-
-Nobody has tested whether the binding builds with public Rust. Until a
-decision is made, the contributor guidance in `docs\local_development.md`
-applies only to Microsoft employees.
 
 ### Platforms without a wheel
 
-Some customers have no compatible wheel (section 13, "Which customers have
-no compatible wheel"). Before general availability, the SDK team and
-Central must choose one approach:
+Alpha Bank needs a wheel matching the operating system and processor used
+by its Python installation. The current `pyproject.toml` configures these
+**five wheel targets**, not a platform-independent package:
+
+| Customer platform | Expected wheel filename |
+|---|---|
+| Windows, x64 processor | `azure_cosmos-<version>-cp310-abi3-win_amd64.whl` |
+| Windows, ARM64 processor | `azure_cosmos-<version>-cp310-abi3-win_arm64.whl` |
+| Linux, x64 processor, `manylinux_2_28` baseline | `azure_cosmos-<version>-cp310-abi3-manylinux_2_28_x86_64.whl` |
+| Linux, ARM64 processor, `manylinux_2_28` baseline | `azure_cosmos-<version>-cp310-abi3-manylinux_2_28_aarch64.whl` |
+| macOS, Apple Silicon processor | `azure_cosmos-<version>-cp310-abi3-macosx_<minimum-version-tag>_arm64.whl` |
+
+`<version>` stands for the package version being built. The macOS minimum
+version must be confirmed from the build and resulting wheel; its placeholder
+above is not a literal filename. The Linux baseline and Python compatibility
+tags are explained in
+[section 10](#the-operating-system-part-has-compatibility-limits-too).
+
+The binding's `abi3-py310` feature and the package's `requires-python = ">=3.10"`
+set a Python 3.10 baseline. The intended stable-interface wheels can serve
+later compatible CPython versions without a separate wheel for each version;
+that does not replace testing or define the final supported Python versions.
+
+**Configured does not mean released or validated.** This list comes from
+the build settings, not a successful five-platform release run.
+`_validate_native_wheel` in `azure_cosmos_package_builder.py` requires every
+wheel to contain the compiled Rust extension and rejects an `any` platform
+wheel. The current path therefore does not produce a Python-only fallback.
+
+The configuration does not request Intel Mac, Windows 32-bit, musl-based Linux,
+or an older Linux baseline than `manylinux_2_28`. It does not provide wheels
+for Python below 3.10 or PyPy. For example, an Alpha Bank developer using an
+Intel Mac has no matching target in this list.
+
+Before general availability, the SDK team and Central must decide how to
+handle platforms outside this list:
 
 | Option | What it means | Cost |
 |---|---|---|
 | Publish a pure-Python fallback wheel | Also publish a `py3-none-any` wheel of the same version. pip prefers a platform wheel where one matches, and uses the fallback elsewhere. The default `core-python` backend works there, while the Rust backend is unavailable | Reverses the "every wheel contains Rust" rule (section 4) and `_validate_native_wheel` in the package builder. Central must build and publish the extra wheel |
 | Build more targets | Add Intel Mac, musllinux, and an older glibc baseline such as `manylinux2014` | Each needs the Microsoft Rust installer in that build environment, plus Central build machines and time |
+| Explicitly exclude a platform | State that this release does not support installation on that platform | Review the customer impact and publish the support boundary |
 
-Until then, the preview ships wheels for the five section 10 targets only.
+Until that decision and the required validation are complete, these five
+targets remain the configured prototype scope, not a proven release matrix.
 
 ### The pinned pyo3 version has a security advisory
 
-The workspace `Cargo.toml` asks for `pyo3 = "0.22"`, and `Cargo.lock` locks
-0.22.6. Advisory
+Alpha Bank needs to assess the dependencies included in our SDK, not just
+our own code. **PyO3** is the library our binding uses to exchange values
+between Rust and Python. It becomes part of the compiled extension.
+The package's `Cargo.lock` selects PyO3 **0.22.6**.
+
+A **security advisory** is a published report of a known security defect.
 [RUSTSEC-2025-0020](https://rustsec.org/advisories/RUSTSEC-2025-0020.html)
-affects every pyo3 version below 0.24.1. In those versions,
-`PyString::from_object` passes text to Python without a terminating zero
-byte. Python can then read past the end of the text and copy the extra
-memory into an error message.
+identifies a defect in PyO3's `PyString::from_object` and
+`PyString::from_object_bound` string-conversion functions. They pass text
+to Python without ensuring that it has the end marker Python expects.
+Python can then read beyond that text and potentially include unrelated
+memory contents in an exception message. PyO3 **0.24.1** fixes this defect.
 
-**The SDK cannot reach the affected code.** Nothing in `azure_cosmos_rust`
-calls `PyString::from_object` or `from_object_bound`, and neither does
-`pyo3-async-runtimes` 0.22.0. Inside pyo3 0.22.6, the only caller is the
-deprecated `PyString::from_object` wrapper (`src\types\string.rs`), which the
-binding does not use.
+**What we know about our use:** a search of our binding source found no
+direct calls to either affected function. That is not a complete check of
+calls through dependencies, and it does not prove that the defect is
+unreachable. We have confirmed an affected dependency version, not
+demonstrated an exploit through a customer operation.
 
-**Audit tools still report it.** They check the locked version, not which
-functions are called. No pipeline under `eng/` or `sdk/cosmos` runs
-`cargo audit` or `cargo deny`, so our builds don't fail. A customer who scans
-the package is still warned.
+For example, Alpha Bank's security team may flag the affected version during
+its dependency review. We should not dismiss that concern merely because
+the SDK builds or its ordinary operation tests pass.
 
-For example, Alpha Bank's security team scans `azure-cosmos`, sees
-RUSTSEC-2025-0020, and must file an exception before they can approve the
-preview.
+**Planned work, deferred to a separate change:** upgrade to **PyO3 0.30.1**
+with **`pyo3-async-runtimes` 0.30.0**. The second library connects Rust
+asynchronous work to Python's asynchronous waits. Its declared PyO3
+dependency accepts the 0.30 series; the two libraries do not need identical
+patch-version numbers.
 
-**The upgrade is a separate change before general availability.** The fix
-needs pyo3 0.24.1 or later; the latest is 0.30. `pyo3-async-runtimes` must
-move to the matching version, because each `pyo3-async-runtimes` release
-works with one pyo3 version. The binding uses pyo3's functions for
-converting values between Rust and Python in about 460 places across 24
-files, and pyo3 replaced several of those functions after 0.22. The SDK team owns this upgrade. It is complete when:
+These targets were checked on November 19, 2026 against the
+[PyO3 release](https://github.com/PyO3/pyo3/releases/tag/v0.30.1) and
+[async-runtime dependency declaration](https://docs.rs/crate/pyo3-async-runtimes/0.30.0).
+They are the planned upgrade versions, not versions already installed by
+this documentation change. Recheck advisories and compatibility when doing
+the upgrade.
 
-- `Cargo.lock` locks pyo3 0.24.1 or later.
-- `run_rust_ci.py native` and the wheel tests pass.
+This is not just changing two version numbers. PyO3 has changed APIs since
+0.22; our binding must be adapted using its
+[migration guide](https://pyo3.rs/v0.30.1/migration).
+The SDK team owns this work before general availability. Completion requires:
 
-### The wheel has no third-party license notices
+- Update the dependency declarations and lockfile, adapt the binding, and
+  confirm the affected PyO3 version is no longer selected.
+- Rebuild the extension and run the native and Python tests, including
+  synchronous/asynchronous operations, credential callbacks, cancellation,
+  and preservation of Python exceptions.
+- Build and validate the five configured wheel targets, including their
+  Python compatibility and Windows ARM64 build configuration.
 
-`_rust` is compiled from open-source Rust crates written by other people:
-207 for Windows x64, 197 for Linux x64 and 198 for macOS ARM64
-(`cargo metadata`, counting normal and build dependencies). Most use MIT or
-Apache-2.0, but 21 offer neither:
+The upgrade remains open until those checks pass. Selecting a fixed version
+addresses this advisory; it is not proof that every dependency is free of
+security defects.
 
-| License | Crates |
+<a id="the-wheel-has-no-third-party-license-notices"></a>
+
+### Confirm that required third-party license notices ship with the wheel
+
+Alpha Bank receives our compiled extension, which includes code from other
+projects. Those dependencies have their own licenses. Alpha Bank's compliance
+team may ask where to find the copyright notices and license terms for that
+code, not just the SDK's own MIT license.
+
+Two different kinds of information matter here:
+
+| Material | What it tells Alpha Bank |
 |---|---|
-| Unicode-3.0 | 18, the `icu_*`, `zerovec`, `yoke` and related crates |
-| ISC | `rustls-webpki`, `untrusted` |
-| BSD-3-Clause | `subtle` |
+| Software bill of materials, or SBOM | Which software components and versions are included |
+| License notices | The applicable copyright notices and license terms |
 
-Licenses like these usually ask that the copyright line and license text be
-included when the code is redistributed. The wheel redistributes the code in
-compiled form. The `.dist-info` folder holds only:
+A dependency list or license name alone does not establish that the required
+notices accompany the package.
 
-| File | What it contains |
-|---|---|
-| `licenses/LICENSE` | Our own MIT license |
-| `sboms/azure_cosmos_rust.cyclonedx.json` | The dependency list maturin generates, with each crate's license name but no license text or copyright lines |
+**Current evidence:** the Python package configuration declares our MIT
+license. The inspected package builder and configuration have no explicit
+third-party-notice handling. The local wheel available during this review
+was an empty archive, not usable release evidence. We therefore still need
+to inspect a freshly built release wheel; this review does not establish
+its final license-file contents.
 
-There is no third-party notice file. The repository's root `NOTICE.txt` is a
-general statement and is not packaged.
+**What we can learn from the Rust SDK:** its inspected packaging code has
+related tooling, but we have not confirmed a complete license-notice solution:
 
-For example, Alpha Bank's open-source compliance team asks where the BSD
-notice for `subtle` is. The wheel can't show them.
+- `eng\scripts\Pack-Crates.ps1` produces Rust source packages, a different
+  output from our compiled Python wheels.
+- Its internal packaging pipeline invokes
+  `eng\scripts\Generate-CargoSbom.ps1` to generate dependency information.
+- The native driver's `pipeline\Invoke-LocalSupplyChain.ps1`, under
+  `sdk\cosmos\azure_data_cosmos_driver_native`, generates and validates an
+  SBOM for compiled artifacts.
 
-**This blocks general availability until CELA, Microsoft's legal team,
-decides.** CELA must say whether the dependency list is enough or a notice
-file with the full license texts must
-ship in the wheel. If a notice file is needed, the SDK team generates it from
-`Cargo.lock` and adds it to `.dist-info/licenses/`, and a test checks that
-every wheel contains it.
+These steps establish dependency-inventory tooling, not proof that full
+required notices reach customers. No explicit consolidated notice-generation
+step was found in the inspected paths. Confirm the Rust team's release
+process and actual artifacts before deciding which tooling we can reuse.
+
+**Follow-up, deferred for now:** the SDK team should work with the Rust
+release owners and Microsoft's legal/compliance team to identify the notices
+needed for the dependencies actually shipped. Then arrange their inclusion
+in the Python wheels and check the final artifacts for every configured
+target. Keep this release-readiness item open until that review and the
+packaging checks are complete.
 
 ### Central changes still required
 
 Central owns the shared implementation under `eng/`, including compiler
 installation, wheel provisioning, signing, and publication. Reusing an
-existing hook does not require changing those shared templates. A defect in
-shared tooling, such as the ARM64 PyO3 configuration losing the requested
-stable ABI, must be resolved separately; extra test steps cannot fix it.
-Central must also verify that release processing enforces the requested
-wheels-only publication policy. Central also needs to agree on the
-contributor toolchain question in "Only Microsoft employees can build the
-package today".
+existing hook does not require changing those shared templates.
+The wheels-only publication fix belongs in Central's shared publishers;
+our Cosmos configuration already requests it. See
+[the file ownership and required publication check](#use-and-validate-the-actual-source-archive-creation-path)
+in section 14. Central also needs to agree on the
+contributor toolchain question in
+[A supported build procedure for external contributors](#a-supported-build-procedure-for-external-contributors).
 
-Central must also add `BUILD_SOURCEVERSION` to the variables that
-`eng/pipelines/templates/steps/build-package-artifacts.yml` forwards to the
-Linux build container. Until then, Linux wheels record
-`_rust.__python_commit__` as `unknown`, while Windows and macOS wheels
-record the commit (section 7, "Which commits the built extension records").
-Our own `environment-pass` list cannot fix this, because the pipeline
-replaces it (section 12, "Which settings reach the Linux build container").
+**Central must pass the source commit into the Linux build container.**
+A Git commit ID identifies the source revision used to build the wheel.
+The pipeline supplies it as `BUILD_SOURCEVERSION`, but the forwarding list in
+`eng\pipelines\templates\steps\build-package-artifacts.yml` omits it.
+Without that value or an explicit `AZURE_COSMOS_BUILD_PYTHON_COMMIT`
+override, our binding records `_rust.__python_commit__` as `unknown`.
+This is the source-confirmed fallback, not a result from an inspected release wheel.
 
-Central should also narrow the Rust installer token. Today
-`build-package-artifacts.yml` passes `System.AccessToken` as
-`MSRUSTUP_ACCESS_TOKEN` for the whole "Generate Packages" step, so every
-build tool and dependency build script can read it (section 12, "The
-pipeline's login stays visible for the whole build"). Two possible fixes:
-make the token available only while the installer runs, or use a token that
-can only read the Rust feed. This is the same on `main`.
+Central must add `BUILD_SOURCEVERSION` to that forwarding list. Adding it
+only to our package's `environment-pass` list would not fix this pipeline
+path, because the shared pipeline replaces the package list. No Python
+wrapper or Rust driver change is needed.
 
-Pipeline wiring is not evidence that the checks have passed. Before release,
-the required jobs must actually run, their results must be available, and
-the final wheels must pass the platform and installation checks described
-above. Missing required offline Python results fail the job; Cargo failure or
-missing test execution fails its command.
+Our Cosmos team must then install each final Linux wheel and compare
+`_rust.__python_commit__` with the source commit recorded by the build that
+produced it. An absent value, `unknown`, or a different commit must fail the
+release check. Follow the
+[installed-wheel commit check](wheel_validation.md#1-match-the-outputs-to-the-intended-release);
+keep this item open until the final-wheel results exist.
+
+**Open follow-up with Central: limit access to the Rust installer token.**
+A token is a credential that lets a program access resources without entering
+a password. Our installer needs one to download from the internal Rust feed;
+Alpha Bank's customer app does not need this build credential.
+
+Today, `eng\pipelines\templates\steps\build-package-artifacts.yml` passes
+`System.AccessToken` as `MSRUSTUP_ACCESS_TOKEN` for the entire "Generate
+Packages" step. It also forwards that variable into the Linux build container.
+The installer uses it for its download, but other build tools and dependency
+build scripts can also read it from their inherited environment.
+
+Central owns the shared pipeline change. The goal is to supply the credential
+only to the installation work that needs it, not to subsequent compilation.
+Central should also check whether its permissions can be restricted to reading
+the required feed. Reducing permissions limits what the token can do;
+limiting its availability reduces which programs can use it. These are
+separate protections, not interchangeable fixes.
+
+To close this item, Central must demonstrate that installation still succeeds
+and subsequent compilation and dependency build scripts cannot read
+`MSRUSTUP_ACCESS_TOKEN`. Check for its presence without printing its value.
+Record the approved permissions separately. The inspected files establish
+where the credential is supplied, not its actual permissions or evidence of
+theft. No customer app, Python wrapper, or Rust driver change is needed.
+
+**Release-wheel validation remains open until the required results exist.**
+Follow the [local and pipeline validation walkthrough](wheel_validation.md).
+The release record must identify the final wheel files and show results for
+each required platform/Python combination. Source-level tests and pipeline
+configuration alone do not establish that those wheels install and run.
 
 The package keeps technical terms in `sdk/cosmos/azure-cosmos/cspell.json`,
 without changing the root dictionary. The SDK templates use file-local

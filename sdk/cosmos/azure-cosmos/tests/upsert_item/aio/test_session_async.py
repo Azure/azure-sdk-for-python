@@ -11,6 +11,7 @@ be observed. Every operation and every response-side assertion still runs in ord
 the test then skips, naming the outgoing-request checks it could not verify.
 """
 
+import importlib.util
 import os
 import unittest
 import uuid
@@ -19,13 +20,18 @@ from typing import Awaitable, Callable
 
 import pytest
 
-from _fault_injection_transport_async import FaultInjectionTransportAsync
-from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient, DatabaseProxy
 from azure.cosmos.http_constants import HttpHeaders
 from config.clients import create_data_client_async
+
+# The whl_no_aio CI check uninstalls aiohttp. Only the multi-write test needs it,
+# so the other tests in this file must still load and run without it.
+HAS_AIOHTTP = importlib.util.find_spec("aiohttp") is not None
+if HAS_AIOHTTP:
+    from _fault_injection_transport_async import FaultInjectionTransportAsync
+    from azure.core.pipeline.transport._aiohttp import AioHttpTransportResponse
 
 
 def assert_no_session_token(request):
@@ -173,6 +179,8 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         # For multiple write regions, all document requests should send out session tokens
         # We will use fault injection to simulate the regions the emulator needs
         # NOTE: This test stays entirely on key-auth since it uses a custom FaultInjection transport
+        if not HAS_AIOHTTP:
+            pytest.skip("aiohttp is not installed; this test builds an aiohttp-based fault injection transport.")
         custom_transport = FaultInjectionTransportAsync()
 
         # Inject topology transformation that would make Emulator look like a multiple write region account

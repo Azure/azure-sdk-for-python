@@ -13,42 +13,42 @@ Run with::
 
     pytest --noconftest tests/read_all_items/aio/test_none_options_async.py -v
 """
-import os
 import unittest
 import uuid
 
 import pytest
 
 from azure.cosmos import PartitionKey
-from azure.cosmos.aio import CosmosClient
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from config.clients import create_data_client_async, create_setup_client_async
 
 
 @pytest.mark.cosmosEmulator
 class TestNoneOptionsAsync(unittest.IsolatedAsyncioTestCase):
 
     async def asyncSetUp(self):
-        self.client = CosmosClient(HOST, KEY, _backend="rust", timeout=30)
+        # Key client owns the database and container; the data client does
+        # item work, as in the original.
+        self.key_client = create_setup_client_async(_backend="rust", timeout=30)
+        await self.key_client.__aenter__()
+        self.client = create_data_client_async(_backend="rust", timeout=30)
         await self.client.__aenter__()
         self._db_id = "rust_read_all_none_opts_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
-        self.database = await self.client.create_database(self._db_id)
-        self.container = await self.database.create_container(
+        key_database = await self.key_client.create_database(self._db_id)
+        await key_database.create_container(
             id=self._container_id,
             partition_key=PartitionKey(path="/pk"),
         )
+        self.container = self.client.get_database_client(
+            self._db_id
+        ).get_container_client(self._container_id)
 
     async def asyncTearDown(self):
         try:
-            await self.client.delete_database(self._db_id)
+            await self.key_client.delete_database(self._db_id)
         finally:
             await self.client.close()
+            await self.key_client.close()
 
     async def _create_sample_item(self):
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 42}

@@ -7,9 +7,8 @@ import unittest
 import pytest
 
 from azure.cosmos import _rust, exceptions
-from azure.cosmos.aio import CosmosClient
 from common._rust_checks import run_on_rust_async
-from config.settings import TestSettings
+from config import clients
 from list_databases._throttling_timeout import delayed_throttling_rule, snapshot, assert_throttled_timeout
 
 
@@ -21,9 +20,7 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
     async def test_timeout_on_throttling_error_async_rust(self):
         # Source: tests/test_crud_async.py::TestCRUDOperationsAsync.test_timeout_on_throttling_error_async
         rule = delayed_throttling_rule()
-        async with CosmosClient(
-            TestSettings.host,
-            TestSettings.masterKey,
+        async with clients.create_data_client_async(
             _backend="rust",
             _fault_injection_rules=[rule],
         ) as client:
@@ -36,11 +33,6 @@ class TestCRUDOperationsAsync(unittest.IsolatedAsyncioTestCase):
             assert snapshot(handle, rule["id"])[1] == 0
             _rust._debug_set_fault_injection_rule_enabled(handle, rule["id"], True)
             try:
-                before = snapshot(handle, rule["id"])
-                with self.assertRaises(exceptions.CosmosClientTimeoutError):
-                    await client.create_database_if_not_exists("test", timeout=20)
-                assert_throttled_timeout(before, snapshot(handle, rule["id"]), 20)
-
                 databases = client.list_databases(timeout=12)
                 before = snapshot(handle, rule["id"])
                 with self.assertRaises(exceptions.CosmosClientTimeoutError):

@@ -241,8 +241,11 @@ def isolate(request, target):
     environment["F02_CONTAINER_ID"] = container.id
     # Existing driver E2E control: wait for observed topology, never a fixed sleep.
     environment["AZURE_COSMOS_E2E_BACKGROUND_ACCOUNT_REFRESH_INTERVAL_MS"] = "100"
+    # Keep the source checkout from hiding the parent's installed wheel.
+    import_paths = [str(Path(path).resolve()) for path in sys.path]
+    bootstrap = f"import sys; sys.path[:] = {import_paths!r}; import pytest; sys.exit(pytest.main())"
     command = [
-        sys.executable, "-m", "pytest", "-vv", "-s", "-o", "pythonpath=tests",
+        sys.executable, "-c", bootstrap, "-vv", "-s", "-o", "pythonpath=tests",
         "--no-header", "--tb=short", "--color=no", "-rfE",
         "--confcutdir=tests\\fault_injection", "--f02-worker", node,
     ]

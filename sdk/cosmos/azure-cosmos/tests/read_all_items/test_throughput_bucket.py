@@ -6,9 +6,8 @@ import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, PartitionKey, _rust
-from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from config.settings import TestSettings
+from azure.cosmos import PartitionKey, _rust
+from config.clients import create_data_client, create_data_client_async
 from read_items.test_fault_recovery import (
     legacy_fault_database,
 )  # pylint: disable=unused-import
@@ -33,9 +32,8 @@ async def test_read_all_throughput_bucket_on_every_fetch_rust(
             item_id = str(uuid.uuid4())
             expected.add(item_id)
             owned.create_item({"id": item_id, "pk": "mypk"})
-        client = (AsyncCosmosClient if asynchronous else CosmosClient)(
-            TestSettings.host,
-            TestSettings.masterKey,
+        # The original reads through the data client (AAD in AAD lanes).
+        client = (create_data_client_async if asynchronous else create_data_client)(
             _backend="rust",
             throughput_bucket=2,
         )
