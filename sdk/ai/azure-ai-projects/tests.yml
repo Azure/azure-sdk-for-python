@@ -292,13 +292,13 @@ extends:
                     AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                     AZURE_TENANT_ID: $(AZURE_TENANT_ID)
                     SAMPLE_QUEUE_NAME: $(QueueName)
-                - task: PublishPipelineArtifact@1
+                - task: 1ES.PublishPipelineArtifact@1
                   displayName: 'Publish this queue''s deployment state and diagnostics'
                   condition: always()
                   inputs:
                     targetPath: $(Pipeline.Workspace)/sample-results/$(QueueName)
-                    artifact: sample-results-$(QueueName)
-                    publishLocation: pipeline
+                    artifactName: sample-results-$(QueueName)-$(System.JobAttempt)
+                    sbomEnabled: false
       - stage: ReportRejectedSamples
         displayName: 'Fail the run for samples rejected during planning'
         dependsOn:

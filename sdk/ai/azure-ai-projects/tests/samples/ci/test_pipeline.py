@@ -103,9 +103,9 @@ def test_cleanup_and_result_publication_still_run_on_failure(pipeline):
     cleanup = next(step for step in job["steps"] if "Remove-SampleResources.ps1" in str(step))
     assert cleanup["condition"] == "always()"
     assert "-ConfirmCleanup" in cleanup["inputs"]["inlineScript"]
-    results = next(step for step in job["steps"] if step.get("task") == "PublishPipelineArtifact@1")
+    results = next(step for step in job["steps"] if step.get("task") == "1ES.PublishPipelineArtifact@1")
     assert results["condition"] == "always()"
-    assert results["inputs"]["artifact"] == "sample-results-$(QueueName)"
+    assert results["inputs"]["artifactName"] == "sample-results-$(QueueName)-$(System.JobAttempt)"
 
 
 @pytest.mark.parametrize("secret", ["MCP_GITHUB_PAT", "PROJ_CONN_OPEN_API_KEY"])
@@ -332,8 +332,8 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
     assert "variable=WorkerMatrix;isOutput=true" in plan["pwsh"]
     assert "TestSamples = 'false'" in plan["pwsh"]
     assert "Pool = 'azsdk-pool'" in plan["pwsh"]
-    artifact = next(step for step in job["steps"] if step.get("task") == "PublishPipelineArtifact@1")
-    assert artifact["inputs"]["artifact"] == "sample-results-$(QueueName)"
+    artifact = next(step for step in job["steps"] if step.get("task") == "1ES.PublishPipelineArtifact@1")
+    assert artifact["inputs"]["artifactName"] == "sample-results-$(QueueName)-$(System.JobAttempt)"
     for step in job["steps"]:
         if step.get("task") == "AzureCLI@2":
             assert step["env"]["SAMPLE_QUEUE_NAME"] == "$(QueueName)"

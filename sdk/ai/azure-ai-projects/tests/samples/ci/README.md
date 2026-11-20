@@ -96,7 +96,7 @@ Read-only admission still rejects leftover temporary sample RGs, repeated/empty 
 2. Set `selectionKind`, `selection`, maximum worker count, **identityResourceGroup** and model options. No preview, connection, Library-group or region fields are shown.
 3. Before queueing, verify the saved variables, configured connection, selected identity set and previous run's cleanup. **Run** authorizes provisioning billable resources after internal planning and live admission succeed.
 4. Inspect offline selections/intents in **sample-plan** and actual admitted identity IDs/region in **resolved-sample-plan**, under each active queue. Each node appears exactly once; the shared live-test job starts each queue after admission.
-5. Verify every queue's ADO **Tests** results and the deployment state in **sample-results-q1** through **sample-results-q4**, as applicable. Cleanup attempts run even if a test fails.
+5. Verify every queue's ADO **Tests** results and the deployment state in **sample-results-q1-<attempt>** through **sample-results-q4-<attempt>**, as applicable. Cleanup attempts run even if a test fails.
 
 To verify repeatability, wait for all queues to pass and finish verified cleanup before queueing a second fresh batch. Each queue gets a new plan, owner token and RG; shared identities alone persist. Never reuse the first batch's workloads or overlap retries.
 
