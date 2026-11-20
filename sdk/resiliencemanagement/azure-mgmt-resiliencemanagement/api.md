@@ -11,6 +11,7 @@ namespace azure.mgmt.resiliencemanagement
         goal_resources: GoalResourcesOperations
         operation_status: OperationStatusOperations
         operations: Operations
+        recovery_config_profiles: RecoveryConfigProfilesOperations
         recovery_job_resources: RecoveryJobResourcesOperations
         recovery_jobs: RecoveryJobsOperations
         recovery_plan_actions: RecoveryPlanActionsOperations
@@ -54,6 +55,7 @@ namespace azure.mgmt.resiliencemanagement.aio
         goal_resources: GoalResourcesOperations
         operation_status: OperationStatusOperations
         operations: Operations
+        recovery_config_profiles: RecoveryConfigProfilesOperations
         recovery_job_resources: RecoveryJobResourcesOperations
         recovery_jobs: RecoveryJobsOperations
         recovery_plan_actions: RecoveryPlanActionsOperations
@@ -96,7 +98,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -106,7 +108,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> DrillResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -127,7 +129,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'drill_run_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'drill_run_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -138,7 +140,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> DrillRunResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -235,7 +237,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_generate_report(
                 self, 
                 service_group_name: str, 
@@ -364,7 +366,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_resume(
                 self, 
                 service_group_name: str, 
@@ -376,7 +378,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -386,7 +388,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> DrillRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -473,7 +475,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[Drill]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -518,7 +520,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_resync_readiness_check(
                 self, 
                 service_group_name: str, 
@@ -634,7 +636,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -643,7 +645,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> Drill: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -699,7 +701,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[Enrollment]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -709,7 +711,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -719,7 +721,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> Enrollment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -770,7 +772,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -812,7 +814,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_refresh_goal_resources(
                 self, 
                 service_group_name: str, 
@@ -887,7 +889,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -896,7 +898,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> GoalAssignment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -916,7 +918,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'goal_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'goal_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -926,7 +928,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> GoalResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -947,7 +949,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 location: str, 
@@ -965,8 +967,118 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(self, **kwargs: Any) -> AsyncItemPaged[Operation]: ...
+
+
+    class azure.mgmt.resiliencemanagement.aio.operations.RecoveryConfigProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_config_profile_name']}, api_versions_list=['2026-11-30-preview'])
+        async def begin_delete(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[RecoveryConfigProfile]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_config_profile_name', 'accept']}, api_versions_list=['2026-11-30-preview'])
+        async def get(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                **kwargs: Any
+            ) -> RecoveryConfigProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-11-30-preview'])
+        def list(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[RecoveryConfigProfile]: ...
 
 
     class azure.mgmt.resiliencemanagement.aio.operations.RecoveryJobResourcesOperations:
@@ -978,7 +1090,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'recovery_job_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'recovery_job_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -989,7 +1101,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> RecoveryJobResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -1086,7 +1198,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[ArmResponseErrorResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'recovery_job_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'recovery_job_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_retry(
                 self, 
                 service_group_name: str, 
@@ -1098,7 +1210,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[ArmResponseErrorResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -1108,7 +1220,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> RecoveryJob: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -1126,7 +1238,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_check_readiness(
                 self, 
                 service_group_name: str, 
@@ -1173,7 +1285,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[RecoveryPlanActionBaseResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_failover_commit(
                 self, 
                 service_group_name: str, 
@@ -1184,7 +1296,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[RecoveryPlanActionBaseResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_finalize(
                 self, 
                 service_group_name: str, 
@@ -1375,7 +1487,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[ValidateForRecoveryOperationBaseResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_validate_for_failover_commit(
                 self, 
                 service_group_name: str, 
@@ -1494,7 +1606,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[ValidateForRecoveryOperationBaseResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_validate_for_test_failover_cleanup(
                 self, 
                 service_group_name: str, 
@@ -1547,7 +1659,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[RecoveryPlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -1589,7 +1701,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[RecoveryPlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -1598,7 +1710,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> RecoveryPlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -1618,7 +1730,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -1628,7 +1740,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> RecoveryResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -1646,7 +1758,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'unified_resilience_item_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'unified_resilience_item_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 service_group_name: str, 
@@ -1655,7 +1767,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> UnifiedResilienceItem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -1708,7 +1820,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[UsagePlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -1750,7 +1862,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncLROPoller[UsagePlan]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -1759,7 +1871,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> UsagePlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -1767,7 +1879,7 @@ namespace azure.mgmt.resiliencemanagement.aio.operations
             ) -> AsyncItemPaged[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[UsagePlan]: ...
 
 
@@ -1935,6 +2047,12 @@ namespace azure.mgmt.resiliencemanagement.models
         ENABLE = "Enable"
 
 
+    class azure.mgmt.resiliencemanagement.models.BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LOG = "Log"
+        SNAPSHOT = "Snapshot"
+        STREAMING = "Streaming"
+
+
     class azure.mgmt.resiliencemanagement.models.ChaosResourcePropertiesOfDrill(_Model):
         chaos_resource_id: Optional[str]
         chaos_resource_identity_for_faults: AssociatedIdentity
@@ -1965,6 +2083,11 @@ namespace azure.mgmt.resiliencemanagement.models
         REJECTED_BY_USER = "RejectedByUser"
 
 
+    class azure.mgmt.resiliencemanagement.models.CopyOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        OVERWRITE = "Overwrite"
+        SKIP = "Skip"
+
+
     class azure.mgmt.resiliencemanagement.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPLICATION = "Application"
         KEY = "Key"
@@ -1982,6 +2105,55 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 fault_name: str, 
                 script_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.CyberResiliencyGroupProperties(RecoveryGroupResiliencyProperties, discriminator='CyberResiliency'):
+        recovery_config_profile_associations: Optional[list[RecoveryConfigProfileAssociation]]
+        resiliency_type: Literal[ResiliencyType.CYBER_RESILIENCY]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_config_profile_associations: Optional[list[RecoveryConfigProfileAssociation]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.CyberResiliencyPlanProperties(RecoveryPlanResiliencyProperties, discriminator='CyberResiliency'):
+        resiliency_type: Literal[ResiliencyType.CYBER_RESILIENCY]
+        target_environment: TargetEnvironment
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_environment: TargetEnvironment
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.CyberResiliencyResourceProperties(RecoveryResourceResiliencyProperties, discriminator='CyberResiliency'):
+        inclusion_eligibility: Optional[Union[str, RecoveryResourceInclusionEligibility]]
+        membership_through_service_group_members: Optional[list[str]]
+        protected_item_details: Optional[list[ProtectedItemDetails]]
+        recovery_config_profile_id: Optional[str]
+        resiliency_type: Literal[ResiliencyType.CYBER_RESILIENCY]
+        workload_type: Optional[Union[str, WorkloadType]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_config_profile_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2169,6 +2341,8 @@ namespace azure.mgmt.resiliencemanagement.models
         advisor_recommendation_type_id: Optional[str]
         attention_reason: Optional[DrillResourceAttentionReason]
         drill_type: str
+        fault_eligibility: Optional[Union[str, FaultEligibility]]
+        fault_ineligible_reason: Optional[Union[str, FaultIneligibleReason]]
         fault_properties: Optional[FaultProperties]
         fault_state: Optional[Union[str, DrillResourceFaultState]]
         force_inclusion_state: Optional[Union[str, ForceInclusionAndUpdate]]
@@ -2281,6 +2455,7 @@ namespace azure.mgmt.resiliencemanagement.models
         job_type: Literal[JobType.DRILL_RUN]
         notes: Optional[list[str]]
         operation: str
+        recovery_time_objective: Optional[Union[str, IsoDuration]]
         report: Optional[DrillReportSummary]
         resource_id: str
         retry_details: list[JobRetryDetails]
@@ -2441,6 +2616,10 @@ namespace azure.mgmt.resiliencemanagement.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.EffectiveConfiguration(_Model):
+        workload_config: WorkloadConfig
 
 
     class azure.mgmt.resiliencemanagement.models.Enrollment(ProxyResource):
@@ -2626,6 +2805,17 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.FaultEligibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ELIGIBLE = "Eligible"
+        INELIGIBLE = "Ineligible"
+        UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.resiliencemanagement.models.FaultIneligibleReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RECOVERY_PLAN_NOT_CONFIGURED = "RecoveryPlanNotConfigured"
+        RESOURCE_NOT_INCLUDED_IN_RECOVERY_PLAN = "ResourceNotIncludedInRecoveryPlan"
+
+
     class azure.mgmt.resiliencemanagement.models.FaultProperties(_Model):
         available_faults: Optional[list[FaultDetails]]
         custom_fault: Optional[CustomFaultDetails]
@@ -2638,6 +2828,29 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 custom_fault: Optional[CustomFaultDetails] = ..., 
                 overridden_default_fault: Optional[FaultDetails] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.FileShareRecoveryConfig(WorkloadConfig, discriminator='AzureFileShare'):
+        copy_options: Optional[Union[str, CopyOptions]]
+        identity: Optional[ManagedServiceIdentity]
+        storage_account: TargetResourceSpec
+        target_folder_path: Optional[str]
+        target_name_prefix: Optional[str]
+        workload_type: Literal[WorkloadType.AZURE_FILE_SHARE]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                copy_options: Optional[Union[str, CopyOptions]] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                storage_account: TargetResourceSpec, 
+                target_folder_path: Optional[str] = ..., 
+                target_name_prefix: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2670,6 +2883,8 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.GoalAssignmentProperties(_Model):
         error_details: Optional[ErrorDetail]
         provisioning_state: Optional[Union[str, ProvisioningState]]
+        regional_objectives: Optional[RegionalObjectives]
+        require_regional_resiliency: Optional[bool]
         require_zonal_resiliency: bool
         service_level_resources: Optional[list[ServiceLevelResource]]
 
@@ -2677,6 +2892,8 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(
                 self, 
                 *, 
+                regional_objectives: Optional[RegionalObjectives] = ..., 
+                require_regional_resiliency: Optional[bool] = ..., 
                 require_zonal_resiliency: bool, 
                 service_level_resources: Optional[list[ServiceLevelResource]] = ...
             ) -> None: ...
@@ -2720,6 +2937,7 @@ namespace azure.mgmt.resiliencemanagement.models
 
     class azure.mgmt.resiliencemanagement.models.GoalResourceProperties(_Model):
         provisioning_state: Optional[Union[str, ProvisioningState]]
+        regional_resiliency: Optional[ResiliencyProperties]
         resource_arm_id: str
         zonal_resiliency: Optional[ResiliencyProperties]
 
@@ -2727,6 +2945,7 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(
                 self, 
                 *, 
+                regional_resiliency: Optional[ResiliencyProperties] = ..., 
                 resource_arm_id: str, 
                 zonal_resiliency: Optional[ResiliencyProperties] = ...
             ) -> None: ...
@@ -2737,6 +2956,7 @@ namespace azure.mgmt.resiliencemanagement.models
 
     class azure.mgmt.resiliencemanagement.models.GoalsData(_Model):
         assignment_id: str
+        regional_resiliency: Optional[UnifiedResilienceItemGoalRequirement]
         zonal_resiliency: Optional[UnifiedResilienceItemGoalRequirement]
 
         @overload
@@ -2744,6 +2964,7 @@ namespace azure.mgmt.resiliencemanagement.models
                 self, 
                 *, 
                 assignment_id: str, 
+                regional_resiliency: Optional[UnifiedResilienceItemGoalRequirement] = ..., 
                 zonal_resiliency: Optional[UnifiedResilienceItemGoalRequirement] = ...
             ) -> None: ...
 
@@ -2788,9 +3009,46 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.InfrastructureResiliencyGroupProperties(RecoveryGroupResiliencyProperties, discriminator='InfrastructureResiliency'):
+        resiliency_type: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.InfrastructureResiliencyPlanProperties(RecoveryPlanResiliencyProperties, discriminator='InfrastructureResiliency'):
+        resiliency_type: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.InfrastructureResiliencyResourceProperties(RecoveryResourceResiliencyProperties, discriminator='InfrastructureResiliency'):
+        resiliency_type: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.InitialConfig(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COMPLETE = "Complete"
         PENDING = "Pending"
+
+
+    class azure.mgmt.resiliencemanagement.models.IsoDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        PT15_M = "PT15M"
+        PT1_H = "PT1H"
+        PT24_H = "PT24H"
+        PT4_H = "PT4H"
 
 
     class azure.mgmt.resiliencemanagement.models.JobErrorInfo(_Model):
@@ -2948,6 +3206,7 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.LastRunProperties(_Model):
         last_run_attestation: Optional[Union[str, DrillAttestation]]
         last_run_duration: Optional[timedelta]
+        last_run_recovery_time_actual: Optional[timedelta]
         last_run_state: Optional[Union[str, JobStatus]]
         last_run_time: Optional[datetime]
 
@@ -3107,6 +3366,15 @@ namespace azure.mgmt.resiliencemanagement.models
         USER_SYSTEM = "user,system"
 
 
+    class azure.mgmt.resiliencemanagement.models.ProtectedItemDetails(_Model):
+        container_resource_id: Optional[str]
+        location: Optional[str]
+        protected_item_id: Optional[str]
+        protection_state: Optional[Union[str, ResourceProtectionState]]
+        recovery_locations: Optional[list[str]]
+        vault_resource_id: Optional[str]
+
+
     class azure.mgmt.resiliencemanagement.models.ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ACCEPTED = "Accepted"
         CANCELED = "Canceled"
@@ -3170,6 +3438,63 @@ namespace azure.mgmt.resiliencemanagement.models
                 self, 
                 *, 
                 description: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryConfigProfile(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[RecoveryConfigProfileProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[RecoveryConfigProfileProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryConfigProfileAssociation(_Model):
+        recovery_config_profile_id: str
+        workload_type: Union[str, WorkloadType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_config_profile_id: str, 
+                workload_type: Union[str, WorkloadType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryConfigProfileProperties(_Model):
+        attention_reasons: Optional[list[str]]
+        effective_configuration: Optional[EffectiveConfiguration]
+        needs_attention: Optional[bool]
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        recovery_point_policy: Optional[RecoveryPointPolicy]
+        target_scope: TargetScope
+        workload_config: WorkloadConfig
+        workload_type: Union[str, WorkloadType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                recovery_point_policy: Optional[RecoveryPointPolicy] = ..., 
+                target_scope: TargetScope, 
+                workload_config: WorkloadConfig
             ) -> None: ...
 
         @overload
@@ -3277,6 +3602,7 @@ namespace azure.mgmt.resiliencemanagement.models
         order_id: int
         post_actions: Optional[list[RecoveryGroupBaseAction]]
         pre_actions: Optional[list[RecoveryGroupBaseAction]]
+        resiliency_group_properties: Optional[RecoveryGroupResiliencyProperties]
 
         @overload
         def __init__(
@@ -3286,7 +3612,22 @@ namespace azure.mgmt.resiliencemanagement.models
                 group_unique_id: str, 
                 order_id: int, 
                 post_actions: Optional[list[RecoveryGroupBaseAction]] = ..., 
-                pre_actions: Optional[list[RecoveryGroupBaseAction]] = ...
+                pre_actions: Optional[list[RecoveryGroupBaseAction]] = ..., 
+                resiliency_group_properties: Optional[RecoveryGroupResiliencyProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryGroupResiliencyProperties(_Model):
+        resiliency_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resiliency_type: str
             ) -> None: ...
 
         @overload
@@ -3486,6 +3827,7 @@ namespace azure.mgmt.resiliencemanagement.models
         plan_type: Union[str, RecoveryPlanType]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         recovery_groups_setting: RecoveryGroupsSetting
+        resiliency_plan_properties: Optional[RecoveryPlanResiliencyProperties]
 
         @overload
         def __init__(
@@ -3493,7 +3835,8 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 plan_description: str, 
                 plan_type: Union[str, RecoveryPlanType], 
-                recovery_groups_setting: RecoveryGroupsSetting
+                recovery_groups_setting: RecoveryGroupsSetting, 
+                resiliency_plan_properties: Optional[RecoveryPlanResiliencyProperties] = ...
             ) -> None: ...
 
         @overload
@@ -3516,6 +3859,20 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.RecoveryPlanResiliencyProperties(_Model):
+        resiliency_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resiliency_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.RecoveryPlanState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         READY = "Ready"
         UNDER_EDIT = "UnderEdit"
@@ -3523,8 +3880,44 @@ namespace azure.mgmt.resiliencemanagement.models
 
 
     class azure.mgmt.resiliencemanagement.models.RecoveryPlanType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CYBER_RECOVERY = "CyberRecovery"
         REGIONAL = "Regional"
         ZONAL = "Zonal"
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryPointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALL = "All"
+        HEALTHY_AND_UNKNOWN = "HealthyAndUnknown"
+        HEALTHY_ONLY = "HealthyOnly"
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryPointPolicy(_Model):
+        backup_type: list[Union[str, BackupType]]
+        end_time: Optional[datetime]
+        lookback_duration: Optional[timedelta]
+        recovery_point_health_status: Optional[Union[str, RecoveryPointHealthStatus]]
+        start_time: Optional[datetime]
+        type: Union[str, RecoveryPointPolicyType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                backup_type: list[Union[str, BackupType]], 
+                end_time: Optional[datetime] = ..., 
+                lookback_duration: Optional[timedelta] = ..., 
+                recovery_point_health_status: Optional[Union[str, RecoveryPointHealthStatus]] = ..., 
+                start_time: Optional[datetime] = ..., 
+                type: Union[str, RecoveryPointPolicyType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryPointPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LATEST = "Latest"
+        RANDOM = "Random"
 
 
     class azure.mgmt.resiliencemanagement.models.RecoveryResource(ProxyResource):
@@ -3545,16 +3938,23 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.RecoveryResourceInclusionEligibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CANNOT_BE_INCLUDED = "CannotBeIncluded"
+        CAN_BE_INCLUDED = "CanBeIncluded"
+
+
     class azure.mgmt.resiliencemanagement.models.RecoveryResourceProperties(_Model):
         associated_identity: Optional[AssociatedIdentity]
         attention_reasons: Optional[list[str]]
         error_details: Optional[ErrorDetail]
+        inclusion_disabled_reasons: Optional[list[Union[str, ResourceInclusionDisabledReason]]]
         inclusion_state: Optional[Union[str, ResourceInclusionState]]
         needs_attention: Optional[bool]
         protection_status: Optional[Union[str, ResourceProtectionStatus]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         recovery_group_id: Optional[str]
         recovery_resource_unique_id: str
+        resiliency_resource_properties: Optional[RecoveryResourceResiliencyProperties]
         resource_id: Optional[str]
         resource_location: Optional[str]
         resource_physical_zones: Optional[list[str]]
@@ -3570,6 +3970,7 @@ namespace azure.mgmt.resiliencemanagement.models
                 inclusion_state: Optional[Union[str, ResourceInclusionState]] = ..., 
                 recovery_group_id: Optional[str] = ..., 
                 recovery_resource_unique_id: str, 
+                resiliency_resource_properties: Optional[RecoveryResourceResiliencyProperties] = ..., 
                 selected_protection_solution_setting: Optional[ResourceBaseProtectionSolutionSetting] = ..., 
                 selected_protection_solution_type: Optional[Union[str, ResourceProtectionSolutionType]] = ...
             ) -> None: ...
@@ -3592,6 +3993,27 @@ namespace azure.mgmt.resiliencemanagement.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryResourceResiliencyProperties(_Model):
+        resiliency_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                resiliency_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RecoveryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALTERNATE_LOCATION = "AlternateLocation"
+        CREATE_NEW_VM = "CreateNewVM"
+        RESTORE_AS_DISKS = "RestoreAsDisks"
+        RESTORE_AS_FILES = "RestoreAsFiles"
 
 
     class azure.mgmt.resiliencemanagement.models.RegionalDrillProperties(DrillProperties, discriminator='Regional'):
@@ -3636,8 +4058,11 @@ namespace azure.mgmt.resiliencemanagement.models
     class azure.mgmt.resiliencemanagement.models.RegionalDrillResourceProperties(DrillResourceProperties, discriminator='Regional'):
         active_locations: list[str]
         advisor_recommendation_type_id: str
+        advisor_regional_recommendation_id: Optional[str]
         attention_reason: DrillResourceAttentionReason
         drill_type: Literal[DrillType.REGIONAL]
+        fault_eligibility: Union[str, FaultEligibility]
+        fault_ineligible_reason: Union[str, FaultIneligibleReason]
         fault_properties: FaultProperties
         fault_state: Union[str, DrillResourceFaultState]
         force_inclusion_state: Union[str, ForceInclusionAndUpdate]
@@ -3649,6 +4074,8 @@ namespace azure.mgmt.resiliencemanagement.models
         recovery_locations: list[str]
         recovery_plan_exclusion_reason: Union[str, RecoveryPlanExclusionReason]
         recovery_plan_inclusion_state: Union[str, ResourceInclusionState]
+        regional_resiliency_status: Optional[Union[str, RegionalResiliencyStatus]]
+        replication_mode: Optional[Union[str, ReplicationMode]]
         resource_id: str
         resource_protection_solution_type: Union[str, ResourceProtectionSolutionType]
         resource_type: str
@@ -3666,9 +4093,36 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.RegionalObjectives(_Model):
+        target_recovery_point_objective: Union[str, IsoDuration]
+        target_recovery_time_objective: Union[str, IsoDuration]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_recovery_point_objective: Union[str, IsoDuration], 
+                target_recovery_time_objective: Union[str, IsoDuration]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.RegionalResiliencyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NOT_RESILIENT = "NotResilient"
+        RESILIENT = "Resilient"
+
+
     class azure.mgmt.resiliencemanagement.models.RelativeResourceCompositionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         IN_SYNC = "InSync"
         OUT_OF_SYNC = "OutOfSync"
+
+
+    class azure.mgmt.resiliencemanagement.models.ReplicationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE_ACTIVE = "ActiveActive"
+        ACTIVE_PASSIVE = "ActivePassive"
+        NONE = "None"
 
 
     class azure.mgmt.resiliencemanagement.models.ReportStageStatus(_Model):
@@ -3735,11 +4189,35 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.ResiliencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CYBER_RESILIENCY = "CyberResiliency"
+        INFRASTRUCTURE_RESILIENCY = "InfrastructureResiliency"
+
+
     class azure.mgmt.resiliencemanagement.models.Resource(_Model):
         id: Optional[str]
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceAzureTemplateProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureTemplate'):
+        deployment_location: Optional[str]
+        deployment_scope: str
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]
+        template_spec_version_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                deployment_location: Optional[str] = ..., 
+                deployment_scope: str, 
+                template_spec_version_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.ResourceBaseProtectionSolutionSetting(_Model):
@@ -3751,6 +4229,16 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 protection_solution_type: str
             ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceCosmosDBProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureCosmosDB'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]
+
+        @overload
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -3843,6 +4331,11 @@ namespace azure.mgmt.resiliencemanagement.models
         SKU_CAPACITY = "SkuCapacity"
 
 
+    class azure.mgmt.resiliencemanagement.models.ResourceInclusionDisabledReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RESOURCE_ACTIVE_ACTIVE_PROTECTION = "ResourceActiveActiveProtection"
+        RESOURCE_HIGHLY_AVAILABLE = "ResourceHighlyAvailable"
+
+
     class azure.mgmt.resiliencemanagement.models.ResourceInclusionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EXCLUDED = "Excluded"
         INCLUDED = "Included"
@@ -3876,6 +4369,16 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.ResourceNetAppFilesProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureNetAppFiles'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionSettings(_Model):
         active_location: Optional[str]
         active_locations: Optional[list[str]]
@@ -3887,17 +4390,39 @@ namespace azure.mgmt.resiliencemanagement.models
         protection_status: Optional[Union[str, ResourceProtectionStatus]]
         recovery_locations: Optional[list[str]]
         replica_resources: Optional[list[str]]
+        replication_mode: Optional[Union[str, ReplicationMode]]
         replication_role: Optional[Union[str, ResourceReplicationRole]]
         resource_id: Optional[str]
         test_failover_state: Optional[Union[str, TestFailoverState]]
 
+        @overload
+        def __init__(
+                self, 
+                *, 
+                replication_mode: Optional[Union[str, ReplicationMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
 
     class azure.mgmt.resiliencemanagement.models.ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_COSMOS_DB = "AzureCosmosDB"
         AZURE_NATIVE = "AzureNative"
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        AZURE_SERVICE_BUS = "AzureServiceBus"
         AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+        AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+        AZURE_TEMPLATE = "AzureTemplate"
         CROSS_ZONE_VM_RECOVERY = "CrossZoneVMRecovery"
         CUSTOM_RUNBOOK = "CustomRunbook"
         NONE = "None"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NOT_PROTECTED = "NotProtected"
+        PROTECTED = "Protected"
+        UNKNOWN = "Unknown"
 
 
     class azure.mgmt.resiliencemanagement.models.ResourceProtectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3911,6 +4436,16 @@ namespace azure.mgmt.resiliencemanagement.models
         PRIMARY = "Primary"
         REPLICA = "Replica"
         UNKNOWN = "Unknown"
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceServiceBusProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureServiceBus'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]
+
+        @overload
+        def __init__(self) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.resiliencemanagement.models.ResourceSiteRecoveryProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureSiteRecovery'):
@@ -3969,6 +4504,16 @@ namespace azure.mgmt.resiliencemanagement.models
                 *, 
                 network_resource_id: Optional[str] = ...
             ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.ResourceStorageAccountProtectionSetting(ResourceBaseProtectionSolutionSetting, discriminator='AzureStorageAccount'):
+        protection_solution_type: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]
+
+        @overload
+        def __init__(self) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
@@ -4138,6 +4683,62 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.TargetEnvironment(_Model):
+        target_locations: list[str]
+        target_subscription_ids: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                target_locations: list[str], 
+                target_subscription_ids: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.TargetProvisioningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EXISTING = "Existing"
+
+
+    class azure.mgmt.resiliencemanagement.models.TargetResourceSpec(_Model):
+        arm_resource_type: str
+        depends_on: Optional[list[str]]
+        provisioning_mode: Optional[Union[str, TargetProvisioningMode]]
+        resource_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                arm_resource_type: str, 
+                depends_on: Optional[list[str]] = ..., 
+                provisioning_mode: Optional[Union[str, TargetProvisioningMode]] = ..., 
+                resource_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.TargetScope(_Model):
+        location: str
+        subscription_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                subscription_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.TestFailoverCleanupRequest(_Model):
         comments: Optional[str]
 
@@ -4251,13 +4852,39 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.UnifiedResilienceItemRegionalResiliencyPosture(_Model):
+        enabled_resource_count: Optional[int]
+        estimated_recovery_point_objective: Optional[Union[str, IsoDuration]]
+        evaluation_date_time: Optional[datetime]
+        not_enabled_resource_count: Optional[int]
+        not_evaluated_resource_count: Optional[int]
+        user_confirmation_needed_count: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                enabled_resource_count: Optional[int] = ..., 
+                estimated_recovery_point_objective: Optional[Union[str, IsoDuration]] = ..., 
+                evaluation_date_time: Optional[datetime] = ..., 
+                not_enabled_resource_count: Optional[int] = ..., 
+                not_evaluated_resource_count: Optional[int] = ..., 
+                user_confirmation_needed_count: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.resiliencemanagement.models.UnifiedResilienceItemResiliencyPosture(_Model):
+        regional_resiliency: Optional[UnifiedResilienceItemRegionalResiliencyPosture]
         zonal_resiliency: UnifiedResilienceItemZonalResiliencyPosture
 
         @overload
         def __init__(
                 self, 
                 *, 
+                regional_resiliency: Optional[UnifiedResilienceItemRegionalResiliencyPosture] = ..., 
                 zonal_resiliency: UnifiedResilienceItemZonalResiliencyPosture
             ) -> None: ...
 
@@ -4478,6 +5105,60 @@ namespace azure.mgmt.resiliencemanagement.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.resiliencemanagement.models.VmRecoveryConfig(WorkloadConfig, discriminator='AzureVm'):
+        disk_encryption_set: Optional[TargetResourceSpec]
+        identity: Optional[ManagedServiceIdentity]
+        recovery_type: Optional[Union[str, RecoveryType]]
+        resource_group: TargetResourceSpec
+        storage_account: TargetResourceSpec
+        subnet: TargetResourceSpec
+        target_name_prefix: Optional[str]
+        virtual_network: TargetResourceSpec
+        workload_type: Literal[WorkloadType.AZURE_VM]
+        zones: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                disk_encryption_set: Optional[TargetResourceSpec] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                recovery_type: Optional[Union[str, RecoveryType]] = ..., 
+                resource_group: TargetResourceSpec, 
+                storage_account: TargetResourceSpec, 
+                subnet: TargetResourceSpec, 
+                target_name_prefix: Optional[str] = ..., 
+                virtual_network: TargetResourceSpec, 
+                zones: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.WorkloadConfig(_Model):
+        workload_type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                workload_type: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.resiliencemanagement.models.WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_FILE_SHARE = "AzureFileShare"
+        AZURE_VM = "AzureVm"
+        ORACLE_IN_AZURE_VM = "OracleInAzureVm"
+        SAP_ASE_IN_AZURE_VM = "SapAseInAzureVm"
+        SAP_HANA_IN_AZURE_VM = "SapHanaInAzureVm"
+        SQL_DATABASE_IN_AZURE_VM = "SqlDatabaseInAzureVm"
+
+
     class azure.mgmt.resiliencemanagement.models.ZonalDrillProperties(DrillProperties, discriminator='Zonal'):
         attention_reason: AttentionReason
         chaos_resource_properties: ChaosResourcePropertiesOfDrill
@@ -4525,6 +5206,8 @@ namespace azure.mgmt.resiliencemanagement.models
         advisor_recommendation_type_id: str
         attention_reason: DrillResourceAttentionReason
         drill_type: Literal[DrillType.ZONAL]
+        fault_eligibility: Union[str, FaultEligibility]
+        fault_ineligible_reason: Union[str, FaultIneligibleReason]
         fault_properties: FaultProperties
         fault_state: Union[str, DrillResourceFaultState]
         force_inclusion_state: Union[str, ForceInclusionAndUpdate]
@@ -4566,7 +5249,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -4576,7 +5259,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> DrillResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -4597,7 +5280,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'drill_run_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'drill_run_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -4608,7 +5291,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> DrillRunResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -4705,7 +5388,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_generate_report(
                 self, 
                 service_group_name: str, 
@@ -4834,7 +5517,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_resume(
                 self, 
                 service_group_name: str, 
@@ -4846,7 +5529,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'drill_run_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -4856,7 +5539,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> DrillRun: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -4943,7 +5626,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[Drill]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -4988,7 +5671,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'drill_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_resync_readiness_check(
                 self, 
                 service_group_name: str, 
@@ -5104,7 +5787,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'drill_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -5113,7 +5796,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> Drill: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -5169,7 +5852,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[Enrollment]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -5179,7 +5862,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'enrollment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -5189,7 +5872,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> Enrollment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -5240,7 +5923,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -5282,7 +5965,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_refresh_goal_resources(
                 self, 
                 service_group_name: str, 
@@ -5357,7 +6040,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -5366,7 +6049,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> GoalAssignment: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -5386,7 +6069,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'goal_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'goal_assignment_name', 'goal_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -5396,7 +6079,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> GoalResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'goal_assignment_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -5417,7 +6100,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 location: str, 
@@ -5435,8 +6118,118 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(self, **kwargs: Any) -> ItemPaged[Operation]: ...
+
+
+    class azure.mgmt.resiliencemanagement.operations.RecoveryConfigProfilesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_config_profile_name']}, api_versions_list=['2026-11-30-preview'])
+        def begin_delete(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: RecoveryConfigProfile, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[RecoveryConfigProfile]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_config_profile_name', 'accept']}, api_versions_list=['2026-11-30-preview'])
+        def get(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                recovery_config_profile_name: str, 
+                **kwargs: Any
+            ) -> RecoveryConfigProfile: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-11-30-preview', params_added_on={'2026-11-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-11-30-preview'])
+        def list(
+                self, 
+                service_group_name: str, 
+                recovery_plan_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[RecoveryConfigProfile]: ...
 
 
     class azure.mgmt.resiliencemanagement.operations.RecoveryJobResourcesOperations:
@@ -5448,7 +6241,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'recovery_job_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'recovery_job_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -5459,7 +6252,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> RecoveryJobResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -5556,7 +6349,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[ArmResponseErrorResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'recovery_job_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'recovery_job_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_retry(
                 self, 
                 service_group_name: str, 
@@ -5568,7 +6361,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[ArmResponseErrorResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_job_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -5578,7 +6371,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> RecoveryJob: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -5596,7 +6389,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_check_readiness(
                 self, 
                 service_group_name: str, 
@@ -5643,7 +6436,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[RecoveryPlanActionBaseResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_failover_commit(
                 self, 
                 service_group_name: str, 
@@ -5654,7 +6447,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[RecoveryPlanActionBaseResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_finalize(
                 self, 
                 service_group_name: str, 
@@ -5845,7 +6638,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[ValidateForRecoveryOperationBaseResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_validate_for_failover_commit(
                 self, 
                 service_group_name: str, 
@@ -5964,7 +6757,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[ValidateForRecoveryOperationBaseResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'operation_id', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_validate_for_test_failover_cleanup(
                 self, 
                 service_group_name: str, 
@@ -6017,7 +6810,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[RecoveryPlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_delete(
                 self, 
                 service_group_name: str, 
@@ -6059,7 +6852,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[RecoveryPlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -6068,7 +6861,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> RecoveryPlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -6088,7 +6881,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'recovery_resource_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -6098,7 +6891,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> RecoveryResource: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'recovery_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -6116,7 +6909,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'unified_resilience_item_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'unified_resilience_item_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 service_group_name: str, 
@@ -6125,7 +6918,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> UnifiedResilienceItem: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['service_group_name', 'api_version', 'skip_token', 'top', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list(
                 self, 
                 service_group_name: str, 
@@ -6178,7 +6971,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -6220,7 +7013,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> LROPoller[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'usage_plan_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -6229,7 +7022,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> UsagePlan: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -6237,7 +7030,7 @@ namespace azure.mgmt.resiliencemanagement.operations
             ) -> ItemPaged[UsagePlan]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01'])
+        @api_version_validation(method_added_on='2026-09-30-preview', params_added_on={'2026-09-30-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-09-30-preview', '2026-10-01', '2026-10-31-preview', '2026-11-30-preview'])
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[UsagePlan]: ...
 
 
@@ -6345,6 +7138,32 @@ namespace azure.mgmt.resiliencemanagement.types
         scriptResourceId: str
 
 
+    class azure.mgmt.resiliencemanagement.types.CyberResiliencyGroupProperties(TypedDict, total=False):
+        key "resiliencyType": Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+        recoveryConfigProfileAssociations: list[RecoveryConfigProfileAssociation]
+        resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+
+
+    class azure.mgmt.resiliencemanagement.types.CyberResiliencyPlanProperties(TypedDict, total=False):
+        key "resiliencyType": Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+        key "targetEnvironment": Required[TargetEnvironment]
+        resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+        targetEnvironment: TargetEnvironment
+
+
+    class azure.mgmt.resiliencemanagement.types.CyberResiliencyResourceProperties(TypedDict, total=False):
+        key "inclusionEligibility": Union[str, RecoveryResourceInclusionEligibility]
+        key "recoveryConfigProfileId": str
+        key "resiliencyType": Required[Literal[ResiliencyType.CYBER_RESILIENCY]]
+        key "workloadType": Union[str, WorkloadType]
+        inclusionEligibility: Union[str, RecoveryResourceInclusionEligibility]
+        membershipThroughServiceGroupMembers: list[str]
+        protectedItemDetails: list[ProtectedItemDetails]
+        recoveryConfigProfileId: str
+        resiliencyType: Literal[ResiliencyType.CYBER_RESILIENCY]
+        workloadType: Union[str, WorkloadType]
+
+
     class azure.mgmt.resiliencemanagement.types.DiskReprotectInputDetails(TypedDict, total=False):
         key "diskResourceId": str
         key "stagingStorageAccountResourceId": str
@@ -6429,6 +7248,11 @@ namespace azure.mgmt.resiliencemanagement.types
         rbacSetupMode: Union[str, RBACSetupMode]
         recoveryPlanProperties: RecoveryPlanPropertiesOfDrill
         sliMonitoringProperties: SliMonitoringProperties
+
+
+    class azure.mgmt.resiliencemanagement.types.EffectiveConfiguration(TypedDict, total=False):
+        key "workloadConfig": Required[WorkloadConfig]
+        workloadConfig: WorkloadConfig
 
 
     class azure.mgmt.resiliencemanagement.types.Enrollment(ProxyResource):
@@ -6518,6 +7342,21 @@ namespace azure.mgmt.resiliencemanagement.types
         overriddenDefaultFault: FaultDetails
 
 
+    class azure.mgmt.resiliencemanagement.types.FileShareRecoveryConfig(TypedDict, total=False):
+        key "copyOptions": Union[str, CopyOptions]
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "storageAccount": Required[TargetResourceSpec]
+        key "targetFolderPath": str
+        key "targetNamePrefix": str
+        key "workloadType": Required[Literal[WorkloadType.AZURE_FILE_SHARE]]
+        copyOptions: Union[str, CopyOptions]
+        identity: ManagedServiceIdentity
+        storageAccount: TargetResourceSpec
+        targetFolderPath: str
+        targetNamePrefix: str
+        workloadType: Literal[WorkloadType.AZURE_FILE_SHARE]
+
+
     class azure.mgmt.resiliencemanagement.types.GoalAssignment(ProxyResource):
         key "id": str
         key "name": str
@@ -6534,9 +7373,13 @@ namespace azure.mgmt.resiliencemanagement.types
     class azure.mgmt.resiliencemanagement.types.GoalAssignmentProperties(TypedDict, total=False):
         key "errorDetails": ForwardRef('ErrorDetail', module='types')
         key "provisioningState": Union[str, ProvisioningState]
+        key "regionalObjectives": ForwardRef('RegionalObjectives', module='types')
+        key "requireRegionalResiliency": bool
         key "requireZonalResiliency": Required[bool]
         errorDetails: ErrorDetail
         provisioningState: Union[str, ProvisioningState]
+        regionalObjectives: RegionalObjectives
+        requireRegionalResiliency: bool
         requireZonalResiliency: bool
         serviceLevelResources: list[ServiceLevelResource]
 
@@ -6563,9 +7406,11 @@ namespace azure.mgmt.resiliencemanagement.types
 
     class azure.mgmt.resiliencemanagement.types.GoalResourceProperties(TypedDict, total=False):
         key "provisioningState": Union[str, ProvisioningState]
+        key "regionalResiliency": ForwardRef('ResiliencyProperties', module='types')
         key "resourceArmId": Required[str]
         key "zonalResiliency": ForwardRef('ResiliencyProperties', module='types')
         provisioningState: Union[str, ProvisioningState]
+        regionalResiliency: ResiliencyProperties
         resourceArmId: str
         zonalResiliency: ResiliencyProperties
 
@@ -6584,13 +7429,30 @@ namespace azure.mgmt.resiliencemanagement.types
         id: str
 
 
+    class azure.mgmt.resiliencemanagement.types.InfrastructureResiliencyGroupProperties(TypedDict, total=False):
+        key "resiliencyType": Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+        resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+
+    class azure.mgmt.resiliencemanagement.types.InfrastructureResiliencyPlanProperties(TypedDict, total=False):
+        key "resiliencyType": Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+        resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+
+    class azure.mgmt.resiliencemanagement.types.InfrastructureResiliencyResourceProperties(TypedDict, total=False):
+        key "resiliencyType": Required[Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]]
+        resiliencyType: Literal[ResiliencyType.INFRASTRUCTURE_RESILIENCY]
+
+
     class azure.mgmt.resiliencemanagement.types.LastRunProperties(TypedDict, total=False):
         key "lastRunAttestation": Union[str, DrillAttestation]
         key "lastRunDuration": str
+        key "lastRunRecoveryTimeActual": str
         key "lastRunState": Union[str, JobStatus]
         key "lastRunTime": str
         lastRunAttestation: Union[str, DrillAttestation]
         lastRunDuration: str
+        lastRunRecoveryTimeActual: str
         lastRunState: Union[str, JobStatus]
         lastRunTime: str
 
@@ -6628,6 +7490,20 @@ namespace azure.mgmt.resiliencemanagement.types
         serviceGroupMetricsDataCollectionRuleId: str
 
 
+    class azure.mgmt.resiliencemanagement.types.ProtectedItemDetails(TypedDict, total=False):
+        key "containerResourceId": str
+        key "location": str
+        key "protectedItemId": str
+        key "protectionState": Union[str, ResourceProtectionState]
+        key "vaultResourceId": str
+        containerResourceId: str
+        location: str
+        protectedItemId: str
+        protectionState: Union[str, ResourceProtectionState]
+        recoveryLocations: list[str]
+        vaultResourceId: str
+
+
     class azure.mgmt.resiliencemanagement.types.ProxyResource(Resource):
         key "id": str
         key "name": str
@@ -6647,6 +7523,44 @@ namespace azure.mgmt.resiliencemanagement.types
     class azure.mgmt.resiliencemanagement.types.RecoveryActionRequest(TypedDict, total=False):
         key "description": str
         description: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryConfigProfile(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RecoveryConfigProfileProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RecoveryConfigProfileProperties
+        systemData: SystemData
+        type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryConfigProfileAssociation(TypedDict, total=False):
+        key "recoveryConfigProfileId": Required[str]
+        key "workloadType": Required[Union[str, WorkloadType]]
+        recoveryConfigProfileId: str
+        workloadType: Union[str, WorkloadType]
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryConfigProfileProperties(TypedDict, total=False):
+        key "effectiveConfiguration": ForwardRef('EffectiveConfiguration', module='types')
+        key "needsAttention": bool
+        key "provisioningState": Union[str, ProvisioningState]
+        key "recoveryPointPolicy": ForwardRef('RecoveryPointPolicy', module='types')
+        key "targetScope": Required[TargetScope]
+        key "workloadConfig": Required[WorkloadConfig]
+        key "workloadType": Required[Union[str, WorkloadType]]
+        attentionReasons: list[str]
+        effectiveConfiguration: EffectiveConfiguration
+        needsAttention: bool
+        provisioningState: Union[str, ProvisioningState]
+        recoveryPointPolicy: RecoveryPointPolicy
+        targetScope: TargetScope
+        workloadConfig: WorkloadConfig
+        workloadType: Union[str, WorkloadType]
 
 
     class azure.mgmt.resiliencemanagement.types.RecoveryGroup(ProxyResource):
@@ -6698,11 +7612,13 @@ namespace azure.mgmt.resiliencemanagement.types
         key "description": Required[str]
         key "groupUniqueId": Required[str]
         key "orderId": Required[int]
+        key "resiliencyGroupProperties": ForwardRef('RecoveryGroupResiliencyProperties', module='types')
         description: str
         groupUniqueId: str
         orderId: int
         postActions: list[RecoveryGroupBaseAction]
         preActions: list[RecoveryGroupBaseAction]
+        resiliencyGroupProperties: RecoveryGroupResiliencyProperties
 
 
     class azure.mgmt.resiliencemanagement.types.RecoveryGroupsSetting(TypedDict, total=False):
@@ -6755,6 +7671,7 @@ namespace azure.mgmt.resiliencemanagement.types
         key "planType": Required[Union[str, RecoveryPlanType]]
         key "provisioningState": Union[str, ProvisioningState]
         key "recoveryGroupsSetting": Required[RecoveryGroupsSetting]
+        key "resiliencyPlanProperties": ForwardRef('RecoveryPlanResiliencyProperties', module='types')
         errorDetails: ErrorDetail
         latestFailoverStatus: RecoveryPlanFailoverOperationStatus
         latestValidationStatus: RecoveryPlanOperationStatus
@@ -6763,6 +7680,7 @@ namespace azure.mgmt.resiliencemanagement.types
         planType: Union[str, RecoveryPlanType]
         provisioningState: Union[str, ProvisioningState]
         recoveryGroupsSetting: RecoveryGroupsSetting
+        resiliencyPlanProperties: RecoveryPlanResiliencyProperties
 
 
     class azure.mgmt.resiliencemanagement.types.RecoveryPlanPropertiesOfDrill(TypedDict, total=False):
@@ -6772,6 +7690,21 @@ namespace azure.mgmt.resiliencemanagement.types
         identity: AssociatedIdentity
         recoveryPlanId: str
         recoveryPlanResourceExcludedCount: int
+
+
+    class azure.mgmt.resiliencemanagement.types.RecoveryPointPolicy(TypedDict, total=False):
+        key "backupType": Required[list[Union[str, BackupType]]]
+        key "endTime": str
+        key "lookbackDuration": str
+        key "recoveryPointHealthStatus": Union[str, RecoveryPointHealthStatus]
+        key "startTime": str
+        key "type": Required[Union[str, RecoveryPointPolicyType]]
+        backupType: list[Union[str, BackupType]]
+        endTime: str
+        lookbackDuration: str
+        recoveryPointHealthStatus: Union[str, RecoveryPointHealthStatus]
+        startTime: str
+        type: Union[str, RecoveryPointPolicyType]
 
 
     class azure.mgmt.resiliencemanagement.types.RecoveryResource(ProxyResource):
@@ -6796,6 +7729,7 @@ namespace azure.mgmt.resiliencemanagement.types
         key "provisioningState": Union[str, ProvisioningState]
         key "recoveryGroupId": str
         key "recoveryResourceUniqueId": Required[str]
+        key "resiliencyResourceProperties": ForwardRef('RecoveryResourceResiliencyProperties', module='types')
         key "resourceId": str
         key "resourceLocation": str
         key "selectedProtectionSolutionSetting": ForwardRef('ResourceBaseProtectionSolutionSetting', module='types')
@@ -6803,12 +7737,14 @@ namespace azure.mgmt.resiliencemanagement.types
         associatedIdentity: AssociatedIdentity
         attentionReasons: list[str]
         errorDetails: ErrorDetail
+        inclusionDisabledReasons: list[Union[str, ResourceInclusionDisabledReason]]
         inclusionState: Union[str, ResourceInclusionState]
         needsAttention: bool
         protectionStatus: Union[str, ResourceProtectionStatus]
         provisioningState: Union[str, ProvisioningState]
         recoveryGroupId: str
         recoveryResourceUniqueId: str
+        resiliencyResourceProperties: RecoveryResourceResiliencyProperties
         resourceId: str
         resourceLocation: str
         resourcePhysicalZones: list[str]
@@ -6858,6 +7794,13 @@ namespace azure.mgmt.resiliencemanagement.types
         systemMetadata: SystemMetadata
 
 
+    class azure.mgmt.resiliencemanagement.types.RegionalObjectives(TypedDict, total=False):
+        key "targetRecoveryPointObjective": Required[Union[str, IsoDuration]]
+        key "targetRecoveryTimeObjective": Required[Union[str, IsoDuration]]
+        targetRecoveryPointObjective: Union[str, IsoDuration]
+        targetRecoveryTimeObjective: Union[str, IsoDuration]
+
+
     class azure.mgmt.resiliencemanagement.types.ReprotectRequest(TypedDict, total=False):
         key "reprotectRequestProperties": ForwardRef('ReprotectRequestProperties', module='types')
         reprotectRequestProperties: ReprotectRequestProperties
@@ -6877,6 +7820,11 @@ namespace azure.mgmt.resiliencemanagement.types
         userConfirmation: list[UserConfirmationItem]
 
 
+    class azure.mgmt.resiliencemanagement.types.ResiliencyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CYBER_RESILIENCY = "CyberResiliency"
+        INFRASTRUCTURE_RESILIENCY = "InfrastructureResiliency"
+
+
     class azure.mgmt.resiliencemanagement.types.Resource(TypedDict, total=False):
         key "id": str
         key "name": str
@@ -6886,6 +7834,22 @@ namespace azure.mgmt.resiliencemanagement.types
         name: str
         systemData: SystemData
         type: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceAzureTemplateProtectionSetting(TypedDict, total=False):
+        key "deploymentLocation": str
+        key "deploymentScope": Required[str]
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]]
+        key "templateSpecVersionId": Required[str]
+        deploymentLocation: str
+        deploymentScope: str
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_TEMPLATE]
+        templateSpecVersionId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceCosmosDBProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_COSMOS_DB]
 
 
     class azure.mgmt.resiliencemanagement.types.ResourceCrossZoneVmRecoveryProtectionSetting(TypedDict, total=False):
@@ -6928,6 +7892,11 @@ namespace azure.mgmt.resiliencemanagement.types
         protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_NATIVE]
 
 
+    class azure.mgmt.resiliencemanagement.types.ResourceNetAppFilesProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_NET_APP_FILES]
+
+
     class azure.mgmt.resiliencemanagement.types.ResourceProtectionSolutionSettings(TypedDict, total=False):
         key "activeLocation": str
         key "failoverState": Union[str, FailoverState]
@@ -6935,6 +7904,7 @@ namespace azure.mgmt.resiliencemanagement.types
         key "primaryResource": str
         key "protectionSolutionType": Union[str, ResourceProtectionSolutionType]
         key "protectionStatus": Union[str, ResourceProtectionStatus]
+        key "replicationMode": Union[str, ReplicationMode]
         key "replicationRole": Union[str, ResourceReplicationRole]
         key "resourceId": str
         key "testFailoverState": Union[str, TestFailoverState]
@@ -6948,17 +7918,28 @@ namespace azure.mgmt.resiliencemanagement.types
         protectionStatus: Union[str, ResourceProtectionStatus]
         recoveryLocations: list[str]
         replicaResources: list[str]
+        replicationMode: Union[str, ReplicationMode]
         replicationRole: Union[str, ResourceReplicationRole]
         resourceId: str
         testFailoverState: Union[str, TestFailoverState]
 
 
     class azure.mgmt.resiliencemanagement.types.ResourceProtectionSolutionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_COSMOS_DB = "AzureCosmosDB"
         AZURE_NATIVE = "AzureNative"
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        AZURE_SERVICE_BUS = "AzureServiceBus"
         AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+        AZURE_STORAGE_ACCOUNT = "AzureStorageAccount"
+        AZURE_TEMPLATE = "AzureTemplate"
         CROSS_ZONE_VM_RECOVERY = "CrossZoneVMRecovery"
         CUSTOM_RUNBOOK = "CustomRunbook"
         NONE = "None"
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceServiceBusProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_SERVICE_BUS]
 
 
     class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryProtectionSetting(TypedDict, total=False):
@@ -6984,6 +7965,11 @@ namespace azure.mgmt.resiliencemanagement.types
     class azure.mgmt.resiliencemanagement.types.ResourceSiteRecoveryTestFailoverParams(TypedDict, total=False):
         key "networkResourceId": str
         networkResourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.ResourceStorageAccountProtectionSetting(TypedDict, total=False):
+        key "protectionSolutionType": Required[Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]]
+        protectionSolutionType: Literal[ResourceProtectionSolutionType.AZURE_STORAGE_ACCOUNT]
 
 
     class azure.mgmt.resiliencemanagement.types.ServiceLevelResource(TypedDict, total=False):
@@ -7038,6 +8024,30 @@ namespace azure.mgmt.resiliencemanagement.types
         key "initialConfig": Required[Union[str, InitialConfig]]
         initialConfig: Union[str, InitialConfig]
         resourceTypeCategories: list[Union[str, ResourceTypeCategories]]
+
+
+    class azure.mgmt.resiliencemanagement.types.TargetEnvironment(TypedDict, total=False):
+        key "targetLocations": Required[list[str]]
+        key "targetSubscriptionIds": Required[list[str]]
+        targetLocations: list[str]
+        targetSubscriptionIds: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.TargetResourceSpec(TypedDict, total=False):
+        key "armResourceType": Required[str]
+        key "provisioningMode": Union[str, TargetProvisioningMode]
+        key "resourceId": str
+        armResourceType: str
+        dependsOn: list[str]
+        provisioningMode: Union[str, TargetProvisioningMode]
+        resourceId: str
+
+
+    class azure.mgmt.resiliencemanagement.types.TargetScope(TypedDict, total=False):
+        key "location": Required[str]
+        key "subscriptionId": Required[str]
+        location: str
+        subscriptionId: str
 
 
     class azure.mgmt.resiliencemanagement.types.TestFailoverCleanupRequest(TypedDict, total=False):
@@ -7128,6 +8138,37 @@ namespace azure.mgmt.resiliencemanagement.types
     class azure.mgmt.resiliencemanagement.types.ValidateForOperationRequest(TypedDict, total=False):
         key "operationName": Required[Union[str, RecoveryOperationNames]]
         operationName: Union[str, RecoveryOperationNames]
+
+
+    class azure.mgmt.resiliencemanagement.types.VmRecoveryConfig(TypedDict, total=False):
+        key "diskEncryptionSet": ForwardRef('TargetResourceSpec', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "recoveryType": Union[str, RecoveryType]
+        key "resourceGroup": Required[TargetResourceSpec]
+        key "storageAccount": Required[TargetResourceSpec]
+        key "subnet": Required[TargetResourceSpec]
+        key "targetNamePrefix": str
+        key "virtualNetwork": Required[TargetResourceSpec]
+        key "workloadType": Required[Literal[WorkloadType.AZURE_VM]]
+        diskEncryptionSet: TargetResourceSpec
+        identity: ManagedServiceIdentity
+        recoveryType: Union[str, RecoveryType]
+        resourceGroup: TargetResourceSpec
+        storageAccount: TargetResourceSpec
+        subnet: TargetResourceSpec
+        targetNamePrefix: str
+        virtualNetwork: TargetResourceSpec
+        workloadType: Literal[WorkloadType.AZURE_VM]
+        zones: list[str]
+
+
+    class azure.mgmt.resiliencemanagement.types.WorkloadType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_FILE_SHARE = "AzureFileShare"
+        AZURE_VM = "AzureVm"
+        ORACLE_IN_AZURE_VM = "OracleInAzureVm"
+        SAP_ASE_IN_AZURE_VM = "SapAseInAzureVm"
+        SAP_HANA_IN_AZURE_VM = "SapHanaInAzureVm"
+        SQL_DATABASE_IN_AZURE_VM = "SqlDatabaseInAzureVm"
 
 
     class azure.mgmt.resiliencemanagement.types.ZonalDrillProperties(TypedDict, total=False):

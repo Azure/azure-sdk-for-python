@@ -57,6 +57,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                                 "orderId": 0,
                                 "postActions": ["recovery_group_base_action"],
                                 "preActions": ["recovery_group_base_action"],
+                                "resiliencyGroupProperties": "recovery_group_resiliency_properties",
                             },
                             "systemData": {
                                 "createdAt": "2020-02-20 00:00:00",
@@ -78,6 +79,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                                     "orderId": 0,
                                     "postActions": ["recovery_group_base_action"],
                                     "preActions": ["recovery_group_base_action"],
+                                    "resiliencyGroupProperties": "recovery_group_resiliency_properties",
                                 },
                                 "systemData": {
                                     "createdAt": "2020-02-20 00:00:00",
@@ -123,6 +125,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                     },
                     "planState": "str",
                     "provisioningState": "str",
+                    "resiliencyPlanProperties": "recovery_plan_resiliency_properties",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -167,6 +170,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                                 "orderId": 0,
                                 "postActions": ["recovery_group_base_action"],
                                 "preActions": ["recovery_group_base_action"],
+                                "resiliencyGroupProperties": "recovery_group_resiliency_properties",
                             },
                             "systemData": {
                                 "createdAt": "2020-02-20 00:00:00",
@@ -188,6 +192,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                                     "orderId": 0,
                                     "postActions": ["recovery_group_base_action"],
                                     "preActions": ["recovery_group_base_action"],
+                                    "resiliencyGroupProperties": "recovery_group_resiliency_properties",
                                 },
                                 "systemData": {
                                     "createdAt": "2020-02-20 00:00:00",
@@ -233,6 +238,7 @@ class TestResilienceManagementRecoveryPlansOperations(AzureMgmtRecordedTestCase)
                     },
                     "planState": "str",
                     "provisioningState": "str",
+                    "resiliencyPlanProperties": "recovery_plan_resiliency_properties",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
