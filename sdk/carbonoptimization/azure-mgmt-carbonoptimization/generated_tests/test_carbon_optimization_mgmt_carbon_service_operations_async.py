@@ -49,3 +49,26 @@ class TestCarbonOptimizationMgmtCarbonServiceOperationsAsync(AzureMgmtRecordedTe
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_carbon_service_query_carbon_emission_reports_by_billing_account(self, resource_group):
+        response = await self.client.carbon_service.query_carbon_emission_reports_by_billing_account(
+            scope="str",
+            query_parameters={
+                "carbonScopeList": ["str"],
+                "categoryType": "str",
+                "dateRange": {"end": "2020-02-20", "start": "2020-02-20"},
+                "pageSize": 0,
+                "reportType": "ItemDetailsReport",
+                "locationList": ["str"],
+                "orderBy": "str",
+                "resourceTypeList": ["str"],
+                "skipToken": "str",
+                "sortDirection": "str",
+                "subscriptionList": ["str"],
+            },
+        )
+
+        # please add some check logic here by yourself
+        # ...
