@@ -1,8 +1,31 @@
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from azure.ai.evaluation import ToolCallAccuracyEvaluator
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
+
+
+@pytest.mark.unittest
+class TestToolCallAccuracyEmptyCalls:
+    @pytest.mark.parametrize("decision", [False, True], ids=["chat", "decision"])
+    @pytest.mark.parametrize("response", [None, [], ""])
+    def test_empty_calls_are_unscored_without_a_judge_request(self, decision, response):
+        model = {
+            "azure_endpoint": "https://example.openai.azure.com",
+            "azure_deployment": "judge",
+            "api_key": "test-only",
+        }
+        if decision:
+            model["type"] = "decision"
+        evaluator = ToolCallAccuracyEvaluator(model_config=model)
+        evaluator._do_eval = AsyncMock(side_effect=AssertionError("No calls to judge"))
+        result = evaluator(
+            query="Find a flight.", response=response, tool_definitions=[{"name": "search", "parameters": {}}]
+        )
+        assert result["tool_call_accuracy"] is None
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert result["tool_call_accuracy_result"] == "not_applicable"
+        evaluator._do_eval.assert_not_called()
 
 
 # This mock should return a dictionary that mimics the output of the prompty (the _flow call),
@@ -389,10 +412,9 @@ class TestToolCallAccuracyEvaluator:
         assert f"{key}_properties" in result
 
     def test_evaluate_tools_no_tools(self, mock_model_config):
+        """No calls produce an unscored skip without invoking the judge."""
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
         evaluator._flow = MagicMock(side_effect=flow_side_effect)
-        # Test with no tool calls provided
-        # Test with no tool calls provided
         query = "Where is the Eiffel Tower?"
         tool_calls = []
         tool_definitions = [
@@ -411,10 +433,12 @@ class TestToolCallAccuracyEvaluator:
                 },
             },
         ]
-        with pytest.raises(EvaluationException) as exc_info:
-            evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
-
-        assert "No tool calls found in response or provided tool_calls." in str(exc_info.value)
+        result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
+        assert result["tool_call_accuracy"] is None
+        assert result["tool_call_accuracy_status"] == "skipped"
+        assert result["tool_call_accuracy_result"] == "not_applicable"
+        assert "No tool calls" in result["tool_call_accuracy_reason"]
+        evaluator._flow.assert_not_called()
 
     def test_evaluate_bing_custom_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)

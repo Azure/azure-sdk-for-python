@@ -288,6 +288,39 @@ class TestToolDefinitionsValidator:
 
 @pytest.mark.unittest
 class TestToolCallsValidator:
+    @pytest.mark.parametrize("response", [None, [], ""])
+    def test_empty_calls_can_reach_evaluator_applicability(self, response):
+        validator = ToolCallsValidator(error_target=TARGET)
+        validator.allow_empty_calls = True
+        assert (
+            validator.validate_eval_input(
+                {
+                    "query": [_user_message()],
+                    "response": response,
+                    "tool_definitions": [_tool_definition()],
+                    "tool_calls": [],
+                }
+            )
+            is True
+        )
+
+    @pytest.mark.parametrize(
+        "changes",
+        [
+            {"query": None},
+            {"response": 123},
+            {"tool_calls": [123]},
+            {"tool_definitions": [123]},
+        ],
+    )
+    def test_empty_call_opt_in_preserves_invalid_input_errors(self, changes):
+        validator = ToolCallsValidator(error_target=TARGET)
+        validator.allow_empty_calls = True
+        inputs = {"query": [_user_message()], "tool_definitions": [_tool_definition()]}
+        inputs.update(changes)
+        with pytest.raises(EvaluationException):
+            validator.validate_eval_input(inputs)
+
     def test_valid_tool_calls(self):
         validator = ToolCallsValidator(error_target=TARGET)
         eval_input = {
@@ -582,6 +615,36 @@ class TestMessagesOrQueryResponseInputValidator:
         validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
         with pytest.raises(EvaluationException):
             validator.validate_eval_input({"messages": [_assistant_message()]})
+
+    @pytest.mark.parametrize("include_system", [False, True])
+    def test_messages_without_user_when_query_is_optional(self, include_system):
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, requires_query=False)
+        messages = [_assistant_message()]
+        if include_system:
+            messages.insert(0, {"role": "system", "content": "Write clearly."})
+        assert validator.validate_eval_input({"messages": messages}) is True
+
+    def test_optional_query_still_requires_assistant(self):
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, requires_query=False)
+        with pytest.raises(EvaluationException, match="role 'assistant'"):
+            validator.validate_eval_input({"messages": [{"role": "system", "content": "Write clearly."}]})
+
+    def test_conversation_scorer_can_evaluate_missing_assistant(self):
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
+        validator.requires_assistant = False
+        assert validator.validate_eval_input({"messages": [_user_message()]}) is True
+
+    def test_optional_assistant_still_requires_user(self):
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
+        validator.requires_assistant = False
+        with pytest.raises(EvaluationException, match="role 'user'"):
+            validator.validate_eval_input({"messages": [{"role": "system", "content": "Write clearly."}]})
+
+    def test_optional_roles_preserve_message_structure_validation(self):
+        validator = MessagesOrQueryResponseInputValidator(error_target=TARGET, requires_query=False)
+        validator.requires_assistant = False
+        with pytest.raises(EvaluationException, match="Invalid role"):
+            validator.validate_eval_input({"messages": [{"role": "unknown", "content": "Hi"}]})
 
     def test_missing_assistant_role_raises(self):
         validator = MessagesOrQueryResponseInputValidator(error_target=TARGET)
