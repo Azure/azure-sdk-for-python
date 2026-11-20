@@ -198,7 +198,12 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
 
 
 def _setup_tracing(configurations: Dict[str, ConfigurationValue]) -> float:
-    """Set up tracing and return the fixed sampling percentage, if any, for correlated logs."""
+    """Set up the tracing pipeline.
+
+    :param dict configurations: Resolved Azure Monitor configuration.
+    :return: The fixed sampling percentage for correlated logs, or 100 for rate-limited sampling.
+    :rtype: float
+    """
     resource: Resource = configurations[RESOURCE_ARG]  # type: ignore
     enable_performance_counters_config = configurations[ENABLE_PERFORMANCE_COUNTERS_ARG]
     if SAMPLING_ARG in configurations:

@@ -52,7 +52,7 @@ class _AzureBatchLogRecordProcessor(BatchLogRecordProcessor):
             and 0 < (record.trace_id or 0) < 1 << 128
             and 0 < (record.span_id or 0) < 1 << 64
         ):
-            if not ((record.trace_flags or 0) & TraceFlags.SAMPLED):
+            if (record.trace_flags or 0) & TraceFlags.SAMPLED == 0:
                 return
             sample_rate = self._fallback_sample_rate
             if record.context is not None:
