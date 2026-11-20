@@ -53,7 +53,7 @@ class ServiceBusManagementClient(
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
-        _endpoint = "https://{endpoint}"
+        _endpoint = "{endpoint}"
         self._config = ServiceBusManagementClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         _policies = kwargs.pop("policies", None)
         if _policies is None:
