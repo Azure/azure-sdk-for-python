@@ -233,13 +233,6 @@ class IPVersions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """IPv6 version."""
 
 
-class Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The language used for recurring bulk action notifications."""
-
-    EN_US = "en-us"
-    """English (United States)."""
-
-
 class LinuxPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode of VM Guest Patch Assessment for the IaaS virtual machine.<br /><br />
     Possible values are:<br /><br /> **ImageDefault** - You control the timing of patch assessments
@@ -325,45 +318,14 @@ class Modes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled mode."""
 
 
-class Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A month in which the recurring bulk action can run."""
-
-    JANUARY = "January"
-    """The recurring bulk action can run in January."""
-    FEBRUARY = "February"
-    """The recurring bulk action can run in February."""
-    MARCH = "March"
-    """The recurring bulk action can run in March."""
-    APRIL = "April"
-    """The recurring bulk action can run in April."""
-    MAY = "May"
-    """The recurring bulk action can run in May."""
-    JUNE = "June"
-    """The recurring bulk action can run in June."""
-    JULY = "July"
-    """The recurring bulk action can run in July."""
-    AUGUST = "August"
-    """The recurring bulk action can run in August."""
-    SEPTEMBER = "September"
-    """The recurring bulk action can run in September."""
-    OCTOBER = "October"
-    """The recurring bulk action can run in October."""
-    NOVEMBER = "November"
-    """The recurring bulk action can run in November."""
-    DECEMBER = "December"
-    """The recurring bulk action can run in December."""
-    ALL = "All"
-    """Every month."""
-
-
 class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the Microsoft.Network API version used when creating networking resources in the
     Network Interface Configurations.
     """
 
-    ENUM2020_11_01 = "2020-11-01"
+    ENUM_2020_11_01 = "2020-11-01"
     """2020-11-01 version."""
-    ENUM2022_11_01 = "2022-11-01"
+    ENUM_2022_11_01 = "2022-11-01"
     """2022-11-01 version."""
 
 
@@ -391,53 +353,6 @@ class NetworkInterfaceAuxiliarySku(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """A4 sku."""
     A8 = "A8"
     """A8 sku."""
-
-
-class NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The delivery method for recurring bulk action notifications."""
-
-    EMAIL = "Email"
-    """Sends notifications by email."""
-
-
-class OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of a recurring bulk action resource within an occurrence."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    CREATED = "Created"
-    """The resource has been created."""
-    SCHEDULED = "Scheduled"
-    """The resource has been scheduled."""
-    CANCELLING = "Cancelling"
-    """The resource is going through cancellation."""
-    RESCHEDULING = "Rescheduling"
-    """The resource is being rescheduled."""
-    INVALID_STATE = "InvalidState"
-    """The resource is in an invalid state."""
-
-
-class OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of a recurring bulk action occurrence."""
-
-    CREATED = "Created"
-    """The occurrence has been created."""
-    RESCHEDULING = "Rescheduling"
-    """The scheduled time for the occurrence is being updated."""
-    SCHEDULED = "Scheduled"
-    """The occurrence has been scheduled."""
-    SUCCEEDED = "Succeeded"
-    """The occurrence operations completed successfully."""
-    FAILED = "Failed"
-    """One or more of the occurrence operations failed."""
-    CANCELLING = "Cancelling"
-    """Cancellation of the occurrence is in progress."""
-    CANCELED = "Canceled"
-    """The occurrence was canceled."""
 
 
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -557,15 +472,6 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NONE."""
 
 
-class ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current status of an operation for the specific occurrence and resource."""
-
-    SUCCEEDED = "Succeeded"
-    """The operation completed successfully for the resource."""
-    FAILED = "Failed"
-    """The operation failed for the resource."""
-
-
 class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of operation performed by Bulk Actions."""
 
@@ -579,65 +485,6 @@ class ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Creates the specified virtual machines."""
     DELETE = "Delete"
     """Deletes the specified virtual machines."""
-
-
-class ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of compute resource targeted by the recurring bulk action."""
-
-    VIRTUAL_MACHINE = "VirtualMachine"
-    """Azure virtual machines."""
-    VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
-    """Azure Virtual Machine Scale Sets."""
-
-
-class ScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """How the scheduled time is interpreted for the resource operation."""
-
-    INITIATE_AT = "InitiateAt"
-    """Starts the operation at the scheduled time."""
-    COMPLETE_BY = "CompleteBy"
-    """Completes the operation by the scheduled time."""
-
-
-class ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the recurring bulk action."""
-
-    SUCCEEDED = "Succeeded"
-    """Resource has been created."""
-    FAILED = "Failed"
-    """Resource creation failed."""
-    CANCELED = "Canceled"
-    """Resource creation was canceled."""
-    DELETING = "Deleting"
-    """The recurring bulk action is being deleted."""
-    UPDATING = "Updating"
-    """The recurring bulk action is being updated."""
-
-
-class ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation to retry when a recurring bulk action fails."""
-
-    START = "Start"
-    """Starts the resources."""
-    DEALLOCATE = "Deallocate"
-    """Deallocates the resources."""
-    HIBERNATE = "Hibernate"
-    """Hibernates the resources."""
-    CREATE = "Create"
-    """Creates the resources."""
-    DELETE = "Delete"
-    """Deletes the resources."""
-
-
-class ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation performed by the recurring bulk action."""
-
-    START = "Start"
-    """Starts the targeted resources."""
-    DEALLOCATE = "Deallocate"
-    """Deallocates the targeted resources."""
-    HIBERNATE = "Hibernate"
-    """Hibernates the targeted resources."""
 
 
 class SecurityEncryptionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -705,27 +552,6 @@ class StorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StandardSSD_ZRS storage account type."""
     PREMIUM_V2_LRS = "PremiumV2_LRS"
     """PremiumV2_LRS storage account type."""
-
-
-class WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A day of the week on which the recurring bulk action can run."""
-
-    MONDAY = "Monday"
-    """The recurring bulk action can run on Monday."""
-    TUESDAY = "Tuesday"
-    """The recurring bulk action can run on Tuesday."""
-    WEDNESDAY = "Wednesday"
-    """The recurring bulk action can run on Wednesday."""
-    THURSDAY = "Thursday"
-    """The recurring bulk action can run on Thursday."""
-    FRIDAY = "Friday"
-    """The recurring bulk action can run on Friday."""
-    SATURDAY = "Saturday"
-    """The recurring bulk action can run on Saturday."""
-    SUNDAY = "Sunday"
-    """The recurring bulk action can run on Sunday."""
-    ALL = "All"
-    """Every day of the week."""
 
 
 class WindowsPatchAssessmentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -44,9 +44,9 @@ class TestComputeBulkActionsMgmtBulkCreateOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_bulk_create_begin_create_or_update(self, resource_group):
+    async def test_bulk_create_begin_create(self, resource_group):
         response = await (
-            await self.client.bulk_create.begin_create_or_update(
+            await self.client.bulk_create.begin_create(
                 resource_group_name=resource_group.name,
                 location="str",
                 name="str",
@@ -362,38 +362,9 @@ class TestComputeBulkActionsMgmtBulkCreateOperationsAsync(AzureMgmtRecordedTestC
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                     "zones": ["str"],
                 },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_bulk_create_begin_delete(self, resource_group):
-        response = await (
-            await self.client.bulk_create.begin_delete(
-                resource_group_name=resource_group.name,
-                location="str",
-                name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_bulk_create_begin_cancel(self, resource_group):
-        response = await (
-            await self.client.bulk_create.begin_cancel(
-                resource_group_name=resource_group.name,
-                location="str",
-                name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 

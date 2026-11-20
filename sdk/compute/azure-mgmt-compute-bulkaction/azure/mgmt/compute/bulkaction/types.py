@@ -26,18 +26,15 @@ if TYPE_CHECKING:
         EvictionPolicy,
         ExtendedLocationType,
         IPVersions,
-        Language,
         LinuxPatchAssessmentMode,
         LinuxVMGuestPatchAutomaticByPlatformRebootSetting,
         LinuxVMGuestPatchMode,
         ManagedServiceIdentityType,
         Mode,
         Modes,
-        Month,
         NetworkApiVersion,
         NetworkInterfaceAuxiliaryMode,
         NetworkInterfaceAuxiliarySku,
-        NotificationType,
         OperatingSystemTypes,
         PriorityType,
         ProtocolTypes,
@@ -47,34 +44,15 @@ if TYPE_CHECKING:
         PublicIPAllocationMethod,
         ResourceIdentityType,
         ResourceOperationType,
-        ResourceType,
-        ScheduledActionType,
-        ScheduledActionsDeadlineType,
-        ScheduledActionsProvisioningState,
-        ScheduledActionsResourceOperationType,
         SecurityEncryptionTypes,
         SecurityTypes,
         SettingNames,
         StorageAccountTypes,
-        WeekDay,
         WindowsPatchAssessmentMode,
         WindowsVMGuestPatchAutomaticByPlatformRebootSetting,
         WindowsVMGuestPatchMode,
         ZonePlacementPolicyType,
     )
-
-
-class AcknowledgeBulkOperationErrorsRequest(TypedDict, total=False):
-    """The operations for which errors should be acknowledged.
-
-    :ivar operationIds: The Bulk Action Operation Ids that identify operations for which errors
-     should be acknowledged. Required.
-    :vartype operationIds: list[str]
-    """
-
-    operationIds: Required[list[str]]
-    """The Bulk Action Operation Ids that identify operations for which errors should be acknowledged.
-     Required."""
 
 
 class AdditionalCapabilities(TypedDict, total=False):
@@ -614,19 +592,6 @@ class BulkCreateProperties(TypedDict, total=False):
     """Extra parameters that control how the request is executed, including the retry policy."""
 
 
-class CancelOccurrenceRequest(TypedDict, total=False):
-    """Request body for canceling a recurring bulk action occurrence.
-
-    :ivar resourceIds: The resources for which operations should be canceled. An empty array
-     cancels all operations for all resources for the occurrence. Required.
-    :vartype resourceIds: list[str]
-    """
-
-    resourceIds: Required[list[str]]
-    """The resources for which operations should be canceled. An empty array cancels all operations
-     for all resources for the occurrence. Required."""
-
-
 class CancelOperationsContent(TypedDict, total=False):
     """The eligible operations to cancel.
 
@@ -802,22 +767,6 @@ class DataDisk(TypedDict, total=False):
      \"Detach\"."""
 
 
-class DelayRequest(TypedDict, total=False):
-    """Request body for delaying a recurring bulk action occurrence.
-
-    :ivar delay: The new date and time for the occurrence, including the UTC offset. Required.
-    :vartype delay: str
-    :ivar resourceIds: The resources to delay. An empty array delays all resources in the
-     occurrence. Required.
-    :vartype resourceIds: list[str]
-    """
-
-    delay: Required[str]
-    """The new date and time for the occurrence, including the UTC offset. Required."""
-    resourceIds: Required[list[str]]
-    """The resources to delay. An empty array delays all resources in the occurrence. Required."""
-
-
 class DiagnosticsProfile(TypedDict, total=False):
     """Specifies the boot diagnostic settings state. Minimum compute api-version: 2015-06-15.
 
@@ -936,20 +885,14 @@ class ExecuteDeallocateContent(TypedDict, total=False):
 
     :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: "Resources"
-    :ivar resourcesWithContext: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
     """The execution settings for the bulk action. Required."""
-    resources: "Resources"
-    """The target virtual machines."""
-    resourcesWithContext: "ResourcesWithContext"
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: Required["Resources"]
+    """The target virtual machines. Required."""
 
 
 class ExecuteDeleteContent(TypedDict, total=False):
@@ -957,11 +900,8 @@ class ExecuteDeleteContent(TypedDict, total=False):
 
     :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: "Resources"
-    :ivar resourcesWithContext: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resourcesWithContext: "ResourcesWithContext"
     :ivar forceDeletion: Indicates whether Bulk Actions uses forced deletion for the target virtual
      machines.
     :vartype forceDeletion: bool
@@ -969,11 +909,8 @@ class ExecuteDeleteContent(TypedDict, total=False):
 
     executionParameters: Required["ExecutionParameters"]
     """The execution settings for the bulk action. Required."""
-    resources: "Resources"
-    """The target virtual machines."""
-    resourcesWithContext: "ResourcesWithContext"
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: Required["Resources"]
+    """The target virtual machines. Required."""
     forceDeletion: bool
     """Indicates whether Bulk Actions uses forced deletion for the target virtual machines."""
 
@@ -983,45 +920,14 @@ class ExecuteHibernateContent(TypedDict, total=False):
 
     :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: "Resources"
-    :ivar resourcesWithContext: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
     """The execution settings for the bulk action. Required."""
-    resources: "Resources"
-    """The target virtual machines."""
-    resourcesWithContext: "ResourcesWithContext"
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
-
-
-class ExecuteReimageRequest(TypedDict, total=False):
-    """The virtual machines and configuration for a bulk reimage action.
-
-    :ivar executionParameters: The execution settings for the bulk action. Required.
-    :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The target virtual machines.
-    :vartype resources: "Resources"
-    :ivar resourcesWithContext: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resourcesWithContext: "ResourcesWithContext"
-    :ivar reimageParameters: The shared and per-virtual-machine reimage configuration.
-    :vartype reimageParameters: "ReimagePayload"
-    """
-
-    executionParameters: Required["ExecutionParameters"]
-    """The execution settings for the bulk action. Required."""
-    resources: "Resources"
-    """The target virtual machines."""
-    resourcesWithContext: "ResourcesWithContext"
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
-    reimageParameters: "ReimagePayload"
-    """The shared and per-virtual-machine reimage configuration."""
+    resources: Required["Resources"]
+    """The target virtual machines. Required."""
 
 
 class ExecuteStartContent(TypedDict, total=False):
@@ -1029,20 +935,14 @@ class ExecuteStartContent(TypedDict, total=False):
 
     :ivar executionParameters: The execution settings for the bulk action. Required.
     :vartype executionParameters: "ExecutionParameters"
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: "Resources"
-    :ivar resourcesWithContext: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resourcesWithContext: "ResourcesWithContext"
     """
 
     executionParameters: Required["ExecutionParameters"]
     """The execution settings for the bulk action. Required."""
-    resources: "Resources"
-    """The target virtual machines."""
-    resourcesWithContext: "ResourcesWithContext"
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: Required["Resources"]
+    """The target virtual machines. Required."""
 
 
 class ExecutionParameters(TypedDict, total=False):
@@ -1092,34 +992,6 @@ class ExtendedLocation(TypedDict, total=False):
     type: Required[Union[str, "ExtendedLocationType"]]
     """The type of the extended location. Required. Known values are: \"EdgeZone\" and
      \"CustomLocation\"."""
-
-
-class Resource(TypedDict, total=False):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    """
-
-    id: str
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: str
-    """The name of the resource."""
-    type: str
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    systemData: "SystemData"
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
 class GetOperationStatusContent(TypedDict, total=False):
@@ -1387,6 +1259,34 @@ class LinuxVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):  # p
     """Enables customer to schedule patching without accidental upgrades."""
 
 
+class Resource(TypedDict, total=False):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
 class ProxyResource(Resource):
     """Proxy Resource.
 
@@ -1428,8 +1328,6 @@ class LocationBasedBulkCreate(ProxyResource):
     :ivar placement: The availability zone placement constraints applied to the virtual machines
      created by the BulkCreate operation.
     :vartype placement: "Placement"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
     :ivar plan: Details of the resource plan.
@@ -1445,8 +1343,6 @@ class LocationBasedBulkCreate(ProxyResource):
     placement: "Placement"
     """The availability zone placement constraints applied to the virtual machines created by the
      BulkCreate operation."""
-    tags: dict[str, str]
-    """Resource tags."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
     plan: "Plan"
@@ -1477,8 +1373,6 @@ class LocationBasedBulkCreateCustom(ProxyResource):
     :ivar placement: The availability zone placement constraints applied to the virtual machines
      created by the BulkCreateCustom operation.
     :vartype placement: "Placement"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
     :ivar plan: Details of the resource plan.
@@ -1494,8 +1388,6 @@ class LocationBasedBulkCreateCustom(ProxyResource):
     placement: "Placement"
     """The availability zone placement constraints applied to the virtual machines created by the
      BulkCreateCustom operation."""
-    tags: dict[str, str]
-    """Resource tags."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
     plan: "Plan"
@@ -1615,30 +1507,6 @@ class NetworkProfile(TypedDict, total=False):
     networkInterfaceConfigurations: list["VirtualMachineNetworkInterfaceConfiguration"]
     """Specifies the networking configurations that will be used to create the virtual machine
      networking resources."""
-
-
-class NotificationProperties(TypedDict, total=False):
-    """Settings for notifications about upcoming recurring bulk action operations.
-
-    :ivar destination: The notification destination. For email notifications, specify a valid email
-     address. Required.
-    :vartype destination: str
-    :ivar type: The notification delivery method. Required. "Email"
-    :vartype type: Union[str, "NotificationType"]
-    :ivar language: The language used for the notification. Required. "en-us"
-    :vartype language: Union[str, "Language"]
-    :ivar disabled: If true, notifications to this destination are disabled.
-    :vartype disabled: bool
-    """
-
-    destination: Required[str]
-    """The notification destination. For email notifications, specify a valid email address. Required."""
-    type: Required[Union[str, "NotificationType"]]
-    """The notification delivery method. Required. \"Email\""""
-    language: Required[Union[str, "Language"]]
-    """The language used for the notification. Required. \"en-us\""""
-    disabled: bool
-    """If true, notifications to this destination are disabled."""
 
 
 class OSDisk(TypedDict, total=False):
@@ -1874,36 +1742,6 @@ class OSProfile(TypedDict, total=False):
     """Optional property which must either be set to True or omitted."""
 
 
-class OSProfileProvisioningData(TypedDict, total=False):
-    """Additional parameters for reimaging a virtual machine that does not use an ephemeral operating
-    system disk.
-
-    :ivar adminPassword: The password for the virtual machine administrator account. The password
-     must be 8 to 123 characters long for Windows virtual machines or 6 to 72 characters long for
-     Linux virtual machines. It must contain characters from at least three of these categories:
-     lowercase letters, uppercase letters, digits, and special characters. The following values are
-     not allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
-     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
-     accepted only in the request and is not returned in responses.
-    :vartype adminPassword: str
-    :ivar customData: Base64-encoded custom data provided to the virtual machine. The decoded data
-     can contain up to 65,535 bytes. Do not include secrets or passwords.
-    :vartype customData: str
-    """
-
-    adminPassword: str
-    """The password for the virtual machine administrator account. The password must be 8 to 123
-     characters long for Windows virtual machines or 6 to 72 characters long for Linux virtual
-     machines. It must contain characters from at least three of these categories: lowercase
-     letters, uppercase letters, digits, and special characters. The following values are not
-     allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
-     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
-     accepted only in the request and is not returned in responses."""
-    customData: str
-    """Base64-encoded custom data provided to the virtual machine. The decoded data can contain up to
-     65,535 bytes. Do not include secrets or passwords."""
-
-
 class PatchSettings(TypedDict, total=False):
     """Specifies settings related to VM Guest Patching on Windows.
 
@@ -2074,72 +1912,6 @@ class PublicIPAddressSku(TypedDict, total=False):
     """Specify public IP sku tier. Known values are: \"Regional\" and \"Global\"."""
 
 
-class ReimagePayload(TypedDict, total=False):
-    """The shared and per-virtual-machine configuration for a bulk reimage action.
-
-    :ivar baseProfile: The reimage configuration applied to every virtual machine unless a
-     per-virtual-machine override is provided.
-    :vartype baseProfile: "VirtualMachineReimageParameters"
-    :ivar resourceOverrides: The reimage configuration overrides for individual virtual machines.
-    :vartype resourceOverrides: list["ReimageResourceOverride"]
-    """
-
-    baseProfile: "VirtualMachineReimageParameters"
-    """The reimage configuration applied to every virtual machine unless a per-virtual-machine
-     override is provided."""
-    resourceOverrides: list["ReimageResourceOverride"]
-    """The reimage configuration overrides for individual virtual machines."""
-
-
-class ReimageResourceOverride(TypedDict, total=False):
-    """A reimage configuration override for one virtual machine.
-
-    :ivar resourceId: The Azure resource ID of the virtual machine to which the override applies.
-     Required.
-    :vartype resourceId: str
-    :ivar profile: The reimage configuration for this virtual machine. Required.
-    :vartype profile: "VirtualMachineReimageParameters"
-    """
-
-    resourceId: Required[str]
-    """The Azure resource ID of the virtual machine to which the override applies. Required."""
-    profile: Required["VirtualMachineReimageParameters"]
-    """The reimage configuration for this virtual machine. Required."""
-
-
-class ResourceAttachRequest(TypedDict, total=False):
-    """Resources to attach to a recurring bulk action.
-
-    :ivar resources: The list of resources to attach to the recurring bulk action. Required.
-    :vartype resources: list["ScheduledActionResourceInput"]
-    """
-
-    resources: Required[list["ScheduledActionResourceInput"]]
-    """The list of resources to attach to the recurring bulk action. Required."""
-
-
-class ResourceDetachRequest(TypedDict, total=False):
-    """Resources to remove from a recurring bulk action.
-
-    :ivar resources: The Azure resource IDs of the resources to remove. Required.
-    :vartype resources: list[str]
-    """
-
-    resources: Required[list[str]]
-    """The Azure resource IDs of the resources to remove. Required."""
-
-
-class ResourcePatchRequest(TypedDict, total=False):
-    """Resource-specific settings to update in a recurring bulk action.
-
-    :ivar resources: The resources and notification settings to update. Required.
-    :vartype resources: list["ScheduledActionResourceInput"]
-    """
-
-    resources: Required[list["ScheduledActionResourceInput"]]
-    """The resources and notification settings to update. Required."""
-
-
 class Resources(TypedDict, total=False):
     """The virtual machines targeted by a bulk action.
 
@@ -2149,32 +1921,6 @@ class Resources(TypedDict, total=False):
 
     ids: Required[list[str]]
     """The Azure resource IDs of the target virtual machines. Required."""
-
-
-class ResourcesWithContext(TypedDict, total=False):
-    """The resources needed for the user request with the context for tracking purposes.
-
-    :ivar resources: The resource ids used for the request. Required.
-    :vartype resources: list["ResourceWithContext"]
-    """
-
-    resources: Required[list["ResourceWithContext"]]
-    """The resource ids used for the request. Required."""
-
-
-class ResourceWithContext(TypedDict, total=False):
-    """The resources needed for the user request with the resourceContext.
-
-    :ivar resourceId: The resource ids used for the request. Required.
-    :vartype resourceId: str
-    :ivar resourceContext: The operational context of the resourceId. Required.
-    :vartype resourceContext: str
-    """
-
-    resourceId: Required[str]
-    """The resource ids used for the request. Required."""
-    resourceContext: Required[str]
-    """The operational context of the resourceId. Required."""
 
 
 class RetryPolicy(TypedDict, total=False):
@@ -2197,286 +1943,6 @@ class RetryPolicy(TypedDict, total=False):
     onFailureAction: Union[str, "ResourceOperationType"]
     """The operation that Bulk Actions attempts when the requested operation fails. Known values are:
      \"Start\", \"Deallocate\", \"Hibernate\", \"Create\", and \"Delete\"."""
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
-
-
-class ScheduledAction(TrackedResource):
-    """A recurring bulk action that operates on specified compute resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "ScheduledActionProperties"
-    """
-
-    properties: "ScheduledActionProperties"
-    """The resource-specific properties for this resource."""
-
-
-class ScheduledActionProperties(TypedDict, total=False):
-    """Configuration and status of a recurring bulk action.
-
-    :ivar resourceType: The type of compute resource targeted by the action. Required. Known values
-     are: "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resourceType: Union[str, "ResourceType"]
-    :ivar actionType: The operation performed on the targeted resources. Required. Known values
-     are: "Start", "Deallocate", and "Hibernate".
-    :vartype actionType: Union[str, "ScheduledActionType"]
-    :ivar startTime: The date and time, including UTC offset, when the schedule becomes active.
-     Required.
-    :vartype startTime: str
-    :ivar endTime: The date and time, including UTC offset, after which no new occurrences are
-     scheduled.
-    :vartype endTime: str
-    :ivar schedule: The recurring schedule. Required.
-    :vartype schedule: "ScheduledActionsSchedule"
-    :ivar notificationSettings: Notification settings that apply to the recurring bulk action.
-     Required.
-    :vartype notificationSettings: list["NotificationProperties"]
-    :ivar disabled: Indicates whether new occurrences are disabled.
-    :vartype disabled: bool
-    :ivar provisioningState: Read-only. The provisioning state of the recurring bulk action. Known
-     values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
-    :vartype provisioningState: Union[str, "ScheduledActionsProvisioningState"]
-    """
-
-    resourceType: Required[Union[str, "ResourceType"]]
-    """The type of compute resource targeted by the action. Required. Known values are:
-     \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
-    actionType: Required[Union[str, "ScheduledActionType"]]
-    """The operation performed on the targeted resources. Required. Known values are: \"Start\",
-     \"Deallocate\", and \"Hibernate\"."""
-    startTime: Required[str]
-    """The date and time, including UTC offset, when the schedule becomes active. Required."""
-    endTime: str
-    """The date and time, including UTC offset, after which no new occurrences are scheduled."""
-    schedule: Required["ScheduledActionsSchedule"]
-    """The recurring schedule. Required."""
-    notificationSettings: Required[list["NotificationProperties"]]
-    """Notification settings that apply to the recurring bulk action. Required."""
-    disabled: bool
-    """Indicates whether new occurrences are disabled."""
-    provisioningState: Union[str, "ScheduledActionsProvisioningState"]
-    """Read-only. The provisioning state of the recurring bulk action. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
-
-
-class ScheduledActionResourceInput(TypedDict, total=False):
-    """A compute resource to add to or update in a recurring bulk action.
-
-    :ivar resourceId: The Azure resource ID of the targeted virtual machine. Required.
-    :vartype resourceId: str
-    :ivar notificationSettings: Notification settings that apply only to this resource.
-    :vartype notificationSettings: list["NotificationProperties"]
-    """
-
-    resourceId: Required[str]
-    """The Azure resource ID of the targeted virtual machine. Required."""
-    notificationSettings: list["NotificationProperties"]
-    """Notification settings that apply only to this resource."""
-
-
-class ScheduledActionsExecutionParameters(TypedDict, total=False):
-    """Settings that control how the recurring bulk action operation is executed.
-
-    :ivar retryPolicy: The retry settings for failed resource operations.
-    :vartype retryPolicy: "ScheduledActionsRetryPolicy"
-    """
-
-    retryPolicy: "ScheduledActionsRetryPolicy"
-    """The retry settings for failed resource operations."""
-
-
-class ScheduledActionsRetryPolicy(TypedDict, total=False):
-    """Retry settings for a recurring bulk action operation.
-
-    :ivar retryCount: The maximum number of retry attempts.
-    :vartype retryCount: int
-    :ivar retryWindowInMinutes: The time window, in minutes, during which retries can occur.
-    :vartype retryWindowInMinutes: int
-    :ivar onFailureAction: The resource operation to retry after a failure. Known values are:
-     "Start", "Deallocate", "Hibernate", "Create", and "Delete".
-    :vartype onFailureAction: Union[str, "ScheduledActionsResourceOperationType"]
-    """
-
-    retryCount: int
-    """The maximum number of retry attempts."""
-    retryWindowInMinutes: int
-    """The time window, in minutes, during which retries can occur."""
-    onFailureAction: Union[str, "ScheduledActionsResourceOperationType"]
-    """The resource operation to retry after a failure. Known values are: \"Start\", \"Deallocate\",
-     \"Hibernate\", \"Create\", and \"Delete\"."""
-
-
-class ScheduledActionsSchedule(TypedDict, total=False):
-    """The recurring schedule for a recurring bulk action.
-
-    :ivar scheduledTime: The local time of day when the recurring bulk action runs. Required.
-    :vartype scheduledTime: str
-    :ivar timeZone: The time zone used to interpret the scheduled time. Required.
-    :vartype timeZone: str
-    :ivar requestedWeekDays: The days of the week when the action runs. An empty array means every
-     day of the week.
-    :vartype requestedWeekDays: list[Union[str, "WeekDay"]]
-    :ivar requestedMonths: The months when the action runs. An empty array means every month.
-    :vartype requestedMonths: list[Union[str, "Month"]]
-    :ivar requestedDaysOfTheMonth: The calendar days when the action runs. An empty array means
-     every day of the month.
-    :vartype requestedDaysOfTheMonth: list[int]
-    :ivar executionParameters: Settings that control operation execution and retries.
-    :vartype executionParameters: "ScheduledActionsExecutionParameters"
-    :ivar deadlineType: How the scheduled time is interpreted. The default is ``InitiateAt``. Known
-     values are: "InitiateAt" and "CompleteBy".
-    :vartype deadlineType: Union[str, "ScheduledActionsDeadlineType"]
-    """
-
-    scheduledTime: Required[str]
-    """The local time of day when the recurring bulk action runs. Required."""
-    timeZone: Required[str]
-    """The time zone used to interpret the scheduled time. Required."""
-    requestedWeekDays: list[Union[str, "WeekDay"]]
-    """The days of the week when the action runs. An empty array means every day of the week."""
-    requestedMonths: list[Union[str, "Month"]]
-    """The months when the action runs. An empty array means every month."""
-    requestedDaysOfTheMonth: list[int]
-    """The calendar days when the action runs. An empty array means every day of the month."""
-    executionParameters: "ScheduledActionsExecutionParameters"
-    """Settings that control operation execution and retries."""
-    deadlineType: Union[str, "ScheduledActionsDeadlineType"]
-    """How the scheduled time is interpreted. The default is ``InitiateAt``. Known values are:
-     \"InitiateAt\" and \"CompleteBy\"."""
-
-
-class ScheduledActionsScheduleUpdate(TypedDict, total=False):
-    """Schedule changes for a recurring bulk action. Omitted properties keep their current values.
-
-    :ivar scheduledTime: The local time of day when the recurring bulk action runs.
-    :vartype scheduledTime: str
-    :ivar timeZone: The time zone used to interpret the scheduled time.
-    :vartype timeZone: str
-    :ivar requestedWeekDays: The days of the week when the action runs. An empty array means every
-     day of the week.
-    :vartype requestedWeekDays: list[Union[str, "WeekDay"]]
-    :ivar requestedMonths: The months when the action runs. An empty array means every month.
-    :vartype requestedMonths: list[Union[str, "Month"]]
-    :ivar requestedDaysOfTheMonth: The calendar days when the action runs. An empty array means
-     every day of the month.
-    :vartype requestedDaysOfTheMonth: list[int]
-    :ivar executionParameters: Settings that control operation execution and retries.
-    :vartype executionParameters: "ScheduledActionsExecutionParameters"
-    :ivar deadlineType: How the scheduled time is interpreted. The default is ``InitiateAt``. Known
-     values are: "InitiateAt" and "CompleteBy".
-    :vartype deadlineType: Union[str, "ScheduledActionsDeadlineType"]
-    """
-
-    scheduledTime: str
-    """The local time of day when the recurring bulk action runs."""
-    timeZone: str
-    """The time zone used to interpret the scheduled time."""
-    requestedWeekDays: list[Union[str, "WeekDay"]]
-    """The days of the week when the action runs. An empty array means every day of the week."""
-    requestedMonths: list[Union[str, "Month"]]
-    """The months when the action runs. An empty array means every month."""
-    requestedDaysOfTheMonth: list[int]
-    """The calendar days when the action runs. An empty array means every day of the month."""
-    executionParameters: "ScheduledActionsExecutionParameters"
-    """Settings that control operation execution and retries."""
-    deadlineType: Union[str, "ScheduledActionsDeadlineType"]
-    """How the scheduled time is interpreted. The default is ``InitiateAt``. Known values are:
-     \"InitiateAt\" and \"CompleteBy\"."""
-
-
-class ScheduledActionUpdate(TypedDict, total=False):
-    """The type used for update operations of the ScheduledAction.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "ScheduledActionUpdateProperties"
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    properties: "ScheduledActionUpdateProperties"
-    """The resource-specific properties for this resource."""
-
-
-class ScheduledActionUpdateProperties(TypedDict, total=False):
-    """The updatable properties of the ScheduledAction.
-
-    :ivar resourceType: The type of compute resource targeted by the action. Known values are:
-     "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resourceType: Union[str, "ResourceType"]
-    :ivar actionType: The operation performed on the targeted resources. Known values are: "Start",
-     "Deallocate", and "Hibernate".
-    :vartype actionType: Union[str, "ScheduledActionType"]
-    :ivar startTime: The date and time, including UTC offset, when the schedule becomes active.
-    :vartype startTime: str
-    :ivar endTime: The date and time, including UTC offset, after which no new occurrences are
-     scheduled.
-    :vartype endTime: str
-    :ivar schedule: Changes to the recurring schedule.
-    :vartype schedule: "ScheduledActionsScheduleUpdate"
-    :ivar notificationSettings: Notification settings that apply to the recurring bulk action.
-    :vartype notificationSettings: list["NotificationProperties"]
-    :ivar disabled: Indicates whether new occurrences are disabled.
-    :vartype disabled: bool
-    """
-
-    resourceType: Union[str, "ResourceType"]
-    """The type of compute resource targeted by the action. Known values are: \"VirtualMachine\" and
-     \"VirtualMachineScaleSet\"."""
-    actionType: Union[str, "ScheduledActionType"]
-    """The operation performed on the targeted resources. Known values are: \"Start\", \"Deallocate\",
-     and \"Hibernate\"."""
-    startTime: str
-    """The date and time, including UTC offset, when the schedule becomes active."""
-    endTime: str
-    """The date and time, including UTC offset, after which no new occurrences are scheduled."""
-    schedule: "ScheduledActionsScheduleUpdate"
-    """Changes to the recurring schedule."""
-    notificationSettings: list["NotificationProperties"]
-    """Notification settings that apply to the recurring bulk action."""
-    disabled: bool
-    """Indicates whether new occurrences are disabled."""
 
 
 class ScheduledEventsAdditionalPublishingTargets(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -3172,32 +2638,6 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(TypedDict, total=Fal
      generated name label is the concatenation of the hashed domain name label with policy according
      to the domain name label scope and vm network profile unique ID. Known values are:
      \"TenantReuse\", \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
-
-
-class VirtualMachineReimageParameters(TypedDict, total=False):
-    """The parameters for reimaging a virtual machine. The operating system disk is always reimaged.
-
-    :ivar tempDisk: Indicates whether to reimage the temporary disk. The default value is
-     ``false``. This option is supported only for virtual machines or virtual machine scale sets
-     that use an ephemeral operating system disk.
-    :vartype tempDisk: bool
-    :ivar exactVersion: The exact image version to use when reimaging the operating system disk.
-     When omitted, the disk is reimaged to its current image version.
-    :vartype exactVersion: str
-    :ivar osProfile: The operating system profile used when reimaging a non-ephemeral operating
-     system disk.
-    :vartype osProfile: "OSProfileProvisioningData"
-    """
-
-    tempDisk: bool
-    """Indicates whether to reimage the temporary disk. The default value is ``false``. This option is
-     supported only for virtual machines or virtual machine scale sets that use an ephemeral
-     operating system disk."""
-    exactVersion: str
-    """The exact image version to use when reimaging the operating system disk. When omitted, the disk
-     is reimaged to its current image version."""
-    osProfile: "OSProfileProvisioningData"
-    """The operating system profile used when reimaging a non-ephemeral operating system disk."""
 
 
 class VMDiskSecurityProfile(TypedDict, total=False):

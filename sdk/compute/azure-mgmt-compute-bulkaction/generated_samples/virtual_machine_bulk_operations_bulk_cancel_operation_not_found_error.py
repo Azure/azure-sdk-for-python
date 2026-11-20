@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/VirtualMachineBulkOperations_BulkCancel_OperationNotFoundError.json
+# x-ms-original-file: 2026-10-16/VirtualMachineBulkOperations_BulkCancel_OperationNotFoundError.json
 if __name__ == "__main__":
     main()

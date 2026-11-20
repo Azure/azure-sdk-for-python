@@ -4,12 +4,7 @@ namespace azure.mgmt.compute.bulkaction
     class azure.mgmt.compute.bulkaction.ComputeBulkActionsMgmtClient: implements ContextManager 
         bulk_create: BulkCreateOperations
         bulk_create_custom: BulkCreateCustomOperations
-        occurrence_extension: OccurrenceExtensionOperations
-        occurrences: OccurrencesOperations
         operations: Operations
-        scheduled_action_extension: ScheduledActionExtensionOperations
-        scheduled_action_operation_status: ScheduledActionOperationStatusOperations
-        scheduled_actions: ScheduledActionsOperations
         virtual_machine_bulk_operations: VirtualMachineBulkOperationsOperations
 
         def __init__(
@@ -40,12 +35,7 @@ namespace azure.mgmt.compute.bulkaction.aio
     class azure.mgmt.compute.bulkaction.aio.ComputeBulkActionsMgmtClient: implements AsyncContextManager 
         bulk_create: BulkCreateOperations
         bulk_create_custom: BulkCreateCustomOperations
-        occurrence_extension: OccurrenceExtensionOperations
-        occurrences: OccurrencesOperations
         operations: Operations
-        scheduled_action_extension: ScheduledActionExtensionOperations
-        scheduled_action_operation_status: ScheduledActionOperationStatusOperations
-        scheduled_actions: ScheduledActionsOperations
         virtual_machine_bulk_operations: VirtualMachineBulkOperationsOperations
 
         def __init__(
@@ -81,18 +71,8 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -104,7 +84,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreateCustom]: ...
 
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -116,7 +96,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreateCustom]: ...
 
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -128,19 +108,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                *, 
-                delete_instances: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -150,7 +118,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> LocationBasedBulkCreateCustom: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         async def get_async_operation_status(
                 self, 
                 location: str, 
@@ -159,7 +127,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -168,7 +136,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -176,7 +144,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -194,18 +162,8 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -217,7 +175,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreate]: ...
 
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -229,7 +187,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreate]: ...
 
         @overload
-        async def begin_create_or_update(
+        async def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -241,19 +199,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncLROPoller[LocationBasedBulkCreate]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                *, 
-                delete_instances: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -263,7 +209,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> LocationBasedBulkCreate: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         async def get_async_operation_status(
                 self, 
                 location: str, 
@@ -272,7 +218,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -281,7 +227,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -289,7 +235,7 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> AsyncItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -297,133 +243,6 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[ResourceOperation]: ...
-
-
-    class azure.mgmt.compute.bulkaction.aio.operations.OccurrenceExtensionOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_occurrence_by_vms(
-                self, 
-                resource_uri: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[OccurrenceExtensionResource]: ...
-
-
-    class azure.mgmt.compute.bulkaction.aio.operations.OccurrencesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: DelayRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: DelayRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                **kwargs: Any
-            ) -> Occurrence: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_scheduled_action(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[Occurrence]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[OccurrenceResource]: ...
 
 
     class azure.mgmt.compute.bulkaction.aio.operations.Operations:
@@ -438,314 +257,6 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
         def list(self, **kwargs: Any) -> AsyncItemPaged[Operation]: ...
 
 
-    class azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionExtensionOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_vms(
-                self, 
-                resource_uri: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ScheduledActionResources]: ...
-
-
-    class azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionOperationStatusOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def get(
-                self, 
-                location: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-
-    class azure.mgmt.compute.bulkaction.aio.operations.ScheduledActionsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceAttachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceAttachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: ScheduledAction, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ScheduledAction]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: ScheduledAction, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ScheduledAction]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ScheduledAction]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceDetachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceDetachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        async def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[ResourceOperationResponse]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_disable(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_enable(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def begin_trigger_manual_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Occurrence]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: ScheduledActionUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: ScheduledActionUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> ScheduledAction: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ScheduledAction]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ScheduledAction]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ScheduledActionResource]: ...
-
-        @overload
-        async def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourcePatchRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-        @overload
-        async def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourcePatchRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-        @overload
-        async def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-
     class azure.mgmt.compute.bulkaction.aio.operations.VirtualMachineBulkOperationsOperations:
 
         def __init__(
@@ -755,39 +266,6 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
             ) -> None: ...
 
         @overload
-        async def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: AcknowledgeBulkOperationErrorsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
-        async def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: AcknowledgeBulkOperationErrorsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
-        async def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
         async def bulk_cancel_operations(
                 self, 
                 resource_group_name: str, 
@@ -951,50 +429,6 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> HibernateResourceOperationResponse: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'lookback_in_minutes', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-10-06-preview'])
-        def bulk_list_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                *, 
-                lookback_in_minutes: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ResourceOperation]: ...
-
-        @overload
-        async def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: ExecuteReimageRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
-
-        @overload
-        async def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: ExecuteReimageRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
-
-        @overload
-        async def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
 
         @overload
         async def bulk_start_operation(
@@ -1031,38 +465,6 @@ namespace azure.mgmt.compute.bulkaction.aio.operations
 
 
 namespace azure.mgmt.compute.bulkaction.models
-
-    class azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsRequest(_Model):
-        operation_ids: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                operation_ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.AcknowledgeBulkOperationErrorsResponse(_Model):
-        acknowledged: list[str]
-        not_found: list[str]
-        skipped: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                acknowledged: list[str], 
-                not_found: list[str], 
-                skipped: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
 
     class azure.mgmt.compute.bulkaction.models.ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INTERNAL = "Internal"
@@ -1405,20 +807,6 @@ namespace azure.mgmt.compute.bulkaction.models
         READ_WRITE = "ReadWrite"
 
 
-    class azure.mgmt.compute.bulkaction.models.CancelOccurrenceRequest(_Model):
-        resource_ids: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resource_ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.CancelOperationsContent(_Model):
         operation_ids: list[str]
 
@@ -1657,22 +1045,6 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.DelayRequest(_Model):
-        delay: datetime
-        resource_ids: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                delay: datetime, 
-                resource_ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.DeleteOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DELETE = "Delete"
         DETACH = "Detach"
@@ -1863,16 +1235,14 @@ namespace azure.mgmt.compute.bulkaction.models
 
     class azure.mgmt.compute.bulkaction.models.ExecuteDeallocateContent(_Model):
         execution_parameters: ExecutionParameters
-        resources: Optional[Resources]
-        resources_with_context: Optional[ResourcesWithContext]
+        resources: Resources
 
         @overload
         def __init__(
                 self, 
                 *, 
                 execution_parameters: ExecutionParameters, 
-                resources: Optional[Resources] = ..., 
-                resources_with_context: Optional[ResourcesWithContext] = ...
+                resources: Resources
             ) -> None: ...
 
         @overload
@@ -1882,8 +1252,7 @@ namespace azure.mgmt.compute.bulkaction.models
     class azure.mgmt.compute.bulkaction.models.ExecuteDeleteContent(_Model):
         execution_parameters: ExecutionParameters
         force_deletion: Optional[bool]
-        resources: Optional[Resources]
-        resources_with_context: Optional[ResourcesWithContext]
+        resources: Resources
 
         @overload
         def __init__(
@@ -1891,8 +1260,7 @@ namespace azure.mgmt.compute.bulkaction.models
                 *, 
                 execution_parameters: ExecutionParameters, 
                 force_deletion: Optional[bool] = ..., 
-                resources: Optional[Resources] = ..., 
-                resources_with_context: Optional[ResourcesWithContext] = ...
+                resources: Resources
             ) -> None: ...
 
         @overload
@@ -1901,36 +1269,14 @@ namespace azure.mgmt.compute.bulkaction.models
 
     class azure.mgmt.compute.bulkaction.models.ExecuteHibernateContent(_Model):
         execution_parameters: ExecutionParameters
-        resources: Optional[Resources]
-        resources_with_context: Optional[ResourcesWithContext]
+        resources: Resources
 
         @overload
         def __init__(
                 self, 
                 *, 
                 execution_parameters: ExecutionParameters, 
-                resources: Optional[Resources] = ..., 
-                resources_with_context: Optional[ResourcesWithContext] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ExecuteReimageRequest(_Model):
-        execution_parameters: ExecutionParameters
-        reimage_parameters: Optional[ReimagePayload]
-        resources: Optional[Resources]
-        resources_with_context: Optional[ResourcesWithContext]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                execution_parameters: ExecutionParameters, 
-                reimage_parameters: Optional[ReimagePayload] = ..., 
-                resources: Optional[Resources] = ..., 
-                resources_with_context: Optional[ResourcesWithContext] = ...
+                resources: Resources
             ) -> None: ...
 
         @overload
@@ -1939,16 +1285,14 @@ namespace azure.mgmt.compute.bulkaction.models
 
     class azure.mgmt.compute.bulkaction.models.ExecuteStartContent(_Model):
         execution_parameters: ExecutionParameters
-        resources: Optional[Resources]
-        resources_with_context: Optional[ResourcesWithContext]
+        resources: Resources
 
         @overload
         def __init__(
                 self, 
                 *, 
                 execution_parameters: ExecutionParameters, 
-                resources: Optional[Resources] = ..., 
-                resources_with_context: Optional[ResourcesWithContext] = ...
+                resources: Resources
             ) -> None: ...
 
         @overload
@@ -1994,13 +1338,6 @@ namespace azure.mgmt.compute.bulkaction.models
     class azure.mgmt.compute.bulkaction.models.ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CUSTOM_LOCATION = "CustomLocation"
         EDGE_ZONE = "EdgeZone"
-
-
-    class azure.mgmt.compute.bulkaction.models.ExtensionResource(Resource):
-        id: str
-        name: str
-        system_data: SystemData
-        type: str
 
 
     class azure.mgmt.compute.bulkaction.models.FallbackOperationInfo(_Model):
@@ -2164,10 +1501,6 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.Language(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        EN_US = "en-us"
-
-
     class azure.mgmt.compute.bulkaction.models.LinuxConfiguration(_Model):
         disable_password_authentication: Optional[bool]
         enable_vm_agent_platform_updates: Optional[bool]
@@ -2250,7 +1583,6 @@ namespace azure.mgmt.compute.bulkaction.models
         plan: Optional[Plan]
         properties: Optional[BulkCreateProperties]
         system_data: SystemData
-        tags: Optional[dict[str, str]]
         type: str
         zones: Optional[list[str]]
 
@@ -2263,7 +1595,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateProperties] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
                 zones: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -2280,7 +1611,6 @@ namespace azure.mgmt.compute.bulkaction.models
         plan: Optional[Plan]
         properties: Optional[BulkCreateCustomProperties]
         system_data: SystemData
-        tags: Optional[dict[str, str]]
         type: str
         zones: Optional[list[str]]
 
@@ -2293,7 +1623,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 placement: Optional[Placement] = ..., 
                 plan: Optional[Plan] = ..., 
                 properties: Optional[BulkCreateCustomProperties] = ..., 
-                tags: Optional[dict[str, str]] = ..., 
                 zones: Optional[list[str]] = ...
             ) -> None: ...
 
@@ -2357,25 +1686,9 @@ namespace azure.mgmt.compute.bulkaction.models
         ENFORCE = "Enforce"
 
 
-    class azure.mgmt.compute.bulkaction.models.Month(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ALL = "All"
-        APRIL = "April"
-        AUGUST = "August"
-        DECEMBER = "December"
-        FEBRUARY = "February"
-        JANUARY = "January"
-        JULY = "July"
-        JUNE = "June"
-        MARCH = "March"
-        MAY = "May"
-        NOVEMBER = "November"
-        OCTOBER = "October"
-        SEPTEMBER = "September"
-
-
     class azure.mgmt.compute.bulkaction.models.NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ENUM2020_11_01 = "2020-11-01"
-        ENUM2022_11_01 = "2022-11-01"
+        ENUM_2020_11_01 = "2020-11-01"
+        ENUM_2022_11_01 = "2022-11-01"
 
 
     class azure.mgmt.compute.bulkaction.models.NetworkInterfaceAuxiliaryMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2440,30 +1753,6 @@ namespace azure.mgmt.compute.bulkaction.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.NotificationProperties(_Model):
-        destination: str
-        disabled: Optional[bool]
-        language: Union[str, Language]
-        type: Union[str, NotificationType]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                destination: str, 
-                disabled: Optional[bool] = ..., 
-                language: Union[str, Language], 
-                type: Union[str, NotificationType]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.NotificationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        EMAIL = "Email"
 
 
     class azure.mgmt.compute.bulkaction.models.OSDisk(_Model):
@@ -2546,144 +1835,6 @@ namespace azure.mgmt.compute.bulkaction.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OSProfileProvisioningData(_Model):
-        admin_password: Optional[str]
-        custom_data: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                admin_password: Optional[str] = ..., 
-                custom_data: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.Occurrence(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[OccurrenceProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[OccurrenceProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceExtensionProperties(_Model):
-        error_details: Optional[ODataV4Format]
-        notification_settings: Optional[list[NotificationProperties]]
-        provisioning_state: Optional[Union[str, OccurrenceResourceProvisioningState]]
-        resource_id: str
-        scheduled_action_id: str
-        scheduled_time: datetime
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                notification_settings: Optional[list[NotificationProperties]] = ..., 
-                resource_id: str, 
-                scheduled_action_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceExtensionResource(ExtensionResource):
-        id: str
-        name: str
-        properties: Optional[OccurrenceExtensionProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[OccurrenceExtensionProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceProperties(_Model):
-        provisioning_state: Optional[Union[str, OccurrenceState]]
-        result_summary: OccurrenceResultSummary
-        scheduled_time: datetime
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceResource(_Model):
-        error_details: Optional[ODataV4Format]
-        id: str
-        name: str
-        notification_settings: Optional[list[NotificationProperties]]
-        provisioning_state: Optional[Union[str, OccurrenceResourceProvisioningState]]
-        resource_id: str
-        scheduled_time: datetime
-        type: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                notification_settings: Optional[list[NotificationProperties]] = ..., 
-                resource_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CANCELLING = "Cancelling"
-        CREATED = "Created"
-        FAILED = "Failed"
-        INVALID_STATE = "InvalidState"
-        RESCHEDULING = "Rescheduling"
-        SCHEDULED = "Scheduled"
-        SUCCEEDED = "Succeeded"
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceResultSummary(_Model):
-        statuses: list[ResourceResultSummary]
-        total: int
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                statuses: list[ResourceResultSummary], 
-                total: int
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.OccurrenceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CANCELLING = "Cancelling"
-        CREATED = "Created"
-        FAILED = "Failed"
-        RESCHEDULING = "Rescheduling"
-        SCHEDULED = "Scheduled"
-        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.compute.bulkaction.models.OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2900,91 +2051,11 @@ namespace azure.mgmt.compute.bulkaction.models
         STATIC = "Static"
 
 
-    class azure.mgmt.compute.bulkaction.models.ReimagePayload(_Model):
-        base_profile: Optional[VirtualMachineReimageParameters]
-        resource_overrides: Optional[list[ReimageResourceOverride]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                base_profile: Optional[VirtualMachineReimageParameters] = ..., 
-                resource_overrides: Optional[list[ReimageResourceOverride]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ReimageResourceOperationResponse(_Model):
-        description: str
-        location: str
-        results: Optional[list[ResourceOperation]]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: str, 
-                location: str, 
-                results: Optional[list[ResourceOperation]] = ..., 
-                type: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ReimageResourceOverride(_Model):
-        profile: VirtualMachineReimageParameters
-        resource_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                profile: VirtualMachineReimageParameters, 
-                resource_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.Resource(_Model):
         id: Optional[str]
         name: Optional[str]
         system_data: Optional[SystemData]
         type: Optional[str]
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceAttachRequest(_Model):
-        resources: list[ScheduledActionResourceInput]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resources: list[ScheduledActionResourceInput]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceDetachRequest(_Model):
-        resources: list[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resources: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.compute.bulkaction.models.ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3086,104 +2157,12 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.ResourceOperationResponse(_Model):
-        resources_statuses: list[ResourceStatus]
-        total_resources: int
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resources_statuses: list[ResourceStatus], 
-                total_resources: int
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-
-
     class azure.mgmt.compute.bulkaction.models.ResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         CREATE = "Create"
         DEALLOCATE = "Deallocate"
         DELETE = "Delete"
         HIBERNATE = "Hibernate"
         START = "Start"
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourcePatchRequest(_Model):
-        resources: list[ScheduledActionResourceInput]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resources: list[ScheduledActionResourceInput]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceResultSummary(_Model):
-        code: str
-        count: int
-        error_details: Optional[ODataV4Format]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                code: str, 
-                count: int, 
-                error_details: Optional[ODataV4Format] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceStatus(_Model):
-        error: Optional[ODataV4Format]
-        resource_id: str
-        status: Union[str, ResourceOperationStatus]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                error: Optional[ODataV4Format] = ..., 
-                resource_id: str, 
-                status: Union[str, ResourceOperationStatus]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        VIRTUAL_MACHINE = "VirtualMachine"
-        VIRTUAL_MACHINE_SCALE_SET = "VirtualMachineScaleSet"
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourceWithContext(_Model):
-        resource_context: str
-        resource_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resource_context: str, 
-                resource_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.compute.bulkaction.models.Resources(_Model):
@@ -3194,20 +2173,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 self, 
                 *, 
                 ids: list[str]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ResourcesWithContext(_Model):
-        resources: list[ResourceWithContext]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                resources: list[ResourceWithContext]
             ) -> None: ...
 
         @overload
@@ -3226,289 +2191,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 on_failure_action: Optional[Union[str, ResourceOperationType]] = ..., 
                 retry_count: Optional[int] = ..., 
                 retry_window_in_minutes: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledAction(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: Optional[ScheduledActionProperties]
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: Optional[ScheduledActionProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionProperties(_Model):
-        action_type: Union[str, ScheduledActionType]
-        disabled: Optional[bool]
-        end_time: Optional[datetime]
-        notification_settings: list[NotificationProperties]
-        provisioning_state: Optional[Union[str, ScheduledActionsProvisioningState]]
-        resource_type: Union[str, ResourceType]
-        schedule: ScheduledActionsSchedule
-        start_time: datetime
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action_type: Union[str, ScheduledActionType], 
-                disabled: Optional[bool] = ..., 
-                end_time: Optional[datetime] = ..., 
-                notification_settings: list[NotificationProperties], 
-                resource_type: Union[str, ResourceType], 
-                schedule: ScheduledActionsSchedule, 
-                start_time: datetime
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionResource(_Model):
-        id: str
-        name: str
-        notification_settings: Optional[list[NotificationProperties]]
-        resource_id: str
-        type: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                notification_settings: Optional[list[NotificationProperties]] = ..., 
-                resource_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionResourceInput(_Model):
-        notification_settings: Optional[list[NotificationProperties]]
-        resource_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                notification_settings: Optional[list[NotificationProperties]] = ..., 
-                resource_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionResources(ExtensionResource):
-        id: str
-        name: str
-        properties: Optional[ScheduledActionsExtensionProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[ScheduledActionsExtensionProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEALLOCATE = "Deallocate"
-        HIBERNATE = "Hibernate"
-        START = "Start"
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionUpdate(_Model):
-        properties: Optional[ScheduledActionUpdateProperties]
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[ScheduledActionUpdateProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionUpdateProperties(_Model):
-        action_type: Optional[Union[str, ScheduledActionType]]
-        disabled: Optional[bool]
-        end_time: Optional[datetime]
-        notification_settings: Optional[list[NotificationProperties]]
-        resource_type: Optional[Union[str, ResourceType]]
-        schedule: Optional[ScheduledActionsScheduleUpdate]
-        start_time: Optional[datetime]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action_type: Optional[Union[str, ScheduledActionType]] = ..., 
-                disabled: Optional[bool] = ..., 
-                end_time: Optional[datetime] = ..., 
-                notification_settings: Optional[list[NotificationProperties]] = ..., 
-                resource_type: Optional[Union[str, ResourceType]] = ..., 
-                schedule: Optional[ScheduledActionsScheduleUpdate] = ..., 
-                start_time: Optional[datetime] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsDeadlineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        COMPLETE_BY = "CompleteBy"
-        INITIATE_AT = "InitiateAt"
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsExecutionParameters(_Model):
-        retry_policy: Optional[ScheduledActionsRetryPolicy]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                retry_policy: Optional[ScheduledActionsRetryPolicy] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsExtensionProperties(_Model):
-        action_type: Union[str, ScheduledActionType]
-        disabled: Optional[bool]
-        end_time: Optional[datetime]
-        notification_settings: list[NotificationProperties]
-        provisioning_state: Optional[Union[str, ScheduledActionsProvisioningState]]
-        resource_notification_settings: Optional[list[NotificationProperties]]
-        resource_type: Union[str, ResourceType]
-        schedule: ScheduledActionsSchedule
-        start_time: datetime
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action_type: Union[str, ScheduledActionType], 
-                disabled: Optional[bool] = ..., 
-                end_time: Optional[datetime] = ..., 
-                notification_settings: list[NotificationProperties], 
-                resource_type: Union[str, ResourceType], 
-                schedule: ScheduledActionsSchedule, 
-                start_time: datetime
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-        UPDATING = "Updating"
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsResourceOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CREATE = "Create"
-        DEALLOCATE = "Deallocate"
-        DELETE = "Delete"
-        HIBERNATE = "Hibernate"
-        START = "Start"
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsRetryPolicy(_Model):
-        on_failure_action: Optional[Union[str, ScheduledActionsResourceOperationType]]
-        retry_count: Optional[int]
-        retry_window_in_minutes: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                on_failure_action: Optional[Union[str, ScheduledActionsResourceOperationType]] = ..., 
-                retry_count: Optional[int] = ..., 
-                retry_window_in_minutes: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsSchedule(_Model):
-        deadline_type: Optional[Union[str, ScheduledActionsDeadlineType]]
-        execution_parameters: Optional[ScheduledActionsExecutionParameters]
-        requested_days_of_the_month: Optional[list[int]]
-        requested_months: Optional[list[Union[str, Month]]]
-        requested_week_days: Optional[list[Union[str, WeekDay]]]
-        scheduled_time: time
-        time_zone: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                deadline_type: Optional[Union[str, ScheduledActionsDeadlineType]] = ..., 
-                execution_parameters: Optional[ScheduledActionsExecutionParameters] = ..., 
-                requested_days_of_the_month: Optional[list[int]] = ..., 
-                requested_months: Optional[list[Union[str, Month]]] = ..., 
-                requested_week_days: Optional[list[Union[str, WeekDay]]] = ..., 
-                scheduled_time: time, 
-                time_zone: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.ScheduledActionsScheduleUpdate(_Model):
-        deadline_type: Optional[Union[str, ScheduledActionsDeadlineType]]
-        execution_parameters: Optional[ScheduledActionsExecutionParameters]
-        requested_days_of_the_month: Optional[list[int]]
-        requested_months: Optional[list[Union[str, Month]]]
-        requested_week_days: Optional[list[Union[str, WeekDay]]]
-        scheduled_time: Optional[time]
-        time_zone: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                deadline_type: Optional[Union[str, ScheduledActionsDeadlineType]] = ..., 
-                execution_parameters: Optional[ScheduledActionsExecutionParameters] = ..., 
-                requested_days_of_the_month: Optional[list[int]] = ..., 
-                requested_months: Optional[list[Union[str, Month]]] = ..., 
-                requested_week_days: Optional[list[Union[str, WeekDay]]] = ..., 
-                scheduled_time: Optional[time] = ..., 
-                time_zone: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3731,26 +2413,6 @@ namespace azure.mgmt.compute.bulkaction.models
                 *, 
                 enable: Optional[bool] = ..., 
                 not_before_timeout: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.TrackedResource(Resource):
-        id: str
-        location: str
-        name: str
-        system_data: SystemData
-        tags: Optional[dict[str, str]]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -4121,24 +2783,6 @@ namespace azure.mgmt.compute.bulkaction.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.compute.bulkaction.models.VirtualMachineReimageParameters(_Model):
-        exact_version: Optional[str]
-        os_profile: Optional[OSProfileProvisioningData]
-        temp_disk: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                exact_version: Optional[str] = ..., 
-                os_profile: Optional[OSProfileProvisioningData] = ..., 
-                temp_disk: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.compute.bulkaction.models.VmSizeProperties(_Model):
         v_cpus_available: Optional[int]
         v_cpus_per_core: Optional[int]
@@ -4153,17 +2797,6 @@ namespace azure.mgmt.compute.bulkaction.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.compute.bulkaction.models.WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ALL = "All"
-        FRIDAY = "Friday"
-        MONDAY = "Monday"
-        SATURDAY = "Saturday"
-        SUNDAY = "Sunday"
-        THURSDAY = "Thursday"
-        TUESDAY = "Tuesday"
-        WEDNESDAY = "Wednesday"
 
 
     class azure.mgmt.compute.bulkaction.models.WinRMConfiguration(_Model):
@@ -4269,18 +2902,8 @@ namespace azure.mgmt.compute.bulkaction.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4292,7 +2915,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreateCustom]: ...
 
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4304,7 +2927,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreateCustom]: ...
 
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4316,19 +2939,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                *, 
-                delete_instances: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4338,7 +2949,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LocationBasedBulkCreateCustom: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def get_async_operation_status(
                 self, 
                 location: str, 
@@ -4347,7 +2958,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4356,7 +2967,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -4364,7 +2975,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreateCustom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-08-06-preview', params_added_on={'2026-08-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -4382,18 +2993,8 @@ namespace azure.mgmt.compute.bulkaction.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4405,7 +3006,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreate]: ...
 
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4417,7 +3018,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreate]: ...
 
         @overload
-        def begin_create_or_update(
+        def begin_create(
                 self, 
                 resource_group_name: str, 
                 location: str, 
@@ -4429,19 +3030,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LROPoller[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'delete_instances']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                name: str, 
-                *, 
-                delete_instances: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -4451,7 +3040,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> LocationBasedBulkCreate: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'async_operation_id', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def get_async_operation_status(
                 self, 
                 location: str, 
@@ -4460,7 +3049,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> OperationStatusResult: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -4469,7 +3058,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'location', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def list_by_subscription(
                 self, 
                 location: str, 
@@ -4477,7 +3066,7 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> ItemPaged[LocationBasedBulkCreate]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview'])
+        @api_version_validation(method_added_on='2026-09-06-preview', params_added_on={'2026-09-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'name', 'accept']}, api_versions_list=['2026-09-06-preview', '2026-10-06-preview', '2026-10-16'])
         def virtual_machines_get_operation_status(
                 self, 
                 resource_group_name: str, 
@@ -4485,133 +3074,6 @@ namespace azure.mgmt.compute.bulkaction.operations
                 name: str, 
                 **kwargs: Any
             ) -> ItemPaged[ResourceOperation]: ...
-
-
-    class azure.mgmt.compute.bulkaction.operations.OccurrenceExtensionOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_occurrence_by_vms(
-                self, 
-                resource_uri: str, 
-                **kwargs: Any
-            ) -> ItemPaged[OccurrenceExtensionResource]: ...
-
-
-    class azure.mgmt.compute.bulkaction.operations.OccurrencesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_cancel(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: DelayRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: DelayRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_delay(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                **kwargs: Any
-            ) -> Occurrence: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_scheduled_action(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[Occurrence]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'occurrence_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                occurrence_id: str, 
-                **kwargs: Any
-            ) -> ItemPaged[OccurrenceResource]: ...
 
 
     class azure.mgmt.compute.bulkaction.operations.Operations:
@@ -4626,314 +3088,6 @@ namespace azure.mgmt.compute.bulkaction.operations
         def list(self, **kwargs: Any) -> ItemPaged[Operation]: ...
 
 
-    class azure.mgmt.compute.bulkaction.operations.ScheduledActionExtensionOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'resource_uri', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_vms(
-                self, 
-                resource_uri: str, 
-                **kwargs: Any
-            ) -> ItemPaged[ScheduledActionResources]: ...
-
-
-    class azure.mgmt.compute.bulkaction.operations.ScheduledActionOperationStatusOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'location', 'operation_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def get(
-                self, 
-                location: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-
-    class azure.mgmt.compute.bulkaction.operations.ScheduledActionsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceAttachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceAttachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_attach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: CancelOccurrenceRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_cancel_next_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: ScheduledAction, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ScheduledAction]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: ScheduledAction, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ScheduledAction]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ScheduledAction]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceDetachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourceDetachRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @overload
-        def begin_detach_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[ResourceOperationResponse]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_disable(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_enable(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def begin_trigger_manual_occurrence(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[Occurrence]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: ScheduledActionUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: ScheduledActionUpdate, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_update(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> ScheduledAction: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[ScheduledAction]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ScheduledAction]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'scheduled_action_name', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-09-06-preview', '2026-10-06-preview'])
-        def list_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[ScheduledActionResource]: ...
-
-        @overload
-        def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourcePatchRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-        @overload
-        def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: ResourcePatchRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-        @overload
-        def patch_resources(
-                self, 
-                resource_group_name: str, 
-                scheduled_action_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ResourceOperationResponse: ...
-
-
     class azure.mgmt.compute.bulkaction.operations.VirtualMachineBulkOperationsOperations:
 
         def __init__(
@@ -4943,39 +3097,6 @@ namespace azure.mgmt.compute.bulkaction.operations
             ) -> None: ...
 
         @overload
-        def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: AcknowledgeBulkOperationErrorsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
-        def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: AcknowledgeBulkOperationErrorsRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
-        def bulk_acknowledge_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AcknowledgeBulkOperationErrorsResponse: ...
-
-        @overload
         def bulk_cancel_operations(
                 self, 
                 resource_group_name: str, 
@@ -5139,50 +3260,6 @@ namespace azure.mgmt.compute.bulkaction.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> HibernateResourceOperationResponse: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-07-06-preview', params_added_on={'2026-07-06-preview': ['api_version', 'subscription_id', 'resource_group_name', 'location', 'lookback_in_minutes', 'accept']}, api_versions_list=['2026-07-06-preview', '2026-08-06-preview', '2026-10-06-preview'])
-        def bulk_list_operation_errors(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                *, 
-                lookback_in_minutes: Optional[int] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[ResourceOperation]: ...
-
-        @overload
-        def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: ExecuteReimageRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
-
-        @overload
-        def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: ExecuteReimageRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
-
-        @overload
-        def bulk_reimage_operation(
-                self, 
-                resource_group_name: str, 
-                location: str, 
-                request_body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ReimageResourceOperationResponse: ...
 
         @overload
         def bulk_start_operation(
@@ -5219,11 +3296,6 @@ namespace azure.mgmt.compute.bulkaction.operations
 
 
 namespace azure.mgmt.compute.bulkaction.types
-
-    class azure.mgmt.compute.bulkaction.types.AcknowledgeBulkOperationErrorsRequest(TypedDict, total=False):
-        key "operationIds": Required[list[str]]
-        operationIds: list[str]
-
 
     class azure.mgmt.compute.bulkaction.types.AdditionalCapabilities(TypedDict, total=False):
         key "hibernationEnabled": bool
@@ -5408,11 +3480,6 @@ namespace azure.mgmt.compute.bulkaction.types
         vmExtensions: list[BulkactionVMExtension]
 
 
-    class azure.mgmt.compute.bulkaction.types.CancelOccurrenceRequest(TypedDict, total=False):
-        key "resourceIds": Required[list[str]]
-        resourceIds: list[str]
-
-
     class azure.mgmt.compute.bulkaction.types.CancelOperationsContent(TypedDict, total=False):
         key "operationIds": Required[list[str]]
         operationIds: list[str]
@@ -5467,13 +3534,6 @@ namespace azure.mgmt.compute.bulkaction.types
         writeAcceleratorEnabled: bool
 
 
-    class azure.mgmt.compute.bulkaction.types.DelayRequest(TypedDict, total=False):
-        key "delay": Required[str]
-        key "resourceIds": Required[list[str]]
-        delay: str
-        resourceIds: list[str]
-
-
     class azure.mgmt.compute.bulkaction.types.DiagnosticsProfile(TypedDict, total=False):
         key "bootDiagnostics": ForwardRef('BootDiagnostics', module='types')
         bootDiagnostics: BootDiagnostics
@@ -5514,51 +3574,32 @@ namespace azure.mgmt.compute.bulkaction.types
 
     class azure.mgmt.compute.bulkaction.types.ExecuteDeallocateContent(TypedDict, total=False):
         key "executionParameters": Required[ExecutionParameters]
-        key "resources": ForwardRef('Resources', module='types')
-        key "resourcesWithContext": ForwardRef('ResourcesWithContext', module='types')
+        key "resources": Required[Resources]
         executionParameters: ExecutionParameters
         resources: Resources
-        resourcesWithContext: ResourcesWithContext
 
 
     class azure.mgmt.compute.bulkaction.types.ExecuteDeleteContent(TypedDict, total=False):
         key "executionParameters": Required[ExecutionParameters]
         key "forceDeletion": bool
-        key "resources": ForwardRef('Resources', module='types')
-        key "resourcesWithContext": ForwardRef('ResourcesWithContext', module='types')
+        key "resources": Required[Resources]
         executionParameters: ExecutionParameters
         forceDeletion: bool
         resources: Resources
-        resourcesWithContext: ResourcesWithContext
 
 
     class azure.mgmt.compute.bulkaction.types.ExecuteHibernateContent(TypedDict, total=False):
         key "executionParameters": Required[ExecutionParameters]
-        key "resources": ForwardRef('Resources', module='types')
-        key "resourcesWithContext": ForwardRef('ResourcesWithContext', module='types')
+        key "resources": Required[Resources]
         executionParameters: ExecutionParameters
         resources: Resources
-        resourcesWithContext: ResourcesWithContext
-
-
-    class azure.mgmt.compute.bulkaction.types.ExecuteReimageRequest(TypedDict, total=False):
-        key "executionParameters": Required[ExecutionParameters]
-        key "reimageParameters": ForwardRef('ReimagePayload', module='types')
-        key "resources": ForwardRef('Resources', module='types')
-        key "resourcesWithContext": ForwardRef('ResourcesWithContext', module='types')
-        executionParameters: ExecutionParameters
-        reimageParameters: ReimagePayload
-        resources: Resources
-        resourcesWithContext: ResourcesWithContext
 
 
     class azure.mgmt.compute.bulkaction.types.ExecuteStartContent(TypedDict, total=False):
         key "executionParameters": Required[ExecutionParameters]
-        key "resources": ForwardRef('Resources', module='types')
-        key "resourcesWithContext": ForwardRef('ResourcesWithContext', module='types')
+        key "resources": Required[Resources]
         executionParameters: ExecutionParameters
         resources: Resources
-        resourcesWithContext: ResourcesWithContext
 
 
     class azure.mgmt.compute.bulkaction.types.ExecutionParameters(TypedDict, total=False):
@@ -5675,7 +3716,6 @@ namespace azure.mgmt.compute.bulkaction.types
         plan: Plan
         properties: BulkCreateProperties
         systemData: SystemData
-        tags: dict[str, str]
         type: str
         zones: list[str]
 
@@ -5698,7 +3738,6 @@ namespace azure.mgmt.compute.bulkaction.types
         plan: Plan
         properties: BulkCreateCustomProperties
         systemData: SystemData
-        tags: dict[str, str]
         type: str
         zones: list[str]
 
@@ -5743,17 +3782,6 @@ namespace azure.mgmt.compute.bulkaction.types
         networkApiVersion: Union[str, NetworkApiVersion]
         networkInterfaceConfigurations: list[VirtualMachineNetworkInterfaceConfiguration]
         networkInterfaces: list[NetworkInterfaceReference]
-
-
-    class azure.mgmt.compute.bulkaction.types.NotificationProperties(TypedDict, total=False):
-        key "destination": Required[str]
-        key "disabled": bool
-        key "language": Required[Union[str, Language]]
-        key "type": Required[Union[str, NotificationType]]
-        destination: str
-        disabled: bool
-        language: Union[str, Language]
-        type: Union[str, NotificationType]
 
 
     class azure.mgmt.compute.bulkaction.types.OSDisk(TypedDict, total=False):
@@ -5808,13 +3836,6 @@ namespace azure.mgmt.compute.bulkaction.types
         requireGuestProvisionSignal: bool
         secrets: list[VaultSecretGroup]
         windowsConfiguration: WindowsConfiguration
-
-
-    class azure.mgmt.compute.bulkaction.types.OSProfileProvisioningData(TypedDict, total=False):
-        key "adminPassword": str
-        key "customData": str
-        adminPassword: str
-        customData: str
 
 
     class azure.mgmt.compute.bulkaction.types.PatchSettings(TypedDict, total=False):
@@ -5881,19 +3902,6 @@ namespace azure.mgmt.compute.bulkaction.types
         tier: Union[str, PublicIPAddressSkuTier]
 
 
-    class azure.mgmt.compute.bulkaction.types.ReimagePayload(TypedDict, total=False):
-        key "baseProfile": ForwardRef('VirtualMachineReimageParameters', module='types')
-        baseProfile: VirtualMachineReimageParameters
-        resourceOverrides: list[ReimageResourceOverride]
-
-
-    class azure.mgmt.compute.bulkaction.types.ReimageResourceOverride(TypedDict, total=False):
-        key "profile": Required[VirtualMachineReimageParameters]
-        key "resourceId": Required[str]
-        profile: VirtualMachineReimageParameters
-        resourceId: str
-
-
     class azure.mgmt.compute.bulkaction.types.Resource(TypedDict, total=False):
         key "id": str
         key "name": str
@@ -5905,36 +3913,9 @@ namespace azure.mgmt.compute.bulkaction.types
         type: str
 
 
-    class azure.mgmt.compute.bulkaction.types.ResourceAttachRequest(TypedDict, total=False):
-        key "resources": Required[list[ScheduledActionResourceInput]]
-        resources: list[ScheduledActionResourceInput]
-
-
-    class azure.mgmt.compute.bulkaction.types.ResourceDetachRequest(TypedDict, total=False):
-        key "resources": Required[list[str]]
-        resources: list[str]
-
-
-    class azure.mgmt.compute.bulkaction.types.ResourcePatchRequest(TypedDict, total=False):
-        key "resources": Required[list[ScheduledActionResourceInput]]
-        resources: list[ScheduledActionResourceInput]
-
-
-    class azure.mgmt.compute.bulkaction.types.ResourceWithContext(TypedDict, total=False):
-        key "resourceContext": Required[str]
-        key "resourceId": Required[str]
-        resourceContext: str
-        resourceId: str
-
-
     class azure.mgmt.compute.bulkaction.types.Resources(TypedDict, total=False):
         key "ids": Required[list[str]]
         ids: list[str]
-
-
-    class azure.mgmt.compute.bulkaction.types.ResourcesWithContext(TypedDict, total=False):
-        key "resources": Required[list[ResourceWithContext]]
-        resources: list[ResourceWithContext]
 
 
     class azure.mgmt.compute.bulkaction.types.RetryPolicy(TypedDict, total=False):
@@ -5944,111 +3925,6 @@ namespace azure.mgmt.compute.bulkaction.types
         onFailureAction: Union[str, ResourceOperationType]
         retryCount: int
         retryWindowInMinutes: int
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledAction(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": ForwardRef('ScheduledActionProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: ScheduledActionProperties
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionProperties(TypedDict, total=False):
-        key "actionType": Required[Union[str, ScheduledActionType]]
-        key "disabled": bool
-        key "endTime": str
-        key "notificationSettings": Required[list[NotificationProperties]]
-        key "provisioningState": Union[str, ScheduledActionsProvisioningState]
-        key "resourceType": Required[Union[str, ResourceType]]
-        key "schedule": Required[ScheduledActionsSchedule]
-        key "startTime": Required[str]
-        actionType: Union[str, ScheduledActionType]
-        disabled: bool
-        endTime: str
-        notificationSettings: list[NotificationProperties]
-        provisioningState: Union[str, ScheduledActionsProvisioningState]
-        resourceType: Union[str, ResourceType]
-        schedule: ScheduledActionsSchedule
-        startTime: str
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionResourceInput(TypedDict, total=False):
-        key "resourceId": Required[str]
-        notificationSettings: list[NotificationProperties]
-        resourceId: str
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionUpdate(TypedDict, total=False):
-        key "properties": ForwardRef('ScheduledActionUpdateProperties', module='types')
-        properties: ScheduledActionUpdateProperties
-        tags: dict[str, str]
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionUpdateProperties(TypedDict, total=False):
-        key "actionType": Union[str, ScheduledActionType]
-        key "disabled": bool
-        key "endTime": str
-        key "resourceType": Union[str, ResourceType]
-        key "schedule": ForwardRef('ScheduledActionsScheduleUpdate', module='types')
-        key "startTime": str
-        actionType: Union[str, ScheduledActionType]
-        disabled: bool
-        endTime: str
-        notificationSettings: list[NotificationProperties]
-        resourceType: Union[str, ResourceType]
-        schedule: ScheduledActionsScheduleUpdate
-        startTime: str
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionsExecutionParameters(TypedDict, total=False):
-        key "retryPolicy": ForwardRef('ScheduledActionsRetryPolicy', module='types')
-        retryPolicy: ScheduledActionsRetryPolicy
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionsRetryPolicy(TypedDict, total=False):
-        key "onFailureAction": Union[str, ScheduledActionsResourceOperationType]
-        key "retryCount": int
-        key "retryWindowInMinutes": int
-        onFailureAction: Union[str, ScheduledActionsResourceOperationType]
-        retryCount: int
-        retryWindowInMinutes: int
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionsSchedule(TypedDict, total=False):
-        key "deadlineType": Union[str, ScheduledActionsDeadlineType]
-        key "executionParameters": ForwardRef('ScheduledActionsExecutionParameters', module='types')
-        key "scheduledTime": Required[str]
-        key "timeZone": Required[str]
-        deadlineType: Union[str, ScheduledActionsDeadlineType]
-        executionParameters: ScheduledActionsExecutionParameters
-        requestedDaysOfTheMonth: list[int]
-        requestedMonths: list[Union[str, Month]]
-        requestedWeekDays: list[Union[str, WeekDay]]
-        scheduledTime: str
-        timeZone: str
-
-
-    class azure.mgmt.compute.bulkaction.types.ScheduledActionsScheduleUpdate(TypedDict, total=False):
-        key "deadlineType": Union[str, ScheduledActionsDeadlineType]
-        key "executionParameters": ForwardRef('ScheduledActionsExecutionParameters', module='types')
-        key "scheduledTime": str
-        key "timeZone": str
-        deadlineType: Union[str, ScheduledActionsDeadlineType]
-        executionParameters: ScheduledActionsExecutionParameters
-        requestedDaysOfTheMonth: list[int]
-        requestedMonths: list[Union[str, Month]]
-        requestedWeekDays: list[Union[str, WeekDay]]
-        scheduledTime: str
-        timeZone: str
 
 
     class azure.mgmt.compute.bulkaction.types.ScheduledEventsAdditionalPublishingTargets(TypedDict, total=False):
@@ -6133,20 +4009,6 @@ namespace azure.mgmt.compute.bulkaction.types
         key "notBeforeTimeout": str
         enable: bool
         notBeforeTimeout: str
-
-
-    class azure.mgmt.compute.bulkaction.types.TrackedResource(Resource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
 
 
     class azure.mgmt.compute.bulkaction.types.UefiSettings(TypedDict, total=False):
@@ -6328,15 +4190,6 @@ namespace azure.mgmt.compute.bulkaction.types
         key "domainNameLabelScope": Union[str, DomainNameLabelScopeTypes]
         domainNameLabel: str
         domainNameLabelScope: Union[str, DomainNameLabelScopeTypes]
-
-
-    class azure.mgmt.compute.bulkaction.types.VirtualMachineReimageParameters(TypedDict, total=False):
-        key "exactVersion": str
-        key "osProfile": ForwardRef('OSProfileProvisioningData', module='types')
-        key "tempDisk": bool
-        exactVersion: str
-        osProfile: OSProfileProvisioningData
-        tempDisk: bool
 
 
     class azure.mgmt.compute.bulkaction.types.VmSizeProperties(TypedDict, total=False):
