@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/VirtualMachineBulkOperations_BulkDelete_ForceDeleteSuccess.json
+# x-ms-original-file: 2026-10-16/VirtualMachineBulkOperations_BulkDelete_ForceDeleteSuccess.json
 if __name__ == "__main__":
     main()
