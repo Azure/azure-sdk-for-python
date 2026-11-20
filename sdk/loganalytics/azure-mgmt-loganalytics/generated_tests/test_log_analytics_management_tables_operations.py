@@ -44,6 +44,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
                     "archiveRetentionInDays": 0,
                     "lastPlanModifiedDate": "str",
                     "plan": "str",
+                    "protectionLevel": "str",
                     "provisioningState": "str",
                     "restoredLogs": {
                         "azureAsyncOperationId": "str",
@@ -128,6 +129,7 @@ class TestLogAnalyticsManagementTablesOperations(AzureMgmtRecordedTestCase):
                     "archiveRetentionInDays": 0,
                     "lastPlanModifiedDate": "str",
                     "plan": "str",
+                    "protectionLevel": "str",
                     "provisioningState": "str",
                     "restoredLogs": {
                         "azureAsyncOperationId": "str",
