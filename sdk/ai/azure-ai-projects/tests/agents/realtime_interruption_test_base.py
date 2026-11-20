@@ -74,11 +74,12 @@ async def _delete_fixture(client: AIProjectClient, fixture: RealtimeInterruption
 
 
 class RealtimeInterruptionPreparer(AbstractPreparer):
-    def __init__(self) -> None:
+    def __init__(self, *, require_generated_audio: bool = False) -> None:
         super().__init__("interrupted-audio-", 32, disable_recording=True)
         self.resource_moniker = _AGENT
         self.fixture: RealtimeInterruptionFixture | None = None
         self.endpoint: str | None = None
+        self.require_generated_audio = require_generated_audio
 
     def create_resource(self, name, **kwargs):
         self.fixture = None
@@ -92,7 +93,13 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
 
     async def _create_fixture(self, agent_name: str, model: str) -> RealtimeInterruptionFixture:
         helpers = _sample_helpers()
-        turn = helpers["InterruptedTurn"]()
+        # A first-chunk cancellation can leave no stored audio beyond the playback cursor.
+        # Let two seconds of PCM16 render, but report that only 200 ms was heard.
+        turn = (
+            helpers["InterruptedTurn"](min_audio_bytes=2 * 24000 * 2, audio_end_ms=200)
+            if self.require_generated_audio
+            else helpers["InterruptedTurn"]()
+        )
         assert self.endpoint, "A live recording requires a configured project endpoint"
         credential = self.test_class_instance.get_credential(AIProjectClient, is_async=True)
         async with (
@@ -107,6 +114,8 @@ class RealtimeInterruptionPreparer(AbstractPreparer):
                 )
                 async with client.voice_agents.realtime.connect(agent_name=agent_name) as connection:
                     await helpers["interrupt_reply_async"](connection, turn)
+                if self.require_generated_audio:
+                    await helpers["wait_for_generated_audio_async"](client, agent_name, turn)
                 deadline = time.monotonic() + helpers["RECORDING_TIMEOUT"]
                 conversations = client.voice_agents.conversations
                 while not turn.stored_item_id:

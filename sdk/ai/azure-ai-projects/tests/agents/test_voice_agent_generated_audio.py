@@ -82,3 +82,19 @@ class TestVoiceAgentGeneratedAudio(TestBase):
                     )
                     if streamed:
                         list(result)
+
+    @interruptionServicePreparer()
+    @RealtimeInterruptionPreparer(require_generated_audio=True)
+    @recorded_by_proxy()
+    def test_generated_audio_can_be_downloaded(self, interrupted_audio_fixture, **kwargs):
+        fixture = interrupted_audio_fixture
+        if is_live():
+            add_interruption_sanitizers(fixture)
+        with self.create_client(**kwargs) as client:
+            conversations = client.voice_agents.conversations
+            item = (fixture.agent_name, fixture.conversation_id, fixture.item_id)
+            metadata = conversations.get_generated_audio_item(*item, raw_response_hook=assert_generated_status(200))
+            content = b"".join(
+                conversations.download_generated_audio_item(*item, raw_response_hook=assert_generated_status(200))
+            )
+            assert_generated_wav(content, metadata, fixture)
