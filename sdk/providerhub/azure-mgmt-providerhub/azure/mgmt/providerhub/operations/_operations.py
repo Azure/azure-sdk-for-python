@@ -51,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_operations_list_by_provider_registration_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_operations_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_operations_create_or_update_request(  # pylint: disable=name-too-long
 def build_operations_delete_request(provider_namespace: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/operations/default"
     path_format_arguments = {
@@ -148,7 +148,7 @@ def build_custom_rollouts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -177,7 +177,7 @@ def build_custom_rollouts_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -206,7 +206,7 @@ def build_custom_rollouts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/customRollouts/{rolloutName}"
     path_format_arguments = {
@@ -229,7 +229,7 @@ def build_custom_rollouts_list_by_provider_registration_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -255,7 +255,7 @@ def build_custom_rollouts_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/customRollouts/{rolloutName}/stop"
     path_format_arguments = {
@@ -272,124 +272,13 @@ def build_custom_rollouts_stop_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_new_region_frontload_release_get_request(  # pylint: disable=name-too-long
-    provider_namespace: str, release_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/newRegionFrontloadRelease/{releaseName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
-        "releaseName": _SERIALIZER.url("release_name", release_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_new_region_frontload_release_create_or_update_request(  # pylint: disable=name-too-long
-    provider_namespace: str, release_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/newRegionFrontloadRelease/{releaseName}"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
-        "releaseName": _SERIALIZER.url("release_name", release_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_new_region_frontload_release_stop_request(  # pylint: disable=name-too-long
-    provider_namespace: str, release_name: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/newRegionFrontloadRelease/{releaseName}/stop"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
-        "releaseName": _SERIALIZER.url("release_name", release_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
-
-
-def build_new_region_frontload_release_generate_manifest_request(  # pylint: disable=name-too-long
-    provider_namespace: str, subscription_id: str, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/generateNewRegionFrontloadManifest"
-    path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_provider_registrations_get_request(
     provider_namespace: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -417,7 +306,7 @@ def build_provider_registrations_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +334,7 @@ def build_provider_registrations_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}"
     path_format_arguments = {
@@ -467,7 +356,7 @@ def build_provider_registrations_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -493,7 +382,7 @@ def build_provider_registrations_generate_operations_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -520,7 +409,7 @@ def build_default_rollouts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -549,7 +438,7 @@ def build_default_rollouts_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -578,7 +467,7 @@ def build_default_rollouts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/defaultRollouts/{rolloutName}"
     path_format_arguments = {
@@ -601,7 +490,7 @@ def build_default_rollouts_list_by_provider_registration_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -627,7 +516,7 @@ def build_default_rollouts_stop_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/defaultRollouts/{rolloutName}/stop"
     path_format_arguments = {
@@ -650,7 +539,7 @@ def build_notification_registrations_get_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -681,7 +570,7 @@ def build_notification_registrations_create_or_update_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -712,7 +601,7 @@ def build_notification_registrations_delete_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/notificationRegistrations/{notificationRegistrationName}"
     path_format_arguments = {
@@ -737,7 +626,7 @@ def build_notification_registrations_list_by_provider_registration_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -764,7 +653,7 @@ def build_resource_type_registrations_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -793,7 +682,7 @@ def build_resource_type_registrations_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -822,7 +711,7 @@ def build_resource_type_registrations_delete_request(  # pylint: disable=name-to
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}"
     path_format_arguments = {
@@ -845,7 +734,7 @@ def build_resource_type_registrations_list_by_provider_registration_request(  # 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -866,6 +755,90 @@ def build_resource_type_registrations_list_by_provider_registration_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_resource_type_registrations_get_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, nested_resource_type_first: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_resource_type_registrations_create_or_update_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, nested_resource_type_first: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_resource_type_registrations_delete_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, nested_resource_type_first: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
 def build_skus_get_nested_resource_type_first_request(  # pylint: disable=name-too-long
     provider_namespace: str,
     resource_type: str,
@@ -877,7 +850,7 @@ def build_skus_get_nested_resource_type_first_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -913,7 +886,7 @@ def build_skus_create_or_update_nested_resource_type_first_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -949,7 +922,7 @@ def build_skus_delete_nested_resource_type_first_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/skus/{sku}"
     path_format_arguments = {
@@ -974,7 +947,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_first_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1003,7 +976,7 @@ def build_skus_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1033,7 +1006,7 @@ def build_skus_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1063,7 +1036,7 @@ def build_skus_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/skus/{sku}"
     path_format_arguments = {
@@ -1087,7 +1060,7 @@ def build_skus_list_by_resource_type_registrations_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1121,7 +1094,7 @@ def build_skus_get_nested_resource_type_second_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1159,7 +1132,7 @@ def build_skus_create_or_update_nested_resource_type_second_request(  # pylint: 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1197,7 +1170,7 @@ def build_skus_delete_nested_resource_type_second_request(  # pylint: disable=na
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/skus/{sku}"
     path_format_arguments = {
@@ -1228,7 +1201,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_second_r
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1265,7 +1238,7 @@ def build_skus_get_nested_resource_type_third_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1305,7 +1278,7 @@ def build_skus_create_or_update_nested_resource_type_third_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1345,7 +1318,7 @@ def build_skus_delete_nested_resource_type_third_request(  # pylint: disable=nam
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/skus/{sku}"
     path_format_arguments = {
@@ -1378,7 +1351,7 @@ def build_skus_list_by_resource_type_registrations_nested_resource_type_third_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1409,7 +1382,7 @@ def build_authorized_applications_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1438,7 +1411,7 @@ def build_authorized_applications_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1467,7 +1440,7 @@ def build_authorized_applications_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/authorizedApplications/{applicationId}"
     path_format_arguments = {
@@ -1490,7 +1463,7 @@ def build_authorized_applications_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1517,7 +1490,7 @@ def build_provider_monitor_settings_get_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1548,7 +1521,7 @@ def build_provider_monitor_settings_create_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1580,7 +1553,7 @@ def build_provider_monitor_settings_update_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1609,7 +1582,7 @@ def build_provider_monitor_settings_delete_request(  # pylint: disable=name-too-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ProviderHub/providerMonitorSettings/{providerMonitorSettingName}"
     path_format_arguments = {
@@ -1634,7 +1607,7 @@ def build_provider_monitor_settings_list_by_resource_group_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1661,7 +1634,7 @@ def build_provider_monitor_settings_list_by_subscription_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1687,7 +1660,7 @@ def build_manifests_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1716,7 +1689,7 @@ def build_manifests_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1740,6 +1713,543 @@ def build_manifests_create_or_update_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_endpoint_registrations_get_request(
+    provider_namespace: str, resource_type: str, endpoint_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_create_or_update_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, endpoint_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_delete_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, endpoint_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_endpoint_registrations_list_by_resource_type_registration_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/endpoints"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_get_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_create_or_update_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_delete_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_first_request(  # pylint: disable=name-too-long
+    provider_namespace: str, resource_type: str, nested_resource_type_first: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/endpoints"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_get_nested_resource_type_second_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_create_or_update_nested_resource_type_second_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_delete_nested_resource_type_second_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_second_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/endpoints"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_get_nested_resource_type_third_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    nested_resource_type_third: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "nestedResourceTypeThird": _SERIALIZER.url("nested_resource_type_third", nested_resource_type_third, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_create_or_update_nested_resource_type_third_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    nested_resource_type_third: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "nestedResourceTypeThird": _SERIALIZER.url("nested_resource_type_third", nested_resource_type_third, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_endpoint_registrations_delete_nested_resource_type_third_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    nested_resource_type_third: str,
+    endpoint_name: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/endpoints/{endpointName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "nestedResourceTypeThird": _SERIALIZER.url("nested_resource_type_third", nested_resource_type_third, "str"),
+        "endpointName": _SERIALIZER.url("endpoint_name", endpoint_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_third_request(  # pylint: disable=name-too-long
+    provider_namespace: str,
+    resource_type: str,
+    nested_resource_type_first: str,
+    nested_resource_type_second: str,
+    nested_resource_type_third: str,
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourcetypeRegistrations/{resourceType}/resourcetypeRegistrations/{nestedResourceTypeFirst}/resourcetypeRegistrations/{nestedResourceTypeSecond}/resourcetypeRegistrations/{nestedResourceTypeThird}/endpoints"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "providerNamespace": _SERIALIZER.url("provider_namespace", provider_namespace, "str"),
+        "resourceType": _SERIALIZER.url("resource_type", resource_type, "str"),
+        "nestedResourceTypeFirst": _SERIALIZER.url("nested_resource_type_first", nested_resource_type_first, "str"),
+        "nestedResourceTypeSecond": _SERIALIZER.url("nested_resource_type_second", nested_resource_type_second, "str"),
+        "nestedResourceTypeThird": _SERIALIZER.url("nested_resource_type_third", nested_resource_type_third, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_resource_actions_delete_resources_request(  # pylint: disable=name-too-long
     provider_namespace: str, resource_action_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
@@ -1747,7 +2257,7 @@ def build_resource_actions_delete_resources_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/providers/Microsoft.ProviderHub/providerRegistrations/{providerNamespace}/resourceActions/{resourceActionName}/deleteResources"
     path_format_arguments = {
@@ -1774,7 +2284,7 @@ def build_provider_hub_mgmt_generate_manifest_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1802,7 +2312,7 @@ def build_provider_hub_mgmt_checkin_manifest_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2760,479 +3270,6 @@ class CustomRolloutsOperations:  # pylint: disable=docstring-missing-param
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
-
-
-class NewRegionFrontloadReleaseOperations:  # pylint: disable=docstring-missing-param
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.providerhub.ProviderHubMgmtClient`'s
-        :attr:`new_region_frontload_release` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ProviderHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, provider_namespace: str, release_name: str, **kwargs: Any) -> _models.DefaultRollout:
-        """Gets a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.DefaultRollout] = kwargs.pop("cls", None)
-
-        _request = build_new_region_frontload_release_get_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DefaultRollout, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: _models.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: _types.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.types.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def create_or_update(
-        self,
-        provider_namespace: str,
-        release_name: str,
-        properties: Union[_models.FrontloadPayload, _types.FrontloadPayload, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DefaultRollout:
-        """Creates or updates a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :param properties: Is either a FrontloadPayload type or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload or
-         ~azure.mgmt.providerhub.types.FrontloadPayload or IO[bytes]
-        :return: DefaultRollout. The DefaultRollout is compatible with MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.DefaultRollout
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DefaultRollout] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_new_region_frontload_release_create_or_update_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DefaultRollout, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
-    def stop(  # pylint: disable=inconsistent-return-statements
-        self, provider_namespace: str, release_name: str, **kwargs: Any
-    ) -> None:
-        """Stops a new region frontload release.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param release_name: The name of the release. Required.
-        :type release_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_new_region_frontload_release_stop_request(
-            provider_namespace=provider_namespace,
-            release_name=release_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @overload
-    def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: _models.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: _types.FrontloadPayload,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: ~azure.mgmt.providerhub.types.FrontloadPayload
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    def generate_manifest(
-        self, provider_namespace: str, properties: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Required.
-        :type properties: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def generate_manifest(
-        self,
-        provider_namespace: str,
-        properties: Union[_models.FrontloadPayload, _types.FrontloadPayload, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.ResourceProviderManifest:
-        """Generates the new region frontload manifest.
-
-        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
-         Required.
-        :type provider_namespace: str
-        :param properties: Is either a FrontloadPayload type or a IO[bytes] type. Required.
-        :type properties: ~azure.mgmt.providerhub.models.FrontloadPayload or
-         ~azure.mgmt.providerhub.types.FrontloadPayload or IO[bytes]
-        :return: ResourceProviderManifest. The ResourceProviderManifest is compatible with
-         MutableMapping
-        :rtype: ~azure.mgmt.providerhub.models.ResourceProviderManifest
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ResourceProviderManifest] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(properties, (IOBase, bytes)):
-            _content = properties
-        else:
-            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_new_region_frontload_release_generate_manifest_request(
-            provider_namespace=provider_namespace,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ResourceProviderManifest, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class ProviderRegistrationsOperations:  # pylint: disable=docstring-missing-param
@@ -5269,6 +5306,532 @@ class ResourceTypeRegistrationsOperations:  # pylint: disable=docstring-missing-
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def get_nested_resource_type_first(
+        self, provider_namespace: str, resource_type: str, nested_resource_type_first: str, **kwargs: Any
+    ) -> _models.ResourceTypeRegistration:
+        """Gets a nested resource type details in the given subscription and provider.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :return: ResourceTypeRegistration. The ResourceTypeRegistration is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.ResourceTypeRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ResourceTypeRegistration] = kwargs.pop("cls", None)
+
+        _request = build_resource_type_registrations_get_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ResourceTypeRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def _create_or_update_nested_resource_type_first_initial(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        properties: Union[_models.ResourceTypeRegistration, _types.ResourceTypeRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_resource_type_registrations_create_or_update_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        properties: _models.ResourceTypeRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ResourceTypeRegistration]:
+        """Creates or updates a nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param properties: The required request body parameters supplied to the resource type
+         registration CreateOrUpdate operation. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ResourceTypeRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ResourceTypeRegistration. The
+         ResourceTypeRegistration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        properties: _types.ResourceTypeRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ResourceTypeRegistration]:
+        """Creates or updates a nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param properties: The required request body parameters supplied to the resource type
+         registration CreateOrUpdate operation. Required.
+        :type properties: ~azure.mgmt.providerhub.types.ResourceTypeRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ResourceTypeRegistration. The
+         ResourceTypeRegistration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.ResourceTypeRegistration]:
+        """Creates or updates a nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param properties: The required request body parameters supplied to the resource type
+         registration CreateOrUpdate operation. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns ResourceTypeRegistration. The
+         ResourceTypeRegistration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def begin_create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        properties: Union[_models.ResourceTypeRegistration, _types.ResourceTypeRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.ResourceTypeRegistration]:
+        """Creates or updates a nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param properties: The required request body parameters supplied to the resource type
+         registration CreateOrUpdate operation. Is either a ResourceTypeRegistration type or a IO[bytes]
+         type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.ResourceTypeRegistration or
+         ~azure.mgmt.providerhub.types.ResourceTypeRegistration or IO[bytes]
+        :return: An instance of LROPoller that returns ResourceTypeRegistration. The
+         ResourceTypeRegistration is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.providerhub.models.ResourceTypeRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ResourceTypeRegistration] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_nested_resource_type_first_initial(
+                provider_namespace=provider_namespace,
+                resource_type=resource_type,
+                nested_resource_type_first=nested_resource_type_first,
+                properties=properties,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ResourceTypeRegistration, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.ResourceTypeRegistration].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.ResourceTypeRegistration](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def _delete_nested_resource_type_first_initial(  # pylint: disable=name-too-long
+        self, provider_namespace: str, resource_type: str, nested_resource_type_first: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_resource_type_registrations_delete_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-10-01",
+        params_added_on={
+            "2026-10-01": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+            ]
+        },
+        api_versions_list=["2026-10-01"],
+    )
+    def begin_delete_nested_resource_type_first(
+        self, provider_namespace: str, resource_type: str, nested_resource_type_first: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_nested_resource_type_first_initial(
+                provider_namespace=provider_namespace,
+                resource_type=resource_type,
+                nested_resource_type_first=nested_resource_type_first,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
 class SkusOperations:  # pylint: disable=docstring-missing-param
@@ -8321,7 +8884,7 @@ class ManifestsOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-10-01": ["api_version", "subscription_id", "provider_namespace", "environment", "accept"]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2026-09-01-preview", "2026-10-01"],
     )
     def get(self, provider_namespace: str, environment: str, **kwargs: Any) -> _models.ManifestInfo:
         """Gets the manifest from the manifest repository.
@@ -8486,7 +9049,7 @@ class ManifestsOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-10-01"],
+        api_versions_list=["2025-10-01", "2026-09-01-preview", "2026-10-01"],
     )
     def create_or_update(
         self,
@@ -8576,6 +9139,2151 @@ class ManifestsOperations:  # pylint: disable=docstring-missing-param
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class EndpointRegistrationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.providerhub.ProviderHubMgmtClient`'s
+        :attr:`endpoint_registrations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ProviderHubMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def get(
+        self, provider_namespace: str, resource_type: str, endpoint_name: str, **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Gets an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_get_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        endpoint_name: str,
+        properties: _models.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        endpoint_name: str,
+        properties: _types.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.types.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        endpoint_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "endpoint_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def create_or_update(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        endpoint_name: str,
+        properties: Union[_models.EndpointRegistration, _types.EndpointRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation. Is
+         either a EndpointRegistration type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration or
+         ~azure.mgmt.providerhub.types.EndpointRegistration or IO[bytes]
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_endpoint_registrations_create_or_update_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "endpoint_name",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, provider_namespace: str, resource_type: str, endpoint_name: str, **kwargs: Any
+    ) -> None:
+        """Deletes an endpoint registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_delete_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": ["api_version", "subscription_id", "provider_namespace", "resource_type", "accept"]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def list_by_resource_type_registration(
+        self, provider_namespace: str, resource_type: str, **kwargs: Any
+    ) -> ItemPaged["_models.EndpointRegistration"]:
+        """Lists endpoint registrations for a resource type registration.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :return: An iterator like instance of EndpointRegistration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.providerhub.models.EndpointRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EndpointRegistration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_endpoint_registrations_list_by_resource_type_registration_request(
+                    provider_namespace=provider_namespace,
+                    resource_type=resource_type,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EndpointRegistration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def get_nested_resource_type_first(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Gets an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_get_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        properties: _models.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        properties: _types.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.types.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "endpoint_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def create_or_update_nested_resource_type_first(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        properties: Union[_models.EndpointRegistration, _types.EndpointRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation. Is
+         either a EndpointRegistration type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration or
+         ~azure.mgmt.providerhub.types.EndpointRegistration or IO[bytes]
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_endpoint_registrations_create_or_update_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "endpoint_name",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def delete_nested_resource_type_first(  # pylint: disable=inconsistent-return-statements
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Deletes an endpoint registration for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_delete_nested_resource_type_first_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def list_by_resource_type_registration_nested_resource_type_first(  # pylint: disable=name-too-long
+        self, provider_namespace: str, resource_type: str, nested_resource_type_first: str, **kwargs: Any
+    ) -> ItemPaged["_models.EndpointRegistration"]:
+        """Lists endpoint registrations for a first-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :return: An iterator like instance of EndpointRegistration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.providerhub.models.EndpointRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EndpointRegistration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = (
+                    build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_first_request(
+                        provider_namespace=provider_namespace,
+                        resource_type=resource_type,
+                        nested_resource_type_first=nested_resource_type_first,
+                        subscription_id=self._config.subscription_id,
+                        api_version=self._config.api_version,
+                        headers=_headers,
+                        params=_params,
+                    )
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EndpointRegistration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def get_nested_resource_type_second(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Gets an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_get_nested_resource_type_second_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update_nested_resource_type_second(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        properties: _models.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_second(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        properties: _types.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.types.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_second(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "endpoint_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def create_or_update_nested_resource_type_second(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        properties: Union[_models.EndpointRegistration, _types.EndpointRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation. Is
+         either a EndpointRegistration type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration or
+         ~azure.mgmt.providerhub.types.EndpointRegistration or IO[bytes]
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_endpoint_registrations_create_or_update_nested_resource_type_second_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "endpoint_name",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def delete_nested_resource_type_second(  # pylint: disable=inconsistent-return-statements
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Deletes an endpoint registration for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_delete_nested_resource_type_second_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def list_by_resource_type_registration_nested_resource_type_second(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EndpointRegistration"]:
+        """Lists endpoint registrations for a second-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :return: An iterator like instance of EndpointRegistration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.providerhub.models.EndpointRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EndpointRegistration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = (
+                    build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_second_request(
+                        provider_namespace=provider_namespace,
+                        resource_type=resource_type,
+                        nested_resource_type_first=nested_resource_type_first,
+                        nested_resource_type_second=nested_resource_type_second,
+                        subscription_id=self._config.subscription_id,
+                        api_version=self._config.api_version,
+                        headers=_headers,
+                        params=_params,
+                    )
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EndpointRegistration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "nested_resource_type_third",
+                "endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def get_nested_resource_type_third(
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Gets an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_get_nested_resource_type_third_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            nested_resource_type_third=nested_resource_type_third,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update_nested_resource_type_third(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        properties: _models.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_third(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        properties: _types.EndpointRegistration,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: ~azure.mgmt.providerhub.types.EndpointRegistration
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update_nested_resource_type_third(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation.
+         Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "nested_resource_type_third",
+                "endpoint_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def create_or_update_nested_resource_type_third(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        properties: Union[_models.EndpointRegistration, _types.EndpointRegistration, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.EndpointRegistration:
+        """Creates or replaces an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :param properties: The endpoint registration supplied to the CreateOrUpdate operation. Is
+         either a EndpointRegistration type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.providerhub.models.EndpointRegistration or
+         ~azure.mgmt.providerhub.types.EndpointRegistration or IO[bytes]
+        :return: EndpointRegistration. The EndpointRegistration is compatible with MutableMapping
+        :rtype: ~azure.mgmt.providerhub.models.EndpointRegistration
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EndpointRegistration] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_endpoint_registrations_create_or_update_nested_resource_type_third_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            nested_resource_type_third=nested_resource_type_third,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EndpointRegistration, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "nested_resource_type_third",
+                "endpoint_name",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def delete_nested_resource_type_third(  # pylint: disable=inconsistent-return-statements
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        endpoint_name: str,
+        **kwargs: Any
+    ) -> None:
+        """Deletes an endpoint registration for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :param endpoint_name: The endpoint registration name. Required.
+        :type endpoint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_endpoint_registrations_delete_nested_resource_type_third_request(
+            provider_namespace=provider_namespace,
+            resource_type=resource_type,
+            nested_resource_type_first=nested_resource_type_first,
+            nested_resource_type_second=nested_resource_type_second,
+            nested_resource_type_third=nested_resource_type_third,
+            endpoint_name=endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "provider_namespace",
+                "resource_type",
+                "nested_resource_type_first",
+                "nested_resource_type_second",
+                "nested_resource_type_third",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview", "2026-10-01"],
+    )
+    def list_by_resource_type_registration_nested_resource_type_third(  # pylint: disable=name-too-long
+        self,
+        provider_namespace: str,
+        resource_type: str,
+        nested_resource_type_first: str,
+        nested_resource_type_second: str,
+        nested_resource_type_third: str,
+        **kwargs: Any
+    ) -> ItemPaged["_models.EndpointRegistration"]:
+        """Lists endpoint registrations for a third-level nested resource type.
+
+        :param provider_namespace: The name of the resource provider hosted within ProviderHub.
+         Required.
+        :type provider_namespace: str
+        :param resource_type: The resource type. Required.
+        :type resource_type: str
+        :param nested_resource_type_first: The first child resource type. Required.
+        :type nested_resource_type_first: str
+        :param nested_resource_type_second: The second child resource type. Required.
+        :type nested_resource_type_second: str
+        :param nested_resource_type_third: The third child resource type. Required.
+        :type nested_resource_type_third: str
+        :return: An iterator like instance of EndpointRegistration
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.providerhub.models.EndpointRegistration]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.EndpointRegistration]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = (
+                    build_endpoint_registrations_list_by_resource_type_registration_nested_resource_type_third_request(
+                        provider_namespace=provider_namespace,
+                        resource_type=resource_type,
+                        nested_resource_type_first=nested_resource_type_first,
+                        nested_resource_type_second=nested_resource_type_second,
+                        nested_resource_type_third=nested_resource_type_third,
+                        subscription_id=self._config.subscription_id,
+                        api_version=self._config.api_version,
+                        headers=_headers,
+                        params=_params,
+                    )
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EndpointRegistration],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
 
 class ResourceActionsOperations:  # pylint: disable=docstring-missing-param

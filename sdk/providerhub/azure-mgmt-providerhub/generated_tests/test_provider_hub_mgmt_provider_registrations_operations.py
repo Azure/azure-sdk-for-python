@@ -41,7 +41,6 @@ class TestProviderHubMgmtProviderRegistrationsOperations(AzureMgmtRecordedTestCa
                     "capabilities": [{"effect": "str", "quotaId": "str", "requiredFeatures": ["str"]}],
                     "crossTenantTokenValidation": "str",
                     "customManifestVersion": "str",
-                    "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                     "enablePresetResourceTypes": bool,
                     "enableTenantLinkedNotification": bool,
                     "featuresRule": {"requiredFeaturesPolicy": "str"},
@@ -60,10 +59,15 @@ class TestProviderHubMgmtProviderRegistrationsOperations(AzureMgmtRecordedTestCa
                     ],
                     "legacyNamespace": "str",
                     "legacyRegistrations": ["str"],
+                    "lifecycleInfo": {
+                        "allowedSubscriptions": ["str"],
+                        "isolationType": "str",
+                        "lifecycleStage": "str",
+                        "partnerCategory": "str",
+                    },
                     "linkedNotificationRules": [
                         {
                             "actions": ["str"],
-                            "dstsConfiguration": {"serviceName": "str", "serviceDnsName": "str"},
                             "endpoints": [
                                 {
                                     "apiVersions": ["str"],
@@ -90,6 +94,7 @@ class TestProviderHubMgmtProviderRegistrationsOperations(AzureMgmtRecordedTestCa
                         "errorResponseMessageOptions": {"serverFailureResponseMessageType": "str"},
                         "expeditedRolloutMetadata": {"enabled": bool, "expeditedRolloutIntent": "str"},
                         "expeditedRolloutSubmitters": ["str"],
+                        "featureApprovalClaims": ["str"],
                         "featureManagementOwners": ["str"],
                         "incidentContactEmail": "str",
                         "incidentRoutingService": "str",
@@ -100,7 +105,6 @@ class TestProviderHubMgmtProviderRegistrationsOperations(AzureMgmtRecordedTestCa
                         "resourceAccessPolicy": "str",
                         "resourceAccessRoles": [{"actions": ["str"], "allowedGroupClaims": ["str"]}],
                         "schemaOwners": ["str"],
-                        "serviceTreeInfos": [{"componentId": "str", "readiness": "str", "serviceId": "str"}],
                     },
                     "managementGroupGlobalNotificationEndpoints": [
                         {

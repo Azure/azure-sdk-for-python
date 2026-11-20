@@ -32,12 +32,12 @@ def main():
 
     response = client.skus.list_by_resource_type_registrations(
         provider_namespace="Microsoft.Contoso",
-        resource_type="testResourceType",
+        resource_type="employees",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2025-10-01/Skus_ListByResourceTypeRegistrations.json
+# x-ms-original-file: 2026-10-01/Skus_ListByResourceTypeRegistrations.json
 if __name__ == "__main__":
     main()
