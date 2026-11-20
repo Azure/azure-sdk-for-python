@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed `ItemCount` for logs retained by `enable_trace_based_sampling_for_logs`. When the matching span reports a 5% sampling rate, each retained log counts as 20 items. Logs without a known rate still count as one.
+
 ### Other Changes
 
 ## 1.8.12 (2026-11-05)

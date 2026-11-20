@@ -66,6 +66,8 @@ from azure.monitor.opentelemetry import configure_azure_monitor
 # unsampled traces are dropped by the logger.
 # A log record is considered associated with an unsampled trace if it has a valid `SpanId` and its `TraceFlags` indicate that the trace is unsampled.
 # The value of this config is False by default.
+# When the matching span reports a 5% sampling rate, its retained logs each count as 20 in sum(ItemCount).
+# If the span does not report a rate, or the log is outside a trace, the log counts as one.
 
 # Example: enable trace-based sampling for logs
 # configure_azure_monitor(
