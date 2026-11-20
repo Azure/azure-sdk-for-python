@@ -11,6 +11,7 @@ import sys
 import types
 import unittest
 from unittest.mock import Mock, patch
+from urllib.parse import urlsplit
 
 from azure.core.credentials import AccessToken
 from azure.search.documents.indexes.models import SearchIndexerStatus
@@ -81,6 +82,8 @@ class BundleAssetTests(unittest.TestCase):
 
         def request(session, method, url, **kwargs):
             self.assertFalse(kwargs["allow_redirects"])
+            parsed = urlsplit(url)
+            self.assertIn(parsed.hostname, ("unit.search.windows.net", "unit.blob.core.windows.net"))
             body = kwargs.get("data")
             if kwargs.get("json") is not None:
                 body = json.dumps(kwargs["json"])
@@ -89,10 +92,10 @@ class BundleAssetTests(unittest.TestCase):
             response.status_code = 201 if method == "PUT" else 200
             response.headers["Content-Type"] = "application/json"
             body = b"{}"
-            if "/docs/search" in url:
-                body = b'{"value": [{"chunk": "Contoso SmartView Glasses"}]}'
-            elif "blob.core.windows.net" in url:
+            if parsed.hostname == "unit.blob.core.windows.net":
                 body = b""
+            elif "/docs/search" in parsed.path:
+                body = b'{"value": [{"chunk": "Contoso SmartView Glasses"}]}'
             response._content = body
             response._content_consumed = True
             response.raw = HTTPResponse(body=BytesIO(body or b""))
