@@ -37,19 +37,20 @@ def main():
             "properties": {
                 "desiredConfiguration": {
                     "azureMonitorInsights": {
-                        "azureMonitorWorkspaceId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.Monitor/accounts/example"
+                        "azureMonitorWorkspaceId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.Monitor/accounts/myAzureMonitorWorkspace"
                     },
                     "changeTrackingAndInventory": {
-                        "logAnalyticsWorkspaceId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.OperationalInsights/workspaces/00000000-0000-0000-0000-000000000000-Default"
+                        "logAnalyticsWorkspaceId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.OperationalInsights/workspaces/myLogAnalyticsWorkspace"
                     },
                     "userAssignedManagedIdentityId": "/subscriptions/11809CA1-E126-4017-945E-AA795CD5C5A9/resourceGroups/myResourceGroup/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myManagedIdentity",
-                }
+                },
+                "sku": {"name": "ManagedOps", "tier": "Essential"},
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-07-28-preview/ManagedOps_CreateOrUpdate.json
+# x-ms-original-file: 2026-01-06-preview/ManagedOps_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
