@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/VMIngestion_Details.json
+# x-ms-original-file: 2026-03-15-preview/VMIngestion_Details.json
 if __name__ == "__main__":
     main()
