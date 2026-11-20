@@ -116,6 +116,8 @@ def add_agent_insights_sanitizers() -> None:
         key="Operation-Id",
         regex=r".+",
         value="00000000-0000-0000-0000-000000000000",
+        # Campaign recordings sanitize operation IDs consistently across headers and poll URLs.
+        condition={"uriRegex": r"^(?!.*?/telephony_campaigns(?:[/?]|$))"},
     )
     add_general_regex_sanitizer(
         regex=r"\bmonitor_[0-9a-f-]{32,36}\b",

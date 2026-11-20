@@ -69,6 +69,8 @@ class InterruptedTurn:
     interruption_requested: bool = False
     cancelled: bool = False
     truncated: bool = False
+    min_audio_bytes: int = _MIN_AUDIO_BYTES
+    audio_end_ms: int = 0
 
     @property
     def ready_to_interrupt(self) -> bool:
@@ -76,7 +78,7 @@ class InterruptedTurn:
             not self.interruption_requested
             and bool(self.item_id)
             and self.speech_received
-            and self.received_audio_bytes >= _MIN_AUDIO_BYTES
+            and self.received_audio_bytes >= self.min_audio_bytes
         )
 
     def consume(self, event: Mapping[str, Any]) -> None:
@@ -119,7 +121,7 @@ class InterruptedTurn:
                     raise RuntimeError("The response ended without confirming the requested cancellation.")
                 self.cancelled = True
         elif event_type == "conversation.item.truncated" and event.get("item_id") == self.item_id:
-            if not self.interruption_requested or event.get("audio_end_ms") != 0:
+            if not self.interruption_requested or event.get("audio_end_ms") != self.audio_end_ms:
                 raise RuntimeError("The service did not confirm truncation to the requested playback position.")
             self.truncated = True
 
@@ -137,7 +139,7 @@ _PROMPT = {
 
 
 def interrupt_reply(connection: RealtimeConnection, turn: InterruptedTurn) -> None:
-    """Cancel a speaking response and report that none of its audio was played."""
+    """Cancel a speaking response and report its playback position."""
     deadline = time.monotonic() + TURN_TIMEOUT
     while not turn.conversation_id:
         turn.consume(connection.recv(timeout=_remaining(deadline, "session.created")))
@@ -148,8 +150,7 @@ def interrupt_reply(connection: RealtimeConnection, turn: InterruptedTurn) -> No
         if turn.ready_to_interrupt:
             turn.interruption_requested = True
             connection.response.cancel(response_id=turn.response_id)
-            # This headless example played no samples. A real player must report its actual playback position.
-            connection.conversation.item.truncate(item_id=turn.item_id, content_index=0, audio_end_ms=0)
+            connection.conversation.item.truncate(item_id=turn.item_id, content_index=0, audio_end_ms=turn.audio_end_ms)
 
 
 async def interrupt_reply_async(connection: AsyncRealtimeConnection, turn: InterruptedTurn) -> None:
@@ -166,7 +167,9 @@ async def interrupt_reply_async(connection: AsyncRealtimeConnection, turn: Inter
         if turn.ready_to_interrupt:
             turn.interruption_requested = True
             await connection.response.cancel(response_id=turn.response_id)
-            await connection.conversation.item.truncate(item_id=turn.item_id, content_index=0, audio_end_ms=0)
+            await connection.conversation.item.truncate(
+                item_id=turn.item_id, content_index=0, audio_end_ms=turn.audio_end_ms
+            )
 
 
 def validate_generated_audio(metadata: models.VoiceGeneratedAudioItem, content: bytes, turn: InterruptedTurn) -> None:
