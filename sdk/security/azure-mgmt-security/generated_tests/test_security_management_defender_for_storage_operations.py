@@ -24,7 +24,7 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
         response = self.client.defender_for_storage.get(
             resource_id="str",
             setting_name="str",
-            api_version="2025-09-01-preview",
+            api_version="2026-09-01",
         )
 
         # please add some check logic here by yourself
@@ -47,7 +47,7 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
                         "onUpload": {
                             "capGBPerMonth": 0,
                             "filters": {
-                                "excludeBlobsLargerThan": {},
+                                "excludeBlobsLargerThan": 0,
                                 "excludeBlobsWithPrefix": ["str"],
                                 "excludeBlobsWithSuffix": ["str"],
                             },
@@ -55,9 +55,15 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
                         },
                         "operationStatus": {"code": "str", "message": "str"},
                         "scanResultsEventGridTopicResourceId": "str",
+                        "scannerResourceId": "str",
                     },
+                    "managedBy": "str",
                     "overrideSubscriptionLevelSettings": bool,
-                    "sensitiveDataDiscovery": {"isEnabled": bool, "operationStatus": {"code": "str", "message": "str"}},
+                    "sensitiveDataDiscovery": {
+                        "isEnabled": bool,
+                        "operationStatus": {"code": "str", "message": "str"},
+                        "scannerResourceId": "str",
+                    },
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -69,7 +75,7 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
                 },
                 "type": "str",
             },
-            api_version="2025-09-01-preview",
+            api_version="2026-09-01",
         )
 
         # please add some check logic here by yourself
@@ -80,21 +86,9 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
     def test_defender_for_storage_list(self, resource_group):
         response = self.client.defender_for_storage.list(
             resource_id="str",
-            api_version="2025-09-01-preview",
+            api_version="2026-09-01",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_defender_for_storage_start_malware_scan(self, resource_group):
-        response = self.client.defender_for_storage.start_malware_scan(
-            resource_id="str",
-            setting_name="str",
-            api_version="2025-09-01-preview",
-        )
-
         # please add some check logic here by yourself
         # ...
 
@@ -105,7 +99,19 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
             resource_id="str",
             setting_name="str",
             scan_id="str",
-            api_version="2025-09-01-preview",
+            api_version="2026-09-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_defender_for_storage_start_malware_scan(self, resource_group):
+        response = self.client.defender_for_storage.start_malware_scan(
+            resource_id="str",
+            setting_name="str",
+            api_version="2026-09-01",
         )
 
         # please add some check logic here by yourself
@@ -118,7 +124,7 @@ class TestSecurityManagementDefenderForStorageOperations(AzureMgmtRecordedTestCa
             resource_id="str",
             setting_name="str",
             scan_id="str",
-            api_version="2025-09-01-preview",
+            api_version="2026-09-01",
         )
 
         # please add some check logic here by yourself

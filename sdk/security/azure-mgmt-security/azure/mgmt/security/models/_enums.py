@@ -125,7 +125,7 @@ class ApplicationSourceResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
 
 class ArmActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
@@ -233,6 +233,17 @@ class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Install missing security agent on VMs automatically."""
     OFF = "Off"
     """Do not install security agent on the VMs automatically."""
+
+
+class AwsCloudTrailProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning type for AWS CloudTrail resources."""
+
+    BRING_YOUR_OWN = "BringYourOwn"
+    """The customer provides their own CloudTrail resources."""
+    MANUAL_PROVISIONING = "ManualProvisioning"
+    """Resources are provisioned on the customer's side."""
+    AUTO_PROVISIONING = "AutoProvisioning"
+    """Resources are provisioned on Microsoft's side."""
 
 
 class BlobScanResultsOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -385,15 +396,15 @@ class Effect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Enforce(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """If set to "False", it allows the descendants of this scope to override the pricing
-    configuration set on this scope (allows setting inherited="False"). If set to "True", it
+    """If set to \"False\", it allows the descendants of this scope to override the pricing
+    configuration set on this scope (allows setting inherited=\"False\"). If set to \"True\", it
     prevents overrides and forces this pricing configuration on all the descendants of this scope.
     This field is only available for subscription-level pricing.
     """
 
     FALSE = "False"
     """Allows the descendants of this scope to override the pricing configuration set on this scope
-    (allows setting inherited="False")."""
+    (allows setting inherited=\"False\")."""
     TRUE = "True"
     """Prevents overrides and forces the current scope's pricing configuration to all descendants."""
 
@@ -491,6 +502,17 @@ class ExternalSecuritySolutionKindEnum(str, Enum, metaclass=CaseInsensitiveEnumM
     """AAD."""
 
 
+class GcpLoggingProvisioningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning type for GCP logging resources."""
+
+    BRING_YOUR_OWN = "BringYourOwn"
+    """The customer provides their own GCP logging resources."""
+    MANUAL_PROVISIONING = "ManualProvisioning"
+    """Resources are provisioned on the customer's side."""
+    AUTO_PROVISIONING = "AutoProvisioning"
+    """Resources are provisioned on Microsoft's side."""
+
+
 class GovernanceRuleOwnerSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The owner type for the governance rule owner source."""
 
@@ -537,9 +559,9 @@ class InformationProtectionPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMe
 
 
 class Inherited(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ "inherited" = "True" indicates that the current scope inherits its pricing configuration from
+    """\"inherited\" = \"True\" indicates that the current scope inherits its pricing configuration from
     its parent. The ID of the parent scope that provides the inherited configuration is displayed
-    in the "inheritedFrom" field. On the other hand, "inherited" = "False" indicates that the
+    in the \"inheritedFrom\" field. On the other hand, \"inherited\" = \"False\" indicates that the
     current scope has its own pricing configuration explicitly set, and does not inherit from its
     parent. This field is read only and available only for resource-level pricing.
     """
@@ -562,6 +584,15 @@ class InheritFromParentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Disabled."""
     ENABLED = "Enabled"
     """Enabled."""
+
+
+class InstallationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The installation method for the Defender for Containers agent."""
+
+    ARC = "Arc"
+    """Arc-based installation."""
+    HELM = "Helm"
+    """Helm-based installation."""
 
 
 class Intent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -661,6 +692,48 @@ class KindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BUNDLES = "Bundles"
     """Simulate alerts according to bundles."""
+
+
+class MalwareScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A status code of the malware scan operation."""
+
+    QUEUED = "Queued"
+    """The scan request has been queued and is waiting to be processed."""
+    IN_PROGRESS = "InProgress"
+    """The scan is currently in progress."""
+    WAITING_FOR_COMPLETION = "WaitingForCompletion"
+    """The scan has finished processing and is waiting for final results."""
+    CANCELING = "Canceling"
+    """The scan is being cancelled upon user request."""
+    CANCELED = "Canceled"
+    """The scan has been canceled."""
+    FAILED = "Failed"
+    """The scan failed."""
+    COMPLETED = "Completed"
+    """The scan has completed successfully."""
+
+
+class ManagedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether this resource's Defender for Storage settings are managed by a higher MDC
+    enforcement scope and which component is managing them.
+    """
+
+    NONE = "None"
+    """The resource's Defender for Storage settings are not managed by a higher enforcement scope."""
+    MICROSOFT_DEFENDER_XDR = "MicrosoftDefenderXDR"
+    """The resource's Defender for Storage settings are managed by Microsoft Defender XDR."""
+    SUBSCRIPTION_SETTINGS_ENFORCER = "SubscriptionSettingsEnforcer"
+    """The resource's Defender for Storage settings are managed by the subscription-level settings
+    enforcer."""
+
+
+class MatchType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The matching strategy for the filter."""
+
+    PREFIX = "Prefix"
+    """Match resources with values starting with the specified string."""
+    EXACT = "Exact"
+    """Match resources with the exact value specified."""
 
 
 class MinimalRiskLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -810,7 +883,7 @@ class OrganizationMembershipType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -819,6 +892,22 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class OriginatedFrom(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the origin of the most recent pricing configuration change."""
+
+    M365 = "M365"
+    """Indicates that the configuration change originated from Microsoft 365."""
+
+
+class PricingPlanOperationStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status code for a pricing plan update operation."""
+
+    SUCCEEDED = "Succeeded"
+    """The pricing plan was updated successfully."""
+    FAILED = "Failed"
+    """The pricing plan was not updated successfully."""
 
 
 class PricingTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1028,15 +1117,15 @@ class ResourceIdentifierType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ResourceIdentityType."""
+    """Resource Identity Type."""
 
     SYSTEM_ASSIGNED = "SystemAssigned"
-    """SYSTEM_ASSIGNED."""
+    """The identity is assigned by the system."""
 
 
 class ResourcesCoverageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This field is available for subscription-level only, and reflects the coverage status of the
-    resources under the subscription. Please note: The "pricingTier" field reflects the plan status
+    resources under the subscription. Please note: The \"pricingTier\" field reflects the plan status
     of the subscription. However, since the plan status can also be defined at the resource level,
     there might be misalignment between the subscription's plan status and the resource status.
     This field helps indicate the coverage status of the resources.
@@ -1309,20 +1398,20 @@ class SettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SettingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of SettingName."""
+    """The name of a Microsoft.Security integration or Defender for Storage setting."""
 
     MCAS = "MCAS"
-    """MCAS."""
+    """Integration with Microsoft Defender for Cloud Apps (formerly Microsoft Cloud App Security)."""
     WDATP = "WDATP"
-    """WDATP."""
+    """Integration with Microsoft Defender for Endpoint (formerly Windows Defender ATP)."""
     WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW = "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW"
-    """WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW."""
+    """Microsoft Defender for Endpoint integration that excludes the Linux public preview."""
     WDATP_UNIFIED_SOLUTION = "WDATP_UNIFIED_SOLUTION"
-    """WDATP_UNIFIED_SOLUTION."""
+    """Integration with the Microsoft Defender for Endpoint unified agent solution."""
     SENTINEL = "Sentinel"
-    """Sentinel."""
+    """Integration with Microsoft Sentinel."""
     CURRENT = "current"
-    """Name of the Defender for Storage Settings name."""
+    """The current Defender for Storage setting for the resource."""
 
 
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):

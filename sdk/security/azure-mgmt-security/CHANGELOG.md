@@ -1,5 +1,84 @@
 # Release History
 
+## 8.0.0b3 (2026-11-18)
+
+### Features Added
+
+  - Client `SecurityManagementClient` added operation group `batch_pricings`
+  - Client `SecurityManagementClient` added operation group `topology_resources`
+  - Model `DefenderCspmAwsOffering` added property `agentless_serverless_posture`
+  - Model `DefenderCspmAwsOffering` added property `serverless_containers`
+  - Model `DefenderCspmAwsOfferingCiem` added property `cloud_trail_audit_log_ingestion`
+  - Model `DefenderCspmAwsOfferingCiem` added property `log_collection_oidc`
+  - Model `DefenderCspmAwsOfferingMdcContainersImageAssessment` added property `security_findings_enabled`
+  - Model `DefenderCspmGcpOffering` added property `ciem`
+  - Model `DefenderCspmGcpOfferingCiemDiscovery` added property `enable_audit_log_ingestion`
+  - Model `DefenderCspmGcpOfferingMdcContainersImageAssessment` added property `security_findings_enabled`
+  - Model `DefenderForContainersAwsOffering` added property `container_anti_malware_enabled`
+  - Model `DefenderForContainersAwsOffering` added property `installation_method`
+  - Model `DefenderForContainersAwsOffering` added property `security_gating_enabled`
+  - Model `DefenderForContainersAwsOfferingMdcContainersImageAssessment` added property `security_findings_enabled`
+  - Model `DefenderForContainersGcpOffering` added property `container_anti_malware_enabled`
+  - Model `DefenderForContainersGcpOffering` added property `installation_method`
+  - Model `DefenderForContainersGcpOffering` added property `security_gating_enabled`
+  - Model `DefenderForContainersGcpOfferingMdcContainersImageAssessment` added property `security_findings_enabled`
+  - Model `DefenderForStorageSettingProperties` added property `managed_by`
+  - Model `Extension` added property `security_operator_resource_id`
+  - Model `MalwareScan` added property `id`
+  - Model `MalwareScan` added property `name`
+  - Model `MalwareScan` added property `system_data`
+  - Model `MalwareScan` added property `type`
+  - Model `MalwareScanningProperties` added property `scanner_resource_id`
+  - Model `PricingProperties` added property `managed_by`
+  - Model `PricingProperties` added property `originated_from`
+  - Model `PricingProperties` added property `security_operator_resource_id`
+  - Model `SensitiveDataDiscoveryProperties` added property `scanner_resource_id`
+  - Added model `AwsCloudTrailConfiguration`
+  - Added enum `AwsCloudTrailProvisioningType`
+  - Added model `AwsCloudTrailResourceSet`
+  - Added model `BlobScanFilter`
+  - Added model `DefenderCspmAwsOfferingAgentlessServerlessPosture`
+  - Added model `DefenderCspmAwsOfferingCiemLogCollectionOidc`
+  - Added model `DefenderCspmAwsOfferingServerlessContainers`
+  - Added model `DefenderCspmGcpOfferingCiem`
+  - Added model `DefenderCspmGcpOfferingCiemOidc`
+  - Added model `FileScanFilter`
+  - Added model `GcpAuditLogConfiguration`
+  - Added enum `GcpLoggingProvisioningType`
+  - Added model `GcpLoggingResourceSet`
+  - Added enum `InstallationMethod`
+  - Added model `MalwareScanFilters`
+  - Added enum `MalwareScanStatus`
+  - Added enum `ManagedByType`
+  - Added model `MatchFilter`
+  - Added enum `MatchType`
+  - Added enum `OriginatedFrom`
+  - Added model `PricingBatch`
+  - Added model `PricingBatchPlanItem`
+  - Added model `PricingBatchProperties`
+  - Added model `PricingPlanOperationStatus`
+  - Added enum `PricingPlanOperationStatusCode`
+  - Added model `PricingPropertiesReference`
+  - Added model `StartMalwareScanRequest`
+  - Added model `StartMalwareScanRequestProperties`
+  - Operation group `DefenderForStorageOperations` added parameter `content_type` in method `start_malware_scan`
+  - Added operation group `BatchPricingsOperations`
+  - Added operation group `TopologyResourcesOperations`
+
+### Breaking Changes
+
+  - Model `DefenderCspmAwsOfferingCiem` deleted or renamed its instance variable `ciem_discovery`
+  - Model `ServerVulnerabilityAssessmentsSetting` deleted or renamed its instance variable `properties`
+  - Model `Setting` deleted or renamed its instance variable `properties`
+  - Deleted or renamed model `DefenderCspmAwsOfferingCiemDiscovery`
+  - Method `DefenderForStorageOperations.cancel_malware_scan` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
+  - Method `DefenderForStorageOperations.create` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
+  - Method `DefenderForStorageOperations.get` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
+  - Method `DefenderForStorageOperations.get_malware_scan` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
+  - Method `DefenderForStorageOperations.start_malware_scan` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
+  - Deleted or renamed method `TopologyOperations.get`
+  - Deleted or renamed method `TopologyOperations.list_by_home_region`
+
 ## 8.0.0b2 (2026-05-11)
 
 ### Features Added
