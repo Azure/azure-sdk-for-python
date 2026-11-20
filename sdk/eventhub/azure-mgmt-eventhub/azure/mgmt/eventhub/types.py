@@ -23,6 +23,9 @@ if TYPE_CHECKING:
         EncodingCaptureDescription,
         EndPointProvisioningState,
         EntityStatus,
+        ExceptionWindowAction,
+        FabricShortcutStatus,
+        FabricShortcutType,
         GeoDRRoleType,
         IpAddressType,
         KeyType,
@@ -42,6 +45,7 @@ if TYPE_CHECKING:
         SkuTier,
         TimestampType,
         TlsVersion,
+        UpgradePreferenceDayOfWeek,
     )
 
 
@@ -56,9 +60,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -84,9 +88,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -101,9 +105,9 @@ class ApplicationGroup(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "ApplicationGroupProperties"
     :ivar location: The geo-location where the resource lives.
@@ -118,13 +122,13 @@ class ApplicationGroup(ProxyResource):
 class ApplicationGroupProperties(TypedDict, total=False):
     """ApplicationGroupProperties.
 
-    :ivar is_enabled: Determines if Application Group is allowed to create connection with
-     namespace or not. Once the isEnabled is set to false, all the existing connections of
-     application group gets dropped and no new connections will be allowed.
-    :vartype is_enabled: bool
-    :ivar client_app_group_identifier: The Unique identifier for application group.Supports
+    :ivar isEnabled: Determines if Application Group is allowed to create connection with namespace
+     or not. Once the isEnabled is set to false, all the existing connections of application group
+     gets dropped and no new connections will be allowed.
+    :vartype isEnabled: bool
+    :ivar clientAppGroupIdentifier: The Unique identifier for application group.Supports
      SAS(SASKeyName=KeyName) or AAD(AADAppID=Guid). Required.
-    :vartype client_app_group_identifier: str
+    :vartype clientAppGroupIdentifier: str
     :ivar policies: List of group policies that define the behavior of application group. The
      policies can support resource governance scenarios such as limiting ingress or egress traffic.
     :vartype policies: list["ApplicationGroupPolicy"]
@@ -153,9 +157,9 @@ class ArmDisasterRecovery(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties required to the Create Or Update Alias(Disaster Recovery
      configurations).
     :vartype properties: "ArmDisasterRecoveryProperties"
@@ -172,20 +176,20 @@ class ArmDisasterRecovery(ProxyResource):
 class ArmDisasterRecoveryProperties(TypedDict, total=False):
     """Properties required to the Create Or Update Alias(Disaster Recovery configurations).
 
-    :ivar provisioning_state: Provisioning state of the Alias(Disaster Recovery configuration) -
+    :ivar provisioningState: Provisioning state of the Alias(Disaster Recovery configuration) -
      possible values 'Accepted' or 'Succeeded' or 'Failed'. Known values are: "Accepted",
      "Succeeded", and "Failed".
-    :vartype provisioning_state: Union[str, "ProvisioningStateDR"]
-    :ivar partner_namespace: ARM Id of the Primary/Secondary eventhub namespace name, which is part
+    :vartype provisioningState: Union[str, "ProvisioningStateDR"]
+    :ivar partnerNamespace: ARM Id of the Primary/Secondary eventhub namespace name, which is part
      of GEO DR pairing.
-    :vartype partner_namespace: str
-    :ivar alternate_name: Alternate name specified when alias and namespace names are same.
-    :vartype alternate_name: str
+    :vartype partnerNamespace: str
+    :ivar alternateName: Alternate name specified when alias and namespace names are same.
+    :vartype alternateName: str
     :ivar role: role of namespace in GEO DR - possible values 'Primary' or 'PrimaryNotReplicating'
      or 'Secondary'. Known values are: "Primary", "PrimaryNotReplicating", and "Secondary".
     :vartype role: Union[str, "RoleDisasterRecovery"]
-    :ivar pending_replication_operations_count: Number of entities pending to be replicated.
-    :vartype pending_replication_operations_count: int
+    :ivar pendingReplicationOperationsCount: Number of entities pending to be replicated.
+    :vartype pendingReplicationOperationsCount: int
     """
 
     provisioningState: Union[str, "ProvisioningStateDR"]
@@ -213,9 +217,9 @@ class AuthorizationRule(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties supplied to create or update AuthorizationRule.
     :vartype properties: "AuthorizationRuleProperties"
     :ivar location: The geo-location where the resource lives.
@@ -248,17 +252,17 @@ class CaptureDescription(TypedDict, total=False):
      Note: 'AvroDeflate' will be deprecated in New API Version. Known values are: "Avro" and
      "AvroDeflate".
     :vartype encoding: Union[str, "EncodingCaptureDescription"]
-    :ivar interval_in_seconds: The time window allows you to set the frequency with which the
-     capture to Azure Blobs will happen, value should between 60 to 900 seconds.
-    :vartype interval_in_seconds: int
-    :ivar size_limit_in_bytes: The size window defines the amount of data built up in your Event
-     Hub before an capture operation, value should be between 10485760 to 524288000 bytes.
-    :vartype size_limit_in_bytes: int
+    :ivar intervalInSeconds: The time window allows you to set the frequency with which the capture
+     to Azure Blobs will happen, value should between 60 to 900 seconds.
+    :vartype intervalInSeconds: int
+    :ivar sizeLimitInBytes: The size window defines the amount of data built up in your Event Hub
+     before an capture operation, value should be between 10485760 to 524288000 bytes.
+    :vartype sizeLimitInBytes: int
     :ivar destination: Properties of Destination where capture will be stored. (Storage Account,
      Blob Names).
     :vartype destination: "Destination"
-    :ivar skip_empty_archives: A value that indicates whether to Skip Empty Archives.
-    :vartype skip_empty_archives: bool
+    :ivar skipEmptyArchives: A value that indicates whether to Skip Empty Archives.
+    :vartype skipEmptyArchives: bool
     """
 
     enabled: bool
@@ -285,10 +289,10 @@ class CaptureIdentity(TypedDict, total=False):
     :ivar type: Type of Azure Active Directory Managed Identity. Known values are: "SystemAssigned"
      and "UserAssigned".
     :vartype type: Union[str, "CaptureIdentityType"]
-    :ivar user_assigned_identity: ARM ID of Managed User Identity. This property is required is the
+    :ivar userAssignedIdentity: ARM ID of Managed User Identity. This property is required is the
      type is UserAssignedIdentity. If type is SystemAssigned, then the System Assigned Identity
      Associated with the namespace will be used.
-    :vartype user_assigned_identity: str
+    :vartype userAssignedIdentity: str
     """
 
     type: Union[str, "CaptureIdentityType"]
@@ -322,9 +326,9 @@ class Cluster(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Event Hubs Cluster properties supplied in responses in List or Get
      operations.
     :vartype properties: "ClusterProperties"
@@ -349,24 +353,24 @@ class Cluster(ProxyResource):
 class ClusterProperties(TypedDict, total=False):
     """Event Hubs Cluster properties supplied in responses in List or Get operations.
 
-    :ivar created_at: The UTC time when the Event Hubs Cluster was created.
-    :vartype created_at: str
-    :ivar provisioning_state: Provisioning state of the Cluster. Known values are: "Unknown",
+    :ivar createdAt: The UTC time when the Event Hubs Cluster was created.
+    :vartype createdAt: str
+    :ivar provisioningState: Provisioning state of the Cluster. Known values are: "Unknown",
      "Creating", "Deleting", "Scaling", "Active", "Failed", "Succeeded", and "Canceled".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar updated_at: The UTC time when the Event Hubs Cluster was last updated.
-    :vartype updated_at: str
-    :ivar metric_id: The metric ID of the cluster resource. Provided by the service and not
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar updatedAt: The UTC time when the Event Hubs Cluster was last updated.
+    :vartype updatedAt: str
+    :ivar metricId: The metric ID of the cluster resource. Provided by the service and not
      modifiable by the user.
-    :vartype metric_id: str
+    :vartype metricId: str
     :ivar status: Status of the Cluster resource.
     :vartype status: str
-    :ivar supports_scaling: A value that indicates whether Scaling is Supported.
-    :vartype supports_scaling: bool
-    :ivar platform_capabilities:
-    :vartype platform_capabilities: "PlatformCapabilities"
-    :ivar zone_redundant: A value that indicates whether the cluster is zone redundant.
-    :vartype zone_redundant: bool
+    :ivar supportsScaling: A value that indicates whether Scaling is Supported.
+    :vartype supportsScaling: bool
+    :ivar platformCapabilities:
+    :vartype platformCapabilities: "PlatformCapabilities"
+    :ivar zoneRedundant: A value that indicates whether the cluster is zone redundant.
+    :vartype zoneRedundant: bool
     """
 
     createdAt: str
@@ -456,9 +460,9 @@ class ConsumerGroup(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Single item in List or Get Consumer group operation.
     :vartype properties: "ConsumerGroupProperties"
     :ivar location: The geo-location where the resource lives.
@@ -474,14 +478,14 @@ class ConsumerGroup(ProxyResource):
 class ConsumerGroupProperties(TypedDict, total=False):
     """Single item in List or Get Consumer group operation.
 
-    :ivar created_at: Exact time the message was created.
-    :vartype created_at: str
-    :ivar updated_at: The exact time the message was updated.
-    :vartype updated_at: str
-    :ivar user_metadata: User Metadata is a placeholder to store user-defined string data with
+    :ivar createdAt: Exact time the message was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The exact time the message was updated.
+    :vartype updatedAt: str
+    :ivar userMetadata: User Metadata is a placeholder to store user-defined string data with
      maximum length 1024. e.g. it can be used to store descriptive data, such as list of teams and
      their contact information also user-defined configuration settings can be stored.
-    :vartype user_metadata: str
+    :vartype userMetadata: str
     """
 
     createdAt: str
@@ -519,21 +523,21 @@ class DestinationProperties(TypedDict, total=False):
     """Properties describing the storage account, blob container and archive name format for capture
     destination.
 
-    :ivar storage_account_resource_id: Resource id of the storage account to be used to create the
+    :ivar storageAccountResourceId: Resource id of the storage account to be used to create the
      blobs.
-    :vartype storage_account_resource_id: str
-    :ivar blob_container: Blob container Name.
-    :vartype blob_container: str
-    :ivar archive_name_format: Blob naming convention for archive, e.g.
+    :vartype storageAccountResourceId: str
+    :ivar blobContainer: Blob container Name.
+    :vartype blobContainer: str
+    :ivar archiveNameFormat: Blob naming convention for archive, e.g.
      {Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}. Here all
      the parameters (Namespace,EventHub .. etc) are mandatory irrespective of order.
-    :vartype archive_name_format: str
-    :ivar data_lake_subscription_id: Subscription Id of Azure Data Lake Store.
-    :vartype data_lake_subscription_id: str
-    :ivar data_lake_account_name: The Azure Data Lake Store name for the captured events.
-    :vartype data_lake_account_name: str
-    :ivar data_lake_folder_path: The destination folder path for the captured events.
-    :vartype data_lake_folder_path: str
+    :vartype archiveNameFormat: str
+    :ivar dataLakeSubscriptionId: Subscription Id of Azure Data Lake Store.
+    :vartype dataLakeSubscriptionId: str
+    :ivar dataLakeAccountName: The Azure Data Lake Store name for the captured events.
+    :vartype dataLakeAccountName: str
+    :ivar dataLakeFolderPath: The destination folder path for the captured events.
+    :vartype dataLakeFolderPath: str
     """
 
     storageAccountResourceId: str
@@ -563,9 +567,9 @@ class EHNamespace(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Namespace properties supplied for create namespace operation.
     :vartype properties: "EHNamespaceProperties"
     :ivar sku: Properties of sku resource.
@@ -593,54 +597,53 @@ class EHNamespace(ProxyResource):
 class EHNamespaceProperties(TypedDict, total=False):
     """Namespace properties supplied for create namespace operation.
 
-    :ivar minimum_tls_version: The minimum TLS version for the cluster to support, e.g. '1.2'.
-     Known values are: "1.0", "1.1", "1.2", and "1.3".
-    :vartype minimum_tls_version: Union[str, "TlsVersion"]
-    :ivar provisioning_state: Provisioning state of the Namespace.
-    :vartype provisioning_state: str
+    :ivar minimumTlsVersion: The minimum TLS version for the cluster to support, e.g. '1.2'. Known
+     values are: "1.0", "1.1", "1.2", and "1.3".
+    :vartype minimumTlsVersion: Union[str, "TlsVersion"]
+    :ivar provisioningState: Provisioning state of the Namespace.
+    :vartype provisioningState: str
     :ivar status: Status of the Namespace.
     :vartype status: str
-    :ivar created_at: The time the Namespace was created.
-    :vartype created_at: str
-    :ivar updated_at: The time the Namespace was updated.
-    :vartype updated_at: str
-    :ivar service_bus_endpoint: Endpoint you can use to perform Service Bus operations.
-    :vartype service_bus_endpoint: str
-    :ivar cluster_arm_id: Cluster ARM ID of the Namespace.
-    :vartype cluster_arm_id: str
-    :ivar metric_id: Identifier for Azure Insights metrics.
-    :vartype metric_id: str
-    :ivar is_auto_inflate_enabled: Value that indicates whether AutoInflate is enabled for eventhub
+    :ivar createdAt: The time the Namespace was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The time the Namespace was updated.
+    :vartype updatedAt: str
+    :ivar serviceBusEndpoint: Endpoint you can use to perform Service Bus operations.
+    :vartype serviceBusEndpoint: str
+    :ivar clusterArmId: Cluster ARM ID of the Namespace.
+    :vartype clusterArmId: str
+    :ivar metricId: Identifier for Azure Insights metrics.
+    :vartype metricId: str
+    :ivar isAutoInflateEnabled: Value that indicates whether AutoInflate is enabled for eventhub
      namespace.
-    :vartype is_auto_inflate_enabled: bool
-    :ivar public_network_access: This determines if traffic is allowed over public network. By
+    :vartype isAutoInflateEnabled: bool
+    :ivar publicNetworkAccess: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
-    :ivar maximum_throughput_units: Upper limit of throughput units when AutoInflate is enabled,
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
+    :ivar maximumThroughputUnits: Upper limit of throughput units when AutoInflate is enabled,
      value should be within 0 to 20 throughput units. ( '0' if AutoInflateEnabled = true).
-    :vartype maximum_throughput_units: int
-    :ivar kafka_enabled: Value that indicates whether Kafka is enabled for eventhub namespace.
-    :vartype kafka_enabled: bool
-    :ivar zone_redundant: Enabling this property creates a Standard Event Hubs Namespace in regions
+    :vartype maximumThroughputUnits: int
+    :ivar kafkaEnabled: Value that indicates whether Kafka is enabled for eventhub namespace.
+    :vartype kafkaEnabled: bool
+    :ivar zoneRedundant: Enabling this property creates a Standard Event Hubs Namespace in regions
      supported availability zones.
-    :vartype zone_redundant: bool
+    :vartype zoneRedundant: bool
     :ivar encryption: Properties of BYOK Encryption description.
     :vartype encryption: "Encryption"
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar disable_local_auth: This property disables SAS authentication for the Event Hubs
-     namespace.
-    :vartype disable_local_auth: bool
-    :ivar alternate_name: Alternate name specified when alias and namespace names are same.
-    :vartype alternate_name: str
-    :ivar platform_capabilities:
-    :vartype platform_capabilities: "PlatformCapabilities"
-    :ivar geo_data_replication: Geo Data Replication settings for the namespace.
-    :vartype geo_data_replication: "GeoDataReplicationProperties"
-    :ivar ip_address_type: The IP address type for the namespace. Determines whether the namespace
+    :ivar privateEndpointConnections: List of private endpoint connections.
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar disableLocalAuth: This property disables SAS authentication for the Event Hubs namespace.
+    :vartype disableLocalAuth: bool
+    :ivar alternateName: Alternate name specified when alias and namespace names are same.
+    :vartype alternateName: str
+    :ivar platformCapabilities:
+    :vartype platformCapabilities: "PlatformCapabilities"
+    :ivar geoDataReplication: Geo Data Replication settings for the namespace.
+    :vartype geoDataReplication: "GeoDataReplicationProperties"
+    :ivar ipAddressType: The IP address type for the namespace. Determines whether the namespace
      supports IPv4 only or both IPv4 and IPv6 (dual stack). Known values are: "IPv4" and
      "DualStack".
-    :vartype ip_address_type: Union[str, "IpAddressType"]
+    :vartype ipAddressType: Union[str, "IpAddressType"]
     """
 
     minimumTlsVersion: Union[str, "TlsVersion"]
@@ -692,13 +695,13 @@ class EHNamespaceProperties(TypedDict, total=False):
 class Encryption(TypedDict, total=False):
     """Properties to configure Encryption.
 
-    :ivar key_vault_properties: Properties of KeyVault.
-    :vartype key_vault_properties: list["KeyVaultProperties"]
-    :ivar key_source: Enumerates the possible value of keySource for Encryption. Default value is
+    :ivar keyVaultProperties: Properties of KeyVault.
+    :vartype keyVaultProperties: list["KeyVaultProperties"]
+    :ivar keySource: Enumerates the possible value of keySource for Encryption. Default value is
      "Microsoft.KeyVault".
-    :vartype key_source: Literal["Microsoft.KeyVault"]
-    :ivar require_infrastructure_encryption: Enable Infrastructure Encryption (Double Encryption).
-    :vartype require_infrastructure_encryption: bool
+    :vartype keySource: Literal["Microsoft.KeyVault"]
+    :ivar requireInfrastructureEncryption: Enable Infrastructure Encryption (Double Encryption).
+    :vartype requireInfrastructureEncryption: bool
     """
 
     keyVaultProperties: list["KeyVaultProperties"]
@@ -721,9 +724,9 @@ class Eventhub(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties supplied to the Create Or Update Event Hub operation.
     :vartype properties: "EventhubProperties"
     :ivar location: The geo-location where the resource lives.
@@ -739,34 +742,34 @@ class Eventhub(ProxyResource):
 class EventhubProperties(TypedDict, total=False):
     """Properties supplied to the Create Or Update Event Hub operation.
 
-    :ivar partition_ids: Current number of shards on the Event Hub.
-    :vartype partition_ids: list[str]
-    :ivar created_at: Exact time the Event Hub was created.
-    :vartype created_at: str
-    :ivar updated_at: The exact time the message was updated.
-    :vartype updated_at: str
-    :ivar message_retention_in_days: Number of days to retain the events for this Event Hub, value
+    :ivar partitionIds: Current number of shards on the Event Hub.
+    :vartype partitionIds: list[str]
+    :ivar createdAt: Exact time the Event Hub was created.
+    :vartype createdAt: str
+    :ivar updatedAt: The exact time the message was updated.
+    :vartype updatedAt: str
+    :ivar messageRetentionInDays: Number of days to retain the events for this Event Hub, value
      should be 1 to 7 days.
-    :vartype message_retention_in_days: int
-    :ivar partition_count: Number of partitions created for the Event Hub, allowed values are from
-     1 to 32 partitions.
-    :vartype partition_count: int
+    :vartype messageRetentionInDays: int
+    :ivar partitionCount: Number of partitions created for the Event Hub, allowed values are from 1
+     to 32 partitions.
+    :vartype partitionCount: int
     :ivar status: Enumerates the possible values for the status of the Event Hub. Known values are:
      "Active", "Disabled", "Restoring", "SendDisabled", "ReceiveDisabled", "Creating", "Deleting",
      "Renaming", and "Unknown".
     :vartype status: Union[str, "EntityStatus"]
-    :ivar capture_description: Properties of capture description.
-    :vartype capture_description: "CaptureDescription"
-    :ivar retention_description: Event Hub retention settings.
-    :vartype retention_description: "RetentionDescription"
-    :ivar message_timestamp_description: Properties of MessageTimestamp Description.
-    :vartype message_timestamp_description: "MessageTimestampDescription"
+    :ivar captureDescription: Properties of capture description.
+    :vartype captureDescription: "CaptureDescription"
+    :ivar retentionDescription: Event Hub retention settings.
+    :vartype retentionDescription: "RetentionDescription"
+    :ivar messageTimestampDescription: Properties of MessageTimestamp Description.
+    :vartype messageTimestampDescription: "MessageTimestampDescription"
     :ivar identifier: Denotes the unique identifier for event hub and is generated by service while
      creating topic. This identifier can be used in kafka runtime apis wherever a UUID is required
      e.g Fetch & Delete Topic. This identifier is not supported in AMQP runtime operations yet.
     :vartype identifier: str
-    :ivar user_metadata: Gets and Sets Metadata of User.
-    :vartype user_metadata: str
+    :ivar userMetadata: Gets and Sets Metadata of User.
+    :vartype userMetadata: str
     """
 
     partitionIds: list[str]
@@ -797,6 +800,129 @@ class EventhubProperties(TypedDict, total=False):
     """Gets and Sets Metadata of User."""
 
 
+class ExceptionWindow(TypedDict, total=False):
+    """A date-specific exception to the recurring maintenance windows.
+
+    :ivar date: The UTC date on which the exception starts. Required.
+    :vartype date: str
+    :ivar action: Whether the exception blocks or allows upgrades. Required. Known values are:
+     "Block" and "Allow".
+    :vartype action: Union[str, "ExceptionWindowAction"]
+    :ivar startTimeOfDay: The UTC time of day at which the exception starts, represented as an ISO
+     8601 duration since midnight. Required.
+    :vartype startTimeOfDay: str
+    :ivar durationMinutes: The exception duration in minutes. Allow exceptions must be between 480
+     and 1440 minutes in 60-minute increments. Block exceptions must be 1440 minutes. Required.
+    :vartype durationMinutes: int
+    """
+
+    date: Required[str]
+    """The UTC date on which the exception starts. Required."""
+    action: Required[Union[str, "ExceptionWindowAction"]]
+    """Whether the exception blocks or allows upgrades. Required. Known values are: \"Block\" and
+     \"Allow\"."""
+    startTimeOfDay: Required[str]
+    """The UTC time of day at which the exception starts, represented as an ISO 8601 duration since
+     midnight. Required."""
+    durationMinutes: Required[int]
+    """The exception duration in minutes. Allow exceptions must be between 480 and 1440 minutes in
+     60-minute increments. Block exceptions must be 1440 minutes. Required."""
+
+
+class FabricShortcut(ProxyResource):
+    """A Microsoft Fabric shortcut attached to an Event Hub.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Properties of the Microsoft Fabric shortcut.
+    :vartype properties: "FabricShortcutProperties"
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    """
+
+    properties: "FabricShortcutProperties"
+    """Properties of the Microsoft Fabric shortcut."""
+    location: str
+    """The geo-location where the resource lives."""
+
+
+class FabricShortcutConfiguration(TypedDict, total=False):
+    """Microsoft Fabric workspace and artifact configuration.
+
+    :ivar tenantId: The Microsoft Fabric tenant ID. Required.
+    :vartype tenantId: str
+    :ivar workspaceId: The Microsoft Fabric workspace ID. Required.
+    :vartype workspaceId: str
+    :ivar artifactId: The Microsoft Fabric artifact ID. Required.
+    :vartype artifactId: str
+    :ivar premiumCapacityId: The Microsoft Fabric premium capacity ID.
+    :vartype premiumCapacityId: str
+    :ivar logAnalyticsResourceId: The resource ID of the Log Analytics workspace.
+    :vartype logAnalyticsResourceId: str
+    :ivar workspaceName: The Microsoft Fabric workspace name.
+    :vartype workspaceName: str
+    :ivar artifactName: The Microsoft Fabric artifact name.
+    :vartype artifactName: str
+    """
+
+    tenantId: Required[str]
+    """The Microsoft Fabric tenant ID. Required."""
+    workspaceId: Required[str]
+    """The Microsoft Fabric workspace ID. Required."""
+    artifactId: Required[str]
+    """The Microsoft Fabric artifact ID. Required."""
+    premiumCapacityId: str
+    """The Microsoft Fabric premium capacity ID."""
+    logAnalyticsResourceId: str
+    """The resource ID of the Log Analytics workspace."""
+    workspaceName: str
+    """The Microsoft Fabric workspace name."""
+    artifactName: str
+    """The Microsoft Fabric artifact name."""
+
+
+class FabricShortcutProperties(TypedDict, total=False):
+    """Properties of a Microsoft Fabric shortcut.
+
+    :ivar configuration: Microsoft Fabric workspace and artifact configuration. Required.
+    :vartype configuration: "FabricShortcutConfiguration"
+    :ivar shortcutType: The type of the shortcut. Known values are: "Entity" and "Network".
+    :vartype shortcutType: Union[str, "FabricShortcutType"]
+    :ivar shortcutStatus: The current shortcut status. Only Pending can be supplied on create or
+     update. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype shortcutStatus: Union[str, "FabricShortcutStatus"]
+    :ivar statusDescription: A description of the current shortcut status.
+    :vartype statusDescription: str
+    :ivar createdAt: The UTC time when the shortcut was created.
+    :vartype createdAt: str
+    :ivar modifiedAt: The UTC time when the shortcut was last modified.
+    :vartype modifiedAt: str
+    """
+
+    configuration: Required["FabricShortcutConfiguration"]
+    """Microsoft Fabric workspace and artifact configuration. Required."""
+    shortcutType: Union[str, "FabricShortcutType"]
+    """The type of the shortcut. Known values are: \"Entity\" and \"Network\"."""
+    shortcutStatus: Union[str, "FabricShortcutStatus"]
+    """The current shortcut status. Only Pending can be supplied on create or update. Known values
+     are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    statusDescription: str
+    """A description of the current shortcut status."""
+    createdAt: str
+    """The UTC time when the shortcut was created."""
+    modifiedAt: str
+    """The UTC time when the shortcut was last modified."""
+
+
 class FailOver(TypedDict, total=False):
     """FailOver.
 
@@ -810,8 +936,8 @@ class FailOver(TypedDict, total=False):
 class FailOverProperties(TypedDict, total=False):
     """FailOverProperties.
 
-    :ivar primary_location: Query parameter for the new primary location after failover.
-    :vartype primary_location: str
+    :ivar primaryLocation: Query parameter for the new primary location after failover.
+    :vartype primaryLocation: str
     :ivar force: If Force is false then graceful failover is attempted after ensuring no data loss.
      If Force flag is set to true, Forced failover is attempted with possible data loss.
     :vartype force: bool
@@ -827,11 +953,11 @@ class FailOverProperties(TypedDict, total=False):
 class GeoDataReplicationProperties(TypedDict, total=False):
     """GeoDR Replication properties.
 
-    :ivar max_replication_lag_duration_in_seconds: The maximum acceptable lag for data replication
+    :ivar maxReplicationLagDurationInSeconds: The maximum acceptable lag for data replication
      operations from the primary replica to a quorum of secondary replicas.  When the lag exceeds
      the configured amount, operations on the primary replica will be failed. The allowed values are
      0 and 5 minutes to 1 day.
-    :vartype max_replication_lag_duration_in_seconds: int
+    :vartype maxReplicationLagDurationInSeconds: int
     :ivar locations: A list of regions where replicas of the namespace are maintained.
     :vartype locations: list["NamespaceReplicaLocation"]
     """
@@ -847,15 +973,15 @@ class GeoDataReplicationProperties(TypedDict, total=False):
 class Identity(TypedDict, total=False):
     """Properties to configure Identity for Bring your Own Keys.
 
-    :ivar principal_id: ObjectId from the KeyVault.
-    :vartype principal_id: str
-    :ivar tenant_id: TenantId from the KeyVault.
-    :vartype tenant_id: str
+    :ivar principalId: ObjectId from the KeyVault.
+    :vartype principalId: str
+    :ivar tenantId: TenantId from the KeyVault.
+    :vartype tenantId: str
     :ivar type: Type of managed service identity. Known values are: "SystemAssigned",
      "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: Properties for User Assigned Identities.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: Properties for User Assigned Identities.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -872,12 +998,12 @@ class Identity(TypedDict, total=False):
 class KeyVaultProperties(TypedDict, total=False):
     """Properties to configure keyVault Properties.
 
-    :ivar key_name: Name of the Key from KeyVault.
-    :vartype key_name: str
-    :ivar key_vault_uri: Uri of KeyVault.
-    :vartype key_vault_uri: str
-    :ivar key_version: Key Version.
-    :vartype key_version: str
+    :ivar keyName: Name of the Key from KeyVault.
+    :vartype keyName: str
+    :ivar keyVaultUri: Uri of KeyVault.
+    :vartype keyVaultUri: str
+    :ivar keyVersion: Key Version.
+    :vartype keyVersion: str
     :ivar identity:
     :vartype identity: "UserAssignedIdentityProperties"
     """
@@ -891,16 +1017,42 @@ class KeyVaultProperties(TypedDict, total=False):
     identity: "UserAssignedIdentityProperties"
 
 
+class MaintenanceWindow(TypedDict, total=False):
+    """A recurring weekly maintenance window in UTC.
+
+    :ivar dayOfWeek: The UTC day of the week on which the maintenance window starts. Required.
+     Known values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and
+     "Saturday".
+    :vartype dayOfWeek: Union[str, "UpgradePreferenceDayOfWeek"]
+    :ivar startTimeOfDay: The UTC time of day at which the maintenance window starts, represented
+     as an ISO 8601 duration since midnight. Required.
+    :vartype startTimeOfDay: str
+    :ivar durationMinutes: The maintenance window duration in minutes. The value must be between
+     480 and 1440 in 60-minute increments. Required.
+    :vartype durationMinutes: int
+    """
+
+    dayOfWeek: Required[Union[str, "UpgradePreferenceDayOfWeek"]]
+    """The UTC day of the week on which the maintenance window starts. Required. Known values are:
+     \"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", and \"Saturday\"."""
+    startTimeOfDay: Required[str]
+    """The UTC time of day at which the maintenance window starts, represented as an ISO 8601 duration
+     since midnight. Required."""
+    durationMinutes: Required[int]
+    """The maintenance window duration in minutes. The value must be between 480 and 1440 in 60-minute
+     increments. Required."""
+
+
 class MessageTimestampDescription(TypedDict, total=False):
     """Properties of MessageTimestamp Description.
 
-    :ivar timestamp_type: Denotes the type of timestamp the message will hold.Two types of
-     timestamp types - "AppendTime" and "CreateTime". AppendTime refers the time in which message
-     got appended inside broker log. CreateTime refers to the time in which the message was
-     generated on source side and producers can set this timestamp while sending the message.
-     Default value is AppendTime. If you are using AMQP protocol, CreateTime equals AppendTime and
-     its behavior remains the same. Known values are: "LogAppend" and "Create".
-    :vartype timestamp_type: Union[str, "TimestampType"]
+    :ivar timestampType: Denotes the type of timestamp the message will hold.Two types of timestamp
+     types - "AppendTime" and "CreateTime". AppendTime refers the time in which message got appended
+     inside broker log. CreateTime refers to the time in which the message was generated on source
+     side and producers can set this timestamp while sending the message. Default value is
+     AppendTime. If you are using AMQP protocol, CreateTime equals AppendTime and its behavior
+     remains the same. Known values are: "LogAppend" and "Create".
+    :vartype timestampType: Union[str, "TimestampType"]
     """
 
     timestampType: Union[str, "TimestampType"]
@@ -915,15 +1067,15 @@ class MessageTimestampDescription(TypedDict, total=False):
 class NamespaceReplicaLocation(TypedDict, total=False):
     """Namespace replication properties.
 
-    :ivar location_name: Azure regions where a replica of the namespace is maintained.
-    :vartype location_name: str
-    :ivar role_type: GeoDR Role Types. Known values are: "Primary" and "Secondary".
-    :vartype role_type: Union[str, "GeoDRRoleType"]
-    :ivar replica_state: state of Namespace replica.
-    :vartype replica_state: str
-    :ivar cluster_arm_id: Optional property that denotes the ARM ID of the Cluster. This is
-     required, if a namespace replica should be placed in a Dedicated Event Hub Cluster.
-    :vartype cluster_arm_id: str
+    :ivar locationName: Azure regions where a replica of the namespace is maintained.
+    :vartype locationName: str
+    :ivar roleType: GeoDR Role Types. Known values are: "Primary" and "Secondary".
+    :vartype roleType: Union[str, "GeoDRRoleType"]
+    :ivar replicaState: state of Namespace replica.
+    :vartype replicaState: str
+    :ivar clusterArmId: Optional property that denotes the ARM ID of the Cluster. This is required,
+     if a namespace replica should be placed in a Dedicated Event Hub Cluster.
+    :vartype clusterArmId: str
     """
 
     locationName: str
@@ -948,9 +1100,9 @@ class NetworkRuleSet(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: NetworkRuleSet properties.
     :vartype properties: "NetworkRuleSetProperties"
     :ivar location: The geo-location where the resource lives.
@@ -966,21 +1118,20 @@ class NetworkRuleSet(ProxyResource):
 class NetworkRuleSetProperties(TypedDict, total=False):
     """NetworkRuleSet properties.
 
-    :ivar trusted_service_access_enabled: Value that indicates whether Trusted Service Access is
+    :ivar trustedServiceAccessEnabled: Value that indicates whether Trusted Service Access is
      Enabled or not.
-    :vartype trusted_service_access_enabled: bool
-    :ivar default_action: Default Action for Network Rule Set. Known values are: "Allow" and
-     "Deny".
-    :vartype default_action: Union[str, "DefaultAction"]
-    :ivar virtual_network_rules: List VirtualNetwork Rules.
-    :vartype virtual_network_rules: list["NWRuleSetVirtualNetworkRules"]
-    :ivar ip_rules: List of IpRules.
-    :vartype ip_rules: list["NWRuleSetIpRules"]
-    :ivar public_network_access: This determines if traffic is allowed over public network. By
+    :vartype trustedServiceAccessEnabled: bool
+    :ivar defaultAction: Default Action for Network Rule Set. Known values are: "Allow" and "Deny".
+    :vartype defaultAction: Union[str, "DefaultAction"]
+    :ivar virtualNetworkRules: List VirtualNetwork Rules.
+    :vartype virtualNetworkRules: list["NWRuleSetVirtualNetworkRules"]
+    :ivar ipRules: List of IpRules.
+    :vartype ipRules: list["NWRuleSetIpRules"]
+    :ivar publicNetworkAccess: This determines if traffic is allowed over public network. By
      default it is enabled. If value is SecuredByPerimeter then Inbound and Outbound communication
      is controlled by the network security perimeter and profile's access rules. Known values are:
      "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccessFlag"]
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccessFlag"]
     """
 
     trustedServiceAccessEnabled: bool
@@ -1001,8 +1152,8 @@ class NetworkRuleSetProperties(TypedDict, total=False):
 class NWRuleSetIpRules(TypedDict, total=False):
     """The response from the List namespace operation.
 
-    :ivar ip_mask: IP Mask.
-    :vartype ip_mask: str
+    :ivar ipMask: IP Mask.
+    :vartype ipMask: str
     :ivar action: The IP Filter Action. "Allow"
     :vartype action: Union[str, "NetworkRuleIPAction"]
     """
@@ -1018,9 +1169,9 @@ class NWRuleSetVirtualNetworkRules(TypedDict, total=False):
 
     :ivar subnet: Subnet properties.
     :vartype subnet: "Subnet"
-    :ivar ignore_missing_vnet_service_endpoint: Value that indicates whether to ignore missing Vnet
+    :ivar ignoreMissingVnetServiceEndpoint: Value that indicates whether to ignore missing Vnet
      Service Endpoint.
-    :vartype ignore_missing_vnet_service_endpoint: bool
+    :vartype ignoreMissingVnetServiceEndpoint: bool
     """
 
     subnet: "Subnet"
@@ -1032,8 +1183,8 @@ class NWRuleSetVirtualNetworkRules(TypedDict, total=False):
 class PlatformCapabilities(TypedDict, total=False):
     """PlatformCapabilities.
 
-    :ivar confidential_compute:
-    :vartype confidential_compute: "ConfidentialCompute"
+    :ivar confidentialCompute:
+    :vartype confidentialCompute: "ConfidentialCompute"
     """
 
     confidentialCompute: "ConfidentialCompute"
@@ -1061,9 +1212,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the PrivateEndpointConnection.
     :vartype properties: "PrivateEndpointConnectionProperties"
     :ivar location: The geo-location where the resource lives.
@@ -1079,13 +1230,13 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Properties of the private endpoint connection resource.
 
-    :ivar private_endpoint: The Private Endpoint resource for this Connection.
-    :vartype private_endpoint: "PrivateEndpoint"
-    :ivar private_link_service_connection_state: Details about the state of the connection.
-    :vartype private_link_service_connection_state: "ConnectionState"
-    :ivar provisioning_state: Provisioning state of the Private Endpoint Connection. Known values
+    :ivar privateEndpoint: The Private Endpoint resource for this Connection.
+    :vartype privateEndpoint: "PrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: Details about the state of the connection.
+    :vartype privateLinkServiceConnectionState: "ConnectionState"
+    :ivar provisioningState: Provisioning state of the Private Endpoint Connection. Known values
      are: "Creating", "Updating", "Deleting", "Succeeded", "Canceled", and "Failed".
-    :vartype provisioning_state: Union[str, "EndPointProvisioningState"]
+    :vartype provisioningState: Union[str, "EndPointProvisioningState"]
     """
 
     privateEndpoint: "PrivateEndpoint"
@@ -1101,9 +1252,9 @@ class RegenerateAccessKeyParameters(TypedDict, total=False):
     """Parameters supplied to the Regenerate Authorization Rule operation, specifies which key needs
     to be reset.
 
-    :ivar key_type: The access key to regenerate. Required. Known values are: "PrimaryKey" and
+    :ivar keyType: The access key to regenerate. Required. Known values are: "PrimaryKey" and
      "SecondaryKey".
-    :vartype key_type: Union[str, "KeyType"]
+    :vartype keyType: Union[str, "KeyType"]
     :ivar key: Optional, if the key value provided, is set for KeyType or autogenerated Key value
      set for keyType.
     :vartype key: str
@@ -1119,22 +1270,22 @@ class RegenerateAccessKeyParameters(TypedDict, total=False):
 class RetentionDescription(TypedDict, total=False):
     """Properties to configure retention settings for the  eventhub.
 
-    :ivar cleanup_policy: Enumerates the possible values for cleanup policy. Known values are:
+    :ivar cleanupPolicy: Enumerates the possible values for cleanup policy. Known values are:
      "Delete", "Compact", and "DeleteOrCompact".
-    :vartype cleanup_policy: Union[str, "CleanupPolicyRetentionDescription"]
-    :ivar retention_time_in_hours: Number of hours to retain the events for this Event Hub. This
+    :vartype cleanupPolicy: Union[str, "CleanupPolicyRetentionDescription"]
+    :ivar retentionTimeInHours: Number of hours to retain the events for this Event Hub. This
      should be positive value upto namespace SKU max. -1 is a special case where retention time is
      infinite, but the size of an entity is restricted and its size depends on namespace SKU type.
-    :vartype retention_time_in_hours: int
-    :ivar min_compaction_lag_time_in_minutes: The minimum time a message will remain ineligible for
+    :vartype retentionTimeInHours: int
+    :ivar minCompactionLagTimeInMinutes: The minimum time a message will remain ineligible for
      compaction in the log. This value is used when cleanupPolicy is Compact or DeleteOrCompact.
-    :vartype min_compaction_lag_time_in_minutes: int
-    :ivar tombstone_retention_time_in_hours: Number of hours to retain the tombstone markers of a
+    :vartype minCompactionLagTimeInMinutes: int
+    :ivar tombstoneRetentionTimeInHours: Number of hours to retain the tombstone markers of a
      compacted Event Hub. This value is used when cleanupPolicy is Compact or DeleteOrCompact.
      Consumer must complete reading the tombstone marker within this specified amount of time if
      consumer begins from starting offset to ensure they get a valid snapshot for the specific key
      described by the tombstone marker within the compacted Event Hub.
-    :vartype tombstone_retention_time_in_hours: int
+    :vartype tombstoneRetentionTimeInHours: int
     """
 
     cleanupPolicy: Union[str, "CleanupPolicyRetentionDescription"]
@@ -1166,9 +1317,9 @@ class SchemaGroup(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties:
     :vartype properties: "SchemaGroupProperties"
     :ivar location: The geo-location where the resource lives.
@@ -1183,18 +1334,18 @@ class SchemaGroup(ProxyResource):
 class SchemaGroupProperties(TypedDict, total=False):
     """SchemaGroupProperties.
 
-    :ivar updated_at_utc: Exact time the Schema Group was updated.
-    :vartype updated_at_utc: str
-    :ivar created_at_utc: Exact time the Schema Group was created.
-    :vartype created_at_utc: str
-    :ivar e_tag: The ETag value.
-    :vartype e_tag: str
-    :ivar group_properties: dictionary object for SchemaGroup group properties.
-    :vartype group_properties: dict[str, str]
-    :ivar schema_compatibility: Known values are: "None", "Backward", and "Forward".
-    :vartype schema_compatibility: Union[str, "SchemaCompatibility"]
-    :ivar schema_type: Known values are: "Unknown", "Avro", "ProtoBuf", and "Json".
-    :vartype schema_type: Union[str, "SchemaType"]
+    :ivar updatedAtUtc: Exact time the Schema Group was updated.
+    :vartype updatedAtUtc: str
+    :ivar createdAtUtc: Exact time the Schema Group was created.
+    :vartype createdAtUtc: str
+    :ivar eTag: The ETag value.
+    :vartype eTag: str
+    :ivar groupProperties: dictionary object for SchemaGroup group properties.
+    :vartype groupProperties: dict[str, str]
+    :ivar schemaCompatibility: Known values are: "None", "Backward", and "Forward".
+    :vartype schemaCompatibility: Union[str, "SchemaCompatibility"]
+    :ivar schemaType: Known values are: "Unknown", "Avro", "ProtoBuf", and "Json".
+    :vartype schemaType: Union[str, "SchemaType"]
     """
 
     updatedAtUtc: str
@@ -1250,20 +1401,20 @@ class Subnet(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1287,14 +1438,14 @@ class ThrottlingPolicy(TypedDict, total=False):
 
     :ivar name: The Name of this policy. Required.
     :vartype name: str
-    :ivar rate_limit_threshold: The Threshold limit above which the application group will be
+    :ivar rateLimitThreshold: The Threshold limit above which the application group will be
      throttled.Rate limit is always per second. Required.
-    :vartype rate_limit_threshold: int
-    :ivar metric_id: Metric Id on which the throttle limit should be set, MetricId can be
-     discovered by hovering over Metric in the Metrics section of Event Hub Namespace inside Azure
-     Portal. Required. Known values are: "IncomingBytes", "OutgoingBytes", "IncomingMessages", and
+    :vartype rateLimitThreshold: int
+    :ivar metricId: Metric Id on which the throttle limit should be set, MetricId can be discovered
+     by hovering over Metric in the Metrics section of Event Hub Namespace inside Azure Portal.
+     Required. Known values are: "IncomingBytes", "OutgoingBytes", "IncomingMessages", and
      "OutgoingMessages".
-    :vartype metric_id: Union[str, "MetricId"]
+    :vartype metricId: Union[str, "MetricId"]
     :ivar type: Application Group Policy types. Required. THROTTLING_POLICY.
     :vartype type: Literal[ApplicationGroupPolicyType.THROTTLING_POLICY]
     """
@@ -1313,13 +1464,78 @@ class ThrottlingPolicy(TypedDict, total=False):
     """Application Group Policy types. Required. THROTTLING_POLICY."""
 
 
+class UpgradePreferences(ProxyResource):
+    """Upgrade preferences for an Event Hubs Dedicated cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: Upgrade preference properties for the Event Hubs Dedicated cluster.
+    :vartype properties: "UpgradePreferencesProperties"
+    """
+
+    properties: "UpgradePreferencesProperties"
+    """Upgrade preference properties for the Event Hubs Dedicated cluster."""
+
+
+class UpgradePreferencesProperties(TypedDict, total=False):
+    """Upgrade preference properties for an Event Hubs Dedicated cluster.
+
+    :ivar maintenanceWindows: Recurring weekly maintenance windows in UTC. At least one window must
+     be supplied when preferences are created or updated. A maximum of two windows can be
+     configured, and their combined duration must be at least 16 hours per week.
+    :vartype maintenanceWindows: list["MaintenanceWindow"]
+    :ivar exceptionWindows: Date-specific exceptions to the recurring maintenance windows.
+    :vartype exceptionWindows: list["ExceptionWindow"]
+    :ivar upgradeStatus: The current cluster upgrade status.
+    :vartype upgradeStatus: "UpgradeStatus"
+    """
+
+    maintenanceWindows: list["MaintenanceWindow"]
+    """Recurring weekly maintenance windows in UTC. At least one window must be supplied when
+     preferences are created or updated. A maximum of two windows can be configured, and their
+     combined duration must be at least 16 hours per week."""
+    exceptionWindows: list["ExceptionWindow"]
+    """Date-specific exceptions to the recurring maintenance windows."""
+    upgradeStatus: "UpgradeStatus"
+    """The current cluster upgrade status."""
+
+
+class UpgradeStatus(TypedDict, total=False):
+    """The current upgrade orchestration state for the cluster.
+
+    :ivar pendingUpgrade: Whether at least one deferred upgrade is waiting for the cluster.
+     Required.
+    :vartype pendingUpgrade: bool
+    :ivar inProgress: Whether an upgrade-now override is currently active. Required.
+    :vartype inProgress: bool
+    :ivar completesAt: The estimated UTC time when the current upgrade will complete.
+    :vartype completesAt: str
+    """
+
+    pendingUpgrade: Required[bool]
+    """Whether at least one deferred upgrade is waiting for the cluster. Required."""
+    inProgress: Required[bool]
+    """Whether an upgrade-now override is currently active. Required."""
+    completesAt: str
+    """The estimated UTC time when the current upgrade will complete."""
+
+
 class UserAssignedIdentity(TypedDict, total=False):
     """Recognized Dictionary value.
 
-    :ivar principal_id: Principal Id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: Client Id of user assigned identity.
-    :vartype client_id: str
+    :ivar principalId: Principal Id of user assigned identity.
+    :vartype principalId: str
+    :ivar clientId: Client Id of user assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
@@ -1331,8 +1547,8 @@ class UserAssignedIdentity(TypedDict, total=False):
 class UserAssignedIdentityProperties(TypedDict, total=False):
     """UserAssignedIdentityProperties.
 
-    :ivar user_assigned_identity: ARM ID of user Identity selected for encryption.
-    :vartype user_assigned_identity: str
+    :ivar userAssignedIdentity: ARM ID of user Identity selected for encryption.
+    :vartype userAssignedIdentity: str
     """
 
     userAssignedIdentity: str

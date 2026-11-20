@@ -50,6 +50,14 @@ rewrite source, update package metadata, install dependencies, or change Git
 state. Refresh the source pin and provenance together after reviewing an
 intentional generation change.
 
+Checkpoint preparation, streamed file delivery, and local destination ownership
+are maintained Python customizations in `_checkpoint_download.py`,
+`_checkpoint_files.py`, and the sync/async operation patches. The REST contract
+already defines preparation and version-pinned file reads; filesystem creation,
+no-overwrite checks, response cleanup and partial-output handling are client-side
+behavior, not new service operations. Keep these hooks in the verifier's explicit
+maintained-module inventory so regeneration preserves the implementation.
+
 ## Validation and packaging
 
 Run the package's existing tests, type checks, formatting, spelling, and

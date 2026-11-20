@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 from azure.core.exceptions import ClientAuthenticationError, ServiceRequestError
 from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal import AadClient, AadClientCertificate
+from azure.identity.aio._internal.aad_client import AadClient as AsyncAadClient
 
 import pytest
 from msal import TokenCache
@@ -310,6 +311,61 @@ def test_shared_cache():
 
     # which B shouldn't return
     assert client_b.get_cached_access_token([scope]) is None
+
+
+@pytest.mark.parametrize("client_class", (AadClient, AsyncAadClient))
+@pytest.mark.parametrize("enable_cae", (False, True))
+def test_app_only_cache_excludes_user_tokens(client_class, enable_cae):
+    cache = TokenCache()
+    tenant_id = "tenant"
+    client_id = "client-id"
+    scope = "scope"
+    authority = "https://localhost"
+    event = {
+        "client_id": client_id,
+        "scope": [scope],
+        "token_endpoint": f"{authority}/{tenant_id}/oauth2/v2.0/token",
+        "response": build_aad_response(access_token="user-token", uid="user", utid=tenant_id),
+    }
+    cache.add(event)
+    client = client_class(tenant_id, client_id, authority=authority, **{"cae_cache" if enable_cae else "cache": cache})
+
+    assert client.get_cached_access_token([scope], enable_cae=enable_cae) is None
+
+    event["response"] = build_aad_response(access_token="app-token")
+    cache.add(event)
+    token = client.get_cached_access_token([scope], enable_cae=enable_cae)
+    assert token is not None
+    assert token.token == "app-token"
+
+
+@pytest.mark.parametrize("client_class", (AadClient, AsyncAadClient))
+@pytest.mark.parametrize("enable_cae", (False, True))
+@pytest.mark.parametrize("home_account_id", (None, "user.tenant"))
+def test_access_token_cache_filters_environment(client_class, enable_cae, home_account_id):
+    cache = TokenCache()
+    tenant_id = "tenant"
+    client_id = "client-id"
+    scope = "scope"
+    authority = "https://localhost"
+    account_info = {"uid": "user", "utid": tenant_id} if home_account_id else {}
+    event = {
+        "client_id": client_id,
+        "scope": [scope],
+        "token_endpoint": f"https://other-authority/{tenant_id}/oauth2/v2.0/token",
+        "response": build_aad_response(access_token="other-authority-token", **account_info),
+    }
+    cache.add(event)
+    client = client_class(tenant_id, client_id, authority=authority, **{"cae_cache" if enable_cae else "cache": cache})
+
+    assert client.get_cached_access_token([scope], home_account_id=home_account_id, enable_cae=enable_cae) is None
+
+    event["token_endpoint"] = f"{authority}/{tenant_id}/oauth2/v2.0/token"
+    event["response"] = build_aad_response(access_token="expected-token", **account_info)
+    cache.add(event)
+    token = client.get_cached_access_token([scope], home_account_id=home_account_id, enable_cae=enable_cae)
+    assert token is not None
+    assert token.token == "expected-token"
 
 
 def test_multitenant_cache():

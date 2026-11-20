@@ -50,7 +50,7 @@ from .._models import (
 )
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
-from .._shared.session_async import SessionProvider
+from ._session_async import SessionProvider
 
 class BlobClient(  # type: ignore[misc]
     AsyncStorageAccountHostsMixin,
@@ -217,6 +217,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -239,6 +240,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -261,6 +263,7 @@ class BlobClient(  # type: ignore[misc]
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

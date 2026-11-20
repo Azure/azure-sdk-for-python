@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/CreateOrUpdateAdapterDeployment.json
+# x-ms-original-file: 2026-11-15-preview/CreateOrUpdateAdapterDeployment.json
 if __name__ == "__main__":
     main()

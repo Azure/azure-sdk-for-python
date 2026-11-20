@@ -43,7 +43,7 @@ class TestCognitiveServicesManagementArcDeploymentsOperationsAsync(AzureMgmtReco
                     "properties": {
                         "compute": "str",
                         "extensionId": "str",
-                        "model": {"format": "str", "name": "str"},
+                        "model": {"assetId": "str", "format": "str", "name": "str", "version": "str"},
                         "replicas": 0,
                         "resources": {
                             "limits": {"cpu": "str", "gpu": 0, "memory": "str"},

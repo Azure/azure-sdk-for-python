@@ -10,7 +10,6 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, AsyncIterator, Callable, IO, Optional, TypeVar, Union, cast, overload
-import urllib.parse
 
 from azure.core import AsyncPipelineClient, MatchConditions
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -37,7 +36,26 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_agent_fabrics_create_or_update_request,
+    build_agent_fabrics_delete_request,
+    build_agent_fabrics_get_request,
+    build_agent_fabrics_list_by_resource_group_request,
+    build_agent_fabrics_list_by_subscription_request,
+    build_agent_fabrics_update_request,
+    build_cluster_associations_create_or_update_request,
+    build_cluster_associations_delete_request,
+    build_cluster_associations_get_request,
+    build_cluster_associations_list_by_parent_request,
+    build_cluster_associations_update_request,
+    build_egress_trust_bundles_get_request,
+    build_egress_trust_bundles_list_by_parent_request,
+    build_members_create_or_update_request,
+    build_members_delete_request,
+    build_members_get_request,
+    build_members_list_by_parent_request,
+    build_members_update_request,
     build_neuro_shield_findings_get_request,
     build_neuro_shield_findings_list_by_neuro_shield_request,
     build_neuro_shield_findings_list_request,
@@ -62,7 +80,14 @@ from ...operations._operations import (
     build_neuro_shields_list_by_resource_group_request,
     build_neuro_shields_list_by_subscription_request,
     build_neuro_shields_update_request,
+    build_operation_status_get_request,
     build_operations_list_request,
+    build_policy_groups_create_or_update_request,
+    build_policy_groups_delete_request,
+    build_policy_groups_get_request,
+    build_policy_groups_list_by_resource_group_request,
+    build_policy_groups_list_by_subscription_request,
+    build_policy_groups_update_request,
 )
 from .._configuration import NetworkSecurityMgmtClientConfiguration
 
@@ -89,6 +114,9 @@ class Operations:  # pylint: disable=docstring-missing-param
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"v3": ["api_version"]},
+    )
     def list(self, **kwargs: Any) -> AsyncItemPaged["_models.Operation"]:
         """List the operations for the provider.
 
@@ -97,8 +125,9 @@ class Operations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.Operation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -113,7 +142,7 @@ class Operations:  # pylint: disable=docstring-missing-param
             if not next_link:
 
                 _request = build_operations_list_request(
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -125,21 +154,7 @@ class Operations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -219,15 +234,16 @@ class NeuroShieldOperationStatusesOperations:  # pylint: disable=docstring-missi
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_operation_statuses_get_request(
             location=location,
             operation_id=operation_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -309,15 +325,16 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldResource] = kwargs.pop("cls", None)
 
         _request = build_neuro_shields_get_request(
             resource_group_name=resource_group_name,
             neuro_shield_name=neuro_shield_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -516,8 +533,9 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NeuroShieldResource] = kwargs.pop("cls", None)
 
@@ -534,8 +552,8 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -735,8 +753,9 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NeuroShieldResource] = kwargs.pop("cls", None)
 
@@ -753,8 +772,8 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -822,15 +841,16 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_neuro_shields_delete_request(
             resource_group_name=resource_group_name,
             neuro_shield_name=neuro_shield_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -879,8 +899,9 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -899,7 +920,7 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -911,21 +932,7 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -985,8 +992,9 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1004,7 +1012,7 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -1016,21 +1024,7 @@ class NeuroShieldsOperations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1110,8 +1104,9 @@ class NeuroShieldSummariesOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldSummary]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1130,7 +1125,7 @@ class NeuroShieldSummariesOperations:  # pylint: disable=docstring-missing-param
                     neuro_shield_name=neuro_shield_name,
                     subscription_id=self._config.subscription_id,
                     top=top,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -1142,21 +1137,7 @@ class NeuroShieldSummariesOperations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1221,15 +1202,16 @@ class NeuroShieldSummariesOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldSummary] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_summaries_get_request(
             resource_group_name=resource_group_name,
             neuro_shield_name=neuro_shield_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1316,8 +1298,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldProtectedResource] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_protected_resources_get_request(
@@ -1325,7 +1308,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
             neuro_shield_name=neuro_shield_name,
             protected_resource_name=protected_resource_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1394,8 +1377,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
@@ -1413,8 +1397,8 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
+            api_version=api_version,
             content_type=content_type,
-            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1620,8 +1604,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.NeuroShieldProtectedResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
@@ -1635,6 +1620,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
                 resource=resource,
                 etag=etag,
                 match_condition=match_condition,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -1699,8 +1685,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_protected_resources_delete_request(
@@ -1710,7 +1697,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
             subscription_id=self._config.subscription_id,
             etag=etag,
             match_condition=match_condition,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -1786,8 +1773,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1799,6 +1787,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
                 protected_resource_name=protected_resource_name,
                 etag=etag,
                 match_condition=match_condition,
+                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1862,8 +1851,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldProtectedResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -1883,7 +1873,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -1895,21 +1885,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -1979,8 +1955,9 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldInventoryUploadRequestResult] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_protected_resources_trigger_inventory_upload_request(
@@ -1988,7 +1965,7 @@ class NeuroShieldProtectedResourcesOperations:  # pylint: disable=docstring-miss
             neuro_shield_name=neuro_shield_name,
             protected_resource_name=protected_resource_name,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2081,8 +2058,9 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldFinding] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_findings_get_request(
@@ -2091,7 +2069,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
             protected_resource_name=protected_resource_name,
             finding_id=finding_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2167,8 +2145,9 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldFinding]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2189,7 +2168,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2201,21 +2180,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2286,8 +2251,9 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldFinding]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2307,7 +2273,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2319,21 +2285,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2410,8 +2362,9 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldMitigationActionResult] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_findings_mitigate_request(
@@ -2420,7 +2373,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
             protected_resource_name=protected_resource_name,
             finding_id=finding_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2496,8 +2449,9 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldMitigationActionResult] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_findings_rollback_request(
@@ -2506,7 +2460,7 @@ class NeuroShieldFindingsOperations:  # pylint: disable=docstring-missing-param
             protected_resource_name=protected_resource_name,
             finding_id=finding_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2599,8 +2553,9 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldMitigation] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_mitigations_get_request(
@@ -2609,7 +2564,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
             protected_resource_name=protected_resource_name,
             mitigation_id=mitigation_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -2685,8 +2640,9 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldMitigation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2707,7 +2663,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2719,21 +2675,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2804,8 +2746,9 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[List[_models.NeuroShieldMitigation]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -2825,7 +2768,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
                     subscription_id=self._config.subscription_id,
                     top=top,
                     skip_token=skip_token,
-                    api_version=self._config.api_version,
+                    api_version=api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -2837,21 +2780,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -2927,8 +2856,9 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldMitigation] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_mitigations_execute_request(
@@ -2937,7 +2867,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
             protected_resource_name=protected_resource_name,
             mitigation_id=mitigation_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3012,8 +2942,9 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-10-01-preview"))
         cls: ClsType[_models.NeuroShieldMitigation] = kwargs.pop("cls", None)
 
         _request = build_neuro_shield_mitigations_rollback_request(
@@ -3022,7 +2953,7 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
             protected_resource_name=protected_resource_name,
             mitigation_id=mitigation_id,
             subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
+            api_version=api_version,
             headers=_headers,
             params=_params,
         )
@@ -3061,3 +2992,4254 @@ class NeuroShieldMitigationsOperations:  # pylint: disable=docstring-missing-par
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+
+class AgentFabricsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`agent_fabrics` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any) -> _models.AgentFabric:
+        """Get a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: AgentFabric. The AgentFabric is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.AgentFabric
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.AgentFabric] = kwargs.pop("cls", None)
+
+        _request = build_agent_fabrics_get_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentFabric, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-07-preview",
+        params_added_on={
+            "2026-10-07-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "agent_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-07-preview", "2026-11-01-preview", "2026-11-02-preview", "2026-11-03-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        resource: Union[_models.AgentFabric, _types.AgentFabric, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_fabrics_create_or_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        resource: _models.AgentFabric,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Creates or replaces an AgentFabric.
+
+        Before accepting the request or changing policy-group associations, validate the policy
+        types in every proposed defaultPolicyGroups reference against the fabric's effective
+        inspection configuration. If no connection is configured and any referenced group contains a
+        ContentInspection policy, reject the request with HTTP 409 and error code
+        ContentInspectionCapabilityDisabled, targeting properties.defaultPolicyGroups. No incompatible
+        association change is accepted. This check does not depend on whether policy selectors
+        currently match traffic.
+
+        Omitting contentInspectionProfile or supplying {} on PUT for an existing fabric preserves its
+        customer-owned connection, legacy regional connection, or absence of connection.
+        Do not persist {} over the stored connection or cancel a pending connection update.
+        New-fabric omission or {} requests no inspection capability and no regional fallback.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        If a connection update is in progress for this fabric, reject a PUT requesting a different
+        connection with HTTP 409 Conflict, without changing the connection update already in progress.
+        A retry of the same requested connection is not a conflicting change. This does not prevent
+        later key rotations or endpoint replacements.
+
+        In API version ``2026-10-07-preview`` and later, reject definite invalid customer connection
+        input before
+        accepting PUT with HTTP 400 Bad Request. A nonempty profile must contain both endpoint and
+        apiKey.
+        Reject a missing field before connection validation, without retrieving a saved key or
+        comparing
+        with the saved endpoint to permit key omission. Only a truly empty object is a connection
+        no-op;
+        partial objects or objects containing only unrecognized fields must not be treated as empty.
+        Invalid input also includes a null or nonobject profile;
+        a malformed, untrusted, or unsupported endpoint (including a non-HTTPS or unrecognized Azure
+        account host or an unsupported cloud); and explicit null, empty, or wrong-type endpoint or key.
+        An endpoint without a key is invalid even when unchanged; a key without an endpoint is invalid.
+        An omitted profile or {} is not invalid connection input. Its no-op applies only to connection
+        handling; caller authorization, other Fabric fields, policy compatibility, and ordinary
+        pending-operation rules still apply.
+
+        For service-level connection validation rejection, return
+        ContentInspectionConnectionValidationFailed
+        in the standard error response, targeting properties.contentInspectionProfile or its endpoint
+        or apiKey field when the invalid field is known. Ordinary schema/model validation may retain
+        its standard HTTP 400 errors. The connection code also applies to definitively rejected
+        credentials or a confirmed account/access setting or missing required Content Safety API
+        capability that prevents use of the supplied connection. Interpret upstream 401/403 responses
+        to distinguish credentials from account access, local authentication, or network restrictions;
+        do not report them as authentication/authorization failures of the Fabric caller.
+
+        Throttling (HTTP 429), service failures (5xx), DNS/TLS failures, timeouts, and inconclusive
+        availability do not establish bad customer input and must not be classified as this HTTP 400
+        rejection. A DNS timeout or an arbitrary upstream 404 does not prove that the account is
+        absent.
+        If a definite validation rejection is discovered after PUT acceptance, report terminal Failed
+        with the corresponding error in the established long-running operation status response;
+        the accepted PUT response does not become HTTP 400. Failed replacement preserves the previously
+        active connection; never validate or operate failed customer input using regional credentials.
+        Error responses must not contain key values or raw upstream response bodies.
+
+        Example connection rejection response (HTTP 400 Bad Request):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionConnectionValidationFailed",
+               "message": "The supplied Content Safety connection could not be validated. Verify the
+        endpoint, API key, and account access settings.",
+               "target": "properties.contentInspectionProfile"
+             }
+           }
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The referenced policy group contains a ContentInspection policy, but this
+        fabric has no configured inspection connection.",
+               "target": "properties.defaultPolicyGroups"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.models.AgentFabric
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        resource: _types.AgentFabric,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Creates or replaces an AgentFabric.
+
+        Before accepting the request or changing policy-group associations, validate the policy
+        types in every proposed defaultPolicyGroups reference against the fabric's effective
+        inspection configuration. If no connection is configured and any referenced group contains a
+        ContentInspection policy, reject the request with HTTP 409 and error code
+        ContentInspectionCapabilityDisabled, targeting properties.defaultPolicyGroups. No incompatible
+        association change is accepted. This check does not depend on whether policy selectors
+        currently match traffic.
+
+        Omitting contentInspectionProfile or supplying {} on PUT for an existing fabric preserves its
+        customer-owned connection, legacy regional connection, or absence of connection.
+        Do not persist {} over the stored connection or cancel a pending connection update.
+        New-fabric omission or {} requests no inspection capability and no regional fallback.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        If a connection update is in progress for this fabric, reject a PUT requesting a different
+        connection with HTTP 409 Conflict, without changing the connection update already in progress.
+        A retry of the same requested connection is not a conflicting change. This does not prevent
+        later key rotations or endpoint replacements.
+
+        In API version ``2026-10-07-preview`` and later, reject definite invalid customer connection
+        input before
+        accepting PUT with HTTP 400 Bad Request. A nonempty profile must contain both endpoint and
+        apiKey.
+        Reject a missing field before connection validation, without retrieving a saved key or
+        comparing
+        with the saved endpoint to permit key omission. Only a truly empty object is a connection
+        no-op;
+        partial objects or objects containing only unrecognized fields must not be treated as empty.
+        Invalid input also includes a null or nonobject profile;
+        a malformed, untrusted, or unsupported endpoint (including a non-HTTPS or unrecognized Azure
+        account host or an unsupported cloud); and explicit null, empty, or wrong-type endpoint or key.
+        An endpoint without a key is invalid even when unchanged; a key without an endpoint is invalid.
+        An omitted profile or {} is not invalid connection input. Its no-op applies only to connection
+        handling; caller authorization, other Fabric fields, policy compatibility, and ordinary
+        pending-operation rules still apply.
+
+        For service-level connection validation rejection, return
+        ContentInspectionConnectionValidationFailed
+        in the standard error response, targeting properties.contentInspectionProfile or its endpoint
+        or apiKey field when the invalid field is known. Ordinary schema/model validation may retain
+        its standard HTTP 400 errors. The connection code also applies to definitively rejected
+        credentials or a confirmed account/access setting or missing required Content Safety API
+        capability that prevents use of the supplied connection. Interpret upstream 401/403 responses
+        to distinguish credentials from account access, local authentication, or network restrictions;
+        do not report them as authentication/authorization failures of the Fabric caller.
+
+        Throttling (HTTP 429), service failures (5xx), DNS/TLS failures, timeouts, and inconclusive
+        availability do not establish bad customer input and must not be classified as this HTTP 400
+        rejection. A DNS timeout or an arbitrary upstream 404 does not prove that the account is
+        absent.
+        If a definite validation rejection is discovered after PUT acceptance, report terminal Failed
+        with the corresponding error in the established long-running operation status response;
+        the accepted PUT response does not become HTTP 400. Failed replacement preserves the previously
+        active connection; never validate or operate failed customer input using regional credentials.
+        Error responses must not contain key values or raw upstream response bodies.
+
+        Example connection rejection response (HTTP 400 Bad Request):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionConnectionValidationFailed",
+               "message": "The supplied Content Safety connection could not be validated. Verify the
+        endpoint, API key, and account access settings.",
+               "target": "properties.contentInspectionProfile"
+             }
+           }
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The referenced policy group contains a ContentInspection policy, but this
+        fabric has no configured inspection connection.",
+               "target": "properties.defaultPolicyGroups"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.types.AgentFabric
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Creates or replaces an AgentFabric.
+
+        Before accepting the request or changing policy-group associations, validate the policy
+        types in every proposed defaultPolicyGroups reference against the fabric's effective
+        inspection configuration. If no connection is configured and any referenced group contains a
+        ContentInspection policy, reject the request with HTTP 409 and error code
+        ContentInspectionCapabilityDisabled, targeting properties.defaultPolicyGroups. No incompatible
+        association change is accepted. This check does not depend on whether policy selectors
+        currently match traffic.
+
+        Omitting contentInspectionProfile or supplying {} on PUT for an existing fabric preserves its
+        customer-owned connection, legacy regional connection, or absence of connection.
+        Do not persist {} over the stored connection or cancel a pending connection update.
+        New-fabric omission or {} requests no inspection capability and no regional fallback.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        If a connection update is in progress for this fabric, reject a PUT requesting a different
+        connection with HTTP 409 Conflict, without changing the connection update already in progress.
+        A retry of the same requested connection is not a conflicting change. This does not prevent
+        later key rotations or endpoint replacements.
+
+        In API version ``2026-10-07-preview`` and later, reject definite invalid customer connection
+        input before
+        accepting PUT with HTTP 400 Bad Request. A nonempty profile must contain both endpoint and
+        apiKey.
+        Reject a missing field before connection validation, without retrieving a saved key or
+        comparing
+        with the saved endpoint to permit key omission. Only a truly empty object is a connection
+        no-op;
+        partial objects or objects containing only unrecognized fields must not be treated as empty.
+        Invalid input also includes a null or nonobject profile;
+        a malformed, untrusted, or unsupported endpoint (including a non-HTTPS or unrecognized Azure
+        account host or an unsupported cloud); and explicit null, empty, or wrong-type endpoint or key.
+        An endpoint without a key is invalid even when unchanged; a key without an endpoint is invalid.
+        An omitted profile or {} is not invalid connection input. Its no-op applies only to connection
+        handling; caller authorization, other Fabric fields, policy compatibility, and ordinary
+        pending-operation rules still apply.
+
+        For service-level connection validation rejection, return
+        ContentInspectionConnectionValidationFailed
+        in the standard error response, targeting properties.contentInspectionProfile or its endpoint
+        or apiKey field when the invalid field is known. Ordinary schema/model validation may retain
+        its standard HTTP 400 errors. The connection code also applies to definitively rejected
+        credentials or a confirmed account/access setting or missing required Content Safety API
+        capability that prevents use of the supplied connection. Interpret upstream 401/403 responses
+        to distinguish credentials from account access, local authentication, or network restrictions;
+        do not report them as authentication/authorization failures of the Fabric caller.
+
+        Throttling (HTTP 429), service failures (5xx), DNS/TLS failures, timeouts, and inconclusive
+        availability do not establish bad customer input and must not be classified as this HTTP 400
+        rejection. A DNS timeout or an arbitrary upstream 404 does not prove that the account is
+        absent.
+        If a definite validation rejection is discovered after PUT acceptance, report terminal Failed
+        with the corresponding error in the established long-running operation status response;
+        the accepted PUT response does not become HTTP 400. Failed replacement preserves the previously
+        active connection; never validate or operate failed customer input using regional credentials.
+        Error responses must not contain key values or raw upstream response bodies.
+
+        Example connection rejection response (HTTP 400 Bad Request):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionConnectionValidationFailed",
+               "message": "The supplied Content Safety connection could not be validated. Verify the
+        endpoint, API key, and account access settings.",
+               "target": "properties.contentInspectionProfile"
+             }
+           }
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The referenced policy group contains a ContentInspection policy, but this
+        fabric has no configured inspection connection.",
+               "target": "properties.defaultPolicyGroups"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-07-preview",
+        params_added_on={
+            "2026-10-07-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "agent_fabric_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-07-preview", "2026-11-01-preview", "2026-11-02-preview", "2026-11-03-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        resource: Union[_models.AgentFabric, _types.AgentFabric, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Creates or replaces an AgentFabric.
+
+        Before accepting the request or changing policy-group associations, validate the policy
+        types in every proposed defaultPolicyGroups reference against the fabric's effective
+        inspection configuration. If no connection is configured and any referenced group contains a
+        ContentInspection policy, reject the request with HTTP 409 and error code
+        ContentInspectionCapabilityDisabled, targeting properties.defaultPolicyGroups. No incompatible
+        association change is accepted. This check does not depend on whether policy selectors
+        currently match traffic.
+
+        Omitting contentInspectionProfile or supplying {} on PUT for an existing fabric preserves its
+        customer-owned connection, legacy regional connection, or absence of connection.
+        Do not persist {} over the stored connection or cancel a pending connection update.
+        New-fabric omission or {} requests no inspection capability and no regional fallback.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        If a connection update is in progress for this fabric, reject a PUT requesting a different
+        connection with HTTP 409 Conflict, without changing the connection update already in progress.
+        A retry of the same requested connection is not a conflicting change. This does not prevent
+        later key rotations or endpoint replacements.
+
+        In API version ``2026-10-07-preview`` and later, reject definite invalid customer connection
+        input before
+        accepting PUT with HTTP 400 Bad Request. A nonempty profile must contain both endpoint and
+        apiKey.
+        Reject a missing field before connection validation, without retrieving a saved key or
+        comparing
+        with the saved endpoint to permit key omission. Only a truly empty object is a connection
+        no-op;
+        partial objects or objects containing only unrecognized fields must not be treated as empty.
+        Invalid input also includes a null or nonobject profile;
+        a malformed, untrusted, or unsupported endpoint (including a non-HTTPS or unrecognized Azure
+        account host or an unsupported cloud); and explicit null, empty, or wrong-type endpoint or key.
+        An endpoint without a key is invalid even when unchanged; a key without an endpoint is invalid.
+        An omitted profile or {} is not invalid connection input. Its no-op applies only to connection
+        handling; caller authorization, other Fabric fields, policy compatibility, and ordinary
+        pending-operation rules still apply.
+
+        For service-level connection validation rejection, return
+        ContentInspectionConnectionValidationFailed
+        in the standard error response, targeting properties.contentInspectionProfile or its endpoint
+        or apiKey field when the invalid field is known. Ordinary schema/model validation may retain
+        its standard HTTP 400 errors. The connection code also applies to definitively rejected
+        credentials or a confirmed account/access setting or missing required Content Safety API
+        capability that prevents use of the supplied connection. Interpret upstream 401/403 responses
+        to distinguish credentials from account access, local authentication, or network restrictions;
+        do not report them as authentication/authorization failures of the Fabric caller.
+
+        Throttling (HTTP 429), service failures (5xx), DNS/TLS failures, timeouts, and inconclusive
+        availability do not establish bad customer input and must not be classified as this HTTP 400
+        rejection. A DNS timeout or an arbitrary upstream 404 does not prove that the account is
+        absent.
+        If a definite validation rejection is discovered after PUT acceptance, report terminal Failed
+        with the corresponding error in the established long-running operation status response;
+        the accepted PUT response does not become HTTP 400. Failed replacement preserves the previously
+        active connection; never validate or operate failed customer input using regional credentials.
+        Error responses must not contain key values or raw upstream response bodies.
+
+        Example connection rejection response (HTTP 400 Bad Request):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionConnectionValidationFailed",
+               "message": "The supplied Content Safety connection could not be validated. Verify the
+        endpoint, API key, and account access settings.",
+               "target": "properties.contentInspectionProfile"
+             }
+           }
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The referenced policy group contains a ContentInspection policy, but this
+        fabric has no configured inspection connection.",
+               "target": "properties.defaultPolicyGroups"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param resource: Resource create parameters. Is either a AgentFabric type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.networksecurity.models.AgentFabric or
+         ~azure.mgmt.networksecurity.types.AgentFabric or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentFabric] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                resource=resource,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AgentFabric, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AgentFabric].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AgentFabric](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        properties: Union[_models.AgentFabricTagsUpdate, _types.AgentFabricTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agent_fabrics_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        properties: _models.AgentFabricTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Update a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.AgentFabricTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        properties: _types.AgentFabricTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Update a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.types.AgentFabricTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Update a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        properties: Union[_models.AgentFabricTagsUpdate, _types.AgentFabricTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AgentFabric]:
+        """Update a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param properties: The resource properties to be updated. Is either a AgentFabricTagsUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.AgentFabricTagsUpdate or
+         ~azure.mgmt.networksecurity.types.AgentFabricTagsUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AgentFabric. The AgentFabric is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentFabric] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                properties=properties,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AgentFabric, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AgentFabric].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AgentFabric](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _delete_initial(
+        self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_agent_fabrics_delete_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.AgentFabric"]:
+        """List AgentFabric resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of AgentFabric
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.AgentFabric]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_agent_fabrics_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentFabric],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.AgentFabric"]:
+        """List AgentFabric resources by subscription ID.
+
+        :return: An iterator like instance of AgentFabric
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.AgentFabric]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.AgentFabric]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_agent_fabrics_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentFabric],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class MembersOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`members` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, agent_fabric_name: str, member_name: str, **kwargs: Any
+    ) -> _models.Member:
+        """Get a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :return: Member. The Member is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.Member
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.Member] = kwargs.pop("cls", None)
+
+        _request = build_members_get_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            member_name=member_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.Member, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        resource: Union[_models.Member, _types.Member, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_members_create_or_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            member_name=member_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        resource: _models.Member,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Create a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.models.Member
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        resource: _types.Member,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Create a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.types.Member
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Create a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        resource: Union[_models.Member, _types.Member, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Create a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param resource: Resource create parameters. Is either a Member type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.networksecurity.models.Member or
+         ~azure.mgmt.networksecurity.types.Member or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Member] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                member_name=member_name,
+                resource=resource,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Member, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Member].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Member](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        properties: Union[_models.MemberTagsUpdate, _types.MemberTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_members_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            member_name=member_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        properties: _models.MemberTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Update a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.MemberTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        properties: _types.MemberTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Update a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.types.MemberTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Update a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        member_name: str,
+        properties: Union[_models.MemberTagsUpdate, _types.MemberTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.Member]:
+        """Update a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :param properties: The resource properties to be updated. Is either a MemberTagsUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.MemberTagsUpdate or
+         ~azure.mgmt.networksecurity.types.MemberTagsUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns Member. The Member is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Member] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                member_name=member_name,
+                properties=properties,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Member, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.Member].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.Member](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _delete_initial(
+        self, resource_group_name: str, agent_fabric_name: str, member_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_members_delete_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            member_name=member_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, agent_fabric_name: str, member_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a Member.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param member_name: The name of the Member. Required.
+        :type member_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                member_name=member_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_by_parent(
+        self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.Member"]:
+        """List Member resources by AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: An iterator like instance of Member
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.Member]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.Member]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_members_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    agent_fabric_name=agent_fabric_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.Member],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class PolicyGroupsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`policy_groups` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, resource_group_name: str, policy_group_name: str, **kwargs: Any) -> _models.PolicyGroup:
+        """Get a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :return: PolicyGroup. The PolicyGroup is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.PolicyGroup
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.PolicyGroup] = kwargs.pop("cls", None)
+
+        _request = build_policy_groups_get_request(
+            resource_group_name=resource_group_name,
+            policy_group_name=policy_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PolicyGroup, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-10-07-preview",
+        params_added_on={
+            "2026-10-07-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "policy_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-07-preview", "2026-11-01-preview", "2026-11-02-preview", "2026-11-03-preview"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        resource: Union[_models.PolicyGroup, _types.PolicyGroup, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policy_groups_create_or_update_request(
+            resource_group_name=resource_group_name,
+            policy_group_name=policy_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        resource: _models.PolicyGroup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Creates or replaces a PolicyGroup.
+
+        If the PUT introduces a ContentInspection policy in networkSecurityPolicies and any
+        associated fabric has no configured inspection connection, reject the
+        request with HTTP 409 and error code ContentInspectionCapabilityDisabled, targeting
+        properties.networkSecurityPolicies. Validate before persisting or distributing policy changes,
+        preserving the previously accepted policies on rejection. Do not partially apply changes to
+        compatible fabrics or silently skip inspection for fabrics without an inspection connection.
+
+        Compatibility uses the associated fabrics' stored configuration, independent of whether
+        policy selectors currently match traffic. This is a configuration check, not a fresh Content
+        Safety connectivity probe. Changes that do not introduce ContentInspection policies do not
+        require this check; transient connection failures do not remove a fabric's configuration.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Unattached groups and groups associated only with compatible fabrics may
+        contain ContentInspection policies. Removing those policies or detaching a group
+        remains allowed, subject to other validation. Tags-only PATCH does not change policy contents.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The proposed ContentInspection policy is incompatible with an associated
+        fabric that has no configured inspection connection.",
+               "target": "properties.networkSecurityPolicies"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.models.PolicyGroup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        resource: _types.PolicyGroup,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Creates or replaces a PolicyGroup.
+
+        If the PUT introduces a ContentInspection policy in networkSecurityPolicies and any
+        associated fabric has no configured inspection connection, reject the
+        request with HTTP 409 and error code ContentInspectionCapabilityDisabled, targeting
+        properties.networkSecurityPolicies. Validate before persisting or distributing policy changes,
+        preserving the previously accepted policies on rejection. Do not partially apply changes to
+        compatible fabrics or silently skip inspection for fabrics without an inspection connection.
+
+        Compatibility uses the associated fabrics' stored configuration, independent of whether
+        policy selectors currently match traffic. This is a configuration check, not a fresh Content
+        Safety connectivity probe. Changes that do not introduce ContentInspection policies do not
+        require this check; transient connection failures do not remove a fabric's configuration.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Unattached groups and groups associated only with compatible fabrics may
+        contain ContentInspection policies. Removing those policies or detaching a group
+        remains allowed, subject to other validation. Tags-only PATCH does not change policy contents.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The proposed ContentInspection policy is incompatible with an associated
+        fabric that has no configured inspection connection.",
+               "target": "properties.networkSecurityPolicies"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.types.PolicyGroup
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Creates or replaces a PolicyGroup.
+
+        If the PUT introduces a ContentInspection policy in networkSecurityPolicies and any
+        associated fabric has no configured inspection connection, reject the
+        request with HTTP 409 and error code ContentInspectionCapabilityDisabled, targeting
+        properties.networkSecurityPolicies. Validate before persisting or distributing policy changes,
+        preserving the previously accepted policies on rejection. Do not partially apply changes to
+        compatible fabrics or silently skip inspection for fabrics without an inspection connection.
+
+        Compatibility uses the associated fabrics' stored configuration, independent of whether
+        policy selectors currently match traffic. This is a configuration check, not a fresh Content
+        Safety connectivity probe. Changes that do not introduce ContentInspection policies do not
+        require this check; transient connection failures do not remove a fabric's configuration.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Unattached groups and groups associated only with compatible fabrics may
+        contain ContentInspection policies. Removing those policies or detaching a group
+        remains allowed, subject to other validation. Tags-only PATCH does not change policy contents.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The proposed ContentInspection policy is incompatible with an associated
+        fabric that has no configured inspection connection.",
+               "target": "properties.networkSecurityPolicies"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-07-preview",
+        params_added_on={
+            "2026-10-07-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "policy_group_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-07-preview", "2026-11-01-preview", "2026-11-02-preview", "2026-11-03-preview"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        resource: Union[_models.PolicyGroup, _types.PolicyGroup, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Creates or replaces a PolicyGroup.
+
+        If the PUT introduces a ContentInspection policy in networkSecurityPolicies and any
+        associated fabric has no configured inspection connection, reject the
+        request with HTTP 409 and error code ContentInspectionCapabilityDisabled, targeting
+        properties.networkSecurityPolicies. Validate before persisting or distributing policy changes,
+        preserving the previously accepted policies on rejection. Do not partially apply changes to
+        compatible fabrics or silently skip inspection for fabrics without an inspection connection.
+
+        Compatibility uses the associated fabrics' stored configuration, independent of whether
+        policy selectors currently match traffic. This is a configuration check, not a fresh Content
+        Safety connectivity probe. Changes that do not introduce ContentInspection policies do not
+        require this check; transient connection failures do not remove a fabric's configuration.
+        Existing legacy fabrics without a profile retain their regional Content Safety connection,
+        which satisfies the inspection prerequisite without new probes, management calls, or key
+        retrieval. A connection still being validated is not an absent connection.
+        Unattached groups and groups associated only with compatible fabrics may
+        contain ContentInspection policies. Removing those policies or detaching a group
+        remains allowed, subject to other validation. Tags-only PATCH does not change policy contents.
+        Error messages must not disclose associated fabric IDs the caller is not authorized to read.
+
+        Example rejection response (HTTP 409 Conflict):
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ContentInspectionCapabilityDisabled",
+               "message": "The proposed ContentInspection policy is incompatible with an associated
+        fabric that has no configured inspection connection.",
+               "target": "properties.networkSecurityPolicies"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param resource: Resource create parameters. Is either a PolicyGroup type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.networksecurity.models.PolicyGroup or
+         ~azure.mgmt.networksecurity.types.PolicyGroup or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                policy_group_name=policy_group_name,
+                resource=resource,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PolicyGroup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PolicyGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PolicyGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        properties: Union[_models.PolicyGroupTagsUpdate, _types.PolicyGroupTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_policy_groups_update_request(
+            resource_group_name=resource_group_name,
+            policy_group_name=policy_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        properties: _models.PolicyGroupTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Update a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.PolicyGroupTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        properties: _types.PolicyGroupTagsUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Update a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.types.PolicyGroupTagsUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Update a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        policy_group_name: str,
+        properties: Union[_models.PolicyGroupTagsUpdate, _types.PolicyGroupTagsUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.PolicyGroup]:
+        """Update a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :param properties: The resource properties to be updated. Is either a PolicyGroupTagsUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.PolicyGroupTagsUpdate or
+         ~azure.mgmt.networksecurity.types.PolicyGroupTagsUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns PolicyGroup. The PolicyGroup is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PolicyGroup] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                policy_group_name=policy_group_name,
+                properties=properties,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.PolicyGroup, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.PolicyGroup].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.PolicyGroup](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _delete_initial(
+        self, resource_group_name: str, policy_group_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_policy_groups_delete_request(
+            resource_group_name=resource_group_name,
+            policy_group_name=policy_group_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, policy_group_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Delete a PolicyGroup.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param policy_group_name: The name of the PolicyGroup. Required.
+        :type policy_group_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                policy_group_name=policy_group_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_by_resource_group(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PolicyGroup"]:
+        """List PolicyGroup resources by resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of PolicyGroup
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.PolicyGroup]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_groups_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PolicyGroup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged["_models.PolicyGroup"]:
+        """List PolicyGroup resources by subscription ID.
+
+        :return: An iterator like instance of PolicyGroup
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.PolicyGroup]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.PolicyGroup]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_policy_groups_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PolicyGroup],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class OperationStatusOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`operation_status` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, location: str, operation_id: str, **kwargs: Any) -> _models.OperationStatusResult:
+        """Returns the current status of an async operation.
+
+        :param location: The name of Azure region. Required.
+        :type location: str
+        :param operation_id: The ID of an ongoing async operation. Required.
+        :type operation_id: str
+        :return: OperationStatusResult. The OperationStatusResult is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.OperationStatusResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+
+        _request = build_operation_status_get_request(
+            location=location,
+            operation_id=operation_id,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ClusterAssociationsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`cluster_associations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(
+        self, resource_group_name: str, agent_fabric_name: str, cluster_association_name: str, **kwargs: Any
+    ) -> _models.ClusterAssociation:
+        """Get a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :return: ClusterAssociation. The ClusterAssociation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.ClusterAssociation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.ClusterAssociation] = kwargs.pop("cls", None)
+
+        _request = build_cluster_associations_get_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            cluster_association_name=cluster_association_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ClusterAssociation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        resource: Union[_models.ClusterAssociation, _types.ClusterAssociation, IO[bytes]],
+        *,
+        etag: Optional[Union[str, _models.ClusterAssociationIfNoneMatch]] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_cluster_associations_create_or_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            cluster_association_name=cluster_association_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        resource: _models.ClusterAssociation,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[Union[str, _models.ClusterAssociationIfNoneMatch]] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Create a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.models.ClusterAssociation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. "*" Default value
+         is None.
+        :paramtype etag: str or ~azure.mgmt.networksecurity.models.ClusterAssociationIfNoneMatch
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        resource: _types.ClusterAssociation,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[Union[str, _models.ClusterAssociationIfNoneMatch]] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Create a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.networksecurity.types.ClusterAssociation
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. "*" Default value
+         is None.
+        :paramtype etag: str or ~azure.mgmt.networksecurity.models.ClusterAssociationIfNoneMatch
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[Union[str, _models.ClusterAssociationIfNoneMatch]] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Create a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. "*" Default value
+         is None.
+        :paramtype etag: str or ~azure.mgmt.networksecurity.models.ClusterAssociationIfNoneMatch
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        resource: Union[_models.ClusterAssociation, _types.ClusterAssociation, IO[bytes]],
+        *,
+        etag: Optional[Union[str, _models.ClusterAssociationIfNoneMatch]] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Create a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param resource: Resource create parameters. Is either a ClusterAssociation type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.networksecurity.models.ClusterAssociation or
+         ~azure.mgmt.networksecurity.types.ClusterAssociation or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. "*" Default value
+         is None.
+        :paramtype etag: str or ~azure.mgmt.networksecurity.models.ClusterAssociationIfNoneMatch
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ClusterAssociation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                cluster_association_name=cluster_association_name,
+                resource=resource,
+                etag=etag,
+                match_condition=match_condition,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ClusterAssociation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ClusterAssociation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ClusterAssociation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _update_initial(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        properties: Union[_models.ClusterAssociationUpdate, _types.ClusterAssociationUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_cluster_associations_update_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            cluster_association_name=cluster_association_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        properties: _models.ClusterAssociationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Update a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.ClusterAssociationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        properties: _types.ClusterAssociationUpdate,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Update a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.networksecurity.types.ClusterAssociationUpdate
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        properties: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Update a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update(
+        self,
+        resource_group_name: str,
+        agent_fabric_name: str,
+        cluster_association_name: str,
+        properties: Union[_models.ClusterAssociationUpdate, _types.ClusterAssociationUpdate, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.ClusterAssociation]:
+        """Update a ClusterAssociation.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :param properties: The resource properties to be updated. Is either a ClusterAssociationUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.networksecurity.models.ClusterAssociationUpdate or
+         ~azure.mgmt.networksecurity.types.ClusterAssociationUpdate or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ClusterAssociation. The ClusterAssociation
+         is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ClusterAssociation] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._update_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                cluster_association_name=cluster_association_name,
+                properties=properties,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.ClusterAssociation, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.ClusterAssociation].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.ClusterAssociation](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    async def _delete_initial(
+        self, resource_group_name: str, agent_fabric_name: str, cluster_association_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_cluster_associations_delete_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            cluster_association_name=cluster_association_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def begin_delete(
+        self, resource_group_name: str, agent_fabric_name: str, cluster_association_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes the association. Idempotent: returns ``202 Accepted`` when completion is
+        asynchronous, and ``204 No Content`` when it completes synchronously or the
+        association is already absent.
+
+        For an association enrolling an ACI SandboxGroup (``clusterResourceId`` of type
+        ``Microsoft.ContainerInstance/sandboxGroups``), the service returns
+        ``409 ClusterAssociationNotEmpty`` while any Member still references the
+        SandboxGroup. All such Members must be deleted before the association can be
+        removed.
+
+
+
+        .. code-block:: json
+
+           {
+             "error": {
+               "code": "ClusterAssociationNotEmpty",
+               "message": "The ClusterAssociation cannot be deleted because one or more members still
+        reference it.",
+               "target": "properties.clusterResourceId"
+             }
+           }
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :param cluster_association_name: The name of the ClusterAssociation. Required.
+        :type cluster_association_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                agent_fabric_name=agent_fabric_name,
+                cluster_association_name=cluster_association_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    def list_by_parent(
+        self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.ClusterAssociation"]:
+        """List ClusterAssociation resources by AgentFabric.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: An iterator like instance of ClusterAssociation
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.ClusterAssociation]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.ClusterAssociation]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_cluster_associations_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    agent_fabric_name=agent_fabric_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ClusterAssociation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class EgressTrustBundlesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networksecurity.aio.NetworkSecurityMgmtClient`'s
+        :attr:`egress_trust_bundles` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkSecurityMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get(self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any) -> _models.EgressTrustBundle:
+        """Gets the egress TLS-inspection trust bundle for the fabric.
+
+        The bundle changes rarely, so callers are expected to cache it for the advertised
+        validity period rather than reading it per workload. To decide whether a cached copy is
+        still current, compare ``bundleVersion``: it is derived from the anchor set, so it changes
+        exactly when the anchors change and is stable otherwise. Every read returns the full
+        bundle together with refreshed cache metadata.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: EgressTrustBundle. The EgressTrustBundle is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networksecurity.models.EgressTrustBundle
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[_models.EgressTrustBundle] = kwargs.pop("cls", None)
+
+        _request = build_egress_trust_bundles_get_request(
+            resource_group_name=resource_group_name,
+            agent_fabric_name=agent_fabric_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.EgressTrustBundle, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_by_parent(
+        self, resource_group_name: str, agent_fabric_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.EgressTrustBundle"]:
+        """Lists the egress TLS-inspection trust bundles for the fabric. The bundle is a singleton, so
+        this returns the single ``default`` bundle. It exists because Azure Policy cannot populate
+        compliance data for a resource type that has no collection GET.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param agent_fabric_name: The name of the AgentFabric. Required.
+        :type agent_fabric_name: str
+        :return: An iterator like instance of EgressTrustBundle
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networksecurity.models.EgressTrustBundle]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-11-03-preview"))
+        cls: ClsType[List[_models.EgressTrustBundle]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_egress_trust_bundles_list_by_parent_request(
+                    resource_group_name=resource_group_name,
+                    agent_fabric_name=agent_fabric_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.EgressTrustBundle],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)

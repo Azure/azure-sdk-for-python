@@ -18,6 +18,7 @@ from ._operations import FleetsOperations  # type: ignore
 from ._operations import FleetMembersOperations  # type: ignore
 from ._operations import FleetManagedNamespacesOperations  # type: ignore
 from ._operations import GatesOperations  # type: ignore
+from ._operations import IdentityBindingProfilesOperations  # type: ignore
 from ._operations import UpdateRunsOperations  # type: ignore
 from ._operations import FleetUpdateStrategiesOperations  # type: ignore
 from ._operations import AutoUpgradeProfilesOperations  # type: ignore
@@ -34,6 +35,7 @@ __all__ = [
     "FleetMembersOperations",
     "FleetManagedNamespacesOperations",
     "GatesOperations",
+    "IdentityBindingProfilesOperations",
     "UpdateRunsOperations",
     "FleetUpdateStrategiesOperations",
     "AutoUpgradeProfilesOperations",

@@ -113,6 +113,58 @@ class AgentProfile(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         super().__init__(*args, **kwargs)
 
 
+class AllowedSubject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an identity binding profile are OR'd.
+
+    :ivar namespace_selector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespace_selector:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelector
+    :ivar service_account_selector: Optional label selector matching the service accounts (within
+     the namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype service_account_selector:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelector
+    """
+
+    namespace_selector: "_models.IdentityBindingLabelSelector" = rest_field(
+        name="namespaceSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    service_account_selector: Optional["_models.IdentityBindingLabelSelector"] = rest_field(
+        name="serviceAccountSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_selector: "_models.IdentityBindingLabelSelector",
+        service_account_selector: Optional["_models.IdentityBindingLabelSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class APIServerAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access profile for the Fleet hub API server.
 
@@ -2215,6 +2267,349 @@ class GenerateResponse(_Model):
      Required."""
 
 
+class IdentityBindingLabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A label selector is a label query over a set of resources. The result of matchLabels and
+    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
+    matches no objects.
+
+    :ivar match_labels: matchLabels is an array of {key=value} pairs. A single {key=value} in the
+     matchLabels map is equivalent to an element of matchExpressions, whose key field is ``key``,
+     the operator is ``In``, and the values array contains only ``value``. The requirements are
+     ANDed.
+    :vartype match_labels: list[str]
+    :ivar match_expressions: matchExpressions is a list of label selector requirements. The
+     requirements are ANDed.
+    :vartype match_expressions:
+     list[~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorRequirement]
+    """
+
+    match_labels: Optional[list[str]] = rest_field(
+        name="matchLabels", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchLabels is an array of {key=value} pairs. A single {key=value} in the matchLabels map is
+     equivalent to an element of matchExpressions, whose key field is ``key``, the operator is
+     ``In``, and the values array contains only ``value``. The requirements are ANDed."""
+    match_expressions: Optional[list["_models.IdentityBindingLabelSelectorRequirement"]] = rest_field(
+        name="matchExpressions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        match_labels: Optional[list[str]] = None,
+        match_expressions: Optional[list["_models.IdentityBindingLabelSelectorRequirement"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingLabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A label selector requirement is a selector that contains values, a key, and an operator that
+    relates the key and values.
+
+    :ivar key: key is the label key that the selector applies to.
+    :vartype key: str
+    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
+     are In, NotIn, Exists and DoesNotExist. Known values are: "In", "NotIn", "Exists", and
+     "DoesNotExist".
+    :vartype operator: str or
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingLabelSelectorOperator
+    :ivar values_property: values is an array of string values. For In or NotIn, the array must be
+     non-empty. For Exists or DoesNotExist, the array must be empty or omitted.
+    :vartype values_property: list[str]
+    """
+
+    key: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """key is the label key that the selector applies to."""
+    operator: Optional[Union[str, "_models.IdentityBindingLabelSelectorOperator"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """operator represents a key's relationship to a set of values. Valid operators are In, NotIn,
+     Exists and DoesNotExist. Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
+    values_property: Optional[list[str]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    )
+    """values is an array of string values. For In or NotIn, the array must be non-empty. For Exists
+     or DoesNotExist, the array must be empty or omitted."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key: Optional[str] = None,
+        operator: Optional[Union[str, "_models.IdentityBindingLabelSelectorOperator"]] = None,
+        values_property: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingManagedIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed identity profile for the identity binding.
+
+    :ivar resource_id: The resource ID of the user-assigned managed identity. Required.
+    :vartype resource_id: str
+    :ivar object_id: The object ID of the managed identity.
+    :vartype object_id: str
+    :ivar client_id: The client ID of the managed identity.
+    :vartype client_id: str
+    :ivar tenant_id: The tenant ID of the managed identity.
+    :vartype tenant_id: str
+    """
+
+    resource_id: str = rest_field(name="resourceId", visibility=["read", "create"])
+    """The resource ID of the user-assigned managed identity. Required."""
+    object_id: Optional[str] = rest_field(name="objectId", visibility=["read"])
+    """The object ID of the managed identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the managed identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the managed identity."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingOidcIssuerProfile(_Model):
+    """The OIDC issuer profile of the identity binding profile.
+
+    :ivar oidc_issuer_url: The OIDC issuer URL of the identity binding profile.
+    :vartype oidc_issuer_url: str
+    """
+
+    oidc_issuer_url: Optional[str] = rest_field(name="oidcIssuerUrl", visibility=["read"])
+    """The OIDC issuer URL of the identity binding profile."""
+
+
+class IdentityBindingProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A fleet identity binding profile.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservicefleet.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileProperties
+    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
+    :vartype e_tag: str
+    """
+
+    properties: Optional["_models.IdentityBindingProfileProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read"])
+    """If eTag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
+
+    __flattened_items = ["provisioning_state", "member_selector", "identity_binding_properties", "status"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.IdentityBindingProfileProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class IdentityBindingProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of an identity binding profile.
+
+    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+     "Failed", "Canceled", and "Applying".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileProvisioningState
+    :ivar member_selector: Select the fleet members that this identity binding profile is applied
+     to.
+
+     * Only key/value pairs with the `=` operator are accepted in the label selector.
+     * If empty or not specified, no fleet members will be selected.
+    :vartype member_selector: ~azure.mgmt.containerservicefleet.models.MemberSelector
+    :ivar identity_binding_properties: The identity binding properties applied to each selected
+     fleet member. Required.
+    :vartype identity_binding_properties:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingProperties
+    :ivar status: The identity binding profile status.
+    :vartype status: ~azure.mgmt.containerservicefleet.models.IdentityBindingProfileStatus
+    """
+
+    provisioning_state: Optional[Union[str, "_models.IdentityBindingProfileProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
+     and \"Applying\"."""
+    member_selector: Optional["_models.MemberSelector"] = rest_field(
+        name="memberSelector", visibility=["read", "create"]
+    )
+    """Select the fleet members that this identity binding profile is applied to.
+ 
+      * Only key/value pairs with the `=` operator are accepted in the label selector.
+      * If empty or not specified, no fleet members will be selected."""
+    identity_binding_properties: "_models.IdentityBindingProperties" = rest_field(
+        name="identityBindingProperties", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity binding properties applied to each selected fleet member. Required."""
+    status: Optional["_models.IdentityBindingProfileStatus"] = rest_field(visibility=["read"])
+    """The identity binding profile status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_binding_properties: "_models.IdentityBindingProperties",
+        member_selector: Optional["_models.MemberSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class IdentityBindingProfileStatus(_Model):
+    """Status of the identity binding profile.
+
+    :ivar last_operation_id: The last operation ID for the identity binding profile.
+    :vartype last_operation_id: str
+    :ivar last_operation_error: The last operation error of the identity binding profile.
+    :vartype last_operation_error: ~azure.mgmt.containerservicefleet.models.ErrorDetail
+    """
+
+    last_operation_id: Optional[str] = rest_field(name="lastOperationId", visibility=["read"])
+    """The last operation ID for the identity binding profile."""
+    last_operation_error: Optional["_models.ErrorDetail"] = rest_field(name="lastOperationError", visibility=["read"])
+    """The last operation error of the identity binding profile."""
+
+
+class IdentityBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The properties of the identity bindings created on each selected fleet member.
+
+    :ivar managed_identity: Managed identity profile for the identity binding. Required.
+    :vartype managed_identity:
+     ~azure.mgmt.containerservicefleet.models.IdentityBindingManagedIdentityProfile
+    :ivar allowed_subjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowed_subjects: list[~azure.mgmt.containerservicefleet.models.AllowedSubject]
+    :ivar oidc_issuer: The OIDC issuer profile of the identity binding profile.
+    :vartype oidc_issuer: ~azure.mgmt.containerservicefleet.models.IdentityBindingOidcIssuerProfile
+    """
+
+    managed_identity: "_models.IdentityBindingManagedIdentityProfile" = rest_field(
+        name="managedIdentity", visibility=["read", "create"]
+    )
+    """Managed identity profile for the identity binding. Required."""
+    allowed_subjects: Optional[list["_models.AllowedSubject"]] = rest_field(
+        name="allowedSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
+    oidc_issuer: Optional["_models.IdentityBindingOidcIssuerProfile"] = rest_field(
+        name="oidcIssuer", visibility=["read"]
+    )
+    """The OIDC issuer profile of the identity binding profile."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        managed_identity: "_models.IdentityBindingManagedIdentityProfile",
+        allowed_subjects: Optional[list["_models.AllowedSubject"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class LabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
@@ -3696,6 +4091,15 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar name: Name of the group. It must match a group name of an existing fleet member.
      Required.
     :vartype name: str
+    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
+     within this group. Failures are evaluated over members within this group only. Accepts either:
+     • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at
+     stage start using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and
+     N is the number of members in this group at scope start. Examples: • "3"   --> up to 3 member
+     upgrade failures are tolerated within this group. The 4th failure causes the group to fail. •
+     "25%" --> up to 25% of the members in this group can fail their upgrade before the group is
+     considered failed.
+    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently in this specific
      group. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within the
      group you want to tolerate at a time. Actual concurrency may be lower depending on stage-level
@@ -3723,6 +4127,16 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Name of the group. It must match a group name of an existing fleet member. Required."""
+    max_allowed_failures: Optional[str] = rest_field(
+        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits the number of member (cluster) upgrade failures tolerated within this group. Failures
+     are evaluated over members within this group only. Accepts either: • A fixed count n, where n
+     >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start using:
+     resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the number of
+     members in this group at scope start. Examples: • \"3\"   --> up to 3 member upgrade failures
+     are tolerated within this group. The 4th failure causes the group to fail. • \"25%\" --> up to
+     25% of the members in this group can fail their upgrade before the group is considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3760,6 +4174,7 @@ class UpdateGroup(_Model):  # pylint: disable=docstring-keyword-should-match-key
         self,
         *,
         name: str,
+        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
         member_selector: Optional["_models.MemberSelector"] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
@@ -3784,6 +4199,11 @@ class UpdateGroupStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateGroup.
     :vartype name: str
+    :ivar failure_count: The total member upgrade failures within the group.
+    :vartype failure_count: int
+    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
+     group, resolved from the UpdateStrategy.UpdateGroup.maxAllowedFailures value.
+    :vartype max_allowed_failures: int
     :ivar max_concurrency:   The max number of upgrades that can run concurrently in this group,
      resolved from the UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided,
      this value defaults to "1".
@@ -3800,6 +4220,11 @@ class UpdateGroupStatus(_Model):
     """The status of the UpdateGroup."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateGroup."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """The total member upgrade failures within the group."""
+    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
+    """The max number of member upgrade failures allowed within this group, resolved from the
+     UpdateStrategy.UpdateGroup.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently in this group, resolved from the
      UpdateStrategy.UpdateGroup.maxConcurrency value. If no value was provided, this value defaults
@@ -4063,6 +4488,8 @@ class UpdateRunStatus(_Model):
      update run when ``NodeImageSelection.type`` is ``Consistent``.
     :vartype node_image_selection:
      ~azure.mgmt.containerservicefleet.models.NodeImageSelectionStatus
+    :ivar failure_count: Total member upgrade failures across the entire UpdateRun.
+    :vartype failure_count: int
     """
 
     status: Optional["_models.UpdateStatus"] = rest_field(visibility=["read"])
@@ -4074,6 +4501,8 @@ class UpdateRunStatus(_Model):
     )
     """The node image upgrade specs for the update run. It is only set in update run when
      ``NodeImageSelection.type`` is ``Consistent``."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """Total member upgrade failures across the entire UpdateRun."""
 
 
 class UpdateRunStrategy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -4130,6 +4559,15 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
     :ivar after_stage_wait_in_seconds: The time in seconds to wait at the end of this stage before
      starting the next one. Defaults to 0 seconds if unspecified.
     :vartype after_stage_wait_in_seconds: int
+    :ivar max_allowed_failures: Limits the number of member (cluster) upgrade failures tolerated
+     within this stage. Failures are evaluated over all members within all groups within this stage.
+     Accepts either: • A fixed count n, where n >= 0 • A percentage p%, where 0 <= p <= 100
+     Percentage resolves at stage start using: resolvedThreshold = ceil(p * N), where p is the
+     percentage as a decimal and N is the number of members in this stage at scope start. Examples:
+     • "3"   --> up to 3 member upgrade failures are tolerated within this stage. The 4th failure
+     would cause the entire stage to fail. • "25%" --> up to 25% of the members in this stage can
+     fail their upgrade before the stage is considered failed.
+    :vartype max_allowed_failures: str
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage. Acts as a ceiling (and not a quota) for the number of concurrent upgrades within
      the stage you want to tolerate at a time. Actual concurrency may be lower depending on
@@ -4169,6 +4607,17 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
     )
     """The time in seconds to wait at the end of this stage before starting the next one. Defaults to
      0 seconds if unspecified."""
+    max_allowed_failures: Optional[str] = rest_field(
+        name="maxAllowedFailures", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits the number of member (cluster) upgrade failures tolerated within this stage. Failures
+     are evaluated over all members within all groups within this stage. Accepts either: • A fixed
+     count n, where n >= 0 • A percentage p%, where 0 <= p <= 100 Percentage resolves at stage start
+     using: resolvedThreshold = ceil(p * N), where p is the percentage as a decimal and N is the
+     number of members in this stage at scope start. Examples: • \"3\"   --> up to 3 member upgrade
+     failures are tolerated within this stage. The 4th failure would cause the entire stage to fail.
+     • \"25%\" --> up to 25% of the members in this stage can fail their upgrade before the stage is
+     considered failed."""
     max_concurrency: Optional[str] = rest_field(
         name="maxConcurrency", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4199,6 +4648,7 @@ class UpdateStage(_Model):  # pylint: disable=docstring-keyword-should-match-key
         groups: Optional[list["_models.UpdateGroup"]] = None,
         member_selector: Optional["_models.MemberSelector"] = None,
         after_stage_wait_in_seconds: Optional[int] = None,
+        max_allowed_failures: Optional[str] = None,
         max_concurrency: Optional[str] = None,
         before_gates: Optional[list["_models.GateConfiguration"]] = None,
         after_gates: Optional[list["_models.GateConfiguration"]] = None,
@@ -4222,6 +4672,11 @@ class UpdateStageStatus(_Model):
     :vartype status: ~azure.mgmt.containerservicefleet.models.UpdateStatus
     :ivar name: The name of the UpdateStage.
     :vartype name: str
+    :ivar failure_count: The total member upgrade failures within the stage.
+    :vartype failure_count: int
+    :ivar max_allowed_failures: The max number of member upgrade failures allowed within this
+     stage, resolved from the UpdateStrategy.UpdateStage.maxAllowedFailures value.
+    :vartype max_allowed_failures: int
     :ivar max_concurrency: The max number of upgrades that can run concurrently across all groups
      in this stage, resolved from the UpdateStrategy.UpdateStage.maxConcurrency value.
     :vartype max_concurrency: int
@@ -4239,6 +4694,11 @@ class UpdateStageStatus(_Model):
     """The status of the UpdateStage."""
     name: Optional[str] = rest_field(visibility=["read"])
     """The name of the UpdateStage."""
+    failure_count: Optional[int] = rest_field(name="failureCount", visibility=["read"])
+    """The total member upgrade failures within the stage."""
+    max_allowed_failures: Optional[int] = rest_field(name="maxAllowedFailures", visibility=["read"])
+    """The max number of member upgrade failures allowed within this stage, resolved from the
+     UpdateStrategy.UpdateStage.maxAllowedFailures value."""
     max_concurrency: Optional[int] = rest_field(name="maxConcurrency", visibility=["read"])
     """The max number of upgrades that can run concurrently across all groups in this stage, resolved
      from the UpdateStrategy.UpdateStage.maxConcurrency value."""

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import importlib.util
 import os
 import sys
 
@@ -455,6 +456,7 @@ def test_validate_cloud_shell_credential_in_dac():
 
 
 @pytest.mark.skipif(not sys.platform.startswith("win") and not is_wsl(), reason="tests Windows-specific behavior")
+@pytest.mark.skipif(importlib.util.find_spec("azure.identity.broker") is None, reason="requires azure-identity-broker")
 def test_broker_credential():
     """Test that DefaultAzureCredential uses the broker credential when available"""
     with patch("azure.identity.broker.InteractiveBrowserBrokerCredential") as mock_credential:

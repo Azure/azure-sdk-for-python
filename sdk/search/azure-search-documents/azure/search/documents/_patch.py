@@ -9,7 +9,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, Union, List, Dict, Mapping, Optional, cast
+from typing import Any, Mapping, Union, List, Dict, Optional, cast
 from enum import Enum
 import time
 import threading
@@ -20,8 +20,8 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ServiceResponseTimeoutError
 
 from ._client import SearchClient as _SearchClient
-from ._operations._patch import SearchItemPaged, _normalize_index_documents_batch
 from . import types as _types
+from ._operations._patch import SearchItemPaged, _normalize_index_documents_batch
 from .models._patch import RequestEntityTooLargeError, IndexDocumentsBatch
 from .models import IndexAction, IndexingResult
 from .indexes import SearchIndexClient
@@ -43,10 +43,13 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2024_07_01 = "2024-07-01"
     V2025_09_01 = "2025-09-01"
     V2026_04_01 = "2026-04-01"
+    V2026_08_01_PREVIEW = "2026-08-01-preview"
     V2026_10_01 = "2026-10-01"
 
+    V2026_11_01_PREVIEW = "2026-11-01-preview"
 
-DEFAULT_VERSION = ApiVersion.V2026_10_01
+
+DEFAULT_VERSION = ApiVersion.V2026_11_01_PREVIEW
 
 
 class SearchClient(_SearchClient):
@@ -62,7 +65,7 @@ class SearchClient(_SearchClient):
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Known values are
         listed on the :class:`~azure.search.documents.ApiVersion` enum. Default value is
-        ``ApiVersion.V2026_10_01``. Note that overriding this default value may
+        ``ApiVersion.V2026_11_01_PREVIEW``. Note that overriding this default value may
         result in unsupported behavior.
     :paramtype api_version: str or ~azure.search.documents.ApiVersion
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
@@ -134,19 +137,13 @@ class SearchIndexingBufferedSender:
         self._retry_counter: Dict[str, int] = {}
 
         self._index_documents_batch = IndexDocumentsBatch()
-        self._client_kwargs = dict(kwargs)
 
         # Create the search client based on credential type
-        if isinstance(credential, AzureKeyCredential):
-            self._aad = False
-            self._client = SearchClient(
-                endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
-            )
-        else:
-            self._aad = True
-            self._client = SearchClient(
-                endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
-            )
+        self._client_kwargs = dict(kwargs)
+        self._aad = not isinstance(credential, AzureKeyCredential)
+        self._client = SearchClient(
+            endpoint=endpoint, index_name=index_name, credential=credential, api_version=self._api_version, **kwargs
+        )
         self._reset_timer()
 
     def _cleanup(self, flush: bool = True) -> None:
@@ -219,13 +216,12 @@ class SearchIndexingBufferedSender:
                 )
                 try:
                     index_result = client.get_index(self._index_name)
-                    fields = index_result.fields if index_result else []
-                    for field in fields:
-                        if field.key:
-                            self._index_key = field.name
-                            break
+                    if index_result:
+                        self._index_key = next(
+                            (field.name for field in index_result.fields if field.key), self._index_key
+                        )
                 finally:
-                    # User-supplied transports and pipelines remain owned by the sender.
+                    # Closing a client that shares a caller-supplied transport/pipeline would break it.
                     if self._client_kwargs.get("transport") is None and self._client_kwargs.get("pipeline") is None:
                         client.close()
             except Exception:  # pylint: disable=broad-except
@@ -338,9 +334,10 @@ class SearchIndexingBufferedSender:
     ) -> List[IndexingResult]:
         """Specify a document operations to perform as a batch.
 
-        :param batch: A batch of document operations to perform.
-        :type batch: ~azure.search.documents.IndexDocumentsBatch or
-         ~azure.search.documents.types.IndexDocumentsBatch or mapping
+        :param batch: A batch of document operations to perform. Can be an IndexDocumentsBatch model,
+            an IndexDocumentsBatch TypedDict, or a wire-shaped mapping with a ``value`` list of actions.
+        :type batch: IndexDocumentsBatch or ~azure.search.documents.types.IndexDocumentsBatch or
+            Mapping[str, Any]
         :return: Indexing result of each action in the batch.
         :rtype: list[~azure.search.documents.types.IndexingResult]
         :raises ~azure.search.documents.RequestEntityTooLargeError: The request is too large.
