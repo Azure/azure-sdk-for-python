@@ -296,6 +296,8 @@ An administrator must also register
 `Microsoft.LoadTestService` and verify workspace availability in the chosen region; workers
 never register providers or repair prerequisites. West US 3 is listed as supported by
 the provider, but registration and RBAC are independent of regional support.
+Preflight does not check Playwright workspace quota. If Azure rejects workspace creation
+because quota is exhausted, ARM fails provisioning and the dependent connection is not created.
 
 Root outputs expose `BROWSER_AUTOMATION_PROJECT_CONNECTION_ID`,
 `BROWSER_AUTOMATION_PROJECT_CONNECTION_NAME`, and `PLAYWRIGHT_SERVICE_RESOURCE_ID`.
@@ -323,10 +325,20 @@ with `RequestConflict`.
 Search indexes, data sources, skillsets and indexer execution are
 [data-plane APIs](https://learn.microsoft.com/azure/search/search-how-to-create-indexers),
 not native ARM resources. A Bicep-managed `Microsoft.Resources/deploymentScripts` resource
-runs the packaged, standard-library-only
+runs the packaged
 [search-indexing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/infra/search-indexing.py)
-under the shared Search UAMI. No new PowerShell publisher, SDK dependency, API key,
-storage key or IAM grant is required in workers.
+under the shared Search UAMI. Following the
+[AI agents reference sample](https://github.com/Azure-Samples/get-started-with-ai-agents/blob/abf8f3dabb2c30c004e9851dde0dc10f98aee6b3/src/api/search_index_manager.py),
+the script uses Azure SDK clients for the Search data plane. It also uses the Blob SDK
+for source uploads. The deployment container installs these dependencies separately from
+the SDK under test. It uses only binary wheels from PyPI, ignores ambient pip configuration,
+and verifies SHA-256 hashes for every direct and transitive dependency before installation.
+It needs outbound access to `pypi.org` and `files.pythonhosted.org`. When updating
+[the lock file](shared/infra/requirements-search-indexing.txt) or the CLI image, verify the
+wheel hashes and test installation against the deployment image's Python version and platform.
+Azure Identity uses
+ARM's existing CLI sign-in for the assigned identity; the clients manage token lifetime.
+No API key, storage key or IAM grant is required.
 
 The script uploads the CI-local
 [search_documents/product_info.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/search_documents/product_info.md)
@@ -346,8 +358,11 @@ Workers create fresh indexers and wait for their automatic initial execution;
 they do not reset or manually rerun an indexer, which would race that execution.
 The script requires successful executions with nonzero processed documents, rejects indexing
 errors and warnings, and verifies searchable content before deployment can finish.
-Authorization propagation, throttling and transient HTTP failures have bounded retries;
-missing grants or model/embedding failures still fail the deployment. The deployment script
+Only HTTP 429 responses are retried. Search handles throttling in its SDK retry policy,
+and Blob uploads retry throttling separately with the Storage SDK's default retries
+disabled. Other HTTP failures, including authorization failures, fail immediately.
+Readiness polling continues while an indexer is still running.
+The deployment script
 has a 30-minute timeout and always removes its supporting resources after execution.
 All indexing resources are created even when no selected sample uses Search.
 
@@ -423,7 +438,7 @@ Retained Python unit tests live in this directory; mocked PowerShell tests and [
 
 - With dotenv/live execution disabled, run the Python tests using `--confcutdir=tests/samples/ci` to avoid parent service fixtures.
 - Run all PowerShell `*.Tests.ps1` files under `shared/validation` using **Pester 4.10.1**. The suites isolate Azure calls and cover identity resource-group resolution and metadata checks. On-demand pipeline agents do not need Pester.
-- Run `python -m unittest discover -s shared/validation -p test_bundle_assets.py` from this directory for the shared Function and Search deployment-asset tests.
+- For the offline Function and Search asset tests, install `azure-identity`, `azure-search-documents==12.1.0` and `azure-storage-blob` into your local test environment if needed, then run `python -m unittest discover -s shared/validation -p test_bundle_assets.py`. The deployment lock targets Linux x86_64 and is not a cross-platform dev requirements file.
 - Run `./shared/validation/Test-BicepTemplates.ps1 -IdentityInfrastructurePath C:\repo\foundry-sdk-test-resources\shared-identities\infra` from this directory to include identity bootstrap checks from a separate reviewed common-resource checkout. Omitting that input validates only the shared resource bundle and explicitly reports that bootstrap validation is outside scope. Bootstrap configuration regression tests live in that repository's `tools/test_identity_bootstrap.py`, not in the SDK test harness.
 - The Bicep checker compiles the root bundle, all workload modules, the resource-group template, the administrator-only Search role update, and the secret-only parameter file with empty PAT and OpenAPI values. It checks unconditional modules, environment-contract parity, Function hosting defaults, identity-based settings, keyless Playwright configuration, Bing account/connection shapes, the four pinned Custom Search pages, secure OpenAPI credentials and non-secret outputs, and rejects Azure IAM writes in worker templates including nested deployments. Its optional `StandardTemplatePath` input also verifies and compiles the 14 unchanged cached official sources.
 - Use the repository Black configuration, PowerShell syntax checks and `git diff --check`. Real harness collection must use `PYTHON_DOTENV_DISABLED=true` and fictional target IDs and must not execute samples.
