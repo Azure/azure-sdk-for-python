@@ -38,12 +38,40 @@ class TestFileSharesMgmtFileSharesOperations(AzureMgmtRecordedTestCase):
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
+                    "encryption": {
+                        "autoKeyRotationError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "currentKeyEncryptionKeyUrl": "str",
+                        "customerManagedKeyEncryption": {
+                            "keyEncryptionKeyIdentity": {
+                                "delegatedIdentityClientId": "str",
+                                "federatedClientId": "str",
+                                "identityType": "str",
+                                "userAssignedIdentityResourceId": "str",
+                            },
+                            "keyEncryptionKeyUrl": "str",
+                        },
+                        "infrastructureEncryption": "str",
+                        "lastKeyRotationTimestamp": "2020-02-20 00:00:00",
+                    },
                     "hostName": "str",
                     "includedBurstIOPerSec": 0,
                     "maxBurstIOPerSecCredits": 0,
                     "mediaTier": "str",
+                    "migrationState": {"redundancyConversionInProgress": bool},
                     "mountName": "str",
                     "nfsProtocolProperties": {"encryptionInTransitRequired": "str", "rootSquash": "str"},
                     "privateEndpointConnections": [
@@ -82,6 +110,7 @@ class TestFileSharesMgmtFileSharesOperations(AzureMgmtRecordedTestCase):
                     "publicAccessProperties": {"allowedSubnets": ["str"]},
                     "publicNetworkAccess": "str",
                     "redundancy": "str",
+                    "scaleMode": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -106,7 +135,34 @@ class TestFileSharesMgmtFileSharesOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             resource_name="str",
             properties={
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "properties": {
+                    "encryption": {
+                        "autoKeyRotationError": {
+                            "additionalInfo": [{"info": {}, "type": "str"}],
+                            "code": "str",
+                            "details": [...],
+                            "message": "str",
+                            "target": "str",
+                        },
+                        "currentKeyEncryptionKeyUrl": "str",
+                        "customerManagedKeyEncryption": {
+                            "keyEncryptionKeyIdentity": {
+                                "delegatedIdentityClientId": "str",
+                                "federatedClientId": "str",
+                                "identityType": "str",
+                                "userAssignedIdentityResourceId": "str",
+                            },
+                            "keyEncryptionKeyUrl": "str",
+                        },
+                        "infrastructureEncryption": "str",
+                        "lastKeyRotationTimestamp": "2020-02-20 00:00:00",
+                    },
                     "nfsProtocolProperties": {"encryptionInTransitRequired": "str", "rootSquash": "str"},
                     "provisionedIOPerSec": 0,
                     "provisionedStorageGiB": 0,
@@ -156,6 +212,29 @@ class TestFileSharesMgmtFileSharesOperations(AzureMgmtRecordedTestCase):
         response = self.client.file_shares.check_name_availability(
             location="str",
             body={"name": "str", "type": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_file_shares_start_redundancy_conversion(self, resource_group):
+        response = self.client.file_shares.start_redundancy_conversion(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            body={"properties": {"targetRedundancy": "str"}},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_file_shares_get_redundancy_conversion_status(self, resource_group):
+        response = self.client.file_shares.get_redundancy_conversion_status(
+            resource_group_name=resource_group.name,
+            resource_name="str",
         )
 
         # please add some check logic here by yourself

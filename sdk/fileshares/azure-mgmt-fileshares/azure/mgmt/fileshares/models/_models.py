@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -50,7 +50,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -81,6 +81,53 @@ class CheckNameAvailabilityResponse(_Model):
         name_available: Optional[bool] = None,
         reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CustomerManagedKeyEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Customer-managed key encryption properties for the resource.
+
+    :ivar key_encryption_key_identity: All identity configuration for Customer-managed key settings
+     defining which identity should be used to auth to Key Vault.
+    :vartype key_encryption_key_identity: ~azure.mgmt.fileshares.models.KeyEncryptionKeyIdentity
+    :ivar key_encryption_key_url: key encryption key Url, versioned or non-versioned. Ex:
+     `https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78
+     <https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78>`_ or
+     `https://contosovault.vault.azure.net/keys/contosokek
+     <https://contosovault.vault.azure.net/keys/contosokek>`_.
+    :vartype key_encryption_key_url: str
+    """
+
+    key_encryption_key_identity: Optional["_models.KeyEncryptionKeyIdentity"] = rest_field(
+        name="keyEncryptionKeyIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """All identity configuration for Customer-managed key settings defining which identity should be
+     used to auth to Key Vault."""
+    key_encryption_key_url: Optional[str] = rest_field(
+        name="keyEncryptionKeyUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """key encryption key Url, versioned or non-versioned. Ex:
+     `https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78
+     <https://contosovault.vault.azure.net/keys/contosokek/562a4bb76b524a1493a6afe8e536ee78>`_ or
+     `https://contosovault.vault.azure.net/keys/contosokek
+     <https://contosovault.vault.azure.net/keys/contosokek>`_."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_encryption_key_identity: Optional["_models.KeyEncryptionKeyIdentity"] = None,
+        key_encryption_key_url: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -138,7 +185,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -194,7 +241,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -238,7 +285,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class FileShare(TrackedResource):
+class FileShare(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File share resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -258,12 +305,18 @@ class FileShare(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.fileshares.models.FileShareProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.fileshares.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.FileShareProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
@@ -272,6 +325,7 @@ class FileShare(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FileShareProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -285,7 +339,76 @@ class FileShare(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class FileShareLimits(_Model):
+class FileShareEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Encryption settings for the file share. Composes the standard common encryption type with
+    read-only customer-managed key rotation status owned by the file share resource provider.
+    Automatic key rotation follows the Azure Storage account model and is derived from the key URL
+    shape: an unversioned customerManagedKeyEncryption.keyEncryptionKeyUrl opts into automatic
+    rotation to the latest key version, while a versioned URL pins a specific version.
+
+    :ivar infrastructure_encryption: Values are enabled and disabled. Known values are: "enabled"
+     and "disabled".
+    :vartype infrastructure_encryption: str or
+     ~azure.mgmt.fileshares.models.InfrastructureEncryption
+    :ivar customer_managed_key_encryption: All Customer-managed key encryption properties for the
+     resource.
+    :vartype customer_managed_key_encryption:
+     ~azure.mgmt.fileshares.models.CustomerManagedKeyEncryption
+    :ivar current_key_encryption_key_url: The versioned key encryption key URL currently applied to
+     the file share by the service. When an unversioned keyEncryptionKeyUrl is supplied, this
+     reflects the resolved latest key version currently in use.
+    :vartype current_key_encryption_key_url: str
+    :ivar last_key_rotation_timestamp: The UTC timestamp when the service last successfully rotated
+     the active customer-managed key version.
+    :vartype last_key_rotation_timestamp: ~datetime.datetime
+    :ivar auto_key_rotation_error: The last customer-actionable error encountered while
+     automatically rotating to the latest key version.
+    :vartype auto_key_rotation_error: ~azure.mgmt.fileshares.models.ErrorDetail
+    """
+
+    infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = rest_field(
+        name="infrastructureEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Values are enabled and disabled. Known values are: \"enabled\" and \"disabled\"."""
+    customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryption"] = rest_field(
+        name="customerManagedKeyEncryption", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """All Customer-managed key encryption properties for the resource."""
+    current_key_encryption_key_url: Optional[str] = rest_field(name="currentKeyEncryptionKeyUrl", visibility=["read"])
+    """The versioned key encryption key URL currently applied to the file share by the service. When
+     an unversioned keyEncryptionKeyUrl is supplied, this reflects the resolved latest key version
+     currently in use."""
+    last_key_rotation_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastKeyRotationTimestamp", visibility=["read"], format="rfc3339"
+    )
+    """The UTC timestamp when the service last successfully rotated the active customer-managed key
+     version."""
+    auto_key_rotation_error: Optional["_models.ErrorDetail"] = rest_field(
+        name="autoKeyRotationError", visibility=["read"]
+    )
+    """The last customer-actionable error encountered while automatically rotating to the latest key
+     version."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infrastructure_encryption: Optional[Union[str, "_models.InfrastructureEncryption"]] = None,
+        customer_managed_key_encryption: Optional["_models.CustomerManagedKeyEncryption"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FileShareLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File share-related limits in the specified subscription/location.
 
     :ivar max_file_shares: The maximum number of file shares that can be created. Required.
@@ -385,7 +508,7 @@ class FileShareLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareLimitsOutput(_Model):
+class FileShareLimitsOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File share limits API result.
 
     :ivar limits: The limits for the file share. Required.
@@ -420,7 +543,35 @@ class FileShareLimitsOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareLimitsResponse(_Model):
+class FileShareLimitsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request structure for the file share limits API.
+
+    :ivar properties: Properties used to select the file share offer. Required.
+    :vartype properties: ~azure.mgmt.fileshares.models.FileShareOfferInput
+    """
+
+    properties: "_models.FileShareOfferInput" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Properties used to select the file share offer. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.FileShareOfferInput",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FileShareLimitsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response structure for file share limits API.
 
     :ivar properties: The properties of the file share limits. Required.
@@ -448,7 +599,52 @@ class FileShareLimitsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareProperties(_Model):
+class FileShareOfferInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """File share offer dimensions.
+
+    :ivar protocol: The file sharing protocol. Defaults to NFS. "NFS"
+    :vartype protocol: str or ~azure.mgmt.fileshares.models.Protocol
+    :ivar media_tier: The storage media tier. Defaults to SSD. Known values are: "SSD" and "HDD".
+    :vartype media_tier: str or ~azure.mgmt.fileshares.models.MediaTier
+    :ivar scale_mode: The scale mode. Defaults to Compatibility. Known values are: "Compatibility"
+     and "Scale".
+    :vartype scale_mode: str or ~azure.mgmt.fileshares.models.ScaleMode
+    """
+
+    protocol: Optional[Union[str, "_models.Protocol"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The file sharing protocol. Defaults to NFS. \"NFS\""""
+    media_tier: Optional[Union[str, "_models.MediaTier"]] = rest_field(
+        name="mediaTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage media tier. Defaults to SSD. Known values are: \"SSD\" and \"HDD\"."""
+    scale_mode: Optional[Union[str, "_models.ScaleMode"]] = rest_field(
+        name="scaleMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale mode. Defaults to Compatibility. Known values are: \"Compatibility\" and \"Scale\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        protocol: Optional[Union[str, "_models.Protocol"]] = None,
+        media_tier: Optional[Union[str, "_models.MediaTier"]] = None,
+        scale_mode: Optional[Union[str, "_models.ScaleMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FileShareProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File share properties.
 
     :ivar mount_name: The name of the file share as seen by the end user when mounting the share,
@@ -456,13 +652,16 @@ class FileShareProperties(_Model):
     :vartype mount_name: str
     :ivar host_name: The host name of the file share.
     :vartype host_name: str
-    :ivar media_tier: The storage media tier of the file share. "SSD"
+    :ivar media_tier: The storage media tier of the file share. Known values are: "SSD" and "HDD".
     :vartype media_tier: str or ~azure.mgmt.fileshares.models.MediaTier
     :ivar redundancy: The chosen redundancy level of the file share. Known values are: "Local" and
      "Zone".
     :vartype redundancy: str or ~azure.mgmt.fileshares.models.Redundancy
     :ivar protocol: The file sharing protocol for this file share. "NFS"
     :vartype protocol: str or ~azure.mgmt.fileshares.models.Protocol
+    :ivar scale_mode: The scale mode selected when the file share is created. Known values are:
+     "Compatibility" and "Scale".
+    :vartype scale_mode: str or ~azure.mgmt.fileshares.models.ScaleMode
     :ivar provisioned_storage_gi_b: The provisioned storage size of the share in GiB (1 GiB is
      1024^3 bytes or 1073741824 bytes). A component of the file share's bill is the provisioned
      storage, regardless of the amount of used storage.
@@ -501,6 +700,10 @@ class FileShareProperties(_Model):
     :ivar private_endpoint_connections: The list of associated private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.fileshares.models.PrivateEndpointConnection]
+    :ivar migration_state: The current migration state of the file share.
+    :vartype migration_state: ~azure.mgmt.fileshares.models.MigrationState
+    :ivar encryption: Encryption settings for the file share.
+    :vartype encryption: ~azure.mgmt.fileshares.models.FileShareEncryption
     """
 
     mount_name: Optional[str] = rest_field(name="mountName", visibility=["read", "create"])
@@ -509,11 +712,14 @@ class FileShareProperties(_Model):
     host_name: Optional[str] = rest_field(name="hostName", visibility=["read"])
     """The host name of the file share."""
     media_tier: Optional[Union[str, "_models.MediaTier"]] = rest_field(name="mediaTier", visibility=["read", "create"])
-    """The storage media tier of the file share. \"SSD\""""
+    """The storage media tier of the file share. Known values are: \"SSD\" and \"HDD\"."""
     redundancy: Optional[Union[str, "_models.Redundancy"]] = rest_field(visibility=["read", "create"])
     """The chosen redundancy level of the file share. Known values are: \"Local\" and \"Zone\"."""
     protocol: Optional[Union[str, "_models.Protocol"]] = rest_field(visibility=["read", "create"])
     """The file sharing protocol for this file share. \"NFS\""""
+    scale_mode: Optional[Union[str, "_models.ScaleMode"]] = rest_field(name="scaleMode", visibility=["read", "create"])
+    """The scale mode selected when the file share is created. Known values are: \"Compatibility\" and
+     \"Scale\"."""
     provisioned_storage_gi_b: Optional[int] = rest_field(
         name="provisionedStorageGiB", visibility=["read", "create", "update"]
     )
@@ -572,6 +778,10 @@ class FileShareProperties(_Model):
         name="privateEndpointConnections", visibility=["read"]
     )
     """The list of associated private endpoint connections."""
+    migration_state: Optional["_models.MigrationState"] = rest_field(name="migrationState", visibility=["read"])
+    """The current migration state of the file share."""
+    encryption: Optional["_models.FileShareEncryption"] = rest_field(visibility=["read", "create", "update"])
+    """Encryption settings for the file share."""
 
     @overload
     def __init__(
@@ -581,12 +791,14 @@ class FileShareProperties(_Model):
         media_tier: Optional[Union[str, "_models.MediaTier"]] = None,
         redundancy: Optional[Union[str, "_models.Redundancy"]] = None,
         protocol: Optional[Union[str, "_models.Protocol"]] = None,
+        scale_mode: Optional[Union[str, "_models.ScaleMode"]] = None,
         provisioned_storage_gi_b: Optional[int] = None,
         provisioned_io_per_sec: Optional[int] = None,
         provisioned_throughput_mi_b_per_sec: Optional[int] = None,
         nfs_protocol_properties: Optional["_models.NfsProtocolProperties"] = None,
         public_access_properties: Optional["_models.PublicAccessProperties"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        encryption: Optional["_models.FileShareEncryption"] = None,
     ) -> None: ...
 
     @overload
@@ -600,7 +812,7 @@ class FileShareProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareProvisioningConstants(_Model):
+class FileShareProvisioningConstants(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Constants used for calculating recommended values of file share provisioning properties.
 
     :ivar base_io_per_sec: Base IO per second. Required.
@@ -663,12 +875,19 @@ class FileShareProvisioningConstants(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareProvisioningRecommendationInput(_Model):
+class FileShareProvisioningRecommendationInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File share provisioning parameters recommendation API input structure.
 
     :ivar provisioned_storage_gi_b: The desired provisioned storage size of the share in GiB. Will
      be use to calculate the values of remaining provisioning parameters. Required.
     :vartype provisioned_storage_gi_b: int
+    :ivar protocol: The file sharing protocol. Defaults to NFS. "NFS"
+    :vartype protocol: str or ~azure.mgmt.fileshares.models.Protocol
+    :ivar media_tier: The storage media tier. Defaults to SSD. Known values are: "SSD" and "HDD".
+    :vartype media_tier: str or ~azure.mgmt.fileshares.models.MediaTier
+    :ivar scale_mode: The scale mode. Defaults to Compatibility. Known values are: "Compatibility"
+     and "Scale".
+    :vartype scale_mode: str or ~azure.mgmt.fileshares.models.ScaleMode
     """
 
     provisioned_storage_gi_b: int = rest_field(
@@ -676,12 +895,27 @@ class FileShareProvisioningRecommendationInput(_Model):
     )
     """The desired provisioned storage size of the share in GiB. Will be use to calculate the values
      of remaining provisioning parameters. Required."""
+    protocol: Optional[Union[str, "_models.Protocol"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The file sharing protocol. Defaults to NFS. \"NFS\""""
+    media_tier: Optional[Union[str, "_models.MediaTier"]] = rest_field(
+        name="mediaTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage media tier. Defaults to SSD. Known values are: \"SSD\" and \"HDD\"."""
+    scale_mode: Optional[Union[str, "_models.ScaleMode"]] = rest_field(
+        name="scaleMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale mode. Defaults to Compatibility. Known values are: \"Compatibility\" and \"Scale\"."""
 
     @overload
     def __init__(
         self,
         *,
         provisioned_storage_gi_b: int,
+        protocol: Optional[Union[str, "_models.Protocol"]] = None,
+        media_tier: Optional[Union[str, "_models.MediaTier"]] = None,
+        scale_mode: Optional[Union[str, "_models.ScaleMode"]] = None,
     ) -> None: ...
 
     @overload
@@ -695,7 +929,9 @@ class FileShareProvisioningRecommendationInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareProvisioningRecommendationOutput(_Model):  # pylint: disable=name-too-long
+class FileShareProvisioningRecommendationOutput(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """File share provisioning parameters recommendation API result.
 
     :ivar provisioned_io_per_sec: The recommended value of provisioned IO / sec of the share.
@@ -741,7 +977,9 @@ class FileShareProvisioningRecommendationOutput(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class FileShareProvisioningRecommendationRequest(_Model):  # pylint: disable=name-too-long
+class FileShareProvisioningRecommendationRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Request structure for file share provisioning parameters recommendation API.
 
     :ivar properties: The properties of the file share provisioning recommendation input. Required.
@@ -771,7 +1009,9 @@ class FileShareProvisioningRecommendationRequest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class FileShareProvisioningRecommendationResponse(_Model):  # pylint: disable=name-too-long
+class FileShareProvisioningRecommendationResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response structure for file share provisioning parameters recommendation API.
 
     :ivar properties: The properties of the file share provisioning recommendation output.
@@ -819,7 +1059,7 @@ class ProxyResource(Resource):
     """
 
 
-class FileShareSnapshot(ProxyResource):
+class FileShareSnapshot(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FileShareSnapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -860,7 +1100,7 @@ class FileShareSnapshot(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class FileShareSnapshotProperties(_Model):
+class FileShareSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FileShareSnapshot properties.
 
     :ivar snapshot_time: The FileShareSnapshot time in UTC in string representation.
@@ -897,7 +1137,7 @@ class FileShareSnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareSnapshotUpdate(_Model):
+class FileShareSnapshotUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FileShareSnapshot.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -927,7 +1167,7 @@ class FileShareSnapshotUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareSnapshotUpdateProperties(_Model):
+class FileShareSnapshotUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FileShareSnapshot.
 
     :ivar metadata: The metadata.
@@ -955,15 +1195,21 @@ class FileShareSnapshotUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareUpdate(_Model):
+class FileShareUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the FileShare.
 
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.fileshares.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.fileshares.models.FileShareUpdateProperties
     """
 
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
     tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.FileShareUpdateProperties"] = rest_field(
@@ -975,6 +1221,7 @@ class FileShareUpdate(_Model):
     def __init__(
         self,
         *,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.FileShareUpdateProperties"] = None,
     ) -> None: ...
@@ -990,7 +1237,7 @@ class FileShareUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareUpdateProperties(_Model):
+class FileShareUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the FileShare.
 
     :ivar provisioned_storage_gi_b: The provisioned storage size of the share in GiB (1 GiB is
@@ -1008,6 +1255,8 @@ class FileShareUpdateProperties(_Model):
     :ivar public_network_access: Gets or sets allow or disallow public network access to azure
      managed file share. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.fileshares.models.PublicNetworkAccess
+    :ivar encryption: Encryption settings for the file share.
+    :vartype encryption: ~azure.mgmt.fileshares.models.FileShareEncryption
     """
 
     provisioned_storage_gi_b: Optional[int] = rest_field(name="provisionedStorageGiB", visibility=["update"])
@@ -1033,6 +1282,8 @@ class FileShareUpdateProperties(_Model):
     )
     """Gets or sets allow or disallow public network access to azure managed file share. Known values
      are: \"Enabled\" and \"Disabled\"."""
+    encryption: Optional["_models.FileShareEncryption"] = rest_field(visibility=["update"])
+    """Encryption settings for the file share."""
 
     @overload
     def __init__(
@@ -1044,6 +1295,7 @@ class FileShareUpdateProperties(_Model):
         nfs_protocol_properties: Optional["_models.NfsProtocolProperties"] = None,
         public_access_properties: Optional["_models.PublicAccessProperties"] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        encryption: Optional["_models.FileShareEncryption"] = None,
     ) -> None: ...
 
     @overload
@@ -1057,7 +1309,7 @@ class FileShareUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareUsageDataOutput(_Model):
+class FileShareUsageDataOutput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """File shares usage result.
 
     :ivar live_shares: File share usage data for active file shares. Required.
@@ -1087,7 +1339,7 @@ class FileShareUsageDataOutput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileShareUsageDataResponse(_Model):
+class FileShareUsageDataResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response structure for file shares usage in the specified subscription/location.
 
     :ivar properties: The properties of the file share usage data. Required.
@@ -1117,7 +1369,78 @@ class FileShareUsageDataResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LiveSharesUsageData(_Model):
+class KeyEncryptionKeyIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """All identity configuration for Customer-managed key settings defining which identity should be
+    used to auth to Key Vault.
+
+    :ivar identity_type: The type of identity to use. Values can be systemAssignedIdentity,
+     userAssignedIdentity, or delegatedResourceIdentity. Known values are: "systemAssignedIdentity",
+     "userAssignedIdentity", and "delegatedResourceIdentity".
+    :vartype identity_type: str or ~azure.mgmt.fileshares.models.KeyEncryptionKeyIdentityType
+    :ivar user_assigned_identity_resource_id: User assigned identity to use for accessing key
+     encryption key Url. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identityType systemAssignedIdentity.
+    :vartype user_assigned_identity_resource_id: str
+    :ivar federated_client_id: application client identity to use for accessing key encryption key
+     Url in a different tenant. Ex: f83c6b1b-4d34-47e4-bb34-9d83df58b540.
+    :vartype federated_client_id: str
+    :ivar delegated_identity_client_id: delegated identity to use for accessing key encryption key
+     Url. Ex: /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identityType systemAssignedIdentity and userAssignedIdentity - internal use only.
+    :vartype delegated_identity_client_id: str
+    """
+
+    identity_type: Optional[Union[str, "_models.KeyEncryptionKeyIdentityType"]] = rest_field(
+        name="identityType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of identity to use. Values can be systemAssignedIdentity, userAssignedIdentity, or
+     delegatedResourceIdentity. Known values are: \"systemAssignedIdentity\",
+     \"userAssignedIdentity\", and \"delegatedResourceIdentity\"."""
+    user_assigned_identity_resource_id: Optional[str] = rest_field(
+        name="userAssignedIdentityResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """User assigned identity to use for accessing key encryption key Url. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identityType systemAssignedIdentity."""
+    federated_client_id: Optional[str] = rest_field(
+        name="federatedClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """application client identity to use for accessing key encryption key Url in a different tenant.
+     Ex: f83c6b1b-4d34-47e4-bb34-9d83df58b540."""
+    delegated_identity_client_id: Optional[str] = rest_field(
+        name="delegatedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """delegated identity to use for accessing key encryption key Url. Ex:
+     /subscriptions/fa5fc227-a624-475e-b696-cdd604c735bc/resourceGroups/<resource
+     group>/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId. Mutually exclusive with
+     identityType systemAssignedIdentity and userAssignedIdentity - internal use only."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        identity_type: Optional[Union[str, "_models.KeyEncryptionKeyIdentityType"]] = None,
+        user_assigned_identity_resource_id: Optional[str] = None,
+        federated_client_id: Optional[str] = None,
+        delegated_identity_client_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LiveSharesUsageData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Usage data for live shares.
 
     :ivar file_share_count: The number of active file shares. Required.
@@ -1147,7 +1470,71 @@ class LiveSharesUsageData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NfsProtocolProperties(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.fileshares.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.fileshares.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MigrationState(_Model):
+    """Summary of the current migration state for the file share.
+
+    :ivar redundancy_conversion_in_progress: Indicates whether a redundancy conversion is in
+     progress for the file share. Required.
+    :vartype redundancy_conversion_in_progress: bool
+    """
+
+    redundancy_conversion_in_progress: bool = rest_field(name="redundancyConversionInProgress", visibility=["read"])
+    """Indicates whether a redundancy conversion is in progress for the file share. Required."""
+
+
+class NfsProtocolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties specific to the NFS protocol.
 
     :ivar root_squash: Root squash defines how root users on clients are mapped to the NFS share.
@@ -1189,7 +1576,7 @@ class NfsProtocolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1288,7 +1675,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1329,7 +1716,7 @@ class PrivateEndpointConnection(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -1382,7 +1769,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1442,7 +1829,7 @@ class PrivateLinkResourceProperties(_Model):
     """The private link resource private link DNS zone name."""
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -1488,7 +1875,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicAccessProperties(_Model):
+class PublicAccessProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The set of properties for control public access.
 
     :ivar allowed_subnets: The allowed set of subnets when access is restricted.
@@ -1518,7 +1905,131 @@ class PublicAccessProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class RedundancyConversionStatusOutput(_Model):
+    """The status and details of the current or most recent redundancy conversion.
+
+    :ivar target_redundancy: The target redundancy requested for the redundancy conversion.
+     Required. Known values are: "Local" and "Zone".
+    :vartype target_redundancy: str or ~azure.mgmt.fileshares.models.Redundancy
+    :ivar conversion_status: The current status of the redundancy conversion. Required. Known
+     values are: "SubmittedForConversion", "InProgress", "Complete", and "Failed".
+    :vartype conversion_status: str or ~azure.mgmt.fileshares.models.RedundancyConversionStatus
+    :ivar conversion_failed_reason: The reason the redundancy conversion failed.
+    :vartype conversion_failed_reason: str
+    :ivar conversion_failed_detailed_reason: Detailed information about why the redundancy
+     conversion failed.
+    :vartype conversion_failed_detailed_reason: str
+    """
+
+    target_redundancy: Union[str, "_models.Redundancy"] = rest_field(name="targetRedundancy", visibility=["read"])
+    """The target redundancy requested for the redundancy conversion. Required. Known values are:
+     \"Local\" and \"Zone\"."""
+    conversion_status: Union[str, "_models.RedundancyConversionStatus"] = rest_field(
+        name="conversionStatus", visibility=["read"]
+    )
+    """The current status of the redundancy conversion. Required. Known values are:
+     \"SubmittedForConversion\", \"InProgress\", \"Complete\", and \"Failed\"."""
+    conversion_failed_reason: Optional[str] = rest_field(name="conversionFailedReason", visibility=["read"])
+    """The reason the redundancy conversion failed."""
+    conversion_failed_detailed_reason: Optional[str] = rest_field(
+        name="conversionFailedDetailedReason", visibility=["read"]
+    )
+    """Detailed information about why the redundancy conversion failed."""
+
+
+class RedundancyConversionStatusResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Response containing the status and details of the current or most recent redundancy conversion.
+
+    :ivar properties: Properties containing the redundancy conversion status output. Required.
+    :vartype properties: ~azure.mgmt.fileshares.models.RedundancyConversionStatusOutput
+    """
+
+    properties: "_models.RedundancyConversionStatusOutput" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties containing the redundancy conversion status output. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.RedundancyConversionStatusOutput",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StartRedundancyConversionInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Input for starting a redundancy conversion.
+
+    :ivar target_redundancy: The requested target redundancy for the conversion. Required. Known
+     values are: "Local" and "Zone".
+    :vartype target_redundancy: str or ~azure.mgmt.fileshares.models.Redundancy
+    """
+
+    target_redundancy: Union[str, "_models.Redundancy"] = rest_field(
+        name="targetRedundancy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The requested target redundancy for the conversion. Required. Known values are: \"Local\" and
+     \"Zone\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target_redundancy: Union[str, "_models.Redundancy"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StartRedundancyConversionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for starting a redundancy conversion.
+
+    :ivar properties: Properties containing the redundancy conversion input. Required.
+    :vartype properties: ~azure.mgmt.fileshares.models.StartRedundancyConversionInput
+    """
+
+    properties: "_models.StartRedundancyConversionInput" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties containing the redundancy conversion input. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.StartRedundancyConversionInput",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -1583,3 +2094,18 @@ class SystemData(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
