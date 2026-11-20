@@ -32,8 +32,11 @@
 ### Breaking Changes
 
   - Deleted or renamed enum value `AuthenticationMode.TASK_AUTHENTICATION_TOKEN`
-  - Deleted or renamed model `AzureResource`
   - Method `PoolOperations.update` changed type of its parameter `parameters` from `Pool` to `PoolPatch`
+
+### Other Changes
+
+  - Deleted model `AzureResource` which actually were not used by SDK users
 
 ## 19.0.0 (2026-02-27)
 
