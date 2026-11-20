@@ -21,8 +21,13 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import DataProtectionMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    BackupInstanceFromDppCrossTenantVaultOperations,
+    BackupInstanceOperationResultFromDppCrossTenantVaultOperations,
+    BackupInstanceOperationStatusFromDppCrossTenantVaultOperations,
     BackupInstancesExtensionRoutingOperations,
+    BackupInstancesFromDppCrossTenantVaultOperations,
     BackupInstancesOperations,
+    BackupJobsFromDppCrossTenantVaultOperations,
     BackupPoliciesOperations,
     BackupVaultOperationResultsOperations,
     BackupVaultsOperations,
@@ -30,20 +35,28 @@ from .operations import (
     DataProtectionOperationsOperations,
     DeletedBackupInstancesOperations,
     DeletedBackupVaultsOperations,
+    DppCrossTenantVaultMappingStatusOperations,
+    DppCrossTenantVaultMappingsOperations,
     DppResourceGuardProxyOperations,
     ExportJobsOperationResultOperations,
     ExportJobsOperations,
     FetchCrossRegionRestoreJobOperations,
     FetchCrossRegionRestoreJobsOperations,
     FetchSecondaryRecoveryPointsOperations,
+    JobFromDppCrossTenantVaultOperations,
     JobsOperations,
     OperationResultOperations,
     OperationStatusBackupVaultContextOperations,
     OperationStatusOperations,
     OperationStatusResourceGroupContextOperations,
+    RecoveryPointFromDppCrossTenantVaultOperations,
+    RecoveryPointsFromDppCrossTenantVaultOperations,
     RecoveryPointsOperations,
     ResourceGuardsOperations,
+    RestorableTimeRangesFromDppCrossTenantVaultOperations,
     RestorableTimeRangesOperations,
+    RestoresFromDppCrossTenantVaultOperations,
+    ValidateRestoreFromDppCrossTenantVaultOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -72,6 +85,56 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes,
      azure.mgmt.dataprotection.operations.DeletedBackupVaultsOperations
     :ivar resource_guards: ResourceGuardsOperations operations
     :vartype resource_guards: azure.mgmt.dataprotection.operations.ResourceGuardsOperations
+    :ivar dpp_cross_tenant_vault_mappings: DppCrossTenantVaultMappingsOperations operations
+    :vartype dpp_cross_tenant_vault_mappings:
+     azure.mgmt.dataprotection.operations.DppCrossTenantVaultMappingsOperations
+    :ivar dpp_cross_tenant_vault_mapping_status: DppCrossTenantVaultMappingStatusOperations
+     operations
+    :vartype dpp_cross_tenant_vault_mapping_status:
+     azure.mgmt.dataprotection.operations.DppCrossTenantVaultMappingStatusOperations
+    :ivar backup_instances_from_dpp_cross_tenant_vault:
+     BackupInstancesFromDppCrossTenantVaultOperations operations
+    :vartype backup_instances_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.BackupInstancesFromDppCrossTenantVaultOperations
+    :ivar backup_instance_from_dpp_cross_tenant_vault:
+     BackupInstanceFromDppCrossTenantVaultOperations operations
+    :vartype backup_instance_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.BackupInstanceFromDppCrossTenantVaultOperations
+    :ivar restores_from_dpp_cross_tenant_vault: RestoresFromDppCrossTenantVaultOperations
+     operations
+    :vartype restores_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.RestoresFromDppCrossTenantVaultOperations
+    :ivar validate_restore_from_dpp_cross_tenant_vault:
+     ValidateRestoreFromDppCrossTenantVaultOperations operations
+    :vartype validate_restore_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.ValidateRestoreFromDppCrossTenantVaultOperations
+    :ivar restorable_time_ranges_from_dpp_cross_tenant_vault:
+     RestorableTimeRangesFromDppCrossTenantVaultOperations operations
+    :vartype restorable_time_ranges_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.RestorableTimeRangesFromDppCrossTenantVaultOperations
+    :ivar recovery_points_from_dpp_cross_tenant_vault:
+     RecoveryPointsFromDppCrossTenantVaultOperations operations
+    :vartype recovery_points_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.RecoveryPointsFromDppCrossTenantVaultOperations
+    :ivar recovery_point_from_dpp_cross_tenant_vault:
+     RecoveryPointFromDppCrossTenantVaultOperations operations
+    :vartype recovery_point_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.RecoveryPointFromDppCrossTenantVaultOperations
+    :ivar backup_jobs_from_dpp_cross_tenant_vault: BackupJobsFromDppCrossTenantVaultOperations
+     operations
+    :vartype backup_jobs_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.BackupJobsFromDppCrossTenantVaultOperations
+    :ivar job_from_dpp_cross_tenant_vault: JobFromDppCrossTenantVaultOperations operations
+    :vartype job_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.JobFromDppCrossTenantVaultOperations
+    :ivar backup_instance_operation_status_from_dpp_cross_tenant_vault:
+     BackupInstanceOperationStatusFromDppCrossTenantVaultOperations operations
+    :vartype backup_instance_operation_status_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.BackupInstanceOperationStatusFromDppCrossTenantVaultOperations
+    :ivar backup_instance_operation_result_from_dpp_cross_tenant_vault:
+     BackupInstanceOperationResultFromDppCrossTenantVaultOperations operations
+    :vartype backup_instance_operation_result_from_dpp_cross_tenant_vault:
+     azure.mgmt.dataprotection.operations.BackupInstanceOperationResultFromDppCrossTenantVaultOperations
     :ivar backup_vaults: BackupVaultsOperations operations
     :vartype backup_vaults: azure.mgmt.dataprotection.operations.BackupVaultsOperations
     :ivar operation_status_backup_vault_context: OperationStatusBackupVaultContextOperations
@@ -129,9 +192,10 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes,
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-07-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-08-31-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -197,6 +261,49 @@ class DataProtectionMgmtClient:  # pylint: disable=too-many-instance-attributes,
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_guards = ResourceGuardsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dpp_cross_tenant_vault_mappings = DppCrossTenantVaultMappingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dpp_cross_tenant_vault_mapping_status = DppCrossTenantVaultMappingStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_instances_from_dpp_cross_tenant_vault = BackupInstancesFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_instance_from_dpp_cross_tenant_vault = BackupInstanceFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restores_from_dpp_cross_tenant_vault = RestoresFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.validate_restore_from_dpp_cross_tenant_vault = ValidateRestoreFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.restorable_time_ranges_from_dpp_cross_tenant_vault = RestorableTimeRangesFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points_from_dpp_cross_tenant_vault = RecoveryPointsFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_point_from_dpp_cross_tenant_vault = RecoveryPointFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_jobs_from_dpp_cross_tenant_vault = BackupJobsFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.job_from_dpp_cross_tenant_vault = JobFromDppCrossTenantVaultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_instance_operation_status_from_dpp_cross_tenant_vault = (
+            BackupInstanceOperationStatusFromDppCrossTenantVaultOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
+        self.backup_instance_operation_result_from_dpp_cross_tenant_vault = (
+            BackupInstanceOperationResultFromDppCrossTenantVaultOperations(
+                self._client, self._config, self._serialize, self._deserialize
+            )
+        )
         self.backup_vaults = BackupVaultsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operation_status_backup_vault_context = OperationStatusBackupVaultContextOperations(
             self._client, self._config, self._serialize, self._deserialize

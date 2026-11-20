@@ -36,6 +36,6 @@ def main():
     )
 
 
-# x-ms-original-file: 2026-07-01/ResourceGuardCRUD/DeleteResourceGuard.json
+# x-ms-original-file: 2026-08-31-preview/ResourceGuardCRUD/DeleteResourceGuard.json
 if __name__ == "__main__":
     main()

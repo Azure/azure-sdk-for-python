@@ -45,6 +45,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/ResourceGuardProxyCRUD/UnlockDeleteResourceGuardProxy.json
+# x-ms-original-file: 2026-08-31-preview/ResourceGuardProxyCRUD/UnlockDeleteResourceGuardProxy.json
 if __name__ == "__main__":
     main()
