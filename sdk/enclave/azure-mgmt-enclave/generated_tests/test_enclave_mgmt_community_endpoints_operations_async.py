@@ -48,6 +48,7 @@ class TestEnclaveMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                             {
                                 "destination": "str",
                                 "destinationType": "str",
+                                "direction": "str",
                                 "endpointRuleName": "str",
                                 "ports": "str",
                                 "protocols": ["str"],
@@ -56,6 +57,24 @@ class TestEnclaveMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                         ],
                         "provisioningState": "str",
                         "resourceCollection": ["str"],
+                        "syncDestinationStatuses": [
+                            {
+                                "destinationId": "str",
+                                "status": "str",
+                                "errorMessage": "str",
+                                "lastSyncTime": "2020-02-20 00:00:00",
+                            }
+                        ],
+                        "syncFrom": "str",
+                        "syncPerformedBy": {
+                            "correlationId": "str",
+                            "performedAt": "2020-02-20 00:00:00",
+                            "principalId": "str",
+                            "principalType": "str",
+                            "tenantId": "str",
+                        },
+                        "syncStatus": "str",
+                        "syncTo": ["str"],
                         "updateMode": "str",
                     },
                     "systemData": {
@@ -89,12 +108,14 @@ class TestEnclaveMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                             {
                                 "destination": "str",
                                 "destinationType": "str",
+                                "direction": "str",
                                 "endpointRuleName": "str",
                                 "ports": "str",
                                 "protocols": ["str"],
                                 "transitHubResourceId": "str",
                             }
                         ],
+                        "syncTo": ["str"],
                         "updateMode": "str",
                     },
                     "tags": {"str": "str"},
@@ -148,11 +169,7 @@ class TestEnclaveMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 community_name="str",
                 community_endpoint_name="str",
-                body={
-                    "approvalStatus": "Approved",
-                    "resourceRequestAction": "Create",
-                    "approvalCallbackPayload": "str",
-                },
+                body={"approvalStatus": "str", "resourceRequestAction": "str", "approvalCallbackPayload": "str"},
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,7 +184,21 @@ class TestEnclaveMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase
                 resource_group_name=resource_group.name,
                 community_name="str",
                 community_endpoint_name="str",
-                body={"resourceRequestAction": "Create"},
+                body={"resourceRequestAction": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_community_endpoints_begin_sync(self, resource_group):
+        response = await (
+            await self.client.community_endpoints.begin_sync(
+                resource_group_name=resource_group.name,
+                community_name="str",
+                community_endpoint_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 

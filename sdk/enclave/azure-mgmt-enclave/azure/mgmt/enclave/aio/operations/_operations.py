@@ -54,6 +54,7 @@ from ...operations._operations import (
     build_community_endpoints_handle_approval_deletion_request,
     build_community_endpoints_list_by_community_resource_request,
     build_community_endpoints_list_by_subscription_request,
+    build_community_endpoints_sync_request,
     build_community_endpoints_update_request,
     build_community_get_request,
     build_community_list_by_resource_group_request,
@@ -2028,6 +2029,7 @@ class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_creation_initial(
@@ -2208,6 +2210,7 @@ class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_creation(
@@ -2303,6 +2306,7 @@ class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_deletion_initial(
@@ -2483,6 +2487,7 @@ class VirtualEnclaveOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_deletion(
@@ -6822,6 +6827,7 @@ class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_creation_initial(
@@ -7014,6 +7020,7 @@ class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_creation(
@@ -7114,6 +7121,7 @@ class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_deletion_initial(
@@ -7306,6 +7314,7 @@ class EnclaveEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_deletion(
@@ -8336,6 +8345,7 @@ class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_creation_initial(
@@ -8528,6 +8538,7 @@ class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_creation(
@@ -8628,6 +8639,7 @@ class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def _handle_approval_deletion_initial(
@@ -8820,6 +8832,7 @@ class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
             "2025-11-01-preview",
             "2026-03-01-preview",
             "2026-04-01",
+            "2026-10-01-preview",
         ],
     )
     async def begin_handle_approval_deletion(
@@ -8901,6 +8914,166 @@ class CommunityEndpointsOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "community_name",
+                "community_endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    async def _sync_initial(
+        self, resource_group_name: str, community_name: str, community_endpoint_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_community_endpoints_sync_request(
+            resource_group_name=resource_group_name,
+            community_name=community_name,
+            community_endpoint_name=community_endpoint_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-10-01-preview",
+        params_added_on={
+            "2026-10-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "community_name",
+                "community_endpoint_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-10-01-preview"],
+    )
+    async def begin_sync(
+        self, resource_group_name: str, community_name: str, community_endpoint_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[_models.CommunityEndpointResource]:
+        """Triggers a manual re-sync of community endpoint connections to all configured sync
+        destinations.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param community_name: The name of the communityResource Resource. Required.
+        :type community_name: str
+        :param community_endpoint_name: The name of the Community Endpoint Resource. Required.
+        :type community_endpoint_name: str
+        :return: An instance of AsyncLROPoller that returns CommunityEndpointResource. The
+         CommunityEndpointResource is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.enclave.models.CommunityEndpointResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.CommunityEndpointResource] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._sync_initial(
+                resource_group_name=resource_group_name,
+                community_name=community_name,
+                community_endpoint_name=community_endpoint_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.CommunityEndpointResource, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.CommunityEndpointResource].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.CommunityEndpointResource](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
 
 class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
     """
@@ -8932,7 +9105,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def get(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -9021,7 +9194,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -9209,7 +9382,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -9303,7 +9476,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def _update_initial(
         self,
@@ -9489,7 +9662,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def begin_update(
         self,
@@ -9581,7 +9754,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def _delete_initial(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -9657,7 +9830,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
                 "dedicated_hub_name",
             ]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     async def begin_delete(
         self, resource_group_name: str, community_name: str, dedicated_hub_name: str, **kwargs: Any
@@ -9726,7 +9899,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-11-01-preview": ["api_version", "subscription_id", "resource_group_name", "community_name", "accept"]
         },
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     def list_by_community_resource(
         self, resource_group_name: str, community_name: str, **kwargs: Any
@@ -9834,7 +10007,7 @@ class DedicatedHubOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-11-01-preview",
         params_added_on={"2025-11-01-preview": ["api_version", "subscription_id", "community_name", "accept"]},
-        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01"],
+        api_versions_list=["2025-11-01-preview", "2026-03-01-preview", "2026-04-01", "2026-10-01-preview"],
     )
     def list_by_subscription(
         self, community_name: str, **kwargs: Any
