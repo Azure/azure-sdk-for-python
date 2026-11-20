@@ -27,25 +27,23 @@ def create_coverage_report():
         folder, package = name[1], name[2]
         if (folder, package) not in packages_to_report:
             packages_to_report.append((folder, package))
-            logging.info("Found a package: {}".format(package))
-
-    package_names = [p[1] for p in packages_to_report]
+            logging.info("Found a package: {} (service folder: {})".format(package, folder))
 
     packages_root = root.find('packages')
     packages_root = packages
 
+    # Group nodes by their full (folder, package) origin so identically-named
+    # distributions under different service directories (e.g.
+    # sdk/textanalytics/azure-ai-textanalytics and
+    # sdk/cognitivelanguage/azure-ai-textanalytics) are condensed separately
+    # rather than sharing class entries.
     packages_nodes = []
     for folder, package_name in packages_to_report:
+        origin_prefix = "sdk.{}.{}".format(folder, package_name)
         condense_nodes = []
         for child in packages:
-
-            test_str = "sdk.{}.{}.{}".format(
-                folder,
-                package_name,
-                package_name.replace('-', '.')
-            )
-
-            if package_name in child.attrib['name']:
+            child_name = child.attrib['name']
+            if child_name == origin_prefix or child_name.startswith(origin_prefix + "."):
                 condense_nodes.append(child)
 
         packages_nodes.append(condense_nodes)
