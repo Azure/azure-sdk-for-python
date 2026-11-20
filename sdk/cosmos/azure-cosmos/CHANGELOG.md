@@ -6,10 +6,16 @@
 
 #### Features Added
 
+* Added support for optimized hybrid search query plans and response formats in synchronous and asynchronous clients, while retaining compatibility with older plans.
+
 #### Breaking Changes
 
 #### Bugs Fixed
 
+* Fixed `ORDER BY RANK` queries using `partition_key` returning unranked results in synchronous and asynchronous clients. Full-text and RRF queries now use the query-plan pipeline while retaining the partition key filter and respecting the full-text statistics scope. See [issue 42241](https://github.com/Azure/azure-sdk-for-python/issues/42241).
+* Fixed undefined projections raising `KeyError` in full-text and hybrid search queries. Missing `SELECT VALUE` projections are omitted without dropping explicit nulls, scalars, or empty object projections.
+* Fixed hybrid search queries returning incomplete results when component queries span multiple backend pages, and skipping RRF ranking when only one of multiple components returns results. Also fixed partition-split recovery double-counting full-text statistics or querying retired partitions in synchronous and asynchronous clients.
+* Fixed statistics substitution for `FullTextScore` expressions in projections and filter predicates, including parameterized vector and weighted RRF queries. These expressions require service-side full-text preview support.
 * Fixed hybrid-search reciprocal rank fusion (RRF) results being ranked incorrectly when component scores are tied.
   Each result now receives a unique ordinal rank, with deterministic tie-breaking based on the decoded document ID
   portion of `_rid`. See [PR 49623](https://github.com/Azure/azure-sdk-for-python/pull/49623).

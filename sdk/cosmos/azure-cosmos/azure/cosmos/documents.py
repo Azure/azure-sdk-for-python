@@ -430,6 +430,7 @@ class _QueryFeature:
     Top: Literal["Top"] = "Top"
     NonStreamingOrderBy: Literal["NonStreamingOrderBy"] = "NonStreamingOrderBy"
     HybridSearch: Literal["HybridSearch"] = "HybridSearch"
+    HybridSearchSkipOrderByRewrite: Literal["HybridSearchSkipOrderByRewrite"] = "HybridSearchSkipOrderByRewrite"
     CountIf: Literal["CountIf"] = "CountIf"
     WeightedRankFusion: Literal["WeightedRankFusion"] = "WeightedRankFusion"
 
