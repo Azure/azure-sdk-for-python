@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -12,21 +12,14 @@ from typing_extensions import TypedDict
 
 if TYPE_CHECKING:
     from .models import (
-        Aggregated,
         Category,
-        Control,
         CpuThreshold,
         CreatedByType,
         DigestConfigState,
         Duration,
-        Impact,
         PredictionType,
-        Priority,
         RecommendationDismissReason,
         RecommendationStatus,
-        ReviewStatus,
-        Risk,
-        Scenario,
     )
 
 
@@ -41,9 +34,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -69,74 +62,10 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
-
-
-class AdvisorScoreEntity(ProxyResource):
-    """The details of Advisor score for a single category.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The Advisor score data.
-    :vartype properties: "AdvisorScoreEntityProperties"
-    """
-
-    properties: "AdvisorScoreEntityProperties"
-    """The Advisor score data."""
-
-
-class AdvisorScoreEntityProperties(TypedDict, total=False):
-    """The Advisor score data.
-
-    :ivar last_refreshed_score: The details of latest available score.
-    :vartype last_refreshed_score: "ScoreEntity"
-    :ivar time_series: The historic Advisor score data.
-    :vartype time_series: list["TimeSeriesEntity"]
-    """
-
-    lastRefreshedScore: "ScoreEntity"
-    """The details of latest available score."""
-    timeSeries: list["TimeSeriesEntity"]
-    """The historic Advisor score data."""
-
-
-class ArmErrorResponse(TypedDict, total=False):
-    """ArmErrorResponse.
-
-    :ivar error: ARM error response body.
-    :vartype error: "ARMErrorResponseBody"
-    """
-
-    error: "ARMErrorResponseBody"
-    """ARM error response body."""
-
-
-class ARMErrorResponseBody(TypedDict, total=False):
-    """ARM error response body.
-
-    :ivar message: Gets or sets the string that describes the error in detail and provides
-     debugging information.
-    :vartype message: str
-    :ivar code: Gets or sets the string that can be used to programmatically identify the error.
-    :vartype code: str
-    """
-
-    message: str
-    """Gets or sets the string that describes the error in detail and provides debugging information."""
-    code: str
-    """Gets or sets the string that can be used to programmatically identify the error."""
 
 
 class AssessmentResult(ProxyResource):
@@ -150,9 +79,9 @@ class AssessmentResult(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The Advisor assessment result properties structure.
     :vartype properties: "AssessmentResultProperties"
     """
@@ -164,24 +93,24 @@ class AssessmentResult(ProxyResource):
 class AssessmentResultProperties(TypedDict, total=False):
     """Assessment result properties.
 
-    :ivar workload_id: Workload Id.
-    :vartype workload_id: str
-    :ivar workload_name: Workload Name.
-    :vartype workload_name: str
-    :ivar assessment_id: Assessment Id.
-    :vartype assessment_id: str
+    :ivar workloadId: Workload Id.
+    :vartype workloadId: str
+    :ivar workloadName: Workload Name.
+    :vartype workloadName: str
+    :ivar assessmentId: Assessment Id.
+    :vartype assessmentId: str
     :ivar description: Assessment Type Description.
     :vartype description: str
-    :ivar type_id: Assessment Type Id.
-    :vartype type_id: str
+    :ivar typeId: Assessment Type Id.
+    :vartype typeId: str
     :ivar type: Assessment Type.
     :vartype type: str
     :ivar score: Assessment Score.
     :vartype score: int
     :ivar state: Assessment State.
     :vartype state: str
-    :ivar type_version: Assessment Type Version.
-    :vartype type_version: str
+    :ivar typeVersion: Assessment Type Version.
+    :vartype typeVersion: str
     :ivar locale: Assessment Type Locale.
     :vartype locale: str
     """
@@ -208,33 +137,6 @@ class AssessmentResultProperties(TypedDict, total=False):
     """Assessment Type Locale."""
 
 
-class AssessmentTypeResult(TypedDict, total=False):
-    """The Advisor assessment type result data structure.
-
-    :ivar id: Assessment Type Id.
-    :vartype id: str
-    :ivar title: Assessment Type Title.
-    :vartype title: str
-    :ivar description: Assessment Type Description.
-    :vartype description: str
-    :ivar locale: Assessment Type Locale.
-    :vartype locale: str
-    :ivar version: Assessment Type Version.
-    :vartype version: str
-    """
-
-    id: str
-    """Assessment Type Id."""
-    title: str
-    """Assessment Type Title."""
-    description: str
-    """Assessment Type Description."""
-    locale: str
-    """Assessment Type Locale."""
-    version: str
-    """Assessment Type Version."""
-
-
 class ConfigData(Resource):
     """The Advisor configuration data structure.
 
@@ -246,9 +148,9 @@ class ConfigData(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The Advisor configuration data structure.
     :vartype properties: "ConfigDataProperties"
     """
@@ -263,10 +165,10 @@ class ConfigDataProperties(TypedDict, total=False):
     :ivar exclude: Exclude the resource from Advisor evaluations. Valid values: False (default) or
      True.
     :vartype exclude: bool
-    :ivar low_cpu_threshold: Minimum percentage threshold for Advisor low CPU utilization
-     evaluation. Valid only for subscriptions. Valid values: 5 (default), 10, 15 or 20. Known values
-     are: "5", "10", "15", and "20".
-    :vartype low_cpu_threshold: Union[str, "CpuThreshold"]
+    :ivar lowCpuThreshold: Minimum percentage threshold for Advisor low CPU utilization evaluation.
+     Valid only for subscriptions. Valid values: 5 (default), 10, 15 or 20. Known values are: "5",
+     "10", "15", and "20".
+    :vartype lowCpuThreshold: Union[str, "CpuThreshold"]
     :ivar duration: Minimum duration for Advisor low CPU utilization evaluation. Valid only for
      subscriptions. Valid values: 7 (default), 14, 21, 30, 60 or 90. Known values are: "7", "14",
      "21", "30", "60", and "90".
@@ -295,8 +197,8 @@ class DigestConfig(TypedDict, total=False):
     :ivar name: Name of digest configuration. Value is case-insensitive and must be unique within a
      subscription.
     :vartype name: str
-    :ivar action_group_resource_id: Action group resource id used by digest.
-    :vartype action_group_resource_id: str
+    :ivar actionGroupResourceId: Action group resource id used by digest.
+    :vartype actionGroupResourceId: str
     :ivar frequency: Frequency that digest will be triggered, in days. Value must be between 7 and
      30 days inclusive.
     :vartype frequency: int
@@ -329,59 +231,6 @@ class DigestConfig(TypedDict, total=False):
     """State of digest configuration. Known values are: \"Active\" and \"Disabled\"."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class ExtensionResource(Resource):
     """The base extension resource.
 
@@ -393,108 +242,10 @@ class ExtensionResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
-
-
-class MetadataEntity(ProxyResource):
-    """The metadata entity contract.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The metadata entity properties.
-    :vartype properties: "MetadataEntityProperties"
-    """
-
-    properties: "MetadataEntityProperties"
-    """The metadata entity properties."""
-
-
-class MetadataEntityProperties(TypedDict, total=False):
-    """The metadata entity properties.
-
-    :ivar display_name: The display name.
-    :vartype display_name: str
-    :ivar depends_on: The list of keys on which this entity depends on.
-    :vartype depends_on: list[str]
-    :ivar applicable_scenarios: The list of scenarios applicable to this metadata entity.
-    :vartype applicable_scenarios: list[Union[str, "Scenario"]]
-    :ivar supported_values: The list of supported values.
-    :vartype supported_values: list["MetadataSupportedValueDetail"]
-    """
-
-    displayName: str
-    """The display name."""
-    dependsOn: list[str]
-    """The list of keys on which this entity depends on."""
-    applicableScenarios: list[Union[str, "Scenario"]]
-    """The list of scenarios applicable to this metadata entity."""
-    supportedValues: list["MetadataSupportedValueDetail"]
-    """The list of supported values."""
-
-
-class MetadataSupportedValueDetail(TypedDict, total=False):
-    """The metadata supported value detail.
-
-    :ivar id: The id.
-    :vartype id: str
-    :ivar display_name: The display name.
-    :vartype display_name: str
-    """
-
-    id: str
-    """The id."""
-    displayName: str
-    """The display name."""
-
-
-class OperationDisplayInfo(TypedDict, total=False):
-    """The operation supported by Advisor.
-
-    :ivar description: The description of the operation.
-    :vartype description: str
-    :ivar operation: The action that users can perform, based on their permission level.
-    :vartype operation: str
-    :ivar provider: Service provider: Microsoft Advisor.
-    :vartype provider: str
-    :ivar resource: Resource on which the operation is performed.
-    :vartype resource: str
-    """
-
-    description: str
-    """The description of the operation."""
-    operation: str
-    """The action that users can perform, based on their permission level."""
-    provider: str
-    """Service provider: Microsoft Advisor."""
-    resource: str
-    """Resource on which the operation is performed."""
-
-
-class OperationEntity(TypedDict, total=False):
-    """The operation supported by Advisor.
-
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
-    :vartype name: str
-    :ivar display: The operation supported by Advisor.
-    :vartype display: "OperationDisplayInfo"
-    """
-
-    name: str
-    """Operation name: {provider}/{resource}/{operation}."""
-    display: "OperationDisplayInfo"
-    """The operation supported by Advisor."""
 
 
 class PredictionRequest(TypedDict, total=False):
@@ -511,66 +262,16 @@ class PredictionRequest(TypedDict, total=False):
 class PredictionRequestProperties(TypedDict, total=False):
     """Properties given for the predictor.
 
-    :ivar prediction_type: Type of the prediction. "PredictiveRightsizing"
-    :vartype prediction_type: Union[str, "PredictionType"]
-    :ivar extended_properties: Extended properties are arguments specific for each prediction type.
-    :vartype extended_properties: Any
+    :ivar predictionType: Type of the prediction. "PredictiveRightsizing"
+    :vartype predictionType: Union[str, "PredictionType"]
+    :ivar extendedProperties: Extended properties are arguments specific for each prediction type.
+    :vartype extendedProperties: Any
     """
 
     predictionType: Union[str, "PredictionType"]
     """Type of the prediction. \"PredictiveRightsizing\""""
     extendedProperties: Any
     """Extended properties are arguments specific for each prediction type."""
-
-
-class PredictionResponse(TypedDict, total=False):
-    """Response used by predictions.
-
-    :ivar properties: The properties of the prediction.
-    :vartype properties: "PredictionResponseProperties"
-    """
-
-    properties: "PredictionResponseProperties"
-    """The properties of the prediction."""
-
-
-class PredictionResponseProperties(TypedDict, total=False):
-    """Properties of the prediction.
-
-    :ivar extended_properties: Extended properties.
-    :vartype extended_properties: Any
-    :ivar prediction_type: Type of the prediction. "PredictiveRightsizing"
-    :vartype prediction_type: Union[str, "PredictionType"]
-    :ivar category: The category of the recommendation. Known values are: "HighAvailability",
-     "Security", "Performance", "Cost", and "OperationalExcellence".
-    :vartype category: Union[str, "Category"]
-    :ivar impact: The business impact of the recommendation. Known values are: "High", "Medium",
-     and "Low".
-    :vartype impact: Union[str, "Impact"]
-    :ivar impacted_field: The resource type identified by Advisor.
-    :vartype impacted_field: str
-    :ivar last_updated: The most recent time that Advisor checked the validity of the
-     recommendation.
-    :vartype last_updated: str
-    :ivar short_description: A summary of the recommendation.
-    :vartype short_description: "ShortDescription"
-    """
-
-    extendedProperties: Any
-    """Extended properties."""
-    predictionType: Union[str, "PredictionType"]
-    """Type of the prediction. \"PredictiveRightsizing\""""
-    category: Union[str, "Category"]
-    """The category of the recommendation. Known values are: \"HighAvailability\", \"Security\",
-     \"Performance\", \"Cost\", and \"OperationalExcellence\"."""
-    impact: Union[str, "Impact"]
-    """The business impact of the recommendation. Known values are: \"High\", \"Medium\", and \"Low\"."""
-    impactedField: str
-    """The resource type identified by Advisor."""
-    lastUpdated: str
-    """The most recent time that Advisor checked the validity of the recommendation."""
-    shortDescription: "ShortDescription"
-    """A summary of the recommendation."""
 
 
 class RecommendationPatchPayload(TypedDict, total=False):
@@ -584,202 +285,19 @@ class RecommendationPatchPayload(TypedDict, total=False):
     """The properties for recommendation patch payload."""
 
 
-class RecommendationProperties(TypedDict, total=False):
-    """The properties of the recommendation.
-
-    :ivar category: The category of the recommendation. Known values are: "HighAvailability",
-     "Security", "Performance", "Cost", and "OperationalExcellence".
-    :vartype category: Union[str, "Category"]
-    :ivar control: The sub-category of the recommendation. Known values are: "HighAvailability",
-     "BusinessContinuity", "DisasterRecovery", "Scalability", "MonitoringAndAlerting",
-     "ServiceUpgradeAndRetirement", "Other", "PrioritizedRecommendations", and "Personalized".
-    :vartype control: Union[str, "Control"]
-    :ivar impact: The business impact of the recommendation. Known values are: "High", "Medium",
-     and "Low".
-    :vartype impact: Union[str, "Impact"]
-    :ivar impacted_field: The resource type identified by Advisor.
-    :vartype impacted_field: str
-    :ivar impacted_value: The resource identified by Advisor.
-    :vartype impacted_value: str
-    :ivar recommendation_status: The state of the Recommendation. Known values are: "New",
-     "Postponed", "Dismissed", and "Completed".
-    :vartype recommendation_status: Union[str, "RecommendationStatus"]
-    :ivar completion_type: The type of recommendation completion, which is either MarkedByUser or
-     SystemVerified.
-    :vartype completion_type: str
-    :ivar recommendation_dismiss_reason: The reason the Recommendation was dismissed. Known values
-     are: "ExcessiveCostInvestmentRequired", "TooComplexOrImpracticalToImplement",
-     "AnAlternativeSolutionIsAlreadyInPlace", "IncompatibleWithTheCurrentConfiguration",
-     "ImplementationStepsAreUnclear", "RiskIsAcceptable", and "Other".
-    :vartype recommendation_dismiss_reason: Union[str, "RecommendationDismissReason"]
-    :ivar postponed_until_date_time: The time the Recommendation was postponed until.
-    :vartype postponed_until_date_time: str
-    :ivar last_refreshed: The most recent time Advisor evaluated the recommendation for validity
-     (re-ingested).
-    :vartype last_refreshed: str
-    :ivar last_updated: The most recent time the recommendation state changed (manual or
-     automated).
-    :vartype last_updated: str
-    :ivar created_time: The created time of the recommendation.
-    :vartype created_time: str
-    :ivar metadata: The recommendation metadata.
-    :vartype metadata: dict[str, Any]
-    :ivar recommendation_type_id: The recommendation-type GUID.
-    :vartype recommendation_type_id: str
-    :ivar risk: The potential risk of not implementing the recommendation. Known values are:
-     "Error", "Warning", and "None".
-    :vartype risk: Union[str, "Risk"]
-    :ivar short_description: A summary of the recommendation.
-    :vartype short_description: "ShortDescription"
-    :ivar suppression_id: The single snoozed or dismissed rule for the recommendation.
-    :vartype suppression_id: str
-    :ivar extended_properties: Extended properties.
-    :vartype extended_properties: dict[str, str]
-    :ivar resource_metadata: Metadata of resource that was assessed.
-    :vartype resource_metadata: "ResourceMetadata"
-    :ivar description: The detailed description of recommendation.
-    :vartype description: str
-    :ivar label: The label of recommendation.
-    :vartype label: str
-    :ivar learn_more_link: The link to learn more about recommendation and generation logic.
-    :vartype learn_more_link: str
-    :ivar potential_benefits: The potential benefit of implementing recommendation.
-    :vartype potential_benefits: str
-    :ivar actions: The list of recommended actions to implement recommendation.
-    :vartype actions: list[dict[str, Any]]
-    :ivar remediation: The automated way to apply recommendation.
-    :vartype remediation: dict[str, Any]
-    :ivar exposed_metadata_properties: The recommendation metadata properties exposed to customer
-     to provide additional information.
-    :vartype exposed_metadata_properties: dict[str, Any]
-    :ivar tracked_properties: The properties of a tracked recommendation.
-    :vartype tracked_properties: "TrackedRecommendationProperties"
-    :ivar review: The Review that this Recommendation belongs to.
-    :vartype review: "RecommendationPropertiesReview"
-    :ivar resource_workload: The Workload that this Resource belongs to.
-    :vartype resource_workload: "RecommendationPropertiesResourceWorkload"
-    :ivar source_system: The Source System that this Recommendation originated from.
-    :vartype source_system: str
-    :ivar notes: Additional notes for the Recommendation.
-    :vartype notes: str
-    """
-
-    category: Union[str, "Category"]
-    """The category of the recommendation. Known values are: \"HighAvailability\", \"Security\",
-     \"Performance\", \"Cost\", and \"OperationalExcellence\"."""
-    control: Union[str, "Control"]
-    """The sub-category of the recommendation. Known values are: \"HighAvailability\",
-     \"BusinessContinuity\", \"DisasterRecovery\", \"Scalability\", \"MonitoringAndAlerting\",
-     \"ServiceUpgradeAndRetirement\", \"Other\", \"PrioritizedRecommendations\", and
-     \"Personalized\"."""
-    impact: Union[str, "Impact"]
-    """The business impact of the recommendation. Known values are: \"High\", \"Medium\", and \"Low\"."""
-    impactedField: str
-    """The resource type identified by Advisor."""
-    impactedValue: str
-    """The resource identified by Advisor."""
-    recommendationStatus: Union[str, "RecommendationStatus"]
-    """The state of the Recommendation. Known values are: \"New\", \"Postponed\", \"Dismissed\", and
-     \"Completed\"."""
-    completionType: str
-    """The type of recommendation completion, which is either MarkedByUser or SystemVerified."""
-    recommendationDismissReason: Union[str, "RecommendationDismissReason"]
-    """The reason the Recommendation was dismissed. Known values are:
-     \"ExcessiveCostInvestmentRequired\", \"TooComplexOrImpracticalToImplement\",
-     \"AnAlternativeSolutionIsAlreadyInPlace\", \"IncompatibleWithTheCurrentConfiguration\",
-     \"ImplementationStepsAreUnclear\", \"RiskIsAcceptable\", and \"Other\"."""
-    postponedUntilDateTime: str
-    """The time the Recommendation was postponed until."""
-    lastRefreshed: str
-    """The most recent time Advisor evaluated the recommendation for validity (re-ingested)."""
-    lastUpdated: str
-    """The most recent time the recommendation state changed (manual or automated)."""
-    createdTime: str
-    """The created time of the recommendation."""
-    metadata: dict[str, Any]
-    """The recommendation metadata."""
-    recommendationTypeId: str
-    """The recommendation-type GUID."""
-    risk: Union[str, "Risk"]
-    """The potential risk of not implementing the recommendation. Known values are: \"Error\",
-     \"Warning\", and \"None\"."""
-    shortDescription: "ShortDescription"
-    """A summary of the recommendation."""
-    suppressionId: str
-    """The single snoozed or dismissed rule for the recommendation."""
-    extendedProperties: dict[str, str]
-    """Extended properties."""
-    resourceMetadata: "ResourceMetadata"
-    """Metadata of resource that was assessed."""
-    description: str
-    """The detailed description of recommendation."""
-    label: str
-    """The label of recommendation."""
-    learnMoreLink: str
-    """The link to learn more about recommendation and generation logic."""
-    potentialBenefits: str
-    """The potential benefit of implementing recommendation."""
-    actions: list[dict[str, Any]]
-    """The list of recommended actions to implement recommendation."""
-    remediation: dict[str, Any]
-    """The automated way to apply recommendation."""
-    exposedMetadataProperties: dict[str, Any]
-    """The recommendation metadata properties exposed to customer to provide additional information."""
-    trackedProperties: "TrackedRecommendationProperties"
-    """The properties of a tracked recommendation."""
-    review: "RecommendationPropertiesReview"
-    """The Review that this Recommendation belongs to."""
-    resourceWorkload: "RecommendationPropertiesResourceWorkload"
-    """The Workload that this Resource belongs to."""
-    sourceSystem: str
-    """The Source System that this Recommendation originated from."""
-    notes: str
-    """Additional notes for the Recommendation."""
-
-
-class RecommendationPropertiesResourceWorkload(TypedDict, total=False):
-    """The Workload that this Resource belongs to.
-
-    :ivar id: The Id of the Workload.
-    :vartype id: str
-    :ivar name: The Name of the Workload.
-    :vartype name: str
-    """
-
-    id: str
-    """The Id of the Workload."""
-    name: str
-    """The Name of the Workload."""
-
-
-class RecommendationPropertiesReview(TypedDict, total=False):
-    """The Review that this Recommendation belongs to.
-
-    :ivar id: The ARM Resource Id of the Review.
-    :vartype id: str
-    :ivar name: The Name of the Review.
-    :vartype name: str
-    """
-
-    id: str
-    """The ARM Resource Id of the Review."""
-    name: str
-    """The Name of the Review."""
-
-
 class RecommendationStatePropertiesPayload(TypedDict, total=False):
     """Properties for recommendation state patch payload.
 
-    :ivar recommendation_status: The state of the recommendation. Known values are: "New",
+    :ivar recommendationStatus: The state of the recommendation. Known values are: "New",
      "Postponed", "Dismissed", and "Completed".
-    :vartype recommendation_status: Union[str, "RecommendationStatus"]
-    :ivar recommendation_dismiss_reason: The reason the state of the Recommendation was changed.
+    :vartype recommendationStatus: Union[str, "RecommendationStatus"]
+    :ivar recommendationDismissReason: The reason the state of the Recommendation was changed.
      Known values are: "ExcessiveCostInvestmentRequired", "TooComplexOrImpracticalToImplement",
      "AnAlternativeSolutionIsAlreadyInPlace", "IncompatibleWithTheCurrentConfiguration",
      "ImplementationStepsAreUnclear", "RiskIsAcceptable", and "Other".
-    :vartype recommendation_dismiss_reason: Union[str, "RecommendationDismissReason"]
-    :ivar postponed_until_date_time: The time the Recommendation was postponed until.
-    :vartype postponed_until_date_time: str
+    :vartype recommendationDismissReason: Union[str, "RecommendationDismissReason"]
+    :ivar postponedUntilDateTime: The time the Recommendation was postponed until.
+    :vartype postponedUntilDateTime: str
     """
 
     recommendationStatus: Union[str, "RecommendationStatus"]
@@ -794,157 +312,6 @@ class RecommendationStatePropertiesPayload(TypedDict, total=False):
     """The time the Recommendation was postponed until."""
 
 
-class ResiliencyReview(ProxyResource):
-    """The Advisor resiliency review data structure.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Advisor resiliency review properties.
-    :vartype properties: "ResiliencyReviewProperties"
-    """
-
-    properties: "ResiliencyReviewProperties"
-    """Advisor resiliency review properties."""
-
-
-class ResiliencyReviewProperties(TypedDict, total=False):
-    """Resiliency review properties.
-
-    :ivar review_name: Review name.
-    :vartype review_name: str
-    :ivar workload_name: Workload Name.
-    :vartype workload_name: str
-    :ivar review_status: Review status. Known values are: "New", "InProgress", and "Completed".
-    :vartype review_status: Union[str, "ReviewStatus"]
-    :ivar recommendations_count: Review recommendations count.
-    :vartype recommendations_count: int
-    :ivar published_at: Review last updated timestamp.
-    :vartype published_at: str
-    :ivar updated_at: Review last updated timestamp.
-    :vartype updated_at: str
-    """
-
-    reviewName: str
-    """Review name."""
-    workloadName: str
-    """Workload Name."""
-    reviewStatus: Union[str, "ReviewStatus"]
-    """Review status. Known values are: \"New\", \"InProgress\", and \"Completed\"."""
-    recommendationsCount: int
-    """Review recommendations count."""
-    publishedAt: str
-    """Review last updated timestamp."""
-    updatedAt: str
-    """Review last updated timestamp."""
-
-
-class ResourceMetadata(TypedDict, total=False):
-    """Recommendation resource metadata.
-
-    :ivar resource_id: Azure resource Id of the assessed resource.
-    :vartype resource_id: str
-    :ivar source: Source from which recommendation is generated.
-    :vartype source: str
-    :ivar action: The action to view resource.
-    :vartype action: dict[str, Any]
-    :ivar singular: The singular user friendly name of resource type. eg: virtual machine.
-    :vartype singular: str
-    :ivar plural: The plural user friendly name of resource type. eg: virtual machines.
-    :vartype plural: str
-    """
-
-    resourceId: str
-    """Azure resource Id of the assessed resource."""
-    source: str
-    """Source from which recommendation is generated."""
-    action: dict[str, Any]
-    """The action to view resource."""
-    singular: str
-    """The singular user friendly name of resource type. eg: virtual machine."""
-    plural: str
-    """The plural user friendly name of resource type. eg: virtual machines."""
-
-
-class ResourceRecommendationBase(ExtensionResource):
-    """Advisor Recommendation.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of the recommendation.
-    :vartype properties: "RecommendationProperties"
-    """
-
-    properties: "RecommendationProperties"
-    """The properties of the recommendation."""
-
-
-class ScoreEntity(TypedDict, total=False):
-    """The details of Advisor Score.
-
-    :ivar date: The date score was calculated.
-    :vartype date: str
-    :ivar score: The percentage score.
-    :vartype score: float
-    :ivar consumption_units: The consumption units for the score.
-    :vartype consumption_units: float
-    :ivar impacted_resource_count: The number of impacted resources.
-    :vartype impacted_resource_count: float
-    :ivar potential_score_increase: The potential percentage increase in overall score at
-     subscription level once all recommendations in this scope are implemented.
-    :vartype potential_score_increase: float
-    :ivar category_count: The count of impacted categories.
-    :vartype category_count: float
-    """
-
-    date: str
-    """The date score was calculated."""
-    score: float
-    """The percentage score."""
-    consumptionUnits: float
-    """The consumption units for the score."""
-    impactedResourceCount: float
-    """The number of impacted resources."""
-    potentialScoreIncrease: float
-    """The potential percentage increase in overall score at subscription level once all
-     recommendations in this scope are implemented."""
-    categoryCount: float
-    """The count of impacted categories."""
-
-
-class ShortDescription(TypedDict, total=False):
-    """A summary of the recommendation.
-
-    :ivar problem: The issue or opportunity identified by the recommendation and proposed solution.
-    :vartype problem: str
-    :ivar solution: The issue or opportunity identified by the recommendation and proposed
-     solution.
-    :vartype solution: str
-    """
-
-    problem: str
-    """The issue or opportunity identified by the recommendation and proposed solution."""
-    solution: str
-    """The issue or opportunity identified by the recommendation and proposed solution."""
-
-
 class SuppressionContract(ExtensionResource):
     """The details of the snoozed or dismissed rule; for example, the duration, name, and GUID
     associated with the rule.
@@ -957,9 +324,9 @@ class SuppressionContract(ExtensionResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The properties of the suppression.
     :vartype properties: "SuppressionProperties"
     """
@@ -971,12 +338,12 @@ class SuppressionContract(ExtensionResource):
 class SuppressionProperties(TypedDict, total=False):
     """The properties of the suppression.
 
-    :ivar suppression_id: The GUID of the suppression.
-    :vartype suppression_id: str
+    :ivar suppressionId: The GUID of the suppression.
+    :vartype suppressionId: str
     :ivar ttl: The duration for which the suppression is valid.
     :vartype ttl: str
-    :ivar expiration_time_stamp: Gets or sets the expiration time stamp.
-    :vartype expiration_time_stamp: str
+    :ivar expirationTimeStamp: Gets or sets the expiration time stamp.
+    :vartype expirationTimeStamp: str
     """
 
     suppressionId: str
@@ -990,20 +357,20 @@ class SuppressionProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -1020,55 +387,3 @@ class SystemData(TypedDict, total=False):
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
     lastModifiedAt: str
     """The timestamp of resource last modification (UTC)."""
-
-
-class TimeSeriesEntity(TypedDict, total=False):
-    """The historic data at different aggregation levels.
-
-    :ivar aggregation_level: The aggregation level of the score. Known values are: "week", "day",
-     and "month".
-    :vartype aggregation_level: Union[str, "Aggregated"]
-    :ivar score_history: The past score data.
-    :vartype score_history: list["ScoreEntity"]
-    """
-
-    aggregationLevel: Union[str, "Aggregated"]
-    """The aggregation level of the score. Known values are: \"week\", \"day\", and \"month\"."""
-    scoreHistory: list["ScoreEntity"]
-    """The past score data."""
-
-
-class TrackedRecommendationProperties(TypedDict, total=False):
-    """The tracked properties of a Recommendation.
-
-    :ivar priority: The Priority of the Recommendation. Known values are: "Critical", "High",
-     "Medium", "Low", and "Informational".
-    :vartype priority: Union[str, "Priority"]
-    """
-
-    priority: Union[str, "Priority"]
-    """The Priority of the Recommendation. Known values are: \"Critical\", \"High\", \"Medium\",
-     \"Low\", and \"Informational\"."""
-
-
-class WorkloadResult(TypedDict, total=False):
-    """The Workload result data structure.
-
-    :ivar id: Workload Id.
-    :vartype id: str
-    :ivar name: Workload Name.
-    :vartype name: str
-    :ivar subscription_id: Subscription Id.
-    :vartype subscription_id: str
-    :ivar subscription_name: Subscription Name.
-    :vartype subscription_name: str
-    """
-
-    id: str
-    """Workload Id."""
-    name: str
-    """Workload Name."""
-    subscriptionId: str
-    """Subscription Id."""
-    subscriptionName: str
-    """Subscription Name."""
