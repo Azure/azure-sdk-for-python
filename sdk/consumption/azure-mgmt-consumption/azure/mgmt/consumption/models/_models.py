@@ -81,7 +81,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class Balance(Resource):
+class Balance(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A balance resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -167,7 +167,7 @@ class Balance(Resource):
             super().__setattr__(key, value)
 
 
-class BalanceProperties(_Model):
+class BalanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the balance.
 
     :ivar currency: The ISO currency in which the meter is charged, for example, USD.
@@ -316,7 +316,7 @@ class ExtensionResource(Resource):
     """
 
 
-class Budget(ExtensionResource):
+class Budget(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A budget resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -393,7 +393,7 @@ class Budget(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class BudgetComparisonExpression(_Model):
+class BudgetComparisonExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The comparison expression to be used in the budgets.
 
     :ivar name: The name of the column to use in comparison. Required.
@@ -435,7 +435,7 @@ class BudgetComparisonExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetFilter(_Model):
+class BudgetFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """May be used to filter budgets by resource group, resource, or meter.
 
     :ivar and_property: The logical "AND" expression. Must have at least 2 items.
@@ -479,7 +479,7 @@ class BudgetFilter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetFilterProperties(_Model):
+class BudgetFilterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Dimensions or Tags to filter a budget by.
 
     :ivar dimensions: Has comparison expression for a dimension.
@@ -516,7 +516,7 @@ class BudgetFilterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetProperties(_Model):
+class BudgetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the budget.
 
     :ivar category: The category of the budget, whether the budget tracks cost or usage. Required.
@@ -600,7 +600,7 @@ class BudgetProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BudgetTimePeriod(_Model):
+class BudgetTimePeriod(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The start and end date for a budget.
 
     :ivar start_date: The start date for the budget. Required.
@@ -666,7 +666,7 @@ class ProxyResource(Resource):
     """
 
 
-class ChargeSummary(ProxyResource):
+class ChargeSummary(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A charge summary resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -739,7 +739,7 @@ class CreditBalanceSummary(_Model):
     """Estimated balance in billing currency."""
 
 
-class CreditSummary(ProxyResource):
+class CreditSummary(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A credit summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -929,7 +929,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -957,7 +957,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventProperties(_Model):
+class EventProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The event properties.
 
     :ivar transaction_date: The date of the event.
@@ -1128,7 +1128,7 @@ class EventProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EventSummary(ProxyResource):
+class EventSummary(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An event summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1252,7 +1252,7 @@ class HighCasedErrorDetails(_Model):
     """Error message indicating why the operation failed."""
 
 
-class HighCasedErrorResponse(_Model):
+class HighCasedErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response indicates that the service is not able to process the incoming request. The
     reason is provided in the error message.
 
@@ -1293,7 +1293,9 @@ class HighCasedErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LegacyChargeSummary(ChargeSummary, discriminator="legacy"):
+class LegacyChargeSummary(
+    ChargeSummary, discriminator="legacy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Legacy charge summary.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1409,135 +1411,13 @@ class LegacyChargeSummaryProperties(_Model):
     """Currency Code."""
 
 
-class ReservationRecommendation(_Model):
-    """A reservation recommendation resource.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    LegacyReservationRecommendation, ModernReservationRecommendation
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar sku: Resource sku.
-    :vartype sku: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar kind: Specifies the kind of reservation recommendation. Required. Known values are:
-     "legacy" and "modern".
-    :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-    location: Optional[str] = rest_field(visibility=["read"])
-    """Resource location."""
-    sku: Optional[str] = rest_field(visibility=["read"])
-    """Resource sku."""
-    etag: Optional[str] = rest_field(visibility=["read"])
-    """The etag for the resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read"])
-    """Resource tags."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
-    """Specifies the kind of reservation recommendation. Required. Known values are: \"legacy\" and
-     \"modern\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        kind: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class LegacyReservationRecommendation(ReservationRecommendation, discriminator="legacy"):
-    """Legacy reservation recommendation.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar sku: Resource sku.
-    :vartype sku: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: Properties for legacy reservation recommendation. Required.
-    :vartype properties: ~azure.mgmt.consumption.models.LegacyReservationRecommendationProperties
-    :ivar kind: Specifies the kind of reservation recommendation. Required. LEGACY.
-    :vartype kind: str or ~azure.mgmt.consumption.models.LEGACY
-    """
-
-    properties: "_models.LegacyReservationRecommendationProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for legacy reservation recommendation. Required."""
-    kind: Literal[ReservationRecommendationKind.LEGACY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Specifies the kind of reservation recommendation. Required. LEGACY."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.LegacyReservationRecommendationProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = ReservationRecommendationKind.LEGACY  # type: ignore
-
-
-class LegacyReservationRecommendationProperties(_Model):  # pylint: disable=name-too-long
+class LegacyReservationRecommendationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the reservation recommendation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacyManagementGroupScopeReservationRecommendationProperties,
     LegacySharedScopeReservationRecommendationProperties,
     LegacySingleScopeReservationRecommendationProperties
 
@@ -1640,6 +1520,204 @@ class LegacyReservationRecommendationProperties(_Model):  # pylint: disable=name
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class LegacyManagementGroupScopeReservationRecommendationProperties(
+    LegacyReservationRecommendationProperties, discriminator="ManagementGroup"
+):  # pylint: disable=name-too-long
+    """The properties of the legacy reservation recommendation for management group scope.
+
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: str
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar resource_type: The azure resource type.
+    :vartype resource_type: str
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~decimal.Decimal
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: ~decimal.Decimal
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~decimal.Decimal
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~decimal.Decimal
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
+    :ivar management_group_id: Management group id associated with management group scoped
+     recommendation. Required.
+    :vartype management_group_id: str
+    :ivar tenant_id: The tenant ID associated with the management group. Required.
+    :vartype tenant_id: str
+    :ivar scope: Shared or single recommendation. Required. Default value is "ManagementGroup".
+    :vartype scope: str
+    """
+
+    management_group_id: str = rest_field(name="managementGroupId", visibility=["read"])
+    """Management group id associated with management group scoped recommendation. Required."""
+    tenant_id: str = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID associated with the management group. Required."""
+    scope: Literal["ManagementGroup"] = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Shared or single recommendation. Required. Default value is \"ManagementGroup\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scope = "ManagementGroup"  # type: ignore
+
+
+class ReservationRecommendation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A reservation recommendation resource.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    LegacyReservationRecommendation, ModernReservationRecommendation
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar sku: Resource sku.
+    :vartype sku: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar kind: Specifies the kind of reservation recommendation. Required. Known values are:
+     "legacy" and "modern".
+    :vartype kind: str or ~azure.mgmt.consumption.models.ReservationRecommendationKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """Resource location."""
+    sku: Optional[str] = rest_field(visibility=["read"])
+    """Resource sku."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """The etag for the resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Resource tags."""
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the kind of reservation recommendation. Required. Known values are: \"legacy\" and
+     \"modern\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class LegacyReservationRecommendation(
+    ReservationRecommendation, discriminator="legacy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Legacy reservation recommendation.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar sku: Resource sku.
+    :vartype sku: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties for legacy reservation recommendation. Required.
+    :vartype properties: ~azure.mgmt.consumption.models.LegacyReservationRecommendationProperties
+    :ivar kind: Specifies the kind of reservation recommendation. Required. LEGACY.
+    :vartype kind: str or ~azure.mgmt.consumption.models.LEGACY
+    """
+
+    properties: "_models.LegacyReservationRecommendationProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for legacy reservation recommendation. Required."""
+    kind: Literal[ReservationRecommendationKind.LEGACY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the kind of reservation recommendation. Required. LEGACY."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.LegacyReservationRecommendationProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ReservationRecommendationKind.LEGACY  # type: ignore
 
 
 class LegacyReservationTransactionProperties(_Model):
@@ -1877,7 +1955,7 @@ class LegacySingleScopeReservationRecommendationProperties(
         self.scope = "Single"  # type: ignore
 
 
-class UsageDetail(Resource):
+class UsageDetail(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An usage detail resource.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1929,7 +2007,9 @@ class UsageDetail(Resource):
         super().__init__(*args, **kwargs)
 
 
-class LegacyUsageDetail(UsageDetail, discriminator="legacy"):
+class LegacyUsageDetail(
+    UsageDetail, discriminator="legacy"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Legacy usage detail.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2374,7 +2454,7 @@ class LotProperties(_Model):
     """Amount consumed from the commitment."""
 
 
-class LotSummary(ProxyResource):
+class LotSummary(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A lot summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2460,7 +2540,7 @@ class LotSummary(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagementGroupAggregatedCostProperties(_Model):
+class ManagementGroupAggregatedCostProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the Management Group Aggregated Cost.
 
     :ivar billing_period_id: The id of the billing period resource that the aggregated cost belongs
@@ -2537,7 +2617,7 @@ class ManagementGroupAggregatedCostProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementGroupAggregatedCostResult(Resource):
+class ManagementGroupAggregatedCostResult(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A management group aggregated cost resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2617,7 +2697,7 @@ class ManagementGroupAggregatedCostResult(Resource):
             super().__setattr__(key, value)
 
 
-class Marketplace(Resource):
+class Marketplace(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A marketplace resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2903,7 +2983,9 @@ class MeterDetailsResponse(_Model):
     """The service family."""
 
 
-class ModernChargeSummary(ChargeSummary, discriminator="modern"):
+class ModernChargeSummary(
+    ChargeSummary, discriminator="modern"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Modern charge summary.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3042,64 +3124,13 @@ class ModernChargeSummaryProperties(_Model):
     """Subscription guid."""
 
 
-class ModernReservationRecommendation(ReservationRecommendation, discriminator="modern"):
-    """Modern reservation recommendation.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar sku: Resource sku.
-    :vartype sku: str
-    :ivar etag: The etag for the resource.
-    :vartype etag: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: Properties for modern reservation recommendation. Required.
-    :vartype properties: ~azure.mgmt.consumption.models.ModernReservationRecommendationProperties
-    :ivar kind: Specifies the kind of reservation recommendation. Required. MODERN.
-    :vartype kind: str or ~azure.mgmt.consumption.models.MODERN
-    """
-
-    properties: "_models.ModernReservationRecommendationProperties" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Properties for modern reservation recommendation. Required."""
-    kind: Literal[ReservationRecommendationKind.MODERN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Specifies the kind of reservation recommendation. Required. MODERN."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: "_models.ModernReservationRecommendationProperties",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.kind = ReservationRecommendationKind.MODERN  # type: ignore
-
-
-class ModernReservationRecommendationProperties(_Model):  # pylint: disable=name-too-long
+class ModernReservationRecommendationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The properties of the reservation recommendation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ModernManagementGroupScopeReservationRecommendationProperties,
     ModernSharedScopeReservationRecommendationProperties,
     ModernSingleScopeReservationRecommendationProperties
 
@@ -3212,7 +3243,138 @@ class ModernReservationRecommendationProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ModernReservationTransaction(Resource):
+class ModernManagementGroupScopeReservationRecommendationProperties(
+    ModernReservationRecommendationProperties, discriminator="ManagementGroup"
+):  # pylint: disable=name-too-long
+    """The properties of the modern reservation recommendation for management group scope.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: Term period of the reservation. ex: P1M, P1Y or P3Y.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: ~decimal.Decimal
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    :ivar last_usage_date: The last usage date used for looking back for computing the
+     recommendation.
+    :vartype last_usage_date: ~datetime.datetime
+    :ivar total_hours: The total hours for which the cost is covered.
+    :vartype total_hours: int
+    :ivar management_group_id: Management group id associated with management group scoped
+     recommendation. Required.
+    :vartype management_group_id: str
+    :ivar tenant_id: The tenant ID associated with the management group. Required.
+    :vartype tenant_id: str
+    :ivar scope: Shared or single recommendation. Required. Default value is "ManagementGroup".
+    :vartype scope: str
+    """
+
+    management_group_id: str = rest_field(name="managementGroupId", visibility=["read"])
+    """Management group id associated with management group scoped recommendation. Required."""
+    tenant_id: str = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID associated with the management group. Required."""
+    scope: Literal["ManagementGroup"] = rest_discriminator(name="scope", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Shared or single recommendation. Required. Default value is \"ManagementGroup\"."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.scope = "ManagementGroup"  # type: ignore
+
+
+class ModernReservationRecommendation(
+    ReservationRecommendation, discriminator="modern"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Modern reservation recommendation.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.consumption.models.SystemData
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar sku: Resource sku.
+    :vartype sku: str
+    :ivar etag: The etag for the resource.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties for modern reservation recommendation. Required.
+    :vartype properties: ~azure.mgmt.consumption.models.ModernReservationRecommendationProperties
+    :ivar kind: Specifies the kind of reservation recommendation. Required. MODERN.
+    :vartype kind: str or ~azure.mgmt.consumption.models.MODERN
+    """
+
+    properties: "_models.ModernReservationRecommendationProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for modern reservation recommendation. Required."""
+    kind: Literal[ReservationRecommendationKind.MODERN] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Specifies the kind of reservation recommendation. Required. MODERN."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: "_models.ModernReservationRecommendationProperties",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = ReservationRecommendationKind.MODERN  # type: ignore
+
+
+class ModernReservationTransaction(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Modern Reservation transaction resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3528,7 +3690,9 @@ class ModernSingleScopeReservationRecommendationProperties(
         self.scope = "Single"  # type: ignore
 
 
-class ModernUsageDetail(UsageDetail, discriminator="modern"):
+class ModernUsageDetail(
+    UsageDetail, discriminator="modern"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Modern usage detail.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4059,7 +4223,7 @@ class ModernUsageDetailProperties(_Model):
     """Name for Cost Allocation Rule."""
 
 
-class Notification(_Model):
+class Notification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The notification associated with a budget.
 
     :ivar enabled: The notification is enabled or not. Required.
@@ -4154,7 +4318,7 @@ class Notification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Consumption REST API operation.
 
     :ivar id: Operation Id.
@@ -4215,7 +4379,7 @@ class OperationDisplay(_Model):
     """Description of the operation."""
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the long running operation.
 
     :ivar status: The status of the long running operation. Known values are: "Running",
@@ -4357,7 +4521,7 @@ class PriceSheetProperties(_Model):
     """SavingsPlan Details."""
 
 
-class PriceSheetResult(ProxyResource):
+class PriceSheetResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An pricesheet resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4444,7 +4608,7 @@ class Reseller(_Model):
     """The reseller property description."""
 
 
-class ReservationDetail(Resource):
+class ReservationDetail(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """reservation detail resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4592,7 +4756,9 @@ class ReservationDetailProperties(_Model):
     """The reservation kind."""
 
 
-class ReservationRecommendationDetailsCalculatedSavingsProperties(_Model):  # pylint: disable=name-too-long
+class ReservationRecommendationDetailsCalculatedSavingsProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Details of estimated savings. The costs and savings are estimated for the term.
 
     :ivar on_demand_cost: The cost without reservation. Includes hardware and software cost.
@@ -4652,7 +4818,7 @@ class ReservationRecommendationDetailsCalculatedSavingsProperties(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ReservationRecommendationDetailsModel(Resource):
+class ReservationRecommendationDetailsModel(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reservation recommendation details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4691,7 +4857,17 @@ class ReservationRecommendationDetailsModel(Resource):
     tags: Optional[dict[str, str]] = rest_field(visibility=["read"])
     """Resource tags."""
 
-    __flattened_items = ["currency", "resource", "resource_group", "savings", "scope", "usage"]
+    __flattened_items = [
+        "currency",
+        "resource",
+        "resource_group",
+        "savings",
+        "scope",
+        "usage",
+        "management_group_id",
+        "tenant_id",
+        "projected_usage",
+    ]
 
     @overload
     def __init__(
@@ -4731,6 +4907,17 @@ class ReservationRecommendationDetailsModel(Resource):
             super().__setattr__(key, value)
 
 
+class ReservationRecommendationDetailsProjectedUsageProperties(_Model):  # pylint: disable=name-too-long
+    """Details about projected usage data that has been used for computing the recommendation.
+
+    :ivar total_retail_usage_in_c_us: Total projected retail usage in commitment units (CUs).
+    :vartype total_retail_usage_in_c_us: float
+    """
+
+    total_retail_usage_in_c_us: Optional[float] = rest_field(name="totalRetailUsageInCUs", visibility=["read"])
+    """Total projected retail usage in commitment units (CUs)."""
+
+
 class ReservationRecommendationDetailsProperties(_Model):  # pylint: disable=name-too-long
     """The properties of the reservation recommendation.
 
@@ -4748,6 +4935,15 @@ class ReservationRecommendationDetailsProperties(_Model):  # pylint: disable=nam
     :vartype scope: str
     :ivar usage: Historical usage details used to calculate the estimated savings.
     :vartype usage: ~azure.mgmt.consumption.models.ReservationRecommendationDetailsUsageProperties
+    :ivar management_group_id: Management group id associated with management group scoped
+     recommendation.
+    :vartype management_group_id: str
+    :ivar tenant_id: The tenant ID associated with the management group. Populated only when
+     managementGroupId is populated.
+    :vartype tenant_id: str
+    :ivar projected_usage: Projected usage details used for generating the recommendation.
+    :vartype projected_usage:
+     ~azure.mgmt.consumption.models.ReservationRecommendationDetailsProjectedUsageProperties
     """
 
     currency: Optional[str] = rest_field(visibility=["read"])
@@ -4762,6 +4958,15 @@ class ReservationRecommendationDetailsProperties(_Model):  # pylint: disable=nam
     """Scope of the reservation, ex: Single or Shared."""
     usage: Optional["_models.ReservationRecommendationDetailsUsageProperties"] = rest_field(visibility=["read"])
     """Historical usage details used to calculate the estimated savings."""
+    management_group_id: Optional[str] = rest_field(name="managementGroupId", visibility=["read"])
+    """Management group id associated with management group scoped recommendation."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID associated with the management group. Populated only when managementGroupId is
+     populated."""
+    projected_usage: Optional["_models.ReservationRecommendationDetailsProjectedUsageProperties"] = rest_field(
+        name="projectedUsage", visibility=["read"]
+    )
+    """Projected usage details used for generating the recommendation."""
 
 
 class ReservationRecommendationDetailsResourceProperties(_Model):  # pylint: disable=name-too-long
@@ -4801,7 +5006,9 @@ class ReservationRecommendationDetailsResourceProperties(_Model):  # pylint: dis
     """The azure resource type."""
 
 
-class ReservationRecommendationDetailsSavingsProperties(_Model):  # pylint: disable=name-too-long
+class ReservationRecommendationDetailsSavingsProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Details of the estimated savings.
 
     :ivar calculated_savings: List of calculated savings.
@@ -4886,7 +5093,7 @@ class ReservationRecommendationDetailsUsageProperties(_Model):  # pylint: disabl
     """The grain of the values represented in the usage data ex: hourly."""
 
 
-class ReservationSummary(Resource):
+class ReservationSummary(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """reservation summary resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5069,7 +5276,7 @@ class ReservationSummaryProperties(_Model):
     """This is the utilized percentage for the reservation Id."""
 
 
-class ReservationTransaction(Resource):
+class ReservationTransaction(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reservation transaction resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5192,7 +5399,7 @@ class SkuProperty(_Model):
     """The value of sku property."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -5259,7 +5466,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tag(_Model):
+class Tag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The tag resource.
 
     :ivar key: Tag key.
@@ -5292,7 +5499,7 @@ class Tag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagProperties(_Model):
+class TagProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the tag.
 
     :ivar tags: A list of Tag.
@@ -5328,7 +5535,7 @@ class TagProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResult(ProxyResource):
+class TagsResult(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A resource listing all tags.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
