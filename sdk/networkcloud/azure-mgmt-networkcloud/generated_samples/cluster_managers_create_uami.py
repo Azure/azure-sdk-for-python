@@ -47,6 +47,7 @@ def main():
                 "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.OperationalInsights/workspaces/logAnalyticsWorkspaceName",
                 "fabricControllerId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabricControllers/fabricControllerName",
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
+                "rolloutRing": 2,
             },
             "tags": {"key1": "myvalue1", "key2": "myvalue2"},
         },
@@ -54,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-07-01/ClusterManagers_Create_Uami.json
+# x-ms-original-file: 2026-08-01-preview/ClusterManagers_Create_Uami.json
 if __name__ == "__main__":
     main()

@@ -66,6 +66,7 @@ class TestNetworkCloudMgmtStorageAppliancesOperationsAsync(AzureMgmtRecordedTest
                                 "lastRotationTime": "2020-02-20 00:00:00",
                                 "rotationPeriodDays": 0,
                                 "secretArchiveReference": {
+                                    "encryptionPublicKey": "str",
                                     "keyVaultId": "str",
                                     "keyVaultUri": "str",
                                     "secretName": "str",
