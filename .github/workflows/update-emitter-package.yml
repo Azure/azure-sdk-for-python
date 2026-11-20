@@ -1,0 +1,162 @@
+name: Update emitter package
+# Checks every dependency in eng/emitter-package.json for updates in the Azure SDK CFS
+# npm feed. When versions change, regenerates the lock file and opens or updates a draft PR.
+on:
+  schedule:
+    - cron: "0 15 * * 1-5" # Weekdays at 15:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-emitter-package
+  cancel-in-progress: false
+
+env:
+  PR_BRANCH: automated/update-emitter-package
+  # Resolve packages only through the Azure SDK CFS feeds (anonymous read on the public project).
+  NPM_CONFIG_REGISTRY: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-js/npm/registry/
+  PIP_INDEX_URL: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+  UV_DEFAULT_INDEX: https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+
+jobs:
+  update-emitter-package:
+    if: github.repository == 'Azure/azure-sdk-for-python'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      available: ${{ steps.updates.outputs.available }}
+      baseline: ${{ steps.checkout.outputs.commit }}
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: "24.x"
+
+      - name: Install emitter update tools
+        run: npm install --global npm-check-updates @azure-tools/typespec-client-generator-cli
+
+      - name: Update emitter package dependencies
+        id: updates
+        run: |
+          ncu --packageFile eng/emitter-package.json --upgrade --registry "$NPM_CONFIG_REGISTRY"
+          changed="$(git diff --name-only -- eng/emitter-package.json)"
+          if [ -n "$changed" ]; then
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "No emitter dependency updates found."
+          fi
+
+      - name: Regenerate emitter package lock file
+        if: steps.updates.outputs.available == 'true'
+        run: tsp-client generate-lock-file
+
+      - name: Upload untrusted update files
+        if: steps.updates.outputs.available == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: emitter-package-update
+          path: |
+            eng/emitter-package.json
+            eng/emitter-package-lock.json
+          if-no-files-found: error
+          retention-days: 1
+
+  publish-emitter-package:
+    needs: update-emitter-package
+    if: needs.update-emitter-package.outputs.available == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout trusted baseline
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          # Never execute code from a ref supplied by the untrusted generator.
+          ref: main
+          persist-credentials: false
+
+      - name: Download untrusted update files
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: emitter-package-update
+          path: ${{ runner.temp }}/emitter-package-update
+
+      - name: Validate and prepare update files
+        id: validated
+        env:
+          EXPECTED_BASELINE: ${{ needs.update-emitter-package.outputs.baseline }}
+        run: |
+          actual_baseline="$(git rev-parse HEAD)"
+          if [ "$EXPECTED_BASELINE" != "$actual_baseline" ]; then
+            echo "::error::main changed during update generation; rerun the workflow."
+            exit 1
+          fi
+          python3 -I .github/workflows/scripts/prepare_emitter_package_update.py "$RUNNER_TEMP/emitter-package-update"
+
+      - name: Create or update draft pull request
+        if: steps.validated.outputs.available == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          if git diff --quiet -- eng/emitter-package.json eng/emitter-package-lock.json; then
+            echo "Emitter package is already up to date."
+            exit 0
+          fi
+
+          git diff -- eng/emitter-package.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout -B "$PR_BRANCH"
+          git add eng/emitter-package.json eng/emitter-package-lock.json
+          git diff --cached --exit-code -- . ':!eng/emitter-package.json' ':!eng/emitter-package-lock.json'
+          unchanged=false
+          gh auth setup-git
+          remote_head=$(git ls-remote --heads origin "refs/heads/$PR_BRANCH")
+          if [ -n "$remote_head" ]; then
+            git fetch --no-tags origin "refs/heads/$PR_BRANCH"
+            candidate_tree=$(git write-tree)
+            existing_tree=$(git rev-parse 'FETCH_HEAD^{tree}')
+            if [ "$candidate_tree" = "$existing_tree" ]; then
+              unchanged=true
+            fi
+          fi
+
+          if [ "$unchanged" = true ]; then
+            echo "Automation branch already contains this update."
+          else
+            git commit -m "[Automation] Update emitter package dependencies"
+            git push --force origin "$PR_BRANCH"
+          fi
+
+          existing_pr=$(gh pr list --head "$PR_BRANCH" --base main --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing_pr" ]; then
+            echo "Updated existing pull request #$existing_pr."
+            exit 0
+          fi
+
+          gh pr create \
+            --draft \
+            --base main \
+            --head "$PR_BRANCH" \
+            --title "[Automation] Update emitter package dependencies" \
+            --body "This automated PR updates the emitter package dependencies through the Azure SDK CFS feed in \`eng/emitter-package.json\` and regenerates \`eng/emitter-package-lock.json\`. Generated by the [Update emitter package workflow](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})."
