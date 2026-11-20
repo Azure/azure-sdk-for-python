@@ -13,6 +13,8 @@ azure-mgmt-resource
 azure-mgmt-subscription
 azure-monitor-opentelemetry
 azure-monitor-query
+# Offline tests for the CI-only Azure Search provisioning script.
+azure-search-documents==12.1.0
 jsonref
 opentelemetry-sdk
 python-dotenv

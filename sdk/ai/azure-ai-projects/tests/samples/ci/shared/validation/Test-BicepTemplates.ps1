@@ -319,8 +319,22 @@ if ($service['properties']['semanticSearch'] -cne 'free') {
 $scriptContent = [IO.File]::ReadAllText((Join-Path $infra 'search-indexing.py'))
 $loadedScripts = @($searchTemplate['variables'].GetEnumerator() |
     Where-Object { $_.Value -is [string] -and $_.Value -ceq $scriptContent })
+$requirementsPath = Join-Path $infra 'requirements-search-indexing.txt'
+$requirementsText = [IO.File]::ReadAllText($requirementsPath)
+$lockedRequirements = @(Get-Content -LiteralPath $requirementsPath | Where-Object { $_ -notmatch '^\s*(#|$)' })
+$loadedRequirements = @($searchTemplate['variables'].GetEnumerator() |
+    Where-Object { $_.Value -is [string] -and $_.Value -ceq $requirementsText })
+$compiledSearchScript = [string] $searchScript['properties']['scriptContent']
+if ($lockedRequirements.Count -eq 0 -or
+    @($lockedRequirements -cnotmatch '^[A-Za-z0-9_-]+==[0-9.]+ --hash=sha256:[a-f0-9]{64}$').Count -ne 0 -or
+    $loadedRequirements.Count -ne 1 -or
+    -not $compiledSearchScript.Contains("variables('$($loadedRequirements[0].Key)')") -or
+    $compiledSearchScript -cnotmatch 'PIP_CONFIG_FILE=/dev/null[^\r\n]*--isolated' -or
+    $compiledSearchScript -cnotmatch '--index-url https://pypi\.org/simple --require-hashes --only-binary=:all: --ignore-installed') {
+    throw 'Search deployment dependencies must be fully pinned, hash-verified wheels from the explicit index.'
+}
 if ($loadedScripts.Count -ne 1 -or
-    -not ([string] $searchScript['properties']['scriptContent']).Contains("variables('$($loadedScripts[0].Key)')") -or
+    -not $compiledSearchScript.Contains("variables('$($loadedScripts[0].Key)')") -or
     $scriptContent -notmatch '2026-04-01' -or $scriptContent -notmatch 'wait_for_indexer' -or
     $scriptContent -match '\baz\s+role\s+assignment|\blistKeys\b|\blistAdminKeys\b') {
     throw 'Search data-plane execution must wait for indexers and use tokens rather than IAM writes or keys.'
