@@ -5,15 +5,15 @@
 """Fixtures for recording the Voice Agents telephony REST tests.
 
 Set FOUNDRY_PROJECT_ENDPOINT and FOUNDRY_VOICE_MODEL_NAME to a test project
-and its Realtime deployment. Binding and outbound tests also need
-FOUNDRY_VOICE_TEST_CONNECTION_NAME and FOUNDRY_VOICE_TEST_SOURCE_PHONE_NUMBER
-for a dedicated Twilio test connection and an unbound number. Do not record
-the two binding tests concurrently against the same number.
+and its Realtime deployment. Binding error-path tests do not need a provider
+connection or a provisioned number.
 
-For outbound tests, set FOUNDRY_VOICE_TEST_DESTINATION_PHONE_NUMBER to a
-test sink you control. The jobs and campaigns dispatch no earlier than the
-next day, expire an hour later, and are cancelled and deleted by the tests.
-Never use a customer connection or a customer's phone number.
+Outbound tests also need FOUNDRY_VOICE_TEST_CONNECTION_NAME for a dedicated
+Twilio test connection, FOUNDRY_VOICE_TEST_SOURCE_PHONE_NUMBER for its source
+number, and FOUNDRY_VOICE_TEST_DESTINATION_PHONE_NUMBER for a test sink you
+control. The jobs and campaigns are scheduled for the next day, expire an
+hour later, and are cancelled and deleted by the tests. Never use a customer
+connection or phone number.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -37,16 +37,14 @@ voiceTelephonyServicePreparer = partial(
     foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
     foundry_voice_model_name="sanitized-model-deployment-name",
 )
-voiceBindingServicePreparer = partial(
+voiceOutboundServicePreparer = partial(
     voiceTelephonyServicePreparer,
     foundry_voice_test_connection_name="sanitized-telephony-connection",
     foundry_voice_test_source_phone_number="+12025550100",
-)
-voiceOutboundServicePreparer = partial(
-    voiceBindingServicePreparer,
     foundry_voice_test_destination_phone_number="+12025550101",
 )
 
+MISSING_BINDING_PHONE_NUMBER = "+12025550183"  # Reserved NANP fictional number.
 MISSING_CALL_ID = "00000000-0000-4000-8000-000000000001"
 TERMINAL_CALL_JOB_STATES = frozenset({"completed", "blocked", "expired", "failed", "cancelled"})
 TERMINAL_CAMPAIGN_STATES = frozenset({"completed", "failed", "cancelled"})

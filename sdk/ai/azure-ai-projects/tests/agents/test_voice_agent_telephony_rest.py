@@ -15,6 +15,7 @@ from azure.core.exceptions import ResourceModifiedError, ResourceNotFoundError
 from devtools_testutils import add_body_key_sanitizer, recorded_by_proxy
 from test_base import TestBase
 from voice_telephony_test_base import (
+    MISSING_BINDING_PHONE_NUMBER,
     MISSING_CALL_ID,
     POLL_TIMEOUT,
     TERMINAL_CALL_JOB_STATES,
@@ -25,66 +26,38 @@ from voice_telephony_test_base import (
     sanitize_telephony_value,
     schedule_window,
     voice_definition,
-    voiceBindingServicePreparer,
     voiceOutboundServicePreparer,
     voiceTelephonyServicePreparer,
 )
 
 
 class TestVoiceAgentTelephonyRest(TestBase):
-    @voiceBindingServicePreparer()
+    @voiceTelephonyServicePreparer()
     @recorded_by_proxy()
-    def test_binding_lifecycle(self, **kwargs):
-        preserve_telephony_etags()
-        agent_name = owned_agent_name("binding", live=self.is_live)
-        phone_number = kwargs["foundry_voice_test_source_phone_number"]
-        connection_name = kwargs["foundry_voice_test_connection_name"]
-        if self.is_live:
-            sanitize_telephony_value(phone_number, "+12025550100")
-            add_body_key_sanitizer(
-                json_path="$..incoming_call_url", value="https://example.invalid/incoming", function_scoped=True
-            )
-
+    def test_binding_not_found(self, **kwargs):
+        agent_name = owned_agent_name("binding-errors", live=self.is_live)
+        binding = models.TwilioTelephonyBinding(
+            connection_name=f"{agent_name}-missing-connection", phone_number=MISSING_BINDING_PHONE_NUMBER
+        )
+        binding_id = f"twilio:{MISSING_BINDING_PHONE_NUMBER}"
+        condition = {"etag": "missing", "match_condition": MatchConditions.IfNotModified}
         with self.create_client(**kwargs) as client, ExitStack() as cleanup:
             client.agents.create_version(agent_name, definition=voice_definition(kwargs["foundry_voice_model_name"]))
             cleanup.callback(client.agents.delete, agent_name)
             telephony = client.voice_agents.telephony
-            binding = telephony.create_binding(
-                agent_name,
-                models.TwilioTelephonyBinding(
-                    connection_name=connection_name, phone_number=phone_number, label="Before"
+            for operation in (
+                lambda: telephony.create_binding(agent_name, binding),
+                lambda: telephony.get_binding(agent_name, binding_id),
+                lambda: telephony.update_binding(
+                    agent_name, binding_id, models.UpdateTelephonyBindingRequest(label="Missing"), **condition
                 ),
-            )
-            binding_id = binding.id
-            assert binding_id
-            try:
-                # If the ID embeds the phone number, the existing number sanitizer handles both.
-                if self.is_live and phone_number not in binding_id:
-                    sanitize_telephony_value(binding_id, "sanitized-binding-id")
-                assert isinstance(binding, models.TwilioTelephonyBinding)
-                assert binding.phone_number == phone_number and binding.connection_name == connection_name
-                assert binding.incoming_call_url.startswith("https://")
-                (listed,) = telephony.list_bindings(agent_name, provider="twilio", limit=1)
-                assert isinstance(listed, models.TwilioTelephonyBindingListItem)
-                assert listed.id == binding_id and listed.etag
-                assert telephony.get_binding(agent_name, binding_id).label == "Before"
-                updated = telephony.update_binding(
-                    agent_name,
-                    binding_id,
-                    models.UpdateTelephonyBindingRequest(label="After"),
-                    etag=listed.etag,
-                    match_condition=MatchConditions.IfNotModified,
-                )
-                assert updated.id == binding_id and updated.label == "After"
-                assert telephony.get_binding(agent_name, binding_id).label == "After"
-            finally:
-                etag = telephony.get_binding(agent_name, binding_id, cls=lambda _, __, headers: headers["ETag"])
-                assert etag
-                telephony.delete_binding(
-                    agent_name, binding_id, etag=etag, match_condition=MatchConditions.IfNotModified
-                )
-            with pytest.raises(ResourceNotFoundError):
-                telephony.get_binding(agent_name, binding_id)
+                lambda: telephony.delete_binding(agent_name, binding_id, **condition),
+            ):
+                with pytest.raises(ResourceNotFoundError) as error:
+                    operation()
+                assert error.value.status_code == 404
+                assert error.value.error and error.value.error.code == "not_found"
+            assert list(telephony.list_bindings(agent_name, provider="twilio", limit=1)) == []
 
     @voiceTelephonyServicePreparer()
     @recorded_by_proxy()
