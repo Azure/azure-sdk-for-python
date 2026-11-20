@@ -5,3 +5,4 @@ extends:
     template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
     parameters:
       ServiceDirectory: compute
+      BuildTargetingString: azure-mgmt-avs,azure-mgmt-compute,azure-mgmt-compute-bulkaction,azure-mgmt-computeworkloadmanager,azure-mgmt-imagebuilder
