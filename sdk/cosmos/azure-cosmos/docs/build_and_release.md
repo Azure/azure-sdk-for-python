@@ -1465,14 +1465,14 @@ The package builder rejects wheels without exactly one nonempty compiled
 `_rust` extension, but file presence does not prove that the extension loads
 or that SDK operations work.
 
-Follow [Validate a wheel locally and in the pipeline](wheel_validation.md):
+Validate a wheel locally and in the pipeline:
 
-- [Local validation](wheel_validation.md#validate-one-wheel-locally) follows
-  one exact wheel through archive inspection, clean installation, import
-  checks, offline suites, and sync/async emulator operations.
-- [Pipeline validation](wheel_validation.md#validate-the-release-wheels-in-the-pipeline)
-  identifies the final release files, checks each platform/Python combination,
-  and separates implemented checks from missing release evidence.
+- Local validation follows one exact wheel through archive inspection, clean
+  installation, import checks, offline suites, and sync/async emulator
+  operations.
+- Pipeline validation identifies the final release files, checks each
+  platform/Python combination, and separates implemented checks from missing
+  release evidence.
 
 Each local step supplies commands and expected results. A successful local
 check does not establish that the other platform wheels work.
@@ -3160,9 +3160,9 @@ wrapper or Rust driver change is needed.
 Our Cosmos team must then install each final Linux wheel and compare
 `_rust.__python_commit__` with the source commit recorded by the build that
 produced it. An absent value, `unknown`, or a different commit must fail the
-release check. Follow the
-[installed-wheel commit check](wheel_validation.md#1-match-the-outputs-to-the-intended-release);
-keep this item open until the final-wheel results exist.
+release check. Follow the installed-wheel commit check (matching the outputs
+to the intended release); keep this item open until the final-wheel results
+exist.
 
 **Open follow-up with Central: limit access to the Rust installer token.**
 A token is a credential that lets a program access resources without entering
@@ -3190,10 +3190,10 @@ where the credential is supplied, not its actual permissions or evidence of
 theft. No customer app, Python wrapper, or Rust driver change is needed.
 
 **Release-wheel validation remains open until the required results exist.**
-Follow the [local and pipeline validation walkthrough](wheel_validation.md).
-The release record must identify the final wheel files and show results for
-each required platform/Python combination. Source-level tests and pipeline
-configuration alone do not establish that those wheels install and run.
+Follow the local and pipeline validation walkthrough. The release record must
+identify the final wheel files and show results for each required
+platform/Python combination. Source-level tests and pipeline configuration
+alone do not establish that those wheels install and run.
 
 The package keeps technical terms in `sdk/cosmos/azure-cosmos/cspell.json`,
 without changing the root dictionary. The SDK templates use file-local

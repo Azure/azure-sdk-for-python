@@ -177,7 +177,11 @@
     },
     {
       "filename": "docs/api-review.md",
-      "ignoreWords": ["containerproxyis"]
+      "ignoreWords": ["containerproxyis", "wirte"]
+    },
+    {
+      "filename": "tests/common/test_create_database_backend_unit.py",
+      "ignoreWords": ["wirte"]
     },
     {
       "filename": "docs/build_and_release.md",
