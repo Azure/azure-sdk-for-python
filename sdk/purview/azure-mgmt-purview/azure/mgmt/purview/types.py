@@ -75,7 +75,7 @@ class Resource(TypedDict, total=False):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class ProxyResource(Resource):
+class ProxyResource(Resource, total=False):
     """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -92,7 +92,7 @@ class ProxyResource(Resource):
     """
 
 
-class Account(ProxyResource):
+class Account(ProxyResource, total=False):
     """Account resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -298,7 +298,7 @@ class AccountStatus(TypedDict, total=False):
     """Gets the account error details."""
 
 
-class AccountPropertiesAccountStatus(AccountStatus):
+class AccountPropertiesAccountStatus(AccountStatus, total=False):
     """Gets or sets the status of the account.
 
     :ivar account_provisioning_state: Gets the account status code. Known values are: "Unknown",
@@ -310,7 +310,7 @@ class AccountPropertiesAccountStatus(AccountStatus):
     """
 
 
-class AccountPropertiesEndpoints(AccountEndpoints):
+class AccountPropertiesEndpoints(AccountEndpoints, total=False):
     """The URIs that are the public endpoints of the account.
 
     :ivar catalog: Gets the catalog endpoint.
@@ -341,7 +341,7 @@ class ManagedResources(TypedDict, total=False):
     """Gets the managed storage account resource identifier."""
 
 
-class AccountPropertiesManagedResources(ManagedResources):
+class AccountPropertiesManagedResources(ManagedResources, total=False):
     """Gets the resource identifiers of the managed resources.
 
     :ivar event_hub_namespace: Gets the managed event hub namespace resource identifier.
@@ -392,7 +392,7 @@ class ErrorModel(TypedDict, total=False):
     """Gets or sets the target."""
 
 
-class AccountStatusErrorDetails(ErrorModel):
+class AccountStatusErrorDetails(ErrorModel, total=False):
     """Gets the account error details.
 
     :ivar code: Gets or sets the code.
@@ -584,7 +584,7 @@ class ErrorResponseModel(TypedDict, total=False):
     """Gets or sets the error."""
 
 
-class ErrorResponseModelError(ErrorModel):
+class ErrorResponseModelError(ErrorModel, total=False):
     """Gets or sets the error.
 
     :ivar code: Gets or sets the code.
@@ -644,7 +644,7 @@ class IngestionStorage(TypedDict, total=False):
      \"Enabled\", and \"Disabled\"."""
 
 
-class KafkaConfiguration(ProxyResource):
+class KafkaConfiguration(ProxyResource, total=False):
     """The configuration of the event streaming service resource attached to the Purview account for
     kafka notifications.
 
@@ -872,7 +872,7 @@ class PrivateEndpoint(TypedDict, total=False):
     """The private endpoint identifier."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource, total=False):
     """A private endpoint connection class.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -943,7 +943,7 @@ class PrivateEndpointConnectionStatusUpdateResponse(TypedDict, total=False):  # 
     """The private endpoint connection status."""
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ProxyResource, total=False):
     """A privately linkable resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1098,7 +1098,7 @@ class UsageList(TypedDict, total=False):
     """The link to the next page of items."""
 
 
-class UsageName(QuotaName):
+class UsageName(QuotaName, total=False):
     """Quota name.
 
     :ivar localized_value: Gets or sets the localized name value.
