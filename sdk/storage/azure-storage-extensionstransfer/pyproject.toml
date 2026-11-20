@@ -1,0 +1,72 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "azure-storage-extensionstransfer"
+authors = [
+  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+]
+description = "Native acceleration for Azure Storage Python SDKs transfer operations"
+license = "MIT"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["azure", "azure sdk"]
+dynamic = ["version"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "azure.storage.extensions.transfer._native"
+python-source = "."
+
+[tool.azure-sdk-build]
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false
+pylint = false
+sphinx = false
+verifysdist = false
+verifywhl = false
+sdist = false
+breaking = false
+suppressed_skip_warnings = ["*"]
+
+[tool.azure-sdk-conda]
+in_bundle = false
+
+[tool.cibuildwheel]
+build = ["cp310*", "cp311*", "cp312*", "cp313*", "cp314*"]
+test-command = 'python -I "{project}/tests/test_wheel.py"'
+
+[tool.cibuildwheel.linux]
+archs = "x86_64 aarch64"
+skip = "*-musllinux_*"
+environment = { MSRUSTUP_HOME = "/msrustup", CARGO_HOME = "/cargo", PATH = "/msrustup/multiplexers/bin:$PATH" }
+before-all = "dnf install -y jq && mkdir -p $MSRUSTUP_HOME/bootstrap && cd $MSRUSTUP_HOME/bootstrap && sh /project/scripts/install-msrustup.sh && cd /project && $MSRUSTUP_HOME/bootstrap/msrustup toolchain install && sh /project/scripts/configure-cargo-feed.sh"
+
+[tool.cibuildwheel.macos]
+archs = "arm64"
+
+[tool.cibuildwheel.windows]
+archs = "AMD64 ARM64"
