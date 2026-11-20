@@ -37,13 +37,68 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
+    build_ai_gateway_alias_resources_check_existence_request,
+    build_ai_gateway_alias_resources_create_or_update_request,
+    build_ai_gateway_alias_resources_delete_request,
+    build_ai_gateway_alias_resources_get_request,
+    build_ai_gateway_alias_resources_list_by_workspace_request,
+    build_ai_gateway_alias_resources_update_request,
+    build_ai_gateway_api_key_resources_check_existence_request,
+    build_ai_gateway_api_key_resources_create_or_update_request,
+    build_ai_gateway_api_key_resources_delete_request,
+    build_ai_gateway_api_key_resources_get_request,
+    build_ai_gateway_api_key_resources_list_by_ai_gateway_request,
+    build_ai_gateway_api_key_resources_list_secrets_request,
+    build_ai_gateway_api_key_resources_regenerate_primary_key_request,
+    build_ai_gateway_api_key_resources_regenerate_secondary_key_request,
+    build_ai_gateway_api_key_resources_update_request,
+    build_ai_gateway_model_provider_resources_check_existence_request,
+    build_ai_gateway_model_provider_resources_create_or_update_request,
+    build_ai_gateway_model_provider_resources_delete_request,
+    build_ai_gateway_model_provider_resources_get_request,
+    build_ai_gateway_model_provider_resources_list_by_workspace_request,
+    build_ai_gateway_model_provider_resources_list_secrets_request,
+    build_ai_gateway_model_provider_resources_update_request,
+    build_ai_gateway_model_resources_check_existence_request,
+    build_ai_gateway_model_resources_create_or_update_request,
+    build_ai_gateway_model_resources_delete_request,
+    build_ai_gateway_model_resources_get_request,
+    build_ai_gateway_model_resources_list_by_model_provider_request,
+    build_ai_gateway_model_resources_update_request,
+    build_ai_gateway_name_availability_operations_check_name_availability_request,
+    build_ai_gateway_private_endpoint_connections_create_or_update_request,
+    build_ai_gateway_private_endpoint_connections_delete_request,
+    build_ai_gateway_private_endpoint_connections_get_request,
+    build_ai_gateway_private_endpoint_connections_list_by_ai_gateway_request,
+    build_ai_gateway_private_link_resources_get_request,
+    build_ai_gateway_private_link_resources_list_by_ai_gateway_request,
     build_ai_gateway_resources_create_or_update_request,
     build_ai_gateway_resources_delete_request,
     build_ai_gateway_resources_get_request,
     build_ai_gateway_resources_list_by_resource_group_request,
     build_ai_gateway_resources_list_by_subscription_request,
     build_ai_gateway_resources_update_request,
+    build_ai_gateway_telemetry_exporter_resources_check_existence_request,
+    build_ai_gateway_telemetry_exporter_resources_create_or_update_request,
+    build_ai_gateway_telemetry_exporter_resources_delete_request,
+    build_ai_gateway_telemetry_exporter_resources_get_request,
+    build_ai_gateway_telemetry_exporter_resources_list_by_workspace_request,
+    build_ai_gateway_telemetry_exporter_resources_update_request,
+    build_ai_gateway_tool_server_resources_check_existence_request,
+    build_ai_gateway_tool_server_resources_create_or_update_request,
+    build_ai_gateway_tool_server_resources_delete_request,
+    build_ai_gateway_tool_server_resources_get_oauth2_login_links_request,
+    build_ai_gateway_tool_server_resources_get_request,
+    build_ai_gateway_tool_server_resources_list_by_workspace_request,
+    build_ai_gateway_tool_server_resources_list_secrets_request,
+    build_ai_gateway_tool_server_resources_update_request,
+    build_ai_gateway_workspace_model_operations_list_by_workspace_request,
+    build_ai_gateway_workspace_resources_check_existence_request,
+    build_ai_gateway_workspace_resources_get_request,
+    build_ai_gateway_workspace_resources_list_by_ai_gateway_request,
+    build_ai_gateway_workspace_resources_update_request,
     build_operations_list_request,
 )
 from .._configuration import AIGatewayMgmtClientConfiguration
@@ -135,6 +190,2039 @@ class Operations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.Operation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayNameAvailabilityOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_name_availability_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def check_name_availability(
+        self,
+        location: str,
+        body: _models.AiGatewayCheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayCheckNameAvailabilityResponse:
+        """Checks whether an AI Gateway name is valid and available in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The CheckAvailability request. Required.
+        :type body: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayCheckNameAvailabilityResponse. The AiGatewayCheckNameAvailabilityResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def check_name_availability(
+        self,
+        location: str,
+        body: _types.AiGatewayCheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayCheckNameAvailabilityResponse:
+        """Checks whether an AI Gateway name is valid and available in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The CheckAvailability request. Required.
+        :type body: ~azure.mgmt.aigateway.types.AiGatewayCheckNameAvailabilityRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayCheckNameAvailabilityResponse. The AiGatewayCheckNameAvailabilityResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def check_name_availability(
+        self, location: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AiGatewayCheckNameAvailabilityResponse:
+        """Checks whether an AI Gateway name is valid and available in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The CheckAvailability request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayCheckNameAvailabilityResponse. The AiGatewayCheckNameAvailabilityResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={"2026-11-01": ["api_version", "subscription_id", "location", "content_type", "accept"]},
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_name_availability(
+        self,
+        location: str,
+        body: Union[
+            _models.AiGatewayCheckNameAvailabilityRequest, _types.AiGatewayCheckNameAvailabilityRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.AiGatewayCheckNameAvailabilityResponse:
+        """Checks whether an AI Gateway name is valid and available in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param body: The CheckAvailability request. Is either a AiGatewayCheckNameAvailabilityRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityRequest or
+         ~azure.mgmt.aigateway.types.AiGatewayCheckNameAvailabilityRequest or IO[bytes]
+        :return: AiGatewayCheckNameAvailabilityResponse. The AiGatewayCheckNameAvailabilityResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayCheckNameAvailabilityResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayCheckNameAvailabilityResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_name_availability_operations_check_name_availability_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayCheckNameAvailabilityResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class AiGatewayTelemetryExporterResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_telemetry_exporter_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "telemetry_exporter_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_telemetry_exporter_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            telemetry_exporter_name=telemetry_exporter_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "telemetry_exporter_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Get a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayTelemetryExporterResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_telemetry_exporter_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            telemetry_exporter_name=telemetry_exporter_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayTelemetryExporterResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        resource: _models.AiGatewayTelemetryExporterResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Create a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        resource: _types.AiGatewayTelemetryExporterResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Create a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayTelemetryExporterResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Create a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "telemetry_exporter_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        resource: Union[
+            _models.AiGatewayTelemetryExporterResource, _types.AiGatewayTelemetryExporterResource, IO[bytes]
+        ],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Create a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayTelemetryExporterResource
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource or
+         ~azure.mgmt.aigateway.types.AiGatewayTelemetryExporterResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayTelemetryExporterResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_telemetry_exporter_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            telemetry_exporter_name=telemetry_exporter_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayTelemetryExporterResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        properties: _models.AiGatewayTelemetryExporterUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Update a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        properties: _types.AiGatewayTelemetryExporterUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Update a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayTelemetryExporterUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Update a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "telemetry_exporter_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        properties: Union[
+            _models.AiGatewayTelemetryExporterUpdateParameters,
+            _types.AiGatewayTelemetryExporterUpdateParameters,
+            IO[bytes],
+        ],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayTelemetryExporterResource:
+        """Update a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayTelemetryExporterUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayTelemetryExporterUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayTelemetryExporterResource. The AiGatewayTelemetryExporterResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayTelemetryExporterResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_telemetry_exporter_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            telemetry_exporter_name=telemetry_exporter_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayTelemetryExporterResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "telemetry_exporter_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        telemetry_exporter_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayTelemetryExporterResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param telemetry_exporter_name: The name of the AiGatewayTelemetryExporterResource. Required.
+        :type telemetry_exporter_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_telemetry_exporter_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            telemetry_exporter_name=telemetry_exporter_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_workspace(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayTelemetryExporterResource"]:
+        """List AiGatewayTelemetryExporterResource resources by AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of AiGatewayTelemetryExporterResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayTelemetryExporterResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayTelemetryExporterResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_telemetry_exporter_resources_list_by_workspace_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayTelemetryExporterResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayAliasResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_alias_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "alias_id",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, alias_id: str, **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_alias_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            alias_id=alias_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "alias_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, alias_id: str, **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Get a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayAliasResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_alias_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            alias_id=alias_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayAliasResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        resource: _models.AiGatewayAliasResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Create a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        resource: _types.AiGatewayAliasResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Create a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayAliasResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Create a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "alias_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        resource: Union[_models.AiGatewayAliasResource, _types.AiGatewayAliasResource, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Create a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param resource: Resource create parameters. Is either a AiGatewayAliasResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayAliasResource or
+         ~azure.mgmt.aigateway.types.AiGatewayAliasResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayAliasResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_alias_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            alias_id=alias_id,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayAliasResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        properties: _models.AiGatewayAliasUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Update a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayAliasUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        properties: _types.AiGatewayAliasUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Update a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayAliasUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Update a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "alias_id",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        properties: Union[_models.AiGatewayAliasUpdateParameters, _types.AiGatewayAliasUpdateParameters, IO[bytes]],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayAliasResource:
+        """Update a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayAliasUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayAliasUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayAliasUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayAliasResource. The AiGatewayAliasResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayAliasResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayAliasResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_alias_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            alias_id=alias_id,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayAliasResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "alias_id",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        alias_id: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayAliasResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param alias_id: The name of the AiGatewayAliasResource. Required.
+        :type alias_id: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_alias_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            alias_id=alias_id,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_workspace(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayAliasResource"]:
+        """List AiGatewayAliasResource resources by AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of AiGatewayAliasResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayAliasResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayAliasResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_alias_resources_list_by_workspace_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayAliasResource],
                 deserialized.get("value", []),
             )
             if cls:
@@ -1071,6 +3159,5903 @@ class AiGatewayResourcesOperations:  # pylint: disable=docstring-missing-param
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.AiGatewayResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayPrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_private_endpoint_connections` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_endpoint_connection_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> _models.AiGatewayPrivateEndpointConnection:
+        """Get a AiGatewayResource PrivateEndpointConnection.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :return: AiGatewayPrivateEndpointConnection. The AiGatewayPrivateEndpointConnection is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_private_endpoint_connections_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayPrivateEndpointConnection, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        private_endpoint_connection_name: str,
+        resource: Union[
+            _models.AiGatewayPrivateEndpointConnection, _types.AiGatewayPrivateEndpointConnection, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_private_endpoint_connections_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        private_endpoint_connection_name: str,
+        resource: _models.AiGatewayPrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection]:
+        """Approves or rejects a private endpoint connection. While the decision is applied,
+        ``properties.provisioningState`` is ``Updating``, a service-defined value of the extensible
+        provisioning state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AiGatewayPrivateEndpointConnection. The
+         AiGatewayPrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        private_endpoint_connection_name: str,
+        resource: _types.AiGatewayPrivateEndpointConnection,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection]:
+        """Approves or rejects a private endpoint connection. While the decision is applied,
+        ``properties.provisioningState`` is ``Updating``, a service-defined value of the extensible
+        provisioning state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayPrivateEndpointConnection
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AiGatewayPrivateEndpointConnection. The
+         AiGatewayPrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        private_endpoint_connection_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection]:
+        """Approves or rejects a private endpoint connection. While the decision is applied,
+        ``properties.provisioningState`` is ``Updating``, a service-defined value of the extensible
+        provisioning state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns AiGatewayPrivateEndpointConnection. The
+         AiGatewayPrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_endpoint_connection_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        private_endpoint_connection_name: str,
+        resource: Union[
+            _models.AiGatewayPrivateEndpointConnection, _types.AiGatewayPrivateEndpointConnection, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection]:
+        """Approves or rejects a private endpoint connection. While the decision is applied,
+        ``properties.provisioningState`` is ``Updating``, a service-defined value of the extensible
+        provisioning state.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayPrivateEndpointConnection
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection or
+         ~azure.mgmt.aigateway.types.AiGatewayPrivateEndpointConnection or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns AiGatewayPrivateEndpointConnection. The
+         AiGatewayPrivateEndpointConnection is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayPrivateEndpointConnection] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                ai_gateway_name=ai_gateway_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                resource=resource,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AiGatewayPrivateEndpointConnection, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.AiGatewayPrivateEndpointConnection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def _delete_initial(
+        self, resource_group_name: str, ai_gateway_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_private_endpoint_connections_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            private_endpoint_connection_name=private_endpoint_connection_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_endpoint_connection_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def begin_delete(
+        self, resource_group_name: str, ai_gateway_name: str, private_endpoint_connection_name: str, **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Deletes a private endpoint connection. Until the connection is removed,
+        ``properties.provisioningState`` is ``Deleting``.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_endpoint_connection_name: The name of the private endpoint connection associated
+         with the Azure resource. Required.
+        :type private_endpoint_connection_name: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._delete_initial(
+                resource_group_name=resource_group_name,
+                ai_gateway_name=ai_gateway_name,
+                private_endpoint_connection_name=private_endpoint_connection_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_ai_gateway(
+        self, resource_group_name: str, ai_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayPrivateEndpointConnection"]:
+        """List AiGatewayResource PrivateEndpointConnections.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :return: An iterator like instance of AiGatewayPrivateEndpointConnection
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayPrivateEndpointConnection]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayPrivateEndpointConnection]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_private_endpoint_connections_list_by_ai_gateway_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayPrivateEndpointConnection],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_private_link_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "private_link_resource_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, private_link_resource_name: str, **kwargs: Any
+    ) -> _models.AiGatewayPrivateLinkResource:
+        """Get a AiGatewayResource PrivateLink.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param private_link_resource_name: The name of the private link associated with the Azure
+         resource. Required.
+        :type private_link_resource_name: str
+        :return: AiGatewayPrivateLinkResource. The AiGatewayPrivateLinkResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayPrivateLinkResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayPrivateLinkResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_private_link_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            private_link_resource_name=private_link_resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayPrivateLinkResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_ai_gateway(
+        self, resource_group_name: str, ai_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayPrivateLinkResource"]:
+        """List AiGatewayResource PrivateLinks.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :return: An iterator like instance of AiGatewayPrivateLinkResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayPrivateLinkResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayPrivateLinkResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_private_link_resources_list_by_ai_gateway_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayPrivateLinkResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayWorkspaceResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_workspace_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "workspace_name"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_workspace_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> _models.AiGatewayWorkspaceResource:
+        """Get a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: AiGatewayWorkspaceResource. The AiGatewayWorkspaceResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayWorkspaceResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_workspace_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayWorkspaceResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        properties: _models.AiGatewayWorkspaceUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayWorkspaceResource:
+        """Update a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayWorkspaceResource. The AiGatewayWorkspaceResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        properties: _types.AiGatewayWorkspaceUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayWorkspaceResource:
+        """Update a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayWorkspaceUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayWorkspaceResource. The AiGatewayWorkspaceResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayWorkspaceResource:
+        """Update a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayWorkspaceResource. The AiGatewayWorkspaceResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        properties: Union[
+            _models.AiGatewayWorkspaceUpdateParameters, _types.AiGatewayWorkspaceUpdateParameters, IO[bytes]
+        ],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayWorkspaceResource:
+        """Update a AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayWorkspaceUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayWorkspaceUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayWorkspaceResource. The AiGatewayWorkspaceResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayWorkspaceResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_workspace_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayWorkspaceResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_ai_gateway(
+        self, resource_group_name: str, ai_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayWorkspaceResource"]:
+        """List AiGatewayWorkspaceResource resources by AiGatewayResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :return: An iterator like instance of AiGatewayWorkspaceResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayWorkspaceResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayWorkspaceResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_workspace_resources_list_by_ai_gateway_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayWorkspaceResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayModelProviderResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_model_provider_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_provider_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Get a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayModelProviderResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_provider_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelProviderResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        resource: _models.AiGatewayModelProviderResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Create a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        resource: _types.AiGatewayModelProviderResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Create a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayModelProviderResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Create a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        resource: Union[_models.AiGatewayModelProviderResource, _types.AiGatewayModelProviderResource, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Create a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayModelProviderResource type or
+         a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource or
+         ~azure.mgmt.aigateway.types.AiGatewayModelProviderResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayModelProviderResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_model_provider_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelProviderResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        properties: _models.AiGatewayModelProviderUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Update a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayModelProviderUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        properties: _types.AiGatewayModelProviderUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Update a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayModelProviderUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Update a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        properties: Union[
+            _models.AiGatewayModelProviderUpdateParameters, _types.AiGatewayModelProviderUpdateParameters, IO[bytes]
+        ],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderResource:
+        """Update a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayModelProviderUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayModelProviderUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayModelProviderUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelProviderResource. The AiGatewayModelProviderResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayModelProviderResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_model_provider_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelProviderResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_provider_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_workspace(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayModelProviderResource"]:
+        """List AiGatewayModelProviderResource resources by AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of AiGatewayModelProviderResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayModelProviderResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayModelProviderResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_model_provider_resources_list_by_workspace_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayModelProviderResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def list_secrets(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelProviderSecrets:
+        """Returns the stored model-provider authentication configuration, including secret values.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :return: AiGatewayModelProviderSecrets. The AiGatewayModelProviderSecrets is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelProviderSecrets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayModelProviderSecrets] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_provider_resources_list_secrets_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelProviderSecrets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class AiGatewayModelResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_model_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "model_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            model_name=model_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "model_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Get a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayModelResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            model_name=model_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        resource: _models.AiGatewayModelResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Create a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        resource: _types.AiGatewayModelResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Create a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayModelResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Create a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "model_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        resource: Union[_models.AiGatewayModelResource, _types.AiGatewayModelResource, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Create a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayModelResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayModelResource or
+         ~azure.mgmt.aigateway.types.AiGatewayModelResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayModelResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_model_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            model_name=model_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        properties: _models.AiGatewayModelUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Update a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayModelUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        properties: _types.AiGatewayModelUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Update a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayModelUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Update a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "model_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        properties: Union[_models.AiGatewayModelUpdateParameters, _types.AiGatewayModelUpdateParameters, IO[bytes]],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayModelResource:
+        """Update a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayModelUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayModelUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayModelUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayModelResource. The AiGatewayModelResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayModelResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayModelResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_model_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            model_name=model_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayModelResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "model_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        model_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayModelResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :param model_name: The name of the AiGatewayModelResource. Required.
+        :type model_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_model_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            model_provider_name=model_provider_name,
+            model_name=model_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "model_provider_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_model_provider(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        model_provider_name: str,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayModelResource"]:
+        """List AiGatewayModelResource resources by AiGatewayModelProviderResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param model_provider_name: The name of the AiGatewayModelProviderResource. Required.
+        :type model_provider_name: str
+        :return: An iterator like instance of AiGatewayModelResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayModelResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayModelResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_model_resources_list_by_model_provider_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    model_provider_name=model_provider_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayModelResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
+class AiGatewayToolServerResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_tool_server_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, tool_server_name: str, **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_tool_server_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, tool_server_name: str, **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Get a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayToolServerResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_tool_server_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayToolServerResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        resource: _models.AiGatewayToolServerResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Create a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        resource: _types.AiGatewayToolServerResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Create a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayToolServerResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Create a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        resource: Union[_models.AiGatewayToolServerResource, _types.AiGatewayToolServerResource, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Create a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayToolServerResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource or
+         ~azure.mgmt.aigateway.types.AiGatewayToolServerResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayToolServerResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_tool_server_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayToolServerResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        properties: _models.AiGatewayToolServerUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Update a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayToolServerUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        properties: _types.AiGatewayToolServerUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Update a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayToolServerUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Update a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        properties: Union[
+            _models.AiGatewayToolServerUpdateParameters, _types.AiGatewayToolServerUpdateParameters, IO[bytes]
+        ],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerResource:
+        """Update a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayToolServerUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayToolServerUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayToolServerUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayToolServerResource. The AiGatewayToolServerResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayToolServerResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_tool_server_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayToolServerResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayToolServerResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_tool_server_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_workspace(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayToolServerResource"]:
+        """List AiGatewayToolServerResource resources by AiGatewayWorkspaceResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of AiGatewayToolServerResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayToolServerResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayToolServerResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_tool_server_resources_list_by_workspace_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayToolServerResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def list_secrets(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, tool_server_name: str, **kwargs: Any
+    ) -> _models.AiGatewayToolServerSecrets:
+        """Lists secret values configured on tool server endpoints.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :return: AiGatewayToolServerSecrets. The AiGatewayToolServerSecrets is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerSecrets
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayToolServerSecrets] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_tool_server_resources_list_secrets_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayToolServerSecrets, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def get_oauth2_login_links(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        body: _models.AiGatewayToolServerLoginLinksRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerOauth2LoginLinks:
+        """Gets links to complete OAuth consent for a tool server endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.aigateway.models.AiGatewayToolServerLoginLinksRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerOauth2LoginLinks. The AiGatewayToolServerOauth2LoginLinks is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2LoginLinks
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_oauth2_login_links(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        body: _types.AiGatewayToolServerLoginLinksRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerOauth2LoginLinks:
+        """Gets links to complete OAuth consent for a tool server endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.aigateway.types.AiGatewayToolServerLoginLinksRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerOauth2LoginLinks. The AiGatewayToolServerOauth2LoginLinks is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2LoginLinks
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_oauth2_login_links(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerOauth2LoginLinks:
+        """Gets links to complete OAuth consent for a tool server endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayToolServerOauth2LoginLinks. The AiGatewayToolServerOauth2LoginLinks is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2LoginLinks
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "tool_server_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get_oauth2_login_links(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        workspace_name: str,
+        tool_server_name: str,
+        body: Union[
+            _models.AiGatewayToolServerLoginLinksRequest, _types.AiGatewayToolServerLoginLinksRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.AiGatewayToolServerOauth2LoginLinks:
+        """Gets links to complete OAuth consent for a tool server endpoint.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: The name of the AiGatewayWorkspaceResource. Required.
+        :type workspace_name: str
+        :param tool_server_name: The name of the AiGatewayToolServerResource. Required.
+        :type tool_server_name: str
+        :param body: The content of the action request. Is either a
+         AiGatewayToolServerLoginLinksRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.aigateway.models.AiGatewayToolServerLoginLinksRequest or
+         ~azure.mgmt.aigateway.types.AiGatewayToolServerLoginLinksRequest or IO[bytes]
+        :return: AiGatewayToolServerOauth2LoginLinks. The AiGatewayToolServerOauth2LoginLinks is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayToolServerOauth2LoginLinks
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayToolServerOauth2LoginLinks] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_tool_server_resources_get_oauth2_login_links_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            workspace_name=workspace_name,
+            tool_server_name=tool_server_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayToolServerOauth2LoginLinks, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class AiGatewayApiKeyResourcesOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_api_key_resources` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "api_key_name"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def check_existence(
+        self, resource_group_name: str, ai_gateway_name: str, api_key_name: str, **kwargs: Any
+    ) -> bool:
+        """Check for the existence of a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_check_existence_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "api_key_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def get(
+        self, resource_group_name: str, ai_gateway_name: str, api_key_name: str, **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Get a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayApiKeyResource] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_get_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayApiKeyResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        resource: _models.AiGatewayApiKeyResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Create a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        resource: _types.AiGatewayApiKeyResource,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Create a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.aigateway.types.AiGatewayApiKeyResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Create a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "api_key_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def create_or_update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        resource: Union[_models.AiGatewayApiKeyResource, _types.AiGatewayApiKeyResource, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Create a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param resource: Resource create parameters. Is either a AiGatewayApiKeyResource type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource or
+         ~azure.mgmt.aigateway.types.AiGatewayApiKeyResource or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayApiKeyResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_api_key_resources_create_or_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayApiKeyResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        properties: _models.AiGatewayApiKeyUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Update a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayApiKeyUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        properties: _types.AiGatewayApiKeyUpdateParameters,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Update a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: ~azure.mgmt.aigateway.types.AiGatewayApiKeyUpdateParameters
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        properties: IO[bytes],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Update a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param properties: The resource properties to be updated. Required.
+        :type properties: IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "api_key_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def update(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        properties: Union[_models.AiGatewayApiKeyUpdateParameters, _types.AiGatewayApiKeyUpdateParameters, IO[bytes]],
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> _models.AiGatewayApiKeyResource:
+        """Update a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :param properties: The resource properties to be updated. Is either a
+         AiGatewayApiKeyUpdateParameters type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.aigateway.models.AiGatewayApiKeyUpdateParameters or
+         ~azure.mgmt.aigateway.types.AiGatewayApiKeyUpdateParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: AiGatewayApiKeyResource. The AiGatewayApiKeyResource is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AiGatewayApiKeyResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(properties, (IOBase, bytes)):
+            _content = properties
+        else:
+            _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_ai_gateway_api_key_resources_update_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayApiKeyResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "api_key_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def delete(
+        self,
+        resource_group_name: str,
+        ai_gateway_name: str,
+        api_key_name: str,
+        *,
+        etag: str,
+        match_condition: MatchConditions,
+        **kwargs: Any
+    ) -> None:
+        """Delete a AiGatewayApiKeyResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Required.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Required.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_delete_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "accept"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_ai_gateway(
+        self, resource_group_name: str, ai_gateway_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayApiKeyResource"]:
+        """List AiGatewayApiKeyResource resources by AiGatewayResource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :return: An iterator like instance of AiGatewayApiKeyResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayApiKeyResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayApiKeyResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_api_key_resources_list_by_ai_gateway_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayApiKeyResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "api_key_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def list_secrets(
+        self, resource_group_name: str, ai_gateway_name: str, api_key_name: str, **kwargs: Any
+    ) -> _models.AiGatewayApiKeyValues:
+        """Returns primary and secondary key values.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :return: AiGatewayApiKeyValues. The AiGatewayApiKeyValues is compatible with MutableMapping
+        :rtype: ~azure.mgmt.aigateway.models.AiGatewayApiKeyValues
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AiGatewayApiKeyValues] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_list_secrets_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AiGatewayApiKeyValues, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "api_key_name"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def regenerate_primary_key(
+        self, resource_group_name: str, ai_gateway_name: str, api_key_name: str, **kwargs: Any
+    ) -> None:
+        """Regenerates the primary API key value.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_regenerate_primary_key_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": ["api_version", "subscription_id", "resource_group_name", "ai_gateway_name", "api_key_name"]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    async def regenerate_secondary_key(
+        self, resource_group_name: str, ai_gateway_name: str, api_key_name: str, **kwargs: Any
+    ) -> None:
+        """Regenerates the secondary API key value.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: The name of the AiGatewayResource. Required.
+        :type ai_gateway_name: str
+        :param api_key_name: The name of the AiGatewayApiKeyResource. Required.
+        :type api_key_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_ai_gateway_api_key_resources_regenerate_secondary_key_request(
+            resource_group_name=resource_group_name,
+            ai_gateway_name=ai_gateway_name,
+            api_key_name=api_key_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class AiGatewayWorkspaceModelOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.aigateway.aio.AIGatewayMgmtClient`'s
+        :attr:`ai_gateway_workspace_model_operations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIGatewayMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-11-01",
+        params_added_on={
+            "2026-11-01": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "ai_gateway_name",
+                "workspace_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-11-01"],
+    )
+    def list_by_workspace(
+        self, resource_group_name: str, ai_gateway_name: str, workspace_name: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.AiGatewayModelResource"]:
+        """Lists models from every model provider in an AI Gateway workspace.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param ai_gateway_name: AI Gateway resource name. Required.
+        :type ai_gateway_name: str
+        :param workspace_name: Workspace resource name. Required.
+        :type workspace_name: str
+        :return: An iterator like instance of AiGatewayModelResource
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.aigateway.models.AiGatewayModelResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AiGatewayModelResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_ai_gateway_workspace_model_operations_list_by_workspace_request(
+                    resource_group_name=resource_group_name,
+                    ai_gateway_name=ai_gateway_name,
+                    workspace_name=workspace_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AiGatewayModelResource],
                 deserialized.get("value", []),
             )
             if cls:

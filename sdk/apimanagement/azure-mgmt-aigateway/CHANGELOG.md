@@ -1,5 +1,180 @@
 # Release History
 
+## 1.0.0 (2026-11-13)
+
+### Features Added
+
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_alias_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_api_key_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_model_provider_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_model_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_name_availability_operations`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_private_endpoint_connections`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_private_link_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_telemetry_exporter_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_tool_server_resources`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_workspace_model_operations`
+  - Client `AIGatewayMgmtClient` added operation group `ai_gateway_workspace_resources`
+  - Model `AiGatewayProperties` added property `private_endpoint_connections`
+  - Model `AiGatewayProperties` added property `public_network_access`
+  - Model `AiGatewayUpdateParameters` added property `properties`
+  - Added model `AiGatewayAgentHook`
+  - Added model `AiGatewayAgentHookAuthentication`
+  - Added model `AiGatewayAgentHookAuthenticationUpdate`
+  - Added model `AiGatewayAgentHookUpdate`
+  - Added model `AiGatewayAgentHooks`
+  - Added model `AiGatewayAgentHooksUpdate`
+  - Added model `AiGatewayAliasFailureRule`
+  - Added model `AiGatewayAliasFailureRuleUpdate`
+  - Added model `AiGatewayAliasProperties`
+  - Added model `AiGatewayAliasResource`
+  - Added enum `AiGatewayAliasSelectionStage`
+  - Added model `AiGatewayAliasTarget`
+  - Added model `AiGatewayAliasTargetUpdate`
+  - Added model `AiGatewayAliasUpdateParameters`
+  - Added model `AiGatewayAliasUpdateProperties`
+  - Added enum `AiGatewayAllowedRequestOverride`
+  - Added model `AiGatewayApiKeyProperties`
+  - Added model `AiGatewayApiKeyResource`
+  - Added model `AiGatewayApiKeyUpdateParameters`
+  - Added model `AiGatewayApiKeyUpdateProperties`
+  - Added model `AiGatewayApiKeyValues`
+  - Added model `AiGatewayApplicationInsightsConfiguration`
+  - Added model `AiGatewayBackendUpdate`
+  - Added model `AiGatewayCheckNameAvailabilityRequest`
+  - Added model `AiGatewayCheckNameAvailabilityResponse`
+  - Added enum `AiGatewayContentSafetySeverity`
+  - Added model `AiGatewayCostLimitOverride`
+  - Added model `AiGatewayCostLimitOverrideUpdate`
+  - Added enum `AiGatewayCounterDimension`
+  - Added model `AiGatewayCustomProviderConfiguration`
+  - Added model `AiGatewayCustomProviderConfigurationUpdate`
+  - Added model `AiGatewayDestinationEndpoint`
+  - Added model `AiGatewayDestinationEndpointUpdate`
+  - Added model `AiGatewayEndpoint`
+  - Added enum `AiGatewayFailureMode`
+  - Added model `AiGatewayFallbackTarget`
+  - Added model `AiGatewayFallbackTargetUpdate`
+  - Added model `AiGatewayFoundryProviderConfiguration`
+  - Added model `AiGatewayFoundryProviderConfigurationUpdate`
+  - Added model `AiGatewayGitHubAppAuthentication`
+  - Added enum `AiGatewayIpFilterAction`
+  - Added model `AiGatewayManagedIdentityAuthentication`
+  - Added model `AiGatewayMcpUrlConfiguration`
+  - Added model `AiGatewayMcpUrlConfigurationUpdate`
+  - Added model `AiGatewayModelDeployment`
+  - Added model `AiGatewayModelDeploymentUpdate`
+  - Added model `AiGatewayModelEndpoint`
+  - Added model `AiGatewayModelEndpointUpdate`
+  - Added model `AiGatewayModelProperties`
+  - Added model `AiGatewayModelProviderAuthentication`
+  - Added model `AiGatewayModelProviderAuthenticationUpdate`
+  - Added enum `AiGatewayModelProviderKind`
+  - Added model `AiGatewayModelProviderProperties`
+  - Added model `AiGatewayModelProviderResource`
+  - Added model `AiGatewayModelProviderSecretAuthentication`
+  - Added model `AiGatewayModelProviderSecretGitHubAppAuthentication`
+  - Added model `AiGatewayModelProviderSecrets`
+  - Added model `AiGatewayModelProviderUpdateParameters`
+  - Added model `AiGatewayModelProviderUpdateProperties`
+  - Added model `AiGatewayModelResource`
+  - Added model `AiGatewayModelSelection`
+  - Added enum `AiGatewayModelSelectionObjective`
+  - Added model `AiGatewayModelSelectionUpdate`
+  - Added model `AiGatewayModelUpdateParameters`
+  - Added model `AiGatewayModelUpdateProperties`
+  - Added enum `AiGatewayNameAvailabilityReason`
+  - Added model `AiGatewayNameValuePair`
+  - Added model `AiGatewayNameValuePairUpdate`
+  - Added model `AiGatewayOpenApiConfiguration`
+  - Added model `AiGatewayOpenApiConfigurationUpdate`
+  - Added model `AiGatewayOpenApiSpecSource`
+  - Added model `AiGatewayOpenApiSpecSourceUpdate`
+  - Added model `AiGatewayOpenTelemetryConfiguration`
+  - Added model `AiGatewayOpenTelemetryConfigurationUpdate`
+  - Added model `AiGatewayPolicy`
+  - Added enum `AiGatewayPolicyPeriod`
+  - Added enum `AiGatewayPolicyScope`
+  - Added enum `AiGatewayPolicyType`
+  - Added model `AiGatewayPolicyUpdate`
+  - Added model `AiGatewayPrivateEndpointConnection`
+  - Added model `AiGatewayPrivateLinkResource`
+  - Added enum `AiGatewayPublicNetworkAccess`
+  - Added model `AiGatewaySecretHeader`
+  - Added model `AiGatewaySecretHeaderUpdate`
+  - Added model `AiGatewaySecretHeaderValue`
+  - Added model `AiGatewaySessionBackendPreference`
+  - Added model `AiGatewaySessionBackendPreferenceUpdate`
+  - Added model `AiGatewaySubnetUpdate`
+  - Added model `AiGatewayTelemetryAttributeMapping`
+  - Added model `AiGatewayTelemetryAttributeMappingUpdate`
+  - Added model `AiGatewayTelemetryAttributeSource`
+  - Added model `AiGatewayTelemetryAttributeSourceUpdate`
+  - Added model `AiGatewayTelemetryAuthentication`
+  - Added model `AiGatewayTelemetryAuthenticationUpdate`
+  - Added model `AiGatewayTelemetryConfiguration`
+  - Added model `AiGatewayTelemetryConfigurationUpdate`
+  - Added enum `AiGatewayTelemetryExporterKind`
+  - Added model `AiGatewayTelemetryExporterProperties`
+  - Added model `AiGatewayTelemetryExporterResource`
+  - Added model `AiGatewayTelemetryExporterUpdateParameters`
+  - Added model `AiGatewayTelemetryExporterUpdateProperties`
+  - Added model `AiGatewayTelemetryManagedIdentity`
+  - Added enum `AiGatewayTelemetrySignal`
+  - Added enum `AiGatewayToolServerAccessState`
+  - Added model `AiGatewayToolServerAuthentication`
+  - Added model `AiGatewayToolServerAuthenticationUpdate`
+  - Added model `AiGatewayToolServerEndpoint`
+  - Added enum `AiGatewayToolServerEndpointSourceKind`
+  - Added model `AiGatewayToolServerEndpointUpdate`
+  - Added model `AiGatewayToolServerFederation`
+  - Added model `AiGatewayToolServerFederationAppCredential`
+  - Added enum `AiGatewayToolServerFederationAppCredentialType`
+  - Added model `AiGatewayToolServerLoginLinksRequest`
+  - Added model `AiGatewayToolServerManagedIdentityAuthentication`
+  - Added enum `AiGatewayToolServerMcpTransport`
+  - Added model `AiGatewayToolServerOauth2Authentication`
+  - Added enum `AiGatewayToolServerOauth2GrantType`
+  - Added model `AiGatewayToolServerOauth2LoginLinks`
+  - Added model `AiGatewayToolServerOauth2Parameter`
+  - Added enum `AiGatewayToolServerOpenApiSourceType`
+  - Added model `AiGatewayToolServerProperties`
+  - Added model `AiGatewayToolServerResource`
+  - Added model `AiGatewayToolServerSecret`
+  - Added model `AiGatewayToolServerSecretAuthentication`
+  - Added model `AiGatewayToolServerSecretOauth2Authentication`
+  - Added model `AiGatewayToolServerSecretOpenApiConfiguration`
+  - Added model `AiGatewayToolServerSecretOpenApiSpecSource`
+  - Added model `AiGatewayToolServerSecrets`
+  - Added model `AiGatewayToolServerTokenExchange`
+  - Added enum `AiGatewayToolServerTokenExchangeProfile`
+  - Added enum `AiGatewayToolServerType`
+  - Added model `AiGatewayToolServerUpdateParameters`
+  - Added model `AiGatewayToolServerUpdateProperties`
+  - Added model `AiGatewayUpdateProperties`
+  - Added model `AiGatewayWorkspaceProperties`
+  - Added model `AiGatewayWorkspaceResource`
+  - Added model `AiGatewayWorkspaceUpdateParameters`
+  - Added model `AiGatewayWorkspaceUpdateProperties`
+  - Added model `PrivateEndpoint`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added enum `PrivateEndpointConnectionProvisioningState`
+  - Added enum `PrivateEndpointServiceConnectionStatus`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `PrivateLinkServiceConnectionState`
+  - Added model `ProxyResource`
+  - Added operation group `AiGatewayAliasResourcesOperations`
+  - Added operation group `AiGatewayApiKeyResourcesOperations`
+  - Added operation group `AiGatewayModelProviderResourcesOperations`
+  - Added operation group `AiGatewayModelResourcesOperations`
+  - Added operation group `AiGatewayNameAvailabilityOperationsOperations`
+  - Added operation group `AiGatewayPrivateEndpointConnectionsOperations`
+  - Added operation group `AiGatewayPrivateLinkResourcesOperations`
+  - Added operation group `AiGatewayTelemetryExporterResourcesOperations`
+  - Added operation group `AiGatewayToolServerResourcesOperations`
+  - Added operation group `AiGatewayWorkspaceModelOperationsOperations`
+  - Added operation group `AiGatewayWorkspaceResourcesOperations`
+
 ## 1.0.0b1 (2026-10-13)
 
 ### Other Changes

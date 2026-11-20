@@ -19,6 +19,151 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AiGatewayAliasSelectionStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Routing stage in an AI Gateway alias selection order."""
+
+    PRIORITY = "priority"
+    """Deterministic priority and weight routing stage."""
+    AUTO_MODEL_SELECTION = "autoModelSelection"
+    """Automatic model selection stage."""
+    SESSION_BACKEND_PREFERENCE = "sessionBackendPreference"
+    """Stateless session backend preference stage."""
+
+
+class AiGatewayAllowedRequestOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Per-request behavior allowed for automatic model selection."""
+
+    MODEL = "model"
+    """Allow narrowing the configured selector model pool."""
+    OBJECTIVE = "objective"
+    """Allow overriding the selection objective."""
+    FILTER_MODELS_FOR_TOOL_COMPATIBILITY = "filterModelsForToolCompatibility"
+    """Enable chat function-tool compatibility filtering without granting either override."""
+
+
+class AiGatewayContentSafetySeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity threshold used by a content safety policy."""
+
+    LOW = "Low"
+    """Low severity."""
+    MEDIUM = "Medium"
+    """Medium severity."""
+    HIGH = "High"
+    """High severity."""
+    NONE = "None"
+    """Do not filter this category."""
+
+
+class AiGatewayCounterDimension(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Public request dimension used to partition a policy counter."""
+
+    IDENTITY = "identity"
+    """Authenticated request identity."""
+    IP_ADDRESS = "ipAddress"
+    """Request source IP address."""
+
+
+class AiGatewayFailureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Resilience failure mode for an outbound endpoint or hook."""
+
+    FAIL_OPEN = "failOpen"
+    """Continue processing when the endpoint or hook fails."""
+    FAIL_CLOSED = "failClosed"
+    """Fail the request when the endpoint or hook fails."""
+
+
+class AiGatewayIpFilterAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action performed by an IP filtering policy."""
+
+    ALLOW = "Allow"
+    """Allow matching addresses."""
+    DENY = "Deny"
+    """Deny matching addresses."""
+
+
+class AiGatewayModelProviderKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of an AI model provider."""
+
+    FOUNDRY = "Foundry"
+    """Azure AI Foundry provider."""
+    CUSTOM = "Custom"
+    """Custom model provider."""
+    GIT_HUB = "GitHub"
+    """GitHub model provider."""
+
+
+class AiGatewayModelSelectionObjective(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Quality and cost objective for automatic model selection."""
+
+    BALANCED = "Balanced"
+    """Balance quality and cost."""
+    COST = "Cost"
+    """Prefer lower cost."""
+    QUALITY = "Quality"
+    """Prefer higher quality."""
+
+
+class AiGatewayNameAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Result of name validation and availability checking."""
+
+    INVALID = "Invalid"
+    """The name does not satisfy gateway naming requirements."""
+    ALREADY_EXISTS = "AlreadyExists"
+    """A gateway with this name already exists in the location."""
+
+
+class AiGatewayPolicyPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Counter period. Token limits support minute/hour/day; request rate limits support
+    minute/hour/day or whole-second ISO 8601 durations (e.g., PT37S); cost limits support
+    hour/day/week/month/year.
+    """
+
+    MINUTE = "minute"
+    """One minute."""
+    HOUR = "hour"
+    """One hour."""
+    DAY = "day"
+    """One day."""
+    WEEK = "week"
+    """One week, for cost limits only."""
+    MONTH = "month"
+    """One month, for cost limits only."""
+    YEAR = "year"
+    """One year, for cost limits only."""
+
+
+class AiGatewayPolicyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregation scope of an inline policy."""
+
+    RESOURCE = "resource"
+    """Apply the policy to its resource."""
+    WORKSPACE = "workspace"
+    """Aggregate counters across the workspace. Supported for workspace counter policies only."""
+
+
+class AiGatewayPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of an inline AI Gateway policy."""
+
+    TOKEN_LIMIT = "tokenLimit"
+    """Limit consumed tokens."""
+    CONTENT_SAFETY = "contentSafety"
+    """Filter unsafe content."""
+    FALLBACK = "fallback"
+    """Route to fallback models after failures."""
+    IP_FILTER = "ipFilter"
+    """Filter clients by IP address."""
+    REQUEST_RATE_LIMIT = "requestRateLimit"
+    """Limit requests over time."""
+    CORS = "cors"
+    """Configure cross-origin resource sharing."""
+    COST_LIMIT = "costLimit"
+    """Limit cumulative spending in US dollars."""
+    TOOL_THREAT_PROTECTION = "toolThreatProtection"
+    """Check tool requests and responses for threats."""
+    AGENT_HOOKS = "agentHooks"
+    """Invoke external pre-tool-call and post-tool-call hooks when authoring is enabled."""
+
+
 class AiGatewayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Provisioning state of an AI Gateway resource."""
 
@@ -28,6 +173,105 @@ class AiGatewayProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource operation failed."""
     CANCELED = "Canceled"
     """The resource operation was canceled."""
+
+
+class AiGatewayPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Public network access state for an AI Gateway."""
+
+    ENABLED = "Enabled"
+    """Public network access is enabled."""
+    DISABLED = "Disabled"
+    """Public network access is disabled."""
+
+
+class AiGatewayTelemetryExporterKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Destination kind for gateway telemetry."""
+
+    APPLICATION_INSIGHTS = "ApplicationInsights"
+    """Export to Application Insights."""
+    OPEN_TELEMETRY = "OpenTelemetry"
+    """Export over OTLP HTTP/protobuf."""
+
+
+class AiGatewayTelemetrySignal(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Telemetry signal receiving a claim attribute."""
+
+    LOGS = "logs"
+    """Log records."""
+    TRACES = "traces"
+    """Trace spans."""
+    METRICS = "metrics"
+    """Token-usage and token-cost metrics."""
+
+
+class AiGatewayToolServerAccessState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tool server access state."""
+
+    ACTIVE = "active"
+    """Tool server is available."""
+    BLOCKED = "blocked"
+    """Tool server is blocked."""
+
+
+class AiGatewayToolServerEndpointSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Endpoint source kind."""
+
+    MCP = "mcp"
+    """MCP server endpoint."""
+    OPEN_API = "openApi"
+    """OpenAPI document endpoint."""
+
+
+class AiGatewayToolServerFederationAppCredentialType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Supported federation application credential types for a tool server endpoint."""
+
+    USER_ASSIGNED_MANAGED_IDENTITY = "userAssignedManagedIdentity"
+    """A user-assigned managed identity assigned to the AI Gateway."""
+
+
+class AiGatewayToolServerMcpTransport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MCP transport protocol."""
+
+    STREAMABLE_HTTP = "streamableHttp"
+    """Streamable HTTP transport."""
+
+
+class AiGatewayToolServerOauth2GrantType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OAuth 2.0 grant type."""
+
+    CLIENT_CREDENTIALS = "clientCredentials"
+    """Client credentials grant."""
+    AUTHORIZATION_CODE = "authorizationCode"
+    """Authorization code grant."""
+
+
+class AiGatewayToolServerOpenApiSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """OpenAPI document source type."""
+
+    INLINE = "inline"
+    """Inline OpenAPI document."""
+    URL = "url"
+    """OpenAPI document fetched from a URL."""
+
+
+class AiGatewayToolServerTokenExchangeProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported token-exchange profiles for a tool server endpoint."""
+
+    ENTRA_ON_BEHALF_OF = "entraOnBehalfOf"
+    """Microsoft Entra chained on-behalf-of token exchange."""
+
+
+class AiGatewayToolServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How a tool server is exposed."""
+
+    MCP = "mcp"
+    """Federates one or more MCP servers."""
+    OPEN_API = "openApi"
+    """Exposes tools generated from OpenAPI documents."""
+    CONNECTOR = "connector"
+    """Exposes a connector-backed tool server."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -69,6 +313,32 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The current provisioning state."""
+
+    SUCCEEDED = "Succeeded"
+    """Connection has been provisioned."""
+    CREATING = "Creating"
+    """Connection is being created."""
+    DELETING = "Deleting"
+    """Connection is being deleted."""
+    FAILED = "Failed"
+    """Connection provisioning has failed."""
+
+
+class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private endpoint connection status."""
+
+    PENDING = "Pending"
+    """Connection waiting for approval or rejection."""
+    APPROVED = "Approved"
+    """Connection approved."""
+    REJECTED = "Rejected"
+    """Connection Rejected."""
 
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
