@@ -67,7 +67,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -147,7 +147,7 @@ class Operations:
         return deserialized  # type: ignore
 
 
-class AvailabilityStatusesOperations:
+class AvailabilityStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -568,7 +568,7 @@ class AvailabilityStatusesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ChildAvailabilityStatusesOperations:
+class ChildAvailabilityStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -772,7 +772,7 @@ class ChildAvailabilityStatusesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ImpactedResourcesOperations:
+class ImpactedResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1140,7 +1140,7 @@ class ImpactedResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class MetadataOperations:
+class MetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1316,7 +1316,7 @@ class MetadataOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EventOperations:
+class EventOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1711,7 +1711,7 @@ class EventOperations:
         return deserialized  # type: ignore
 
 
-class EventsOperations:
+class EventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2044,7 +2044,7 @@ class EventsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=name-too-long
+class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2271,7 +2271,7 @@ class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=name-too-l
         return AsyncItemPaged(get_next, extract_data)
 
 
-class EmergingIssuesOperations:
+class EmergingIssuesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2449,7 +2449,7 @@ class EmergingIssuesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ChildResourcesOperations:
+class ChildResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

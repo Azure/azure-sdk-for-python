@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0 (2026-10-27)
+
+### Features Added
+
+  - Model `EventProperties` added property `advisor_recommendations`
+  - Added model `ApiOperationLink`
+
 ## 1.0.0 (2026-07-07)
 
 ### Other Changes

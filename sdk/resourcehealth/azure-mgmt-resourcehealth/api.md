@@ -377,6 +377,12 @@ namespace azure.mgmt.resourcehealth.aio.operations
 
 namespace azure.mgmt.resourcehealth.models
 
+    class azure.mgmt.resourcehealth.models.ApiOperationLink(_Model):
+        description: Optional[str]
+        http_method: str
+        url: str
+
+
     class azure.mgmt.resourcehealth.models.AvailabilityStateValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABLE = "Available"
         DEGRADED = "Degraded"
@@ -629,6 +635,7 @@ namespace azure.mgmt.resourcehealth.models
 
     class azure.mgmt.resourcehealth.models.EventProperties(_Model):
         additional_information: Optional[EventPropertiesAdditionalInformation]
+        advisor_recommendations: Optional[ApiOperationLink]
         article: Optional[EventPropertiesArticle]
         billing_id: Optional[str]
         currency_type: Optional[str]
