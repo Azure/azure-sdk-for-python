@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActivateSaaSRequest(_Model):
+class ActivateSaaSRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS guid for Activate SaaS Resource.
 
     :ivar saas_guid: SaaS guid for Activate SaaS Resource. Required.
@@ -53,7 +53,7 @@ class ActivateSaaSRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Address(_Model):
+class Address(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Address details.
 
     :ivar address_line1: Address line 1. Required.
@@ -108,7 +108,7 @@ class Address(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Alert(_Model):
+class Alert(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health alerts.
 
     :ivar level: Severity level. Required. Known values are: "info", "warning", and "error".
@@ -141,7 +141,7 @@ class Alert(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsConnection(_Model):
+class AvsConnection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Transient information about an on-going connection to an AVS instance.
 
     :ivar service_initialization_completed: Indicates whether service initialization is complete.
@@ -188,7 +188,7 @@ class AvsConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsDiskDetails(_Model):
+class AvsDiskDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS disk/volume information.
 
     :ivar disk_id: VMware ID of the disk/volume. Required.
@@ -255,7 +255,7 @@ class AvsDiskDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsStatus(_Model):
+class AvsStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of storage pool / AVS connection.
 
     :ivar avs_enabled: If true, an AVS connection has been successfully completed. Required.
@@ -342,7 +342,7 @@ class ProxyResource(Resource):
     """
 
 
-class AvsStorageContainer(ProxyResource):
+class AvsStorageContainer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS storage container resource type, representing a VMware storage container in a storage pool,
     which can be associated to and mounted as a datastore.
 
@@ -384,7 +384,7 @@ class AvsStorageContainer(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AvsStorageContainerProperties(_Model):
+class AvsStorageContainerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS storage container properties.
 
     :ivar space: Storage space usage.
@@ -435,7 +435,7 @@ class AvsStorageContainerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsStorageContainerVolume(ProxyResource):
+class AvsStorageContainerVolume(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A volume contained in an AVS storage container.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -476,7 +476,7 @@ class AvsStorageContainerVolume(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AvsStorageContainerVolumeUpdate(_Model):
+class AvsStorageContainerVolumeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AvsStorageContainerVolume.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -507,7 +507,9 @@ class AvsStorageContainerVolumeUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsStorageContainerVolumeUpdateProperties(_Model):  # pylint: disable=name-too-long
+class AvsStorageContainerVolumeUpdateProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The updatable properties of the AvsStorageContainerVolume.
 
     :ivar soft_deletion: Volume's soft-deletion state.
@@ -535,7 +537,7 @@ class AvsStorageContainerVolumeUpdateProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class AvsVm(ProxyResource):
+class AvsVm(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS VM resource type, representing all the volumes associated to an AVS VM as defined by
     VMware.
 
@@ -577,7 +579,7 @@ class AvsVm(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmDetails(_Model):
+class AvsVmDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS VM details.
 
     :ivar vm_id: ID of the AVS VM using this set of volumes. Required.
@@ -624,7 +626,7 @@ class AvsVmDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmProperties(_Model):
+class AvsVmProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AVS VM properties.
 
     :ivar storage_pool_internal_id: Pure Storage's internal ID for the storage pool.
@@ -692,7 +694,7 @@ class AvsVmProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmUpdate(_Model):
+class AvsVmUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AvsVm.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -722,7 +724,7 @@ class AvsVmUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmUpdateProperties(_Model):
+class AvsVmUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the AvsVm.
 
     :ivar soft_deletion: AVS VM's soft-deletion state.
@@ -750,7 +752,7 @@ class AvsVmUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmVolume(ProxyResource):
+class AvsVmVolume(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Any volume associated to a particular AVS VM.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -791,7 +793,7 @@ class AvsVmVolume(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmVolumeUpdate(_Model):
+class AvsVmVolumeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the AvsVmVolume.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -821,7 +823,7 @@ class AvsVmVolumeUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AvsVmVolumeUpdateProperties(_Model):
+class AvsVmVolumeUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the AvsVmVolume.
 
     :ivar soft_deletion: Volume's soft-deletion state.
@@ -849,7 +851,7 @@ class AvsVmVolumeUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureVmwareService(_Model):
+class AzureVmwareService(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected AVS status.
 
     :ivar avs_enabled: If true, an AVS SDDC is successfully connected to the storage pool.
@@ -885,7 +887,7 @@ class AzureVmwareService(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureVolumeProperties(_Model):
+class AzureVolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Azure volume.
 
     :ivar space: Storage space usage for the volume.
@@ -980,7 +982,7 @@ class AzureVolumeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BandwidthUsage(_Model):
+class BandwidthUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bandwidth usage metrics.
 
     :ivar current: Number of bytes written and read per second (maximum value over the last 10
@@ -1020,7 +1022,7 @@ class BandwidthUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BillingUsageProperty(_Model):
+class BillingUsageProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an individual billing usage property.
 
     :ivar property_id: Unique identifier for the billing usage property. Required.
@@ -1088,7 +1090,7 @@ class BillingUsageProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CompanyDetails(_Model):
+class CompanyDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Company details.
 
     :ivar company_name: Company name. Required.
@@ -1121,7 +1123,7 @@ class CompanyDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectionParametersResponse(_Model):
+class ConnectionParametersResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connection parameters response.
 
     :ivar iscsi: ISCSI connection parameters. Required.
@@ -1222,7 +1224,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1250,7 +1252,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthDetails(_Model):
+class HealthDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health metrics for a storage pool.
 
     :ivar used_capacity_percentage: How full the pool is right now, in %, compared to the maximum
@@ -1317,7 +1319,7 @@ class HealthDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IopsUsage(_Model):
+class IopsUsage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IOPS usage metrics.
 
     :ivar current: Current number of IOPS (maximum value over the last 10 minutes). Required.
@@ -1355,7 +1357,7 @@ class IopsUsage(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IscsiConnectionParameters(_Model):
+class IscsiConnectionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ISCSI connection parameters.
 
     :ivar endpoints: List of ISCSI endpoints for connection. Required.
@@ -1383,7 +1385,7 @@ class IscsiConnectionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IscsiEndpoint(_Model):
+class IscsiEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ISCSI connection endpoint details.
 
     :ivar ip: IP address of the endpoint. Required.
@@ -1421,7 +1423,7 @@ class IscsiEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LatestLinkedSaaSResponse(_Model):
+class LatestLinkedSaaSResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get latest linked SaaS resource operation.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -1458,7 +1460,7 @@ class LatestLinkedSaaSResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LimitDetails(_Model):
+class LimitDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Limits constraining certain resource properties.
 
     :ivar storage_pool: Limits used for storage pool resources. Required.
@@ -1507,7 +1509,7 @@ class LimitDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkSaaSRequest(_Model):
+class LinkSaaSRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS details for linking to a reservation.
 
     :ivar saa_s_resource_id: SaaS resource id. Required.
@@ -1537,7 +1539,7 @@ class LinkSaaSRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -1589,7 +1591,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MarketplaceDetails(_Model):
+class MarketplaceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace details.
 
     :ivar subscription_id: Marketplace subscription ID.
@@ -1639,7 +1641,7 @@ class MarketplaceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetails(_Model):
+class OfferDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Offer details for the marketplace that is selected by the user.
 
     :ivar publisher_id: Publisher ID for the marketplace offer. Required.
@@ -1692,7 +1694,7 @@ class OfferDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1780,7 +1782,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PerformanceParameters(_Model):
+class PerformanceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Performance parameters for volume group.
 
     :ivar bandwidth_limit_mb_per_sec: Bandwidth limit in MB per second.
@@ -1815,7 +1817,7 @@ class PerformanceParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PerformancePolicyLimits(_Model):
+class PerformancePolicyLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """internal.
 
     :ivar iops_limit: internal. Required.
@@ -1852,7 +1854,7 @@ class PerformancePolicyLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleAccessSettings(_Model):
+class PlatformConsoleAccessSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access settings for a platform console interface.
 
     :ivar enabled: Whether this console interface access is enabled. Required.
@@ -1880,7 +1882,7 @@ class PlatformConsoleAccessSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleActivationCode(_Model):
+class PlatformConsoleActivationCode(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One-time activation code for platform console access.
 
     :ivar username: Username to use when activating the console session. Required.
@@ -1920,7 +1922,7 @@ class PlatformConsoleActivationCode(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleAuthConfig(_Model):
+class PlatformConsoleAuthConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for platform console authentication configuration. Extend with a type-specific
     subtype for each auth mechanism.
 
@@ -1953,7 +1955,7 @@ class PlatformConsoleAuthConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleAuthResult(_Model):
+class PlatformConsoleAuthResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base model for platform console authentication result. Actual type depends on the authType used
     in the request.
 
@@ -1986,7 +1988,7 @@ class PlatformConsoleAuthResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleSettings(_Model):
+class PlatformConsoleSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for platform console access to the storage pool.
 
     :ivar enabled: Whether platform console access is enabled for the storage pool or not.When
@@ -2048,7 +2050,7 @@ class PlatformConsoleSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlatformConsoleSubnet(_Model):
+class PlatformConsoleSubnet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subnet configuration for platform console access.
 
     :ivar id: Azure resource ID of the subnet. Required.
@@ -2085,7 +2087,7 @@ class PlatformConsoleSubnet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionParameters(_Model):
+class ProtectionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Protection parameters for volume group.
 
     :ivar retention: Retention period for snapshots in ISO 8601 duration format.
@@ -2118,7 +2120,7 @@ class ProtectionParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProtectionPolicyLimits(_Model):
+class ProtectionPolicyLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """internal.
 
     :ivar frequency: internal. Required.
@@ -2151,7 +2153,7 @@ class ProtectionPolicyLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RangeLimits(_Model):
+class RangeLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Minimum and maximum values for a property.
 
     :ivar min: Minimum value of the property. Required.
@@ -2184,7 +2186,7 @@ class RangeLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecoverableVolumeGroup(ProxyResource):
+class RecoverableVolumeGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A destroyed volume group that is pending eradication.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2265,7 +2267,7 @@ class RecoverableVolumeGroupProperties(_Model):
      \"Deleting\", and \"Accepted\"."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2309,7 +2311,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Reservation(TrackedResource):
+class Reservation(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pure Storage cloud service resource type, also called reservation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2357,7 +2359,7 @@ class Reservation(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ReservationBillingStatus(_Model):
+class ReservationBillingStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Latest billing status for this reservation.
 
     :ivar timestamp: Timestamp for the latest update of this billing status, in RFC 3339 format.
@@ -2491,7 +2493,7 @@ class ReservationBillingStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReservationBillingUsageReport(_Model):
+class ReservationBillingUsageReport(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a billing usage report, including overall status and detailed properties.
 
     :ivar timestamp: Latest formatted billing report for this reservation. Required.
@@ -2534,7 +2536,9 @@ class ReservationBillingUsageReport(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReservationPropertiesBaseResourceProperties(_Model):  # pylint: disable=name-too-long
+class ReservationPropertiesBaseResourceProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties of a Reservation resource.
 
     :ivar reservation_internal_id: Pure Storage's internal ID for the reservation.
@@ -2579,7 +2583,7 @@ class ReservationPropertiesBaseResourceProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ReservationUpdate(_Model):
+class ReservationUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Reservation.
 
     :ivar tags: Resource tags.
@@ -2614,7 +2618,7 @@ class ReservationUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReservationUpdateProperties(_Model):
+class ReservationUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Reservation.
 
     :ivar user: User details.
@@ -2642,7 +2646,7 @@ class ReservationUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSResourceDetailsResponse(ProxyResource):
+class SaaSResourceDetailsResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Marketplace SaaS resource details.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2681,7 +2685,7 @@ class SaaSResourceDetailsResponse(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class ServiceInitializationHandle(_Model):
+class ServiceInitializationHandle(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Initialization handle used to configure the AVS SDDC to communicate with the storage pool.
 
     :ivar cluster_resource_id: Azure resource ID of the AVS SDDC the pool is connecting to.
@@ -2718,7 +2722,7 @@ class ServiceInitializationHandle(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceInitializationInfo(_Model):
+class ServiceInitializationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Explicit service initialization data.
 
     :ivar service_account_username: Service account username.
@@ -2769,7 +2773,7 @@ class ServiceInitializationInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SoftDeletion(_Model):
+class SoftDeletion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Soft-deletion state.
 
     :ivar destroyed: If false, the resource is active; if true, the resource has been destroyed;
@@ -2806,7 +2810,7 @@ class SoftDeletion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Space(_Model):
+class Space(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage space usage.
 
     :ivar total_used: Total space occupied by customer data (i.e., being billed for), in bytes.
@@ -2856,11 +2860,13 @@ class Space(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SshPlatformConsoleAuthConfig(PlatformConsoleAuthConfig, discriminator="ssh"):
+class SshPlatformConsoleAuthConfig(
+    PlatformConsoleAuthConfig, discriminator="ssh"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH-based platform console authentication configuration.
 
     :ivar auth_type: Required. SSH public key authentication.
-    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.SSH
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleAuthType
     :ivar username: Username to associate with the SSH public key. Required.
     :vartype username: str
     :ivar public_key: SSH public key in OpenSSH authorized_keys format. Required.
@@ -2903,11 +2909,13 @@ class SshPlatformConsoleAuthConfig(PlatformConsoleAuthConfig, discriminator="ssh
         self.auth_type = PlatformConsoleAuthType.SSH  # type: ignore
 
 
-class SshPlatformConsoleAuthResult(PlatformConsoleAuthResult, discriminator="ssh"):
+class SshPlatformConsoleAuthResult(
+    PlatformConsoleAuthResult, discriminator="ssh"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH-based platform console authentication result.
 
     :ivar auth_type: Required. SSH public key authentication.
-    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.SSH
+    :vartype auth_type: str or ~azure.mgmt.purestorageblock.models.PlatformConsoleAuthType
     :ivar username: Username that was configured for the console session. Required.
     :vartype username: str
     :ivar role: Role assigned to the user on the platform console. Required. Known values are:
@@ -2945,7 +2953,7 @@ class SshPlatformConsoleAuthResult(PlatformConsoleAuthResult, discriminator="ssh
         self.auth_type = PlatformConsoleAuthType.SSH  # type: ignore
 
 
-class StoragePool(TrackedResource):
+class StoragePool(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage pool resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2999,7 +3007,7 @@ class StoragePool(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolEnableAvsConnectionPost(_Model):
+class StoragePoolEnableAvsConnectionPost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EnableAvsConnection payload information.
 
     :ivar cluster_resource_id: Azure resource ID of the AVS SDDC to connect to. Required.
@@ -3029,7 +3037,7 @@ class StoragePoolEnableAvsConnectionPost(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolFinalizeAvsConnectionPost(_Model):
+class StoragePoolFinalizeAvsConnectionPost(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FinalizeAvsConnection payload information, either encoded or explicit.
 
     :ivar service_initialization_data_enc: Encoded AVS connection information.
@@ -3067,7 +3075,7 @@ class StoragePoolFinalizeAvsConnectionPost(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolHealthInfo(_Model):
+class StoragePoolHealthInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health information for a storage pool.
 
     :ivar health: Health metrics. Required.
@@ -3100,7 +3108,7 @@ class StoragePoolHealthInfo(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolLimits(_Model):
+class StoragePoolLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Limits used for storage pool creation.
 
     :ivar provisioned_bandwidth_mb_per_sec: Allowed provisioned bandwidth range for a storage pool,
@@ -3149,7 +3157,7 @@ class StoragePoolLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolProperties(_Model):
+class StoragePoolProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a storage pool.
 
     :ivar storage_pool_internal_id: Pure Storage's internal ID of the storage pool.
@@ -3229,7 +3237,7 @@ class StoragePoolProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolUpdate(_Model):
+class StoragePoolUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the StoragePool.
 
     :ivar identity: The managed service identities assigned to this resource.
@@ -3271,7 +3279,7 @@ class StoragePoolUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StoragePoolUpdateProperties(_Model):
+class StoragePoolUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the StoragePool.
 
     :ivar provisioned_bandwidth_mb_per_sec: Total bandwidth provisioned for the pool, in MB/s.
@@ -3308,7 +3316,7 @@ class StoragePoolUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -3390,7 +3398,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class UserDetails(_Model):
+class UserDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User details.
 
     :ivar first_name: First name. Required.
@@ -3447,7 +3455,7 @@ class UserDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetInjection(_Model):
+class VnetInjection(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network in which the storage pool will be made available.
 
     :ivar subnet_id: Azure resource ID of the Virtual Network subnet where the storage pool will be
@@ -3483,7 +3491,7 @@ class VnetInjection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Volume(ProxyResource):
+class Volume(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Volume resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3524,7 +3532,7 @@ class Volume(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroup(TrackedResource):
+class VolumeGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume Group resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3571,7 +3579,7 @@ class VolumeGroup(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupOverwriteRequest(_Model):
+class VolumeGroupOverwriteRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to overwrite all volumes in a volume group from a snapshot.
 
     :ivar source_snapshot_resource_id: Azure resource ID of the volume group snapshot to restore
@@ -3609,7 +3617,7 @@ class VolumeGroupOverwriteRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupProperties(_Model):
+class VolumeGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a volume group.
 
     :ivar storage_pool_internal_id: Pure Storage's internal ID of the storage pool.
@@ -3693,7 +3701,7 @@ class VolumeGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupSnapshot(ProxyResource):
+class VolumeGroupSnapshot(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A snapshot of a volume group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3734,7 +3742,7 @@ class VolumeGroupSnapshot(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupSnapshotListRequest(_Model):
+class VolumeGroupSnapshotListRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request payload for listing volume group snapshots.
 
     :ivar filter: OData filter expression (e.g. filter=substringof('sna', name) and space/unique gt
@@ -3778,7 +3786,7 @@ class VolumeGroupSnapshotListRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupSnapshotPostListResult(_Model):
+class VolumeGroupSnapshotPostListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List result for volume group snapshots returned by the listSnapshots POST action.
 
     :ivar value: Array of volume group snapshots. Required.
@@ -3818,7 +3826,7 @@ class VolumeGroupSnapshotPostListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupSnapshotProperties(_Model):
+class VolumeGroupSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a volume group snapshot.
 
     :ivar source_snapshot_resource_id: Azure resource ID of the source snapshot to recover from;
@@ -3879,7 +3887,7 @@ class VolumeGroupSnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupStatus(_Model):
+class VolumeGroupStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume group status information.
 
     :ivar space: Storage space usage for the volume group. Required.
@@ -3914,7 +3922,7 @@ class VolumeGroupStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupUpdate(_Model):
+class VolumeGroupUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the VolumeGroup.
 
     :ivar tags: Resource tags.
@@ -3949,7 +3957,7 @@ class VolumeGroupUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeGroupUpdateProperties(_Model):
+class VolumeGroupUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the VolumeGroup.
 
     :ivar performance_parameters: Performance parameters for the volume group.
@@ -3986,7 +3994,7 @@ class VolumeGroupUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeLimits(_Model):
+class VolumeLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Limits used for volumes.
 
     :ivar provisioned_size: Provisioned size limits for a volume, in bytes. Required.
@@ -4016,7 +4024,7 @@ class VolumeLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeOverwriteRequest(_Model):
+class VolumeOverwriteRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to overwrite a volume's content from another volume or a snapshot.
 
     :ivar source_type: Source type for the overwrite operation. Required. Known values are: "none",
@@ -4083,7 +4091,7 @@ class VolumeOverwriteRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeProperties(_Model):
+class VolumeProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Volume properties.
 
     :ivar storage_pool_internal_id: Pure Storage's internal ID for the storage pool containing the
@@ -4180,7 +4188,7 @@ class VolumeSnapshotInfo(_Model):
     """Serial number of the volume."""
 
 
-class VolumeSnapshotSource(_Model):
+class VolumeSnapshotSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identifies the specific volume snapshot within a volume group snapshot to restore from.
 
     :ivar volume_group_snapshot_resource_id: Azure resource ID of the volume group snapshot
@@ -4216,7 +4224,7 @@ class VolumeSnapshotSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeUpdate(_Model):
+class VolumeUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type used for update operations of the Volume.
 
     :ivar properties: The resource-specific properties for this resource.
@@ -4246,7 +4254,7 @@ class VolumeUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VolumeUpdateProperties(_Model):
+class VolumeUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The updatable properties of the Volume.
 
     :ivar provisioned_size: Currently provisioned size of the volume, in bytes.

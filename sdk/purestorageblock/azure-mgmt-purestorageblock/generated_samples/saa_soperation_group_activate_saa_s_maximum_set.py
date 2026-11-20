@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/SaaSOperationGroup_ActivateSaaS_MaximumSet.json
+# x-ms-original-file: 2026-10-01/SaaSOperationGroup_ActivateSaaS_MaximumSet.json
 if __name__ == "__main__":
     main()

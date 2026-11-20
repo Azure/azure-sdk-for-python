@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-05-01-preview/StoragePools_EnableAvsConnection_MaximumSet_Gen.json
+# x-ms-original-file: 2026-10-01/StoragePools_EnableAvsConnection_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
