@@ -709,8 +709,8 @@ class Model(_MyMutableMapping):
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
-                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
-                for attr, rf in cls._attr_to_rest_field.items()
+                Model._get_backcompat_attribute_name(attr_to_rest_field, attr): rf
+                for attr, rf in attr_to_rest_field.items()
             }
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
