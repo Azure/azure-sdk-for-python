@@ -39,6 +39,7 @@ class TestManagedNetworkFabricMgmtNeighborGroupsOperations(AzureMgmtRecordedTest
                 "location": "str",
                 "properties": {
                     "destination": {"ipv4Addresses": ["str"], "ipv6Addresses": ["str"]},
+                    "administrativeState": "str",
                     "annotation": "str",
                     "configurationState": "str",
                     "lastOperation": {"details": "str"},

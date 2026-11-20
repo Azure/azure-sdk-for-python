@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlList(TrackedResource):
+class AccessControlList(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Access Control List resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -173,7 +173,7 @@ class AccessControlList(TrackedResource):
             super().__setattr__(key, value)
 
 
-class AccessControlListAction(_Model):
+class AccessControlListAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action that need to performed.
 
     :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
@@ -227,7 +227,7 @@ class AccessControlListAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListActionPatch(_Model):
+class AccessControlListActionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action that need to be performed.
 
     :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
@@ -281,7 +281,7 @@ class AccessControlListActionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonMatchConditions(_Model):
+class CommonMatchConditions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the common match conditions of the ACL and Network Tap Rule.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -325,7 +325,9 @@ class CommonMatchConditions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListMatchCondition(CommonMatchConditions):
+class AccessControlListMatchCondition(
+    CommonMatchConditions
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match condition that is supported to filter the traffic.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -412,7 +414,7 @@ class AccessControlListMatchCondition(CommonMatchConditions):
         super().__init__(*args, **kwargs)
 
 
-class CommonMatchConditionsPatch(_Model):
+class CommonMatchConditionsPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the common match conditions of the ACL and Network Tap Rule.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -456,7 +458,9 @@ class CommonMatchConditionsPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListMatchConditionPatch(CommonMatchConditionsPatch):
+class AccessControlListMatchConditionPatch(
+    CommonMatchConditionsPatch
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match condition that is supported to filter the traffic.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -544,7 +548,7 @@ class AccessControlListMatchConditionPatch(CommonMatchConditionsPatch):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListMatchConfiguration(_Model):
+class AccessControlListMatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match configuration that are supported to filter the traffic.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -603,7 +607,7 @@ class AccessControlListMatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListMatchConfigurationPatch(_Model):
+class AccessControlListMatchConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match configuration that are supported to filter the traffic.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -662,7 +666,7 @@ class AccessControlListMatchConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsUpdate(_Model):
+class TagsUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base tracked resource type for PATCH updates.
 
     :ivar tags: Resource tags.
@@ -690,7 +694,7 @@ class TagsUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListPatch(TagsUpdate):
+class AccessControlListPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Access Control Lists patch resource definition.
 
     :ivar tags: Resource tags.
@@ -754,7 +758,7 @@ class AccessControlListPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class AccessControlListPatchProperties(_Model):
+class AccessControlListPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Control Lists patch properties.
 
     :ivar configuration_type: Input method to configure Access Control List. Known values are:
@@ -777,7 +781,8 @@ class AccessControlListPatchProperties(_Model):
     :ivar acl_type: Access Control List (ACL) Type. Known values are: "ControlPlaneTrafficPolicy",
      "Tenant", "Management", and "ControlPlaneAcl".
     :vartype acl_type: str or ~azure.mgmt.managednetworkfabric.models.AclType
-    :ivar device_role: Device Role. Known values are: "CE", "ToR", "NPB", and "ManagementSwitch".
+    :ivar device_role: Device Role. Known values are: "CE", "ToR", "NPB", "ManagementSwitch", and
+     "TerminalServer".
     :vartype device_role: str or ~azure.mgmt.managednetworkfabric.models.DeviceRole
     :ivar global_access_control_list_actions: Global Access Control List (ACL) actions.
     :vartype global_access_control_list_actions:
@@ -817,7 +822,8 @@ class AccessControlListPatchProperties(_Model):
     device_role: Optional[Union[str, "_models.DeviceRole"]] = rest_field(
         name="deviceRole", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Device Role. Known values are: \"CE\", \"ToR\", \"NPB\", and \"ManagementSwitch\"."""
+    """Device Role. Known values are: \"CE\", \"ToR\", \"NPB\", \"ManagementSwitch\", and
+     \"TerminalServer\"."""
     global_access_control_list_actions: Optional["_models.GlobalAccessControlListActionPatchProperties"] = rest_field(
         name="globalAccessControlListActions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -852,7 +858,7 @@ class AccessControlListPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortCondition(_Model):
+class PortCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port condition that needs to be matched.
 
     :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort",
@@ -905,7 +911,7 @@ class PortCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListPortCondition(PortCondition):
+class AccessControlListPortCondition(PortCondition):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the port condition that needs to be matched.
 
     :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort",
@@ -951,7 +957,7 @@ class AccessControlListPortCondition(PortCondition):
         super().__init__(*args, **kwargs)
 
 
-class PortConditionPatch(_Model):
+class PortConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port condition that needs to be matched.
 
     :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort",
@@ -1004,7 +1010,9 @@ class PortConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListPortConditionPatch(PortConditionPatch):
+class AccessControlListPortConditionPatch(
+    PortConditionPatch
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the port condition that needs to be matched.
 
     :ivar port_type: Port type that needs to be matched. Known values are: "SourcePort",
@@ -1050,7 +1058,7 @@ class AccessControlListPortConditionPatch(PortConditionPatch):
         super().__init__(*args, **kwargs)
 
 
-class AccessControlListProperties(_Model):
+class AccessControlListProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Control List Properties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -1074,7 +1082,8 @@ class AccessControlListProperties(_Model):
     :ivar acl_type: Access Control List (ACL) Type. Known values are: "ControlPlaneTrafficPolicy",
      "Tenant", "Management", and "ControlPlaneAcl".
     :vartype acl_type: str or ~azure.mgmt.managednetworkfabric.models.AclType
-    :ivar device_role: Device Role. Known values are: "CE", "ToR", "NPB", and "ManagementSwitch".
+    :ivar device_role: Device Role. Known values are: "CE", "ToR", "NPB", "ManagementSwitch", and
+     "TerminalServer".
     :vartype device_role: str or ~azure.mgmt.managednetworkfabric.models.DeviceRole
     :ivar global_access_control_list_actions: Global Access Control List (ACL) actions.
     :vartype global_access_control_list_actions:
@@ -1088,8 +1097,8 @@ class AccessControlListProperties(_Model):
      list[~azure.mgmt.managednetworkfabric.models.ControlPlaneAclProperties]
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -1134,7 +1143,8 @@ class AccessControlListProperties(_Model):
     device_role: Optional[Union[str, "_models.DeviceRole"]] = rest_field(
         name="deviceRole", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Device Role. Known values are: \"CE\", \"ToR\", \"NPB\", and \"ManagementSwitch\"."""
+    """Device Role. Known values are: \"CE\", \"ToR\", \"NPB\", \"ManagementSwitch\", and
+     \"TerminalServer\"."""
     global_access_control_list_actions: Optional["_models.GlobalAccessControlListActionProperties"] = rest_field(
         name="globalAccessControlListActions", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1152,8 +1162,9 @@ class AccessControlListProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -1192,7 +1203,7 @@ class AccessControlListProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionIpCommunityPatchProperties(_Model):
+class ActionIpCommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community Properties.
 
     :ivar add: List of IP Community IDs.
@@ -1232,7 +1243,7 @@ class ActionIpCommunityPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionIpCommunityProperties(_Model):
+class ActionIpCommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community Properties.
 
     :ivar add: List of IP Community IDs.
@@ -1272,7 +1283,7 @@ class ActionIpCommunityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionIpExtendedCommunityPatchProperties(_Model):
+class ActionIpExtendedCommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Extended Community Properties.
 
     :ivar add: List of IP Extended Community IDs.
@@ -1316,7 +1327,7 @@ class ActionIpExtendedCommunityPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionIpExtendedCommunityProperties(_Model):
+class ActionIpExtendedCommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Extended Community Properties.
 
     :ivar add: List of IP Extended Community IDs.
@@ -1360,7 +1371,7 @@ class ActionIpExtendedCommunityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AggregateRoute(_Model):
+class AggregateRoute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """aggregateIpv4Route model.
 
     :ivar prefix: IPv4 Prefix of the aggregate Ipv4Route. Required.
@@ -1388,7 +1399,7 @@ class AggregateRoute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AggregateRouteConfiguration(_Model):
+class AggregateRouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of IPv4 and IPv6 aggregate routes.
 
     :ivar ipv4_routes: List of IPv4 Route prefixes.
@@ -1425,7 +1436,7 @@ class AggregateRouteConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AggregateRoutePatchConfiguration(_Model):
+class AggregateRoutePatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of IPv4 and IPv6 aggregate routes.
 
     :ivar ipv4_routes: List of IPv4 Route prefixes.
@@ -1462,7 +1473,7 @@ class AggregateRoutePatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnnotationResource(_Model):
+class AnnotationResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Switch configuration entries require a description to discern between configuration group.
 
     :ivar annotation: Switch configuration description.
@@ -1490,7 +1501,7 @@ class AnnotationResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmConfigurationDiffOperationResponse(_Model):
+class ArmConfigurationDiffOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Configuration Diff Response V2.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -1574,7 +1585,7 @@ class ArmConfigurationDiffOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArmConfigurationDiffResponseProperties(_Model):
+class ArmConfigurationDiffResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Configuration Diff Response Properties.
 
     :ivar configuration_diff_url: Storage URL to the diff file.
@@ -1604,7 +1615,7 @@ class ArmConfigurationDiffResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizedTransceiverPatchProperties(_Model):
+class AuthorizedTransceiverPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorized Transceiver Patch Properties.
 
     :ivar vendor: Vendor of the transceiver.
@@ -1637,7 +1648,7 @@ class AuthorizedTransceiverPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AuthorizedTransceiverProperties(_Model):
+class AuthorizedTransceiverProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorized Transceiver Properties.
 
     :ivar vendor: Vendor of the transceiver.
@@ -1670,7 +1681,7 @@ class AuthorizedTransceiverProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BfdConfiguration(_Model):
+class BfdConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BFD configuration properties.
 
     :ivar administrative_state: Administrative state of the BfdConfiguration. Example: Enabled |
@@ -1714,7 +1725,7 @@ class BfdConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BfdPatchConfiguration(_Model):
+class BfdPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BFD configuration properties.
 
     :ivar administrative_state: Administrative state of the BfdConfiguration. Example: Enabled |
@@ -1758,7 +1769,7 @@ class BfdPatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BgpConfiguration(AnnotationResource):
+class BgpConfiguration(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP configuration properties.
 
     :ivar annotation: Switch configuration description.
@@ -1877,7 +1888,7 @@ class BgpConfiguration(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class BgpPatchConfiguration(AnnotationResource):
+class BgpPatchConfiguration(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP configuration properties.
 
     :ivar annotation: Switch configuration description.
@@ -1998,7 +2009,7 @@ class BgpPatchConfiguration(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class BitRate(_Model):
+class BitRate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Bit rate in bits per second.
 
     :ivar rate: Bitrate.
@@ -2033,7 +2044,7 @@ class BitRate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmpConfigurationPatchProperties(_Model):
+class BmpConfigurationPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BMP Configuration patch properties.
 
     :ivar station_configuration_state: Enabling a station. Either True/False. Known values are:
@@ -2147,7 +2158,7 @@ class BmpConfigurationPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmpConfigurationProperties(_Model):
+class BmpConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP Monitoring Protocol (BMP) Configuration properties.
 
     :ivar station_configuration_state: Enabling a station. Either True/False. Known values are:
@@ -2261,7 +2272,7 @@ class BmpConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmpExportPolicyPatchProperties(_Model):
+class BmpExportPolicyPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BMP Export Policy Configuration properties.
 
     :ivar export_policies: Export Policy for the BGP Monitoring Protocol (BMP) Configuration.
@@ -2291,7 +2302,7 @@ class BmpExportPolicyPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BmpExportPolicyProperties(_Model):
+class BmpExportPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BMP Export Policy Configuration properties.
 
     :ivar export_policies: Export Policy for the BGP Monitoring Protocol (BMP) Configuration.
@@ -2321,7 +2332,7 @@ class BmpExportPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BurstSize(_Model):
+class BurstSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Burst size in packets.
 
     :ivar size: Burst size.
@@ -2420,7 +2431,7 @@ class CertificateRotationStatus(_Model):
     """Identifies the certificate according to its purpose."""
 
 
-class CommitBatchDetails(_Model):
+class CommitBatchDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Batch Details.
 
     :ivar failed_devices: List of devices for which the commit operation failed.
@@ -2450,7 +2461,7 @@ class CommitBatchDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitBatchStatusOperationResponse(_Model):
+class CommitBatchStatusOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Batch Status Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2534,7 +2545,7 @@ class CommitBatchStatusOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitBatchStatusRequest(_Model):
+class CommitBatchStatusRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Batch Status Request.
 
     :ivar commit_batch_id: Commit Batch Identifier. If not provided, the latest commit batch status
@@ -2565,7 +2576,7 @@ class CommitBatchStatusRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitBatchStatusResponseProperties(_Model):
+class CommitBatchStatusResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Batch Status Response Properties.
 
     :ivar commit_batch_id: Commit Batch Identifier.
@@ -2610,7 +2621,7 @@ class CommitBatchStatusResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitConfigurationRequest(_Model):
+class CommitConfigurationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Configuration Request.
 
     :ivar commit_stage: Commit stage Action to be performed. Known values are: "Start", "Continue",
@@ -2659,7 +2670,7 @@ class CommitConfigurationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommitConfigurationResponse(_Model):
+class CommitConfigurationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Commit Configuration Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2735,7 +2746,7 @@ class CommitConfigurationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonDynamicMatchConfiguration(_Model):
+class CommonDynamicMatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic match configuration object.
 
     :ivar ip_groups: List of IP Groups.
@@ -2779,7 +2790,7 @@ class CommonDynamicMatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonDynamicMatchConfigurationPatch(_Model):
+class CommonDynamicMatchConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dynamic match configuration object.
 
     :ivar ip_groups: List of IP Groups.
@@ -2823,7 +2834,7 @@ class CommonDynamicMatchConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonErrorResponse(_Model):
+class CommonErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The error message.
 
     :ivar error: The error object.
@@ -2851,13 +2862,15 @@ class CommonErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommonPostActionResponseForDeviceROCommands(_Model):  # pylint: disable=name-too-long
+class CommonPostActionResponseForDeviceROCommands(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Common response for device Ro Commands.
 
     :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar output_url: Predefined link containing Device RO Command output.
     :vartype output_url: str
@@ -2870,8 +2883,9 @@ class CommonPostActionResponseForDeviceROCommands(_Model):  # pylint: disable=na
     )
     """Gets the configuration state. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     output_url: Optional[str] = rest_field(name="outputUrl", visibility=["read", "create", "update", "delete", "query"])
     """Predefined link containing Device RO Command output."""
     device_configuration_preview: Optional[str] = rest_field(
@@ -2900,7 +2914,7 @@ class CommonPostActionResponseForDeviceROCommands(_Model):  # pylint: disable=na
 
 class CommonPostActionResponseForDeviceROCommandsOperationStatusResult(
     CommonErrorResponse
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar error: The error object.
@@ -2960,15 +2974,17 @@ class CommonPostActionResponseForDeviceROCommandsOperationStatusResult(
         super().__init__(*args, **kwargs)
 
 
-class CommonPostActionResponseForDeviceUpdate(CommonErrorResponse):
+class CommonPostActionResponseForDeviceUpdate(
+    CommonErrorResponse
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common response for device updates.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
     :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar successful_devices: List of ARM Resource IDs for which the given action applied
      successfully.
@@ -2982,8 +2998,9 @@ class CommonPostActionResponseForDeviceUpdate(CommonErrorResponse):
     )
     """Gets the configuration state. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     successful_devices: Optional[list[str]] = rest_field(
         name="successfulDevices", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3013,15 +3030,17 @@ class CommonPostActionResponseForDeviceUpdate(CommonErrorResponse):
         super().__init__(*args, **kwargs)
 
 
-class CommonPostActionResponseForStateUpdate(CommonErrorResponse):
+class CommonPostActionResponseForStateUpdate(
+    CommonErrorResponse
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common response for the state updates.
 
     :ivar error: The error object.
     :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
     :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     """
 
@@ -3030,8 +3049,9 @@ class CommonPostActionResponseForStateUpdate(CommonErrorResponse):
     )
     """Gets the configuration state. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
 
     @overload
     def __init__(
@@ -3051,7 +3071,7 @@ class CommonPostActionResponseForStateUpdate(CommonErrorResponse):
         super().__init__(*args, **kwargs)
 
 
-class ConditionalDefaultRouteProperties(_Model):
+class ConditionalDefaultRouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Conditional Default Route Configuration properties.
 
     :ivar ipv4_routes: List of IPv4 Routes.
@@ -3088,7 +3108,7 @@ class ConditionalDefaultRouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedSubnet(AnnotationResource):
+class ConnectedSubnet(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Subnet properties.
 
     :ivar annotation: Switch configuration description.
@@ -3119,7 +3139,7 @@ class ConnectedSubnet(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedSubnetPatch(AnnotationResource):
+class ConnectedSubnetPatch(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Subnet properties.
 
     :ivar annotation: Switch configuration description.
@@ -3150,7 +3170,7 @@ class ConnectedSubnetPatch(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedSubnetRoutePolicy(_Model):
+class ConnectedSubnetRoutePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Subnet Route Policy properties.
 
     :ivar export_route_policy: Array of ARM Resource ID of the RoutePolicies.
@@ -3180,7 +3200,7 @@ class ConnectedSubnetRoutePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectedSubnetRoutePolicyPatch(_Model):
+class ConnectedSubnetRoutePolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connected Subnet Route Policy properties.
 
     :ivar export_route_policy: Array of ARM Resource ID of the RoutePolicies.
@@ -3210,7 +3230,7 @@ class ConnectedSubnetRoutePolicyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControllerServices(_Model):
+class ControllerServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Controller services.
 
     :ivar ipv4_address_spaces: The IPv4 Address space is optional, if the value is not defined at
@@ -3251,7 +3271,7 @@ class ControllerServices(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlanAclIpMatchCondition(_Model):
+class ControlPlanAclIpMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) IP condition properties.
 
     :ivar source_ip_prefix: List of the source IP addresses that need to be matched.
@@ -3288,7 +3308,7 @@ class ControlPlanAclIpMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclAction(_Model):
+class ControlPlaneAclAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) Actions.
 
     :ivar type: Type of actions that can be performed. Known values are: "Permit", "Deny", and
@@ -3326,7 +3346,7 @@ class ControlPlaneAclAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclActionPatch(_Model):
+class ControlPlaneAclActionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) Actions.
 
     :ivar type: Type of actions that can be performed. Known values are: "Permit", "Deny", and
@@ -3364,7 +3384,7 @@ class ControlPlaneAclActionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclIpMatchConditionPatch(_Model):
+class ControlPlaneAclIpMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) IP condition patch properties.
 
     :ivar source_ip_prefix: List of the source IP addresses that need to be matched.
@@ -3401,7 +3421,7 @@ class ControlPlaneAclIpMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclMatchCondition(_Model):
+class ControlPlaneAclMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) match conditions properties.
 
     :ivar protocol_types: Protocols that need to be matched.
@@ -3470,7 +3490,7 @@ class ControlPlaneAclMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclMatchConditionPatch(_Model):
+class ControlPlaneAclMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) match conditions properties.
 
     :ivar protocol_types: Protocols that need to be matched.
@@ -3540,7 +3560,9 @@ class ControlPlaneAclMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclMatchConfigurationPatchProperties(_Model):  # pylint: disable=name-too-long
+class ControlPlaneAclMatchConfigurationPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) match configurations properties.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -3592,7 +3614,9 @@ class ControlPlaneAclMatchConfigurationPatchProperties(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclMatchConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class ControlPlaneAclMatchConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) match configurations properties.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -3643,7 +3667,7 @@ class ControlPlaneAclMatchConfigurationProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclPatchProperties(_Model):
+class ControlPlaneAclPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Control List (ACL) configurations patch properties.
 
     :ivar ip_address_type: IP Address Type. IPv4 or IPv6. Known values are: "IPv4" and "IPv6".
@@ -3681,7 +3705,7 @@ class ControlPlaneAclPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclPortCondition(_Model):
+class ControlPlaneAclPortCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) Port Match conditions properties.
 
     :ivar ports: List of the ports that need to be matched. Possible values: 1234, 1234-1235,
@@ -3720,7 +3744,7 @@ class ControlPlaneAclPortCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclPortMatchCondition(_Model):
+class ControlPlaneAclPortMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) Port Match conditions properties.
 
     :ivar source_ports: List of the ports that need to be matched.
@@ -3758,7 +3782,7 @@ class ControlPlaneAclPortMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclPortMatchConditionPatch(_Model):
+class ControlPlaneAclPortMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control Plane Access Control List (ACL) Port Match conditions properties.
 
     :ivar source_ports: List of the ports that need to be matched.
@@ -3796,7 +3820,7 @@ class ControlPlaneAclPortMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclProperties(_Model):
+class ControlPlaneAclProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Control List (ACL) configurations properties.
 
     :ivar ip_address_type: IP Address Type. IPv4 or IPv6. Known values are: "IPv4" and "IPv6".
@@ -3834,7 +3858,7 @@ class ControlPlaneAclProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclTtlMatchCondition(_Model):
+class ControlPlaneAclTtlMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TTL [Time To Live] match conditions properties.
 
     :ivar ttl_value: TTL [Time To Live] values that need to be matched.
@@ -3872,7 +3896,7 @@ class ControlPlaneAclTtlMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ControlPlaneAclTtlMatchConditionPatch(_Model):
+class ControlPlaneAclTtlMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TTL [Time To Live] match conditions patch properties.
 
     :ivar ttl_value: TTL [Time To Live] values that need to be matched.
@@ -3910,7 +3934,7 @@ class ControlPlaneAclTtlMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DestinationPatchProperties(_Model):
+class DestinationPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network tap destination properties.
 
     :ivar name: Destination name.
@@ -3970,7 +3994,7 @@ class DestinationPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DestinationProperties(_Model):
+class DestinationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network tap destination properties.
 
     :ivar name: Destination name. Required.
@@ -4029,7 +4053,7 @@ class DestinationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeviceInterfaceProperties(_Model):
+class DeviceInterfaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network device interface properties.
 
     :ivar identifier: Interface identifier. Example: HundredGigE0/0.
@@ -4072,7 +4096,7 @@ class DeviceInterfaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeviceRoCommand(_Model):
+class DeviceRoCommand(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provide the RO command.
 
     :ivar command: Specify the command.
@@ -4100,7 +4124,7 @@ class DeviceRoCommand(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DeviceRwCommand(_Model):
+class DeviceRwCommand(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Provide the Rw command.
 
     :ivar command: Specify the command.
@@ -4135,7 +4159,7 @@ class DeviceRwCommand(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscardCommitBatchOperationResponse(_Model):
+class DiscardCommitBatchOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discard Commit Batch Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -4219,7 +4243,7 @@ class DiscardCommitBatchOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscardCommitBatchRequest(_Model):
+class DiscardCommitBatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discard Commit Batch Request.
 
     :ivar commit_batch_id: Commit Batch Identifier. If not provided, the latest commit batch status
@@ -4250,7 +4274,7 @@ class DiscardCommitBatchRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscardCommitBatchResponseProperties(_Model):
+class DiscardCommitBatchResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Discard Commit Batch Response Properties.
 
     :ivar commit_batch_id: Commit Batch Identifier.
@@ -4280,7 +4304,176 @@ class DiscardCommitBatchResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnableDisableOnResources(_Model):
+class EdgeConnector(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """EdgeConnector represents the mechanism by which a collection of on-prem infrastructure (Fabric)
+    is connected to Azure.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: EdgeConnector properties. Required.
+    :vartype properties: ~azure.mgmt.managednetworkfabric.models.EdgeConnectorProperties
+    """
+
+    properties: "_models.EdgeConnectorProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """EdgeConnector properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.EdgeConnectorProperties",
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeConnectorPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """EdgeConnector patch body.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.managednetworkfabric.models.EdgeConnectorPatchableProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.EdgeConnectorPatchableProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.EdgeConnectorPatchableProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeConnectorPatchableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """EdgeConnector patchable properties.
+
+    :ivar connectivity_model: How the EdgeConnector establishes connectivity to on-prem
+     infrastructure. Known values are: "none", "direct", "arcProxy", and "expressRoute".
+    :vartype connectivity_model: str or ~azure.mgmt.managednetworkfabric.models.ConnectivityModel
+    :ivar version: Software version of the control plane.
+    :vartype version: str
+    """
+
+    connectivity_model: Optional[Union[str, "_models.ConnectivityModel"]] = rest_field(
+        name="connectivityModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the EdgeConnector establishes connectivity to on-prem infrastructure. Known values are:
+     \"none\", \"direct\", \"arcProxy\", and \"expressRoute\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Software version of the control plane."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connectivity_model: Optional[Union[str, "_models.ConnectivityModel"]] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EdgeConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """EdgeConnectorProperties defines the resource properties.
+
+    :ivar connectivity_model: How the EdgeConnector establishes connectivity to on-prem
+     infrastructure. Known values are: "none", "direct", "arcProxy", and "expressRoute".
+    :vartype connectivity_model: str or ~azure.mgmt.managednetworkfabric.models.ConnectivityModel
+    :ivar version: Software version of the control plane.
+    :vartype version: str
+    :ivar managed_fabric_ids: ARM resource IDs of Fabric resources managed by this EdgeConnector.
+    :vartype managed_fabric_ids: list[str]
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    """
+
+    connectivity_model: Optional[Union[str, "_models.ConnectivityModel"]] = rest_field(
+        name="connectivityModel", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the EdgeConnector establishes connectivity to on-prem infrastructure. Known values are:
+     \"none\", \"direct\", \"arcProxy\", and \"expressRoute\"."""
+    version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Software version of the control plane."""
+    managed_fabric_ids: Optional[list[str]] = rest_field(name="managedFabricIds", visibility=["read"])
+    """ARM resource IDs of Fabric resources managed by this EdgeConnector."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Accepted\", \"Succeeded\",
+     \"Updating\", \"Deleting\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        connectivity_model: Optional[Union[str, "_models.ConnectivityModel"]] = None,
+        version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EnableDisableOnResources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update administrative state on list of resources.
 
     :ivar resource_ids: Network Fabrics or Network Rack resource Id.
@@ -4354,7 +4547,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -4382,7 +4575,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRoutePolicy(_Model):
+class ExportRoutePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Export Route Policy either IPv4 or IPv6.
 
     :ivar export_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
@@ -4419,7 +4612,7 @@ class ExportRoutePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRoutePolicyInformation(_Model):
+class ExportRoutePolicyInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Export Route Policy Configuration.
 
     :ivar export_ipv4_route_policy_id: Export IPv4 Route Policy Id.
@@ -4456,7 +4649,7 @@ class ExportRoutePolicyInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRoutePolicyInformationPatch(_Model):
+class ExportRoutePolicyInformationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Export Route Policy Configuration.
 
     :ivar export_ipv4_route_policy_id: Export IPv4 Route Policy Id.
@@ -4493,7 +4686,7 @@ class ExportRoutePolicyInformationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRoutePolicyPatch(_Model):
+class ExportRoutePolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Export Route Policy either IPv4 or IPv6.
 
     :ivar export_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
@@ -4530,7 +4723,7 @@ class ExportRoutePolicyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExpressRouteConnectionInformation(_Model):
+class ExpressRouteConnectionInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExpressRoute circuit ID and the Auth Key are required for you to successfully deploy NFC
     service.
 
@@ -4593,7 +4786,7 @@ class ProxyResource(Resource):
     """
 
 
-class ExternalNetwork(ProxyResource):
+class ExternalNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the External Network resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4668,7 +4861,7 @@ class ExternalNetwork(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ExternalNetworkBmpPatchProperties(_Model):
+class ExternalNetworkBmpPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BMP Monitoring Configuration patch properties.
 
     :ivar configuration_state: BMP Configuration State. Known values are: "Enabled" and "Disabled".
@@ -4699,7 +4892,7 @@ class ExternalNetworkBmpPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkBmpProperties(_Model):
+class ExternalNetworkBmpProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP Monitoring Protocol (BMP) Configuration properties.
 
     :ivar configuration_state: BMP Configuration State. Known values are: "Enabled" and "Disabled".
@@ -4730,7 +4923,7 @@ class ExternalNetworkBmpProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkPatch(_Model):
+class ExternalNetworkPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ExternalNetwork patch resource definition.
 
     :ivar properties: External Network Patch properties.
@@ -4789,7 +4982,7 @@ class ExternalNetworkPatch(_Model):
             super().__setattr__(key, value)
 
 
-class ExternalNetworkPatchProperties(_Model):
+class ExternalNetworkPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -4869,7 +5062,9 @@ class ExternalNetworkPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkPatchPropertiesOptionAProperties(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkPatchPropertiesOptionAProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """option A properties object.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -5002,7 +5197,7 @@ class ExternalNetworkPatchPropertiesOptionAProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkProperties(_Model):
+class ExternalNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network Properties.
 
     :ivar annotation: Switch configuration description.
@@ -5030,8 +5225,8 @@ class ExternalNetworkProperties(_Model):
     :vartype network_fabric_id: str
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -5081,8 +5276,9 @@ class ExternalNetworkProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -5119,7 +5315,9 @@ class ExternalNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkPropertiesOptionAProperties(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkPropertiesOptionAProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """option A properties object.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -5252,7 +5450,7 @@ class ExternalNetworkPropertiesOptionAProperties(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkStaticRouteConfiguration(_Model):
+class ExternalNetworkStaticRouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties for ExternalNetwork.
 
     :ivar bfd_configuration: BFD configuration properties.
@@ -5296,7 +5494,9 @@ class ExternalNetworkStaticRouteConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkStaticRoutePatchConfiguration(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkStaticRoutePatchConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties for External Network.
 
     :ivar bfd_configuration: BFD configuration properties.
@@ -5340,7 +5540,9 @@ class ExternalNetworkStaticRoutePatchConfiguration(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkUpdateBfdAdministrativeStateRequest(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkUpdateBfdAdministrativeStateRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """External Network Update Administrative State request.
 
     :ivar route_type: Route Type that helps to know which bfd we are updating. Known values are:
@@ -5381,7 +5583,9 @@ class ExternalNetworkUpdateBfdAdministrativeStateRequest(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkUpdateBfdAdministrativeStateResponse(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkUpdateBfdAdministrativeStateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """External Network Update Administrative State response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -5465,7 +5669,9 @@ class ExternalNetworkUpdateBfdAdministrativeStateResponse(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ExternalNetworkUpdateBfdAdministrativeStateResponseProperties(_Model):  # pylint: disable=name-too-long
+class ExternalNetworkUpdateBfdAdministrativeStateResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response properties for External Network BFD Administrative State.
 
     :ivar route_type: Route Type that helps to know which bfd we are updating. Known values are:
@@ -5506,7 +5712,52 @@ class ExternalNetworkUpdateBfdAdministrativeStateResponseProperties(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class FabricLockProperties(_Model):
+class Fabric(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents a physical network deployment hosting infrastructure network configuration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.managednetworkfabric.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Fabric properties. Required.
+    :vartype properties: ~azure.mgmt.managednetworkfabric.models.FabricProperties
+    """
+
+    properties: "_models.FabricProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Fabric properties. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.FabricProperties",
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricLockProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Lock Configuration.
 
     :ivar lock_state: NetworkFabric Lock State. Known values are: "Enabled" and "Disabled".
@@ -5544,7 +5795,221 @@ class FabricLockProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureFlagProperties(_Model):
+class FabricPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fabric patch body.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Resource properties.
+    :vartype properties: ~azure.mgmt.managednetworkfabric.models.FabricPatchableProperties
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    properties: Optional["_models.FabricPatchableProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.FabricPatchableProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricPatchableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Fabric patchable properties.
+
+    :ivar infrastructure_networks: Infrastructure network definitions.
+    :vartype infrastructure_networks:
+     ~azure.mgmt.managednetworkfabric.models.PatchInfrastructureNetworks
+    :ivar infrastructure_services: Infrastructure service endpoints.
+    :vartype infrastructure_services:
+     ~azure.mgmt.managednetworkfabric.models.PatchInfrastructureServices
+    :ivar operation_policy: Operation policy for device interaction. Known values are:
+     "validateOnly" and "fullControl".
+    :vartype operation_policy: str or ~azure.mgmt.managednetworkfabric.models.OperationPolicy
+    :ivar controller_endpoint: URL of the SDN controller API endpoint.
+    :vartype controller_endpoint: str
+    :ivar controller_credential_ref: ARM resource ID of the Key Vault secret for controller
+     credentials.
+    :vartype controller_credential_ref: str
+    """
+
+    infrastructure_networks: Optional["_models.PatchInfrastructureNetworks"] = rest_field(
+        name="infrastructureNetworks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure network definitions."""
+    infrastructure_services: Optional["_models.PatchInfrastructureServices"] = rest_field(
+        name="infrastructureServices", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure service endpoints."""
+    operation_policy: Optional[Union[str, "_models.OperationPolicy"]] = rest_field(
+        name="operationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operation policy for device interaction. Known values are: \"validateOnly\" and
+     \"fullControl\"."""
+    controller_endpoint: Optional[str] = rest_field(
+        name="controllerEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URL of the SDN controller API endpoint."""
+    controller_credential_ref: Optional[str] = rest_field(
+        name="controllerCredentialRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the Key Vault secret for controller credentials."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        infrastructure_networks: Optional["_models.PatchInfrastructureNetworks"] = None,
+        infrastructure_services: Optional["_models.PatchInfrastructureServices"] = None,
+        operation_policy: Optional[Union[str, "_models.OperationPolicy"]] = None,
+        controller_endpoint: Optional[str] = None,
+        controller_credential_ref: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """FabricProperties defines the resource properties.
+
+    :ivar infrastructure_networks: Infrastructure network definitions.
+    :vartype infrastructure_networks:
+     ~azure.mgmt.managednetworkfabric.models.InfrastructureNetworks
+    :ivar infrastructure_services: Infrastructure service endpoints.
+    :vartype infrastructure_services:
+     ~azure.mgmt.managednetworkfabric.models.InfrastructureServices
+    :ivar operation_policy: Operation policy for device interaction. Known values are:
+     "validateOnly" and "fullControl".
+    :vartype operation_policy: str or ~azure.mgmt.managednetworkfabric.models.OperationPolicy
+    :ivar controller_endpoint: URL of the SDN controller API endpoint.
+    :vartype controller_endpoint: str
+    :ivar controller_credential_ref: ARM resource ID of the Key Vault secret for controller
+     credentials.
+    :vartype controller_credential_ref: str
+    :ivar edge_connector_id: ARM resource ID of the EdgeConnector.
+    :vartype edge_connector_id: str
+    :ivar management_mode: Management mode. Required. Known values are: "unmanaged" and "managed".
+    :vartype management_mode: str or ~azure.mgmt.managednetworkfabric.models.ManagementMode
+    :ivar controller_type: Controller type for device interaction. Known values are: "ciscoAci",
+     "aristaCloudVision", and "direct".
+    :vartype controller_type: str or ~azure.mgmt.managednetworkfabric.models.ControllerType
+    :ivar rack_count: Number of physical racks.
+    :vartype rack_count: int
+    :ivar fabric_sku: Predefined topology identifier.
+    :vartype fabric_sku: str
+    :ivar customer_vnet_id: ARM ID of the customer's Azure VNet.
+    :vartype customer_vnet_id: str
+    :ivar customer_subnet_id: ARM ID of the customer's subnet.
+    :vartype customer_subnet_id: str
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    """
+
+    infrastructure_networks: Optional["_models.InfrastructureNetworks"] = rest_field(
+        name="infrastructureNetworks", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure network definitions."""
+    infrastructure_services: Optional["_models.InfrastructureServices"] = rest_field(
+        name="infrastructureServices", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Infrastructure service endpoints."""
+    operation_policy: Optional[Union[str, "_models.OperationPolicy"]] = rest_field(
+        name="operationPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Operation policy for device interaction. Known values are: \"validateOnly\" and
+     \"fullControl\"."""
+    controller_endpoint: Optional[str] = rest_field(
+        name="controllerEndpoint", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """URL of the SDN controller API endpoint."""
+    controller_credential_ref: Optional[str] = rest_field(
+        name="controllerCredentialRef", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the Key Vault secret for controller credentials."""
+    edge_connector_id: Optional[str] = rest_field(name="edgeConnectorId", visibility=["read", "create"])
+    """ARM resource ID of the EdgeConnector."""
+    management_mode: Union[str, "_models.ManagementMode"] = rest_field(
+        name="managementMode", visibility=["read", "create"]
+    )
+    """Management mode. Required. Known values are: \"unmanaged\" and \"managed\"."""
+    controller_type: Optional[Union[str, "_models.ControllerType"]] = rest_field(
+        name="controllerType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Controller type for device interaction. Known values are: \"ciscoAci\", \"aristaCloudVision\",
+     and \"direct\"."""
+    rack_count: Optional[int] = rest_field(name="rackCount", visibility=["read", "create", "update", "delete", "query"])
+    """Number of physical racks."""
+    fabric_sku: Optional[str] = rest_field(name="fabricSku", visibility=["read", "create", "update", "delete", "query"])
+    """Predefined topology identifier."""
+    customer_vnet_id: Optional[str] = rest_field(
+        name="customerVnetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the customer's Azure VNet."""
+    customer_subnet_id: Optional[str] = rest_field(
+        name="customerSubnetId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM ID of the customer's subnet."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Accepted\", \"Succeeded\",
+     \"Updating\", \"Deleting\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        management_mode: Union[str, "_models.ManagementMode"],
+        infrastructure_networks: Optional["_models.InfrastructureNetworks"] = None,
+        infrastructure_services: Optional["_models.InfrastructureServices"] = None,
+        operation_policy: Optional[Union[str, "_models.OperationPolicy"]] = None,
+        controller_endpoint: Optional[str] = None,
+        controller_credential_ref: Optional[str] = None,
+        edge_connector_id: Optional[str] = None,
+        controller_type: Optional[Union[str, "_models.ControllerType"]] = None,
+        rack_count: Optional[int] = None,
+        fabric_sku: Optional[str] = None,
+        customer_vnet_id: Optional[str] = None,
+        customer_subnet_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FeatureFlagProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Feature flag properties.
 
     :ivar feature_flag_name: Feature flag name.
@@ -5581,7 +6046,7 @@ class FeatureFlagProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetTopologyResponse(_Model):
+class GetTopologyResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetTopology Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -5664,7 +6129,7 @@ class GetTopologyResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetTopologyResponseProperties(_Model):
+class GetTopologyResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the GetTopology Response.
 
     :ivar url: Topology JSON string.
@@ -5692,7 +6157,9 @@ class GetTopologyResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalAccessControlListActionPatchProperties(_Model):  # pylint: disable=name-too-long
+class GlobalAccessControlListActionPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Global Access Control List actions patch properties.
 
     :ivar enable_count: Configuration to enable or disable ACL action count. Known values are:
@@ -5723,7 +6190,7 @@ class GlobalAccessControlListActionPatchProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class GlobalAccessControlListActionProperties(_Model):
+class GlobalAccessControlListActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Global Access Control List actions properties.
 
     :ivar enable_count: Configuration to enable or disable ACL action count. Known values are:
@@ -5754,7 +6221,9 @@ class GlobalAccessControlListActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalNetworkTapRuleActionPatchProperties(_Model):  # pylint: disable=name-too-long
+class GlobalNetworkTapRuleActionPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Global network tap rule actions patch properties.
 
     :ivar enable_count: Configuration to enable network tap rule counter. Known values are: "True"
@@ -5790,7 +6259,7 @@ class GlobalNetworkTapRuleActionPatchProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class GlobalNetworkTapRuleActionProperties(_Model):
+class GlobalNetworkTapRuleActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Global network tap rule actions properties.
 
     :ivar enable_count: Configuration to enable network tap rule counter. Known values are: "True"
@@ -5826,7 +6295,7 @@ class GlobalNetworkTapRuleActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HeaderAddressProperties(_Model):
+class HeaderAddressProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Header name and source addresses associated with the header.
 
     :ivar header_name: Name of the header.
@@ -5863,7 +6332,7 @@ class HeaderAddressProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IcmpConfigurationPatchProperties(_Model):
+class IcmpConfigurationPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internet Control Message Protocol (ICMP) configuration patch properties.
 
     :ivar icmp_types: Internet Control Message Protocol (ICMP) types.
@@ -5893,7 +6362,7 @@ class IcmpConfigurationPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IcmpConfigurationProperties(_Model):
+class IcmpConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internet Control Message Protocol (ICMP) configuration.
 
     :ivar icmp_types: Internet Control Message Protocol (ICMP) types.
@@ -5923,7 +6392,7 @@ class IcmpConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentitySelector(_Model):
+class IdentitySelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentitySelector represents the selection of a managed identity for use.
 
     :ivar identity_type: The type of managed identity that is being selected. Required. Known
@@ -5965,7 +6434,7 @@ class IdentitySelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentitySelectorPatch(_Model):
+class IdentitySelectorPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentitySelector represents the selection of a managed identity for use.
 
     :ivar identity_type: The type of managed identity that is being selected. Known values are:
@@ -6007,7 +6476,7 @@ class IdentitySelectorPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportRoutePolicy(_Model):
+class ImportRoutePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import Route Policy either IPv4 or IPv6.
 
     :ivar import_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
@@ -6044,7 +6513,7 @@ class ImportRoutePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportRoutePolicyInformation(_Model):
+class ImportRoutePolicyInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import Route Policy Configuration.
 
     :ivar import_ipv4_route_policy_id: Import IPv4 Route Policy Id.
@@ -6081,7 +6550,7 @@ class ImportRoutePolicyInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportRoutePolicyInformationPatch(_Model):
+class ImportRoutePolicyInformationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import Route Policy Configuration.
 
     :ivar import_ipv4_route_policy_id: Import IPv4 Route Policy Id.
@@ -6118,7 +6587,7 @@ class ImportRoutePolicyInformationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportRoutePolicyPatch(_Model):
+class ImportRoutePolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import Route Policy either IPv4 or IPv6.
 
     :ivar import_ipv4_route_policy_id: ARM resource ID of RoutePolicy.
@@ -6155,7 +6624,216 @@ class ImportRoutePolicyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalNetwork(ProxyResource):
+class InfraNetwork(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure network definition.
+
+    :ivar vlan_id: 802.1Q VLAN ID. Required.
+    :vartype vlan_id: int
+    :ivar ipv4_subnet: IPv4 subnet in CIDR notation. Required.
+    :vartype ipv4_subnet: str
+    :ivar ipv4_gateway: Default gateway IP. Required.
+    :vartype ipv4_gateway: str
+    :ivar ipv4_start_addr: Start of allocatable IP range. Required.
+    :vartype ipv4_start_addr: str
+    :ivar ipv4_end_addr: End of allocatable IP range. Required.
+    :vartype ipv4_end_addr: str
+    :ivar mtu: Maximum Transmission Unit.
+    :vartype mtu: int
+    """
+
+    vlan_id: int = rest_field(name="vlanId", visibility=["read", "create", "update", "delete", "query"])
+    """802.1Q VLAN ID. Required."""
+    ipv4_subnet: str = rest_field(name="ipv4Subnet", visibility=["read", "create", "update", "delete", "query"])
+    """IPv4 subnet in CIDR notation. Required."""
+    ipv4_gateway: str = rest_field(name="ipv4Gateway", visibility=["read", "create", "update", "delete", "query"])
+    """Default gateway IP. Required."""
+    ipv4_start_addr: str = rest_field(name="ipv4StartAddr", visibility=["read", "create", "update", "delete", "query"])
+    """Start of allocatable IP range. Required."""
+    ipv4_end_addr: str = rest_field(name="ipv4EndAddr", visibility=["read", "create", "update", "delete", "query"])
+    """End of allocatable IP range. Required."""
+    mtu: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum Transmission Unit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vlan_id: int,
+        ipv4_subnet: str,
+        ipv4_gateway: str,
+        ipv4_start_addr: str,
+        ipv4_end_addr: str,
+        mtu: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InfraNetworkOptionalIp(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure network with optional IP fields.
+
+    :ivar vlan_id: 802.1Q VLAN ID. Required.
+    :vartype vlan_id: int
+    :ivar ipv4_subnet: IPv4 subnet in CIDR notation.
+    :vartype ipv4_subnet: str
+    :ivar ipv4_gateway: Default gateway IP.
+    :vartype ipv4_gateway: str
+    :ivar ipv4_start_addr: Start of allocatable IP range.
+    :vartype ipv4_start_addr: str
+    :ivar ipv4_end_addr: End of allocatable IP range.
+    :vartype ipv4_end_addr: str
+    :ivar mtu: Maximum Transmission Unit.
+    :vartype mtu: int
+    """
+
+    vlan_id: int = rest_field(name="vlanId", visibility=["read", "create", "update", "delete", "query"])
+    """802.1Q VLAN ID. Required."""
+    ipv4_subnet: Optional[str] = rest_field(
+        name="ipv4Subnet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IPv4 subnet in CIDR notation."""
+    ipv4_gateway: Optional[str] = rest_field(
+        name="ipv4Gateway", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default gateway IP."""
+    ipv4_start_addr: Optional[str] = rest_field(
+        name="ipv4StartAddr", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Start of allocatable IP range."""
+    ipv4_end_addr: Optional[str] = rest_field(
+        name="ipv4EndAddr", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """End of allocatable IP range."""
+    mtu: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum Transmission Unit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vlan_id: int,
+        ipv4_subnet: Optional[str] = None,
+        ipv4_gateway: Optional[str] = None,
+        ipv4_start_addr: Optional[str] = None,
+        ipv4_end_addr: Optional[str] = None,
+        mtu: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InfrastructureNetworks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Named infrastructure network definitions.
+
+    :ivar management: OAM management network. Typical VLAN: 39. Required.
+    :vartype management: ~azure.mgmt.managednetworkfabric.models.InfraNetwork
+    :ivar pxe: PXE boot network. Typical VLAN: 40. Required.
+    :vartype pxe: ~azure.mgmt.managednetworkfabric.models.InfraNetwork
+    :ivar bmc: BMC/iDRAC network. Typical VLAN: 41. Required.
+    :vartype bmc: ~azure.mgmt.managednetworkfabric.models.InfraNetwork
+    :ivar storage: Storage data plane network. Typical VLAN: 42. Required.
+    :vartype storage: ~azure.mgmt.managednetworkfabric.models.InfraNetwork
+    :ivar storage_mgmt: Storage management plane network. Typical VLAN: 37.
+    :vartype storage_mgmt: ~azure.mgmt.managednetworkfabric.models.InfraNetworkOptionalIp
+    :ivar pdu: PDU management network. Typical VLAN: 43.
+    :vartype pdu: ~azure.mgmt.managednetworkfabric.models.InfraNetwork
+    """
+
+    management: "_models.InfraNetwork" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """OAM management network. Typical VLAN: 39. Required."""
+    pxe: "_models.InfraNetwork" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """PXE boot network. Typical VLAN: 40. Required."""
+    bmc: "_models.InfraNetwork" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """BMC/iDRAC network. Typical VLAN: 41. Required."""
+    storage: "_models.InfraNetwork" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Storage data plane network. Typical VLAN: 42. Required."""
+    storage_mgmt: Optional["_models.InfraNetworkOptionalIp"] = rest_field(
+        name="storageMgmt", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage management plane network. Typical VLAN: 37."""
+    pdu: Optional["_models.InfraNetwork"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """PDU management network. Typical VLAN: 43."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        management: "_models.InfraNetwork",
+        pxe: "_models.InfraNetwork",
+        bmc: "_models.InfraNetwork",
+        storage: "_models.InfraNetwork",
+        storage_mgmt: Optional["_models.InfraNetworkOptionalIp"] = None,
+        pdu: Optional["_models.InfraNetwork"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InfrastructureServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure service endpoints.
+
+    :ivar platform_proxy: Platform proxy configuration. Required.
+    :vartype platform_proxy: ~azure.mgmt.managednetworkfabric.models.PlatformProxy
+    :ivar ntp_servers: NTP server IPs or hostnames. Required.
+    :vartype ntp_servers: list[str]
+    :ivar dns_servers: DNS server IPs. Required.
+    :vartype dns_servers: list[str]
+    """
+
+    platform_proxy: "_models.PlatformProxy" = rest_field(
+        name="platformProxy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Platform proxy configuration. Required."""
+    ntp_servers: list[str] = rest_field(name="ntpServers", visibility=["read", "create", "update", "delete", "query"])
+    """NTP server IPs or hostnames. Required."""
+    dns_servers: list[str] = rest_field(name="dnsServers", visibility=["read", "create", "update", "delete", "query"])
+    """DNS server IPs. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        platform_proxy: "_models.PlatformProxy",
+        ntp_servers: list[str],
+        dns_servers: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InternalNetwork(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Internal Network resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6237,7 +6915,7 @@ class InternalNetwork(ProxyResource):
             super().__setattr__(key, value)
 
 
-class InternalNetworkBmpPatchProperties(_Model):
+class InternalNetworkBmpPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internal Network BMP Configuration.
 
     :ivar neighbor_ip_exclusions: Neighbor IP Address exclusions for BMP.
@@ -6276,7 +6954,7 @@ class InternalNetworkBmpPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkBmpProperties(_Model):
+class InternalNetworkBmpProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internal Network BMP Configuration.
 
     :ivar neighbor_ip_exclusions: BMP Collector Address.
@@ -6323,7 +7001,7 @@ class InternalNetworkBmpProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkPatch(_Model):
+class InternalNetworkPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The InternalNetwork patch resource definition.
 
     :ivar properties: InternalNetwork Patch properties.
@@ -6387,7 +7065,7 @@ class InternalNetworkPatch(_Model):
             super().__setattr__(key, value)
 
 
-class InternalNetworkPatchProperties(_Model):
+class InternalNetworkPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InternalNetwork Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -6505,7 +7183,7 @@ class InternalNetworkPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkProperties(_Model):
+class InternalNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internal Network Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -6550,8 +7228,8 @@ class InternalNetworkProperties(_Model):
     :vartype network_fabric_id: str
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -6626,8 +7304,9 @@ class InternalNetworkProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -6671,7 +7350,9 @@ class InternalNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBfdAdministrativeStateRequest(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBfdAdministrativeStateRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network BFD Administrative State request.
 
     :ivar route_type: Route Type that helps to know which bfd we are updating. Known values are:
@@ -6720,7 +7401,9 @@ class InternalNetworkUpdateBfdAdministrativeStateRequest(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBfdAdministrativeStateResponse(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBfdAdministrativeStateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network BFD Administrative State response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -6804,7 +7487,9 @@ class InternalNetworkUpdateBfdAdministrativeStateResponse(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBfdAdministrativeStateResponseProperties(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBfdAdministrativeStateResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network BFD Administrative State response properties.
 
     :ivar neighbor_address_administrative_status: NeighborAddress administrative status.
@@ -6837,7 +7522,9 @@ class InternalNetworkUpdateBfdAdministrativeStateResponseProperties(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBgpAdministrativeStateRequest(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBgpAdministrativeStateRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network Administrative State Request.
 
     :ivar neighbor_address: NeighborAddress - Input should be either All or Specific Ipv4 Address
@@ -6877,7 +7564,9 @@ class InternalNetworkUpdateBgpAdministrativeStateRequest(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBgpAdministrativeStateResponse(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBgpAdministrativeStateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network Administrative State Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -6961,7 +7650,9 @@ class InternalNetworkUpdateBgpAdministrativeStateResponse(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class InternalNetworkUpdateBgpAdministrativeStateResponseProperties(_Model):  # pylint: disable=name-too-long
+class InternalNetworkUpdateBgpAdministrativeStateResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Internal Network BGP Administrative State response properties.
 
     :ivar neighbor_address_administrative_status: NeighborAddress administrative status.
@@ -6994,7 +7685,7 @@ class InternalNetworkUpdateBgpAdministrativeStateResponseProperties(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class InternetGateway(TrackedResource):
+class InternetGateway(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Internet Gateway resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7071,7 +7762,7 @@ class InternetGateway(TrackedResource):
             super().__setattr__(key, value)
 
 
-class InternetGatewayPatch(TagsUpdate):
+class InternetGatewayPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Internet Gateway patch resource definition.
 
     :ivar tags: Resource tags.
@@ -7124,7 +7815,7 @@ class InternetGatewayPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class InternetGatewayPatchProperties(_Model):
+class InternetGatewayPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PatchProperties for InternetGateway.
 
     :ivar internet_gateway_rule_id: ARM Resource ID of the Internet Gateway Rule.
@@ -7154,7 +7845,7 @@ class InternetGatewayPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternetGatewayProperties(_Model):
+class InternetGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internet Gateway Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -7231,7 +7922,7 @@ class InternetGatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternetGatewayRule(TrackedResource):
+class InternetGatewayRule(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Internet Gateway Rule resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7304,7 +7995,7 @@ class InternetGatewayRule(TrackedResource):
             super().__setattr__(key, value)
 
 
-class InternetGatewayRulePatch(_Model):
+class InternetGatewayRulePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Internet Gateway Rules patch resource definition.
 
     :ivar tags: Resource tags.
@@ -7332,7 +8023,7 @@ class InternetGatewayRulePatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternetGatewayRuleProperties(AnnotationResource):
+class InternetGatewayRuleProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Internet Gateway Rule Properties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -7381,7 +8072,7 @@ class InternetGatewayRuleProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class IpCommunity(TrackedResource):
+class IpCommunity(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Community resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7454,7 +8145,7 @@ class IpCommunity(TrackedResource):
             super().__setattr__(key, value)
 
 
-class IpCommunityIdList(_Model):
+class IpCommunityIdList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community ID list properties.
 
     :ivar ip_community_ids: List of IP Community resource IDs.
@@ -7484,7 +8175,7 @@ class IpCommunityIdList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpCommunityPatch(TagsUpdate):
+class IpCommunityPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Community patch resource definition.
 
     :ivar tags: Resource tags.
@@ -7537,7 +8228,7 @@ class IpCommunityPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class IpCommunityPatchableProperties(_Model):
+class IpCommunityPatchableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community patchable properties.
 
     :ivar ip_community_rules: List of IP Community Rules.
@@ -7567,7 +8258,7 @@ class IpCommunityPatchableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpCommunityProperties(_Model):
+class IpCommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community Properties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -7580,8 +8271,8 @@ class IpCommunityProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -7607,8 +8298,9 @@ class IpCommunityProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -7639,7 +8331,7 @@ class IpCommunityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpCommunityRule(_Model):
+class IpCommunityRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Community patchable properties.
 
     :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
@@ -7697,7 +8389,7 @@ class IpCommunityRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpExtendedCommunity(TrackedResource):
+class IpExtendedCommunity(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Extended Community resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7772,7 +8464,7 @@ class IpExtendedCommunity(TrackedResource):
             super().__setattr__(key, value)
 
 
-class IpExtendedCommunityIdList(_Model):
+class IpExtendedCommunityIdList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Extended Community Id list properties.
 
     :ivar ip_extended_community_ids: List of IP Extended Community resource IDs.
@@ -7802,7 +8494,7 @@ class IpExtendedCommunityIdList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpExtendedCommunityPatch(TagsUpdate):
+class IpExtendedCommunityPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Extended Communities patch resource definition.
 
     :ivar tags: Resource tags.
@@ -7855,7 +8547,7 @@ class IpExtendedCommunityPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class IpExtendedCommunityPatchProperties(_Model):
+class IpExtendedCommunityPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Extended Community patchable properties.
 
     :ivar annotation: Switch configuration description.
@@ -7891,7 +8583,7 @@ class IpExtendedCommunityPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpExtendedCommunityProperties(_Model):
+class IpExtendedCommunityProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Extended Community Properties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -7905,8 +8597,8 @@ class IpExtendedCommunityProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -7932,8 +8624,9 @@ class IpExtendedCommunityProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -7964,7 +8657,7 @@ class IpExtendedCommunityProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpExtendedCommunityRule(_Model):
+class IpExtendedCommunityRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of IP Extended Community Rules.
 
     :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
@@ -8019,7 +8712,7 @@ class IpExtendedCommunityRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpGroupPatchProperties(_Model):
+class IpGroupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Group properties.
 
     :ivar name: IP Group name.
@@ -8061,7 +8754,7 @@ class IpGroupPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpGroupProperties(_Model):
+class IpGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Group properties.
 
     :ivar name: IP Group name.
@@ -8103,7 +8796,7 @@ class IpGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpMatchCondition(_Model):
+class IpMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the condition that can be filtered using the selected IPs.
 
     :ivar type: IP Address type that needs to be matched. Known values are: "SourceIP",
@@ -8157,7 +8850,7 @@ class IpMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpMatchConditionPatch(_Model):
+class IpMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the condition that can be filtered using the selected IPs.
 
     :ivar type: IP Address type that needs to be matched. Known values are: "SourceIP",
@@ -8211,7 +8904,7 @@ class IpMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpPrefix(TrackedResource):
+class IpPrefix(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Prefix resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8284,7 +8977,7 @@ class IpPrefix(TrackedResource):
             super().__setattr__(key, value)
 
 
-class IpPrefixPatch(TagsUpdate):
+class IpPrefixPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP Prefix patch resource definition.
 
     :ivar tags: Resource tags.
@@ -8337,7 +9030,7 @@ class IpPrefixPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class IpPrefixPatchProperties(_Model):
+class IpPrefixPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Prefix patchable properties.
 
     :ivar annotation: Switch configuration description.
@@ -8372,7 +9065,7 @@ class IpPrefixPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpPrefixProperties(_Model):
+class IpPrefixProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Prefix Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -8385,8 +9078,8 @@ class IpPrefixProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -8412,8 +9105,9 @@ class IpPrefixProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -8444,7 +9138,7 @@ class IpPrefixProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpPrefixRule(_Model):
+class IpPrefixRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IP Prefix Rule properties.
 
     :ivar action: Action to be taken on the configuration. Example: Permit | Deny. Required. Known
@@ -8512,7 +9206,7 @@ class IpPrefixRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsolationDomainPatchProperties(_Model):
+class IsolationDomainPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Isolation Domain Properties.
 
     :ivar encapsulation: Type of encapsulation. Known values are: "None" and "GRE".
@@ -8549,7 +9243,7 @@ class IsolationDomainPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsolationDomainProperties(_Model):
+class IsolationDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Isolation Domain Properties.
 
     :ivar encapsulation: Type of encapsulation. Known values are: "None" and "GRE".
@@ -8586,7 +9280,7 @@ class IsolationDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L2IsolationDomain(TrackedResource):
+class L2IsolationDomain(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The L2 Isolation Domain resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8671,7 +9365,7 @@ class L2IsolationDomain(TrackedResource):
             super().__setattr__(key, value)
 
 
-class L2IsolationDomainPatch(TagsUpdate):
+class L2IsolationDomainPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The L2 Isolation Domain patch resource definition.
 
     :ivar tags: Resource tags.
@@ -8731,7 +9425,9 @@ class L2IsolationDomainPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class L2IsolationDomainPatchProperties(AnnotationResource):
+class L2IsolationDomainPatchProperties(
+    AnnotationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2 Isolation Domain Patch Properties defines the patchable properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -8777,7 +9473,7 @@ class L2IsolationDomainPatchProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class L2IsolationDomainProperties(AnnotationResource):
+class L2IsolationDomainProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L2Isolation Domain Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -8798,8 +9494,8 @@ class L2IsolationDomainProperties(AnnotationResource):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -8834,8 +9530,9 @@ class L2IsolationDomainProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -8870,7 +9567,7 @@ class L2IsolationDomainProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class L3ExportRoutePolicy(_Model):
+class L3ExportRoutePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Array of ARM Resource ID of the RoutePolicies.
 
     :ivar export_ipv4_route_policy_id: ARM Resource ID of the RoutePolicy.
@@ -8907,7 +9604,7 @@ class L3ExportRoutePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3ExportRoutePolicyPatch(_Model):
+class L3ExportRoutePolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Array of ARM Resource ID of the RoutePolicies.
 
     :ivar export_ipv4_route_policy_id: ARM Resource ID of the RoutePolicy.
@@ -8944,7 +9641,7 @@ class L3ExportRoutePolicyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3IsolationDomain(TrackedResource):
+class L3IsolationDomain(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The L3 Isolation Domain resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9034,7 +9731,7 @@ class L3IsolationDomain(TrackedResource):
             super().__setattr__(key, value)
 
 
-class L3IsolationDomainPatch(TagsUpdate):
+class L3IsolationDomainPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The L3 Isolation Domain patch resource definition.
 
     :ivar tags: Resource tags.
@@ -9104,7 +9801,7 @@ class L3IsolationDomainPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class L3IsolationDomainPatchProperties(_Model):
+class L3IsolationDomainPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -9198,7 +9895,7 @@ class L3IsolationDomainPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3IsolationDomainProperties(_Model):
+class L3IsolationDomainProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """L3 Isolation Domain Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -9237,8 +9934,8 @@ class L3IsolationDomainProperties(_Model):
      ~azure.mgmt.managednetworkfabric.models.BmpExportPolicyProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -9297,8 +9994,9 @@ class L3IsolationDomainProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -9338,7 +10036,7 @@ class L3IsolationDomainProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3OptionBPatchProperties(_Model):
+class L3OptionBPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Option B configuration.
 
     :ivar import_route_targets: RouteTargets to be applied. This is used for the backward
@@ -9384,7 +10082,7 @@ class L3OptionBPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class L3OptionBProperties(_Model):
+class L3OptionBProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Option B configuration.
 
     :ivar import_route_targets: RouteTargets to be applied. This is used for the backward
@@ -9452,7 +10150,7 @@ class LastOperationProperties(_Model):
     """Details status of the last operation performed on the resource."""
 
 
-class Layer2Configuration(_Model):
+class Layer2Configuration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common properties for Layer2 Configuration.
 
     :ivar mtu: MTU of the packets between PE & CE.
@@ -9485,7 +10183,7 @@ class Layer2Configuration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Layer2ConfigurationPatch(_Model):
+class Layer2ConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common properties for Layer2 Configuration.
 
     :ivar mtu: MTU of the packets between PE & CE.
@@ -9518,7 +10216,7 @@ class Layer2ConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Layer3IpPrefixPatchProperties(_Model):
+class Layer3IpPrefixPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Layer 3 primary and secondary IP Address prefixes.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -9569,7 +10267,7 @@ class Layer3IpPrefixPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Layer3IpPrefixProperties(_Model):
+class Layer3IpPrefixProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Layer 3 primary and secondary IP Address prefixes.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -9620,7 +10318,7 @@ class Layer3IpPrefixProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedResourceGroupConfiguration(_Model):
+class ManagedResourceGroupConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed Resource Group configuration properties.
 
     :ivar name: The NFC service will be hosted in a Managed resource group.
@@ -9653,7 +10351,7 @@ class ManagedResourceGroupConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentity(_Model):
+class ManagedServiceIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed service identity (system assigned and/or user assigned identities).
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
@@ -9705,7 +10403,7 @@ class ManagedServiceIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedServiceIdentityPatch(_Model):
+class ManagedServiceIdentityPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The managed service identities assigned to this resource.
 
     :ivar type: The type of managed identity assigned to this resource. Known values are: "None",
@@ -9745,7 +10443,7 @@ class ManagedServiceIdentityPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementNetworkConfigurationProperties(_Model):
+class ManagementNetworkConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration to be used to setup the management network.
 
     :ivar infrastructure_vpn_configuration: VPN Configuration properties. Required.
@@ -9784,7 +10482,7 @@ class ManagementNetworkConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagementNetworkPatchConfiguration(_Model):
+class ManagementNetworkPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration to be used to setup the management network.
 
     :ivar infrastructure_vpn_configuration: VPN Configuration properties.
@@ -9823,7 +10521,7 @@ class ManagementNetworkPatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NativeIpv4PrefixLimitPatchProperties(_Model):
+class NativeIpv4PrefixLimitPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network native IPv4 prefix limits patch properties.
 
     :ivar prefix_limits: Prefix limits.
@@ -9854,7 +10552,7 @@ class NativeIpv4PrefixLimitPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NativeIpv4PrefixLimitProperties(_Model):
+class NativeIpv4PrefixLimitProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network native IPv4 prefix limit properties.
 
     :ivar prefix_limits: Prefix limits.
@@ -9884,7 +10582,7 @@ class NativeIpv4PrefixLimitProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NativeIpv6PrefixLimitPatchProperties(_Model):
+class NativeIpv6PrefixLimitPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network native IPv6 prefix limits patch properties.
 
     :ivar prefix_limits: Prefix limits.
@@ -9915,7 +10613,7 @@ class NativeIpv6PrefixLimitPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NativeIpv6PrefixLimitProperties(_Model):
+class NativeIpv6PrefixLimitProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External Network native IPv6 prefix limit properties.
 
     :ivar prefix_limits: Prefix limits.
@@ -9945,7 +10643,7 @@ class NativeIpv6PrefixLimitProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborAddress(_Model):
+class NeighborAddress(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Address properties.
 
     :ivar address: IP Address.
@@ -9960,8 +10658,8 @@ class NeighborAddress(_Model):
      ~azure.mgmt.managednetworkfabric.models.BgpAdministrativeState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     """
 
@@ -9982,8 +10680,9 @@ class NeighborAddress(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
 
     @overload
     def __init__(
@@ -10003,7 +10702,7 @@ class NeighborAddress(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborAddressBfdAdministrativeStatus(_Model):
+class NeighborAddressBfdAdministrativeStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Address Bidirectional Forwarding Detection (BFD) Administrative Status.
 
     :ivar neighbor_address: NeighborAddress - Input should be either All or Specific Ipv4 Address
@@ -10048,7 +10747,7 @@ class NeighborAddressBfdAdministrativeStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborAddressBgpAdministrativeStatus(_Model):
+class NeighborAddressBgpAdministrativeStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Address BGP Administrative Status.
 
     :ivar neighbor_address: NeighborAddress - Input should be either All or Specific Ipv4 Address
@@ -10093,7 +10792,7 @@ class NeighborAddressBgpAdministrativeStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborAddressPatch(_Model):
+class NeighborAddressPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Address properties.
 
     :ivar address: IP Address.
@@ -10108,8 +10807,8 @@ class NeighborAddressPatch(_Model):
      ~azure.mgmt.managednetworkfabric.models.BgpAdministrativeState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     """
 
@@ -10130,8 +10829,9 @@ class NeighborAddressPatch(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
 
     @overload
     def __init__(
@@ -10151,7 +10851,7 @@ class NeighborAddressPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborGroup(TrackedResource):
+class NeighborGroup(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the Neighbor Group.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10193,6 +10893,7 @@ class NeighborGroup(TrackedResource):
         "last_operation",
         "provisioning_state",
         "configuration_state",
+        "administrative_state",
     ]
 
     @overload
@@ -10234,7 +10935,7 @@ class NeighborGroup(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NeighborGroupDestination(_Model):
+class NeighborGroupDestination(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An array of destination IPv4 Addresses or IPv6 Addresses.
 
     :ivar ipv4_addresses: Array of IPv4 Addresses.
@@ -10271,7 +10972,7 @@ class NeighborGroupDestination(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborGroupDestinationPatch(_Model):
+class NeighborGroupDestinationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An array of destination IPv4 Addresses or IPv6 Addresses.
 
     :ivar ipv4_addresses: Array of IPv4 Addresses.
@@ -10308,7 +11009,7 @@ class NeighborGroupDestinationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborGroupPatch(TagsUpdate):
+class NeighborGroupPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Neighbor Group Patch definition.
 
     :ivar tags: Resource tags.
@@ -10368,7 +11069,7 @@ class NeighborGroupPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NeighborGroupPatchProperties(_Model):
+class NeighborGroupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Group Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -10403,7 +11104,7 @@ class NeighborGroupPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborGroupProperties(_Model):
+class NeighborGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Neighbor Group Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -10423,9 +11124,13 @@ class NeighborGroupProperties(_Model):
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar administrative_state: Administrative state of the resource. Known values are: "Enabled",
+     "Disabled", "MAT", "RMA", "UnderMaintenance", and "EnabledDegraded".
+    :vartype administrative_state: str or
+     ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     """
 
     annotation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10452,8 +11157,14 @@ class NeighborGroupProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
+    administrative_state: Optional[Union[str, "_models.AdministrativeState"]] = rest_field(
+        name="administrativeState", visibility=["read"]
+    )
+    """Administrative state of the resource. Known values are: \"Enabled\", \"Disabled\", \"MAT\",
+     \"RMA\", \"UnderMaintenance\", and \"EnabledDegraded\"."""
 
     @overload
     def __init__(
@@ -10474,7 +11185,7 @@ class NeighborGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NeighborGroupResyncResponse(_Model):
+class NeighborGroupResyncResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Neighbor Group Resync operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -10550,7 +11261,7 @@ class NeighborGroupResyncResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDevice(TrackedResource):
+class NetworkBootstrapDevice(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Bootstrap Device resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10587,6 +11298,7 @@ class NetworkBootstrapDevice(TrackedResource):
         "annotation",
         "host_name",
         "serial_number",
+        "control_plane_acls",
         "version",
         "network_device_sku",
         "network_fabric_id",
@@ -10598,6 +11310,8 @@ class NetworkBootstrapDevice(TrackedResource):
         "primary_management_ipv4_address",
         "administrative_state",
         "configuration_state",
+        "operational_state",
+        "secret_rotation_status",
     ]
 
     @overload
@@ -10639,7 +11353,7 @@ class NetworkBootstrapDevice(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkBootstrapDevicePatch(TagsUpdate):
+class NetworkBootstrapDevicePatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Bootstrap Device Patch Parameters defines the patch parameters of the resource.
 
     :ivar tags: Resource tags.
@@ -10660,7 +11374,7 @@ class NetworkBootstrapDevicePatch(TagsUpdate):
     )
     """The managed service identities assigned to this resource."""
 
-    __flattened_items = ["annotation", "host_name", "serial_number"]
+    __flattened_items = ["annotation", "host_name", "serial_number", "control_plane_acls"]
 
     @overload
     def __init__(
@@ -10700,7 +11414,7 @@ class NetworkBootstrapDevicePatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkBootstrapDevicePatchProperties(_Model):
+class NetworkBootstrapDevicePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Device Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -10710,6 +11424,8 @@ class NetworkBootstrapDevicePatchProperties(_Model):
     :ivar serial_number: Serial number of the device. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
+    :ivar control_plane_acls: Control Plane Access Control List ARM resource IDs.
+    :vartype control_plane_acls: list[str]
     """
 
     annotation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10721,6 +11437,10 @@ class NetworkBootstrapDevicePatchProperties(_Model):
     )
     """Serial number of the device. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber."""
+    control_plane_acls: Optional[list[str]] = rest_field(
+        name="controlPlaneAcls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Control Plane Access Control List ARM resource IDs."""
 
     @overload
     def __init__(
@@ -10729,6 +11449,7 @@ class NetworkBootstrapDevicePatchProperties(_Model):
         annotation: Optional[str] = None,
         host_name: Optional[str] = None,
         serial_number: Optional[str] = None,
+        control_plane_acls: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -10742,7 +11463,7 @@ class NetworkBootstrapDevicePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceProperties(_Model):
+class NetworkBootstrapDeviceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Device Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -10752,6 +11473,8 @@ class NetworkBootstrapDeviceProperties(_Model):
     :ivar serial_number: Serial number of the device. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
+    :ivar control_plane_acls: Control Plane Access Control List ARM resource IDs.
+    :vartype control_plane_acls: list[str]
     :ivar version: Current version of the device as defined in SKU.
     :vartype version: str
     :ivar network_device_sku: Network Bootstrap Device SKU name.
@@ -10777,9 +11500,16 @@ class NetworkBootstrapDeviceProperties(_Model):
      ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar operational_state: Operational state of networkBootstrapDevice indicating if the device
+     is reachable and services are available. Known values are: "Unknown", "Up", "Down", and
+     "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
+    :ivar secret_rotation_status: Secret rotation status for the terminal server's secrets.
+    :vartype secret_rotation_status:
+     list[~azure.mgmt.managednetworkfabric.models.SecretRotationStatus]
     """
 
     annotation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10791,6 +11521,10 @@ class NetworkBootstrapDeviceProperties(_Model):
     )
     """Serial number of the device. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber."""
+    control_plane_acls: Optional[list[str]] = rest_field(
+        name="controlPlaneAcls", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Control Plane Access Control List ARM resource IDs."""
     version: Optional[str] = rest_field(visibility=["read"])
     """Current version of the device as defined in SKU."""
     network_device_sku: Optional[str] = rest_field(name="networkDeviceSku", visibility=["read", "create"])
@@ -10830,8 +11564,18 @@ class NetworkBootstrapDeviceProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkBootstrapDevice indicating if the device is reachable and services
+     are available. Known values are: \"Unknown\", \"Up\", \"Down\", and \"Degraded\"."""
+    secret_rotation_status: Optional[list["_models.SecretRotationStatus"]] = rest_field(
+        name="secretRotationStatus", visibility=["read"]
+    )
+    """Secret rotation status for the terminal server's secrets."""
 
     @overload
     def __init__(
@@ -10840,6 +11584,7 @@ class NetworkBootstrapDeviceProperties(_Model):
         annotation: Optional[str] = None,
         host_name: Optional[str] = None,
         serial_number: Optional[str] = None,
+        control_plane_acls: Optional[list[str]] = None,
         network_device_sku: Optional[str] = None,
     ) -> None: ...
 
@@ -10854,7 +11599,7 @@ class NetworkBootstrapDeviceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceRebootResponse(_Model):
+class NetworkBootstrapDeviceRebootResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Device reboot Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -10930,7 +11675,9 @@ class NetworkBootstrapDeviceRebootResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceRefreshConfigurationResponse(_Model):  # pylint: disable=name-too-long
+class NetworkBootstrapDeviceRefreshConfigurationResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The current status of an refresh configuration async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11006,7 +11753,9 @@ class NetworkBootstrapDeviceRefreshConfigurationResponse(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceResyncPasswordsResponse(_Model):  # pylint: disable=name-too-long
+class NetworkBootstrapDeviceResyncPasswordsResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Response body for a ResyncPasswords request on a Network Bootstrap Device.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11082,7 +11831,9 @@ class NetworkBootstrapDeviceResyncPasswordsResponse(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceUpdateAdministrativeStateResponse(_Model):  # pylint: disable=name-too-long
+class NetworkBootstrapDeviceUpdateAdministrativeStateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network Bootstrap Device Administrative State Update Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11158,7 +11909,7 @@ class NetworkBootstrapDeviceUpdateAdministrativeStateResponse(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapDeviceUpgradeResponse(_Model):
+class NetworkBootstrapDeviceUpgradeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Device upgrade Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11234,7 +11985,7 @@ class NetworkBootstrapDeviceUpgradeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapInterface(ProxyResource):
+class NetworkBootstrapInterface(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the NetworkBootstrapInterface resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11271,6 +12022,7 @@ class NetworkBootstrapInterface(ProxyResource):
         "ipv4_address",
         "ipv6_address",
         "serial_number",
+        "operational_state",
     ]
 
     @overload
@@ -11309,7 +12061,7 @@ class NetworkBootstrapInterface(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkBootstrapInterfacePatch(_Model):
+class NetworkBootstrapInterfacePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkBootstrapInterfacePatch resource definition.
 
     :ivar properties: Network Bootstrap Interface Patch properties.
@@ -11360,7 +12112,9 @@ class NetworkBootstrapInterfacePatch(_Model):
             super().__setattr__(key, value)
 
 
-class NetworkBootstrapInterfacePatchProperties(AnnotationResource):
+class NetworkBootstrapInterfacePatchProperties(
+    AnnotationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Interface Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -11402,7 +12156,9 @@ class NetworkBootstrapInterfacePatchProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkBootstrapInterfaceProperties(AnnotationResource):
+class NetworkBootstrapInterfaceProperties(
+    AnnotationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Bootstrap Interface Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -11416,8 +12172,8 @@ class NetworkBootstrapInterfaceProperties(AnnotationResource):
      ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar physical_identifier: Physical identifier of the device.
     :vartype physical_identifier: str
@@ -11436,6 +12192,9 @@ class NetworkBootstrapInterfaceProperties(AnnotationResource):
     :ivar serial_number: Serial number of the interface. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber.
     :vartype serial_number: str
+    :ivar operational_state: Operational state of networkBootstrapInterface indicating if the
+     interface is reachable. Known values are: "Unknown", "Up", "Down", and "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -11453,8 +12212,9 @@ class NetworkBootstrapInterfaceProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     physical_identifier: Optional[str] = rest_field(name="physicalIdentifier", visibility=["read"])
     """Physical identifier of the device."""
     connected_to: Optional[str] = rest_field(name="connectedTo", visibility=["read"])
@@ -11478,6 +12238,11 @@ class NetworkBootstrapInterfaceProperties(AnnotationResource):
     )
     """Serial number of the interface. Format of serial Number -
      Make;Model;HardwareRevisionId;SerialNumber."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkBootstrapInterface indicating if the interface is reachable. Known
+     values are: \"Unknown\", \"Up\", \"Down\", and \"Degraded\"."""
 
     @overload
     def __init__(
@@ -11499,7 +12264,7 @@ class NetworkBootstrapInterfaceProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDevice(TrackedResource):
+class NetworkDevice(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Device resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11548,6 +12313,7 @@ class NetworkDevice(TrackedResource):
         "configuration_state",
         "provisioning_state",
         "administrative_state",
+        "operational_state",
         "secret_rotation_status",
         "certificate_rotation_status",
         "network_fabric_id",
@@ -11592,7 +12358,7 @@ class NetworkDevice(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkDevicePatchParameters(TagsUpdate):
+class NetworkDevicePatchParameters(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Device Patch Parameters defines the patch parameters of the resource.
 
     :ivar tags: Resource tags.
@@ -11653,7 +12419,7 @@ class NetworkDevicePatchParameters(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkDevicePatchParametersProperties(_Model):
+class NetworkDevicePatchParametersProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Device Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -11704,7 +12470,7 @@ class NetworkDevicePatchParametersProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceProperties(_Model):
+class NetworkDeviceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Device Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -11737,8 +12503,8 @@ class NetworkDeviceProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -11747,6 +12513,10 @@ class NetworkDeviceProperties(_Model):
      "Disabled", "MAT", "RMA", "UnderMaintenance", and "EnabledDegraded".
     :vartype administrative_state: str or
      ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    :ivar operational_state: Operational state of networkDevice indicating if the device is
+     reachable and services are available. Known values are: "Unknown", "Up", "Down", and
+     "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
     :ivar secret_rotation_status: Secret rotation status for the device's secrets.
     :vartype secret_rotation_status:
      list[~azure.mgmt.managednetworkfabric.models.SecretRotationStatus]
@@ -11793,8 +12563,9 @@ class NetworkDeviceProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -11805,6 +12576,11 @@ class NetworkDeviceProperties(_Model):
     )
     """Administrative state of the resource. Known values are: \"Enabled\", \"Disabled\", \"MAT\",
      \"RMA\", \"UnderMaintenance\", and \"EnabledDegraded\"."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkDevice indicating if the device is reachable and services are
+     available. Known values are: \"Unknown\", \"Up\", \"Down\", and \"Degraded\"."""
     secret_rotation_status: Optional[list["_models.SecretRotationStatus"]] = rest_field(
         name="secretRotationStatus", visibility=["read"]
     )
@@ -11838,7 +12614,9 @@ class NetworkDeviceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceRefreshConfigurationResponse(_Model):  # pylint: disable=name-too-long
+class NetworkDeviceRefreshConfigurationResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The current status of an refresh configuration async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11914,7 +12692,7 @@ class NetworkDeviceRefreshConfigurationResponse(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceResyncPasswordsResponse(_Model):
+class NetworkDeviceResyncPasswordsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a ResyncPasswords request on a Network Device.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -11990,7 +12768,7 @@ class NetworkDeviceResyncPasswordsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceRunRwCommandResponse(_Model):
+class NetworkDeviceRunRwCommandResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a RunRwCommand request on a Network Device.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -12074,13 +12852,13 @@ class NetworkDeviceRunRwCommandResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceRwCommandResponseProperties(_Model):
+class NetworkDeviceRwCommandResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Device Resource defines the properties of the resource.
 
     :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar output_url: Predefined link containing Device Rw Command output.
     :vartype output_url: str
@@ -12091,8 +12869,9 @@ class NetworkDeviceRwCommandResponseProperties(_Model):
     )
     """Gets the configuration state. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     output_url: Optional[str] = rest_field(name="outputUrl", visibility=["read", "create", "update", "delete", "query"])
     """Predefined link containing Device Rw Command output."""
 
@@ -12114,7 +12893,7 @@ class NetworkDeviceRwCommandResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceSku(ProxyResource):
+class NetworkDeviceSku(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkDeviceSku resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12182,7 +12961,7 @@ class NetworkDeviceSku(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkDeviceSkuProperties(_Model):
+class NetworkDeviceSkuProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Device SKU Properties defines the properties of the resource.
 
     :ivar model: Model of the network device. Required.
@@ -12246,7 +13025,9 @@ class NetworkDeviceSkuProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceUpdateAdministrativeStateResponse(_Model):  # pylint: disable=name-too-long
+class NetworkDeviceUpdateAdministrativeStateResponse(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network Device Administrative State Update Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -12322,7 +13103,7 @@ class NetworkDeviceUpdateAdministrativeStateResponse(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceUpgradeRequest(_Model):
+class NetworkDeviceUpgradeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkDevice Upgrade Request Properties.
 
     :ivar version: Version to which the device needs to be upgraded. Required.
@@ -12358,7 +13139,7 @@ class NetworkDeviceUpgradeRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkDeviceUpgradeResponse(_Model):
+class NetworkDeviceUpgradeResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Device Upgrade Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -12434,7 +13215,7 @@ class NetworkDeviceUpgradeResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabric(TrackedResource):
+class NetworkFabric(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Fabric resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12480,6 +13261,7 @@ class NetworkFabric(TrackedResource):
         "ipv4_prefix",
         "ipv6_prefix",
         "fabric_asn",
+        "network_bootstrap_device_id",
         "terminal_server_configuration",
         "management_network_configuration",
         "racks",
@@ -12498,7 +13280,10 @@ class NetworkFabric(TrackedResource):
         "configuration_state",
         "provisioning_state",
         "administrative_state",
+        "operational_state",
         "qos_configuration",
+        "secret_archive_settings",
+        "upgrade_profile",
     ]
 
     @overload
@@ -12540,7 +13325,7 @@ class NetworkFabric(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkFabricController(TrackedResource):
+class NetworkFabricController(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Fabric Controller resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12588,6 +13373,8 @@ class NetworkFabricController(TrackedResource):
         "nfc_sku",
         "last_operation",
         "provisioning_state",
+        "operational_state",
+        "vm_profile",
     ]
 
     @overload
@@ -12629,7 +13416,7 @@ class NetworkFabricController(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkFabricControllerPatch(TagsUpdate):
+class NetworkFabricControllerPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Fabric Controller Patch payload definition.
 
     :ivar tags: Resource tags.
@@ -12690,7 +13477,7 @@ class NetworkFabricControllerPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkFabricControllerPatchProperties(_Model):
+class NetworkFabricControllerPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Controller patch properties.
 
     :ivar infrastructure_express_route_connections: As part of an update, the Infrastructure
@@ -12737,7 +13524,7 @@ class NetworkFabricControllerPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricControllerProperties(_Model):
+class NetworkFabricControllerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkFabricControllerProperties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -12784,6 +13571,12 @@ class NetworkFabricControllerProperties(_Model):
      the status of NFC provisioning. Known values are: "Accepted", "Succeeded", "Updating",
      "Deleting", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar operational_state: Operational state of networkFabricController indicating if the
+     resources of the controller are reachable and services are available. Known values are:
+     "Unknown", "Up", "Down", and "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
+    :ivar vm_profile: The VM profile configuration for the NFC's associated compute (VM) resources.
+    :vartype vm_profile: ~azure.mgmt.managednetworkfabric.models.VmProfile
     """
 
     annotation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -12845,6 +13638,16 @@ class NetworkFabricControllerProperties(_Model):
      or Failed. During this process, the states keep changing based on the status of NFC
      provisioning. Known values are: \"Accepted\", \"Succeeded\", \"Updating\", \"Deleting\",
      \"Failed\", and \"Canceled\"."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkFabricController indicating if the resources of the controller are
+     reachable and services are available. Known values are: \"Unknown\", \"Up\", \"Down\", and
+     \"Degraded\"."""
+    vm_profile: Optional["_models.VmProfile"] = rest_field(
+        name="vmProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The VM profile configuration for the NFC's associated compute (VM) resources."""
 
     @overload
     def __init__(
@@ -12860,6 +13663,7 @@ class NetworkFabricControllerProperties(_Model):
         ipv4_address_space: Optional[str] = None,
         ipv6_address_space: Optional[str] = None,
         nfc_sku: Optional[Union[str, "_models.NfcSku"]] = None,
+        vm_profile: Optional["_models.VmProfile"] = None,
     ) -> None: ...
 
     @overload
@@ -12873,7 +13677,7 @@ class NetworkFabricControllerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricLockRequest(_Model):
+class NetworkFabricLockRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Lock Request.
 
     :ivar lock_type: Type of lock to be applied. Known values are: "Administrative" and
@@ -12911,7 +13715,7 @@ class NetworkFabricLockRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricPatch(TagsUpdate):
+class NetworkFabricPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Fabric resource definition.
 
     :ivar tags: Resource tags.
@@ -12948,6 +13752,8 @@ class NetworkFabricPatch(TagsUpdate):
         "qos_configuration",
         "feature_flags",
         "authorized_transceiver",
+        "secret_archive_settings",
+        "upgrade_profile",
     ]
 
     @overload
@@ -12988,7 +13794,7 @@ class NetworkFabricPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkFabricPatchProperties(_Model):
+class NetworkFabricPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -13032,6 +13838,14 @@ class NetworkFabricPatchProperties(_Model):
     :ivar authorized_transceiver: Authorized transciever configuration for NetworkFabric.
     :vartype authorized_transceiver:
      ~azure.mgmt.managednetworkfabric.models.AuthorizedTransceiverPatchProperties
+    :ivar secret_archive_settings: The settings for a customer secret archive that may be used to
+     hold copies of credentials for the Network Fabric.
+    :vartype secret_archive_settings:
+     ~azure.mgmt.managednetworkfabric.models.SecretArchivePatchSettings
+    :ivar upgrade_profile: The upgrade profile to be used by devices in the network fabric during
+     device operations.
+    :vartype upgrade_profile:
+     list[~azure.mgmt.managednetworkfabric.models.UpgradeProfilePropertiesPatchProperties]
     """
 
     annotation: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13092,6 +13906,15 @@ class NetworkFabricPatchProperties(_Model):
         name="authorizedTransceiver", visibility=["read", "create", "update", "delete", "query"]
     )
     """Authorized transciever configuration for NetworkFabric."""
+    secret_archive_settings: Optional["_models.SecretArchivePatchSettings"] = rest_field(
+        name="secretArchiveSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The settings for a customer secret archive that may be used to hold copies of credentials for
+     the Network Fabric."""
+    upgrade_profile: Optional[list["_models.UpgradeProfilePropertiesPatchProperties"]] = rest_field(
+        name="upgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upgrade profile to be used by devices in the network fabric during device operations."""
 
     @overload
     def __init__(
@@ -13113,6 +13936,8 @@ class NetworkFabricPatchProperties(_Model):
         qos_configuration: Optional["_models.QosPatchProperties"] = None,
         feature_flags: Optional[list["_models.FeatureFlagProperties"]] = None,
         authorized_transceiver: Optional["_models.AuthorizedTransceiverPatchProperties"] = None,
+        secret_archive_settings: Optional["_models.SecretArchivePatchSettings"] = None,
+        upgrade_profile: Optional[list["_models.UpgradeProfilePropertiesPatchProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -13126,7 +13951,7 @@ class NetworkFabricPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricProperties(AnnotationResource):
+class NetworkFabricProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -13158,6 +13983,9 @@ class NetworkFabricProperties(AnnotationResource):
     :vartype ipv6_prefix: str
     :ivar fabric_asn: ASN of CE devices for CE/PE connectivity. Required.
     :vartype fabric_asn: int
+    :ivar network_bootstrap_device_id: Azure resource ID for the NetworkBootstrapDevice belonging
+     to this Network Fabric.
+    :vartype network_bootstrap_device_id: str
     :ivar terminal_server_configuration: Network and credentials configuration currently applied to
      terminal server. Required.
     :vartype terminal_server_configuration:
@@ -13198,8 +14026,8 @@ class NetworkFabricProperties(AnnotationResource):
      ~azure.mgmt.managednetworkfabric.models.AuthorizedTransceiverProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
      Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
@@ -13210,8 +14038,19 @@ class NetworkFabricProperties(AnnotationResource):
      "Disabled", "MAT", "RMA", "UnderMaintenance", and "EnabledDegraded".
     :vartype administrative_state: str or
      ~azure.mgmt.managednetworkfabric.models.AdministrativeState
+    :ivar operational_state: Operational state of networkFabric indicating if the resources of the
+     fabric are reachable and services are available. Known values are: "Unknown", "Up", "Down", and
+     "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
     :ivar qos_configuration: NetworkFabric QoS Configuration.
     :vartype qos_configuration: ~azure.mgmt.managednetworkfabric.models.QosProperties
+    :ivar secret_archive_settings: The settings for a customer secret archive that may be used to
+     hold copies of credentials for the Network Fabric.
+    :vartype secret_archive_settings: ~azure.mgmt.managednetworkfabric.models.SecretArchiveSettings
+    :ivar upgrade_profile: The upgrade profile to be used by devices in the network fabric during
+     device operations.
+    :vartype upgrade_profile:
+     list[~azure.mgmt.managednetworkfabric.models.UpgradeProfileProperties]
     """
 
     network_fabric_sku: str = rest_field(name="networkFabricSku", visibility=["read", "create"])
@@ -13246,6 +14085,8 @@ class NetworkFabricProperties(AnnotationResource):
     """IPv6Prefix for Management Network. Example: 3FFE:FFFF:0:CD40::/59."""
     fabric_asn: int = rest_field(name="fabricASN", visibility=["read", "create", "update", "delete", "query"])
     """ASN of CE devices for CE/PE connectivity. Required."""
+    network_bootstrap_device_id: Optional[str] = rest_field(name="networkBootstrapDeviceId", visibility=["read"])
+    """Azure resource ID for the NetworkBootstrapDevice belonging to this Network Fabric."""
     terminal_server_configuration: "_models.TerminalServerConfiguration" = rest_field(
         name="terminalServerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13302,8 +14143,9 @@ class NetworkFabricProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -13316,10 +14158,24 @@ class NetworkFabricProperties(AnnotationResource):
     )
     """Administrative state of the resource. Known values are: \"Enabled\", \"Disabled\", \"MAT\",
      \"RMA\", \"UnderMaintenance\", and \"EnabledDegraded\"."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkFabric indicating if the resources of the fabric are reachable and
+     services are available. Known values are: \"Unknown\", \"Up\", \"Down\", and \"Degraded\"."""
     qos_configuration: Optional["_models.QosProperties"] = rest_field(
         name="qosConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """NetworkFabric QoS Configuration."""
+    secret_archive_settings: Optional["_models.SecretArchiveSettings"] = rest_field(
+        name="secretArchiveSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The settings for a customer secret archive that may be used to hold copies of credentials for
+     the Network Fabric."""
+    upgrade_profile: Optional[list["_models.UpgradeProfileProperties"]] = rest_field(
+        name="upgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The upgrade profile to be used by devices in the network fabric during device operations."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -13345,6 +14201,8 @@ class NetworkFabricProperties(AnnotationResource):
         storage_array_count: Optional[int] = None,
         authorized_transceiver: Optional["_models.AuthorizedTransceiverProperties"] = None,
         qos_configuration: Optional["_models.QosProperties"] = None,
+        secret_archive_settings: Optional["_models.SecretArchiveSettings"] = None,
+        upgrade_profile: Optional[list["_models.UpgradeProfileProperties"]] = None,
     ) -> None: ...
 
     @overload
@@ -13358,7 +14216,7 @@ class NetworkFabricProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricResyncCertificatesResponse(_Model):
+class NetworkFabricResyncCertificatesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a ResyncCertificates request on a Network Fabric.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -13434,7 +14292,7 @@ class NetworkFabricResyncCertificatesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricResyncPasswordsResponse(_Model):
+class NetworkFabricResyncPasswordsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a ResyncPasswords request on a Network Fabric.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -13510,7 +14368,7 @@ class NetworkFabricResyncPasswordsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricRotateCertificatesResponse(_Model):
+class NetworkFabricRotateCertificatesResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a RotateCertificates request on a Network Fabric.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -13586,7 +14444,7 @@ class NetworkFabricRotateCertificatesResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricRotatePasswordsResponse(_Model):
+class NetworkFabricRotatePasswordsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response body for a RotatePasswords request on a Network Fabric.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -13662,7 +14520,7 @@ class NetworkFabricRotatePasswordsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkFabricSku(ProxyResource):
+class NetworkFabricSku(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Fabric SKU resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13730,7 +14588,7 @@ class NetworkFabricSku(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkFabricSkuProperties(_Model):
+class NetworkFabricSkuProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Fabric SKU Properties define properties of the resource.
 
     :ivar type: Type of Network Fabric SKU. Known values are: "SingleRack" and "MultiRack".
@@ -13789,7 +14647,7 @@ class NetworkFabricSkuProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterface(ProxyResource):
+class NetworkInterface(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the NetworkInterface resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13832,6 +14690,7 @@ class NetworkInterface(ProxyResource):
         "provisioning_state",
         "administrative_state",
         "configuration_state",
+        "operational_state",
     ]
 
     @overload
@@ -13871,7 +14730,7 @@ class NetworkInterface(ProxyResource):
             super().__setattr__(key, value)
 
 
-class NetworkInterfacePatch(_Model):
+class NetworkInterfacePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkInterfacePatch resource definition.
 
     :ivar properties: Network Interface Patch properties.
@@ -13928,7 +14787,9 @@ class NetworkInterfacePatch(_Model):
             super().__setattr__(key, value)
 
 
-class NetworkInterfacePatchProperties(AnnotationResource):
+class NetworkInterfacePatchProperties(
+    AnnotationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Interface Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -13961,7 +14822,7 @@ class NetworkInterfacePatchProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkInterfaceProperties(AnnotationResource):
+class NetworkInterfaceProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Interface Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -13994,9 +14855,12 @@ class NetworkInterfaceProperties(AnnotationResource):
      ~azure.mgmt.managednetworkfabric.models.AdministrativeState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar operational_state: Operational state of networkInterface indicating if the interface is
+     reachable. Known values are: "Unknown", "Up", "Down", and "Degraded".
+    :vartype operational_state: str or ~azure.mgmt.managednetworkfabric.models.OperationalState
     """
 
     physical_identifier: Optional[str] = rest_field(name="physicalIdentifier", visibility=["read"])
@@ -14036,8 +14900,14 @@ class NetworkInterfaceProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
+    operational_state: Optional[Union[str, "_models.OperationalState"]] = rest_field(
+        name="operationalState", visibility=["read"]
+    )
+    """Operational state of networkInterface indicating if the interface is reachable. Known values
+     are: \"Unknown\", \"Up\", \"Down\", and \"Degraded\"."""
 
     @overload
     def __init__(
@@ -14058,7 +14928,7 @@ class NetworkInterfaceProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkMonitor(TrackedResource):
+class NetworkMonitor(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkMonitor resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14132,7 +15002,7 @@ class NetworkMonitor(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkMonitorPatch(TagsUpdate):
+class NetworkMonitorPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Monitor Patch resource definition.
 
     :ivar tags: Resource tags.
@@ -14185,7 +15055,7 @@ class NetworkMonitorPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkMonitorPatchProperties(_Model):
+class NetworkMonitorPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Monitor Patch Properties.
 
     :ivar bmp_configuration: BGP Monitoring Protocol (BMP) Configurations for the Network Monitor.
@@ -14216,7 +15086,7 @@ class NetworkMonitorPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkMonitorProperties(AnnotationResource):
+class NetworkMonitorProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Monitor Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -14227,8 +15097,8 @@ class NetworkMonitorProperties(AnnotationResource):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provides you the latest status of the NetworkMonitor resource. Known
      values are: "Accepted", "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -14250,8 +15120,9 @@ class NetworkMonitorProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -14282,7 +15153,7 @@ class NetworkMonitorProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkPacketBroker(TrackedResource):
+class NetworkPacketBroker(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkPacketBroker resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14321,6 +15192,7 @@ class NetworkPacketBroker(TrackedResource):
         "source_interface_ids",
         "network_tap_ids",
         "neighbor_group_ids",
+        "source_network_tap_rule_id",
         "last_operation",
         "provisioning_state",
         "configuration_state",
@@ -14365,15 +15237,21 @@ class NetworkPacketBroker(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkPacketBrokerPatch(TagsUpdate):
+class NetworkPacketBrokerPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkPacketBroker patch resource definition.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar properties: NetworkPacketBroker patch properties.
+    :vartype properties: ~azure.mgmt.managednetworkfabric.models.NetworkPacketBrokerPatchProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.managednetworkfabric.models.ManagedServiceIdentityPatch
     """
 
+    properties: Optional["_models.NetworkPacketBrokerPatchProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NetworkPacketBroker patch properties."""
     identity: Optional["_models.ManagedServiceIdentityPatch"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -14384,6 +15262,7 @@ class NetworkPacketBrokerPatch(TagsUpdate):
         self,
         *,
         tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.NetworkPacketBrokerPatchProperties"] = None,
         identity: Optional["_models.ManagedServiceIdentityPatch"] = None,
     ) -> None: ...
 
@@ -14398,62 +15277,23 @@ class NetworkPacketBrokerPatch(TagsUpdate):
         super().__init__(*args, **kwargs)
 
 
-class NetworkPacketBrokerProperties(_Model):
-    """Network Packet Broker Properties defines the properties of the resource.
+class NetworkPacketBrokerPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The NetworkPacketBroker patch properties.
 
-    :ivar network_fabric_id: ARM resource ID of the Network Fabric. Required.
-    :vartype network_fabric_id: str
-    :ivar network_device_ids: List of ARM resource IDs of Network Devices [NPB].
-    :vartype network_device_ids: list[str]
-    :ivar source_interface_ids: List of network interfaces across NPB devices that are used to
-     mirror source traffic.
-    :vartype source_interface_ids: list[str]
-    :ivar network_tap_ids: List of network Tap IDs configured on NPB.
-    :vartype network_tap_ids: list[str]
-    :ivar neighbor_group_ids: List of neighbor group IDs configured on NPB.
-    :vartype neighbor_group_ids: list[str]
-    :ivar last_operation: Details of the last operation performed on the resource.
-    :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
-    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
-     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
-    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
-     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
-    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    :ivar source_network_tap_rule_id: ARM resource ID of the source Network Tap Rule.
+    :vartype source_network_tap_rule_id: str
     """
 
-    network_fabric_id: str = rest_field(name="networkFabricId", visibility=["read", "create"])
-    """ARM resource ID of the Network Fabric. Required."""
-    network_device_ids: Optional[list[str]] = rest_field(name="networkDeviceIds", visibility=["read"])
-    """List of ARM resource IDs of Network Devices [NPB]."""
-    source_interface_ids: Optional[list[str]] = rest_field(name="sourceInterfaceIds", visibility=["read"])
-    """List of network interfaces across NPB devices that are used to mirror source traffic."""
-    network_tap_ids: Optional[list[str]] = rest_field(name="networkTapIds", visibility=["read"])
-    """List of network Tap IDs configured on NPB."""
-    neighbor_group_ids: Optional[list[str]] = rest_field(name="neighborGroupIds", visibility=["read"])
-    """List of neighbor group IDs configured on NPB."""
-    last_operation: Optional["_models.LastOperationProperties"] = rest_field(name="lastOperation", visibility=["read"])
-    """Details of the last operation performed on the resource."""
-    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
+    source_network_tap_rule_id: Optional[str] = rest_field(
+        name="sourceNetworkTapRuleId", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Provisioning state of the resource. Known values are: \"Accepted\", \"Succeeded\",
-     \"Updating\", \"Deleting\", \"Failed\", and \"Canceled\"."""
-    configuration_state: Optional[Union[str, "_models.ConfigurationState"]] = rest_field(
-        name="configurationState", visibility=["read"]
-    )
-    """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
-     \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+    """ARM resource ID of the source Network Tap Rule."""
 
     @overload
     def __init__(
         self,
         *,
-        network_fabric_id: str,
+        source_network_tap_rule_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -14467,7 +15307,84 @@ class NetworkPacketBrokerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRack(TrackedResource):
+class NetworkPacketBrokerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Network Packet Broker Properties defines the properties of the resource.
+
+    :ivar network_fabric_id: ARM resource ID of the Network Fabric. Required.
+    :vartype network_fabric_id: str
+    :ivar network_device_ids: List of ARM resource IDs of Network Devices [NPB].
+    :vartype network_device_ids: list[str]
+    :ivar source_interface_ids: List of network interfaces across NPB devices that are used to
+     mirror source traffic.
+    :vartype source_interface_ids: list[str]
+    :ivar network_tap_ids: List of network Tap IDs configured on NPB.
+    :vartype network_tap_ids: list[str]
+    :ivar neighbor_group_ids: List of neighbor group IDs configured on NPB.
+    :vartype neighbor_group_ids: list[str]
+    :ivar source_network_tap_rule_id: ARM resource ID of the source Network Tap Rule.
+    :vartype source_network_tap_rule_id: str
+    :ivar last_operation: Details of the last operation performed on the resource.
+    :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
+    :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
+     "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
+    :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
+     "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
+    :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
+    """
+
+    network_fabric_id: str = rest_field(name="networkFabricId", visibility=["read", "create"])
+    """ARM resource ID of the Network Fabric. Required."""
+    network_device_ids: Optional[list[str]] = rest_field(name="networkDeviceIds", visibility=["read"])
+    """List of ARM resource IDs of Network Devices [NPB]."""
+    source_interface_ids: Optional[list[str]] = rest_field(name="sourceInterfaceIds", visibility=["read"])
+    """List of network interfaces across NPB devices that are used to mirror source traffic."""
+    network_tap_ids: Optional[list[str]] = rest_field(name="networkTapIds", visibility=["read"])
+    """List of network Tap IDs configured on NPB."""
+    neighbor_group_ids: Optional[list[str]] = rest_field(name="neighborGroupIds", visibility=["read"])
+    """List of neighbor group IDs configured on NPB."""
+    source_network_tap_rule_id: Optional[str] = rest_field(
+        name="sourceNetworkTapRuleId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """ARM resource ID of the source Network Tap Rule."""
+    last_operation: Optional["_models.LastOperationProperties"] = rest_field(name="lastOperation", visibility=["read"])
+    """Details of the last operation performed on the resource."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Provisioning state of the resource. Known values are: \"Accepted\", \"Succeeded\",
+     \"Updating\", \"Deleting\", \"Failed\", and \"Canceled\"."""
+    configuration_state: Optional[Union[str, "_models.ConfigurationState"]] = rest_field(
+        name="configurationState", visibility=["read"]
+    )
+    """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
+     \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        network_fabric_id: str,
+        source_network_tap_rule_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkRack(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Rack resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14540,7 +15457,7 @@ class NetworkRack(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkRackPatch(_Model):
+class NetworkRackPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Rack patch resource definition.
 
     :ivar tags: Resource tags.
@@ -14568,7 +15485,7 @@ class NetworkRackPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRackProperties(AnnotationResource):
+class NetworkRackProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Rack Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -14587,8 +15504,8 @@ class NetworkRackProperties(AnnotationResource):
     :vartype provisioning_state: str or ~azure.mgmt.managednetworkfabric.models.ProvisioningState
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     """
 
@@ -14614,8 +15531,9 @@ class NetworkRackProperties(AnnotationResource):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
 
     @overload
     def __init__(
@@ -14637,7 +15555,7 @@ class NetworkRackProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTap(TrackedResource):
+class NetworkTap(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Tap resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14720,7 +15638,7 @@ class NetworkTap(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkTapPatch(TagsUpdate):
+class NetworkTapPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkFabric resource definition.
 
     :ivar tags: Resource tags.
@@ -14780,7 +15698,7 @@ class NetworkTapPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkTapPatchProperties(AnnotationResource):
+class NetworkTapPatchProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network Tap resource patch definition.
 
     :ivar annotation: Switch configuration description.
@@ -14820,7 +15738,7 @@ class NetworkTapPatchProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapProperties(AnnotationResource):
+class NetworkTapProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Tap Properties defines the properties of the resource.
 
     :ivar annotation: Switch configuration description.
@@ -14840,7 +15758,8 @@ class NetworkTapProperties(AnnotationResource):
     :ivar configuration_state: Gets the configurations state of the resource. Known values are:
      "Succeeded", "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning",
      "Deprovisioning", "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning",
-     "PendingCommit", and "PendingAdministrativeUpdate".
+     "PendingCommit", "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and
+     "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provides you the latest status of the NFC service, whether it is
      Accepted, updating, Succeeded or Failed. During this process, the states keep changing based on
@@ -14876,7 +15795,8 @@ class NetworkTapProperties(AnnotationResource):
     """Gets the configurations state of the resource. Known values are: \"Succeeded\", \"Failed\",
      \"Rejected\", \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\",
      \"Deprovisioned\", \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\",
-     \"PendingCommit\", and \"PendingAdministrativeUpdate\"."""
+     \"PendingCommit\", \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\",
+     and \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -14911,7 +15831,7 @@ class NetworkTapProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapResyncResponse(_Model):
+class NetworkTapResyncResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for NetworkTap Resync operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -14987,7 +15907,7 @@ class NetworkTapResyncResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRule(TrackedResource):
+class NetworkTapRule(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkTapRule resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15078,7 +15998,7 @@ class NetworkTapRule(TrackedResource):
             super().__setattr__(key, value)
 
 
-class NetworkTapRuleAction(_Model):
+class NetworkTapRuleAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action that need to performed.
 
     :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
@@ -15141,7 +16061,7 @@ class NetworkTapRuleAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleActionPatch(_Model):
+class NetworkTapRuleActionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Action that need to performed.
 
     :ivar type: Type of actions that can be performed. Known values are: "Drop", "Count", "Log",
@@ -15204,7 +16124,9 @@ class NetworkTapRuleActionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleMatchCondition(CommonMatchConditions):
+class NetworkTapRuleMatchCondition(
+    CommonMatchConditions
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match condition that is supported to filter the traffic.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -15251,7 +16173,9 @@ class NetworkTapRuleMatchCondition(CommonMatchConditions):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleMatchConditionPatch(CommonMatchConditionsPatch):
+class NetworkTapRuleMatchConditionPatch(
+    CommonMatchConditionsPatch
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match condition that is supported to filter the traffic.
 
     :ivar protocol_types: List of the protocols that need to be matched.
@@ -15298,7 +16222,7 @@ class NetworkTapRuleMatchConditionPatch(CommonMatchConditionsPatch):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleMatchConfiguration(_Model):
+class NetworkTapRuleMatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match configuration that are supported to filter the traffic.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -15357,7 +16281,7 @@ class NetworkTapRuleMatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleMatchConfigurationPatch(_Model):
+class NetworkTapRuleMatchConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the match configuration that are supported to filter the traffic.
 
     :ivar match_configuration_name: The name of the match configuration.
@@ -15416,7 +16340,7 @@ class NetworkTapRuleMatchConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRulePatch(TagsUpdate):
+class NetworkTapRulePatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The NetworkTapRule resource definition.
 
     :ivar tags: Resource tags.
@@ -15484,7 +16408,7 @@ class NetworkTapRulePatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class NetworkTapRulePatchProperties(_Model):
+class NetworkTapRulePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Tap Rule Patch properties.
 
     :ivar annotation: Switch configuration description.
@@ -15560,7 +16484,7 @@ class NetworkTapRulePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleProperties(_Model):
+class NetworkTapRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Tap Rule Properties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -15596,8 +16520,8 @@ class NetworkTapRuleProperties(_Model):
     :vartype network_fabric_ids: list[str]
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -15657,8 +16581,9 @@ class NetworkTapRuleProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -15695,7 +16620,7 @@ class NetworkTapRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkTapRuleResyncResponse(_Model):
+class NetworkTapRuleResyncResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response for Network Tap Rule resync operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -15771,7 +16696,7 @@ class NetworkTapRuleResyncResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkToNetworkInterconnect(ProxyResource):
+class NetworkToNetworkInterconnect(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network To Network Interconnect resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15875,7 +16800,9 @@ class ProxyResourceBase(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class NetworkToNetworkInterconnectPatch(ProxyResourceBase):
+class NetworkToNetworkInterconnectPatch(
+    ProxyResourceBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Network To Network Interconnect resource patch definition.
 
     :ivar id: Fully qualified resource ID for the resource. E.g.
@@ -15945,7 +16872,9 @@ class NetworkToNetworkInterconnectPatch(ProxyResourceBase):
             super().__setattr__(key, value)
 
 
-class NetworkToNetworkInterconnectPatchProperties(_Model):  # pylint: disable=name-too-long
+class NetworkToNetworkInterconnectPatchProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network Tap Rule Patch properties.
 
     :ivar layer2_configuration: Common properties for Layer2Configuration.
@@ -16037,7 +16966,7 @@ class NetworkToNetworkInterconnectPatchProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class NetworkToNetworkInterconnectProperties(_Model):
+class NetworkToNetworkInterconnectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration used to setup CE-PE connectivity.
 
     :ivar nni_type: Type of NNI used. Example: CE | NPB. Known values are: "CE" and "NPB".
@@ -16080,8 +17009,8 @@ class NetworkToNetworkInterconnectProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -16154,8 +17083,9 @@ class NetworkToNetworkInterconnectProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -16197,7 +17127,7 @@ class NetworkToNetworkInterconnectProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniBmpPatchProperties(_Model):
+class NniBmpPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP Monitoring Protocol (BMP) patch properties.
 
     :ivar configuration_state: (BGP Monitoring Protocol (BMP) configuration state. Known values
@@ -16230,7 +17160,7 @@ class NniBmpPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniBmpProperties(_Model):
+class NniBmpProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BGP Monitoring Protocol (BMP) properties.
 
     :ivar configuration_state: BGP Monitoring Protocol (BMP) Configuration State. Required. Known
@@ -16263,7 +17193,7 @@ class NniBmpProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniStaticRouteConfiguration(_Model):
+class NniStaticRouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties for NNI.
 
     :ivar bfd_configuration: BFD configuration properties.
@@ -16307,7 +17237,7 @@ class NniStaticRouteConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniStaticRoutePatchConfiguration(_Model):
+class NniStaticRoutePatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties for NNI.
 
     :ivar bfd_configuration: Bidirectional Forwarding Detection (BFD) configuration properties.
@@ -16351,7 +17281,7 @@ class NniStaticRoutePatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniUpdateBfdAdministrativeStateRequest(_Model):
+class NniUpdateBfdAdministrativeStateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NNI Bidirectional Forwarding Detection (BFD) Administrative State request.
 
     :ivar route_type: Route Type. Choose either Static or OptionA. Known values are: "Static" and
@@ -16392,7 +17322,7 @@ class NniUpdateBfdAdministrativeStateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniUpdateBfdAdministrativeStateResponse(_Model):
+class NniUpdateBfdAdministrativeStateResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NNI Bidirectional Forwarding Detection (BFD) Administrative State response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -16476,7 +17406,9 @@ class NniUpdateBfdAdministrativeStateResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NniUpdateBfdAdministrativeStateResponseProperties(_Model):  # pylint: disable=name-too-long
+class NniUpdateBfdAdministrativeStateResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """NNI Bidirectional Forwarding Detection (BFD) Update Administrative State response.
 
     :ivar route_type: Route Type. Choose either Static or OptionA. Known values are: "Static" and
@@ -16517,7 +17449,7 @@ class NniUpdateBfdAdministrativeStateResponseProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class NpbStaticRouteConfiguration(_Model):
+class NpbStaticRouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NPB Static Route Configuration properties.
 
     :ivar bfd_configuration: BFD Configuration properties.
@@ -16561,7 +17493,7 @@ class NpbStaticRouteConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NpbStaticRouteConfigurationPatch(_Model):
+class NpbStaticRouteConfigurationPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NPB Static Route Configuration properties.
 
     :ivar bfd_configuration: BFD Configuration properties.
@@ -16605,7 +17537,7 @@ class NpbStaticRouteConfigurationPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -16693,7 +17625,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -16769,7 +17701,9 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OptionBLayer3Configuration(Layer3IpPrefixProperties):
+class OptionBLayer3Configuration(
+    Layer3IpPrefixProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OptionB Layer3 Configuration properties.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -16840,7 +17774,9 @@ class OptionBLayer3Configuration(Layer3IpPrefixProperties):
         super().__init__(*args, **kwargs)
 
 
-class OptionBLayer3ConfigurationPatchProperties(Layer3IpPrefixPatchProperties):  # pylint: disable=name-too-long
+class OptionBLayer3ConfigurationPatchProperties(
+    Layer3IpPrefixPatchProperties
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Common properties for Layer3Configuration.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -16911,7 +17847,7 @@ class OptionBLayer3ConfigurationPatchProperties(Layer3IpPrefixPatchProperties): 
         super().__init__(*args, **kwargs)
 
 
-class OptionBLayer3PrefixLimitPatchProperties(_Model):
+class OptionBLayer3PrefixLimitPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OptionB Layer3 prefix limit patch properties.
 
     :ivar maximum_routes: Maximum number of routes allowed.
@@ -16941,7 +17877,7 @@ class OptionBLayer3PrefixLimitPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OptionBLayer3PrefixLimitProperties(_Model):
+class OptionBLayer3PrefixLimitProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OptionB Layer3 prefix limit properties.
 
     :ivar maximum_routes: Maximum number of routes allowed.
@@ -16971,7 +17907,251 @@ class OptionBLayer3PrefixLimitProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PoliceRateConfigurationProperties(_Model):
+class PatchInfraNetwork(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure network definition for PATCH. All fields optional.
+
+    :ivar vlan_id: 802.1Q VLAN ID.
+    :vartype vlan_id: int
+    :ivar ipv4_subnet: IPv4 subnet in CIDR notation.
+    :vartype ipv4_subnet: str
+    :ivar ipv4_gateway: Default gateway IP.
+    :vartype ipv4_gateway: str
+    :ivar ipv4_start_addr: Start of allocatable IP range.
+    :vartype ipv4_start_addr: str
+    :ivar ipv4_end_addr: End of allocatable IP range.
+    :vartype ipv4_end_addr: str
+    :ivar mtu: Maximum Transmission Unit.
+    :vartype mtu: int
+    """
+
+    vlan_id: Optional[int] = rest_field(name="vlanId", visibility=["read", "create", "update", "delete", "query"])
+    """802.1Q VLAN ID."""
+    ipv4_subnet: Optional[str] = rest_field(
+        name="ipv4Subnet", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """IPv4 subnet in CIDR notation."""
+    ipv4_gateway: Optional[str] = rest_field(
+        name="ipv4Gateway", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Default gateway IP."""
+    ipv4_start_addr: Optional[str] = rest_field(
+        name="ipv4StartAddr", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Start of allocatable IP range."""
+    ipv4_end_addr: Optional[str] = rest_field(
+        name="ipv4EndAddr", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """End of allocatable IP range."""
+    mtu: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum Transmission Unit."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vlan_id: Optional[int] = None,
+        ipv4_subnet: Optional[str] = None,
+        ipv4_gateway: Optional[str] = None,
+        ipv4_start_addr: Optional[str] = None,
+        ipv4_end_addr: Optional[str] = None,
+        mtu: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PatchInfrastructureNetworks(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure network definitions for PATCH. No networks required.
+
+    :ivar management: OAM management network.
+    :vartype management: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    :ivar pxe: PXE boot network.
+    :vartype pxe: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    :ivar bmc: BMC/iDRAC network.
+    :vartype bmc: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    :ivar storage: Storage data plane network.
+    :vartype storage: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    :ivar storage_mgmt: Storage management plane network.
+    :vartype storage_mgmt: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    :ivar pdu: PDU management network.
+    :vartype pdu: ~azure.mgmt.managednetworkfabric.models.PatchInfraNetwork
+    """
+
+    management: Optional["_models.PatchInfraNetwork"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """OAM management network."""
+    pxe: Optional["_models.PatchInfraNetwork"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """PXE boot network."""
+    bmc: Optional["_models.PatchInfraNetwork"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """BMC/iDRAC network."""
+    storage: Optional["_models.PatchInfraNetwork"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage data plane network."""
+    storage_mgmt: Optional["_models.PatchInfraNetwork"] = rest_field(
+        name="storageMgmt", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Storage management plane network."""
+    pdu: Optional["_models.PatchInfraNetwork"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """PDU management network."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        management: Optional["_models.PatchInfraNetwork"] = None,
+        pxe: Optional["_models.PatchInfraNetwork"] = None,
+        bmc: Optional["_models.PatchInfraNetwork"] = None,
+        storage: Optional["_models.PatchInfraNetwork"] = None,
+        storage_mgmt: Optional["_models.PatchInfraNetwork"] = None,
+        pdu: Optional["_models.PatchInfraNetwork"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PatchInfrastructureServices(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Infrastructure service endpoints for PATCH. All fields optional.
+
+    :ivar platform_proxy: Platform proxy configuration.
+    :vartype platform_proxy: ~azure.mgmt.managednetworkfabric.models.PatchPlatformProxy
+    :ivar ntp_servers: NTP server IPs or hostnames.
+    :vartype ntp_servers: list[str]
+    :ivar dns_servers: DNS server IPs.
+    :vartype dns_servers: list[str]
+    """
+
+    platform_proxy: Optional["_models.PatchPlatformProxy"] = rest_field(
+        name="platformProxy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Platform proxy configuration."""
+    ntp_servers: Optional[list[str]] = rest_field(
+        name="ntpServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """NTP server IPs or hostnames."""
+    dns_servers: Optional[list[str]] = rest_field(
+        name="dnsServers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """DNS server IPs."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        platform_proxy: Optional["_models.PatchPlatformProxy"] = None,
+        ntp_servers: Optional[list[str]] = None,
+        dns_servers: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PatchPlatformProxy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Platform proxy configuration for PATCH. All fields optional.
+
+    :ivar http_proxy: HTTP proxy endpoint URL, or proxy bare host:port.
+    :vartype http_proxy: str
+    :ivar https_proxy: HTTPS proxy endpoint URL, or proxy bare host:port for 443.
+    :vartype https_proxy: str
+    :ivar no_proxy: CIDRs, hostnames, and domain suffixes that bypass the proxy.
+    :vartype no_proxy: list[str]
+    """
+
+    http_proxy: Optional[str] = rest_field(name="httpProxy", visibility=["read", "create", "update", "delete", "query"])
+    """HTTP proxy endpoint URL, or proxy bare host:port."""
+    https_proxy: Optional[str] = rest_field(
+        name="httpsProxy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """HTTPS proxy endpoint URL, or proxy bare host:port for 443."""
+    no_proxy: Optional[list[str]] = rest_field(
+        name="noProxy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """CIDRs, hostnames, and domain suffixes that bypass the proxy."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        http_proxy: Optional[str] = None,
+        https_proxy: Optional[str] = None,
+        no_proxy: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PlatformProxy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Platform proxy configuration.
+
+    :ivar http_proxy: HTTP proxy endpoint URL, or proxy bare host:port. Required.
+    :vartype http_proxy: str
+    :ivar https_proxy: HTTPS proxy endpoint URL, or proxy bare host:port for 443. Required.
+    :vartype https_proxy: str
+    :ivar no_proxy: CIDRs, hostnames, and domain suffixes that bypass the proxy. Required.
+    :vartype no_proxy: list[str]
+    """
+
+    http_proxy: str = rest_field(name="httpProxy", visibility=["read", "create", "update", "delete", "query"])
+    """HTTP proxy endpoint URL, or proxy bare host:port. Required."""
+    https_proxy: str = rest_field(name="httpsProxy", visibility=["read", "create", "update", "delete", "query"])
+    """HTTPS proxy endpoint URL, or proxy bare host:port for 443. Required."""
+    no_proxy: list[str] = rest_field(name="noProxy", visibility=["read", "create", "update", "delete", "query"])
+    """CIDRs, hostnames, and domain suffixes that bypass the proxy. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        http_proxy: str,
+        https_proxy: str,
+        no_proxy: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PoliceRateConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Police rate configuration properties.
 
     :ivar bit_rate: Rate limit in bits per second.
@@ -17008,7 +18188,7 @@ class PoliceRateConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortGroupPatchProperties(_Model):
+class PortGroupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port Group Properties.
 
     :ivar name: The name of the port group.
@@ -17041,7 +18221,7 @@ class PortGroupPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PortGroupProperties(_Model):
+class PortGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Port Group properties.
 
     :ivar name: The name of the port group.
@@ -17074,7 +18254,91 @@ class PortGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrefixLimitPatchProperties(_Model):
+class PostUpgradeProfilePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The post-upgrade configuration parameters to be used by devices in the network fabric during
+    device upgrade operations.
+
+    :ivar max_exiting_maintenance_timeout_in_seconds: Maximum wait time in seconds for during the
+     post-upgrade process for devices in the network fabric to successfully move out of maintenance
+     mode.
+    :vartype max_exiting_maintenance_timeout_in_seconds: int
+    :ivar mlag_reload_delay_timeout_in_seconds: Maximum time in seconds to wait for MLAG reload
+     delay on devices in the network fabric.
+    :vartype mlag_reload_delay_timeout_in_seconds: int
+    """
+
+    max_exiting_maintenance_timeout_in_seconds: Optional[int] = rest_field(
+        name="maxExitingMaintenanceTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum wait time in seconds for during the post-upgrade process for devices in the network
+     fabric to successfully move out of maintenance mode."""
+    mlag_reload_delay_timeout_in_seconds: Optional[int] = rest_field(
+        name="mlagReloadDelayTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum time in seconds to wait for MLAG reload delay on devices in the network fabric."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_exiting_maintenance_timeout_in_seconds: Optional[int] = None,
+        mlag_reload_delay_timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PostUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The post-upgrade configuration parameters to be used by devices in the network fabric during
+    device upgrade operations.
+
+    :ivar max_exiting_maintenance_timeout_in_seconds: Maximum wait time in seconds for during the
+     post-upgrade process for devices in the network fabric to successfully move out of maintenance
+     mode.
+    :vartype max_exiting_maintenance_timeout_in_seconds: int
+    :ivar mlag_reload_delay_timeout_in_seconds: Maximum time in seconds to wait for MLAG reload
+     delay on devices in the network fabric.
+    :vartype mlag_reload_delay_timeout_in_seconds: int
+    """
+
+    max_exiting_maintenance_timeout_in_seconds: Optional[int] = rest_field(
+        name="maxExitingMaintenanceTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum wait time in seconds for during the post-upgrade process for devices in the network
+     fabric to successfully move out of maintenance mode."""
+    mlag_reload_delay_timeout_in_seconds: Optional[int] = rest_field(
+        name="mlagReloadDelayTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum time in seconds to wait for MLAG reload delay on devices in the network fabric."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_exiting_maintenance_timeout_in_seconds: Optional[int] = None,
+        mlag_reload_delay_timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PrefixLimitPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prefix Limit Patch properties.
 
     :ivar maximum_routes: Maximum routes allowed.
@@ -17116,7 +18380,7 @@ class PrefixLimitPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrefixLimitProperties(_Model):
+class PrefixLimitProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Prefix Limit properties.
 
     :ivar maximum_routes: Maximum routes allowed.
@@ -17158,7 +18422,75 @@ class PrefixLimitProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QosPatchProperties(_Model):
+class PreUpgradeProfilePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The pre-upgrade configuration parameters to be used by devices in the network fabric during
+    device upgrade operations.
+
+    :ivar max_entering_maintenance_timeout_in_seconds: Maximum wait time in seconds for during the
+     pre-upgrade process for devices in the network fabric to successfully move into maintenance
+     mode.
+    :vartype max_entering_maintenance_timeout_in_seconds: int
+    """
+
+    max_entering_maintenance_timeout_in_seconds: Optional[int] = rest_field(
+        name="maxEnteringMaintenanceTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum wait time in seconds for during the pre-upgrade process for devices in the network
+     fabric to successfully move into maintenance mode."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_entering_maintenance_timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PreUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The pre-upgrade configuration parameters to be used by devices in the network fabric during
+    device upgrade operations.
+
+    :ivar max_entering_maintenance_timeout_in_seconds: Maximum wait time in seconds for during the
+     pre-upgrade process for devices in the network fabric to successfully move into maintenance
+     mode.
+    :vartype max_entering_maintenance_timeout_in_seconds: int
+    """
+
+    max_entering_maintenance_timeout_in_seconds: Optional[int] = rest_field(
+        name="maxEnteringMaintenanceTimeoutInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum wait time in seconds for during the pre-upgrade process for devices in the network
+     fabric to successfully move into maintenance mode."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_entering_maintenance_timeout_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class QosPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkFabric QoS Patch Properties.
 
     :ivar qos_configuration_state: QoS configuration state. Default is Disabled. Known values are:
@@ -17190,7 +18522,7 @@ class QosPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QosProperties(_Model):
+class QosProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NetworkFabric QoS Properties.
 
     :ivar qos_configuration_state: QoS configuration state. Default is Disabled. Known values are:
@@ -17222,7 +18554,7 @@ class QosProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RebootProperties(_Model):
+class RebootProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Reboot properties.
 
     :ivar reboot_type: Type of reboot to be performed. Example: GracefulRebootWithZTP. Known values
@@ -17256,7 +18588,59 @@ class RebootProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutePolicy(TrackedResource):
+class RefreshConfigurationRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Refresh configuration request properties.
+
+    :ivar generate_base_configuration: Indicates if base configuration needs to be generated
+     afresh. Required. Known values are: "Disabled" and "Enabled".
+    :vartype generate_base_configuration: str or
+     ~azure.mgmt.managednetworkfabric.models.GenerateBaseConfiguration
+    :ivar configuration_regeneration_type: Type of configuration regeneration to be performed.
+     Required. "Partial"
+    :vartype configuration_regeneration_type: str or
+     ~azure.mgmt.managednetworkfabric.models.ConfigurationRegenerationType
+    :ivar device_types: The types of devices for which the configuration needs to be refreshed. If
+     not provided, configuration will be refreshed for all device types.
+    :vartype device_types: list[str or
+     ~azure.mgmt.managednetworkfabric.models.NetworkFabricRefreshDeviceTypes]
+    """
+
+    generate_base_configuration: Union[str, "_models.GenerateBaseConfiguration"] = rest_field(
+        name="generateBaseConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates if base configuration needs to be generated afresh. Required. Known values are:
+     \"Disabled\" and \"Enabled\"."""
+    configuration_regeneration_type: Union[str, "_models.ConfigurationRegenerationType"] = rest_field(
+        name="configurationRegenerationType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Type of configuration regeneration to be performed. Required. \"Partial\""""
+    device_types: Optional[list[Union[str, "_models.NetworkFabricRefreshDeviceTypes"]]] = rest_field(
+        name="deviceTypes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The types of devices for which the configuration needs to be refreshed. If not provided,
+     configuration will be refreshed for all device types."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        generate_base_configuration: Union[str, "_models.GenerateBaseConfiguration"],
+        configuration_regeneration_type: Union[str, "_models.ConfigurationRegenerationType"],
+        device_types: Optional[list[Union[str, "_models.NetworkFabricRefreshDeviceTypes"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RoutePolicy(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The RoutePolicy resource definition.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17331,7 +18715,7 @@ class RoutePolicy(TrackedResource):
             super().__setattr__(key, value)
 
 
-class RoutePolicyPatch(TagsUpdate):
+class RoutePolicyPatch(TagsUpdate):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Route Policy patch resource definition.
 
     :ivar tags: Resource tags.
@@ -17384,7 +18768,7 @@ class RoutePolicyPatch(TagsUpdate):
             super().__setattr__(key, value)
 
 
-class RoutePolicyPatchableProperties(_Model):
+class RoutePolicyPatchableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Policy patchable properties.
 
     :ivar default_action: Default action that needs to be applied when no condition is matched.
@@ -17424,7 +18808,7 @@ class RoutePolicyPatchableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutePolicyProperties(_Model):
+class RoutePolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RoutePolicyProperties defines the resource properties.
 
     :ivar annotation: Switch configuration description.
@@ -17444,8 +18828,8 @@ class RoutePolicyProperties(_Model):
     :vartype last_operation: ~azure.mgmt.managednetworkfabric.models.LastOperationProperties
     :ivar configuration_state: Configuration state of the resource. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Accepted",
      "Succeeded", "Updating", "Deleting", "Failed", and "Canceled".
@@ -17483,8 +18867,9 @@ class RoutePolicyProperties(_Model):
     )
     """Configuration state of the resource. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -17518,7 +18903,9 @@ class RoutePolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutePolicyStatementPatchProperties(AnnotationResource):
+class RoutePolicyStatementPatchProperties(
+    AnnotationResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Policy Statement properties.
 
     :ivar annotation: Switch configuration description.
@@ -17563,7 +18950,7 @@ class RoutePolicyStatementPatchProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class RoutePolicyStatementProperties(AnnotationResource):
+class RoutePolicyStatementProperties(AnnotationResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Policy Statement properties.
 
     :ivar annotation: Switch configuration description.
@@ -17606,7 +18993,7 @@ class RoutePolicyStatementProperties(AnnotationResource):
         super().__init__(*args, **kwargs)
 
 
-class RoutePrefixLimitPatchProperties(_Model):
+class RoutePrefixLimitPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """VRP Limit patch configuration.
 
     :ivar hard_limit: Hard limit for the routes.
@@ -17639,7 +19026,7 @@ class RoutePrefixLimitPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RoutePrefixLimitProperties(_Model):
+class RoutePrefixLimitProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Layer3 Route prefix limit configuration.
 
     :ivar hard_limit: Hard limit for the routes.
@@ -17672,7 +19059,7 @@ class RoutePrefixLimitProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteTargetInformation(_Model):
+class RouteTargetInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Target Configuration.
 
     :ivar import_ipv4_route_targets: Route Targets to be applied for incoming routes into CE.
@@ -17723,7 +19110,7 @@ class RouteTargetInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RouteTargetPatchInformation(_Model):
+class RouteTargetPatchInformation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Target Configuration.
 
     :ivar import_ipv4_route_targets: Route Targets to be applied for incoming routes into CE.
@@ -17774,7 +19161,7 @@ class RouteTargetPatchInformation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleProperties(_Model):
+class RuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rules for the InternetGateways.
 
     :ivar action: Specify action. Required. Known values are: "Allow" and "Deny".
@@ -17838,6 +19225,43 @@ class RuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SecretArchivePatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the settings for a secret archive used to hold credentials for the Network Fabric.
+
+    :ivar associated_identity: The selection of the managed identity to use with this vault URI.
+     The identity type must be either system assigned or user assigned.
+    :vartype associated_identity: ~azure.mgmt.managednetworkfabric.models.IdentitySelectorPatch
+    :ivar vault_uri: The URI for the key vault used as the secret archive.
+    :vartype vault_uri: str
+    """
+
+    associated_identity: Optional["_models.IdentitySelectorPatch"] = rest_field(
+        name="associatedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The selection of the managed identity to use with this vault URI. The identity type must be
+     either system assigned or user assigned."""
+    vault_uri: Optional[str] = rest_field(name="vaultUri", visibility=["read", "create", "update", "delete", "query"])
+    """The URI for the key vault used as the secret archive."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        associated_identity: Optional["_models.IdentitySelectorPatch"] = None,
+        vault_uri: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SecretArchiveReference(_Model):
     """A reference to a version of a secret in a key vault.
 
@@ -17859,6 +19283,43 @@ class SecretArchiveReference(_Model):
     """The name of the secret in the key vault."""
     secret_version: Optional[str] = rest_field(name="secretVersion", visibility=["read"])
     """The version of the secret in the key vault."""
+
+
+class SecretArchiveSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Represents the settings for a secret archive used to hold credentials for the Network Fabric.
+
+    :ivar associated_identity: The selection of the managed identity to use with this vault URI.
+     The identity type must be either system assigned or user assigned. Required.
+    :vartype associated_identity: ~azure.mgmt.managednetworkfabric.models.IdentitySelector
+    :ivar vault_uri: The URI for the key vault used as the secret archive. Required.
+    :vartype vault_uri: str
+    """
+
+    associated_identity: "_models.IdentitySelector" = rest_field(
+        name="associatedIdentity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The selection of the managed identity to use with this vault URI. The identity type must be
+     either system assigned or user assigned. Required."""
+    vault_uri: str = rest_field(name="vaultUri", visibility=["read", "create", "update", "delete", "query"])
+    """The URI for the key vault used as the secret archive. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        associated_identity: "_models.IdentitySelector",
+        vault_uri: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SecretRotationStatus(_Model):
@@ -17906,7 +19367,7 @@ class SecretRotationSummary(_Model):
     """The number of active password sets configured on the devices."""
 
 
-class StatementActionPatchProperties(_Model):
+class StatementActionPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route policy action properties.
 
     :ivar local_preference: Local Preference of the route policy.
@@ -17961,7 +19422,7 @@ class StatementActionPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatementActionProperties(_Model):
+class StatementActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route policy action properties.
 
     :ivar local_preference: Local Preference of the route policy.
@@ -18016,7 +19477,7 @@ class StatementActionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatementConditionPatchProperties(_Model):
+class StatementConditionPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route policy statement condition properties.
 
     :ivar ip_community_ids: List of IP Community resource IDs.
@@ -18067,7 +19528,7 @@ class StatementConditionPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatementConditionProperties(_Model):
+class StatementConditionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route policy statement condition properties.
 
     :ivar ip_community_ids: List of IP Community resource IDs.
@@ -18118,7 +19579,7 @@ class StatementConditionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRouteConfiguration(_Model):
+class StaticRouteConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties.
 
     :ivar bfd_configuration: BFD configuration properties.
@@ -18170,7 +19631,7 @@ class StaticRouteConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRoutePatchConfiguration(_Model):
+class StaticRoutePatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route Configuration properties.
 
     :ivar bfd_configuration: BFD configuration properties.
@@ -18214,7 +19675,7 @@ class StaticRoutePatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRoutePatchProperties(_Model):
+class StaticRoutePatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Properties.
 
     :ivar prefix: Prefix of the route. Required.
@@ -18247,7 +19708,7 @@ class StaticRoutePatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRoutePolicy(_Model):
+class StaticRoutePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route - route policy properties.
 
     :ivar export_route_policy: Array of ARM Resource ID of the RoutePolicies.
@@ -18277,7 +19738,7 @@ class StaticRoutePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRoutePolicyPatch(_Model):
+class StaticRoutePolicyPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Static Route - route policy properties.
 
     :ivar export_route_policy: Array of ARM Resource ID of the RoutePolicies.
@@ -18307,7 +19768,7 @@ class StaticRoutePolicyPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StaticRouteProperties(_Model):
+class StaticRouteProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Route Properties.
 
     :ivar prefix: Prefix of the route. Required.
@@ -18340,7 +19801,7 @@ class StaticRouteProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StationConnectionPatchProperties(_Model):
+class StationConnectionPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Station Connection PATCH Properties.
 
     :ivar keepalive_idle_time: Connection keepalive idle time in seconds.
@@ -18384,7 +19845,7 @@ class StationConnectionPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StationConnectionProperties(_Model):
+class StationConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Station Connection Properties.
 
     :ivar keepalive_idle_time: Connection keepalive idle time in seconds.
@@ -18428,7 +19889,7 @@ class StationConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageAccountConfiguration(_Model):
+class StorageAccountConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage account configuration.
 
     :ivar storage_account_id: Network Fabric storage account resource identifier.
@@ -18467,7 +19928,7 @@ class StorageAccountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StorageAccountPatchConfiguration(_Model):
+class StorageAccountPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage account configuration.
 
     :ivar storage_account_id: Network Fabric storage account resource identifier.
@@ -18507,7 +19968,7 @@ class StorageAccountPatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedConnectorProperties(_Model):
+class SupportedConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported connector properties.
 
     :ivar connector_type: Type of connector used. Example: Optical.
@@ -18544,7 +20005,7 @@ class SupportedConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SupportedVersionProperties(_Model):
+class SupportedVersionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Supported version details of the network device.
 
     :ivar version: Operating system and firmware combined versions.
@@ -18595,7 +20056,7 @@ class SupportedVersionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -18662,7 +20123,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TerminalServerConfiguration(_Model):
+class TerminalServerConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network and credentials configuration currently applied to terminal server.
 
     :ivar username: Username for the terminal server connection. Required.
@@ -18741,7 +20202,7 @@ class TerminalServerConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TerminalServerPatchConfiguration(_Model):
+class TerminalServerPatchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network and credentials configuration already applied to terminal server.
 
     :ivar username: Username for the terminal server connection.
@@ -18809,7 +20270,7 @@ class TerminalServerPatchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UniqueRouteDistinguisherPatchProperties(_Model):
+class UniqueRouteDistinguisherPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Unique Route Distinguisher configuration properties.
 
     :ivar unique_rd_configuration_state: Unique Route Distinguisher configuration state. Default is
@@ -18858,7 +20319,7 @@ class UniqueRouteDistinguisherPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UniqueRouteDistinguisherProperties(_Model):
+class UniqueRouteDistinguisherProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Unique Route Distinguisher properties.
 
     :ivar unique_rd_configuration_state: Unique Route Distinguisher configuration state. Default is
@@ -18911,7 +20372,9 @@ class UniqueRouteDistinguisherProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateAdministrativeState(EnableDisableOnResources):
+class UpdateAdministrativeState(
+    EnableDisableOnResources
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update administrative state on list of resources.
 
     :ivar resource_ids: Network Fabrics or Network Rack resource Id.
@@ -18945,7 +20408,7 @@ class UpdateAdministrativeState(EnableDisableOnResources):
         super().__init__(*args, **kwargs)
 
 
-class UpdateAdministrativeStateResponse(_Model):
+class UpdateAdministrativeStateResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update Administrative State Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -19029,7 +20492,9 @@ class UpdateAdministrativeStateResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateAdministrativeStateResponseProperties(_Model):  # pylint: disable=name-too-long
+class UpdateAdministrativeStateResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Update Administrative State Response Properties.
 
     :ivar successful_resources: List of ARM Resource IDs for which the given action applied
@@ -19067,7 +20532,9 @@ class UpdateAdministrativeStateResponseProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class UpdateDeviceAdministrativeState(EnableDisableOnResources):
+class UpdateDeviceAdministrativeState(
+    EnableDisableOnResources
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update the administrative state on list of resources.
 
     :ivar resource_ids: Network Fabrics or Network Rack resource Id.
@@ -19104,7 +20571,7 @@ class UpdateDeviceAdministrativeState(EnableDisableOnResources):
         super().__init__(*args, **kwargs)
 
 
-class UpdateVersion(_Model):
+class UpdateVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update version properties.
 
     :ivar version: Specify the version.
@@ -19132,7 +20599,7 @@ class UpdateVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpgradeNetworkFabricProperties(UpdateVersion):
+class UpgradeNetworkFabricProperties(UpdateVersion):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model used for Upgrade Network Fabric Properties.
 
     :ivar version: Specify the version.
@@ -19167,6 +20634,94 @@ class UpgradeNetworkFabricProperties(UpdateVersion):
         super().__init__(*args, **kwargs)
 
 
+class UpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The upgrade profile to be used by devices in the network fabric during device upgrade
+    operations.
+
+    :ivar pre_upgrade_profile: The pre-upgrade configuration parameters to be used by devices in
+     the network fabric during device upgrade operations.
+    :vartype pre_upgrade_profile:
+     ~azure.mgmt.managednetworkfabric.models.PreUpgradeProfileProperties
+    :ivar post_upgrade_profile: The post-upgrade configuration parameters to be used by devices in
+     the network fabric during device upgrade operations.
+    :vartype post_upgrade_profile:
+     ~azure.mgmt.managednetworkfabric.models.PostUpgradeProfileProperties
+    """
+
+    pre_upgrade_profile: Optional["_models.PreUpgradeProfileProperties"] = rest_field(
+        name="preUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The pre-upgrade configuration parameters to be used by devices in the network fabric during
+     device upgrade operations."""
+    post_upgrade_profile: Optional["_models.PostUpgradeProfileProperties"] = rest_field(
+        name="postUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The post-upgrade configuration parameters to be used by devices in the network fabric during
+     device upgrade operations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pre_upgrade_profile: Optional["_models.PreUpgradeProfileProperties"] = None,
+        post_upgrade_profile: Optional["_models.PostUpgradeProfileProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeProfilePropertiesPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The upgrade profile patch parameters that can be patched which are used by devices in the
+    network fabric during device upgrade operations.
+
+    :ivar pre_upgrade_profile: The pre-upgrade configuration parameters to be used by devices in
+     the network fabric during device upgrade operations.
+    :vartype pre_upgrade_profile:
+     ~azure.mgmt.managednetworkfabric.models.PreUpgradeProfilePatchProperties
+    :ivar post_upgrade_profile: The post-upgrade configuration parameters to be used by devices in
+     the network fabric during device upgrade operations.
+    :vartype post_upgrade_profile:
+     ~azure.mgmt.managednetworkfabric.models.PostUpgradeProfilePatchProperties
+    """
+
+    pre_upgrade_profile: Optional["_models.PreUpgradeProfilePatchProperties"] = rest_field(
+        name="preUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The pre-upgrade configuration parameters to be used by devices in the network fabric during
+     device upgrade operations."""
+    post_upgrade_profile: Optional["_models.PostUpgradeProfilePatchProperties"] = rest_field(
+        name="postUpgradeProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The post-upgrade configuration parameters to be used by devices in the network fabric during
+     device upgrade operations."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pre_upgrade_profile: Optional["_models.PreUpgradeProfilePatchProperties"] = None,
+        post_upgrade_profile: Optional["_models.PostUpgradeProfilePatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class UserAssignedIdentity(_Model):
     """User assigned identity properties.
 
@@ -19182,7 +20737,7 @@ class UserAssignedIdentity(_Model):
     """The client ID of the assigned identity."""
 
 
-class ValidateConfigurationProperties(_Model):
+class ValidateConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validation configuration properties.
 
     :ivar validate_action: Validate action that to be performed. Known values are: "Cabling",
@@ -19214,15 +20769,13 @@ class ValidateConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidateConfigurationResponse(CommonErrorResponse):
+class ValidateConfigurationResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of the action validate configuration.
 
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
     :ivar configuration_state: Gets the configuration state. Known values are: "Succeeded",
      "Failed", "Rejected", "Accepted", "Provisioned", "ErrorProvisioning", "Deprovisioning",
-     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit", and
-     "PendingAdministrativeUpdate".
+     "Deprovisioned", "ErrorDeprovisioning", "DeferredControl", "Provisioning", "PendingCommit",
+     "PendingAdministrativeUpdate", "CommitStaged", "CommitStageFailed", and "CommitRollbackFailed".
     :vartype configuration_state: str or ~azure.mgmt.managednetworkfabric.models.ConfigurationState
     :ivar url: URL for the details of the response.
     :vartype url: str
@@ -19233,8 +20786,9 @@ class ValidateConfigurationResponse(CommonErrorResponse):
     )
     """Gets the configuration state. Known values are: \"Succeeded\", \"Failed\", \"Rejected\",
      \"Accepted\", \"Provisioned\", \"ErrorProvisioning\", \"Deprovisioning\", \"Deprovisioned\",
-     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\", and
-     \"PendingAdministrativeUpdate\"."""
+     \"ErrorDeprovisioning\", \"DeferredControl\", \"Provisioning\", \"PendingCommit\",
+     \"PendingAdministrativeUpdate\", \"CommitStaged\", \"CommitStageFailed\", and
+     \"CommitRollbackFailed\"."""
     url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """URL for the details of the response."""
 
@@ -19242,7 +20796,6 @@ class ValidateConfigurationResponse(CommonErrorResponse):
     def __init__(
         self,
         *,
-        error: Optional["_models.ErrorDetail"] = None,
         url: Optional[str] = None,
     ) -> None: ...
 
@@ -19257,7 +20810,91 @@ class ValidateConfigurationResponse(CommonErrorResponse):
         super().__init__(*args, **kwargs)
 
 
-class ViewDeviceConfigurationOperationResponse(_Model):
+class ValidateConfigurationResponseV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The response of the action validate configuration.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.managednetworkfabric.models.OperationStatusResult]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.managednetworkfabric.models.ErrorDetail
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar properties: Network Device Run Rw Command Response properties.
+    :vartype properties:
+     ~azure.mgmt.managednetworkfabric.models.ValidateConfigurationResponseProperties
+    """
+
+    id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Fully qualified ID for the async operation."""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Name of the async operation."""
+    status: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Operation status. Required."""
+    percent_complete: Optional[float] = rest_field(
+        name="percentComplete", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Percent of the operation that is complete."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The start time of the operation."""
+    end_time: Optional[datetime.datetime] = rest_field(
+        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The end time of the operation."""
+    operations: Optional[list["_models.OperationStatusResult"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operations list."""
+    error: Optional["_models.ErrorDetail"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """If present, details of the operation error."""
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Fully qualified ID of the resource against which the original async operation was started."""
+    properties: Optional["_models.ValidateConfigurationResponseProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Network Device Run Rw Command Response properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetail"] = None,
+        properties: Optional["_models.ValidateConfigurationResponseProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ViewDeviceConfigurationOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """View Device Configuration Response V2.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -19341,7 +20978,9 @@ class ViewDeviceConfigurationOperationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ViewDeviceConfigurationResponseProperties(_Model):  # pylint: disable=name-too-long
+class ViewDeviceConfigurationResponseProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """View Device Configuration Response Properties.
 
     :ivar device_configuration_url: Storage URL to the device configuration file.
@@ -19371,7 +21010,7 @@ class ViewDeviceConfigurationResponseProperties(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class VlanGroupPatchProperties(_Model):
+class VlanGroupPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vlan group properties.
 
     :ivar name: Vlan group name.
@@ -19404,7 +21043,7 @@ class VlanGroupPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VlanGroupProperties(_Model):
+class VlanGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Vlan group properties.
 
     :ivar name: Vlan group name.
@@ -19437,7 +21076,7 @@ class VlanGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VlanMatchCondition(_Model):
+class VlanMatchCondition(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vlan match conditions that need to be matched.
 
     :ivar vlans: List of vlans that need to be matched. Inputs can be single vlan or the range of
@@ -19481,7 +21120,7 @@ class VlanMatchCondition(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VlanMatchConditionPatch(_Model):
+class VlanMatchConditionPatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The vlan match conditions that need to be matched.
 
     :ivar vlans: List of vlans that need to be matched. Inputs can be single vlan or the range of
@@ -19525,7 +21164,35 @@ class VlanMatchConditionPatch(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnConfigurationPatchableProperties(_Model):
+class VmProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The VM profile configuration for the NFC's associated compute (VM) resources.
+
+    :ivar vm_sku_name: The SKU that will be used for creating the VMS for AKS cluster. Required.
+    :vartype vm_sku_name: str
+    """
+
+    vm_sku_name: str = rest_field(name="vmSkuName", visibility=["read", "create", "update", "delete", "query"])
+    """The SKU that will be used for creating the VMS for AKS cluster. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_sku_name: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VpnConfigurationPatchableProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network and credential configuration currently applied on terminal server.
 
     :ivar network_to_network_interconnect_id: ARM Resource ID of the Network To Network
@@ -19577,7 +21244,7 @@ class VpnConfigurationPatchableProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnConfigurationProperties(_Model):
+class VpnConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network and credential configuration currently applied on terminal server.
 
     :ivar network_to_network_interconnect_id: ARM Resource ID of the Network To Network
@@ -19638,7 +21305,9 @@ class VpnConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnOptionAPatchProperties(Layer3IpPrefixPatchProperties):
+class VpnOptionAPatchProperties(
+    Layer3IpPrefixPatchProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Peering optionA properties.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -19695,7 +21364,7 @@ class VpnOptionAPatchProperties(Layer3IpPrefixPatchProperties):
         super().__init__(*args, **kwargs)
 
 
-class VpnOptionAProperties(Layer3IpPrefixProperties):
+class VpnOptionAProperties(Layer3IpPrefixProperties):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """option A properties.
 
     :ivar primary_ipv4_prefix: IPv4 Address Prefix.
@@ -19752,7 +21421,7 @@ class VpnOptionAProperties(Layer3IpPrefixProperties):
         super().__init__(*args, **kwargs)
 
 
-class VpnOptionBPatchProperties(_Model):
+class VpnOptionBPatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Option B configuration to be used for Management VPN.
 
     :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. This is
@@ -19798,7 +21467,7 @@ class VpnOptionBPatchProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VpnOptionBProperties(_Model):
+class VpnOptionBProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Option B configuration to be used for Management VPN.
 
     :ivar import_route_targets: Route Targets to be applied for incoming routes into CE. This is

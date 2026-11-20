@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkBootstrapDevices_UpdateAdministrativeState.json
+# x-ms-original-file: 2026-01-15-preview/NetworkBootstrapDevices_UpdateAdministrativeState.json
 if __name__ == "__main__":
     main()
