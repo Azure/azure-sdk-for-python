@@ -14,6 +14,10 @@
   - Added enum `RegionalEndpoints`
   - Added model `VirtualNetworkRule`
 
+### Breaking Changes
+
+  - Model `SyncProperties` property `token_id` (JSON `tokenId`) is no longer required and is now `Optional[str]` with constructor default `None`; type-checked readers may need to handle `None`.
+
 ## 15.1.0b4 (2026-11-11)
 
 ### Features Added
