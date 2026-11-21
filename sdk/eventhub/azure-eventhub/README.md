@@ -564,7 +564,9 @@ finally:
 For distributed tracing, configure your OpenTelemetry tracer provider, install
 `azure-core-tracing-opentelemetry`, and set `AZURE_SDK_TRACING_IMPLEMENTATION=opentelemetry`.
 For logs, attach your OpenTelemetry logging handler to the standard `azure.eventhub` logger.
-AMQP link lifecycle records use the `DEBUG` level and include `component` and `outcome`.
+Logical send and receive operation spans include AMQP link opening. The existing message, send, receive, and
+processing spans retain message-context propagation and links. AMQP link lifecycle records use the `DEBUG` level
+and include `component` and `outcome`.
 All three signals can be configured independently. The default installation requires only the existing SDK dependencies.
 
 ## Next steps

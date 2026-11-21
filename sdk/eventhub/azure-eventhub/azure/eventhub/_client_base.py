@@ -27,7 +27,7 @@ try:
 except ImportError:
     UamqpTransport = None  # type: ignore
 from ._metrics import DISABLED_OPERATION, EventHubMetrics, Operation
-from ._tracing import link_open, record_link_transition
+from ._tracing import LinkOpen, is_tracing_enabled, record_link_transition
 from ._transport._pyamqp_transport import PyamqpTransport
 from .exceptions import ClientClosedError
 from ._configuration import Configuration
@@ -307,9 +307,7 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         path = "/" + eventhub_name if eventhub_name else ""
         self._address = _Address(hostname=fully_qualified_namespace, path=path)
         provider = kwargs.pop("meter_provider", None)
-        self._metrics = (
-            EventHubMetrics(provider, fully_qualified_namespace, eventhub_name) if provider is not None else None
-        )
+        self._metrics = EventHubMetrics(provider) if provider is not None else None
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         if isinstance(credential, AzureSasCredential):
             self._credential = EventhubAzureSasTokenCredential(credential)
@@ -330,8 +328,10 @@ class ClientBase:  # pylint:disable=too-many-instance-attributes
         self._conn_manager = get_connection_manager(amqp_transport=self._amqp_transport, **kwargs)
         self._idle_timeout = kwargs.get("idle_timeout", None)
 
-    def _start_operation(self, name: str) -> Operation:
-        return Operation(self._metrics, name) if self._metrics is not None else DISABLED_OPERATION
+    def _start_operation(self, name: str, *, paused: bool = False) -> Operation:
+        if self._metrics is None and not is_tracing_enabled():
+            return DISABLED_OPERATION
+        return Operation(self._metrics, name, self._address.hostname, self.eventhub_name, paused=paused)
 
     @staticmethod
     def _from_connection_string(conn_str: str, **kwargs: Any) -> Dict[str, Any]:
@@ -545,7 +545,7 @@ class ConsumerProducerMixin:
         """
         # pylint: disable=protected-access
         if not self.running:
-            with link_open(self._client._metrics, self._link_component):
+            with LinkOpen(self._client._metrics, self._link_component):
                 if self._handler:
                     self._handler.close()
                 auth = self._client._create_auth(auth_uri=self._client._auth_uri)

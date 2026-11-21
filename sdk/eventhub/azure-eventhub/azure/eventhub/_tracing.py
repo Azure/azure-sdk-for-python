@@ -3,7 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from contextlib import contextmanager, nullcontext
+from contextlib import contextmanager
+from contextvars import Context, copy_context
 from enum import Enum
 from asyncio import CancelledError  # pylint: disable=do-not-import-asyncio
 import logging
@@ -77,25 +78,88 @@ def record_link_transition(metrics: Optional[EventHubMetrics], component: str, o
 
 
 @contextmanager
-def link_open(metrics: Optional[EventHubMetrics], component: str) -> Iterator[None]:
-    span_impl = settings.tracing_implementation()
-    failure: Optional[BaseException] = None
-    with (span_impl(name="EventHubs.amqp.open", kind=SpanKind.CLIENT) if span_impl else nullcontext()) as span:
-        if span is not None:
-            span.add_attribute("messaging.system", "eventhubs")
-            span.add_attribute("component", component)
-        outcome = "success"
-        try:
-            yield
-        except BaseException as exc:  # pylint: disable=broad-exception-caught
-            failure = exc
-            outcome = "cancelled" if isinstance(exc, CancelledError) else "error"
-        record_link_transition(metrics, component, outcome)
-        if span is not None:
-            span.add_attribute("outcome", outcome)
-    # End the span before propagating the original exception so exporters omit broker details.
-    if failure is not None:
-        raise failure
+def _client_span(span_impl: Type[AbstractSpan], name: str, attributes: Dict[str, str]) -> Iterator[AbstractSpan]:
+    with span_impl(name=name, kind=SpanKind.CLIENT) as span:
+        for key, value in attributes.items():
+            span.add_attribute(key, value)
+        yield span
+
+
+class DiagnosticSpan:
+    """A span that can stay pending across partition polls without changing their ambient context."""
+
+    def __init__(
+        self, span_impl: Type[AbstractSpan], name: str, attributes: Dict[str, str], context: Optional[Context] = None
+    ) -> None:
+        self.context = context
+        self._scope = _client_span(span_impl, name, attributes)
+        if context is not None:
+            self._span = context.run(self._scope.__enter__)
+        else:
+            self._span = self._scope.__enter__()
+
+    def finish(self, outcome: str) -> None:
+        if self.context is not None:
+            self.context.run(self._finish, outcome)
+        else:
+            self._finish(outcome)
+
+    def _finish(self, outcome: str) -> None:
+        self._span.add_attribute("outcome", outcome)
+        if outcome == "success":
+            self._scope.__exit__(None, None, None)
+        else:
+            # Azure Core uses the exception value to set trace error status. Keep transport
+            # descriptions and original traceback frames out of the exported diagnostic.
+            sanitized = RuntimeError("Event Hubs operation " + outcome)
+            self._scope.__exit__(RuntimeError, sanitized, None)
+
+
+class LinkOpen:
+    """One AMQP open attempt, including authentication and readiness polling."""
+
+    def __init__(
+        self,
+        metrics: Optional[EventHubMetrics],
+        component: str,
+        *,
+        detached: bool = False,
+        parent: Optional[DiagnosticSpan] = None,
+    ) -> None:
+        self._metrics = metrics
+        self._component = component
+        self._span = None
+        span_impl = settings.tracing_implementation()
+        if span_impl is not None:
+            context = None
+            if parent is not None and parent.context is not None:
+                context = parent.context.copy()
+            elif detached:
+                context = copy_context()
+            self._span = DiagnosticSpan(
+                span_impl, "EventHubs.amqp.open", {"messaging.system": "eventhubs", "component": component}, context
+            )
+
+    def finish(self, error: Optional[BaseException] = None) -> None:
+        outcome = operation_outcome(error)
+        if self._span is not None and self._span.context is not None:
+            self._span.context.run(record_link_transition, self._metrics, self._component, outcome)
+        else:
+            record_link_transition(self._metrics, self._component, outcome)
+        if self._span is not None:
+            self._span.finish(outcome)
+
+    def __enter__(self) -> LinkOpen:
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        self.finish(exc)
+
+
+def operation_outcome(error: Optional[BaseException]) -> str:
+    if error is None:
+        return "success"
+    return "cancelled" if isinstance(error, CancelledError) else "error"
 
 
 @contextmanager

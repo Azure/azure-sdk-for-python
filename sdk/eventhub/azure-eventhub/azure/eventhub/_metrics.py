@@ -4,11 +4,14 @@
 # ------------------------------------
 from __future__ import annotations
 
-from asyncio import CancelledError  # pylint: disable=do-not-import-asyncio
+from contextvars import copy_context
 import logging
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional
 
+from azure.core.settings import settings
+
+from ._tracing import DiagnosticSpan, operation_outcome
 from ._version import VERSION
 
 if TYPE_CHECKING:
@@ -20,13 +23,8 @@ _LOGGER = logging.getLogger(__name__)
 class EventHubMetrics:
     """Application-owned instruments, shared by all partition links for one client."""
 
-    def __init__(self, provider: MeterProvider, namespace: str, hub: str) -> None:
+    def __init__(self, provider: MeterProvider) -> None:
         meter = provider.get_meter("azure.eventhub", VERSION)
-        self.attributes = {
-            "messaging.system": "eventhubs",
-            "messaging.destination.name": hub,
-            "server.address": namespace,
-        }
         self.operations = meter.create_counter("az.eventhubs.operations", unit="{operation}")
         self.events = meter.create_counter("az.eventhubs.events", unit="{event}")
         self.duration = meter.create_histogram(
@@ -40,28 +38,72 @@ class EventHubMetrics:
 class Operation:
     """A logical send or receive. Finish before handing control to an application callback."""
 
-    def __init__(self, metrics: Optional[EventHubMetrics], name: str) -> None:
+    def __init__(
+        self, metrics: Optional[EventHubMetrics], name: str, namespace: str = "", hub: str = "", *, paused: bool = False
+    ) -> None:
         self._metrics = metrics
         self._name = name
-        self._start = perf_counter() if metrics is not None else 0.0
+        self._elapsed = 0.0
+        self._start: Optional[float] = None
+        self._finished = not name
+        self.span: Optional[DiagnosticSpan] = None
+        self._attributes = {
+            "messaging.system": "eventhubs",
+            "messaging.destination.name": hub,
+            "server.address": namespace,
+        }
+        if not paused:
+            self.resume()
+
+    def resume(self) -> None:
+        if self._finished:
+            return
+        if self._metrics is not None and self._start is None:
+            self._start = perf_counter()
+        self._start_trace()
+
+    def _start_trace(self) -> None:
+        span_impl = settings.tracing_implementation()
+        if self.span is None and span_impl is not None:
+            # Receive polls and callbacks may be interleaved or run on different tasks.
+            self.span = DiagnosticSpan(
+                span_impl,
+                "EventHubs." + self._name + ".operation",
+                self._attributes,
+                copy_context() if self._name == "receive" else None,
+            )
+
+    def pause(self) -> None:
+        if self._start is not None:
+            self._elapsed += perf_counter() - self._start
+            self._start = None
 
     def finish(self, count: int = 0, error: Optional[BaseException] = None) -> None:
-        metrics = self._metrics
-        if metrics is None:
+        if self._finished:
             return
-        self._metrics = None
-        outcome = "success"
-        if error is not None:
-            outcome = "cancelled" if isinstance(error, CancelledError) else "error"
-        attributes = {**metrics.attributes, "operation": self._name, "outcome": outcome}
-        try:
-            duration = perf_counter() - self._start
-            metrics.operations.add(1, attributes)
-            metrics.duration.record(duration, attributes)
-            if count:
-                metrics.events.add(count, attributes)
-        except Exception:  # pylint: disable=broad-except
-            _LOGGER.debug("Unable to record Event Hubs operation metrics", exc_info=True)
+        self._finished = True
+        self.pause()
+        outcome = operation_outcome(error)
+        if error is not None and self.span is None:
+            self._start_trace()
+        if self.span is not None:
+            self.span.finish(outcome)
+        metrics = self._metrics
+        if metrics is not None:
+            attributes = {**self._attributes, "operation": self._name, "outcome": outcome}
+            try:
+                metrics.operations.add(1, attributes)
+                metrics.duration.record(self._elapsed, attributes)
+                if count:
+                    metrics.events.add(count, attributes)
+            except Exception:  # pylint: disable=broad-except
+                _LOGGER.debug("Unable to record Event Hubs operation metrics", exc_info=True)
+
+    def discard(self) -> None:
+        # An empty send or a receive loop that completed without another delivery.
+        if not self._finished and self.span is not None:
+            self.span.finish("success")
+        self._finished = True
 
     def __enter__(self) -> Operation:
         return self
@@ -69,7 +111,8 @@ class Operation:
     def __exit__(self, exc_type, exc, tb) -> None:
         if exc is not None:
             self.finish(error=exc)
+        else:
+            self.discard()
 
 
-# No mutable state or clock reads on the uninstrumented path.
 DISABLED_OPERATION = Operation(None, "")

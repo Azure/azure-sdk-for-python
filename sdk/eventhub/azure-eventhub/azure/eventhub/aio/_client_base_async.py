@@ -16,7 +16,8 @@ from azure.core.credentials import (
     AzureNamedKeyCredential,
 )
 
-from .._tracing import link_open, record_link_transition
+from .._metrics import Operation
+from .._tracing import LinkOpen, record_link_transition
 from .._client_base import (
     ClientBase,
     _generate_sas_token,
@@ -416,6 +417,7 @@ class ClientBaseAsync(ClientBase):
 
 class ConsumerProducerMixin(_MIXIN_BASE):
     _link_component: str
+    _receive_operation: Optional[Operation] = None
 
     async def __aenter__(self) -> ConsumerProducerMixin:
         return self
@@ -436,7 +438,8 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         """
         # pylint: disable=protected-access
         if not self.running:
-            with link_open(self._client._metrics, self._link_component):
+            parent = self._receive_operation.span if self._receive_operation is not None else None
+            with LinkOpen(self._client._metrics, self._link_component, parent=parent):
                 if self._handler:
                     await self._handler.close_async()
                 auth = await self._client._create_auth_async(auth_uri=self._client._auth_uri)

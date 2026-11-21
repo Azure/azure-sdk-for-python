@@ -14,7 +14,7 @@ from ._client_base_async import ConsumerProducerMixin
 from ._async_utils import get_dict_with_loop_if_needed
 from .._common import EventData
 from .._utils import create_properties, event_position_selector
-from .._metrics import Operation
+from .._metrics import DISABLED_OPERATION, Operation
 from .._constants import (
     EPOCH_SYMBOL,
     TIMEOUT_SYMBOL,
@@ -100,9 +100,8 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         ]
         self._internal_kwargs = get_dict_with_loop_if_needed(kwargs.get("loop", None))
         self._receive_operation: Optional[Operation] = None
-        if client._metrics is not None:
-            self._callback = self._on_event_received
-            self._on_event_received = self._deliver_events
+        self._callback = self._on_event_received
+        self._on_event_received = self._deliver_events
         self._client = client
         self._source = source
         self._offset = event_position
@@ -189,12 +188,23 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         return event_data
 
     async def _deliver_events(self, events):
-        if self._receive_operation is not None:
-            count = len(events) if isinstance(events, list) else int(events is not None)
-            self._receive_operation.finish(count)
-            self._receive_operation = None
-        await self._callback(events)
-        self._receive_operation = self._client._start_operation("receive")  # pylint: disable=protected-access
+        # pylint: disable=protected-access
+        if self._receive_operation is None or self._receive_operation is DISABLED_OPERATION:
+            await self._callback(events)
+            return
+        count = len(events) if isinstance(events, list) else int(events is not None)
+        self._receive_operation.finish(count)
+        pending = self._client._start_operation("receive", paused=True)
+        self._receive_operation = pending
+        try:
+            await self._callback(events)
+        except BaseException:
+            if self._receive_operation is pending:
+                pending.discard()
+                self._receive_operation = None
+            raise
+        if self._receive_operation is pending:
+            pending.resume()
 
     async def receive(
         self,
@@ -203,7 +213,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         max_wait_time: Optional[float] = None,
     ) -> None:
         # pylint: disable=protected-access
-        if self._client._metrics is not None and self._receive_operation is None:
+        if self._receive_operation is None:
             self._receive_operation = self._client._start_operation("receive")
         try:
             await self._amqp_transport.receive_messages_async(self, batch, max_batch_size, max_wait_time)
@@ -212,3 +222,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
                 self._receive_operation.finish(error=exc)
                 self._receive_operation = None
             raise
+        finally:
+            if self._receive_operation is not None:
+                self._receive_operation.discard()
+                self._receive_operation = None
