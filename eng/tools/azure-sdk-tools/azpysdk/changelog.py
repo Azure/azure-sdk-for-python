@@ -9,10 +9,10 @@ from .Check import Check, REPO_ROOT
 from ci_tools.functions import get_package_from_repo
 from ci_tools.logging import logger
 
-# Chronus is pinned as a dev dependency in .github/package.json with a
+# Chronus is pinned as a dev dependency in .github/chronus/package.json with a
 # committed lockfile so both the top-level version and all transitive
 # dependencies are reproducible.
-_CHRONUS_INSTALL_DIR = ".github"
+_CHRONUS_INSTALL_DIR = os.path.join(".github", "chronus")
 _CHRONUS_BIN_NAME = "chronus.cmd" if os.name == "nt" else "chronus"
 _CHRONUS_BIN_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", ".bin", _CHRONUS_BIN_NAME)
 
@@ -195,23 +195,32 @@ class changelog(Check):
 
     @staticmethod
     def _resolve_package(package_arg: Optional[str]) -> Optional[str]:
-        """Resolve a package argument to a Chronus package name."""
-        if not package_arg:
-            return None
-        path_like = (
-            os.path.isabs(package_arg) or package_arg.startswith(".") or os.sep in package_arg or "/" in package_arg
-        )
-        if os.path.isabs(package_arg):
-            target = os.path.abspath(package_arg)
-        elif path_like:
-            target = os.path.join(REPO_ROOT, package_arg)
+        """Resolve a package argument or the current directory to a Chronus package name."""
+        package_was_supplied = package_arg is not None
+        if not package_was_supplied:
+            target = os.getcwd()
+            if os.path.abspath(target) == os.path.abspath(REPO_ROOT):
+                return None
         else:
-            target = package_arg
+            path_like = (
+                os.path.isabs(package_arg)
+                or package_arg.startswith(".")
+                or os.sep in package_arg
+                or "/" in package_arg
+            )
+            if os.path.isabs(package_arg):
+                target = os.path.abspath(package_arg)
+            elif path_like:
+                target = os.path.join(REPO_ROOT, package_arg)
+            else:
+                target = package_arg
         try:
             parsed = get_package_from_repo(target, REPO_ROOT)
-            return parsed.name if parsed else package_arg
+            if parsed:
+                return parsed.name
         except RuntimeError:
-            return package_arg  # passthrough for unresolvable names
+            pass
+        return package_arg if package_was_supplied else None
 
     def _run_chronus(self, chronus_args: List[str]) -> int:
         """Run a chronus command from the repository root."""
