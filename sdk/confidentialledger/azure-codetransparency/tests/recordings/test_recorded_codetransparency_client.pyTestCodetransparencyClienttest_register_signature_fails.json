@@ -1,0 +1,49 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://Sanitized.confidential-ledger.core.azure.com/ledgerIdentity/fake?api-version=2024-12-09-preview",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-confidentialledger-certificate/1.0.0b1 Python/3.12.12 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Connection": "keep-alive",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Fri, 23 Jan 2026 17:16:28 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-azure-ref": "Sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "x-ms-correlation-request-id": "106c631a-a388-45a0-8051-9a8531a283a6",
+        "x-ms-image-tag": "1.0.03294.347-d1945404d10e89393dd1073706fbb6a98e4119c3",
+        "x-ms-machineName": "identityservice-79c6dccd75-5hl75"
+      },
+      "ResponseBody": {
+        "ledgerTlsCertificate": "-----BEGIN CERTIFICATE-----\nMIIBzzCCAVSgAwIBAgIRAM4OyWXlGYR79Fx+2dIQX5wwCgYIKoZIzj0EAwMwFjEU\nMBIGA1UEAwwLQ0NGIFNlcnZpY2UwHhcNMjUxMjE0MjAzMzE1WhcNMjYwMzE0MjAz\nMzE0WjAWMRQwEgYDVQQDDAtDQ0YgU2VydmljZTB2MBAGByqGSM49AgEGBSuBBAAi\nA2IABKofq2BQw/zpD6TpVFbxD6Ku1hlapCKe2RWd20SUYl5WDsu9mg016137G0ah\nNZBt3IwB1PqdNczlsS6bKBiOllsXb1eW/Ka74NutBqEDjlJtLV3kjcLxh4ndHhgw\nt6h+jKNmMGQwEgYDVR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAoQwHQYD\nVR0OBBYEFHfKIxSpe2N8qNsRV5fafE8xDpm7MB8GA1UdIwQYMBaAFHfKIxSpe2N8\nqNsRV5fafE8xDpm7MAoGCCqGSM49BAMDA2kAMGYCMQCSFV9sNG6N71OCGsBPvMKc\nJbApchJJxNp3ba0gJZdXJcxCrXA7S1EDdDxkuis56ZMCMQCIopd8WdSTCVVGLhFA\n1EKWAAS5P5AUZ2i9t/ULbp+wWAgoYZCW4HmbRyrQWViYU2I=\n-----END CERTIFICATE-----\n",
+        "ledgerId": "fake"
+      }
+    },
+    {
+      "RequestUri": "https://Sanitized.confidential-ledger.azure.com/entries?api-version=2025-01-31-preview",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/cose; application/cbor",
+        "Connection": "keep-alive",
+        "Content-Length": "18",
+        "Content-Type": "application/cose",
+        "User-Agent": "azsdk-python-codetransparency/1.0.0b1 Python/3.12.12 (Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.35)"
+      },
+      "RequestBody": "aW52YWxpZCBjYm9yIGJ5dGVz",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Length": "56",
+        "Content-Type": "application/concise-problem-details+cbor"
+      },
+      "ResponseBody": "oiBsSW52YWxpZElucHV0IXgmRmFpbGVkIHRvIHBhcnNlIENPU0VfU2lnbjEgb3V0ZXIgYXJyYXk="
+    }
+  ],
+  "Variables": {}
+}
