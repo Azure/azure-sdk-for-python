@@ -677,6 +677,10 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         new_messages: List[Dict[str, Any]],
     ) -> None:
         """Helper to append messages to an existing attribute, combining with previous messages."""
+        # A non-recording span (e.g. one dropped by the sampler) has no readable attributes.
+        if not span or not span.span_instance.is_recording():
+            return
+
         # Get existing attribute value
         existing_value = span.span_instance.attributes.get(attribute_name) if span.span_instance.attributes else None
 
