@@ -1,10 +1,10 @@
 # On-demand sample tests in Azure DevOps
 
-[../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml) runs existing synchronous/asynchronous pytest sample cases in up to **four fresh public-network Standard Foundry environments**, sharing one permanent set of managed identities. Each test queue creates its own resource group (RG) and deletes only its owned temporary resources.
+[../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml) uses the shared Azure SDK Python live-test job to run selected synchronous/asynchronous pytest samples in up to **four fresh public-network Standard Foundry environments**, sharing one permanent set of managed identities. Each test queue creates its own resource group (RG) with the package's Foundry Bicep bundle and deletes only its owned temporary resources.
 
 ## Workflow
 
-Every manually queued run generates plans, checks the selected shared identities and aggregate capacity, then provisions/tests/cleans up each nonempty queue in parallel. **Queueing this pipeline opts in to billable resources.** There is no preview/run-mode selector, automatic CI/PR trigger or YAML manual-approval stage.
+Every manually queued run generates plans, checks the selected shared identities and aggregate capacity, then provisions/tests/cleans up each nonempty queue in parallel. The shared `live.tests.yml` job runs only the exact pytest sample nodes assigned to each queue. **Queueing this pipeline can incur charges.** There is no preview/run-mode selector, automatic CI/PR trigger or YAML manual-approval stage.
 
 The internal **Plan** stage collects samples without execution and publishes a fresh plan per queue before the live stage may start. It changes no Azure resources and is not ARM `what-if`, a permission/capacity check or a regression-test job. Pester installation and unit-test execution are not part of an on-demand sample run. Maintainer checks are described below.
 
@@ -14,7 +14,7 @@ Selected cases are sorted by pytest node ID and divided **round-robin, without r
 
 ## One-time setup
 
-Configure a pipeline to use [../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml), authorize the Azure SDK package feed and `azsdk-pool`, and save these variables in the [Foundry SDK Env Vars and Secrets Library group (163)](https://dev.azure.com/azure-sdk/internal/_library?view=VariableGroupView&variableGroupId=163):
+Use the existing [Azure DevOps pipeline definition 8392](https://dev.azure.com/azure-sdk/internal/_build?definitionId=8392), which points to [../../../tests.yml](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests.yml); no new pipeline registration is needed. Authorize the Azure SDK package feed and `azsdk-pool`, and save these variables in the [Foundry SDK Env Vars and Secrets Library group (163)](https://dev.azure.com/azure-sdk/internal/_library?view=VariableGroupView&variableGroupId=163):
 
 | Variable | Setting |
 | --- | --- |
@@ -95,8 +95,8 @@ Read-only admission still rejects leftover temporary sample RGs, repeated/empty 
 1. Select the reviewed branch in **Run pipeline**.
 2. Set `selectionKind`, `selection`, maximum worker count, **identityResourceGroup** and model options. No preview, connection, Library-group or region fields are shown.
 3. Before queueing, verify the saved variables, configured connection, selected identity set and previous run's cleanup. **Run** authorizes provisioning billable resources after internal planning and live admission succeed.
-4. Inspect offline selections/intents in **sample-plan** and actual admitted identity IDs/region in **resolved-sample-plan**, under each active queue. Each node appears exactly once; workers run automatically after admission. For plan-only inspection without a live run, maintainers can invoke the local selector/planner with fictional targets; this is not a separate pipeline mode.
-5. Verify every queue's ADO **Tests** results and attachments and final deployment state `CleanedUp` in **sample-results-q1** through **sample-results-q4**, as applicable.
+4. Inspect offline selections/intents in **sample-plan** and actual admitted identity IDs/region in **resolved-sample-plan**, under each active queue. Each node appears exactly once; the shared live-test job starts each queue after admission.
+5. Verify every queue's ADO **Tests** results and the deployment state in **sample-results-q1-<attempt>** through **sample-results-q4-<attempt>**, as applicable. Cleanup attempts run even if a test fails.
 
 To verify repeatability, wait for all queues to pass and finish verified cleanup before queueing a second fresh batch. Each queue gets a new plan, owner token and RG; shared identities alone persist. Never reuse the first batch's workloads or overlap retries.
 
@@ -110,7 +110,7 @@ To verify repeatability, wait for all queues to pass and finish verified cleanup
 | `test-id` | `*test_samples_async.py::*[sample_agent_mcp_with_project_connection_async]` |
 | `test-id` | `sample_agent_basic;sample_agent_mcp_with_project_connection` (OR) |
 
-`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Every active queue's plan saves the complete provisioned input names as `environmentBindings`, which `run_samples.py` enforces. A queue whose samples were all rejected gets no worker.
+`*` and `?` are wildcards; brackets in pytest IDs are literal. Matching is case-insensitive, slash-normalized and deduplicated. Semicolons/newlines separate OR patterns. Zero matches fail; selection never falls back to all tests. Harness exclusions remain excluded. A selected sample that needs an environment variable nothing supplies is rejected during planning, before any resource is created: it is logged as an error and skipped, the other samples still run, and the run fails at the end in `ReportRejectedSamples`. Supported sample inputs come from the root `environment` output in [infra/main.bicep](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/infra/main.bicep), `AZURE_SUBSCRIPTION_ID`, `AZURE_TENANT_ID`, `AZURE_RESOURCE_GROUP`, and the pipeline-supplied `LLM_VALIDATION_PROJECT_ENDPOINT`. Each active queue's state carries its provisioned bindings and exact assigned pytest IDs; `live_test_job.py` validates the state and the conftest restricts the shared runner to those IDs. A queue whose samples were all rejected gets no worker.
 
 ## Shared provisioning and language adapters
 
@@ -429,7 +429,7 @@ Provisioning can incur standing charges. Agent loss, hard termination or Azure e
 | [Remove-SampleResources.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/Remove-SampleResources.ps1) | Exact queue/ownership-checked cleanup. |
 | [SampleCiHelpers.ps1](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/SampleCiHelpers.ps1) | Language-neutral identity metadata, ownership, output, quota and error-handling guards. |
 | [test_search_indexing.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/shared/test_search_indexing.py) | Shared offline tests for the Search data-plane executor. |
-| [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [run_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/run_samples.py) | Real sample collection/selection and live pytest invocation. |
+| [select_samples.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/select_samples.py), [live_test_job.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/live_test_job.py) | Real sample collection/selection, per-queue state validation and readiness for the shared live-test job. |
 | [sample_ci_attachments.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/tests/samples/ci/sample_ci_attachments.py) | Sanitized shared-log attachments and captured report publication. |
 
 ## Maintainer validation (separate from sample runs)

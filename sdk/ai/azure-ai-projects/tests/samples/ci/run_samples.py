@@ -43,7 +43,7 @@ def require_validation_endpoint() -> str:
     return endpoint
 
 
-def build_command(state: dict, junit_path: Path) -> list[str]:
+def validate_deployment_state(state: dict) -> list[str]:
     if state.get("schemaVersion") != 1 or state.get("status") != "Ready":
         raise ValueError("Bicep provisioning must complete before tests can run.")
     if state.get("plan", {}).get("queueName") not in {"q1", "q2", "q3", "q4"}:
@@ -75,6 +75,11 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
         for node in nodes
     ):
         raise ValueError("Only collected sync/async sample test nodes may be executed.")
+    return nodes
+
+
+def build_command(state: dict, junit_path: Path) -> list[str]:
+    nodes = validate_deployment_state(state)
     arguments = [
         sys.executable,
         "-m",
@@ -99,7 +104,7 @@ def build_command(state: dict, junit_path: Path) -> list[str]:
         "--azure-skip-live-recording=true",
     ]
     # Supplying CLI environment options prevents conftest from replacing live values with .env/defaults.
-    for name, value in sorted(environment.items()):
+    for name, value in sorted(state["environment"].items()):
         if not isinstance(value, str):
             raise ValueError("Deployment environment bindings must be strings.")
         # The harness has no tenant CLI option; preserve this authentication setting in the environment only.

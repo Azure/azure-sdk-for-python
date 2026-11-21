@@ -11,6 +11,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from live_test_job import load_live_test_state, normalize_collected_node
 import run_samples
 from run_samples import build_command, wait_for_project
 
@@ -48,6 +49,56 @@ def ready_state():
             "AZURE_RESOURCE_GROUP": "example-ci-group",
         },
     }
+
+
+@pytest.fixture
+def live_job_state(monkeypatch):
+    state = ready_state()
+    bindings = {
+        "AI_SEARCH_PROJECT_CONNECTION_ID": "/subscriptions/example/connections/search",
+        "AI_SEARCH_INDEX_NAME": "sample-index",
+        "AI_SEARCH_USER_INPUT": "What does this document say?",
+        "OPENAPI_PROJECT_CONNECTION_ID": "/subscriptions/example/connections/openapi",
+    }
+    state["environment"].update(bindings)
+    state["plan"]["environmentBindings"].extend(bindings)
+    monkeypatch.setenv("AZURE_TEST_RUN_LIVE", "true")
+    monkeypatch.setenv("AZURE_SKIP_LIVE_RECORDING", "true")
+    monkeypatch.setenv("AZURE_SUBSCRIPTION_ID", state["subscriptionId"])
+    monkeypatch.setenv("AZURE_TENANT_ID", state["tenantId"])
+    monkeypatch.setenv("SAMPLE_QUEUE_NAME", state["plan"]["queueName"])
+    monkeypatch.setenv(
+        "LLM_VALIDATION_PROJECT_ENDPOINT",
+        "https://validator.services.ai.azure.com/api/projects/test",
+    )
+    return state
+
+
+def test_shared_job_accepts_the_queue_plan_and_sample_bindings(tmp_path, live_job_state):
+    path = tmp_path / "deployment-state.json"
+    path.write_text(json.dumps(live_job_state), encoding="utf-8")
+    assert load_live_test_state(path) == live_job_state
+
+
+def test_shared_job_rejects_duplicate_selection(tmp_path, live_job_state):
+    path = tmp_path / "deployment-state.json"
+    tests = live_job_state["plan"]["selectedTests"]
+    live_job_state["plan"]["selectedTests"] = [tests[0], tests[0]]
+    path.write_text(json.dumps(live_job_state), encoding="utf-8")
+    with pytest.raises(ValueError, match="duplicate sample tests"):
+        load_live_test_state(path)
+
+
+def test_shared_job_normalizes_pytest_node_ids_from_repository_root(tmp_path):
+    package_root = tmp_path / "sdk" / "ai" / "azure-ai-projects"
+    path = package_root / "tests" / "samples" / "test_samples.py"
+    node_id = (
+        "sdk/ai/azure-ai-projects/tests/samples/test_samples.py::"
+        "TestSamples::test_agent_tools_samples[sample_agent_ai_search]"
+    )
+    assert normalize_collected_node(path, node_id, package_root) == (
+        "tests/samples/test_samples.py::" "TestSamples::test_agent_tools_samples[sample_agent_ai_search]"
+    )
 
 
 def test_command_executes_pytest_live_without_recording():

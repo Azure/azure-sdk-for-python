@@ -21,11 +21,21 @@ def live_stages(pipeline):
 
 
 def worker(pipeline):
-    return next(
+    template = next(
         job
         for job in live_stages(pipeline)[0]["jobs"]
-        if job.get("job") == "ProvisionTestCleanup"
+        if job.get("template") == "/eng/pipelines/templates/jobs/live.tests.yml"
     )
+    parameters = template["parameters"]
+    return {
+        **parameters,
+        "steps": parameters["PreSteps"] + parameters["PostSteps"],
+        "dependsOn": parameters["DependsOn"],
+        "strategy": {
+            "maxParallel": parameters["MaxParallel"],
+            "matrix": parameters["Matrix"],
+        },
+    }
 
 
 def test_no_manual_approval_stage_or_task(pipeline):
@@ -34,10 +44,7 @@ def test_no_manual_approval_stage_or_task(pipeline):
     for stage in stages:
         for job in stage["jobs"]:
             assert job.get("pool") != "server"
-            assert not any(
-                step.get("task", "").startswith("ManualValidation@")
-                for step in job.get("steps", [])
-            )
+            assert not any(step.get("task", "").startswith("ManualValidation@") for step in job.get("steps", []))
 
 
 def test_manual_run_requires_successful_internal_planning_without_a_preview_choice(
@@ -47,10 +54,12 @@ def test_manual_run_requires_successful_internal_planning_without_a_preview_choi
     assert pipeline["pr"] == "none"
     assert "runMode" not in {parameter["name"] for parameter in pipeline["parameters"]}
     stages = pipeline["extends"]["parameters"]["stages"]
-    assert [stage["stage"] for stage in stages] == ["Plan", "RunSamples"]
-    run_stage = next(
-        stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples"
-    )
+    assert [stage["stage"] for stage in stages] == [
+        "Plan",
+        "RunSamples",
+        "ReportRejectedSamples",
+    ]
+    run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     assert run_stage["dependsOn"] == "Plan"
     assert run_stage["condition"] == "succeeded()"
 
@@ -67,14 +76,8 @@ def test_run_form_uses_project_mi_without_connection_group_or_region_fields(pipe
     assert "identityNamePattern" not in parameters
     # No default: ADO prompts for the resource group holding the shared identities.
     assert "default" not in parameters["identityResourceGroup"]
-    assert (
-        "resource group" in parameters["identityResourceGroup"]["displayName"].lower()
-    )
-    variables = {
-        entry["name"]: entry["value"]
-        for entry in pipeline["variables"]
-        if "name" in entry
-    }
+    assert "resource group" in parameters["identityResourceGroup"]["displayName"].lower()
+    variables = {entry["name"]: entry["value"] for entry in pipeline["variables"] if "name" in entry}
     assert variables["azureServiceConnection"] == "azure-sdk-tests"
     assert [entry["group"] for entry in pipeline["variables"] if "group" in entry] == [
         "Foundry SDK Env Vars and Secrets"
@@ -88,43 +91,26 @@ def test_run_form_uses_project_mi_without_connection_group_or_region_fields(pipe
     }.isdisjoint(variables)
     stages = pipeline["extends"]["parameters"]["stages"]
     assert all("variables" not in stage for stage in stages)
-    azure_tasks = [
-        step
-        for job in live_stages(pipeline)[0]["jobs"]
-        for step in job["steps"]
-        if step.get("task") == "AzureCLI@2"
-    ]
+    admission = next(job for job in live_stages(pipeline)[0]["jobs"] if job.get("job") == "AdmitTestQueues")
+    azure_tasks = [step for step in admission["steps"] + worker(pipeline)["steps"] if step.get("task") == "AzureCLI@2"]
     assert len(azure_tasks) == 5
-    assert all(
-        step["inputs"]["azureSubscription"] == "${{ variables.azureServiceConnection }}"
-        for step in azure_tasks
-    )
+    assert all(step["inputs"]["azureSubscription"] == "${{ variables.azureServiceConnection }}" for step in azure_tasks)
 
 
 def test_cleanup_and_result_publication_still_run_on_failure(pipeline):
-    run_stage = next(
-        stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples"
-    )
+    run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     job = worker(pipeline)
-    assert job["cancelTimeoutInMinutes"] == 30
-    cleanup = next(
-        step for step in job["steps"] if "Remove-SampleResources.ps1" in str(step)
-    )
+    cleanup = next(step for step in job["steps"] if "Remove-SampleResources.ps1" in str(step))
     assert cleanup["condition"] == "always()"
     assert "-ConfirmCleanup" in cleanup["inputs"]["inlineScript"]
-    results = next(
-        step for step in job["steps"] if step.get("task") == "PublishTestResults@2"
-    )
+    results = next(step for step in job["steps"] if step.get("task") == "1ES.PublishPipelineArtifact@1")
     assert results["condition"] == "always()"
-    assert results["inputs"]["publishRunAttachments"] is True
-    assert results["inputs"]["failTaskOnFailureToPublishResults"] is True
+    assert results["inputs"]["artifactName"] == "sample-results-$(QueueName)-$(System.JobAttempt)"
 
 
 @pytest.mark.parametrize("secret", ["MCP_GITHUB_PAT", "PROJ_CONN_OPEN_API_KEY"])
 def test_secrets_stay_scoped_to_provisioning_task(pipeline, secret):
-    run_stage = next(
-        stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples"
-    )
+    run_stage = next(stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples")
     steps = worker(pipeline)["steps"]
     secret_steps = [step for step in steps if secret in step.get("env", {})]
     assert len(secret_steps) == 1
@@ -136,22 +122,14 @@ def test_secrets_stay_scoped_to_provisioning_task(pipeline, secret):
 
 
 def test_failed_runner_still_fails_before_always_run_cleanup(pipeline):
-    run_stage = next(
-        stage for stage in live_stages(pipeline) if stage["stage"] == "RunSamples"
+    params = worker(pipeline)
+    assert params["BuildTargetingString"] == "azure-ai-projects"
+    assert params["DisableAzureResourceCreation"] is True
+    assert params["EnvVars"]["AZURE_AI_PROJECTS_LIVE_TEST_STATE"].endswith("/$(QueueName)/deployment-state.json")
+    assert "load_live_test_state" in (Path(__file__).resolve().parent.parent.parent / "conftest.py").read_text(
+        encoding="utf-8"
     )
-    steps = worker(pipeline)["steps"]
-    runner = next(
-        step
-        for step in steps
-        if step.get("task") == "AzureCLI@2" and "--junit" in str(step)
-    )
-    script = runner["inputs"]["inlineScript"]
-    assert "$sampleExitCode = $LASTEXITCODE" in script
-    assert "if ($sampleExitCode -ne 0)" in script
-    assert "throw 'Selected sample runner failed" in script
-    assert steps.index(runner) < next(
-        i for i, step in enumerate(steps) if "Remove-SampleResources.ps1" in str(step)
-    )
+    assert any(step.get("condition") == "always()" for step in params["PostSteps"])
 
 
 def test_external_validator_is_env_only_and_checked_before_provisioning(pipeline):
@@ -162,56 +140,35 @@ def test_external_validator_is_env_only_and_checked_before_provisioning(pipeline
         "validationModelCapacity",
     }.isdisjoint(parameters)
     steps = worker(pipeline)["steps"]
-    validation_steps = [
-        step
-        for step in steps
-        if "LLM_VALIDATION_PROJECT_ENDPOINT" in step.get("env", {})
-    ]
+    validation_steps = [step for step in steps if "LLM_VALIDATION_PROJECT_ENDPOINT" in step.get("env", {})]
     assert len(validation_steps) == 2
-    preflight = next(
-        step for step in validation_steps if "--check-validation-config" in str(step)
-    )
-    runner = next(step for step in validation_steps if "--junit" in str(step))
-    provisioning = next(
-        step for step in steps if "Invoke-SampleProvisioning.ps1" in str(step)
-    )
+    preflight = next(step for step in validation_steps if "--check-validation-config" in str(step))
+    readiness = next(step for step in validation_steps if "live_test_job.py" in str(step))
+    provisioning = next(step for step in steps if "Invoke-SampleProvisioning.ps1" in str(step))
     for step in validation_steps:
-        assert (
-            step["env"]["LLM_VALIDATION_PROJECT_ENDPOINT"]
-            == "$(LLM_VALIDATION_PROJECT_ENDPOINT)"
-        )
+        assert step["env"]["LLM_VALIDATION_PROJECT_ENDPOINT"] == "$(LLM_VALIDATION_PROJECT_ENDPOINT)"
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in provisioning.get("env", {})
-    assert steps.index(preflight) < steps.index(provisioning) < steps.index(runner)
+    assert steps.index(preflight) < steps.index(provisioning) < steps.index(readiness)
     assert preflight["task"] == "AzureCLI@2"
-    assert (
-        preflight["inputs"]["azureSubscription"]
-        == provisioning["inputs"]["azureSubscription"]
-    )
+    assert preflight["inputs"]["azureSubscription"] == provisioning["inputs"]["azureSubscription"]
     assert "Set-SampleSubscriptionContext" in preflight["inputs"]["inlineScript"]
-    assert "pipeline-identity.json" in preflight["inputs"]["inlineScript"]
     assert "MCP_GITHUB_PAT" not in preflight.get("env", {})
 
 
 def test_rejected_samples_skip_only_themselves_then_fail_the_run(pipeline):
     stages = pipeline["extends"]["parameters"]["stages"]
     planning = next(stage for stage in stages if stage.get("stage") == "Plan")
-    plan = next(
-        step
-        for step in planning["jobs"][0]["steps"]
-        if "New-SampleDeploymentPlan.ps1" in str(step)
-    )
+    plan = next(step for step in planning["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
     assert "deployment-plan.json" in plan["pwsh"]
     assert "RejectedTestCount;isOutput=true" in plan["pwsh"]
     assert "task.complete result=SucceededWithIssues" in plan["pwsh"]
-    report = next(
-        job
-        for job in live_stages(pipeline)[0]["jobs"]
-        if job.get("job") == "ReportRejectedSamples"
+    report_stage = next(
+        stage for stage in pipeline["extends"]["parameters"]["stages"] if stage.get("stage") == "ReportRejectedSamples"
     )
-    assert report["dependsOn"] == "ProvisionTestCleanup"
-    assert report["condition"] == "succeededOrFailed()"
+    report = report_stage["jobs"][0]
+    assert report_stage["dependsOn"] == ["Plan", "RunSamples"]
+    assert report_stage["condition"] == "succeededOrFailed()"
     assert "Plan.RejectedTestCount" in report["variables"]["rejectedCount"]
-    assert report["steps"][0] == {"checkout": "none"}
     assert "REJECTED_COUNT" in report["steps"][1]["pwsh"]
 
 
@@ -225,9 +182,7 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
         source = (directory / name).read_text(encoding="utf-8").lower()
         assert "validationmodel" not in source
         assert "validation_model" not in source
-    template = (directory / "shared/infra/sample-resources.bicep").read_text(
-        encoding="utf-8"
-    )
+    template = (directory / "shared/infra/sample-resources.bicep").read_text(encoding="utf-8")
     assert "validationDeployment" not in template
     assert "validationModel" not in template
     assert "LLM_VALIDATION_PROJECT_ENDPOINT" not in template
@@ -237,26 +192,18 @@ def test_validator_model_is_absent_from_plan_and_provisioning_sources():
 def test_target_ids_are_explicit_in_plan_and_every_live_azure_task(pipeline, variable):
     stages = pipeline["extends"]["parameters"]["stages"]
     planning = next(stage for stage in stages if stage.get("stage") == "Plan")
-    plan = next(
-        step
-        for step in planning["jobs"][0]["steps"]
-        if "New-SampleDeploymentPlan.ps1" in str(step)
-    )
+    plan = next(step for step in planning["jobs"][0]["steps"] if "New-SampleDeploymentPlan.ps1" in str(step))
     assert plan["env"][variable] == f"$({variable})"
-    azure_tasks = [
-        step for step in worker(pipeline)["steps"] if step.get("task") == "AzureCLI@2"
-    ]
+    azure_tasks = [step for step in worker(pipeline)["steps"] if step.get("task") == "AzureCLI@2"]
     assert len(azure_tasks) == 4
     for step in azure_tasks:
         assert step["env"][variable] == f"$({variable})"
     assert variable not in {parameter["name"] for parameter in pipeline["parameters"]}
     assert variable not in pipeline["variables"]
-    preflight = next(
-        step for step in azure_tasks if "--check-validation-config" in str(step)
-    )
-    runner = next(step for step in azure_tasks if "--junit" in str(step))
+    preflight = next(step for step in azure_tasks if "--check-validation-config" in str(step))
     assert "Set-SampleSubscriptionContext -Plan" in preflight["inputs"]["inlineScript"]
-    assert "Set-SampleSubscriptionContext -Plan" in runner["inputs"]["inlineScript"]
+    readiness = next(step for step in azure_tasks if "live_test_job.py" in str(step))
+    assert "Set-SampleSubscriptionContext -Plan" in readiness["inputs"]["inlineScript"]
 
 
 def test_default_model_and_region_use_verified_gpt5_configuration(pipeline):
@@ -274,17 +221,12 @@ def test_internal_plan_only_collects_and_plans_without_test_framework_bootstrap(
     planning = next(stage for stage in stages if stage.get("stage") == "Plan")
     steps = planning["jobs"][0]["steps"]
     scripts = [step["pwsh"] for step in steps if "pwsh" in step]
-    assert (
-        len(scripts) == 2
-    )  # Dependency installation, then collection and plan generation.
+    assert len(scripts) == 2  # Dependency installation, then collection and plan generation.
     assert "select_samples.py" in scripts[1]
     assert "New-SampleDeploymentPlan.ps1" in scripts[1]
     assert "-IdentityResourceGroup $env:SAMPLE_IDENTITY_RESOURCE_GROUP" in scripts[1]
     assert "-Location" not in scripts[1]
-    assert (
-        steps[-1]["env"]["SAMPLE_IDENTITY_RESOURCE_GROUP"]
-        == "${{ parameters.identityResourceGroup }}"
-    )
+    assert steps[-1]["env"]["SAMPLE_IDENTITY_RESOURCE_GROUP"] == "${{ parameters.identityResourceGroup }}"
     assert "SAMPLE_MI_NAME_PATTERN" not in steps[-1]["env"]
     assert "SAMPLE_PROJECT_IDENTITY_NAME" not in steps[-1]["env"]
     assert "SAMPLE_LOCATION" not in steps[-1]["env"]
@@ -306,12 +248,8 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     directory = Path(__file__).resolve().parent
     shared = directory / "shared"
     source = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
-    assert source.index("Get-SampleSharedIdentities -Plan $plan") < source.index(
-        "$state = @{"
-    )
-    assert source.index("Set-Content -LiteralPath $StatePath") < source.index(
-        "@('deployment', 'sub', 'create')"
-    )
+    assert source.index("Get-SampleSharedIdentities -Plan $plan") < source.index("$state = @{")
+    assert source.index("Set-Content -LiteralPath $StatePath") < source.index("@('deployment', 'sub', 'create')")
     assert "[Parameter(Mandatory)] [string] $StandardTemplatePath" not in source
     helper = (shared / "SampleCiHelpers.ps1").read_text(encoding="utf-8")
     assert "function Get-SampleStandardTemplate" in helper
@@ -321,9 +259,9 @@ def test_provisioning_uses_shared_variant_without_worker_iam_writes():
     root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "'./standard-shared-identities.bicep'" in root
     for name in ("sample-resources.bicep", "standard-shared-identities.bicep"):
-        assert "'Microsoft.Authorization/roleAssignments@" not in (
-            directory / "shared" / "infra" / name
-        ).read_text(encoding="utf-8")
+        assert "'Microsoft.Authorization/roleAssignments@" not in (directory / "shared" / "infra" / name).read_text(
+            encoding="utf-8"
+        )
 
 
 def test_subscription_is_not_derived_from_the_service_connection_default():
@@ -346,20 +284,16 @@ def test_tenant_is_required_from_environment_and_bound_to_plan_and_cleanup():
     plan = (shared / "New-ResourceDeploymentPlan.ps1").read_text(encoding="utf-8")
     assert "$tenant = Get-SampleTenantId" in plan
     assert "tenantId = $tenant" in plan
-    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
-        encoding="utf-8"
-    )
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "tenantId = $runnerIdentity.tenantId" in provisioning
-    assert (
-        "$state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId"
-        in provisioning
-    )
+    assert "$state.environment['AZURE_TENANT_ID'] = $runnerIdentity.tenantId" in provisioning
     cleanup = (shared / "Remove-SampleResources.ps1").read_text(encoding="utf-8")
     assert "$state['tenantId'] -ine $state.plan.tenantId" in cleanup
 
 
 def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipeline):
     parameters = {parameter["name"]: parameter for parameter in pipeline["parameters"]}
+    assert "useSharedLiveTestPilot" not in parameters
     assert parameters["testQueueCount"]["default"] == 4
     assert parameters["testQueueCount"]["values"] == [1, 2, 3, 4]
     selection = parameters["selection"]["default"].split(";")
@@ -369,53 +303,37 @@ def test_round_robin_workers_are_isolated_without_an_environment_dependency(pipe
     ]
     stage = live_stages(pipeline)[0]
     assert "lockBehavior" not in stage
-    assert all(
-        "environment" not in job and "deployment" not in job for job in stage["jobs"]
-    )
-    admission = next(
-        job for job in stage["jobs"] if job.get("job") == "AdmitTestQueues"
-    )
+    assert all("environment" not in job and "deployment" not in job for job in stage["jobs"])
+    admission = next(job for job in stage["jobs"] if job.get("job") == "AdmitTestQueues")
     steps = admission["steps"]
     preflight = next(step for step in steps if step.get("task") == "AzureCLI@2")
     assert "-BatchPlanDirectory" in preflight["inputs"]["inlineScript"]
     assert "-ResolvedPlanDirectory" in preflight["inputs"]["inlineScript"]
-    assert (
-        admission["templateContext"]["outputs"][0]["artifactName"]
-        == "resolved-sample-plan"
-    )
+    assert admission["templateContext"]["outputs"][0]["artifactName"] == "resolved-sample-plan"
     assert preflight["env"] == {
         "AZURE_SUBSCRIPTION_ID": "$(AZURE_SUBSCRIPTION_ID)",
         "AZURE_TENANT_ID": "$(AZURE_TENANT_ID)",
     }
     job = worker(pipeline)
-    download = next(
-        step
-        for step in job["steps"]
-        if step.get("task") == "DownloadPipelineArtifact@2"
-    )
+    download = next(step for step in job["steps"] if step.get("task") == "DownloadPipelineArtifact@2")
     assert download["inputs"]["artifactName"] == "resolved-sample-plan"
     assert job["dependsOn"] == "AdmitTestQueues"
     assert job["strategy"]["maxParallel"] == 4
-    assert (
-        job["strategy"]["matrix"]
-        == "$[ stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix'] ]"
-    )
-    planning = next(
-        stage
-        for stage in pipeline["extends"]["parameters"]["stages"]
-        if stage.get("stage") == "Plan"
-    )
-    plan = next(
-        step for step in planning["jobs"][0]["steps"] if step.get("name") == "Plan"
-    )
+    assert job["MaxParallel"] == 4
+    assert job["CheckEnv"] == "samples"
+    assert job["CloudConfig"]["ServiceConnection"] == "${{ variables.azureServiceConnection }}"
+    assert "azure-sdk-tests-public" not in str(job)
+    assert job["strategy"]["matrix"] == "stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix']"
+    planning = next(stage for stage in pipeline["extends"]["parameters"]["stages"] if stage.get("stage") == "Plan")
+    plan = next(step for step in planning["jobs"][0]["steps"] if step.get("name") == "Plan")
     assert "--queue-count $env:SAMPLE_QUEUE_COUNT" in plan["pwsh"]
     assert '"$queueName/selected-tests.json"' in plan["pwsh"]
     assert "queue-matrix.json" in plan["pwsh"]
     assert "variable=WorkerMatrix;isOutput=true" in plan["pwsh"]
-    assert (
-        job["templateContext"]["outputs"][0]["artifactName"]
-        == "sample-results-$(QueueName)"
-    )
+    assert "TestSamples = 'false'" in plan["pwsh"]
+    assert "Pool = 'azsdk-pool'" in plan["pwsh"]
+    artifact = next(step for step in job["steps"] if step.get("task") == "1ES.PublishPipelineArtifact@1")
+    assert artifact["inputs"]["artifactName"] == "sample-results-$(QueueName)-$(System.JobAttempt)"
     for step in job["steps"]:
         if step.get("task") == "AzureCLI@2":
             assert step["env"]["SAMPLE_QUEUE_NAME"] == "$(QueueName)"
@@ -444,25 +362,16 @@ def test_batch_admission_retains_guards_without_querying_ado():
 def test_provisioning_metadata_is_passed_directly_not_through_environment_variables():
     directory = Path(__file__).resolve().parent
     shared = directory / "shared"
-    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(
-        encoding="utf-8"
-    )
+    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(encoding="utf-8")
     assert parameters.startswith("using none")
     assert parameters.count("readEnvironmentVariable(") == 2
     assert "param mcpPat = readEnvironmentVariable('MCP_GITHUB_PAT', '')" in parameters
-    assert (
-        "param openApiKey = readEnvironmentVariable('PROJ_CONN_OPEN_API_KEY', '')"
-        in parameters
-    )
-    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
-        encoding="utf-8"
-    )
+    assert "param openApiKey = readEnvironmentVariable('PROJ_CONN_OPEN_API_KEY', '')" in parameters
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
     assert "SAMPLE_CI_" not in provisioning + parameters
     assert "SetEnvironmentVariable" not in provisioning
     assert '"agentName=$($plan.agentName)"' in provisioning
-    assert (
-        "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
-    )
+    assert "'sampleModel=' + ($modelParameters | ConvertTo-Json -Compress)" in provisioning
     assert "Invoke-SampleAzure -Arguments $bundleArguments -Sensitive" in provisioning
     root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "accountName: standard.outputs.accountName" in root
@@ -472,23 +381,14 @@ def test_provisioning_metadata_is_passed_directly_not_through_environment_variab
 def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     directory = Path(__file__).resolve().parent
     shared = directory / "shared"
-    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(
-        encoding="utf-8"
-    )
-    template = (directory / "shared/infra/sample-resources.bicep").read_text(
-        encoding="utf-8"
-    )
-    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(
-        encoding="utf-8"
-    )
+    provisioning = (shared / "Invoke-ResourceProvisioning.ps1").read_text(encoding="utf-8")
+    template = (directory / "shared/infra/sample-resources.bicep").read_text(encoding="utf-8")
+    parameters = (directory / "shared/infra/sample-resources.bicepparam").read_text(encoding="utf-8")
     assert "enableFunctionApp" not in provisioning + template + parameters
     root = (directory / "shared/infra/main.bicep").read_text(encoding="utf-8")
     assert "'./function-app.bicep'" in root
     assert "storageAccountName: standard.outputs.storageAccountName" in root
-    assert (
-        '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"'
-        in provisioning
-    )
+    assert '"sharedFunctionIdentityResourceId=$($identities.function.resourceId)"' in provisioning
     assert "Test-SampleFunctionRequired" not in provisioning
     assert "$requiresFunction" not in provisioning
     assert "requiredEnvironment" not in provisioning
@@ -496,9 +396,9 @@ def test_function_infrastructure_is_always_provisioned_using_resolved_inputs():
     assert "Test-SampleFunctionRequired" not in helper
     assert "RequireFunctionAccess" not in helper
     assert "requiredEnvironment" not in helper
-    assert provisioning.index(
-        "Publish-SampleFunctionApp -Plan $plan"
-    ) < provisioning.index("$state['status'] = 'Ready'")
+    assert provisioning.index("Publish-SampleFunctionApp -Plan $plan") < provisioning.index(
+        "$state['status'] = 'Ready'"
+    )
 
 
 def test_shared_provisioning_has_no_python_planning_dependency():

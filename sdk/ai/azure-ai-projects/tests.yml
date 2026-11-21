@@ -103,7 +103,16 @@ extends:
                       -IdentityResourceGroup $env:SAMPLE_IDENTITY_RESOURCE_GROUP -ModelName $env:SAMPLE_MODEL -ModelVersion $env:SAMPLE_MODEL_VERSION `
                       -ModelSku $env:SAMPLE_MODEL_SKU -ModelCapacity ([int] $env:SAMPLE_MODEL_CAPACITY)
                     # A queue whose samples were all rejected has no plan and gets no billable worker.
-                    if (Test-Path -LiteralPath (Join-Path $outputDirectory "$queueName/deployment-plan.json")) { $runnable[$queueName] = $matrix[$queueName] }
+                    if (Test-Path -LiteralPath (Join-Path $outputDirectory "$queueName/deployment-plan.json")) {
+                      $runnable[$queueName] = @{
+                        QueueName = $queueName
+                        Pool = 'azsdk-pool'
+                        OSVmImage = 'ubuntu-24.04'
+                        PythonVersion = '3.12'
+                        CoverageArg = '--disablecov'
+                        TestSamples = 'false'
+                      }
+                    }
                   }
                   $rejected = @(Get-ChildItem -LiteralPath $outputDirectory -Filter 'rejected-tests.json' -Recurse -File |
                     ForEach-Object { Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json } | ForEach-Object { $_ })
@@ -131,7 +140,7 @@ extends:
                   SAMPLE_QUEUE_COUNT: ${{ parameters.testQueueCount }}
 
       - stage: RunSamples
-        displayName: 'Provision billable resources -> sample pytest -> run-owned cleanup'
+        displayName: 'Provision billable resources -> shared Python live tests -> run-owned cleanup'
         dependsOn: Plan
         condition: succeeded()
         jobs:
@@ -167,133 +176,139 @@ extends:
                 env:
                   AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
                   AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-          - job: ProvisionTestCleanup
-            dependsOn: AdmitTestQueues
-            strategy:
-              maxParallel: 4
-              matrix: $[ stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix'] ]
-            timeoutInMinutes: 180
-            cancelTimeoutInMinutes: 30
-            pool:
-              name: azsdk-pool
-              image: ubuntu-24.04
-              os: linux
-            templateContext:
-              outputs:
-                - output: pipelineArtifact
-                  targetPath: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
-                  artifactName: sample-results-$(QueueName)
+          - template: /eng/pipelines/templates/jobs/live.tests.yml
+            parameters:
+              ServiceDirectory: ai
+              BuildTargetingString: azure-ai-projects
+              Matrix: stageDependencies.Plan.Plan.outputs['Plan.WorkerMatrix']
+              MaxParallel: 4
+              DependsOn: AdmitTestQueues
+              TestTimeoutInMinutes: 180
+              CheckEnv: samples
+              OSName: linux
+              UseFederatedAuth: true
+              DisableAzureResourceCreation: true
+              CloudConfig:
+                Cloud: Public
+                ServiceConnection: ${{ variables.azureServiceConnection }}
+              EnvVars:
+                PYTHONPATH: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects/tests/samples/ci
+                AZURE_AI_PROJECTS_LIVE_TEST_STATE: $(Pipeline.Workspace)/sample-results/$(QueueName)/deployment-state.json
+                AZURE_TEST_RUN_LIVE: 'true'
+                AZURE_SKIP_LIVE_RECORDING: 'true'
+                PYTHON_DOTENV_DISABLED: 'true'
+                PYTEST_ADDOPTS: ''
+                AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                SAMPLE_QUEUE_NAME: $(QueueName)
+              PreSteps:
+                - task: DownloadPipelineArtifact@2
+                  displayName: 'Download this run''s admitted queue plans'
+                  inputs:
+                    artifactName: resolved-sample-plan
+                    targetPath: $(Pipeline.Workspace)/sample-plan
+                - template: /eng/pipelines/templates/steps/use-python-version.yml
+                  parameters:
+                    versionSpec: '3.12'
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                  parameters:
+                    EnableTwineAuth: false
+                    EnableUvAuth: false
+                - pwsh: |
+                    New-Item -ItemType Directory -Path '$(Pipeline.Workspace)/sample-results/$(QueueName)' -Force | Out-Null
+                    python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
+                    if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
+                  workingDirectory: $(packageRoot)
+                  displayName: 'Prepare Python for provisioning and project readiness checks'
+                - task: AzureCLI@2
+                  displayName: 'Validate this queue and external output-validation project before provisioning'
+                  inputs:
+                    azureSubscription: ${{ variables.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
+                      $planPath = '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json'
+                      $samplePlan = Get-Content -LiteralPath $planPath -Raw | ConvertFrom-Json -AsHashtable
+                      $null = Set-SampleSubscriptionContext -Plan $samplePlan
+                      python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
+                      if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
+                - task: AzureCLI@2
+                  displayName: 'Provision this queue using the package Foundry Bicep bundle'
+                  inputs:
+                    azureSubscription: ${{ variables.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
+                        -PlanPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' `
+                        -StatePath '$(Pipeline.Workspace)/sample-results/$(QueueName)/deployment-state.json' `
+                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmProvisioning
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                    MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
+                    PROJ_CONN_OPEN_API_KEY: $(PROJ_CONN_OPEN_API_KEY)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
+                - task: AzureCLI@2
+                  displayName: 'Wait for this queue''s Foundry project to accept requests'
+                  inputs:
+                    azureSubscription: ${{ variables.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
+                      $state = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
+                      $null = Set-SampleSubscriptionContext -Plan $state.plan
+                      python '$(packageRoot)/tests/samples/ci/live_test_job.py' `
+                        --state '$(Pipeline.Workspace)/sample-results/$(QueueName)/deployment-state.json' --check-ready
+                      if ($LASTEXITCODE -ne 0) { throw 'The deployed Foundry project is not ready for the selected tests.' }
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                    AZURE_TEST_RUN_LIVE: 'true'
+                    AZURE_SKIP_LIVE_RECORDING: 'true'
+                    LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
+              PostSteps:
+                - task: AzureCLI@2
+                  displayName: 'Always clean up this queue''s run-owned resources'
                   condition: always()
-                  sbomEnabled: false
-            steps:
-              - checkout: self
-              - template: /eng/pipelines/templates/steps/use-python-version.yml
-                parameters:
-                  versionSpec: '3.12'
-              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-                parameters:
-                  EnableTwineAuth: false
-                  EnableUvAuth: false
-              - pwsh: |
-                  New-Item -ItemType Directory -Path '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)' -Force | Out-Null
-                  python -m pip install --disable-pip-version-check -r dev_requirements.txt -e .
-                  if ($LASTEXITCODE -ne 0) { throw 'Dependency installation failed.' }
-                workingDirectory: $(packageRoot)
-                displayName: 'Install SDK source and live sample dependencies'
-              - task: DownloadPipelineArtifact@2
-                inputs:
-                  artifactName: resolved-sample-plan
-                  targetPath: $(Pipeline.Workspace)/sample-plan
-                displayName: 'Use this run''s collected sample selection and deployment plan'
-              - task: AzureCLI@2
-                displayName: 'Identify pipeline application and validate target configuration before provisioning'
-                inputs:
-                  azureSubscription: ${{ variables.azureServiceConnection }}
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
-                    $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
-                    $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
-                    $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/pipeline-identity.json' -Encoding utf8
-                    Write-Host ('Pipeline application: principalId={0}; clientId={1}; tenantId={2}' -f $runnerIdentity.principalId, $runnerIdentity.clientId, $runnerIdentity.tenantId)
-                    python '$(packageRoot)/tests/samples/ci/run_samples.py' --check-validation-config
-                    if ($LASTEXITCODE -ne 0) { throw 'The existing validation-project environment variable is missing or invalid; no resources were provisioned.' }
-                env:
-                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                  LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
-                  SAMPLE_QUEUE_NAME: $(QueueName)
-              - task: AzureCLI@2
-                displayName: 'Provision Standard Foundry, sample model and MCP connection using Bicep'
-                inputs:
-                  azureSubscription: ${{ variables.azureServiceConnection }}
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    & '$(packageRoot)/tests/samples/ci/Invoke-SampleProvisioning.ps1' `
-                      -PlanPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' `
-                      -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                      -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmProvisioning
-                env:
-                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                  MCP_GITHUB_PAT: $(MCP_GITHUB_PAT)
-                  PROJ_CONN_OPEN_API_KEY: $(PROJ_CONN_OPEN_API_KEY)
-                  SAMPLE_QUEUE_NAME: $(QueueName)
-              - task: AzureCLI@2
-                displayName: 'Run selected test and collect results'
-                inputs:
-                  azureSubscription: ${{ variables.azureServiceConnection }}
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
-                    $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
-                    $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
-                    python '$(packageRoot)/tests/samples/ci/run_samples.py' `
-                      --state '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                      --junit '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/sample-tests.xml'
-                    $sampleExitCode = $LASTEXITCODE
-                    if ($sampleExitCode -ne 0) {
-                      throw 'Selected sample runner failed; inspect the task output and pytest results when present.'
-                    }
-                env:
-                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                  LLM_VALIDATION_PROJECT_ENDPOINT: $(LLM_VALIDATION_PROJECT_ENDPOINT)
-                  SAMPLE_QUEUE_NAME: $(QueueName)
-              - task: AzureCLI@2
-                displayName: 'Always clean up only the run-owned temporary resources'
-                condition: always()
-                inputs:
-                  azureSubscription: ${{ variables.azureServiceConnection }}
-                  scriptType: pscore
-                  scriptLocation: inlineScript
-                  inlineScript: |
-                    & '$(packageRoot)/tests/samples/ci/shared/Remove-SampleResources.ps1' `
-                      -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
-                      -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
-                env:
-                  AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
-                  AZURE_TENANT_ID: $(AZURE_TENANT_ID)
-                  SAMPLE_QUEUE_NAME: $(QueueName)
-              - task: PublishTestResults@2
-                displayName: 'Publish sample pytest results in the ADO Tests tab'
-                condition: always()
-                inputs:
-                  testResultsFormat: JUnit
-                  testResultsFiles: sample-tests.xml
-                  searchFolder: $(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)
-                  testRunTitle: 'Foundry sample tests - $(Build.BuildNumber) - $(QueueName)'
-                  failTaskOnFailedTests: true
-                  failTaskOnMissingResultsFile: false
-                  failTaskOnFailureToPublishResults: true
-                  publishRunAttachments: true
+                  inputs:
+                    azureSubscription: ${{ variables.azureServiceConnection }}
+                    scriptType: pscore
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      & '$(packageRoot)/tests/samples/ci/shared/Remove-SampleResources.ps1' `
+                        -StatePath '$(Pipeline.Workspace)/sample-results/$(QueueName)/deployment-state.json' `
+                        -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
+                  env:
+                    AZURE_SUBSCRIPTION_ID: $(AZURE_SUBSCRIPTION_ID)
+                    AZURE_TENANT_ID: $(AZURE_TENANT_ID)
+                    SAMPLE_QUEUE_NAME: $(QueueName)
+                - task: 1ES.PublishPipelineArtifact@1
+                  displayName: 'Publish this queue''s deployment state and diagnostics'
+                  condition: always()
+                  inputs:
+                    targetPath: $(Pipeline.Workspace)/sample-results/$(QueueName)
+                    artifactName: sample-results-$(QueueName)-$(System.JobAttempt)
+                    sbomEnabled: false
+      - stage: ReportRejectedSamples
+        displayName: 'Fail the run for samples rejected during planning'
+        dependsOn:
+          - Plan
+          - RunSamples
+        condition: succeededOrFailed()
+        jobs:
           - job: ReportRejectedSamples
-            displayName: 'Fail the run for samples rejected during planning'
-            dependsOn: ProvisionTestCleanup
-            condition: succeededOrFailed()
+            displayName: 'Report rejected samples after queue tests complete'
+            condition: and(succeededOrFailed(), gt(variables['rejectedCount'], 0))
             timeoutInMinutes: 5
             variables:
               rejectedCount: $[ stageDependencies.Plan.Plan.outputs['Plan.RejectedTestCount'] ]
@@ -304,9 +319,7 @@ extends:
             steps:
               - checkout: none
               - pwsh: |
-                  if ([int] $env:REJECTED_COUNT -gt 0) {
-                    throw "$env:REJECTED_COUNT selected sample test(s) were rejected during planning for unsupported environment variables; see the Plan stage errors. The remaining samples were run."
-                  }
-                displayName: 'Fail if any selected sample could not be planned'
+                  throw "$env:REJECTED_COUNT selected sample test(s) were rejected during planning for unsupported environment variables; see the Plan stage errors."
+                displayName: 'Fail for samples that could not be provisioned'
                 env:
                   REJECTED_COUNT: $(rejectedCount)
