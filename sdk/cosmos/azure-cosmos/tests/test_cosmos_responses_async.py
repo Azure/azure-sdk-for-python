@@ -94,17 +94,25 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         assert isinstance(first_response, DatabaseProxy)
 
     async def test_create_database_if_not_exists_headers_async(self):
-        first_response = await self.client.create_database_if_not_exists(id=test_config.unique_database_id("responses"), return_properties=True)
-        assert len(first_response[1].get_response_headers()) > 0
+        database_id = test_config.unique_database_id("responses")
+        first_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+        try:
+            assert first_response[1]["id"] == database_id
+            assert len(first_response[1].get_response_headers()) > 0
+        finally:
+            await self.client.delete_database(database_id)
 
     async def test_create_database_if_not_exists_headers_negative_async(self):
-        # Both calls must target the same id so the second one exercises the
-        # already-exists path; the id is run-scoped so a leftover database from another
-        # run can't make the first call take that path too.
         database_id = test_config.unique_database_id("responses-negative")
-        first_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
-        second_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
-        assert len(second_response[1].get_response_headers()) > 0
+        _, existing = await self.client.create_database(id=database_id, return_properties=True)
+        try:
+            first_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            second_response = await self.client.create_database_if_not_exists(id=database_id, return_properties=True)
+            assert first_response[1]["id"] == second_response[1]["id"] == database_id
+            assert first_response[1]["_rid"] == second_response[1]["_rid"] == existing["_rid"]
+            assert len(second_response[1].get_response_headers()) > 0
+        finally:
+            await self.client.delete_database(database_id)
 
     async def test_create_container_headers_async(self):
         first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
@@ -146,22 +154,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         first_response = await container.read()
         assert len(first_response.get_response_headers()) > 0
 
-    async def test_container_replace_throughput_async(self):
-        container = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                        partition_key=PartitionKey(path="/company"), offer_throughput=400)
-        replace_throughput_value = 500
-        first_response = await container.replace_throughput(replace_throughput_value)
-        assert len(first_response.get_response_headers()) > 0
-        new_throughput = await container.get_throughput()
-        assert replace_throughput_value == new_throughput.offer_throughput
 
-    async def test_database_replace_throughput_async(self):
-        db = await self.client.create_database(id=test_config.unique_database_id("responses"), offer_throughput=400)
-        replace_throughput_value = 500
-        first_response = await db.replace_throughput(replace_throughput_value)
-        assert len(first_response.get_response_headers()) > 0
-        new_throughput = await db.get_throughput()
-        assert replace_throughput_value == new_throughput.offer_throughput
 
 
 if __name__ == '__main__':

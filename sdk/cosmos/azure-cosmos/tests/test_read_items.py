@@ -14,6 +14,7 @@ from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPo
 from azure.cosmos._gone_retry_policy import PartitionKeyRangeGoneRetryPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
+from _client_transport import create_client_with_transport
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
@@ -81,7 +82,7 @@ class TestReadItems(unittest.TestCase):
         """Helper to set up a client with fault injection for read_items queries."""
         # Fault injection needs its own key-auth client with custom transport  -  stays as-is
         fault_injection_transport = FaultInjectionTransport()
-        client_with_faults = cosmos_client.CosmosClient(self.host, self.masterKey, transport=fault_injection_transport)
+        client_with_faults = create_client_with_transport(cosmos_client.CosmosClient, self.host, self.masterKey, transport=fault_injection_transport)
         container_with_faults = client_with_faults.get_database_client(self.database.id).get_container_client(
             self._container_id)
 

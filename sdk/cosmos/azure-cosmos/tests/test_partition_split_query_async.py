@@ -40,7 +40,7 @@ class TestPartitionSplitQueryAsync(unittest.IsolatedAsyncioTestCase):
     container: ContainerProxy = None
     client: CosmosClient = None
     # Key-auth client/database  -  control-plane (create_container, delete_container, replace_throughput,
-    # get_throughput, read_offer)
+    # get_throughput, get_throughput)
     key_client: CosmosClient = None
     key_database: DatabaseProxy = None
     key_container: ContainerProxy = None

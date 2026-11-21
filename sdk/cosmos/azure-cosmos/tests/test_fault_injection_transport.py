@@ -18,6 +18,11 @@ from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from _fault_injection_transport import FaultInjectionTransport
 from azure.core.exceptions import ServiceRequestError
+from _client_transport import create_client_with_transport
+
+pytestmark = pytest.mark.skip(
+    reason="Legacy Python fault-injection suite is disabled; targeted Rust-path coverage runs separately."
+)
 
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
@@ -70,7 +75,7 @@ class TestFaultInjectionTransport:
             container_id: str = SINGLE_PARTITION_CONTAINER_NAME,
             custom_logger = logger,
             **kwargs):
-        client = CosmosClient(default_endpoint, key, consistency_level="Session",
+        client = create_client_with_transport(CosmosClient, default_endpoint, key, consistency_level="Session",
                               transport=custom_transport, logger=custom_logger, enable_diagnostics_logging=True, **kwargs)
         db: DatabaseProxy = client.get_database_client(database_id)
         container: ContainerProxy = db.get_container_client(container_id)

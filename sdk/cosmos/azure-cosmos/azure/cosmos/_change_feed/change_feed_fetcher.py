@@ -25,15 +25,21 @@ database service.
 import base64
 import json
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Tuple, cast
+from typing import Any, Callable, Optional, Tuple
 
 from azure.cosmos import _retry_utility, http_constants, exceptions
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV1, ChangeFeedStateV2, ChangeFeedStateVersion
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from .._constants import _Constants as Constants
+from .._operation_deadline import legacy_deadline_options, remaining_timeout
 
 # pylint: disable=protected-access
+
+def _response_continuation(headers: dict[str, Any]) -> str:
+    token = headers.get(http_constants.HttpHeaders.ETag)
+    if not isinstance(token, str) or not token:
+        raise ValueError("Change-feed response is missing its ETag continuation.")
+    return token
 
 class ChangeFeedFetcher(ABC):
 
@@ -72,10 +78,15 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         :return: List of results.
         :rtype: list
         """
-        def callback():
+        def callback(**_kwargs):
             return self.fetch_change_feed_items()
 
-        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
+        return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback,
+                                     **legacy_deadline_options({}, self._feed_options.get("_item_operation_deadline")))
+
+    @property
+    def continuation_token(self) -> Optional[str]:
+        return self._change_feed_state._continuation
 
     def fetch_change_feed_items(self) -> list[dict[str, Any]]:
         self._feed_options["changeFeedState"] = self._change_feed_state
@@ -83,12 +94,12 @@ class ChangeFeedFetcherV1(ChangeFeedFetcher):
         self._change_feed_state.populate_feed_options(self._feed_options)
         is_s_time_first_fetch = self._change_feed_state._continuation is None
         while True:
+            remaining_timeout(self._feed_options.get("_item_operation_deadline"))
             (fetched_items, response_headers) = self._fetch_function(self._feed_options)
-            continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated. The hasNext() test is whether
             # there is any items in the response or not.
             self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)),
+                _response_continuation(response_headers),
                 bool(fetched_items))
 
             if fetched_items:
@@ -133,24 +144,28 @@ class ChangeFeedFetcherV2(object):
         :rtype: list
         """
 
-        def callback():
+        def callback(**_kwargs):
             return self.fetch_change_feed_items()
 
-        try:
-            return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback)
-        except CosmosHttpResponseError as e:
-            if exceptions._partition_range_is_gone(e) or exceptions._is_partition_split_or_merge(e):
-                # refresh change feed state, preserving relevant options for PK range resolution
-                options = {k: self._feed_options[k] for k in ("excludedLocations", Constants.ContainerRID)
-                           if k in self._feed_options}
+        for attempt in range(11):
+            deadline = self._feed_options.get("_item_operation_deadline")
+            remaining_timeout(deadline)
+            try:
+                return _retry_utility.Execute(self._client, self._client._global_endpoint_manager, callback,
+                                             **legacy_deadline_options({}, deadline))
+            except CosmosHttpResponseError as error:
+                if attempt == 10 or not (exceptions._partition_range_is_gone(error)
+                                         or exceptions._is_partition_split_or_merge(error)):
+                    raise
                 self._change_feed_state.handle_feed_range_gone(
                     self._client._routing_map_provider,
                     self._resource_link,
-                    options or None)
-            else:
-                raise e
+                    legacy_deadline_options(self._feed_options, deadline))
+        raise RuntimeError("Change-feed split retry limit exhausted.")
 
-        return self.fetch_next_block()
+    @property
+    def continuation_token(self) -> str:
+        return self._get_base64_encoded_continuation()
 
     def fetch_change_feed_items(self) -> list[dict[str, Any]]:
         self._feed_options["changeFeedState"] = self._change_feed_state
@@ -159,12 +174,13 @@ class ChangeFeedFetcherV2(object):
 
         is_s_time_first_fetch = self._change_feed_state._continuation.current_token.token is None
         while True:
+            remaining_timeout(self._feed_options.get("_item_operation_deadline"))
             (fetched_items, response_headers) = self._fetch_function(self._feed_options)
 
             continuation_key = http_constants.HttpHeaders.ETag
             # In change feed queries, the continuation token is always populated.
             self._change_feed_state.apply_server_response_continuation(
-                cast(str, response_headers.get(continuation_key)),
+                _response_continuation(response_headers),
                 bool(fetched_items))
 
             if fetched_items:
@@ -186,7 +202,7 @@ class ChangeFeedFetcherV2(object):
                 self._change_feed_state._continuation._move_to_next_token()
                 response_headers[continuation_key] = self._get_base64_encoded_continuation()
                 should_retry = self._change_feed_state.should_retry_on_not_modified_response()
-                is_s_time_first_fetch = False
+                is_s_time_first_fetch = self._change_feed_state._continuation.current_token.token is None
 
             if not should_retry:
                 break

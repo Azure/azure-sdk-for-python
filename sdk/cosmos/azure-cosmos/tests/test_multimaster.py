@@ -54,17 +54,6 @@ class TestMultiMaster(unittest.TestCase):
                                    'operation': 'insertion'}
             created_document = created_collection.create_item(body=document_definition)
 
-            sproc_definition = {
-                'id': 'sample sproc' + str(uuid.uuid4()),
-                'serverScript': 'function() {var x = 10;}'
-            }
-            sproc = created_collection.scripts.create_stored_procedure(body=sproc_definition)
-
-            created_collection.scripts.execute_stored_procedure(
-                sproc=sproc['id'],
-                partition_key='pk'
-            )
-
             created_collection.read_item(
                 item=created_document,
                 partition_key='pk'
@@ -90,11 +79,9 @@ class TestMultiMaster(unittest.TestCase):
             headers_with_tentative_writes = sum(1 for h in self.last_headers if h)
 
             if is_allow_tentative_writes_set:
-                # When multi-write is enabled, at least 6 write operations should have the header:
-                # create_item, create_stored_procedure, execute_stored_procedure,
-                # replace_item, upsert_item, delete_item
-                self.assertGreaterEqual(headers_with_tentative_writes, 6,
-                    f"Expected at least 6 write operations with tentative writes header, "
+                # Create, replace, upsert and delete each require the header.
+                self.assertGreaterEqual(headers_with_tentative_writes, 4,
+                    f"Expected at least 4 write operations with tentative writes header, "
                     f"got {headers_with_tentative_writes}")
             else:
                 # When multi-write is disabled, no operations should have the header

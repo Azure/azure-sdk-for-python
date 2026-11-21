@@ -23,6 +23,7 @@ from test_excluded_locations_emulator import (L1_URL, L2_URL,
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.http_constants import ResourceType
+from _client_transport import create_client_with_transport
 
 CONFIG = test_config.TestConfig()
 HOST = CONFIG.host
@@ -132,7 +133,7 @@ class TestExcludedLocationsEmulatorAsync:
 
 
             # Create client
-            async with CosmosClient(HOST, KEY,
+            async with create_client_with_transport(CosmosClient, HOST, KEY,
                                     consistency_level="Session",
                                     transport=custom_transport,
                                     # logger=logger, enable_diagnostics_logging=True,

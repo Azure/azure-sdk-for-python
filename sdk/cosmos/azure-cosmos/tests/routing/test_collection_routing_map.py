@@ -18,7 +18,7 @@ from azure.cosmos._routing.collection_routing_map import (
 @pytest.mark.cosmosEmulator
 class TestCollectionRoutingMap(unittest.TestCase):
 
-    def test_advanced(self):
+    def test_advanced_rust(self):
         partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'05C1C9CD673398'},
                                 {u'id': u'1', u'minInclusive': u'05C1C9CD673398', u'maxExclusive': u'05C1D9CD673398'},
                                 {u'id': u'2', u'minInclusive': u'05C1D9CD673398', u'maxExclusive': u'05C1E399CD6732'},
@@ -33,7 +33,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual(len(overlapping_partition_key_ranges), len(partition_key_ranges))
         self.assertEqual(overlapping_partition_key_ranges, partition_key_ranges)
 
-    def test_point_range_mapping(self):
+    def test_point_range_mapping_rust(self):
         partition_key_ranges = [{u'id': u'0', u'minInclusive': u'', u'maxExclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF'},
                                 {u'id': u'1', u'minInclusive': u'1FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', u'maxExclusive': u'FF'}]
         partitionRangeWithInfo = [(r, True) for r in partition_key_ranges]
@@ -48,7 +48,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual(1, len(overlapping_partition_key_ranges))
         self.assertEqual(expected_partition_key_range, routing_range.Range.PartitionKeyRangeToRange(overlapping_partition_key_ranges[0]))
 
-    def test_collection_routing_map(self):
+    def test_collection_routing_map_rust(self):
         Id = 'id'
         MinInclusive = 'minInclusive'
         MaxExclusive = 'maxExclusive'
@@ -128,7 +128,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual("1", overlappingPartitionKeyRanges[0][Id])
         self.assertEqual("2", overlappingPartitionKeyRanges[1][Id])
 
-    def test_invalid_routing_map(self):
+    def test_invalid_routing_map_rust(self):
         partitionKeyRanges = \
             [
                 ({'id': "1", 'minInclusive': "0000000020", 'maxExclusive': "0000000030"}, 2),
@@ -142,7 +142,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         self.assertRaises(ValueError, createRoutingMap)
 
-    def test_incomplete_routing_map(self):
+    def test_incomplete_routing_map_rust(self):
         crm = CollectionRoutingMap.CompleteRoutingMap(
             [
                 ({'id': "2", 'minInclusive': "", 'maxExclusive': "0000000030"}, 2),
@@ -160,7 +160,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
 
         self.assertIsNotNone(crm)
 
-    def test_try_combine_valid_split(self):
+    def test_try_combine_valid_split_rust(self):
         """try_combine correctly merges child ranges from a split into the existing map."""
         initial_ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
@@ -184,7 +184,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual(ranges[2]['id'], '1')
         self.assertEqual(result.change_feed_etag, '"etag-2"')
 
-    def test_try_combine_incomplete_range_returns_none(self):
+    def test_try_combine_incomplete_range_returns_none_rust(self):
         """try_combine returns None when merged ranges have a gap."""
         initial_ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}, True)
@@ -200,7 +200,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         result = crm.try_combine(gapped_ranges, '"etag-2"')
         self.assertIsNone(result, "try_combine should return None for incomplete range coverage")
 
-    def test_try_combine_preserves_stable_partitions(self):
+    def test_try_combine_preserves_stable_partitions_rust(self):
         """try_combine keeps unaffected partitions when only some split."""
         initial_ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': '40'}, 'info_0'),
@@ -227,7 +227,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         # Verify stable range '2' preserved its original range_info
         self.assertEqual(result._orderedPartitionInfo[3], 'info_2')
 
-    def test_change_feed_etag_stored_and_accessible(self):
+    def test_change_feed_etag_stored_and_accessible_rust(self):
         """CompleteRoutingMap stores the change_feed_etag and makes it accessible."""
         ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': 'FF'}, True)
@@ -241,7 +241,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertIsNotNone(crm_no_etag)
         self.assertIsNone(crm_no_etag.change_feed_etag)
 
-    def test_try_combine_valid_merge(self):
+    def test_try_combine_valid_merge_rust(self):
         """try_combine correctly handles a merge: two adjacent ranges merge into one.
 
         Scenario: Range '1' originally split into '1A' and '1B'. The SDK's cache
@@ -280,7 +280,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertEqual(result._orderedPartitionInfo[0], 'info_0')
         self.assertEqual(result._orderedPartitionInfo[2], 'info_2')
 
-    def test_try_combine_merge_evicted_grandparent_noop(self):
+    def test_try_combine_merge_evicted_grandparent_noop_rust(self):
         """try_combine gracefully handles parents that are not in the cache (already evicted).
 
         When the parents list includes an ancestor that was already removed from the cache
@@ -305,7 +305,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '3', '2'])
 
-    def test_try_combine_accumulates_gone_ranges_across_updates(self):
+    def test_try_combine_accumulates_gone_ranges_across_updates_rust(self):
         """Gone range ids should persist across combines, not just within one delta."""
         initial_ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
@@ -332,7 +332,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertIn('0', after_second._goneRangeIds)
         self.assertIn('1', after_second._goneRangeIds)
 
-    def test_try_combine_ignores_stale_previously_gone_range_in_later_delta(self):
+    def test_try_combine_ignores_stale_previously_gone_range_in_later_delta_rust(self):
         """A stale previously-gone range in a later delta should be removed by accumulated tombstones."""
         initial_ranges = [
             ({'id': '0', 'minInclusive': '', 'maxExclusive': '80'}, True),
@@ -363,7 +363,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
     # Tests for _build_routing_map_from_ranges parent filtering
     # =========================================================
 
-    def test_build_routing_map_filters_gone_parent_ranges(self):
+    def test_build_routing_map_filters_gone_parent_ranges_rust(self):
         """_build_routing_map_from_ranges filters out parent (gone) ranges
         referenced in children's 'parents' lists and builds a complete map
         from only the child ranges."""
@@ -382,7 +382,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         self.assertNotIn('0', ids, "Gone parent '0' should be filtered out")
         self.assertEqual(result.change_feed_etag, '"etag-1"')
 
-    def test_build_routing_map_filters_multiple_parent_levels(self):
+    def test_build_routing_map_filters_multiple_parent_levels_rust(self):
         """_build_routing_map_from_ranges filters out all ancestors referenced
         as parents, even when multiple levels of splits are present in a single
         change feed response."""
@@ -403,7 +403,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         # '0' is gone (parent of '1' and '2'), '1' is gone (parent of '3' and '4')
         self.assertEqual(ids, ['3', '4', '2'])
 
-    def test_build_routing_map_no_parents_passes_through_all(self):
+    def test_build_routing_map_no_parents_passes_through_all_rust(self):
         """_build_routing_map_from_ranges passes through all ranges when none
         have parents (no splits occurred)."""
         _logger = logging.getLogger("test")
@@ -417,7 +417,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '1'])
 
-    def test_build_routing_map_raises_gap_detected_for_incomplete_ranges(self):
+    def test_build_routing_map_raises_gap_detected_for_incomplete_ranges_rust(self):
         """``_build_routing_map_from_ranges`` raises ``_GapDetected`` when
         the filtered ranges have a gap in the partition key space."""
         _logger = logging.getLogger("test")
@@ -430,7 +430,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
                 ranges, 'coll1', '"etag-4"', 'dbs/db/colls/coll1', _logger
             )
 
-    def test_build_routing_map_empty_parents_list_not_treated_as_gone(self):
+    def test_build_routing_map_empty_parents_list_not_treated_as_gone_rust(self):
         """_build_routing_map_from_ranges does NOT filter a range whose 'parents'
         key exists but is an empty list — only non-empty parents trigger filtering."""
         _logger = logging.getLogger("test")
@@ -444,7 +444,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '1'])
 
-    def test_build_routing_map_stores_etag(self):
+    def test_build_routing_map_stores_etag_rust(self):
         """_build_routing_map_from_ranges stores the provided ETag on the
         resulting CollectionRoutingMap, and None etag is handled gracefully."""
         _logger = logging.getLogger("test")
@@ -463,7 +463,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
     # never reach ``get_overlapping_ranges``.
     # ==========================================================================
 
-    def test_full_load_dedups_duplicate_range_id_across_pages_mode_1(self):
+    def test_full_load_dedups_duplicate_range_id_across_pages_mode_1_rust(self):
         """A duplicate range id repeated across paginated pages should be
         deduped (last-write-wins) before validation, producing a valid map."""
         _logger = logging.getLogger("test")
@@ -483,7 +483,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         ids = [r['id'] for r in result._orderedPartitionKeyRanges]
         self.assertEqual(ids, ['0', '1', '2', '3'])
 
-    def test_full_load_raises_overlap_sentinel_for_stale_parent_with_missing_child_refs_mode_2(self):
+    def test_full_load_raises_overlap_sentinel_for_stale_parent_with_missing_child_refs_mode_2_rust(self):
         """A stale parent alongside children that lack ``parents`` references
         must convert the underlying ``ValueError`` into ``_OverlapDetected``,
         not escape as a bare ``ValueError``."""
@@ -501,7 +501,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         with self.assertRaises(_OverlapDetected):
             _build_routing_map_from_ranges(ranges, 'coll1', '"etag-stale-parent"', 'dbs/db/colls/coll1', _logger)
 
-    def test_full_load_raises_overlap_sentinel_for_grandparent_surviving_cascade_split_mode_3(self):
+    def test_full_load_raises_overlap_sentinel_for_grandparent_surviving_cascade_split_mode_3_rust(self):
         """A grandparent that survives a cascade split because intermediate
         parents lost their ``parents`` references must raise
         ``_OverlapDetected``."""
@@ -522,7 +522,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         with self.assertRaises(_OverlapDetected):
             _build_routing_map_from_ranges(ranges, 'coll1', '"etag-cascade"', 'dbs/db/colls/coll1', _logger)
 
-    def test_full_load_raises_gap_detected_for_hole_in_key_space(self):
+    def test_full_load_raises_gap_detected_for_hole_in_key_space_rust(self):
         """A snapshot with a hole in the key space must raise
         ``_GapDetected`` so the caller retries."""
         _logger = logging.getLogger("test")
@@ -536,7 +536,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         with self.assertRaises(_GapDetected):
             _build_routing_map_from_ranges(ranges, 'coll1', '"etag-gap"', 'dbs/db/colls/coll1', _logger)
 
-    def test_gap_detected_is_not_a_value_error(self):
+    def test_gap_detected_is_not_a_value_error_rust(self):
         """``_GapDetected`` must not inherit from ``ValueError`` so legacy
         ``except ValueError`` blocks cannot absorb the retry signal."""
         self.assertFalse(
@@ -545,7 +545,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         )
         self.assertTrue(issubclass(_GapDetected, Exception))
 
-    def test_overlap_sentinel_is_not_a_value_error(self):
+    def test_overlap_sentinel_is_not_a_value_error_rust(self):
         """``_OverlapDetected`` must not inherit from ``ValueError`` so legacy
         ``except ValueError`` blocks cannot absorb the retry signal."""
         self.assertFalse(
@@ -554,7 +554,7 @@ class TestCollectionRoutingMap(unittest.TestCase):
         )
         self.assertTrue(issubclass(_OverlapDetected, Exception))
 
-    def test_overlap_error_message_identifies_offending_ranges(self):
+    def test_overlap_error_message_identifies_offending_ranges_rust(self):
         """The ``ValueError`` raised by ``is_complete_set_of_range`` for
         genuinely overlapping input should name the offending ranges and
         start with the ``"Ranges overlap"`` prefix that production guards

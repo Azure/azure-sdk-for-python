@@ -1,8 +1,5 @@
-include *.md
-include LICENSE
-include azure/__init__.py
-recursive-include samples *.py *.md
-recursive-include tests *.py
+# Maturin builds this package and does not read this file.
+# Package contents come from [tool.maturin] include/exclude in pyproject.toml.
+# This file stays only because the repo's sdist check
+# (eng/tools/azure-sdk-tools/azpysdk/verify_sdist.py) requires a py.typed line here.
 include azure/cosmos/py.typed
-recursive-include azure/cosmos/_query_advisor *.json
-recursive-include doc *.rst

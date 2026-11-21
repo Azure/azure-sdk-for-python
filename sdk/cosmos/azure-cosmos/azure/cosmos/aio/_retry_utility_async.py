@@ -160,8 +160,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             #  for now raising a manual exception here should allow it to be retried.
             # If container does not have throughput, results will return empty list.
             # We manually raise a 404. We raise it here, so we can handle it in retry utilities.
-            if result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers'] \
+            # Only container lookups can retry against refreshed container metadata.
+            # Database offer queries must finish normally, including empty pages.
+            if request is not None and container_recreate_retry_policy.container_link is not None and \
+                    result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers'] \
                     and request.method == 'POST':
+                if len(result) > 1 and result[1].get(HttpHeaders.Continuation):
+                    return result
                 # Grab the link used for getting throughput properties to add to message.
                 link = json.loads(request.body)["parameters"][0]["value"]
                 response = exceptions._InternalCosmosException(status_code=StatusCodes.NOT_FOUND,
@@ -218,6 +223,8 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
                     pass
             elif exceptions._container_recreate_exception(e):
                 retry_policy = container_recreate_retry_policy
+                if retry_policy.container_link is None:
+                    raise
                 # Before we retry if retry policy is container recreate, we need refresh the cache of the
                 # container properties and pass in the new RID in the headers.
                 await client._refresh_container_properties_cache(retry_policy.container_link)
