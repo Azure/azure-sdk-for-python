@@ -33,6 +33,7 @@ from ._request_context import (
     set_request_context,
 )
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
+from ._restore_entropy import add_openssl_entropy, reseed_python_generators
 from ._server_version import build_server_version
 from ._types import MiddlewareFactory, P
 from ._version import VERSION as _CORE_VERSION
@@ -903,9 +904,13 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 key: os.environ.get(key) for key in self._lifecycle.applied_environment_variables
             }
             self._lifecycle.before_snapshot_completed = True
+            # Buffered telemetry would otherwise be re-exported by every restored sandbox.
+            await _tracing.flush_providers_before_snapshot()
             return JSONResponse({"status": "ok"})
 
     async def _after_restore_endpoint(self, request: Request) -> Response:
+        # Restored sandboxes share copied OpenSSL state; adding entropy is always safe.
+        add_openssl_entropy()
         try:
             return await AgentServerHost._run_after_restore(self, request)
         except Exception:  # pylint: disable=broad-exception-caught
@@ -1037,6 +1042,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     )
                 )
                 try:
+                    logger.info(
+                        "Reseeded in-process random generators after restore: %s",
+                        ", ".join(reseed_python_generators()),
+                    )
                     await self._after_restore(context)
                     await self._activate_task_manager(context.restore_id, prepare_only=True)
                     if self._lifecycle.after_restore_fn is not None:
