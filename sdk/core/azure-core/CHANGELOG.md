@@ -7,6 +7,10 @@
 - Added `ODataV4Format.as_dict()` to convert parsed OData V4 errors, including nested details and model-valued inner errors, to JSON-compatible dictionaries for generated model serialization, preserving `None` values and empty collections.
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- Fixed `HttpLoggingPolicy.allowed_header_names` and the `allowed_query_params` sets of `HttpLoggingPolicy` and `DistributedTracingPolicy` ignoring changes made with in-place set operators (`|=`, `-=`, `&=`, `^=`) and with `difference_update`, `intersection_update` and `symmetric_difference_update`.
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
