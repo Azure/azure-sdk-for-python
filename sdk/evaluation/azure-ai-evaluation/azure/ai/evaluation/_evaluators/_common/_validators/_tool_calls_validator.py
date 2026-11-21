@@ -14,9 +14,14 @@ from ._tool_definitions_validator import ToolDefinitionsValidator
 class ToolCallsValidator(ToolDefinitionsValidator):
     """
     Validate tool calls alongside tool definitions and conversation inputs.
+
+    An evaluator with an explicit no-calls applicability result can set
+    ``allow_empty_calls=True``. Invalid queries, definitions, and malformed
+    nonempty response/call values still fail validation.
     """
 
     optional_tool_definitions = False
+    allow_empty_calls: bool = False
 
     def __init__(
         self,
@@ -82,6 +87,13 @@ class ToolCallsValidator(ToolDefinitionsValidator):
         tool_calls_validation_exception = self._validate_tool_calls(tool_calls)
 
         if response_validation_exception and tool_calls_validation_exception:
+            if (
+                self.allow_empty_calls
+                and response_validation_exception.category == ErrorCategory.MISSING_FIELD
+                and tool_calls_validation_exception.category == ErrorCategory.MISSING_FIELD
+            ):
+                # The evaluator owns the not-applicable result when no calls were supplied.
+                return True
             main_exception: EvaluationException
             if response_validation_exception.category == ErrorCategory.MISSING_FIELD:
                 main_exception = tool_calls_validation_exception

@@ -21,9 +21,14 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
       - ``enforce_tool_definitions`` (default False): validate ``tool_definitions`` in both the
         messages path and the query/response path. Set True for evaluators that require
         tool definitions.
+    Evaluators that assess a whole conversation's outcome can set
+    ``requires_assistant=False`` so an absent assistant reply reaches their
+    applicability and scoring rules. Query requirements and structural checks
+    remain independent.
     """
 
     enforce_tool_definitions: bool = False
+    requires_assistant: bool = True
 
     def __init__(
         self,
@@ -94,14 +99,14 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
                 roles_present.add(role)
 
             # Conversation-level checks
-            if MessageRole.USER.value not in roles_present:
+            if self.requires_query and MessageRole.USER.value not in roles_present:
                 raise EvaluationException(
                     message="messages must contain at least one message with role 'user'.",
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
                     target=self.error_target,
                 )
-            if MessageRole.ASSISTANT.value not in roles_present:
+            if self.requires_assistant and MessageRole.ASSISTANT.value not in roles_present:
                 raise EvaluationException(
                     message="messages must contain at least one message with role 'assistant'.",
                     blame=ErrorBlame.USER_ERROR,
