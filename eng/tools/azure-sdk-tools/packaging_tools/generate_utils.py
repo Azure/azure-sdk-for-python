@@ -28,7 +28,6 @@ from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
 from .conf import CONF_NAME, OLD_CONF_NAME
 from jinja2 import Environment, FileSystemLoader
 
-
 logging.basicConfig(
     stream=sys.stdout,
     format="[%(levelname)s] %(message)s",

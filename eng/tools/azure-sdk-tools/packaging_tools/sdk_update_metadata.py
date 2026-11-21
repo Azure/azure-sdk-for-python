@@ -8,7 +8,6 @@ import json
 from .generate_utils import update_metadata_json, generate_packaging_and_ci_files
 from .package_utils import check_file
 
-
 logging.basicConfig(
     stream=sys.stdout,
     format="[%(levelname)s] %(message)s",
