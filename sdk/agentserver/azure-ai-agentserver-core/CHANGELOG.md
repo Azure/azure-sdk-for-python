@@ -88,11 +88,57 @@
 
 ## 2.3.1b1 (2026-11-02)
 
+### Features Added
+
+- Added `FOUNDRY_LIFECYCLE_TOKEN`. Hosted snapshot lifecycle endpoints require
+  a matching `x-foundry-lifecycle-token` request header. Hosted requests return
+  `403` when the token is not configured and `401` when the presented token
+  does not match.
+- Added `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` as a temporary
+  compatibility switch for hosted platforms that have not provisioned the
+  lifecycle token.
+- Added `FOUNDRY_SESSION_ENV_ALLOWED_KEYS` for platform-declared, comma-separated
+  session environment override names.
+
+### Breaking Changes
+
+- Snapshot lifecycle endpoints are no longer registered when the process is not
+  running in a Foundry-hosted environment and neither `FOUNDRY_LIFECYCLE_TOKEN`
+  nor `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` is set. Local or
+  self-hosted deployments that rely on the endpoints must set the token or
+  explicitly opt in to unauthenticated access.
+- Before upgrading a hosted deployment to the `2.3.1b1` beta, provision
+  `FOUNDRY_LIFECYCLE_TOKEN` and send the matching lifecycle header, or explicitly
+  set `FOUNDRY_LIFECYCLE_ALLOW_UNAUTHENTICATED=true` for temporary compatibility.
+- `session_env_overrides` on after-restore requests are now validated as a
+  whole: keys must match `^[A-Za-z_][A-Za-z0-9_]*$` and be at most 256
+  UTF-8 bytes, values are capped at 32 KiB of UTF-8, aggregate overrides are
+  capped at 256 KiB, at most 256 entries are accepted, and request bodies are
+  capped at 1 MiB. Names that control loaders, interpreters, process startup,
+  proxies, TLS trust, telemetry export, or platform identity are rejected.
+  Task-provider configuration that the restore flow itself governs
+  (`FOUNDRY_AGENT_NAME`, `FOUNDRY_PROJECT_ENDPOINT`, `AGENTSERVER_TASKS_BACKEND`,
+  `AGENTSERVER_STATE_ROOT`, `HOME`) is exempt from that rule but remains subject
+  to the allowed-key check below. Proxy names ending in `_PROXY` are denied case-insensitively, as are
+  credential-bearing names containing `KEY`, `SECRET`, `TOKEN`, `PASSWORD`,
+  `CREDENTIAL`, or `CONNECTION_STRING`. Other names must be a session ID or
+  GUID, resource attributes, have existed in the startup environment, or be
+  declared through `FOUNDRY_SESSION_ENV_ALLOWED_KEYS`. Hosted platforms must
+  declare every additional session-scoped key that can be absent at startup
+  before upgrading. Any violation rejects the request before environment or
+  session state is changed.
+
 ### Bugs Fixed
 
 - Preserve explicit Agent Card name and version attributes on spans emitted
   by the `Azure.AI.AgentServer.A2A` instrumentation scope. Other spans retain
   the existing Foundry deployment identity enrichment.
+
+### Other Changes
+
+- Hardened lifecycle endpoint authentication and environment-variable
+  validation. The hosted-environment flag is captured once at startup and no
+  longer re-read from the process environment.
 
 ## 2.3.0 (2026-10-29)
 
