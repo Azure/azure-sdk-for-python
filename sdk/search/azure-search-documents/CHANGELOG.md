@@ -1,5 +1,13 @@
 # Release History
 
+## 12.2.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `SearchIndexClient.get_search_client` (sync and async) returning a `SearchClient` that used the
+  default API version and the public cloud audience instead of those of the `SearchIndexClient`.
+  Passing `api_version` or `audience` to `get_search_client` still overrides them.
+
 ## 12.2.0b1 (2026-11-14)
 
 ### Features Added
