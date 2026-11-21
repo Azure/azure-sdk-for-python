@@ -575,6 +575,14 @@ python -m unittest test_response_handlers test_customization_regressions -v
 
 ## Live recording resources
 
+Instance Mix and zone-policy API recordings use a pre-existing feature-enabled account.
+Set `BATCH_FEATURE_ACCOUNT_NAME` and `BATCH_FEATURE_RESOURCE_GROUP` before running
+`test_batch_instance_mix_pool_api` or `test_batch_zone_policy_pool_api` live. These
+cases create/get/delete pools with both dedicated and low-priority node targets set
+to zero; they verify API configuration, not VM selection or zone distribution.
+Network-free coverage in `tests/test_pool_api.py` exercises sync/async serialization,
+nested response models, omitted policies, and the supported `TASK_COMPLETION` options.
+
 Windows recording pools use Windows Server 2022 Datacenter Gen2
 (`MicrosoftWindowsServer:windowsserver2022:2022-datacenter-g2`); Linux pools use Ubuntu 22.04 LTS.
 Windows compute-node tests request `standard_d2s_v3` to support the Gen2 image;

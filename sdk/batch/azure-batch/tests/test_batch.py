@@ -23,6 +23,7 @@ import six
 from batch_preparers import AccountPreparer, PoolPreparer, JobPreparer, BatchStorageAccountPreparer, get_log_container_url
 from async_wrapper import wrap_list_result, wrap_result, wrap_file_result
 from decorators import recorded_by_proxy_async, client_setup
+from test_pool_api import feature_pool, assert_feature_pool, POOL_ID
 
 from devtools_testutils import (
     AzureMgmtRecordedTestCase,
@@ -245,6 +246,39 @@ class TestBatch(AzureMgmtRecordedTestCase):
             ),
         )
         assert len(pools) == 1
+
+    @AccountPreparer(
+        existing_account_name=os.environ.get("BATCH_FEATURE_ACCOUNT_NAME", "batch-feature-account"),
+        existing_resource_group=os.environ.get("BATCH_FEATURE_RESOURCE_GROUP", "batch-feature-resource-group"),
+    )
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_instance_mix_pool_api(self, client: BatchClient, **_kwargs):
+        for strategy in models.VirtualMachineSkuAllocationStrategy:
+            await wrap_result(client.create_pool(feature_pool(strategy)))
+            try:
+                pool = await wrap_result(client.get_pool(POOL_ID))
+                assert_feature_pool(pool, strategy)
+            finally:
+                poller = await wrap_result(getattr(client, "begin_delete_pool")(POOL_ID, polling_interval=1))
+                await wrap_result(poller.result())
+
+    @AccountPreparer(
+        existing_account_name=os.environ.get("BATCH_FEATURE_ACCOUNT_NAME", "batch-feature-account"),
+        existing_resource_group=os.environ.get("BATCH_FEATURE_RESOURCE_GROUP", "batch-feature-resource-group"),
+    )
+    @pytest.mark.parametrize("BatchClient", [SyncBatchClient, AsyncBatchClient], ids=["sync", "async"])
+    @client_setup
+    @recorded_by_proxy_async
+    async def test_batch_zone_policy_pool_api(self, client: BatchClient, **_kwargs):
+        await wrap_result(client.create_pool(feature_pool(zone_policy=True)))
+        try:
+            pool = await wrap_result(client.get_pool(POOL_ID))
+            assert_feature_pool(pool, zone_policy=True)
+        finally:
+            poller = await wrap_result(getattr(client, "begin_delete_pool")(POOL_ID, polling_interval=1))
+            await wrap_result(poller.result())
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
