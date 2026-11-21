@@ -546,7 +546,9 @@ from opentelemetry.sdk.metrics.export import ConsoleMetricExporter, PeriodicExpo
 reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
 provider = MeterProvider(metric_readers=[reader])
 try:
-    with EventHubProducerClient.from_connection_string(connection_string, meter_provider=provider) as producer:
+    with EventHubProducerClient.from_connection_string(
+        connection_string, eventhub_name=eventhub_name, meter_provider=provider
+    ) as producer:
         producer.send_event(event)
 finally:
     provider.shutdown()
