@@ -29,6 +29,7 @@ import json
 import os
 from pathlib import Path
 import time
+from typing import cast
 from urllib.parse import urlparse
 from unittest.mock import patch
 import uuid
@@ -37,6 +38,7 @@ from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.cosmos import _rust
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos.aio._helpers._item_operations import AsyncItemHelper
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -181,7 +183,7 @@ async def run_case(exporter, connection, failure, mode):
         if properties["partitionKey"]["paths"] != ["/customerId"]:
             raise ValueError("sales.orders must be partitioned by /customerId")
         await require_absent(container, order)
-        adapter = container._get_item_helper()._backend
+        adapter = cast(AsyncItemHelper, container._get_item_helper())._backend
         driver_handle = await adapter._ensure_driver_handle()
 
         def hits():

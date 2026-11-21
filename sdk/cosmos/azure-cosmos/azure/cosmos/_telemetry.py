@@ -434,6 +434,8 @@ class _Contribution:
         if payload is not None:
             try:
                 total, _, attempts = _decode_payload(payload)
+                if not isinstance(payload, dict):
+                    raise ValueError("Invalid diagnostics payload")
                 complete = payload["complete"]
                 reasons = payload["incomplete_reasons"]
                 if (

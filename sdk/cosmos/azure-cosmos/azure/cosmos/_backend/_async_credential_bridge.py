@@ -123,7 +123,8 @@ class AsyncTokenCredentialBridge:
     def _close_cosmos_async_bridge(self) -> None:
         """Release one use; cancel only this bridge's work after the last release."""
         with _REGISTRY_LOCK:
-            if self._registry_key is not None:
+            registry_key = self._registry_key
+            if registry_key is not None:
                 if self._refcount == 0:
                     return
                 self._refcount -= 1
@@ -134,7 +135,7 @@ class AsyncTokenCredentialBridge:
                     return
                 self._closed = True
                 pending = tuple(self._pending)
-            if _REGISTRY.get(self._registry_key) is self:
-                del _REGISTRY[self._registry_key]
+            if registry_key is not None and _REGISTRY.get(registry_key) is self:
+                del _REGISTRY[registry_key]
         for future in pending:
             future.cancel()
