@@ -194,7 +194,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
             self._receive_operation.finish(count)
             self._receive_operation = None
         await self._callback(events)
-        self._receive_operation = self._client._start_operation("receive")
+        self._receive_operation = self._client._start_operation("receive")  # pylint: disable=protected-access
 
     async def receive(
         self,
@@ -202,6 +202,7 @@ class EventHubConsumer(ConsumerProducerMixin):  # pylint:disable=too-many-instan
         max_batch_size: int = 300,
         max_wait_time: Optional[float] = None,
     ) -> None:
+        # pylint: disable=protected-access
         if self._client._metrics is not None and self._receive_operation is None:
             self._receive_operation = self._client._start_operation("receive")
         try:

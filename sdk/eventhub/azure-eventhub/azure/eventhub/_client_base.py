@@ -574,6 +574,7 @@ class ConsumerProducerMixin:
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
     def _handle_exception(self, exception, *, is_consumer=False):
+        # pylint: disable=protected-access
         exception = self._amqp_transport.check_timeout_exception(self, exception)
         was_running = self.running
         try:

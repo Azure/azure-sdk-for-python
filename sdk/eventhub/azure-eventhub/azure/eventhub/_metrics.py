@@ -4,7 +4,7 @@
 # ------------------------------------
 from __future__ import annotations
 
-import asyncio
+from asyncio import CancelledError  # pylint: disable=do-not-import-asyncio
 import logging
 from time import perf_counter
 from typing import TYPE_CHECKING, Optional
@@ -52,7 +52,7 @@ class Operation:
         self._metrics = None
         outcome = "success"
         if error is not None:
-            outcome = "cancelled" if isinstance(error, asyncio.CancelledError) else "error"
+            outcome = "cancelled" if isinstance(error, CancelledError) else "error"
         attributes = {**metrics.attributes, "operation": self._name, "outcome": outcome}
         try:
             duration = perf_counter() - self._start

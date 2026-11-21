@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from contextlib import contextmanager, ExitStack
+from contextlib import contextmanager, nullcontext
 from enum import Enum
-import asyncio
+from asyncio import CancelledError  # pylint: disable=do-not-import-asyncio
 import logging
 from typing import TYPE_CHECKING, Type, Optional, Dict, List, Union, Any, Iterable, Iterator
 
@@ -79,26 +79,23 @@ def record_link_transition(metrics: Optional[EventHubMetrics], component: str, o
 @contextmanager
 def link_open(metrics: Optional[EventHubMetrics], component: str) -> Iterator[None]:
     span_impl = settings.tracing_implementation()
-    scope = ExitStack()
-    span = scope.enter_context(span_impl(name="EventHubs.amqp.open", kind=SpanKind.CLIENT)) if span_impl else None
-    if span is not None:
-        span.add_attribute("messaging.system", "eventhubs")
-        span.add_attribute("component", component)
-    outcome = "success"
-    try:
-        yield
-    except asyncio.CancelledError:
-        outcome = "cancelled"
-        raise
-    except Exception:
-        outcome = "error"
-        raise
-    finally:
+    failure: Optional[BaseException] = None
+    with (span_impl(name="EventHubs.amqp.open", kind=SpanKind.CLIENT) if span_impl else nullcontext()) as span:
+        if span is not None:
+            span.add_attribute("messaging.system", "eventhubs")
+            span.add_attribute("component", component)
+        outcome = "success"
+        try:
+            yield
+        except BaseException as exc:  # pylint: disable=broad-exception-caught
+            failure = exc
+            outcome = "cancelled" if isinstance(exc, CancelledError) else "error"
         record_link_transition(metrics, component, outcome)
         if span is not None:
             span.add_attribute("outcome", outcome)
-        # The outcome conveys failure without exporting broker exception details.
-        scope.close()
+    # End the span before propagating the original exception so exporters omit broker details.
+    if failure is not None:
+        raise failure
 
 
 @contextmanager

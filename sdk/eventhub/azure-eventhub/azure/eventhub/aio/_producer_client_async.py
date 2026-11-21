@@ -419,6 +419,7 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         **kwargs: Any,
     ) -> "EventHubProducerClient":
         """Create an EventHubProducerClient from a connection string.
+        Pass the constructor option ``meter_provider`` to enable OpenTelemetry client metrics.
 
         :param str conn_str: The connection string of an Event Hub.
         :keyword str eventhub_name: The path of the specific Event Hub to connect the client to.
@@ -497,8 +498,6 @@ class EventHubProducerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
          connection_verify will be ignored.
         :paramtype ssl_context: ssl.SSLContext or None
-        :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
-        :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
