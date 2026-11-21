@@ -184,3 +184,5 @@ invocation returns `server_error`.
 ## Contributing
 
 This project welcomes contributions and suggestions. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md).
+
+<!-- dummy CI trigger: no-op -->
