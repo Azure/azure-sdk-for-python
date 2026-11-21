@@ -131,11 +131,13 @@ class IOConstants:
         ComponentParameterTypes.BOOLEAN: lambda v: str(v).lower() == "true",
         ComponentParameterTypes.NUMBER: float,
     }
+    # Non-primitive (asset-backed) input types that accept an asset/path reference string as default value.
+    ASSET_TYPES_SUPPORTING_DEFAULT = ["uri_folder", "uri_file", "mltable"]
     # For validation, indicates specific parameters combination for each type
     INPUT_TYPE_COMBINATION = {
-        "uri_folder": ["path", "mode"],
-        "uri_file": ["path", "mode"],
-        "mltable": ["path", "mode"],
+        "uri_folder": ["path", "mode", "default"],
+        "uri_file": ["path", "mode", "default"],
+        "mltable": ["path", "mode", "default"],
         "mlflow_model": ["path", "mode"],
         "custom_model": ["path", "mode"],
         "integer": ["default", "min", "max"],
