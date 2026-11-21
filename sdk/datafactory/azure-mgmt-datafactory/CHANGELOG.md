@@ -1,5 +1,11 @@
 # Release History
 
+## 10.0.1 (Unreleased)
+
+### Bugs Fixed
+
+  - Fixed model `ExecuteDataFlowActivity` losing its data flow reference on deserialization and serialization because the model mapped `data_flow` to `typeProperties.dataFlow` while the service uses lowercase `typeProperties.dataflow` ([#48704](https://github.com/Azure/azure-sdk-for-python/issues/48704))
+
 ## 10.0.0 (2026-07-07)
 
 ### Features Added
