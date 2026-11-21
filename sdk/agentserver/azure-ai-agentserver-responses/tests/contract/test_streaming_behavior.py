@@ -6,12 +6,19 @@ from __future__ import annotations
 
 import asyncio
 import json
+import sys
 from typing import Any
 
+import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+requires_task_cancelling = pytest.mark.skipif(
+    sys.version_info < (3, 11),
+    reason="Task.cancelling() is needed to tell a leaked CancelledError from a cancellation",
+)
 
 
 async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
@@ -54,6 +61,32 @@ async def _throwing_after_created_handler(request: Any, context: Any, cancellati
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
         raise RuntimeError("Simulated post-creation failure")
+
+    return _events()
+
+
+async def _leaking_cancellation_after_created_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+    """Handler that emits response.created, then raises a CancelledError nobody requested.
+
+    This is how an MCP client whose anyio cancel scope was exited from another task fails.
+    """
+
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_in_progress()
+        raise asyncio.CancelledError("Cancelled via cancel scope")
+
+    return _events()
+
+
+async def _leaking_cancellation_before_created_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
+    """Handler that raises a CancelledError nobody requested before yielding any event."""
+
+    async def _events():
+        raise asyncio.CancelledError("Cancelled via cancel scope")
+        if False:  # pragma: no cover - keep async generator shape.
+            yield None
 
     return _events()
 
@@ -415,6 +448,47 @@ def test_streaming__post_creation_error_yields_response_failed_not_error_event()
     assert (
         "error" not in event_types
     ), f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
+
+
+@requires_task_cancelling
+@pytest.mark.parametrize("keep_alive_seconds", [None, 15])
+def test_streaming__leaked_cancellation_after_created_yields_response_failed(keep_alive_seconds: int | None) -> None:
+    """S-024 — A CancelledError the handler raises with no cancellation requested is a handler error, so the stream
+    still ends with response.failed, including on the SSE keep-alive path hosted containers use."""
+    app = ResponsesAgentServerHost(options=ResponsesServerOptions(sse_keep_alive_interval_seconds=keep_alive_seconds))
+    app.response_handler(_leaking_cancellation_after_created_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert event_types[-1] == "response.failed", f"Stream must end with response.failed, got: {event_types}"
+    assert "error" not in event_types, f"Standalone 'error' event must not follow response.created: {event_types}"
+
+
+@requires_task_cancelling
+def test_streaming__leaked_cancellation_before_created_yields_error_event() -> None:
+    """S-024 + B8 — A CancelledError nobody requested, raised before any event, ends with a standalone error event."""
+    app = ResponsesAgentServerHost()
+    app.response_handler(_leaking_cancellation_before_created_handler)
+    client = TestClient(app, raise_server_exceptions=False)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "gpt-4o-mini", "input": "hello", "stream": True, "store": True, "background": False},
+    ) as response:
+        assert response.status_code == 200
+        events = _collect_stream_events(response)
+
+    event_types = [e["type"] for e in events]
+    assert event_types == ["error"], f"Expected only a standalone 'error' event, got: {event_types}"
 
 
 def test_streaming_failed_terminal_preserves_public_metadata() -> None:
