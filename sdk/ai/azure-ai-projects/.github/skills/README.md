@@ -41,6 +41,31 @@
 
 ## Skills
 
+### azure-ai-projects-cloud-regeneration
+
+This package-only cloud workflow installs the repository-pinned TypeSpec CLI,
+emitter dependencies, and Python development requirements on a dedicated Actions
+runner, then regenerates and validates `azure-ai-projects`. A cloud agent downloads
+a baseline-checked patch instead of installing dependencies through its restricted
+network. The shared Copilot setup workflow is not changed.
+
+Example cloud-agent prompt:
+
+> Work only in sdk/ai/azure-ai-projects. Follow AGENTS.md and the
+> azure-ai-projects-cloud-regeneration skill to regenerate from the commit already
+> pinned in tsp-location.yaml.
+
+The manually dispatched workflow must first be merged into the default branch.
+Dispatch requires repository Actions-write permission; a maintainer can dispatch
+it when the cloud agent's credential is read-only. Its Actions entry point must
+live at the repository root in `.github/workflows/azure-ai-projects-regenerate.yml`
+because GitHub ignores workflows under package directories. All generation
+orchestration and instructions live in this package, and no setup is added to
+unrelated cloud-agent tasks.
+
+See [the skill](azure-ai-projects-cloud-regeneration/SKILL.md) for dispatch,
+artifact application, validation scope, and feed-failure handling.
+
 ### azure-ai-projects-emit-from-typespec
 
 This skill creates a new topic branch, emits SDK from TypeSpec, runs some post-processing and creates a PR.
