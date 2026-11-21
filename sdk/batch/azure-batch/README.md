@@ -537,6 +537,72 @@ on GitHub or see [Batch](https://docs.microsoft.com/python/api/overview/azure/ba
 on docs.microsoft.com.
 
 
+## Maintaining generated-code customizations
+
+The handwritten client, model, and operation patches and the synchronous/asynchronous
+polling modules must be preserved during regeneration. They provide Shared Key signing,
+Batch-specific error handling, bulk task submission, typed file properties, and public
+long-running-operation methods. The service specification declares OAuth authentication
+and keeps several Python operations internal in anticipation of these wrappers; generated
+output alone does not replace this SDK behavior.
+
+The generation inputs for service API `2026-10-01` are recorded in
+[`tsp-location.yaml`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/batch/azure-batch/tsp-location.yaml) and [`_metadata.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/batch/azure-batch/_metadata.json):
+specification commit `0b01059c3d95a84bc84ff16a4bb0fd10f66f3abd`, emitter version
+`0.63.10`, and HTTP client Python version `0.39.0`. The existing customizations were
+recovered from SDK commit `c143a045142bf8e56416b6023f25230d301f56b3` and adapted
+to the relocated serialization utilities and generated duration parameters, preserving
+integer-seconds timeouts on the handwritten operations.
+
+This restores existing SDK-specific behavior, not a new workaround for a confirmed
+emitter defect. The generation pipeline step that discarded the customizations has not
+been established; future generation should verify that these files and their public
+exports remain intact. Intentional service API removals are documented separately in
+the [release notes](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/batch/azure-batch/CHANGELOG.md).
+
+No service code regeneration was performed for this repair. The original generation
+command is not recorded in the package metadata, so its exact invocation remains
+unverified; consult the original SDK-generation pipeline before reproducing that step.
+
+Network-free regression coverage verifies public operation model/enum exports, including
+nested model fields, so regeneration cannot silently require private model imports.
+Run from the `tests` directory in an environment with the package and its test
+dependencies installed:
+
+```text
+python -m unittest test_response_handlers test_customization_regressions -v
+```
+
+## Live recording resources
+
+Instance Mix and zone-policy API recordings use a pre-existing feature-enabled account.
+Set `BATCH_FEATURE_ACCOUNT_NAME` and `BATCH_FEATURE_RESOURCE_GROUP` before running
+`test_batch_instance_mix_pool_api` or `test_batch_zone_policy_pool_api` live. These
+cases create/get/delete pools with both dedicated and low-priority node targets set
+to zero; they verify API configuration, not VM selection or zone distribution.
+Network-free coverage in `tests/test_pool_api.py` exercises sync/async serialization,
+nested response models, omitted policies, and the supported `TASK_COMPLETION` options.
+
+Windows recording pools use Windows Server 2022 Datacenter Gen2
+(`MicrosoftWindowsServer:windowsserver2022:2022-datacenter-g2`); Linux pools use Ubuntu 22.04 LTS.
+Windows compute-node tests request `standard_d2s_v3` to support the Gen2 image;
+Linux compute-node tests request `standard_d2_v2`.
+
+The node-log upload test requires `BATCH_LOG_CONTAINER_SAS_URL`: an HTTPS Blob
+container SAS URL with write permission and sufficient validity for the test run.
+Keep this value in your local environment, never in source control or shared logs.
+The test replaces the container URL in recordings; playback does not need the SAS.
+
+Set `BATCH_TEST_APP_ZIP` to a local application ZIP if testing with your own package.
+When unset, the preparer creates a valid ZIP containing a text file in memory.
+The package is used for application-package upload and activation, not as a task executable.
+
+The disk-encryption test additionally requires `BATCH_USERSUB_ACCOUNT_NAME`,
+`BATCH_RESOURCE_GROUP`, and `BATCH_DISKENCRYPTIONSET_ID` for a pre-created
+UserSubscription Batch account and a compatible Disk Encryption Set.
+Set these variables before starting pytest. Ordinary tests create temporary accounts
+and should be run sequentially when regional account quota is limited.
+
 # Provide Feedback
 
 If you encounter any bugs or have suggestions, please file an issue in the

@@ -24,7 +24,7 @@ async def wrap_list_result(result: Union[Iterable[T], AsyncIterable[T]]) -> Iter
 
 
 async def wrap_file_result(
-    result: Union[Iterator[bytes], Coroutine[Any, Any, AsyncIterator[bytes]]]
+    result: Union[Iterator[bytes], Coroutine[Any, Any, AsyncIterator[bytes]]],
 ) -> Iterator[bytes]:
     """Handle a file download operation result and convert to an Iterator if it's async"""
     if inspect.iscoroutine(result):

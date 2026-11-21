@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import datetime
-from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar
+from typing import Any, Callable, cast, Deque, Dict, List, Optional, Iterable, Iterator, TypeVar, Union
 import collections
 import logging
 import threading
@@ -52,6 +52,19 @@ _LOGGER = logging.getLogger(__name__)
 __all__: List[str] = [
     "_BatchClientOperationsMixin",
 ]  # Add all objects you want publicly available to users at this package level
+
+
+def _to_timedelta(value: Optional[Union[int, datetime.timedelta]]) -> Optional[datetime.timedelta]:
+    """Convert integer seconds to a timedelta, passing through None and timedelta values.
+
+    :param value: The timeout in seconds, or an existing timedelta.
+    :type value: int or ~datetime.timedelta or None
+    :return: The timeout as a timedelta, or None.
+    :rtype: ~datetime.timedelta or None
+    """
+    if value is None or isinstance(value, datetime.timedelta):
+        return value
+    return datetime.timedelta(seconds=value)
 
 
 class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
@@ -123,7 +136,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_internal(
                 job_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -212,7 +225,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._disable_job_internal(
                 job_id,
                 disable_options=disable_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -289,7 +302,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._enable_job_internal(
                 job_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -365,7 +378,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_schedule_internal(
                 job_schedule_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -449,7 +462,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_pool_internal(
                 pool_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -470,7 +483,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models.BatchNodeDeallocateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -486,7 +499,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
+        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          deallocate the Compute Node, in seconds. The default is 30 seconds. If the value is larger
          than 30, the default will be used instead.". Default value is None.
@@ -511,7 +524,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -528,7 +541,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeRebootOptions] = None,
+        options: Optional[_models.BatchNodeRebootOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -544,7 +557,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
+        :type options: ~azure.batch.models.BatchNodeRebootOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reboot the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -569,7 +582,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -586,7 +599,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models._models.BatchNodeReimageOptions] = None,
+        options: Optional[_models.BatchNodeReimageOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -606,7 +619,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
+        :type options: ~azure.batch.models.BatchNodeReimageOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reimage the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -631,7 +644,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -667,7 +680,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param remove_options: The options to use for removing the node. Required.
-        :type remove_options: ~azure.batch.models._models.BatchNodeRemoveOptions
+        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          remove the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -706,7 +719,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._remove_nodes_internal(
                 pool_id,
                 remove_options=remove_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -789,7 +802,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._resize_pool_internal(
                 pool_id,
                 resize_options=resize_options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -847,7 +860,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._start_node_internal(
                 pool_id,
                 node_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
@@ -922,7 +935,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._stop_pool_resize_internal(
                 pool_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -942,7 +955,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def begin_terminate_job(
         self,
         job_id: str,
-        options: Optional[_models._models.BatchJobTerminateOptions] = None,
+        options: Optional[_models.BatchJobTerminateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -966,7 +979,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
+        :type options: ~azure.batch.models.BatchJobTerminateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request
          to terminate the Job, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -1008,7 +1021,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._terminate_job_internal(
                 job_id,
                 options=options,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -1085,7 +1098,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._terminate_job_schedule_internal(
                 job_schedule_id,
-                service_timeout=service_timeout,
+                service_timeout=_to_timedelta(service_timeout),
                 ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
@@ -1134,7 +1147,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to which the Task collection is to be added. Required.
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
-        :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
+        :type task_collection: list[~azure.batch.models.BatchTaskCreateOptions]
         :keyword max_concurrency: number of threads to use in parallel when adding tasks. If specified
          and greater than 0, will start additional threads to submit requests and wait for them to finish.
          Otherwise will submit create_task_collection requests sequentially on main thread
@@ -1147,12 +1160,12 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
         :paramtype ocp_date: ~datetime.datetime
-        :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
-        :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
-        :raises ~azure.batch.custom.CreateTasksError:
+        :return: The aggregated results of submitting the tasks.
+        :rtype: ~azure.batch.models.BatchCreateTaskCollectionResult
+        :raises ~azure.batch.models.CreateTasksError:
         """
 
-        kwargs.update({"service_timeout": service_timeout, "ocp_date": ocp_date})
+        kwargs.update({"service_timeout": _to_timedelta(service_timeout), "ocp_date": ocp_date})
 
         # deque operations(append/pop) are thread-safe
         results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
@@ -1195,7 +1208,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[Union[int, datetime.timedelta]] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1238,7 +1251,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "service_timeout": service_timeout,
+                "service_timeout": _to_timedelta(service_timeout),
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -1306,7 +1319,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             pool_id,
             node_id,
             file_path,
-            service_timeout=service_timeout,
+            service_timeout=_to_timedelta(service_timeout),
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -1374,7 +1387,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             job_id,
             task_id,
             file_path,
-            service_timeout=service_timeout,
+            service_timeout=_to_timedelta(service_timeout),
             ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
@@ -1391,7 +1404,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        service_timeout: Optional[int] = None,
+        service_timeout: Optional[Union[int, datetime.timedelta]] = None,
         ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
@@ -1435,7 +1448,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "service_timeout": service_timeout,
+                "service_timeout": _to_timedelta(service_timeout),
                 "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
@@ -1464,8 +1477,6 @@ class _TaskWorkflowManager:
         added.
     :param task_collection: The collection of tasks to add.
     :type task_collection: Iterable[~azure.batch.models.BatchTaskCreateOptions]
-    :param kwargs: Additional parameters for the operation
-    :type kwargs: dict
     """
 
     def __init__(

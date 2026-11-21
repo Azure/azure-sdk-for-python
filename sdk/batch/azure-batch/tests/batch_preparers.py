@@ -1,8 +1,24 @@
 from collections import namedtuple
 import io
 import os
-import requests
 import time
+import zipfile
+from urllib.parse import parse_qs, urlsplit
+
+import requests
+
+from devtools_testutils import (
+    AzureMgmtPreparer,
+    AzureTestError,
+    ResourceGroupPreparer,
+    StorageAccountPreparer,
+    FakeResource,
+    add_general_regex_sanitizer,
+    add_general_string_sanitizer,
+    add_body_key_sanitizer,
+)
+from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
+from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
 
 import azure.core.exceptions
 import azure.mgmt.batch
@@ -11,23 +27,72 @@ import azure.batch
 import azure.batch.models
 from azure.core.credentials import AzureNamedKeyCredential
 
-from devtools_testutils import (
-    AzureMgmtPreparer,
-    AzureTestError,
-    ResourceGroupPreparer,
-    FakeResource,
-    add_general_regex_sanitizer,
-)
-from devtools_testutils.fake_credentials import BATCH_TEST_PASSWORD
-from devtools_testutils.resource_testcase import RESOURCE_GROUP_PARAM
-
 AZURE_ARM_ENDPOINT = "https://management.azure.com"
 BATCH_ACCOUNT_PARAM = "batch_account"
 STORAGE_ACCOUNT_PARAM = "storage_account"
 FakeAccount = namedtuple("FakeResource", ["name", "account_endpoint"])
+PLAYBACK_LOG_CONTAINER_URL = "https://computecontainer.blob.core.windows.net/"
+
+
+class BatchStorageAccountPreparer(StorageAccountPreparer):
+    def _create_account(self, resource_group_name, account_name):
+        return self.client.storage_accounts.begin_create(
+            resource_group_name,
+            account_name,
+            {
+                "sku": {"name": self.sku},
+                "location": self.location,
+                "kind": self.kind,
+                "enable_https_traffic_only": True,
+                "allow_blob_public_access": False,
+            },
+        )
+
+
+def load_application_package():
+    package_path = os.environ.get("BATCH_TEST_APP_ZIP")
+    if package_path:
+        with open(package_path, "rb") as package_file:
+            content = package_file.read()
+        if not zipfile.is_zipfile(io.BytesIO(content)):
+            raise AzureTestError("BATCH_TEST_APP_ZIP must reference a valid ZIP application package.")
+        return content
+    with io.BytesIO() as package_file:
+        with zipfile.ZipFile(package_file, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("readme.txt", "Azure Batch SDK test application package.")
+        return package_file.getvalue()
+
+
+def get_log_container_url(live):
+    if not live:
+        return PLAYBACK_LOG_CONTAINER_URL
+    url = os.environ.get("BATCH_LOG_CONTAINER_SAS_URL")
+    if not url:
+        raise AzureTestError("Set BATCH_LOG_CONTAINER_SAS_URL to a writable container SAS URL for live log uploads.")
+    try:
+        parsed = urlsplit(url)
+        query = parse_qs(parsed.query)
+        valid = (
+            parsed.scheme == "https"
+            and bool(parsed.hostname)
+            and bool(parsed.path.strip("/"))
+            and "sig" in query
+            and "w" in query.get("sp", [""])[0]
+            and query.get("sr") == ["c"]
+        )
+    except ValueError:
+        valid = False
+    if not valid:
+        raise AzureTestError("BATCH_LOG_CONTAINER_SAS_URL must be an HTTPS container SAS URL with write permission.")
+    add_general_string_sanitizer(target=url, value=PLAYBACK_LOG_CONTAINER_URL)
+    add_body_key_sanitizer(json_path="$..containerUrl", value=PLAYBACK_LOG_CONTAINER_URL)
+    return url
 
 
 class AccountPreparer(AzureMgmtPreparer):
+    creds_parameter = "credential"
+    parameter_name_for_location = "location"
+
     def __init__(
         self,
         name_prefix="batch",
@@ -51,8 +116,6 @@ class AccountPreparer(AzureMgmtPreparer):
         self.location = location
         self.resource_group_parameter_name = resource_group_parameter_name
         self.parameter_name = parameter_name
-        self.creds_parameter = "credential"
-        self.parameter_name_for_location = "location"
         self.resource_moniker = name_prefix
         self.batch_environment = batch_environment
         self.existing_account_name = existing_account_name
@@ -61,31 +124,32 @@ class AccountPreparer(AzureMgmtPreparer):
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs[self.resource_group_parameter_name]
-        except KeyError:
+        except KeyError as exc:
             template = (
                 "To create a batch account a resource group is required. Please add "
                 "decorator @{} in front of this storage account preparer."
             )
-            raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+            raise AzureTestError(template.format(ResourceGroupPreparer.__name__)) from exc
 
     def _get_storage_account(self, **kwargs):
         return kwargs.get(STORAGE_ACCOUNT_PARAM)
 
     def _add_app_package(self, group_name, batch_name):
+        content = load_application_package()
         self.client.application.create(group_name, batch_name, "application_id")
         package_ref = self.client.application_package.create(group_name, batch_name, "application_id", "v1.0")
         try:
-            with io.BytesIO(b"Hello World") as f:
-                headers = {"x-ms-blob-type": "BlockBlob"}
-                upload = requests.put(package_ref.storage_url, headers=headers, data=f.read())
-                if not upload:
-                    raise ValueError("Upload failed: {!r}".format(upload))
-        except Exception as err:
-            raise AzureTestError("Failed to upload test package: {}".format(err))
-        else:
-            self.client.application_package.activate(
-                group_name, batch_name, "application_id", "v1.0", {"format": "zip"}
-            )
+            headers = {"x-ms-blob-type": "BlockBlob"}
+            upload = requests.put(package_ref.storage_url, headers=headers, data=content, timeout=60)
+            if not upload:
+                raise ValueError("Upload failed with HTTP status {}".format(upload.status_code))
+        except (requests.RequestException, ValueError) as err:
+            raise AzureTestError(
+                "Failed to upload the test application package ({})".format(type(err).__name__)
+            ) from None
+        self.client.application_package.activate(
+            group_name, batch_name, "application_id", "v1.0", {"format": "zip"}
+        )
 
     def create_resource(self, name, **kwargs):
         if self.is_live:
@@ -144,7 +208,7 @@ class PoolPreparer(AzureMgmtPreparer):
         self,
         name_prefix="",
         size=0,
-        os="Linux",
+        operating_system="Linux",
         config="iaas",
         parameter_name="batch_pool",
         location=None,
@@ -163,7 +227,8 @@ class PoolPreparer(AzureMgmtPreparer):
             client_kwargs=client_kwargs,
         )
         self.size = size
-        self.os = os
+        self.os = operating_system
+        self.location = location
         self.config = config
         self.resource_group_parameter_name = resource_group_parameter_name
         self.batch_account_parameter_name = batch_account_parameter_name
@@ -173,22 +238,22 @@ class PoolPreparer(AzureMgmtPreparer):
     def _get_resource_group(self, **kwargs):
         try:
             return kwargs[self.resource_group_parameter_name]
-        except KeyError:
+        except KeyError as exc:
             template = (
                 "To create a batch account a resource group is required. Please add "
                 "decorator @{} in front of this storage account preparer."
             )
-            raise AzureTestError(template.format(ResourceGroupPreparer.__name__))
+            raise AzureTestError(template.format(ResourceGroupPreparer.__name__)) from exc
 
     def _get_batch_account(self, **kwargs):
         try:
             return kwargs[self.batch_account_parameter_name]
-        except KeyError:
+        except KeyError as exc:
             template = (
                 "To create a batch poool, a batch account is required. Please add "
                 "decorator @AccountPreparer in front of this pool preparer."
             )
-            raise AzureTestError(template)
+            raise AzureTestError(template) from exc
 
     def create_resource(self, name, **kwargs):
 
@@ -203,13 +268,13 @@ class PoolPreparer(AzureMgmtPreparer):
             user = models.UserAccount(
                 name="task-user", password=BATCH_TEST_PASSWORD, elevation_level=models.ElevationLevel.admin
             )
-            vm_size = "standard_d2_v2"
+            vm_size = "standard_d2s_v3" if self.os == "Windows" else "standard_d2_v2"
 
             if self.os == "Windows":
                 deployment = models.DeploymentConfiguration(
                     virtual_machine_configuration=models.VirtualMachineConfiguration(
                         image_reference=models.ImageReference(
-                            publisher="MicrosoftWindowsServer", offer="WindowsServer", sku="2016-Datacenter-smalldisk"
+                            publisher="MicrosoftWindowsServer", offer="windowsserver2022", sku="2022-datacenter-g2"
                         ),
                         node_agent_sku_id="batch.node.windows amd64",
                     )
@@ -299,12 +364,12 @@ class JobPreparer(AzureMgmtPreparer):
             account = kwargs[self.batch_account_parameter_name]
             credential = kwargs[self.batch_credentials_parameter_name]
             return azure.batch.BatchClient(credential=credential, endpoint="https://" + account.account_endpoint)
-        except KeyError:
+        except KeyError as exc:
             template = (
                 "To create a batch job, a batch account is required. Please add "
                 "decorator @AccountPreparer in front of this job preparer."
             )
-            raise AzureTestError(template)
+            raise AzureTestError(template) from exc
 
     def _get_batch_pool_id(self, **kwargs):
         try:
@@ -336,7 +401,7 @@ class JobPreparer(AzureMgmtPreparer):
                 message = "{}:{} ".format(e.error.code, e.error.message)
                 for v in e.error.values:
                     message += "\n{}: {}".format(v.key, v.value)
-                raise AzureTestError(message)
+                raise AzureTestError(message) from e
             add_general_regex_sanitizer(regex=name, value=self.moniker)
         else:
             self.resource = FakeResource(name=name, id=name)
@@ -346,4 +411,4 @@ class JobPreparer(AzureMgmtPreparer):
 
     def remove_resource(self, name, **kwargs):
         if self.is_live:
-            self.client.begin_delete_job(name).result()
+            getattr(self.client, "begin_delete_job")(name).result()

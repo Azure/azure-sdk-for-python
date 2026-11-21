@@ -6,10 +6,6 @@
 import logging
 import urllib.parse as url_parse
 
-from azure.core.exceptions import ResourceNotFoundError
-from azure.core.pipeline.policies import ContentDecodePolicy
-from azure.core.pipeline.transport import AioHttpTransport, RequestsTransport
-
 from devtools_testutils import trim_kwargs_from_test_function
 from devtools_testutils.helpers import is_live_and_not_recording
 from devtools_testutils.proxy_testcase import (
@@ -20,6 +16,10 @@ from devtools_testutils.proxy_testcase import (
 )
 
 from async_wrapper import wrap_result
+
+from azure.core.exceptions import ResourceNotFoundError
+from azure.core.pipeline.policies import ContentDecodePolicy
+from azure.core.pipeline import transport
 
 
 # A modified version of devtools_testutils.aio.recorded_by_proxy_async
@@ -41,7 +41,7 @@ def recorded_by_proxy_async(test_func):
 
             return tuple(copied_positional_args), kwargs
 
-        trimmed_kwargs = {k: v for k, v in kwargs.items()}
+        trimmed_kwargs = dict(kwargs)
         trim_kwargs_from_test_function(test_func, trimmed_kwargs)
 
         if is_live_and_not_recording():
@@ -49,8 +49,8 @@ def recorded_by_proxy_async(test_func):
 
         test_id = get_test_id()
         recording_id, variables = start_record_or_playback(test_id)
-        async_transport_func = AioHttpTransport.send
-        sync_transport_func = RequestsTransport.send
+        async_transport_func = transport.AioHttpTransport.send
+        sync_transport_func = transport.RequestsTransport.send
 
         async def combined_call_async(*args, **kwargs):
             adjusted_args, adjusted_kwargs = transform_args(*args, **kwargs)
@@ -88,8 +88,8 @@ def recorded_by_proxy_async(test_func):
             result.request.url = original_target
             return result
 
-        AioHttpTransport.send = combined_call_async
-        RequestsTransport.send = combined_call_sync
+        transport.AioHttpTransport.send = combined_call_async
+        transport.RequestsTransport.send = combined_call_sync
 
         # call the modified function
         # we define test_variables before invoking the test so the variable is defined in case of an exception
@@ -121,8 +121,8 @@ def recorded_by_proxy_async(test_func):
             raise error_with_message from error
 
         finally:
-            AioHttpTransport.send = async_transport_func
-            RequestsTransport.send = sync_transport_func
+            transport.AioHttpTransport.send = async_transport_func
+            transport.RequestsTransport.send = sync_transport_func
             stop_record_or_playback(test_id, recording_id, test_variables)
 
         return test_variables
@@ -134,10 +134,9 @@ def client_setup(test_func):
     def _batch_url(batch):
         if batch.account_endpoint.startswith("https://"):
             return batch.account_endpoint
-        else:
-            return "https://" + batch.account_endpoint
+        return "https://" + batch.account_endpoint
 
-    def create_client(BatchClient, batch_account, credential, **kwargs):
+    def create_client(BatchClient, batch_account, credential, **_kwargs):
         client = BatchClient(credential=credential, endpoint=_batch_url(batch_account))
         return client
 

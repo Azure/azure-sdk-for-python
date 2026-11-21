@@ -34,8 +34,7 @@ class TestAyncWrapper:
     @pytest.mark.asyncio
     async def test_isIterable(self):
         def func():
-            for i in range(3):
-                yield i
+            yield from range(3)
 
         iterable = func()
         result = await wrap_list_result(iterable)
