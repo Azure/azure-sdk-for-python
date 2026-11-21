@@ -8,9 +8,13 @@ import pytest
 
 from azure.servicebus._pyamqp import SendClient, ReceiveClient
 from azure.servicebus._pyamqp.aio import SendClientAsync, ReceiveClientAsync
+from azure.servicebus._pyamqp.aio._session_async import Session as SessionAsync
 from azure.servicebus._pyamqp.constants import LINK_MAX_MESSAGE_SIZE
+from azure.servicebus._pyamqp.performatives import AttachFrame
+from azure.servicebus._pyamqp.session import Session
 
 SIZE_CASES = [({}, LINK_MAX_MESSAGE_SIZE), ({"max_message_size": 5 * 1024 * 1024}, 5 * 1024 * 1024)]
+ATTACH_SIZE_CASES = [({}, 0), ({"max_message_size": 5 * 1024 * 1024}, 5 * 1024 * 1024)]
 
 
 @pytest.mark.parametrize("kwargs, expected", SIZE_CASES)
@@ -39,3 +43,28 @@ async def test_link_max_message_size_async(cls, factory, kwargs, expected):
 
     assert await client._client_ready_async() is False
     assert getattr(client._session, factory).call_args.kwargs["max_message_size"] == expected
+
+
+@pytest.mark.parametrize("kwargs, expected", ATTACH_SIZE_CASES)
+def test_receiver_attach_frame_max_message_size(kwargs, expected):
+    client = ReceiveClient("fake.host.com", "fake_sb", auth="my_fake_auth", **kwargs)
+    connection = Mock()
+    client._session = Session(connection, 0, network_trace=False, network_trace_params={})
+
+    assert client._client_ready() is False
+    frame = connection._process_outgoing_frame.call_args.args[1]
+    assert isinstance(frame, AttachFrame)
+    assert frame.max_message_size == expected
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("kwargs, expected", ATTACH_SIZE_CASES)
+async def test_receiver_attach_frame_max_message_size_async(kwargs, expected):
+    client = ReceiveClientAsync("fake.host.com", "fake_sb", auth="my_fake_auth", **kwargs)
+    connection = AsyncMock()
+    client._session = SessionAsync(connection, 0, network_trace=False, network_trace_params={})
+
+    assert await client._client_ready_async() is False
+    frame = connection._process_outgoing_frame.call_args.args[1]
+    assert isinstance(frame, AttachFrame)
+    assert frame.max_message_size == expected
