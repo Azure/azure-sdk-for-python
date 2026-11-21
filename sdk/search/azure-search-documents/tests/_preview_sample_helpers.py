@@ -13,10 +13,12 @@ import sys
 from types import ModuleType, SimpleNamespace
 from unittest import mock
 
+import pytest
+
 from azure.core import MatchConditions
 from azure.core.exceptions import ResourceNotFoundError
 from azure.core.credentials import AzureKeyCredential
-from devtools_testutils import remove_batch_sanitizers
+from devtools_testutils import get_credential, remove_batch_sanitizers
 from devtools_testutils.helpers import get_recording_id
 from devtools_testutils.sanitizers import add_body_key_sanitizer, add_general_regex_sanitizer
 
@@ -61,14 +63,13 @@ def load_preview_sample(test, monkeypatch, scenario, endpoint, variables, *, is_
     assert variables and variables.get("run_tag"), "A matching sample recording is required."
     monkeypatch.setenv("SAMPLE_RUN_TAG", variables["run_tag"])
     monkeypatch.setenv("AZURE_SEARCH_SERVICE_ENDPOINT", endpoint)
-    monkeypatch.setenv(
-        "AZURE_SEARCH_API_KEY", os.environ["AZURE_SEARCH_API_KEY"] if test.is_live else "fake-search-key"
-    )
-    model_live = test.is_live and scenario not in {"agentic_search", "microsoft_retriever"}
+    if not test.is_live:
+        monkeypatch.setenv("AZURE_SEARCH_API_KEY", "fake-search-key")
+    model_live = test.is_live and scenario not in {"agentic_search", "microsoft_retriever", "graph_index"}
     openai_endpoint = (
         os.environ["AZURE_OPENAI_ENDPOINT"] if model_live else "https://fake-openai.openai.azure.com/"
     ).rstrip("/")
-    provider_key = os.environ["AZURE_OPENAI_API_KEY"] if model_live else "fake-provider-key"
+    provider_key = os.environ.get("AZURE_OPENAI_API_KEY") if model_live else "fake-provider-key"
     for name, fake in {
         "AZURE_OPENAI_EMBEDDING_DEPLOYMENT": FAKE_AZURE_OPENAI_EMBEDDING_DEPLOYMENT,
         "AZURE_OPENAI_EMBEDDING_MODEL": FAKE_AZURE_OPENAI_EMBEDDING_MODEL,
@@ -93,10 +94,13 @@ def load_preview_sample(test, monkeypatch, scenario, endpoint, variables, *, is_
             openai_endpoint + "/openai/deployments/gpt-5-mini/chat/completions?api-version=2025-04-01-preview"
         ),
         "AZURE_SEARCH_COMPATIBLE_CHAT_MODEL": "gpt-5-mini",
-        "AZURE_SEARCH_COMPATIBLE_CHAT_HEADERS_JSON": json.dumps({"api-key": provider_key}),
+        "AZURE_SEARCH_COMPATIBLE_CHAT_HEADERS_JSON": json.dumps({"api-key": provider_key}) if provider_key else None,
         "AZURE_SEARCH_GRAPH_HYDRATE": str(scenario == "graph_hydration").lower(),
     }.items():
-        monkeypatch.setenv(name, value)
+        if value is None:
+            monkeypatch.delenv(name, raising=False)
+        else:
+            monkeypatch.setenv(name, value)
     for name in (
         "AZURE_SEARCH_INDEX_NAME",
         "AZURE_SEARCH_TOPIC_GRAPH_INDEX_NAME",
@@ -182,9 +186,10 @@ def record_topic_embeddings(test, monkeypatch, variables, *, is_async=False):
         monkeypatch.setitem(sys.modules, "openai", provider)
         return
 
-    import openai
-
-    original = getattr(openai, client_name)
+    openai = pytest.importorskip("openai", reason="Live Topic Graph samples require the optional OpenAI SDK.")
+    original = getattr(openai, client_name, None)
+    if original is None:
+        pytest.skip(f"Live Topic Graph samples require openai.{client_name}.")
 
     def factory(*args, **kwargs):
         client = original(*args, **kwargs)
@@ -269,7 +274,8 @@ def cleanup_retained_sample(endpoint, created):
     from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
     from sample_utils import cleanup_preview_resources
 
-    credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
+    key = os.environ.get("AZURE_SEARCH_API_KEY")
+    credential = AzureKeyCredential(key) if key else get_credential()
     with SearchIndexClient(endpoint, credential) as indexes, SearchIndexerClient(endpoint, credential) as indexers:
         generated = []
         for kind, name in created:
@@ -292,7 +298,8 @@ async def cleanup_retained_sample_async(endpoint, created):
     from azure.search.documents.indexes.aio import SearchIndexClient, SearchIndexerClient
     from sample_utils import cleanup_preview_resources_async
 
-    credential = AzureKeyCredential(os.environ["AZURE_SEARCH_API_KEY"])
+    key = os.environ.get("AZURE_SEARCH_API_KEY")
+    credential = AzureKeyCredential(key) if key else get_credential(is_async=True)
     async with SearchIndexClient(endpoint, credential) as indexes, SearchIndexerClient(
         endpoint, credential
     ) as indexers:

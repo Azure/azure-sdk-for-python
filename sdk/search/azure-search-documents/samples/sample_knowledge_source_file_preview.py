@@ -15,7 +15,7 @@ USAGE:
 
     Set the following environment variables before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
-    2) AZURE_SEARCH_API_KEY - the admin key for your search service
+    2) AZURE_SEARCH_API_KEY - optional admin key; otherwise use DefaultAzureCredential
     3) AZURE_OPENAI_ENDPOINT - endpoint for your Azure OpenAI resource
     4) AZURE_OPENAI_EMBEDDING_DEPLOYMENT - deployment name for your embedding model
     5) AZURE_OPENAI_EMBEDDING_MODEL - model name for your embedding model
@@ -35,7 +35,7 @@ from sample_utils import (
 )
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
-key = os.environ["AZURE_SEARCH_API_KEY"]
+key = os.environ.get("AZURE_SEARCH_API_KEY")
 run_tag = get_sample_run_tag()
 knowledge_source_name = f"hotels-file-ks-{run_tag}"
 knowledge_base_name = f"hotels-file-kb-{run_tag}"
@@ -46,6 +46,7 @@ def main():  # pylint: disable=too-many-locals,too-many-statements
     # [START sample_knowledge_source_file_preview]
     from azure.core import MatchConditions
     from azure.core.credentials import AzureKeyCredential
+    from azure.identity import DefaultAzureCredential
     from azure.search.documents import ApiVersion
     from azure.search.documents.indexes import SearchIndexClient
     from azure.search.documents.indexes.models import (
@@ -78,7 +79,9 @@ def main():  # pylint: disable=too-many-locals,too-many-statements
     )
     created: list[tuple[str, str]] = []
     api_version = ApiVersion.V2026_11_01_PREVIEW.value
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key), api_version=api_version)
+    identity = DefaultAzureCredential()
+    credential = AzureKeyCredential(key) if key else identity
+    index_client = SearchIndexClient(service_endpoint, credential, api_version=api_version)
     try:
         knowledge_source = FileKnowledgeSource(
             name=knowledge_source_name,
@@ -193,7 +196,7 @@ def main():  # pylint: disable=too-many-locals,too-many-statements
 
         wait_for_knowledge_source_active(index_client, knowledge_source_name)
         retrieval_client = KnowledgeBaseRetrievalClient(
-            service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name, api_version=api_version
+            service_endpoint, credential, knowledge_base_name=knowledge_base_name, api_version=api_version
         )
         try:
             request = KnowledgeBaseRetrievalRequest(
@@ -226,7 +229,10 @@ def main():  # pylint: disable=too-many-locals,too-many-statements
         try:
             cleanup_preview_resources(index_client, created)
         finally:
-            index_client.close()
+            try:
+                index_client.close()
+            finally:
+                identity.close()
 
 
 if __name__ == "__main__":

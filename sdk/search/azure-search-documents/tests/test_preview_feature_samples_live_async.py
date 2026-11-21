@@ -32,41 +32,41 @@ class TestPreviewFeatureSamplesAsync(AzureRecordedTestCase):
             return variables
 
     @live_test()
-    async def test_search_agentic_returns_hotel_evidence_and_usage(self, endpoint, variables):
+    async def test_search_agentic_returns_hotel_evidence_and_usage(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "agentic_search", variables)
 
     @live_test()
-    async def test_retrieve_microsoft_retriever_returns_hotel_evidence(self, endpoint, variables):
+    async def test_retrieve_microsoft_retriever_returns_hotel_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "microsoft_retriever", variables)
 
     @live_test()
-    async def test_begin_ingest_upload_and_replace_returns_updated_hotel_evidence(self, endpoint, variables):
+    async def test_begin_ingest_upload_and_replace_returns_updated_hotel_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "file_lro", variables)
 
     @live_test()
-    async def test_retrieve_compatible_chat_returns_hotel_evidence(self, endpoint, variables):
+    async def test_retrieve_compatible_chat_returns_hotel_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "compatible_chat", variables)
 
     @live_test()
-    async def test_retrieve_native_gpt6_returns_hotel_evidence(self, endpoint, variables):
+    async def test_retrieve_native_gpt6_returns_hotel_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "gpt6", variables)
 
     @live_test()
-    async def test_retrieve_automatic_hints_refreshes_new_country_after_ttl(self, endpoint, variables):
+    async def test_retrieve_automatic_hints_refreshes_new_country_after_ttl(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "automatic_hints", variables)
 
     @live_test()
-    async def test_search_topic_graph_modes_retrieve_populated_hotel_evidence(self, endpoint, variables):
+    async def test_search_topic_graph_modes_retrieve_populated_hotel_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "topic_graph", variables)
 
     @live_test()
-    async def test_graph_setup_returns_seeded_relationship_and_provenance(self, endpoint, variables):
+    async def test_graph_setup_returns_seeded_relationship_and_provenance(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "graph_index", variables)
 
     @live_test()
-    async def test_retrieve_extracted_graph_returns_hotel_relationship_evidence(self, endpoint, variables):
+    async def test_retrieve_extracted_graph_returns_hotel_relationship_evidence(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "graph_extraction", variables)
 
     @live_test()
-    async def test_retrieve_hydrated_graph_returns_supporting_hotel_text(self, endpoint, variables):
+    async def test_retrieve_hydrated_graph_returns_supporting_hotel_text(self, endpoint, variables=None):
         return await self._run_sample(endpoint, "graph_hydration", variables)
