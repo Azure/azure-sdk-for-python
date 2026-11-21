@@ -83,7 +83,7 @@ def pytest_addoption(parser):
 
 
 def pytest_configure(config):
-    global _LIVE_TEST_NODES
+    global _LIVE_TEST_NODES, _LIVE_TEST_PASSED
     _LIVE_TEST_PASSED.clear()
     if _LIVE_TEST_STATE_PATH is not None:
         from live_test_job import load_live_test_state
