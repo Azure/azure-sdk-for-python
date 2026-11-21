@@ -326,7 +326,7 @@ if __name__ == "__main__":
     # The checkpoint blobs require a specific naming scheme to be valid for use with the
     # V5 CheckpointStore.
     prefix = "{}/{}/{}/checkpoint/".format(
-        EVENT_HUB_FULLY_QUALIFIED_NAMESPACE.lower(),
+        EVENT_HUB_HOSTNAME.lower(),
         EVENT_HUB_NAME.lower(),
         EVENT_HUB_CONSUMER_GROUP.lower(),
     )
@@ -344,9 +344,13 @@ if __name__ == "__main__":
     except:
         pass
 
-    # Translate each legacy checkpoint, storing offset and sequence data into correct
-    # blob to align with V5 BlobCheckpointStore.
+    # Translate each legacy checkpoint, storing offset and sequence data into the correct
+    # blob to align with V5 BlobCheckpointStore.  Partitions without a checkpoint yet
+    # have no offset or sequence number to migrate.
     for checkpoint in legacy_checkpoints:
+        if checkpoint["offset"] is None or checkpoint["sequence_number"] is None:
+            continue
+
         metadata = {
             "offset": str(checkpoint["offset"]),
             "sequencenumber": str(checkpoint["sequence_number"]),
