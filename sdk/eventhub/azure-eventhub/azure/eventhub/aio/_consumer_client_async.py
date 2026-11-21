@@ -140,6 +140,8 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
     :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
      connection_verify will be ignored.
     :paramtype ssl_context: ssl.SSLContext or None
+    :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
+    :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -343,6 +345,8 @@ class EventHubConsumerClient(ClientBaseAsync):  # pylint: disable=client-accepts
         :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
          connection_verify will be ignored.
         :paramtype ssl_context: ssl.SSLContext or None
+        :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
+        :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool

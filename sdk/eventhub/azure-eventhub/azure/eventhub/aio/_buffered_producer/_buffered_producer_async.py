@@ -148,10 +148,12 @@ class BufferedProducer:
                 self._buffered_queue.task_done()
                 try:
                     _LOGGER.info("Partition %r is sending.", self.partition_id)
-                    await self._producer.send(
-                        batch,
-                        timeout=timeout_time - time.time() if timeout_time else None,
-                    )
+                    with self._producer._client._start_operation("send") as operation:
+                        await self._producer.send(
+                            batch,
+                            timeout=timeout_time - time.time() if timeout_time else None,
+                        )
+                        operation.finish(len(batch))
                     _LOGGER.info(
                         "Partition %r sending %r events succeeded.",
                         self.partition_id,

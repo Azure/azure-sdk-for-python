@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from contextlib import contextmanager
+from contextlib import contextmanager, ExitStack
 from enum import Enum
+import asyncio
 import logging
 from typing import TYPE_CHECKING, Type, Optional, Dict, List, Union, Any, Iterable, Iterator
 
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
     from ._client_base import ClientBase
     from ._common import EventData, EventDataBatch
+    from ._metrics import EventHubMetrics
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -62,6 +64,41 @@ class TraceOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 def is_tracing_enabled():
     span_impl_type = settings.tracing_implementation()
     return span_impl_type is not None
+
+
+def record_link_transition(metrics: Optional[EventHubMetrics], component: str, outcome: str) -> None:
+    attributes = {"component": component, "outcome": outcome}
+    _LOGGER.debug("AMQP %s link: %s", component, outcome, extra=attributes)
+    if metrics is not None:
+        try:
+            metrics.lifecycle.add(1, attributes)
+        except Exception:  # pylint: disable=broad-except
+            _LOGGER.debug("Unable to record Event Hubs link metrics", exc_info=True)
+
+
+@contextmanager
+def link_open(metrics: Optional[EventHubMetrics], component: str) -> Iterator[None]:
+    span_impl = settings.tracing_implementation()
+    scope = ExitStack()
+    span = scope.enter_context(span_impl(name="EventHubs.amqp.open", kind=SpanKind.CLIENT)) if span_impl else None
+    if span is not None:
+        span.add_attribute("messaging.system", "eventhubs")
+        span.add_attribute("component", component)
+    outcome = "success"
+    try:
+        yield
+    except asyncio.CancelledError:
+        outcome = "cancelled"
+        raise
+    except Exception:
+        outcome = "error"
+        raise
+    finally:
+        record_link_transition(metrics, component, outcome)
+        if span is not None:
+            span.add_attribute("outcome", outcome)
+        # The outcome conveys failure without exporting broker exception details.
+        scope.close()
 
 
 @contextmanager

@@ -2,6 +2,10 @@
 
 ## 5.15.2 (Unreleased)
 
+### Features Added
+
+- Added optional OpenTelemetry operation, event, duration, and AMQP link metrics for synchronous and asynchronous clients. AMQP link opens also emit diagnostic spans and lifecycle logs.
+
 ### Bugs Fixed
 
 - Fixed a leak of `aiohttp.ClientSession` instances when the async `AmqpOverWebsocket` transport could not connect or its WebSocket failed while closing. ([#49131](https://github.com/Azure/azure-sdk-for-python/issues/49131))

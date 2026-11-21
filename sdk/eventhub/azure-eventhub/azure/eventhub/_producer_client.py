@@ -134,6 +134,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
     :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
      connection_verify will be ignored.
     :paramtype ssl_context: ssl.SSLContext or None
+    :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
+    :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
     :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
      False and the Pure Python AMQP library will be used as the underlying transport.
     :paramtype uamqp_transport: bool
@@ -527,6 +529,8 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         :keyword ssl_context: The SSLContext object to use in the underlying Pure Python AMQP transport. If specified,
          connection_verify will be ignored.
         :paramtype ssl_context: ssl.SSLContext or None
+        :keyword meter_provider: An optional OpenTelemetry meter provider for Event Hubs client metrics.
+        :paramtype meter_provider: ~opentelemetry.metrics.MeterProvider
         :keyword uamqp_transport: Whether to use the `uamqp` library as the underlying transport. The default value is
          False and the Pure Python AMQP library will be used as the underlying transport.
         :paramtype uamqp_transport: bool
@@ -629,15 +633,17 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
         pid: str = input_pid or ALL_PARTITIONS
         send_timeout = timeout
         try:
-            try:
-                cast(EventHubProducer, self._producers[pid]).send(
-                    event_data, partition_key=partition_key, timeout=send_timeout
-                )
-            except (KeyError, AttributeError, EventHubError):
-                self._start_producer(pid, send_timeout)
-                cast(EventHubProducer, self._producers[pid]).send(
-                    event_data, partition_key=partition_key, timeout=send_timeout
-                )
+            with self._start_operation("send") as operation:
+                try:
+                    cast(EventHubProducer, self._producers[pid]).send(
+                        event_data, partition_key=partition_key, timeout=send_timeout
+                    )
+                except (KeyError, AttributeError, EventHubError):
+                    self._start_producer(pid, send_timeout)
+                    cast(EventHubProducer, self._producers[pid]).send(
+                        event_data, partition_key=partition_key, timeout=send_timeout
+                    )
+                operation.finish(1)
             if self._on_success:
                 self._on_success([event_data], input_pid)
         except Exception as exc:  # pylint: disable=broad-except
@@ -724,40 +730,44 @@ class EventHubProducerClient(ClientBase):  # pylint: disable=client-accepts-api-
                 :caption: Sends event data
 
         """
-        batch, pid, pkey = self._batch_preparer(
-            event_data_batch, partition_id=partition_id, partition_key=partition_key
-        )
+        with self._start_operation("send") as operation:
+            batch, pid, pkey = self._batch_preparer(
+                event_data_batch, partition_id=partition_id, partition_key=partition_key
+            )
 
-        if len(batch) == 0:
-            return
+            if len(batch) == 0:
+                return
 
-        partition_id = pid or ALL_PARTITIONS
-        send_timeout = timeout
+            partition_id = pid or ALL_PARTITIONS
+            send_timeout = timeout
 
-        try:
             try:
-                cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, partition_key=pkey, timeout=send_timeout
-                )
-                if self._on_success:
-                    self._on_success(batch._internal_events, pid)
-            except (KeyError, AttributeError, EventHubError) as e:
-                _LOGGER.debug(
-                    "Producer for partition ID %s not available: %s. Rebuilding new producer.",
-                    partition_id,
-                    e,
-                )
-                self._start_producer(partition_id, send_timeout)
-                cast(EventHubProducer, self._producers[partition_id]).send(
-                    batch, partition_key=pkey, timeout=send_timeout
-                )
-                if self._on_success:
-                    self._on_success(batch._internal_events, pid)
-        except Exception as exc:  # pylint: disable=broad-except
-            if self._on_error:
-                self._on_error(batch._internal_events, pid, exc)
-            else:
-                raise
+                try:
+                    cast(EventHubProducer, self._producers[partition_id]).send(
+                        batch, partition_key=pkey, timeout=send_timeout
+                    )
+                    operation.finish(len(batch))
+                    if self._on_success:
+                        self._on_success(batch._internal_events, pid)
+                except (KeyError, AttributeError, EventHubError) as e:
+                    _LOGGER.debug(
+                        "Producer for partition ID %s not available: %s. Rebuilding new producer.",
+                        partition_id,
+                        e,
+                    )
+                    self._start_producer(partition_id, send_timeout)
+                    cast(EventHubProducer, self._producers[partition_id]).send(
+                        batch, partition_key=pkey, timeout=send_timeout
+                    )
+                    operation.finish(len(batch))
+                    if self._on_success:
+                        self._on_success(batch._internal_events, pid)
+            except Exception as exc:  # pylint: disable=broad-except
+                operation.finish(error=exc)
+                if self._on_error:
+                    self._on_error(batch._internal_events, pid, exc)
+                else:
+                    raise
 
     def create_batch(  # pylint: disable=unused-argument
         self,
