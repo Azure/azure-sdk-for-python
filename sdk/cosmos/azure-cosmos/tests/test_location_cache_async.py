@@ -20,6 +20,7 @@ import pytest
 from azure.cosmos import exceptions
 from azure.cosmos import documents
 from azure.cosmos.aio._global_endpoint_manager_async import _GlobalEndpointManager as _AsyncGlobalEndpointManager
+from azure.cosmos._utils import current_time_millis
 from azure.cosmos.documents import _OperationType
 from azure.cosmos.http_constants import ResourceType
 from azure.cosmos._location_cache import LocationCache, _normalize_region_name
@@ -271,6 +272,33 @@ class TestLocationCacheAsync(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(call_counter["count"], 1)
         self.assertFalse(gem.startup)
         self.assertGreater(len(gem.location_cache.get_ordered_read_locations()), 0)
+
+    async def test_async_refresh_endpoint_list_clears_refresh_task_on_failure_async(self):
+        """A failed health-check task must not leave a sticky refresh_task
+        reference: after the exception is observed, the slot is cleared so a
+        subsequent call does not re-raise the same stale exception."""
+        mock_client = unittest.mock.Mock()
+        mock_client.connection_policy = documents.ConnectionPolicy()
+        mock_client.url_connection = default_endpoint
+
+        gem = _AsyncGlobalEndpointManager(mock_client)
+        gem.refresh_needed = False
+        gem.last_refresh_time = current_time_millis()
+        gem._aenter_used = True
+
+        async def _failing_probe():
+            raise RuntimeError("transient health-check failure")
+
+        failing_task = asyncio.ensure_future(_failing_probe())
+        await asyncio.sleep(0)
+        gem.refresh_task = failing_task
+
+        await gem.refresh_endpoint_list(None)
+        self.assertIsNone(
+            gem.refresh_task,
+            "refresh_task should be cleared after a failed health check, "
+            "not retain the already-failed task.",
+        )
 
     async def test_async_service_request_retry_policy_routes_through_unavailable_as_last_resort(self):  # pylint: disable=line-too-long
         """Drives the retry policy through the full retry-then-fallback
