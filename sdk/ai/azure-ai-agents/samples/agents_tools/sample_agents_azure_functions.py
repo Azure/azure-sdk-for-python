@@ -44,7 +44,7 @@ with project_client:
     agents_client = project_client.agents
 
     # [START create_agent_with_azure_function_tool]
-    storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPONT"]
+    storage_service_endpoint = os.environ["STORAGE_SERVICE_ENDPOINT"]
 
     azure_function_tool = AzureFunctionTool(
         name="foo",
