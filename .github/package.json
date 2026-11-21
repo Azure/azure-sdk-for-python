@@ -1,0 +1,8 @@
+{
+  "name": "azure-sdk-for-python-github-tools",
+  "private": true,
+  "description": "Pinned dependencies for GitHub Actions workflows",
+  "devDependencies": {
+    "@chronus/chronus": "1.3.1"
+  }
+}
