@@ -28,7 +28,6 @@ class TestNetworkManagementAdminRulesOperationsAsync(AzureMgmtRecordedTestCase):
             configuration_name="str",
             rule_collection_name="str",
             rule_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -71,7 +70,6 @@ class TestNetworkManagementAdminRulesOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +85,6 @@ class TestNetworkManagementAdminRulesOperationsAsync(AzureMgmtRecordedTestCase):
                 configuration_name="str",
                 rule_collection_name="str",
                 rule_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -102,7 +99,6 @@ class TestNetworkManagementAdminRulesOperationsAsync(AzureMgmtRecordedTestCase):
             network_manager_name="str",
             configuration_name="str",
             rule_collection_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -26,7 +26,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
         response = await self.client.application_gateways.get(
             resource_group_name=resource_group.name,
             application_gateway_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -14754,7 +14753,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "type": "str",
                     "zones": ["str"],
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14768,7 +14766,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             application_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -14781,7 +14778,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14793,7 +14789,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     async def test_application_gateways_list(self, resource_group):
         response = self.client.application_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -14802,9 +14797,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_all(self, resource_group):
-        response = self.client.application_gateways.list_all(
-            api_version="2026-03-01",
-        )
+        response = self.client.application_gateways.list_all()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
@@ -14816,7 +14809,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_start(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14830,7 +14822,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_stop(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14844,7 +14835,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
             await self.client.application_gateways.begin_backend_health(
                 resource_group_name=resource_group.name,
                 application_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14869,7 +14859,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
                     "protocol": "str",
                     "timeout": 0,
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -14879,9 +14868,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_ssl_options(self, resource_group):
-        response = await self.client.application_gateways.list_available_ssl_options(
-            api_version="2026-03-01",
-        )
+        response = await self.client.application_gateways.list_available_ssl_options()
 
         # please add some check logic here by yourself
         # ...
@@ -14889,9 +14876,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_ssl_predefined_policies(self, resource_group):
-        response = self.client.application_gateways.list_available_ssl_predefined_policies(
-            api_version="2026-03-01",
-        )
+        response = self.client.application_gateways.list_available_ssl_predefined_policies()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
@@ -14901,7 +14886,6 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     async def test_application_gateways_get_ssl_predefined_policy(self, resource_group):
         response = await self.client.application_gateways.get_ssl_predefined_policy(
             predefined_policy_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -14910,9 +14894,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_server_variables(self, resource_group):
-        response = await self.client.application_gateways.list_available_server_variables(
-            api_version="2026-03-01",
-        )
+        response = await self.client.application_gateways.list_available_server_variables()
 
         # please add some check logic here by yourself
         # ...
@@ -14920,9 +14902,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_request_headers(self, resource_group):
-        response = await self.client.application_gateways.list_available_request_headers(
-            api_version="2026-03-01",
-        )
+        response = await self.client.application_gateways.list_available_request_headers()
 
         # please add some check logic here by yourself
         # ...
@@ -14930,9 +14910,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_response_headers(self, resource_group):
-        response = await self.client.application_gateways.list_available_response_headers(
-            api_version="2026-03-01",
-        )
+        response = await self.client.application_gateways.list_available_response_headers()
 
         # please add some check logic here by yourself
         # ...
@@ -14940,9 +14918,7 @@ class TestNetworkManagementApplicationGatewaysOperationsAsync(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_application_gateways_list_available_waf_rule_sets(self, resource_group):
-        response = await self.client.application_gateways.list_available_waf_rule_sets(
-            api_version="2026-03-01",
-        )
+        response = await self.client.application_gateways.list_available_waf_rule_sets()
 
         # please add some check logic here by yourself
         # ...

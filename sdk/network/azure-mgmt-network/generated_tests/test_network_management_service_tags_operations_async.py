@@ -24,7 +24,6 @@ class TestNetworkManagementServiceTagsOperationsAsync(AzureMgmtRecordedTestCase)
     async def test_service_tags_list(self, resource_group):
         response = await self.client.service_tags.list(
             location="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

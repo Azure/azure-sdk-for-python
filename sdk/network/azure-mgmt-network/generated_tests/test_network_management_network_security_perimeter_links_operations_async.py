@@ -26,7 +26,6 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             link_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +63,6 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperationsAsync(AzureMgm
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +76,6 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 network_security_perimeter_name="str",
                 link_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -91,7 +88,6 @@ class TestNetworkManagementNetworkSecurityPerimeterLinksOperationsAsync(AzureMgm
         response = self.client.network_security_perimeter_links.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

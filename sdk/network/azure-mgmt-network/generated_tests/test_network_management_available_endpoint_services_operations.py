@@ -23,7 +23,6 @@ class TestNetworkManagementAvailableEndpointServicesOperations(AzureMgmtRecorded
     def test_available_endpoint_services_list(self, resource_group):
         response = self.client.available_endpoint_services.list(
             location="str",
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

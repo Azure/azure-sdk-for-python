@@ -26,7 +26,6 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperationsAsync(Azure
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +52,6 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperationsAsync(Azure
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -66,7 +64,6 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperationsAsync(Azure
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +75,6 @@ class TestNetworkManagementNetworkSecurityPerimeterProfilesOperationsAsync(Azure
         response = self.client.network_security_perimeter_profiles.list(
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -26,7 +26,6 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperations(AzureMg
             network_security_perimeter_name="str",
             profile_name="str",
             access_rule_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +63,6 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperations(AzureMg
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +76,6 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperations(AzureMg
             network_security_perimeter_name="str",
             profile_name="str",
             access_rule_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -91,7 +88,6 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperations(AzureMg
             resource_group_name=resource_group.name,
             network_security_perimeter_name="str",
             profile_name="str",
-            api_version="2026-03-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -106,7 +102,6 @@ class TestNetworkManagementNetworkSecurityPerimeterAccessRulesOperations(AzureMg
             profile_name="str",
             access_rule_name="str",
             parameters={},
-            api_version="2026-03-01",
             content_type="str",
         )
 

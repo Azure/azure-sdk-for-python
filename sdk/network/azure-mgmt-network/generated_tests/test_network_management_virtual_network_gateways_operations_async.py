@@ -25,7 +25,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
         response = await self.client.virtual_network_gateways.get(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -215,7 +214,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -230,7 +228,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 parameters={"tags": {"str": "str"}},
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -244,7 +241,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -256,7 +252,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
     async def test_virtual_network_gateways_list(self, resource_group):
         response = self.client.virtual_network_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -268,7 +263,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
         response = self.client.virtual_network_gateways.list_connections(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -281,7 +275,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_reset(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -295,7 +288,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_reset_vpn_client_shared_key(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -315,7 +307,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                     "processorArchitecture": "str",
                     "radiusServerAuthCertificate": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -335,7 +326,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                     "processorArchitecture": "str",
                     "radiusServerAuthCertificate": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -349,7 +339,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_vpn_profile_package_url(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -363,7 +352,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_bgp_peer_status(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -376,7 +364,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
         response = await self.client.virtual_network_gateways.supported_vpn_devices(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -388,7 +375,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
         response = await self.client.virtual_network_gateways.list_radius_secrets(
             resource_group_name=resource_group.name,
             virtual_network_gateway_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -401,7 +387,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_learned_routes(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -416,7 +401,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 peer="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -430,7 +414,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_effective_routes(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -444,7 +427,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_resiliency_information(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -458,7 +440,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_routes_information(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -482,7 +463,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                     "saDataSizeKilobytes": 0,
                     "saLifeTimeSeconds": 0,
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -496,7 +476,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_vpnclient_ipsec_parameters(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -510,7 +489,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_start_packet_capture(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -525,7 +503,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 parameters={"sasUrl": "str"},
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -541,7 +518,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 virtual_network_gateway_name="str",
                 type="str",
                 fetch_latest=bool,
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -557,7 +533,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 virtual_network_gateway_name="str",
                 peering_location="str",
                 failover_test_id="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -572,7 +547,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 peering_location="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -591,7 +565,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                     "peeringLocation": "str",
                     "wasSimulationSuccessful": bool,
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -605,7 +578,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_get_vpnclient_connection_health(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -622,7 +594,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 request={"vpnConnectionIds": ["str"]},
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -637,7 +608,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
                 migration_params={"migrationType": "str", "resourceUrl": "str"},
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -651,7 +621,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_invoke_execute_migration(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -665,7 +634,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_invoke_commit_migration(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -679,7 +647,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             await self.client.virtual_network_gateways.begin_invoke_abort_migration(
                 resource_group_name=resource_group.name,
                 virtual_network_gateway_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -693,7 +660,6 @@ class TestNetworkManagementVirtualNetworkGatewaysOperationsAsync(AzureMgmtRecord
             resource_group_name=resource_group.name,
             virtual_network_gateway_connection_name="str",
             parameters={"deviceFamily": "str", "firmwareVersion": "str", "vendor": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

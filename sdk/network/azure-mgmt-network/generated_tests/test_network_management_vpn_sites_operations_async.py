@@ -25,7 +25,6 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.vpn_sites.get(
             resource_group_name=resource_group.name,
             vpn_site_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +92,6 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -107,7 +105,6 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             vpn_site_name="str",
             vpn_site_parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -120,7 +117,6 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.vpn_sites.begin_delete(
                 resource_group_name=resource_group.name,
                 vpn_site_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -132,7 +128,6 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_vpn_sites_list_by_resource_group(self, resource_group):
         response = self.client.vpn_sites.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -141,9 +136,7 @@ class TestNetworkManagementVpnSitesOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_vpn_sites_list(self, resource_group):
-        response = self.client.vpn_sites.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.vpn_sites.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

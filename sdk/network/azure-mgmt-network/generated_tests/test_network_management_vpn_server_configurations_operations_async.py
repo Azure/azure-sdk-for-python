@@ -25,7 +25,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
         response = await self.client.vpn_server_configurations.get(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -180,7 +179,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -194,7 +192,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
             vpn_server_configuration_parameters={"tags": {"str": "str"}},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -207,7 +204,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
             await self.client.vpn_server_configurations.begin_delete(
                 resource_group_name=resource_group.name,
                 vpn_server_configuration_name="str",
-                api_version="2026-03-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -219,7 +215,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
     async def test_vpn_server_configurations_list_by_resource_group(self, resource_group):
         response = self.client.vpn_server_configurations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2026-03-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -228,9 +223,7 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_vpn_server_configurations_list(self, resource_group):
-        response = self.client.vpn_server_configurations.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.vpn_server_configurations.list()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
@@ -241,7 +234,6 @@ class TestNetworkManagementVpnServerConfigurationsOperationsAsync(AzureMgmtRecor
         response = await self.client.vpn_server_configurations.list_radius_secrets(
             resource_group_name=resource_group.name,
             vpn_server_configuration_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

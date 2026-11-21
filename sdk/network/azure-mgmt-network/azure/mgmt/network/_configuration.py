@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -18,7 +19,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NetworkManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class NetworkManagementClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for NetworkManagementClient.
 
     Note that all parameters used to create this instance are saved as instance
@@ -33,6 +34,10 @@ class NetworkManagementClientConfiguration:  # pylint: disable=too-many-instance
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
+    :keyword api_version: The API version to use for this operation. Known values are "2026-03-01"
+     and None. Default value is None. If not set, the operation's default API version will be used.
+     Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -43,6 +48,8 @@ class NetworkManagementClientConfiguration:  # pylint: disable=too-many-instance
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
+        api_version: str = kwargs.pop("api_version", "2026-03-01")
+
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
         if subscription_id is None:
@@ -52,6 +59,7 @@ class NetworkManagementClientConfiguration:  # pylint: disable=too-many-instance
         self.subscription_id = subscription_id
         self.base_url = base_url
         self.cloud_setting = cloud_setting
+        self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://management.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "mgmt-network/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)

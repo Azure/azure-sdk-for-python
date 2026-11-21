@@ -25,7 +25,6 @@ class TestNetworkManagementNetworkManagerDeploymentStatusOperations(AzureMgmtRec
             resource_group_name=resource_group.name,
             network_manager_name="str",
             parameters={"deploymentTypes": ["str"], "regions": ["str"], "skipToken": "str"},
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself

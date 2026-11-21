@@ -23,7 +23,6 @@ class TestNetworkManagementExpressRoutePortsLocationsOperations(AzureMgmtRecorde
     def test_express_route_ports_locations_get(self, resource_group):
         response = self.client.express_route_ports_locations.get(
             location_name="str",
-            api_version="2026-03-01",
         )
 
         # please add some check logic here by yourself
@@ -32,9 +31,7 @@ class TestNetworkManagementExpressRoutePortsLocationsOperations(AzureMgmtRecorde
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_express_route_ports_locations_list(self, resource_group):
-        response = self.client.express_route_ports_locations.list(
-            api_version="2026-03-01",
-        )
+        response = self.client.express_route_ports_locations.list()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
