@@ -7,14 +7,15 @@
 
 """
 DESCRIPTION:
-    Demonstrates File knowledge source setup and retrieval using async clients.
+    Ingest and replace File knowledge source content with async long-running
+    operations, wait for completion, and retrieve the updated hotel facts.
 
 USAGE:
     python sample_knowledge_source_file_preview_async.py
 
     Set the following environment variables before running the sample:
     1) AZURE_SEARCH_SERVICE_ENDPOINT - base URL of your Azure AI Search service
-    2) AZURE_SEARCH_API_KEY - the admin key for your search service
+    2) AZURE_SEARCH_API_KEY - optional admin key; otherwise use DefaultAzureCredential
     3) AZURE_OPENAI_ENDPOINT - endpoint for your Azure OpenAI resource
     4) AZURE_OPENAI_EMBEDDING_DEPLOYMENT - deployment name for your embedding model
     5) AZURE_OPENAI_EMBEDDING_MODEL - model name for your embedding model
@@ -24,26 +25,30 @@ USAGE:
 """
 
 import asyncio
+import json
 import os
 
 from sample_utils import (
-    cleanup_resources_async,
+    cleanup_preview_resources_async,
     get_sample_run_tag,
     print_retrieval_summary,
     wait_for_knowledge_source_active_async,
 )
 
 service_endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
-key = os.environ["AZURE_SEARCH_API_KEY"]
+key = os.environ.get("AZURE_SEARCH_API_KEY")
 run_tag = get_sample_run_tag()
 knowledge_source_name = f"hotels-file-ks-{run_tag}"
 knowledge_base_name = f"hotels-file-kb-{run_tag}"
 upload_file_name = "hotels.txt"
 
 
-async def main():  # pylint: disable=too-many-locals
+async def main():  # pylint: disable=too-many-locals,too-many-statements
     # [START sample_knowledge_source_file_preview_async]
+    from azure.core import MatchConditions
     from azure.core.credentials import AzureKeyCredential
+    from azure.identity.aio import DefaultAzureCredential
+    from azure.search.documents import ApiVersion
     from azure.search.documents.indexes.aio import SearchIndexClient
     from azure.search.documents.indexes.models import (
         AzureOpenAIVectorizerParameters,
@@ -66,8 +71,19 @@ async def main():  # pylint: disable=too-many-locals
         KnowledgeSourceIngestionParameters,
     )
 
-    index_client = SearchIndexClient(service_endpoint, AzureKeyCredential(key))
-    async with index_client:
+    embedding_model = KnowledgeSourceAzureOpenAIVectorizer(
+        azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
+            resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
+            deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
+            model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
+        )
+    )
+    created: list[tuple[str, str]] = []
+    api_version = ApiVersion.V2026_11_01_PREVIEW.value
+    identity = DefaultAzureCredential()
+    credential = AzureKeyCredential(key) if key else identity
+    index_client = SearchIndexClient(service_endpoint, credential, api_version=api_version)
+    async with identity, index_client:
         try:
             knowledge_source = FileKnowledgeSource(
                 name=knowledge_source_name,
@@ -75,18 +91,14 @@ async def main():  # pylint: disable=too-many-locals
                 file_parameters=FileKnowledgeSourceParameters(
                     ingestion_parameters=KnowledgeSourceIngestionParameters(
                         content_extraction_mode="minimal",
-                        network_access_mode="public",
-                        embedding_model=KnowledgeSourceAzureOpenAIVectorizer(
-                            azure_open_ai_parameters=AzureOpenAIVectorizerParameters(
-                                resource_url=os.environ["AZURE_OPENAI_ENDPOINT"],
-                                deployment_name=os.environ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT"],
-                                model_name=os.environ["AZURE_OPENAI_EMBEDDING_MODEL"],
-                            )
-                        ),
+                        embedding_model=embedding_model,
                     )
                 ),
             )
-            created_knowledge_source = await index_client.create_or_update_knowledge_source(knowledge_source)
+            created_knowledge_source = await index_client.create_or_update_knowledge_source(
+                knowledge_source, match_condition=MatchConditions.IfMissing
+            )
+            created.append(("knowledge_source", knowledge_source_name))
             print(f"Created: knowledge source '{created_knowledge_source.name}'")
 
             retrieved_knowledge_source = await index_client.get_knowledge_source(knowledge_source_name)
@@ -109,20 +121,26 @@ async def main():  # pylint: disable=too-many-locals
                 output_mode="extractiveData",
                 retrieval_reasoning_effort=KnowledgeRetrievalMinimalReasoningEffort(),
             )
-            await index_client.create_or_update_knowledge_base(knowledge_base)
+            await index_client.create_or_update_knowledge_base(
+                knowledge_base, match_condition=MatchConditions.IfMissing
+            )
+            created.append(("knowledge_base", knowledge_base_name))
 
             file_content = b"Historic Harbor Hotel has free parking and a rooftop restaurant."
             file_metadata = FileUploadMetadata(
                 file_name=f"hotels/{upload_file_name}",
                 metadata={"category": "hotel", "city": "Seattle"},
             )
-            uploaded_file = await index_client.upload_knowledge_source_file_multipart(
+            upload_poller = await index_client.begin_ingest_knowledge_source_file_multipart(
                 name=knowledge_source_name,
                 body=UploadKnowledgeSourceFileMultipartRequest(
                     metadata=file_metadata,
                     content=(upload_file_name, file_content, "text/plain"),
                 ),
             )
+            uploaded_file = await asyncio.wait_for(upload_poller.result(), timeout=300)
+            assert upload_poller.done()
+            assert uploaded_file.error_message is None
             print(f"Uploaded: file '{uploaded_file.file_name}'")
             print(f"Prefix: {uploaded_file.prefix}; size: {uploaded_file.file_size_bytes} bytes")
             print(f"Service-selected modes: {uploaded_file.parsing_mode}, {uploaded_file.extraction_mode}")
@@ -130,7 +148,7 @@ async def main():  # pylint: disable=too-many-locals
             print(f"Processing error: {uploaded_file.error_message}")
             assert uploaded_file.file_id is not None
 
-            annex_file = await index_client.upload_knowledge_source_file_multipart(
+            annex_poller = await index_client.begin_ingest_knowledge_source_file_multipart(
                 name=knowledge_source_name,
                 body=UploadKnowledgeSourceFileMultipartRequest(
                     metadata=FileUploadMetadata(
@@ -140,9 +158,11 @@ async def main():  # pylint: disable=too-many-locals
                     content=("annex.txt", b"Harbor Hotel Annex has meeting rooms.", "text/plain"),
                 ),
             )
+            annex_file = await asyncio.wait_for(annex_poller.result(), timeout=300)
+            assert annex_file.error_message is None
             assert annex_file.file_id is not None
 
-            updated_file = await index_client.update_knowledge_source_file(
+            replacement_poller = await index_client.begin_ingest_knowledge_source_file_replacement(
                 file_id=uploaded_file.file_id,
                 name=knowledge_source_name,
                 body=UpdateKnowledgeSourceFileRequest(
@@ -157,6 +177,10 @@ async def main():  # pylint: disable=too-many-locals
                     ),
                 ),
             )
+            updated_file = await asyncio.wait_for(replacement_poller.result(), timeout=300)
+            assert replacement_poller.done()
+            assert updated_file.file_id == uploaded_file.file_id
+            assert updated_file.error_message is None
             print(f"Updated: file '{updated_file.file_name}'")
             assert updated_file.metadata == {"category": "renovated hotel", "city": "Seattle"}
             assert updated_file.parsing_mode is not None
@@ -179,7 +203,10 @@ async def main():  # pylint: disable=too-many-locals
 
             await wait_for_knowledge_source_active_async(index_client, knowledge_source_name)
             retrieval_client = KnowledgeBaseRetrievalClient(
-                service_endpoint, AzureKeyCredential(key), knowledge_base_name=knowledge_base_name
+                service_endpoint,
+                credential,
+                knowledge_base_name=knowledge_base_name,
+                api_version=api_version,
             )
             try:
                 request = KnowledgeBaseRetrievalRequest(
@@ -195,6 +222,9 @@ async def main():  # pylint: disable=too-many-locals
                 )
                 retrieval_result = await retrieval_client.retrieve(request)
                 print_retrieval_summary(retrieval_result)
+                assert retrieval_result.references
+                assert not any(activity.error for activity in retrieval_result.activity or [])
+                assert "free Wi-Fi" in json.dumps(retrieval_result.as_dict())
                 for reference in retrieval_result.references or []:
                     if isinstance(reference, KnowledgeBaseFileReference):
                         print(f"Search-owned citation URL: {reference.citation_url}")
@@ -206,11 +236,7 @@ async def main():  # pylint: disable=too-many-locals
             print("Deleted both uploaded files")
             # [END sample_knowledge_source_file_preview_async]
         finally:
-            await cleanup_resources_async(
-                index_client,
-                knowledge_base_name=knowledge_base_name,
-                knowledge_source_name=knowledge_source_name,
-            )
+            await cleanup_preview_resources_async(index_client, created)
 
 
 if __name__ == "__main__":
