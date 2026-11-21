@@ -37,7 +37,7 @@ from ._request_settings import (
     OPTION_HEADER_NAMES,
     is_supported_operation_timeout,
     overrides_driver_owned_header,
-    reject_unknown_feed_kwargs,
+    reject_unsupported_feed_options,
     validate_operation_timeout,
 )
 from ._resource_validation import validate_resource
@@ -105,9 +105,10 @@ def prepare_create_database_options(
     for name in options:
         if name in _CREATE_DATABASE_QUERY_OPTIONS:
             raise TypeError(f"{operation_name}() does not support query or paging option '{name}'")
-    reject_unknown_feed_kwargs(
+    reject_unsupported_feed_options(
         operation_name,
-        kwargs.keys() - {"timeout", "tracing_options", "tracing_attributes", "if_match", "if_none_match"},
+        kwargs.keys() - {"timeout", "tracing_options", "tracing_attributes"},
+        options,
     )
     timeout = kwargs.get("timeout", options.pop("timeout", None))
     if not is_supported_operation_timeout(timeout):
@@ -150,6 +151,18 @@ def prepare_create_database_options(
     if "prefer" in initial or any(isinstance(name, str) and name.lower() == "prefer" for name in options):
         raise TypeError(
             f"{operation_name}() does not accept the Prefer header; full database properties are required."
+        )
+    unsupported_options = options.keys() - _CREATE_DATABASE_OPTIONS
+    if unsupported_options:
+        names = ", ".join(sorted(repr(name) for name in unsupported_options))
+        raise TypeError(
+            f"{operation_name}() does not support request option(s): {names}; remove these options."
+        )
+    unsupported_headers = initial.keys() & _CREATE_DATABASE_INAPPLICABLE_HEADERS
+    if unsupported_headers:
+        names = ", ".join(repr(name) for name in sorted(unsupported_headers))
+        raise TypeError(
+            f"{operation_name}() does not support initial_headers entry(s): {names}; remove these headers."
         )
     has_manual = options.get("offerThroughput") is not None or "x-ms-offer-throughput" in initial
     has_autoscale = (

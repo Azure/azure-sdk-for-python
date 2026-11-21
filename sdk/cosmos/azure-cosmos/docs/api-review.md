@@ -598,7 +598,7 @@ API Review Board approval. The
 closed driver retry decision
 does not constitute that approval.
 
-An unknown or misspelled keyword, such as `retry_wirte=True`, raises
+An unknown or misspelled keyword, such as `retry_writes=True`, raises
 `TypeError` before any request is sent. The message names the API and the
 unexpected keyword: the customer app must correct the argument, not wait
 for Rust functionality. This proposed contract applies to both synchronous
@@ -612,6 +612,42 @@ query/index metrics, and query-plan controls, including explicit `None`
 or `False`. This also covers their internal forms in `request_options` and
 `feed_options`, such as `maxItemCount` and `populateQueryMetrics`.
 This public contract change likewise requires API Review Board approval.
+
+**Operation timeout: one budget for database creation**
+
+Alpha Bank wants to limit how long its customer app waits to create `sales`:
+
+```python
+database = client.create_database("sales", timeout=10)
+```
+
+The asynchronous client accepts the same setting; await its creation call.
+The ten seconds are one budget for request preparation, setup needed by the
+call, service requests, and retry waits. A retry does not receive another
+ten seconds. This is different from `connection_timeout`, which limits
+establishing a connection.
+
+Previously, `create_database("sales", timeout=0.5)` accepted a half-second
+budget. The Rust-backed API rejects it with `ValueError` before sending a
+creation request. For both clients, a supplied numeric timeout must be
+finite seconds satisfying `1 <= timeout < 2**64`. Booleans, strings,
+zero, negative values, and values outside that range raise `ValueError`.
+The same range applies inside `request_options` and `feed_options`.
+
+Omitting `timeout`, or supplying `None`, uses the client's configured
+operation timeout. Without a configured default, no overall operation
+budget is imposed; connection and individual-request limits still apply.
+
+An exhausted budget raises `CosmosClientTimeoutError`. It does not undo a
+database already created by the service backend. Returning the exception
+can take longer than the budget if synchronous setup cannot be interrupted
+or asynchronous work needs time to stop. The budget does not limit the
+customer's response-hook execution.
+
+**Decision requested:** approve or revise this timeout range and scope.
+Customer code using a sub-second budget must choose a supported value;
+the SDK does not silently round it up. API Review Board approval remains
+pending.
 
 **Full database properties and custom headers**
 
@@ -993,25 +1029,6 @@ Customer supplies timeout=5
 The response hook runs outside the timed work. A timeout or cancellation
 does not undo creation already accepted by the service backend.
 
-**Timeout error details: proposed synchronous compatibility difference**
-
-**API Review Board approval pending.** The proposed synchronous Rust-backed
-contract preserves the outer timeout exception but does not guarantee its cause.
-When repeated HTTP 429 responses (requests to slow down) exhaust the operation
-timeout, the customer still receives `CosmosClientTimeoutError`. Code catching
-that exception continues to work.
-
-Unlike the synchronous legacy behavior, the Rust-backed call does not
-guarantee that `error.inner_exception` contains the preceding
-`CosmosHttpResponseError` with `status_code == 429`. It may contain a generic
-timeout instead.
-
-For example, Alpha Bank's setup job can still catch the timeout and report
-that `sales` could not be made available within the allotted time. It cannot
-rely on the inner exception to identify throttling as the reason. This is a
-proposed compatibility difference, not a change to the outer exception type.
-This proposal does not change the asynchronous contract.
-
 **The response hook describes the final successful result**
 
 As explained in `CosmosClient.create_database`, both clients use `response_hook(headers, properties)`
@@ -1041,8 +1058,7 @@ per-call connection settings and `retry_write`, query/paging-option rejection,
 unknown-keyword errors, rejection of `no_response` and `Prefer`,
 driver-owned header precedence,
 recovery from concurrent creation, the shared operation timeout,
-synchronous timeout error details, and the response-hook
-contract inherited from `create_database`.
+and the response-hook contract inherited from `create_database`.
 
 Implemented behavior and closed Rust-driver design decisions do not constitute
 API Review Board approval.

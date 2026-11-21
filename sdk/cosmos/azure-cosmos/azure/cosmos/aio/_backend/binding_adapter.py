@@ -56,6 +56,7 @@ from azure.cosmos._backend._binding_adapter_shared import (
     driver_unsupported_query_error_type,
     finalize_adapter_resources,
     is_credential_error,
+    operation_timeout_error,
     page_binding_call_errors,
     release_driver_handle_quietly,
     validate_page_request,
@@ -66,7 +67,6 @@ from azure.cosmos._backend.credentials import _is_async_credential
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from ..._operation_deadline import remaining_timeout, run_with_deadline
-from ...exceptions import CosmosClientTimeoutError
 
 from .cosmos_backend import AsyncCosmosBackend
 from ..._telemetry import get_operation, log_error_diagnostics, log_response_diagnostics, record_failed_lookup
@@ -384,7 +384,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 contribution.error(exc)
             if deadline is None or is_credential_error(exc):
                 raise
-            raise CosmosClientTimeoutError(error=exc) from exc
+            raise operation_timeout_error(exc) from exc
         except ClientAuthenticationError as exc:
             if contribution is not None:
                 contribution.error(exc)
@@ -449,7 +449,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             record_failed_lookup(operation, exc)
             if deadline is None or is_credential_error(exc):
                 raise
-            raise CosmosClientTimeoutError(error=exc) from exc
+            raise operation_timeout_error(exc) from exc
         except ClientAuthenticationError as exc:
             record_failed_lookup(operation, exc)
             raise

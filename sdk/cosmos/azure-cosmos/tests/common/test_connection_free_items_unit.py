@@ -35,7 +35,7 @@ from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._helpers._client_context import CosmosClientContext, ClientOperationDefaults, ClientLastResponseHeaders
-from azure.cosmos._helpers import _request_item
+from azure.cosmos._helpers import _item_arguments, _request_item
 from azure.cosmos._helpers._item_operations import ItemHelper, build_item_request, normalize_item_arguments
 from common.request_preparation import call_item_helper
 from azure.cosmos._helpers._paths import parse_paths
@@ -133,6 +133,83 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
     async def execute(self, prepared, *, deadline=None):
         """Await-able request, recorded like the sync one."""
         return Backend.execute(self, prepared, deadline=deadline)
+
+
+@pytest.fixture(
+    name="merge_item_kwargs",
+    params=[
+        _item_arguments.merge_create_item_explicit_kwargs,
+        _item_arguments.merge_delete_item_explicit_kwargs,
+        _item_arguments.merge_read_item_explicit_kwargs,
+        _item_arguments.merge_upsert_replace_item_explicit_kwargs,
+        _item_arguments.merge_patch_item_explicit_kwargs,
+    ],
+    ids=["create", "delete", "read", "upsert-replace", "patch"],
+)
+def explicit_item_merger(request):
+    return request.param
+
+
+def test_explicit_item_merge_preserves_none_and_overrides_with_falsey_values_rust(merge_item_kwargs):
+    hook = object()
+    kwargs = {
+        "post_trigger_include": "keep",
+        "session_token": "old",
+        "priority": "Low",
+        "availability_strategy": True,
+        "response_hook": hook,
+    }
+    explicit = {
+        "post_trigger_include": None,
+        "session_token": "",
+        "priority": None,
+        "throughput_bucket": 0,
+        "availability_strategy": False,
+        "response_hook": None,
+    }
+    expected = {
+        "post_trigger_include": "keep",
+        "session_token": "",
+        "priority": "Low",
+        "availability_strategy": False,
+        "response_hook": hook,
+        "throughput_bucket": 0,
+    }
+    if merge_item_kwargs is not _item_arguments.merge_read_item_explicit_kwargs:
+        kwargs[Constants.Kwargs.RETRY_WRITE] = 3
+        explicit["retry_write"] = 0
+        expected[Constants.Kwargs.RETRY_WRITE] = 0
+    merge_item_kwargs(kwargs, **explicit)
+    assert kwargs == expected
+
+
+def test_explicit_item_merge_normalizes_hedging_without_changing_input_rust(merge_item_kwargs):
+    strategy = {"threshold_ms": 25}
+    hook = object()
+    kwargs = {}
+    merge_item_kwargs(kwargs, availability_strategy=strategy, response_hook=hook)
+    assert kwargs["availability_strategy"].threshold_ms == 25
+    assert strategy == {"threshold_ms": 25}
+    assert kwargs["response_hook"] is hook
+
+
+def test_explicit_item_merge_preserves_assignment_order_on_hedging_error_rust(merge_item_kwargs):
+    hook = object()
+    kwargs = {"availability_strategy": False, "response_hook": hook}
+    with pytest.raises(ValueError, match="threshold_ms must be positive"):
+        merge_item_kwargs(
+            kwargs,
+            priority="High",
+            throughput_bucket=0,
+            availability_strategy={"threshold_ms": 0},
+            response_hook=object(),
+        )
+    assert kwargs == {
+        "availability_strategy": False,
+        "response_hook": hook,
+        "priority": "High",
+        "throughput_bucket": 0,
+    }
 
 
 @pytest.mark.parametrize("async_mode", [False, True])

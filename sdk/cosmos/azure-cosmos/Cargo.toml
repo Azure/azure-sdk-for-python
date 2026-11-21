@@ -52,7 +52,7 @@ azure_core     = "1.1.0"
 # Pinned to one commit of Azure/azure-sdk-for-rust so CI, which does not check
 # out that repo, builds the same driver. To build against a local driver
 # checkout instead, see docs/build_and_release.md section 7.
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "b485409baf6e24ce198b028fb6d1c5a54a0e6d4c" }
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "554dc96b730b4b802883552bc0dc9e6e017241f4" }
 
 # --- crates.io deps the binding uses ---
 # List only crates the binding declares. Cargo ignores entries no member

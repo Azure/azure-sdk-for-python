@@ -24,6 +24,21 @@ from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._constants import _Constants as Constants
 
 
+def _merge_explicit_item_kwargs(kwargs: Dict[str, Any], **values: Any) -> None:
+    """Copy non-None options in caller order, validating hedging before assignment.
+
+    :param kwargs: Working options updated in place.
+    :type kwargs: Dict[str, Any]
+    """
+    for name, value in values.items():
+        if value is None:
+            continue
+        if name == "availability_strategy":
+            value = _validate_request_hedging_strategy(value)
+        key = Constants.Kwargs.RETRY_WRITE if name == "retry_write" else name
+        kwargs[key] = value
+
+
 def merge_create_item_explicit_kwargs(
     kwargs: Dict[str, Any],
     *,
@@ -47,26 +62,19 @@ def merge_create_item_explicit_kwargs(
     ``availability_strategy`` is passed through the hedging-strategy
     validator.
     """
-    if pre_trigger_include is not None:
-        kwargs['pre_trigger_include'] = pre_trigger_include
-    if post_trigger_include is not None:
-        kwargs['post_trigger_include'] = post_trigger_include
-    if session_token is not None:
-        kwargs['session_token'] = session_token
-    if initial_headers is not None:
-        kwargs['initial_headers'] = initial_headers
-    if priority is not None:
-        kwargs['priority'] = priority
-    if no_response is not None:
-        kwargs['no_response'] = no_response
-    if retry_write is not None:
-        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-    if throughput_bucket is not None:
-        kwargs["throughput_bucket"] = throughput_bucket
-    if availability_strategy is not None:
-        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-    if response_hook is not None:
-        kwargs['response_hook'] = response_hook
+    _merge_explicit_item_kwargs(
+        kwargs,
+        pre_trigger_include=pre_trigger_include,
+        post_trigger_include=post_trigger_include,
+        session_token=session_token,
+        initial_headers=initial_headers,
+        priority=priority,
+        no_response=no_response,
+        retry_write=retry_write,
+        throughput_bucket=throughput_bucket,
+        availability_strategy=availability_strategy,
+        response_hook=response_hook,
+    )
 
 
 def get_selected_backend(client_connection: Any) -> Any:
@@ -159,28 +167,20 @@ def merge_delete_item_explicit_kwargs(
     ``no_response`` (delete has no body). ``availability_strategy`` is
     passed through the hedging-strategy validator.
     """
-    if pre_trigger_include is not None:
-        kwargs['pre_trigger_include'] = pre_trigger_include
-    if post_trigger_include is not None:
-        kwargs['post_trigger_include'] = post_trigger_include
-    if session_token is not None:
-        kwargs['session_token'] = session_token
-    if initial_headers is not None:
-        kwargs['initial_headers'] = initial_headers
-    if etag is not None:
-        kwargs['etag'] = etag
-    if match_condition is not None:
-        kwargs['match_condition'] = match_condition
-    if priority is not None:
-        kwargs['priority'] = priority
-    if retry_write is not None:
-        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-    if throughput_bucket is not None:
-        kwargs["throughput_bucket"] = throughput_bucket
-    if availability_strategy is not None:
-        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-    if response_hook is not None:
-        kwargs['response_hook'] = response_hook
+    _merge_explicit_item_kwargs(
+        kwargs,
+        pre_trigger_include=pre_trigger_include,
+        post_trigger_include=post_trigger_include,
+        session_token=session_token,
+        initial_headers=initial_headers,
+        etag=etag,
+        match_condition=match_condition,
+        priority=priority,
+        retry_write=retry_write,
+        throughput_bucket=throughput_bucket,
+        availability_strategy=availability_strategy,
+        response_hook=response_hook,
+    )
 
 
 def build_delete_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -225,26 +225,19 @@ def merge_read_item_explicit_kwargs(
     customer's call line, not this helper. ``availability_strategy``
     is passed through the hedging-strategy validator.
     """
-    if post_trigger_include is not None:
-        kwargs['post_trigger_include'] = post_trigger_include
-    if session_token is not None:
-        kwargs['session_token'] = session_token
-    if initial_headers is not None:
-        kwargs['initial_headers'] = initial_headers
-    if etag is not None:
-        kwargs['etag'] = etag
-    if match_condition is not None:
-        kwargs['match_condition'] = match_condition
-    if max_integrated_cache_staleness_in_ms is not None:
-        kwargs['max_integrated_cache_staleness_in_ms'] = max_integrated_cache_staleness_in_ms
-    if priority is not None:
-        kwargs['priority'] = priority
-    if throughput_bucket is not None:
-        kwargs["throughput_bucket"] = throughput_bucket
-    if availability_strategy is not None:
-        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-    if response_hook is not None:
-        kwargs['response_hook'] = response_hook
+    _merge_explicit_item_kwargs(
+        kwargs,
+        post_trigger_include=post_trigger_include,
+        session_token=session_token,
+        initial_headers=initial_headers,
+        etag=etag,
+        match_condition=match_condition,
+        max_integrated_cache_staleness_in_ms=max_integrated_cache_staleness_in_ms,
+        priority=priority,
+        throughput_bucket=throughput_bucket,
+        availability_strategy=availability_strategy,
+        response_hook=response_hook,
+    )
 
 
 def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
@@ -282,30 +275,21 @@ def merge_upsert_replace_item_explicit_kwargs(
     ``enable_automatic_id_generation``. ``availability_strategy`` is validated
     before it is stored.
     """
-    if pre_trigger_include is not None:
-        kwargs['pre_trigger_include'] = pre_trigger_include
-    if post_trigger_include is not None:
-        kwargs['post_trigger_include'] = post_trigger_include
-    if session_token is not None:
-        kwargs['session_token'] = session_token
-    if initial_headers is not None:
-        kwargs['initial_headers'] = initial_headers
-    if etag is not None:
-        kwargs['etag'] = etag
-    if match_condition is not None:
-        kwargs['match_condition'] = match_condition
-    if priority is not None:
-        kwargs['priority'] = priority
-    if no_response is not None:
-        kwargs['no_response'] = no_response
-    if retry_write is not None:
-        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-    if throughput_bucket is not None:
-        kwargs["throughput_bucket"] = throughput_bucket
-    if availability_strategy is not None:
-        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-    if response_hook is not None:
-        kwargs['response_hook'] = response_hook
+    _merge_explicit_item_kwargs(
+        kwargs,
+        pre_trigger_include=pre_trigger_include,
+        post_trigger_include=post_trigger_include,
+        session_token=session_token,
+        initial_headers=initial_headers,
+        etag=etag,
+        match_condition=match_condition,
+        priority=priority,
+        no_response=no_response,
+        retry_write=retry_write,
+        throughput_bucket=throughput_bucket,
+        availability_strategy=availability_strategy,
+        response_hook=response_hook,
+    )
 
 
 def build_upsert_item_request_options(
@@ -369,28 +353,20 @@ def merge_patch_item_explicit_kwargs(
     separately, not merged here. ``availability_strategy`` is validated
     before it is stored.
     """
-    if pre_trigger_include is not None:
-        kwargs['pre_trigger_include'] = pre_trigger_include
-    if post_trigger_include is not None:
-        kwargs['post_trigger_include'] = post_trigger_include
-    if session_token is not None:
-        kwargs['session_token'] = session_token
-    if etag is not None:
-        kwargs['etag'] = etag
-    if match_condition is not None:
-        kwargs['match_condition'] = match_condition
-    if priority is not None:
-        kwargs['priority'] = priority
-    if no_response is not None:
-        kwargs['no_response'] = no_response
-    if retry_write is not None:
-        kwargs[Constants.Kwargs.RETRY_WRITE] = retry_write
-    if throughput_bucket is not None:
-        kwargs["throughput_bucket"] = throughput_bucket
-    if availability_strategy is not None:
-        kwargs["availability_strategy"] = _validate_request_hedging_strategy(availability_strategy)
-    if response_hook is not None:
-        kwargs['response_hook'] = response_hook
+    _merge_explicit_item_kwargs(
+        kwargs,
+        pre_trigger_include=pre_trigger_include,
+        post_trigger_include=post_trigger_include,
+        session_token=session_token,
+        etag=etag,
+        match_condition=match_condition,
+        priority=priority,
+        no_response=no_response,
+        retry_write=retry_write,
+        throughput_bucket=throughput_bucket,
+        availability_strategy=availability_strategy,
+        response_hook=response_hook,
+    )
 
 
 def build_patch_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:

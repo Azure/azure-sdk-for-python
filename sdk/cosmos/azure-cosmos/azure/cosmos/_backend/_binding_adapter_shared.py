@@ -29,9 +29,9 @@ from azure.core.utils import CaseInsensitiveDict
 
 from ._binding_conversions import acquire_driver_handle_args, response_exception_from_binding
 from .contracts import PreparedClientConfig, PreparedPageRequest, PreparedRequest
-from .errors import PagePreflightError, UnsupportedQueryError, UNSUPPORTED_AGGREGATE_QUERY_MESSAGE
+from .errors import BindingProtocolError, PagePreflightError, UnsupportedQueryError, UNSUPPORTED_AGGREGATE_QUERY_MESSAGE
 from .operations import get_page_binding_function_name
-from ..exceptions import CosmosClientTimeoutError
+from ..exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from .._constants import _Constants
 from ..runtime import CosmosRuntime
 
@@ -127,6 +127,32 @@ def is_credential_error(error: BaseException) -> bool:
     return attributes.get("_cosmos_credential_error") is True
 
 
+def operation_timeout_error(error: TimeoutError) -> CosmosClientTimeoutError:
+    """Preserve a diagnostic-backed throttle status without inventing response details."""
+    attributes = BaseException.__dict__["__dict__"].__get__(error)
+    if "_cosmos_timeout_throttle_status" not in attributes:
+        return CosmosClientTimeoutError(error=error)
+    status = attributes["_cosmos_timeout_throttle_status"]
+    if (
+        not isinstance(status, tuple)
+        or len(status) != 2
+        or type(status[0]) is not int
+        or status[0] != 429
+        or type(status[1]) is not int
+        or not 0 <= status[1] < 2**32
+    ):
+        raise BindingProtocolError("The binding returned invalid timeout throttle status")
+    cause = CosmosHttpResponseError(
+        status_code=status[0],
+        sub_status=status[1] or None,
+        message=(
+            "The last completed request before the operation timeout returned HTTP 429; "
+            "response details are unavailable."
+        ),
+    )
+    return CosmosClientTimeoutError(error=cause)
+
+
 @contextmanager
 def page_binding_call_errors(
     deadline: Optional[float],
@@ -164,7 +190,7 @@ def page_binding_call_errors(
     except TimeoutError as exc:
         if deadline is None or is_credential_error(exc):
             raise
-        raise CosmosClientTimeoutError(error=exc) from exc
+        raise operation_timeout_error(exc) from exc
     except unsupported_query_error as exc:
         message = str(exc)
         prefix, marker, feature = message.partition("unsupported query feature: ")

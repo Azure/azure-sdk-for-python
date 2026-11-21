@@ -54,6 +54,7 @@ import asyncio
 import inspect
 import json
 import warnings
+from copy import deepcopy
 from functools import partial
 from types import SimpleNamespace
 from unittest.mock import ANY, AsyncMock, MagicMock
@@ -1826,33 +1827,43 @@ def test_create_database_hedging_true_retains_client_threshold_rust(create_datab
     assert (hedging.enabled, hedging.threshold_ms) == (True, 20)
 
 
-@pytest.mark.parametrize("options", [
-    {"request_options": {"sessionToken": "unused"}},
-    {"request_options": {"operationStartTime": 123}},
-    *[{"initial_headers": {name: "unused"}} for name in (
+@pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
+@pytest.mark.parametrize("options,name", [
+    ({"request_options": {"sessionToken": "unused"}}, "sessionToken"),
+    ({"request_options": {"sessionToken": None}}, "sessionToken"),
+    ({"feed_options": {"sessionToken": ""}}, "sessionToken"),
+    ({"request_options": {"session_token": None}}, "session_token"),
+    ({"feed_options": {"session_token": False}}, "session_token"),
+    ({"request_options": {"operationStartTime": 123}}, "operationStartTime"),
+    ({"request_options": {"unknown_setting": None}}, "unknown_setting"),
+    ({"request_options": {"accessCondition": {"type": "IfMatch", "condition": "*"}}}, "accessCondition"),
+    ({"if_match": None}, "if_match"),
+    ({"if_none_match": ""}, "if_none_match"),
+    *[({"initial_headers": {name: "unused"}}, name) for name in (
         "if-match", "x-ms-session-token", "x-ms-documentdb-populatequerymetrics",
     )],
+    ({"feed_options": {"initialHeaders": {"IF-NONE-MATCH": None}}}, "if-none-match"),
 ])
-def test_create_rejects_unhonored_options_without_dispatch_rust(create_database_client, options):
-    """Anything the Rust engine cannot honor exactly stops the call before a request
-    is built.
-
-    The inputs cover unsupported nested request options and conditional,
-    session, and query-metrics headers.
-
-    Each raises ``NotImplementedError`` naming ``create_database``. Nothing is
-    prepared and the legacy create is never called, so a customer is told their
-    option is unsupported instead of watching it be dropped.
-    """
+def test_create_rejects_unhonored_options_without_dispatch_rust(
+    create_database_client, method_name, options, name,
+):
+    """Unsupported inputs raise a named TypeError without dispatch, hooks, or legacy replay."""
     client = create_database_client
-    with pytest.raises(NotImplementedError, match="create_database"):
-        _call_create_database(client, "db1", **options)
+    original = deepcopy(options)
+    hook = MagicMock()
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(TypeError, match=rf"{method_name}\(\).*'{name}'"):
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert options == original
     assert not client._adapter.prepared_requests
+    client.client_connection.ReadDatabase.assert_not_called()
     client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
-@pytest.mark.parametrize("options", [{"misspelled_setting": None}, {"retry_wirte": True}])
+@pytest.mark.parametrize("options", [{"misspelled_setting": None}, {"retry_writes": True}])
 def test_create_rejects_unknown_keywords_before_dispatch_rust(
     create_database_client, method_name, options,  # pylint: disable=redefined-outer-name
 ):
@@ -1868,16 +1879,31 @@ def test_create_rejects_unknown_keywords_before_dispatch_rust(
 
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
-@pytest.mark.parametrize("options", [{"retry_total": 0}, {"proxy": "http://localhost:8888"}])
+@pytest.mark.parametrize("mapping_name", [None, "request_options", "feed_options"])
+@pytest.mark.parametrize("name,value,guidance", [
+    ("retry_total", 0, "retry_throttle_total"),
+    ("retry_backoff_max", 0, "throttle_retry_wait_threshold_seconds"),
+    ("proxy", None, "ConnectionPoolOptions.proxy_allowed"),
+    ("stream", False, "Remove these options"),
+    ("retry_connect", 0, "Remove these options"),
+])
 def test_create_keeps_recognized_transport_options_unsupported_rust(
-    create_database_client, method_name, options,  # pylint: disable=redefined-outer-name
+    create_database_client, method_name, mapping_name, name, value, guidance,
 ):
     client = create_database_client
-    with pytest.raises(NotImplementedError, match=method_name):
-        _call_create_database(client, "db1", method_name=method_name, **options)
+    setting = {name: value}
+    options = {mapping_name: setting} if mapping_name is not None else setting
+    hook = MagicMock()
+    before = rust_compatibility_fallback_count()
+    with pytest.raises(TypeError, match=rf"{method_name}\(\).*'{name}'") as raised:
+        _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
+    assert guidance in str(raised.value)
+    assert setting == {name: value}
     assert client._adapter.prepared_requests == []
     client.client_connection.ReadDatabase.assert_not_called()
     client.client_connection.CreateDatabase.assert_not_called()
+    hook.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
@@ -3128,7 +3154,7 @@ def test_if_not_exists_rejects_invalid_id_before_read_rust(
     ({"if_match": None}, TypeError),
     ({"no_response": True}, TypeError),
     ({"request_options": {"maxItemCount": 1}}, TypeError),
-    ({"initial_headers": {"x-ms-session-token": "unused"}}, NotImplementedError),
+    ({"initial_headers": {"x-ms-session-token": "unused"}}, TypeError),
     ({"initial_headers": {"Prefer": "return=minimal"}}, TypeError),
 ])
 def test_if_not_exists_preflight_validates_the_complete_workflow_rust(create_database_client, options, error):

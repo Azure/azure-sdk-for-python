@@ -24,7 +24,8 @@ from azure.cosmos.aio._backend import binding_adapter as async_binding
 from azure.cosmos._backend.operations import OP_TO_BINDING_FUNCTION_NAME, get_page_binding_function_name
 from azure.cosmos._backend.contracts import PreparedPageRequest, PreparedRequest
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
-from azure.cosmos.exceptions import CosmosClientTimeoutError
+from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
+from azure.cosmos._backend.errors import BindingProtocolError
 
 
 def _complete(value):
@@ -591,6 +592,49 @@ def test_native_default_expiration_uses_public_exception_rust(case):
     with pytest.raises(CosmosClientTimeoutError) as caught:
         _complete(case.client.create_database("sales"))
     assert caught.value.__cause__ is failure
+
+
+@pytest.mark.parametrize("operation", ["get_or_create", "metadata", "page"])
+@pytest.mark.parametrize("status", [None, (429, 0), (429, 3200)])
+def test_driver_timeout_preserves_only_available_throttle_cause_rust(case, operation, status):
+    failure = TimeoutError("driver operation deadline")
+    if status is not None:
+        failure.__dict__["_cosmos_timeout_throttle_status"] = status
+    hook = MagicMock()
+    create = case.install("create_database", result=_response())
+    if operation == "get_or_create":
+        case.install("read_database", side_effect=failure)
+        call = lambda: _complete(case.client.create_database_if_not_exists("sales", response_hook=hook))
+    elif operation == "metadata":
+        case.install("get_container_metadata", side_effect=failure)
+        call = lambda: _complete(case.client._adapter.get_container_metadata("dbs/sales/colls/orders"))
+    else:
+        name = get_page_binding_function_name("list_databases", uses_cursor=False)
+        case.install(name, side_effect=failure)
+        pages = case.client.list_databases(response_hook=hook).by_page()
+        call = lambda: _complete(pages.__anext__()) if case.asynchronous else next(pages)
+    with pytest.raises(CosmosClientTimeoutError) as caught:
+        call()
+    assert caught.value.__cause__ is failure
+    if status is None:
+        assert caught.value.inner_exception is failure
+    else:
+        inner = caught.value.inner_exception
+        assert isinstance(inner, CosmosHttpResponseError)
+        assert inner.status_code == 429
+        assert inner.sub_status == (status[1] or None)
+        assert inner.headers == {}
+        assert "response details are unavailable" in inner.message
+    hook.assert_not_called()
+    create.assert_not_called()
+
+
+@pytest.mark.parametrize("status", [(503, 0), (429, -1), (429, True), (429,), None])
+def test_driver_timeout_rejects_malformed_throttle_metadata_rust(status):
+    failure = TimeoutError("driver operation deadline")
+    failure.__dict__["_cosmos_timeout_throttle_status"] = status
+    with pytest.raises(BindingProtocolError, match="invalid timeout throttle status"):
+        shared.operation_timeout_error(failure)
 
 
 def test_response_hook_timeout_is_not_reclassified_rust(case):

@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Public Rust-backed create/read proof with locally inspected spans.
+"""Public Rust-backed create/read scenarios with locally inspected spans.
 
 Set COSMOSDBCONNECTIONSTRING to an authorized test account (alpha-bank-account
 in the guide). Database alpha-bank-db and container alpha-bank-container must
 already exist with partition key /customerId. The sample
 creates and removes one unique synthetic order; it never changes the resources.
 Use --conflict for a setup create followed by a measured duplicate create.
-Without that flag, the measured call is the original Bite 15 successful create.
+With no scenario flag, the measured call is a successful create.
 Use --read for a successful read of the setup order, or --read-missing for
 a read of a different, absent ID returning 404. Only the measured client
 request is inspected or optionally exported.
@@ -174,16 +174,16 @@ def configure_recording(
     return provider, local_exporter, azure_exporter
 
 
-async def run_proof(exporter, *, conflict=False, read=False, not_found=False, azure_exporter=None):
+async def run_telemetry_scenario(exporter, *, conflict=False, read=False, not_found=False, azure_exporter=None):
     if (not_found and not read) or (conflict and read):
-        raise ValueError("A read proof cannot measure a create conflict; not_found requires read")
-    proof_name = "telemetry-bite26" if read else ("telemetry-bite22" if conflict else "telemetry-bite15")
+        raise ValueError("A read scenario cannot measure a create conflict; not_found requires read")
+    scenario_name = "telemetry-read" if read else ("telemetry-create-conflict" if conflict else "telemetry-create")
     operation_name = "ContainerProxy.read_item" if read else "ContainerProxy.create_item"
     expected_driver_status = 404 if not_found else (200 if read else (409 if conflict else 201))
     failed = conflict or not_found
     order = {
-        "id": proof_name + "-" + uuid.uuid4().hex,
-        "customerId": proof_name,
+        "id": scenario_name + "-" + uuid.uuid4().hex,
+        "customerId": scenario_name,
         "total": 125.5,
     }
     async with CosmosClient.from_connection_string(os.environ["COSMOSDBCONNECTIONSTRING"]) as client:
@@ -335,7 +335,7 @@ def main():
     settings.tracing_implementation = None
     try:
         evidence = asyncio.run(
-            run_proof(
+            run_telemetry_scenario(
                 exporter,
                 conflict=args.conflict,
                 read=args.read or args.read_missing,

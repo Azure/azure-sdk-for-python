@@ -70,11 +70,11 @@ def test_utf8_decoding_reaches_retained_feed_request_rust(operation):
     from types import SimpleNamespace
     from common.test_connection_free_items_unit import Backend
     from azure.cosmos._helpers._feed_paging import FeedConfig
-    from azure.cosmos._helpers._item_context import ItemClientContext
+    from azure.cosmos._helpers._client_context import CosmosClientContext
 
     backend = Backend()
     proxy = SimpleNamespace(
-        _item_context=ItemClientContext(backend), container_link="dbs/db/colls/c"
+        _client_context=CosmosClientContext(backend), container_link="dbs/db/colls/c"
     )
     config = FeedConfig(
         proxy, {"utf8_decoding_mode": "Lossy"}, operation=operation, backend=backend

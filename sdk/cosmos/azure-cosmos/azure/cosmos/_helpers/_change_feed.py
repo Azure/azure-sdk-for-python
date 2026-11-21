@@ -66,7 +66,7 @@ _SETTINGS = (
 )
 
 
-def _decode(token: str, *, urlsafe: bool = False) -> dict[str, Any]:
+def _decode_continuation_payload(token: str, *, urlsafe: bool = False) -> dict[str, Any]:
     try:
         value = json.loads(
             base64.b64decode(
@@ -82,7 +82,7 @@ def _decode(token: str, *, urlsafe: bool = False) -> dict[str, Any]:
     return value
 
 
-def _settings(values: dict[str, Any], *, rust: bool) -> dict[str, Any]:
+def _normalize_change_feed_settings(values: dict[str, Any], *, rust: bool) -> dict[str, Any]:
     mode = values.get("mode")
     if mode is None:
         mode = "LatestVersion"
@@ -182,11 +182,11 @@ class ChangeFeedConfig(FeedConfig):
 
     def resolve(self, token: Optional[str]) -> tuple[dict[str, Any], Optional[str]]:
         if token is None:
-            return _settings(self.requested, rust=self.rust), None
+            return _normalize_change_feed_settings(self.requested, rust=self.rust), None
         if not isinstance(token, str) or not token:
             raise ValueError("change-feed continuation must be a nonempty string or None.")
         if token.startswith(_PREFIX):
-            saved = _decode(token[len(_PREFIX) :], urlsafe=True)
+            saved = _decode_continuation_payload(token[len(_PREFIX) :], urlsafe=True)
             expected = "rust" if self.rust else "core-python"
             if (
                 saved.get("backend") != expected
@@ -229,7 +229,7 @@ class ChangeFeedConfig(FeedConfig):
                 values["feed_range"] = {"Range": {"min": interval[0], "max": interval[1]}}
             if "range_id" in settings:
                 values["partition_key_range_id"] = settings["range_id"]
-            normalized = _settings(values, rust=self.rust)
+            normalized = _normalize_change_feed_settings(values, rust=self.rust)
             if (
                 self.rust and not inner.startswith(("c1.", "c2."))
                 or not self.rust and inner.startswith(("c1.", "c2.", _PREFIX))
@@ -245,16 +245,16 @@ class ChangeFeedConfig(FeedConfig):
         if token.strip('"').isdigit():
             values = dict(self.requested)
             values.update(mode="LatestVersion", start_time="Now", is_start_from_beginning=False)
-            settings = _settings(values, rust=self.rust)
+            settings = _normalize_change_feed_settings(values, rust=self.rust)
             return settings, token
-        saved = _decode(token)
+        saved = _decode_continuation_payload(token)
         if saved.get("v") != "v2" or saved.get("mode") not in (
             "LatestVersion",
             "AllVersionsAndDeletes",
         ):
             raise ValueError("Invalid legacy change-feed continuation.")
         # V2 restores and validates its own mode, start, scope and container RID.
-        return _settings({"mode": saved["mode"]}, rust=False), token
+        return _normalize_change_feed_settings({"mode": saved["mode"]}, rust=False), token
 
 
 class ChangeFeedPageState(FeedPageState):

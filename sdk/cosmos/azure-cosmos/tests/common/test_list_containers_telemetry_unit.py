@@ -398,7 +398,7 @@ def test_container_listing_telemetry_keeps_other_paths(listing, recording, monke
         assert len(h.calls) == len(h.seen) == 1 and h.seen[0].outcome == "success"
         assert not h.calls[0][1] and not fetch_spans(recording) and not attempt_spans(recording)
     elif case == "unsupported":
-        with pytest.raises(NotImplementedError):
+        with pytest.raises(TypeError, match="unknown_setting"):
             h.next(h.create_iterable(unknown_setting=True).by_page())
         assert not h.calls and h.seen[0].outcome == "error"
         assert len(fetch_spans(recording)) == 1

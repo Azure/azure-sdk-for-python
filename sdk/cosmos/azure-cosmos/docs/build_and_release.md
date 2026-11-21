@@ -121,7 +121,7 @@ repository. The workspace `Cargo.toml` uses a **Git dependency** pinned to
 one commit of `azure-sdk-for-rust`:
 
 ```toml
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "b485409baf6e24ce198b028fb6d1c5a54a0e6d4c" }
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "554dc96b730b4b802883552bc0dc9e6e017241f4" }
 ```
 
 Cargo downloads that exact commit from GitHub. `Cargo.lock` records the same
@@ -131,7 +131,9 @@ commit, so every machine, including CI, compiles the same driver source. No
 A pinned commit is not a published release. It is a temporary choice for
 the preview, because the driver changes we need are not yet on crates.io.
 
-To move to a newer driver commit, change `rev`, run
+To move to a newer driver commit, first disable any local driver patch in
+`.cargo\config.toml`; otherwise Cargo resolves the local checkout instead
+of the pinned revision. Change `rev`, run
 `cargo update -p azure_data_cosmos_driver`, and review the `Cargo.lock`
 changes. `tests\common\test_build_configuration_unit.py` checks the pinned
 commit in both files, so update it at the same time.
@@ -1465,17 +1467,16 @@ The package builder rejects wheels without exactly one nonempty compiled
 `_rust` extension, but file presence does not prove that the extension loads
 or that SDK operations work.
 
-Follow [Validate a wheel locally and in the pipeline](wheel_validation.md):
+Validate wheels locally and in the pipeline:
 
-- [Local validation](wheel_validation.md#validate-one-wheel-locally) follows
+- Local validation follows
   one exact wheel through archive inspection, clean installation, import
   checks, offline suites, and sync/async emulator operations.
-- [Pipeline validation](wheel_validation.md#validate-the-release-wheels-in-the-pipeline)
+- Pipeline validation
   identifies the final release files, checks each platform/Python combination,
   and separates implemented checks from missing release evidence.
 
-Each local step supplies commands and expected results. A successful local
-check does not establish that the other platform wheels work.
+A successful local check does not establish that the other platform wheels work.
 
 ## 9. What goes inside the wheel
 
@@ -3160,9 +3161,7 @@ wrapper or Rust driver change is needed.
 Our Cosmos team must then install each final Linux wheel and compare
 `_rust.__python_commit__` with the source commit recorded by the build that
 produced it. An absent value, `unknown`, or a different commit must fail the
-release check. Follow the
-[installed-wheel commit check](wheel_validation.md#1-match-the-outputs-to-the-intended-release);
-keep this item open until the final-wheel results exist.
+release check. Keep this item open until the final-wheel results exist.
 
 **Open follow-up with Central: limit access to the Rust installer token.**
 A token is a credential that lets a program access resources without entering
@@ -3190,7 +3189,6 @@ where the credential is supplied, not its actual permissions or evidence of
 theft. No customer app, Python wrapper, or Rust driver change is needed.
 
 **Release-wheel validation remains open until the required results exist.**
-Follow the [local and pipeline validation walkthrough](wheel_validation.md).
 The release record must identify the final wheel files and show results for
 each required platform/Python combination. Source-level tests and pipeline
 configuration alone do not establish that those wheels install and run.

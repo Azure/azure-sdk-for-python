@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Compiled-binding proofs for returned connection errors, deadlines and cancellation.
+"""Compiled-binding scenarios for returned connection errors, deadlines and cancellation.
 
 Use an authorized loopback Cosmos emulator in COSMOSDBCONNECTIONSTRING with
 sales.orders already present, partitioned by /customerId. No resources are
@@ -285,7 +285,7 @@ async def run_case(exporter, connection, failure, mode):
         }
 
 
-async def run_proofs(exporter, failure):
+async def run_telemetry_scenarios(exporter, failure):
     connection = emulator_connection_string()
     cases = []
     failures = ("connection", "timeout", "binding-timeout", "cancellation") if failure == "all" else (failure,)
@@ -319,7 +319,7 @@ def main():
     trace.set_tracer_provider(provider)
     settings.tracing_implementation = None
     try:
-        evidence = asyncio.run(run_proofs(exporter, args.failure))
+        evidence = asyncio.run(run_telemetry_scenarios(exporter, args.failure))
         if not provider.force_flush():
             raise RuntimeError("Local exporter did not flush")
         print(json.dumps(evidence, indent=2))

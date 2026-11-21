@@ -285,10 +285,10 @@ def test_change_feed_does_not_turn_the_empty_sentinel_into_null_rust():
     are different requests; the first covers the whole container. Turning one into the
     other would quietly return a different set of changes.
     """
-    from azure.cosmos._helpers._change_feed import _settings
+    from azure.cosmos._helpers._change_feed import _normalize_change_feed_settings
 
     assert (
-        _settings({"partition_key": _Empty()}, rust=True)["partition_key"].kind
+        _normalize_change_feed_settings({"partition_key": _Empty()}, rust=True)["partition_key"].kind
         == "empty_sentinel"
     )
 

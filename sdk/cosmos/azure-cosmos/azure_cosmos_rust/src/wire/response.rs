@@ -217,7 +217,7 @@ pub(super) fn tuple_from_result<'py>(
                 backend_response_tuple_from_cosmos_error(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
-            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+            } else if let Some(timeout) = client_operation_timeout_error(py, &cosmos_error)? {
                 Err(timeout)
             } else if matches!(u16::from(cosmos_error.status().status_code()), 400 | 412) {
                 let (status, sub_status) = status_code_and_sub_status(cosmos_error.status());
@@ -286,7 +286,7 @@ pub(super) fn tuple_from_feed_result<'py>(
                 backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
-            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+            } else if let Some(timeout) = client_operation_timeout_error(py, &cosmos_error)? {
                 Err(timeout)
             } else if let Some(validation) = feed_validation_error(&cosmos_error) {
                 Err(validation)
@@ -475,7 +475,7 @@ fn tuple_from_named_feed_result_for<'py>(
                 backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
             {
                 Ok(raw_http_error)
-            } else if let Some(timeout) = client_operation_timeout_error(&cosmos_error) {
+            } else if let Some(timeout) = client_operation_timeout_error(py, &cosmos_error)? {
                 Err(timeout)
             } else if let Some(validation) = feed_validation_error(&cosmos_error) {
                 Err(validation)
@@ -945,17 +945,35 @@ fn feed_validation_error(error: &CosmosError) -> Option<PyErr> {
     }
 }
 
-fn client_operation_timeout_error(error: &CosmosError) -> Option<PyErr> {
+fn client_operation_timeout_error(py: Python<'_>, error: &CosmosError) -> PyResult<Option<PyErr>> {
     if error.response().is_none()
         && error.status().status_code() == azure_core::http::StatusCode::RequestTimeout
         && error.status().sub_status() == Some(status_codes::substatus::CLIENT_OPERATION_TIMEOUT)
     {
         record_diagnostics_for_responseless(error);
-        Some(PyTimeoutError::new_err(format!(
-            "Request timed out: {error}"
-        )))
+        let timeout = PyTimeoutError::new_err(format!("Request timed out: {error}"));
+        if let Some(diagnostics) = error.diagnostics() {
+            // Compacted history cannot establish the last response before cancellation.
+            if diagnostics.request_count() == diagnostics.retained_request_count() {
+                let requests = diagnostics.requests();
+                let last = requests
+                    .iter()
+                    .filter(|request| *request.status() != error.status())
+                    .filter_map(|request| request.completed_at().map(|end| (end, request)))
+                    .max_by_key(|(end, _)| *end);
+                if let Some((_, request)) = last {
+                    if request.status().is_throttled() {
+                        timeout.value_bound(py).setattr(
+                            "_cosmos_timeout_throttle_status",
+                            status_code_and_sub_status(*request.status()),
+                        )?;
+                    }
+                }
+            }
+        }
+        Ok(Some(timeout))
     } else {
-        None
+        Ok(None)
     }
 }
 
@@ -2557,6 +2575,98 @@ def record_unraisable(args):
     }
 
     #[tokio::test]
+    async fn client_operation_timeout_retains_observed_throttle_status() {
+        use azure_data_cosmos_driver::{
+            fault_injection::{
+                CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionResultBuilder,
+                FaultInjectionRuleBuilder,
+            },
+            in_memory_emulator::{InMemoryEmulatorHttpClient, VirtualAccountConfig, VirtualRegion},
+            models::{AccountReference, CosmosOperation, DatabaseReference},
+            options::{DriverOptions, EndToEndOperationLatencyPolicy, OperationOptionsBuilder},
+        };
+        use std::{sync::Arc, time::Duration};
+
+        crate::test_support::prepare_python();
+        let url = azure_core::http::Url::parse("https://timeout-cause.emulator.local").unwrap();
+        let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+            VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())]).unwrap(),
+        ));
+        emulator.store().create_database("sales");
+        let rule = Arc::new(
+            FaultInjectionRuleBuilder::new(
+                "read-throttle",
+                FaultInjectionResultBuilder::new()
+                    .with_custom_response(
+                        CustomResponseBuilder::new(azure_core::http::StatusCode::TooManyRequests)
+                            .with_sub_status(3200)
+                            .build(),
+                    )
+                    .with_delay(Duration::from_millis(100))
+                    .with_probability(1.0)
+                    .build(),
+            )
+            .with_condition(
+                FaultInjectionConditionBuilder::new()
+                    .with_container_id("sales")
+                    .build(),
+            )
+            .build(),
+        );
+        let runtime = emulator
+            .runtime_builder_with_fault_rules(vec![rule.clone()])
+            .build()
+            .await
+            .unwrap();
+        let driver = runtime
+            .create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .build(),
+            )
+            .await
+            .unwrap();
+        let error = driver
+            .execute_singleton_operation(
+                CosmosOperation::read_database(DatabaseReference::from_name(
+                    driver.account().clone(),
+                    "sales".to_string(),
+                )),
+                OperationOptionsBuilder::new()
+                    .with_end_to_end_latency_policy(EndToEndOperationLatencyPolicy::new(
+                        Duration::from_secs(1),
+                    ))
+                    .build(),
+            )
+            .await
+            .unwrap_err();
+        assert!(rule.hit_count() >= 2);
+        assert_eq!(
+            error.status().sub_status(),
+            Some(status_codes::substatus::CLIENT_OPERATION_TIMEOUT)
+        );
+        Python::with_gil(|py| {
+            for result in [
+                tuple_from_result(py, Err(error.clone())),
+                tuple_from_feed_result(py, Err(error.clone())),
+                tuple_from_database_feed_result(py, Err(error.clone())),
+                tuple_from_result_with_attempts(py, Err(error.clone())),
+            ] {
+                let timeout = result.unwrap_err();
+                assert!(timeout.is_instance_of::<PyTimeoutError>(py));
+                assert_eq!(
+                    timeout
+                        .value_bound(py)
+                        .getattr("_cosmos_timeout_throttle_status")
+                        .unwrap()
+                        .extract::<(u16, u32)>()
+                        .unwrap(),
+                    (429, 3200),
+                );
+            }
+        });
+    }
+
+    #[tokio::test]
     async fn client_operation_timeout_preserves_attached_response_and_diagnostics() {
         crate::test_support::prepare_python();
         let (_, _, conflict) = create_read_and_conflict().await;
@@ -2597,6 +2707,10 @@ def record_unraisable(args):
                 .build();
             let before = BINDING_ATTEMPT_COUNT.load(Ordering::Relaxed);
             let ordinary = tuple_from_result(py, Err(error.clone())).unwrap_err();
+            assert!(!ordinary
+                .value_bound(py)
+                .hasattr("_cosmos_timeout_throttle_status")
+                .unwrap());
             let traced = tuple_from_result_with_attempts(py, Err(error.clone())).unwrap_err();
             let fault = super::tuple_from_result_with_fault_diagnostics(py, Err(error.clone()))
                 .unwrap_err();

@@ -32,7 +32,6 @@ from typing import TYPE_CHECKING, Any, Iterator, Optional
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
 from .._operation_deadline import remaining_timeout
-from ..exceptions import CosmosClientTimeoutError
 from .._telemetry import get_operation, log_error_diagnostics, log_response_diagnostics, record_failed_lookup
 from ..runtime import CosmosRuntime
 
@@ -55,6 +54,7 @@ from ._binding_adapter_shared import (
     driver_unsupported_query_error_type,
     finalize_adapter_resources,
     is_credential_error,
+    operation_timeout_error,
     page_binding_call_errors,
     release_driver_handle_quietly,
     validate_page_request,
@@ -318,7 +318,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 contribution.error(exc)
             if deadline is None or is_credential_error(exc):
                 raise
-            raise CosmosClientTimeoutError(error=exc) from exc
+            raise operation_timeout_error(exc) from exc
         except ClientAuthenticationError as exc:
             if contribution is not None:
                 contribution.error(exc)
@@ -406,7 +406,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             record_failed_lookup(operation, exc)
             if deadline is None or is_credential_error(exc):
                 raise
-            raise CosmosClientTimeoutError(error=exc) from exc
+            raise operation_timeout_error(exc) from exc
         except ClientAuthenticationError as exc:
             record_failed_lookup(operation, exc)
             raise
