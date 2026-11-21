@@ -237,9 +237,13 @@ input_image, input_file) is also valid.
 | `metadata` | map | No | |
 | `temperature` | number | No | |
 | `top_p` | number | No | |
-| `tools` | Tool[] | No | |
-| `tool_choice` | ToolChoiceParam | No | |
+| `tools` | Tool[] | **Yes** | Defaults to `[]` when omitted |
+| `tool_choice` | `"none" \| "auto" \| "required" \| object` | **Yes** | Defaults to `"auto"` when omitted |
 | `parallel_tool_calls` | boolean | No | |
+
+`ResponseEventStream` supplies these defaults for fresh and recovery-seeded
+response snapshots. Explicit request and recovery-seeded values are preserved;
+tools bound inside an agent are not inferred.
 
 ---
 
