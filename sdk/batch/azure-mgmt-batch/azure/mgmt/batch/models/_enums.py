@@ -49,8 +49,6 @@ class AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication mode using shared keys."""
     AAD = "AAD"
     """The authentication mode using Microsoft Entra ID."""
-    TASK_AUTHENTICATION_TOKEN = "TaskAuthenticationToken"
-    """The authentication mode using task authentication tokens."""
 
 
 class AutoStorageAuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -352,19 +350,19 @@ class NetworkSecurityPerimeterConfigurationProvisioningState(  # pylint: disable
     """
 
     SUCCEEDED = "Succeeded"
-    """SUCCEEDED."""
+    """The configuration was provisioned successfully."""
     CREATING = "Creating"
-    """CREATING."""
+    """The configuration is being created."""
     UPDATING = "Updating"
-    """UPDATING."""
+    """The configuration is being updated."""
     DELETING = "Deleting"
-    """DELETING."""
+    """The configuration is being deleted."""
     ACCEPTED = "Accepted"
-    """ACCEPTED."""
+    """The configuration request was accepted and provisioning has not started yet."""
     FAILED = "Failed"
-    """FAILED."""
+    """The configuration failed to provision."""
     CANCELED = "Canceled"
-    """CANCELED."""
+    """The configuration provisioning was canceled."""
 
 
 class NodePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -477,6 +475,23 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Secures connectivity to Azure Batch through NSP configuration."""
 
 
+class RequestedComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines what to do with a node and its running task(s) after it has been selected for
+    deallocation. This is the set of values that can be requested; ``RetainedData`` is no longer
+    accepted as of the 2026-10-01 API version.
+    """
+
+    REQUEUE = "Requeue"
+    """Terminate running task processes and requeue the tasks. The tasks will run again when a node is
+    available. Remove nodes as soon as tasks have been terminated."""
+    TERMINATE = "Terminate"
+    """Terminate running tasks. The tasks will be completed with failureInfo indicating that they were
+    terminated, and will not run again. Remove nodes as soon as tasks have been terminated."""
+    TASK_COMPLETION = "TaskCompletion"
+    """Allow currently running tasks to complete. Schedule no new tasks while waiting. Remove nodes
+    when all tasks have completed."""
+
+
 class ResourceAssociationAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access mode of the resource association."""
 
@@ -544,9 +559,9 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Severity of the issue."""
 
     WARNING = "Warning"
-    """WARNING."""
+    """The issue is a warning and does not prevent the configuration from being applied."""
     ERROR = "Error"
-    """ERROR."""
+    """The issue is an error and prevents the configuration from being applied."""
 
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -578,3 +593,25 @@ class UpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The existing instances in a scale set are brought down in batches to be upgraded. Once the
     upgraded batch is complete, the instances will begin taking traffic again and the next batch
     will begin. This continues until all instances brought up-to-date."""
+
+
+class VirtualMachineSkuAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the allocation strategy that the Fungible Compute Platform uses to select VM sizes
+    from the vmSkuProfile when allocating nodes for an Instance Mix pool.
+    """
+
+    LOWEST_PRICE = "LowestPrice"
+    """Select the cheapest available SKU in the region. This is the default strategy."""
+    CAPACITY_OPTIMIZED = "CapacityOptimized"
+    """Select the SKU with the most regional physical capacity."""
+    PRIORITIZED = "Prioritized"
+    """Follow the customer-defined ranking via the 0-based rank, falling back to the next rank when a
+    preferred SKU is unavailable."""
+
+
+class ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The zone placement policy for compute nodes in a pool."""
+
+    AUTO = "Auto"
+    """The Virtual Machine Scale Set automatically selects availability zones and balances instances
+    across them."""

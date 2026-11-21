@@ -117,6 +117,7 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                                     "typeHandlerVersion": "str",
                                 }
                             ],
+                            "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
                             "licenseType": "str",
                             "nodePlacementConfiguration": {"policy": "str"},
                             "osDisk": {
@@ -132,6 +133,13 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                                     "storageAccountType": "str",
                                 },
                                 "writeAcceleratorEnabled": bool,
+                            },
+                            "placement": {"zonePlacementPolicy": "str"},
+                            "resiliencyPolicy": {
+                                "zoneAllocationPolicy": {
+                                    "maxInstancePercentPerZonePolicy": {"value": 0, "enabled": bool},
+                                    "maxZoneCount": 0,
+                                }
                             },
                             "securityProfile": {
                                 "encryptionAtHost": bool,
@@ -292,6 +300,7 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                         }
                     ],
                     "vmSize": "str",
+                    "vmSkuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -323,7 +332,6 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
-                "name": "str",
                 "properties": {
                     "allocationState": "str",
                     "allocationStateTransitionTime": "2020-02-20 00:00:00",
@@ -396,6 +404,7 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                                     "typeHandlerVersion": "str",
                                 }
                             ],
+                            "hardwareProfile": {"vmSizeProperties": {"vCPUsAvailable": 0, "vCPUsPerCore": 0}},
                             "licenseType": "str",
                             "nodePlacementConfiguration": {"policy": "str"},
                             "osDisk": {
@@ -411,6 +420,13 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                                     "storageAccountType": "str",
                                 },
                                 "writeAcceleratorEnabled": bool,
+                            },
+                            "placement": {"zonePlacementPolicy": "str"},
+                            "resiliencyPolicy": {
+                                "zoneAllocationPolicy": {
+                                    "maxInstancePercentPerZonePolicy": {"enabled": bool, "value": 0},
+                                    "maxZoneCount": 0,
+                                }
                             },
                             "securityProfile": {
                                 "encryptionAtHost": bool,
@@ -571,6 +587,7 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                         }
                     ],
                     "vmSize": "str",
+                    "vmSkuProfile": {"allocationStrategy": "str", "vmSizes": [{"name": "str", "rank": 0}]},
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -581,7 +598,6 @@ class TestBatchManagementPoolOperations(AzureMgmtRecordedTestCase):
                     "lastModifiedByType": "str",
                 },
                 "tags": {"str": "str"},
-                "type": "str",
             },
         )
 
