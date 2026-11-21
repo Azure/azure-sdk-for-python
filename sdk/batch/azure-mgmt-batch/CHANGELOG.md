@@ -31,6 +31,8 @@
 
 ### Breaking Changes
 
+  - Python 3.9 is no longer supported. Python 3.10 or later is required.
+  - `FixedScaleSettings.node_deallocation_option` now uses `RequestedComputeNodeDeallocationOption`, which no longer includes `RetainedData`. The service no longer accepts `RetainedData` in resize requests with API version `2026-10-01`.
   - Deleted or renamed enum value `AuthenticationMode.TASK_AUTHENTICATION_TOKEN`
   - Method `PoolOperations.update` changed type of its parameter `parameters` from `Pool` to `PoolPatch`
 
