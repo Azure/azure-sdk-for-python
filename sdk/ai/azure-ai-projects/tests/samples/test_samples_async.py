@@ -4,8 +4,9 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import pytest, os
+from unittest.mock import AsyncMock, patch
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils import AzureRecordedTestCase, RecordedTransport
+from devtools_testutils import AzureRecordedTestCase, RecordedTransport, is_live
 from test_base import servicePreparer, modelsServicePreparer
 from sample_executor import (
     AdditionalSampleTestDetail,
@@ -14,11 +15,61 @@ from sample_executor import (
     additionalSampleTests,
     get_async_sample_paths,
 )
-from test_samples_helpers import get_sample_env_vars
+from test_samples_helpers import (
+    get_sample_env_vars,
+    audioEvaluationsPreparer,
+    voiceSimulationPreparer,
+    sanitize_audio_evaluation_dataset,
+    assert_audio_evaluation_results,
+)
+
+
+@pytest.fixture
+def patch_async_evaluation_sleep(monkeypatch):
+    if not is_live():
+        monkeypatch.setattr("asyncio.sleep", AsyncMock())
 
 
 class TestSamplesAsync(AzureRecordedTestCase):
     """Async test cases for samples."""
+
+    @pytest.mark.usefixtures("patch_async_evaluation_sleep")
+    @audioEvaluationsPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "evaluations",
+            samples_to_test=["sample_audio_conversation_evaluation_async.py"],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_audio_conversation_sample_async(self, sample_path: str, **kwargs) -> None:
+        sanitize_audio_evaluation_dataset()
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
+        with patch("pprint.pprint") as output:
+            await executor.execute_async()
+        assert_audio_evaluation_results(
+            output.call_args_list,
+            ("task_completion", "groundedness", "customer_satisfaction", "coherence"),
+        )
+
+    @pytest.mark.usefixtures("patch_async_evaluation_sleep")
+    @voiceSimulationPreparer()
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "evaluations",
+            samples_to_test=["sample_voice_agent_simulation_evaluation_async.py"],
+        ),
+    )
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX2)
+    async def test_voice_agent_simulation_sample_async(self, sample_path: str, **kwargs) -> None:
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=get_sample_env_vars(kwargs), **kwargs)
+        with patch("pprint.pprint") as output:
+            await executor.execute_async()
+        assert_audio_evaluation_results(output.call_args_list, ("task_completion",))
 
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_async.py::TestSamplesAsync::test_agent_tools_samples_async[sample_agent_memory_search_async]
@@ -28,7 +79,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         get_async_sample_paths(
             "agents/tools",
             samples_to_skip=[
-                "sample_agent_computer_use_async.py",
                 "sample_agent_memory_search_async.py",  # Skipped until re-enabled and recorded on Foundry endpoint that supports the new versioning schema
             ],
         ),
@@ -68,7 +118,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
         get_async_sample_paths(
             "agents",
             samples_to_skip=[
-                "sample_external_agents_crud_async.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent_async.py",
             ],
         ),
@@ -214,14 +263,6 @@ class TestSamplesAsync(AzureRecordedTestCase):
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                     "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
-                },
-            ),
-            AdditionalSampleTestDetail(
-                test_id="sample_create_hosted_agent_from_code_async",
-                sample_filename="sample_create_hosted_agent_from_code_async.py",
-                env_vars={
-                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
                 },
             ),
             AdditionalSampleTestDetail(

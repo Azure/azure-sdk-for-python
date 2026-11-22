@@ -63,7 +63,6 @@ class TestHorizonDBMgmtPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "lastModifiedBy": "str",
                         "lastModifiedByType": "str",
                     },
-                    "tags": {"str": "str"},
                     "type": "str",
                 },
             )
@@ -87,8 +86,7 @@ class TestHorizonDBMgmtPoolsOperationsAsync(AzureMgmtRecordedTestCase):
                         "nodeCount": 0,
                         "parameterGroup": {"applyMethod": "str", "parameterGroupResourceId": "str"},
                         "scheduledMaintenance": {"maintenanceManagementType": "str"},
-                    },
-                    "tags": {"str": "str"},
+                    }
                 },
             )
         ).result()  # call '.result()' to poll until service return final result

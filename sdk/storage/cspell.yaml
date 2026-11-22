@@ -11,8 +11,13 @@ words:
   - adlskey
   - adlsstorage
   - amet
+  - aqid
   - asyncdownload
   - basync
+  - baug
+  - cdef
+  - cdefgh
+  - cdylib
   - consectetur
   - cpkdirectory
   - cpkfile
@@ -22,7 +27,9 @@ words:
   - dlake
   - dname
   - download
+  - efgh
   - elit
+  - esac
   - Fdir
   - Fdirectory
   - FFFE
@@ -38,6 +45,10 @@ words:
   - ISLNK
   - ISREG
   - mday
+  - mpsc
+  - msrustup
+  - msvc
+  - msys
   - myaccount
   - myclientfilesystem
   - myclientfilesystemasync
@@ -67,6 +78,9 @@ words:
   - oauthdir
   - prevsharesnapshot
   - pyacrstoragestorname
+  - pyclass
+  - pyfunction
+  - pymodule
   - pyrmtstoragestorname
   - racwdlmeop
   - rcwd
@@ -78,6 +92,7 @@ words:
   - saoid
   - sduoid
   - skdutid
+  - ssize
   - struct
   - tbody
   - testdir2async

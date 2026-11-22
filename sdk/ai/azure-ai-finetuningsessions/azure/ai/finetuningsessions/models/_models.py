@@ -258,7 +258,8 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar ejectable: Opt the session into idle hibernation. Default False.
     :vartype ejectable: bool
     :ivar training_type: Training tier. Set this property explicitly to select the tier. If
-     omitted, tier selection is left to the service. Known values are: "GlobalStandard",
+     omitted, the service selects the default for the account and available capacity. Explicit tier
+     choices are preserved. No client-side default is applied. Known values are: "GlobalStandard",
      "DatazoneStandard", and "DeveloperTier".
     :vartype training_type: str or ~azure.ai.finetuningsessions.models.TrainingType
     """
@@ -276,8 +277,9 @@ class CreateSessionRequest(_Model):  # pylint: disable=docstring-keyword-should-
     training_type: Optional[Union[str, "_models.TrainingType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Training tier. Set this property explicitly to select the tier. If omitted, tier selection is
-     left to the service. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
+    """Training tier. Set this property explicitly to select the tier. If omitted, the service selects
+     the default for the account and available capacity. Explicit tier choices are preserved. No
+     client-side default is applied. Known values are: \"GlobalStandard\", \"DatazoneStandard\", and
      \"DeveloperTier\"."""
 
     @overload
@@ -476,7 +478,7 @@ class ForwardBackwardOperationResult(
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies this result as a forward-backward operation. Required. A
      forward-backward pass operation.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.FORWARD_BACKWARD
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar total_loss: Aggregate training loss, or None when the operation does not report one.
     :vartype total_loss: float
     :ivar loss_fn_output_type: Shape/type identifier for each loss output.
@@ -531,7 +533,8 @@ class ForwardBackwardOperationResult(
 
 
 class ForwardBackwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward_backward.
+    """Existing token-native raw-operation constructor. Maintained convenience methods serialize
+    reference-based text-only requests without changing it.
 
     :ivar forward_backward_input: Batch inputs for the combined forward and backward pass.
      Required.
@@ -598,7 +601,7 @@ class ForwardInput(ForwardBackwardInput):  # pylint: disable=docstring-keyword-s
 
 
 class ForwardRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/forward.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/forward.
 
     :ivar forward_input: Batch inputs for the forward-only pass. Required.
     :vartype forward_input: ~azure.ai.finetuningsessions.models.ForwardInput
@@ -692,7 +695,7 @@ class ImageChunk(InputChunk, discriminator="image"):  # pylint: disable=docstrin
     service validates the image content and token count at runtime.
 
     :ivar type: Identifies this chunk as an encoded image. Required. An encoded image.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.IMAGE
+    :vartype type: str or ~azure.ai.finetuningsessions.models.InputChunkType
     :ivar data: Image bytes, serialized as a base64-encoded string. Required.
     :vartype data: bytes
     :ivar format: Encoding of the supplied image bytes. Required.
@@ -918,7 +921,7 @@ class ModelInputChunk(InputChunk, discriminator="text"):  # pylint: disable=docs
 
     :ivar type: Identifies this chunk as text tokens. Required. A contiguous sequence of text
      tokens.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.TEXT
+    :vartype type: str or ~azure.ai.finetuningsessions.models.InputChunkType
     :ivar tokens: Sequence of token IDs in this chunk. Required.
     :vartype tokens: list[int]
     """
@@ -959,7 +962,7 @@ class OptimStepOperationResult(
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies this result as an optimizer-step operation. Required. An optimizer step
      operation.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.OPTIM_STEP
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar grad_norm: Gradient norm reported for the optimizer step. Required.
     :vartype grad_norm: float
     :ivar step_count: Number of optimizer steps completed. Required.
@@ -999,7 +1002,7 @@ class OptimStepOperationResult(
 
 
 class OptimStepRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/optim_step.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/optim_step.
 
     :ivar adam_params: Adam optimizer parameters used to apply accumulated gradients. Required.
     :vartype adam_params: ~azure.ai.finetuningsessions.models.AdamParams
@@ -1075,7 +1078,7 @@ class SampleOperationResult(
      are: "running", "succeeded", and "failed".
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies this result as a sampling operation. Required. A sampling operation.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.SAMPLE
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar sequences: Sequences generated by the sampling operation. Required.
     :vartype sequences: list[~azure.ai.finetuningsessions.models.SampledSequence]
     :ivar prompt_logprobs: Per-token log-probabilities for the prompt, if requested. None at
@@ -1086,8 +1089,8 @@ class SampleOperationResult(
      where logprobs were not computed (e.g. the first prompt token). Note: over the wire each pair
      is a JSON array, so at runtime pairs are lists, not tuples.
     :vartype topk_prompt_logprobs: list[list[list[any]]]
-    :ivar metrics: Per-call prefill and sample token COGS, including counts, duration, throughput,
-     and prefill cache-hit tokens when supported.
+    :ivar metrics: Service-reported sampling metrics, including token counts, duration, throughput,
+     and prompt cache-hit counts when supported.
     :vartype metrics: dict[str, any]
     """
 
@@ -1106,8 +1109,8 @@ class SampleOperationResult(
      computed (e.g. the first prompt token). Note: over the wire each pair is a JSON array, so at
      runtime pairs are lists, not tuples."""
     metrics: Optional[dict[str, Any]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Per-call prefill and sample token COGS, including counts, duration, throughput, and prefill
-     cache-hit tokens when supported."""
+    """Service-reported sampling metrics, including token counts, duration, throughput, and prompt
+     cache-hit counts when supported."""
 
     @overload
     def __init__(
@@ -1269,7 +1272,7 @@ class SaveCheckpointOperationResult(
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies this result as a training checkpoint save operation. Required. A
      training checkpoint save operation.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_CHECKPOINT
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar checkpoint_id: Identifier of the saved training checkpoint. Required.
     :vartype checkpoint_id: str
     :ivar path: Path associated with the saved training checkpoint. Required.
@@ -1305,7 +1308,7 @@ class SaveCheckpointOperationResult(
 
 
 class SaveCheckpointRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for POST /fine_tuning/sessions/{sessionId}/checkpoint.
+    """Request body for POST /fine_tuning_sessions/{sessionId}/checkpoint.
 
     :ivar path: User-supplied checkpoint identifier. Alphanumeric plus underscores and hyphens; max
      255 characters. Required.
@@ -1356,7 +1359,7 @@ class SaveSamplerWeightsOperationResult(
     :vartype status: str or ~azure.ai.finetuningsessions.models.OperationStatus
     :ivar type: Identifies this result as a sampler-weights save operation. Required. A
      sampler-weights save operation.
-    :vartype type: str or ~azure.ai.finetuningsessions.models.SAVE_SAMPLER_WEIGHTS
+    :vartype type: str or ~azure.ai.finetuningsessions.models.OperationType
     :ivar checkpoint_id: Identifier of the saved sampler checkpoint. Required.
     :vartype checkpoint_id: str
     :ivar sampling_session_id: Identifier of the sampling session associated with the saved

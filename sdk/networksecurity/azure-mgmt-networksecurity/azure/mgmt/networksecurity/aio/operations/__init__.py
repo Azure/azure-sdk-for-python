@@ -19,6 +19,12 @@ from ._operations import NeuroShieldSummariesOperations  # type: ignore
 from ._operations import NeuroShieldProtectedResourcesOperations  # type: ignore
 from ._operations import NeuroShieldFindingsOperations  # type: ignore
 from ._operations import NeuroShieldMitigationsOperations  # type: ignore
+from ._operations import AgentFabricsOperations  # type: ignore
+from ._operations import MembersOperations  # type: ignore
+from ._operations import PolicyGroupsOperations  # type: ignore
+from ._operations import OperationStatusOperations  # type: ignore
+from ._operations import ClusterAssociationsOperations  # type: ignore
+from ._operations import EgressTrustBundlesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -32,6 +38,12 @@ __all__ = [
     "NeuroShieldProtectedResourcesOperations",
     "NeuroShieldFindingsOperations",
     "NeuroShieldMitigationsOperations",
+    "AgentFabricsOperations",
+    "MembersOperations",
+    "PolicyGroupsOperations",
+    "OperationStatusOperations",
+    "ClusterAssociationsOperations",
+    "EgressTrustBundlesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

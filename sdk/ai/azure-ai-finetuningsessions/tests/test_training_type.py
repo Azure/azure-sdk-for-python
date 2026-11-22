@@ -94,6 +94,33 @@ class AsyncRecordingClient(RecordingClient):
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("explicit_none", [False, True])
+async def test_create_without_metadata_leaves_pool_dependent_default_to_service(
+    monkeypatch, asynchronous, explicit_none
+):
+    monkeypatch.setattr(FineTuningSession, "_start_heartbeat", lambda *_: None)
+    monkeypatch.setattr(aio, "_start_heartbeat", lambda *_: None)
+    client = AsyncRecordingClient() if asynchronous else RecordingClient()
+    options = {
+        "base_model": "test-model",
+        "lora_config": LoRAConfig(rank=16),
+        "timeout_sec": 1,
+    }
+    if explicit_none:
+        options["training_type"] = None
+    if asynchronous:
+        assert await aio.create_session(client, **options) == "session_abc12345"
+    else:
+        assert FineTuningSession.create(client, **options).session_id == "session_abc12345"
+    assert len(client.requests) == 2
+    assert json.loads(client.requests[0].content) == {
+        "type": "training",
+        "base_model": "test-model",
+        "lora_config": {"rank": 16},
+    }
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
 @pytest.mark.parametrize("value", [*VALUES, None])
 async def test_create_and_resume_preserve_exact_tier_payload(monkeypatch, asynchronous, value):
     monkeypatch.setattr(FineTuningSession, "_start_heartbeat", lambda *_: None)

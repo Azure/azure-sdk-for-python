@@ -6,13 +6,20 @@ from unittest.mock import AsyncMock
 import pytest
 
 from azure.ai.evaluation._evaluators._common._prompty_strategy import PromptyEvaluationStrategy
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._legacy.prompty._utils import _LLMOutput, _LLMOutputDiagnosticMetadata
 
 
 def strategy(**kwargs):
     options = {"result_key": "metric", "threshold": 3, "timeout": 17}
     options.update(kwargs)
     return PromptyEvaluationStrategy(AsyncMock(), **options)
+
+
+def _sdk_output(answer, *, finish_reason="stop", output_tokens=0, model="judge-model"):
+    output = _LLMOutput({"llm_output": answer})
+    output.diagnostic_metadata = _LLMOutputDiagnosticMetadata(finish_reason, output_tokens, model)
+    return output
 
 
 @pytest.mark.parametrize(
@@ -371,3 +378,66 @@ def test_runtime_flow_resolution():
 def test_legacy_empty_envelope_is_invalid():
     with pytest.raises(EvaluationException, match="Evaluator returned invalid output"):
         strategy(strict=False).parse({})
+
+
+def test_missing_score_logs_diagnostic_and_preserves_unknown_result(caplog):
+    result = strategy(strict=False, missing_score=math.nan).parse(_sdk_output({"reason": "unused"}))
+
+    assert result["metric_result"] == "unknown"
+    assert "no valid score" in caplog.text
+    assert "finish_reason=stop, output_tokens=0, model=judge-model" in caplog.text
+
+
+@pytest.mark.parametrize("answer", ["not json", None])
+def test_invalid_output_message_includes_runtime_metadata(answer, caplog):
+    output = _sdk_output(answer)
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy().parse(output)
+
+    message = exc_info.value.message
+    assert message.startswith("Evaluator returned invalid output. Cause: ")
+    assert "finish_reason=stop, output_tokens=0, model=judge-model" in message
+    assert "not json" not in message and "not json" not in caplog.text
+    assert "Model returned invalid output" in caplog.text
+
+
+def test_invalid_score_message_keeps_original_text_and_adds_metadata():
+    output = _sdk_output({"score": 9}, finish_reason="length", output_tokens=5, model="m")
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy(score_range=(1, 5), missing_score=None).parse(output)
+
+    message = exc_info.value.message
+    assert message.startswith("Invalid score value: 9. Expected a number in range [1, 5]. Cause: ")
+    assert "finish_reason=length, output_tokens=5, model=m" in message
+
+
+def test_non_numeric_strict_score_still_raises_value_error_and_logs(caplog):
+    with pytest.raises(ValueError):
+        strategy().parse({"llm_output": {"score": "high"}, "finish_reason": "stop", "model_id": "m"})
+
+    assert "no valid score" in caplog.text
+    assert "high" not in caplog.text
+
+
+def test_untrusted_output_metadata_is_not_logged(caplog):
+    output = {
+        "llm_output": [],
+        "finish_reason": "length",
+        "output_token_count": 5,
+        "model_id": "SYNTHETIC_MODEL_PRIVATE_TEXT",
+    }
+    with pytest.raises(EvaluationException) as exc_info:
+        strategy().parse(output)
+
+    assert "model=SYNTHETIC_MODEL_PRIVATE_TEXT" not in exc_info.value.message
+    assert "SYNTHETIC_MODEL_PRIVATE_TEXT" not in caplog.text
+    assert "finish_reason=unknown, output_tokens=unknown, model=unknown" in caplog.text
+
+
+def test_unexpected_array_output_preserves_evaluator_exception():
+    class AmbiguousComparison:
+        def __eq__(self, _other):
+            raise ValueError("ambiguous comparison")
+
+    with pytest.raises(EvaluationException, match="unexpected type AmbiguousComparison"):
+        strategy().parse(AmbiguousComparison())

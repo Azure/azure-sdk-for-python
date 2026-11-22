@@ -236,3 +236,32 @@ class TestIndexDocumentsBatch:
         batch.add_upload_actions([{"id": "1"}, {"id": "2"}])
 
         assert repr(batch) == "<IndexDocumentsBatch [2 actions]>"
+
+    def test_serialized_value_matches_actions_after_dequeue_enqueue_reuse(self):
+        batch = IndexDocumentsBatch()
+        batch.add_upload_actions([{"id": "1"}])
+        batch.dequeue_actions()
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)) == {"value": []}
+
+        batch.enqueue_actions(IndexAction({"@search.action": "delete", "id": "2"}))
+        batch.add_merge_actions([{"id": "3"}])
+
+        expected = [
+            {"@search.action": "delete", "id": "2"},
+            {"@search.action": "merge", "id": "3"},
+        ]
+        assert [action.as_dict() for action in batch.actions] == expected
+        assert json.loads(json.dumps(batch, cls=SdkJSONEncoder, exclude_readonly=True)) == {"value": expected}
+
+    def test_direct_value_mutation_is_reflected_by_actions(self):
+        batch = IndexDocumentsBatch()
+        action = IndexAction({"@search.action": "upload", "id": "1"})
+
+        batch["value"] = [action]
+
+        assert batch.actions == [action]
+        batch["value"].append(IndexAction({"@search.action": "delete", "id": "2"}))
+        assert [a.as_dict() for a in batch.actions] == [
+            {"@search.action": "upload", "id": "1"},
+            {"@search.action": "delete", "id": "2"},
+        ]

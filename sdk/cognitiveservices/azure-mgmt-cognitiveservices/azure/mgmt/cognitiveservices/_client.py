@@ -22,16 +22,17 @@ from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
+    AccountCostControlsOperations,
     AccountsOperations,
     AdapterDeploymentsOperations,
     AgentApplicationsOperations,
     AgentDeploymentsOperations,
     ArcDeploymentsOperations,
+    AttachedAksClustersOperations,
     CommitmentPlansOperations,
     CommitmentTiersOperations,
     ComputeOperationsOperations,
     ComputesOperations,
-    CostControlsOperations,
     DefenderForAISettingsOperations,
     DeletedAccountsOperations,
     DeploymentsOperations,
@@ -52,6 +53,7 @@ from .operations import (
     PrivateLinkResourcesOperations,
     ProjectCapabilityHostsOperations,
     ProjectConnectionsOperations,
+    ProjectCostControlsOperations,
     ProjectsOperations,
     QuotaTiersOperations,
     RaiBindingsOperations,
@@ -93,6 +95,9 @@ class CognitiveServicesManagementClient(
     :vartype accounts: azure.mgmt.cognitiveservices.operations.AccountsOperations
     :ivar deleted_accounts: DeletedAccountsOperations operations
     :vartype deleted_accounts: azure.mgmt.cognitiveservices.operations.DeletedAccountsOperations
+    :ivar attached_aks_clusters: AttachedAksClustersOperations operations
+    :vartype attached_aks_clusters:
+     azure.mgmt.cognitiveservices.operations.AttachedAksClustersOperations
     :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
     :vartype private_endpoint_connections:
      azure.mgmt.cognitiveservices.operations.PrivateEndpointConnectionsOperations
@@ -165,8 +170,12 @@ class CognitiveServicesManagementClient(
     :ivar managed_compute_capacities: ManagedComputeCapacitiesOperations operations
     :vartype managed_compute_capacities:
      azure.mgmt.cognitiveservices.operations.ManagedComputeCapacitiesOperations
-    :ivar cost_controls: CostControlsOperations operations
-    :vartype cost_controls: azure.mgmt.cognitiveservices.operations.CostControlsOperations
+    :ivar account_cost_controls: AccountCostControlsOperations operations
+    :vartype account_cost_controls:
+     azure.mgmt.cognitiveservices.operations.AccountCostControlsOperations
+    :ivar project_cost_controls: ProjectCostControlsOperations operations
+    :vartype project_cost_controls:
+     azure.mgmt.cognitiveservices.operations.ProjectCostControlsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.cognitiveservices.operations.PrivateLinkResourcesOperations
@@ -220,7 +229,7 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-09-15-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-11-15-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -278,6 +287,9 @@ class CognitiveServicesManagementClient(
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.accounts = AccountsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deleted_accounts = DeletedAccountsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.attached_aks_clusters = AttachedAksClustersOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
@@ -340,7 +352,12 @@ class CognitiveServicesManagementClient(
         self.managed_compute_capacities = ManagedComputeCapacitiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.cost_controls = CostControlsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.account_cost_controls = AccountCostControlsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.project_cost_controls = ProjectCostControlsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

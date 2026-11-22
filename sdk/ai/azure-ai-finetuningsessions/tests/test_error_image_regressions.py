@@ -111,6 +111,8 @@ def test_http_non_object_json_bodies(status_code, expected_type, expected_messag
         assert error is None
     else:
         assert type(error) is expected_type
+        if expected_type is errors.TrainingEngineError:
+            expected_message = f"{expected_message} {errors._TRAINING_RECOVERY_MESSAGE}"
         assert error.message == expected_message
         assert error.response is response
         if isinstance(error, errors.TrainingEngineError):
@@ -192,7 +194,10 @@ def test_http_supported_object_bodies(status_code, detail, expected_type, attrib
         assert error is None
     else:
         assert type(error) is expected_type
-        assert error.message == (detail.get("message") or detail["error_message"])
+        expected_message = detail.get("message") or detail["error_message"]
+        if expected_type is errors.TrainingEngineError:
+            expected_message = f"{expected_message} {errors._TRAINING_RECOVERY_MESSAGE}"
+        assert error.message == expected_message
         for name, expected in attributes.items():
             assert getattr(error, name) == expected
 

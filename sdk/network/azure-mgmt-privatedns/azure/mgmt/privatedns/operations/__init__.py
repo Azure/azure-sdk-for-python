@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import RecordSetsOperations  # type: ignore
 from ._operations import PrivateZonesOperations  # type: ignore
 from ._operations import VirtualNetworkLinksOperations  # type: ignore
+from ._operations import PrivateDnsResourceReferenceOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -24,6 +25,7 @@ __all__ = [
     "RecordSetsOperations",
     "PrivateZonesOperations",
     "VirtualNetworkLinksOperations",
+    "PrivateDnsResourceReferenceOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -7,6 +7,7 @@
         "azure.mgmt.redisenterprise.models.AccessPolicyAssignment": "Microsoft.Cache.AccessPolicyAssignment",
         "azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProperties": "Microsoft.Cache.AccessPolicyAssignmentProperties",
         "azure.mgmt.redisenterprise.models.AccessPolicyAssignmentPropertiesUser": "Microsoft.Cache.AccessPolicyAssignmentPropertiesUser",
+        "azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProvisioningError": "Microsoft.Cache.AccessPolicyAssignmentProvisioningError",
         "azure.mgmt.redisenterprise.models.MigrationProperties": "Microsoft.Cache.MigrationProperties",
         "azure.mgmt.redisenterprise.models.AzureCacheForRedisMigrationProperties": "Microsoft.Cache.AzureCacheForRedisMigrationProperties",
         "azure.mgmt.redisenterprise.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
@@ -28,6 +29,7 @@
         "azure.mgmt.redisenterprise.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.redisenterprise.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
         "azure.mgmt.redisenterprise.models.ExportClusterParameters": "Microsoft.Cache.ExportClusterParameters",
+        "azure.mgmt.redisenterprise.models.FirewallRule": "Microsoft.Cache.FirewallRule",
         "azure.mgmt.redisenterprise.models.FlushParameters": "Microsoft.Cache.FlushParameters",
         "azure.mgmt.redisenterprise.models.ForceLinkParameters": "Microsoft.Cache.ForceLinkParameters",
         "azure.mgmt.redisenterprise.models.ForceLinkParametersGeoReplication": "Microsoft.Cache.ForceLinkParametersGeoReplication",
@@ -168,5 +170,5 @@
         "azure.mgmt.redisenterprise.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get",
         "azure.mgmt.redisenterprise.aio.operations.OperationsStatusOperations.get": "Microsoft.Cache.OperationsStatusOperationGroup.get"
     },
-    "CrossLanguageVersion": "e9d43b271802"
+    "CrossLanguageVersion": "2008636db134"
 }

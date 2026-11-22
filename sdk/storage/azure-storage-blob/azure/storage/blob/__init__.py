@@ -26,7 +26,7 @@ from ._shared.models import (
     UserDelegationKey,
     Services,
 )
-from ._shared.session import ContainerSessionProvider, Session, SessionProvider
+from ._session import ContainerSessionProvider, Session, SessionProvider
 from ._generated.models import RehydratePriority
 from ._models import (
     BlobType,
@@ -84,6 +84,11 @@ def upload_blob_to_url(
     """Upload data to a given URL
 
     The data will be uploaded as a block blob.
+
+    .. note::
+
+        The optional, experimental native transfer extension could increase performance.
+        See :meth:`BlobClient.upload_blob` for installation, compatibility caveats, and how to disable it.
 
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.
@@ -153,6 +158,11 @@ def download_blob_from_url(
     **kwargs: Any,
 ) -> None:
     """Download the contents of a blob to a local file or stream.
+
+    .. note::
+
+        The optional, experimental native transfer extension could increase performance.
+        See :meth:`BlobClient.download_blob` for installation, compatibility caveats, and how to disable it.
 
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.

@@ -46,11 +46,16 @@ parameters:
     default: 10
 
 variables:
-  packageRoot: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
+  - group: Foundry SDK Env Vars and Secrets
+  - name: packageRoot
+    value: $(Build.SourcesDirectory)/sdk/ai/azure-ai-projects
   # Connection configuration belongs here, not in the Run pipeline form.
-  azureServiceConnection: azure-sdk-tests
-  PYTHON_DOTENV_DISABLED: 'true'
-  PYTEST_ADDOPTS: ''
+  - name: azureServiceConnection
+    value: azure-sdk-tests
+  - name: PYTHON_DOTENV_DISABLED
+    value: 'true'
+  - name: PYTEST_ADDOPTS
+    value: ''
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
@@ -207,7 +212,7 @@ extends:
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                    . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
                     $samplePlan = Get-Content -LiteralPath '$(Pipeline.Workspace)/sample-plan/$(QueueName)/deployment-plan.json' -Raw | ConvertFrom-Json -AsHashtable
                     $runnerIdentity = Set-SampleSubscriptionContext -Plan $samplePlan
                     $runnerIdentity | ConvertTo-Json | Set-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/pipeline-identity.json' -Encoding utf8
@@ -243,7 +248,7 @@ extends:
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    . '$(packageRoot)/tests/samples/ci/SampleCiHelpers.ps1'
+                    . '$(packageRoot)/tests/samples/ci/shared/SampleCiHelpers.ps1'
                     $sampleState = Get-Content -LiteralPath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' -Raw | ConvertFrom-Json -AsHashtable
                     $null = Set-SampleSubscriptionContext -Plan $sampleState.plan
                     python '$(packageRoot)/tests/samples/ci/run_samples.py' `
@@ -266,7 +271,7 @@ extends:
                   scriptType: pscore
                   scriptLocation: inlineScript
                   inlineScript: |
-                    & '$(packageRoot)/tests/samples/ci/Remove-SampleResources.ps1' `
+                    & '$(packageRoot)/tests/samples/ci/shared/Remove-SampleResources.ps1' `
                       -StatePath '$(Build.ArtifactStagingDirectory)/sample-results/$(QueueName)/deployment-state.json' `
                       -QueueName $env:SAMPLE_QUEUE_NAME -ConfirmCleanup
                 env:

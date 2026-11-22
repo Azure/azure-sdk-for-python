@@ -5,7 +5,6 @@
 # --------------------------------------------------------------------------
 # mypy: disable-error-code="attr-defined"
 
-import copy
 import logging
 from typing import Any, cast, Dict, Optional, Tuple, TYPE_CHECKING, Union
 
@@ -47,11 +46,9 @@ from .policies_async import (
     AsyncStorageBearerTokenCredentialPolicy,
     AsyncContentValidationPolicy,
     AsyncStorageResponseHook,
-    AsyncStorageSessionPolicy,
 )
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
-from .session_async import ContainerSessionProvider
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
@@ -105,6 +102,7 @@ class AsyncStorageAccountHostsMixin(object):
             Union[AsyncStorageBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]
         ] = None
         audience = kwargs.pop("audience", None)
+        session_policy_factory = kwargs.pop("_session_policy_factory", None)
         if hasattr(credential, "get_token"):
             scope = str(audience).rstrip("/") + DEFAULT_OAUTH_SCOPE if audience else STORAGE_OAUTH_SCOPE
             self._credential_policy = AsyncStorageBearerTokenCredentialPolicy(
@@ -146,32 +144,8 @@ class AsyncStorageAccountHostsMixin(object):
             StorageRequestHook(**kwargs),
             self._credential_policy,
         ]
-        use_session = bool(kwargs.pop("use_session", False))
-        session_provider = kwargs.pop("session_provider", None)
-        session_account_name = kwargs.pop("session_account_name", None)
-        if use_session:
-            if session_provider is None:
-                sub_kwargs = dict(kwargs)
-                sub_kwargs.pop("_configuration", None)
-                sub_kwargs.pop("pipeline", None)
-                sub_kwargs.pop("sdk_moniker", None)
-                sub_kwargs["transport"] = AsyncTransportWrapper(transport)
-                sub_kwargs["logging_body"] = False
-                if sub_kwargs.get("retry_policy") is not None:
-                    sub_kwargs["retry_policy"] = copy.copy(sub_kwargs["retry_policy"])
-                sub_kwargs.pop("_additional_pipeline_policies", None)
-                session_provider = ContainerSessionProvider(
-                    f"{self.scheme}://{self.primary_hostname}",
-                    cast(AsyncTokenCredential, credential),
-                    audience=audience,
-                    **sub_kwargs,
-                )
-            policies.append(
-                AsyncStorageSessionPolicy(
-                    account_name=session_account_name or self.account_name,
-                    session_provider=session_provider,
-                )
-            )
+        if session_policy_factory:
+            policies.append(session_policy_factory(self, credential, transport, audience, kwargs))
         policies.extend(
             [
                 StorageSensitiveHeaderCleanupPolicy(**kwargs),

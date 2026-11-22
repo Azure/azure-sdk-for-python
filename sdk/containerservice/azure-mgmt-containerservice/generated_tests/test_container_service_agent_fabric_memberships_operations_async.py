@@ -41,9 +41,10 @@ class TestContainerServiceAgentFabricMembershipsOperationsAsync(AzureMgmtRecorde
                 agent_fabric_membership_name="str",
                 resource={
                     "managedBy": "str",
+                    "sku": {"name": "str"},
                     "id": "str",
                     "name": "str",
-                    "properties": {"sku": "str", "provisioningState": "str"},
+                    "properties": {"provisioningState": "str"},
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

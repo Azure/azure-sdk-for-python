@@ -31,6 +31,11 @@ if TYPE_CHECKING:
         ArcDeploymentComputeType,
         ArcDeploymentRuntime,
         ArcDeploymentSkuName,
+        AttachedAksClusterCapability,
+        AttachedAksClusterExtensionInstallationMode,
+        AttachedAksClusterHealthState,
+        AttachedAksClusterProjectBindingStage,
+        AttachedAksClusterProvisioningStage,
         ByPassSelection,
         CapabilityHostKind,
         CapabilityHostProvisioningState,
@@ -39,11 +44,11 @@ if TYPE_CHECKING:
         ConnectionCategory,
         ConnectionGroup,
         ContentLevel,
-        CostControlDimensionType,
-        CostControlPeriod,
-        CostControlThresholdAction,
+        CostControlCategory,
+        CostControlFilterName,
+        CostControlGroupingName,
         CostControlThresholdType,
-        CostControlUnit,
+        CostControlTimeGrain,
         CreatedByType,
         DefenderForAISettingState,
         DeploymentModelVersionUpgradeOption,
@@ -71,6 +76,7 @@ if TYPE_CHECKING:
         PrivateEndpointServiceConnectionStatus,
         ProvisioningState,
         PublicNetworkAccess,
+        RaiAcsAnnotatorType,
         RaiAcsHarmCategory,
         RaiAcsModerationSubjectFormat,
         RaiAcsPolicyDefinitionType,
@@ -99,7 +105,10 @@ if TYPE_CHECKING:
         ServiceTier,
         SkuTier,
         TierUpgradePolicy,
+        ToolControlType,
+        ToolControlsDefaultAction,
         TrafficRoutingProtocol,
+        TrustedCertificateSourceType,
         UpgradeAvailabilityStatus,
         VmPriority,
         WorkbenchProvisioningState,
@@ -431,6 +440,34 @@ class Account(ProxyResource):
     """Identity for the resource."""
 
 
+class AccountCostControl(ProxyResource):
+    """A budget that measures consumption and optionally alerts or blocks requests within an account.
+    Reading, deleting, and enforcing stored identity selections requires
+    Microsoft.CognitiveServices/CostControlsByIdentity registration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "CostControlProperties"
+    :ivar etag: The opaque entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: "CostControlProperties"
+    """The resource-specific properties for this resource."""
+    etag: str
+    """The opaque entity tag used for optimistic concurrency."""
+
+
 class AccountKeyAuthTypeConnectionProperties(TypedDict, total=False):
     """This connection type covers the account key connection for Azure storage.
 
@@ -685,14 +722,19 @@ class AccountProperties(TypedDict, total=False):
      unchanged. Responses only include hosting configuration types defined by the requested API
      version.
     :vartype agentHostingConfigurations: list["AgentHostingConfiguration"]
-    :ivar costControlIds: The full resource IDs of cost controls directly attached to this account.
-     At the moment the service only supports a single cost control. This will be expanded in future
-     API versions.
-    :vartype costControlIds: list[str]
-    :ivar costControlConnections: The account-level connections used to publish cost control
-     telemetry and events. Application Insights is optional for attachment, accounting, and
-     enforcement and can be configured later. Event Grid must be configured before attaching a cost
-     control with an alert threshold.
+    :ivar trustedCertificateSources: Private CA trust sources for supported features in an
+     AIServices account with allowProjectManagement enabled. Supports one Azure Key Vault source
+     containing version-pinned references to secrets with PEM-encoded CA certificates or certificate
+     bundles. On PUT or PATCH, a non-null array replaces the complete configuration, so include all
+     references to retain. Omit this property or send null to preserve the existing configuration;
+     send an empty array to clear it.
+    :vartype trustedCertificateSources: list["TrustedCertificateSource"]
+    :ivar costControlConnections: Account-level cost-control telemetry connections. Application
+     Insights is optional. Budget notifications use their own Event Grid connection IDs;
+     account-level Event Grid configuration is not exposed or accepted by this API version. Set this
+     object to null in an account update to clear the Application Insights connection. Existing
+     legacy Event Grid configuration is preserved. This property is available independently of
+     Microsoft.CognitiveServices/CostControls subscription registration.
     :vartype costControlConnections: "CostControlConnections"
     """
 
@@ -780,13 +822,20 @@ class AccountProperties(TypedDict, total=False):
      the configuration cannot be changed, removed, or reordered. Account update requests should omit
      this property or send the complete existing value unchanged. Responses only include hosting
      configuration types defined by the requested API version."""
-    costControlIds: list[str]
-    """The full resource IDs of cost controls directly attached to this account. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
+    trustedCertificateSources: Optional[list["TrustedCertificateSource"]]
+    """Private CA trust sources for supported features in an AIServices account with
+     allowProjectManagement enabled. Supports one Azure Key Vault source containing version-pinned
+     references to secrets with PEM-encoded CA certificates or certificate bundles. On PUT or PATCH,
+     a non-null array replaces the complete configuration, so include all references to retain. Omit
+     this property or send null to preserve the existing configuration; send an empty array to clear
+     it."""
     costControlConnections: Optional["CostControlConnections"]
-    """The account-level connections used to publish cost control telemetry and events. Application
-     Insights is optional for attachment, accounting, and enforcement and can be configured later.
-     Event Grid must be configured before attaching a cost control with an alert threshold."""
+    """Account-level cost-control telemetry connections. Application Insights is optional. Budget
+     notifications use their own Event Grid connection IDs; account-level Event Grid configuration
+     is not exposed or accepted by this API version. Set this object to null in an account update to
+     clear the Application Insights connection. Existing legacy Event Grid configuration is
+     preserved. This property is available independently of Microsoft.CognitiveServices/CostControls
+     subscription registration."""
 
 
 class AdapterDeployment(ProxyResource):
@@ -1296,16 +1345,24 @@ class ArcDeploymentKubernetesResources(TypedDict, total=False):
 class ArcDeploymentModel(TypedDict, total=False):
     """Model reference for an Arc deployment.
 
-    :ivar format: Deployment model format. Required.
+    :ivar format: Read-only. Deployment model format resolved from the model asset. Required.
     :vartype format: str
-    :ivar name: Deployment model name. Required.
+    :ivar name: Read-only. Deployment model name resolved from the model asset. Required.
     :vartype name: str
+    :ivar version: Read-only. Deployment model version resolved from the model asset. Required.
+    :vartype version: str
+    :ivar assetId: AzureML Registry model asset URI. Required.
+    :vartype assetId: str
     """
 
     format: Required[str]
-    """Deployment model format. Required."""
+    """Read-only. Deployment model format resolved from the model asset. Required."""
     name: Required[str]
-    """Deployment model name. Required."""
+    """Read-only. Deployment model name resolved from the model asset. Required."""
+    version: Required[str]
+    """Read-only. Deployment model version resolved from the model asset. Required."""
+    assetId: Required[str]
+    """AzureML Registry model asset URI. Required."""
 
 
 class ArcDeploymentPatchCpuMemoryResourceRequirements(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -1346,11 +1403,11 @@ class ArcDeploymentProperties(TypedDict, total=False):
     :ivar extensionId: Full Azure resource ID of the Foundry inference extension on the target
      Arc-enabled Kubernetes cluster. Required on creation and immutable after creation. Required.
     :vartype extensionId: str
-    :ivar runtime: Inference runtime. Required on creation and immutable after creation. Required.
-     Known values are: "vllm" and "onnx-genai".
+    :ivar runtime: Read-only. Inference runtime resolved from the model asset. Required. Known
+     values are: "vllm" and "onnx-genai".
     :vartype runtime: Union[str, "ArcDeploymentRuntime"]
-    :ivar compute: Compute type for the deployment. Required on creation and immutable after
-     creation. Required. Known values are: "gpu" and "cpu".
+    :ivar compute: Read-only. Compute type resolved from the model asset. Required. Known values
+     are: "gpu" and "cpu".
     :vartype compute: Union[str, "ArcDeploymentComputeType"]
     :ivar deploymentTemplate: Optional deployment template identifier for advanced vLLM tuning.
      Allowed only when runtime is vllm. Example:
@@ -1390,11 +1447,11 @@ class ArcDeploymentProperties(TypedDict, total=False):
     """Full Azure resource ID of the Foundry inference extension on the target Arc-enabled Kubernetes
      cluster. Required on creation and immutable after creation. Required."""
     runtime: Required[Union[str, "ArcDeploymentRuntime"]]
-    """Inference runtime. Required on creation and immutable after creation. Required. Known values
-     are: \"vllm\" and \"onnx-genai\"."""
+    """Read-only. Inference runtime resolved from the model asset. Required. Known values are:
+     \"vllm\" and \"onnx-genai\"."""
     compute: Required[Union[str, "ArcDeploymentComputeType"]]
-    """Compute type for the deployment. Required on creation and immutable after creation. Required.
-     Known values are: \"gpu\" and \"cpu\"."""
+    """Read-only. Compute type resolved from the model asset. Required. Known values are: \"gpu\" and
+     \"cpu\"."""
     deploymentTemplate: str
     """Optional deployment template identifier for advanced vLLM tuning. Allowed only when runtime is
      vllm. Example:
@@ -1572,6 +1629,532 @@ class AssignedIdentity(TypedDict, total=False):
      \"Updating\", \"Succeeded\", \"Failed\", \"Canceled\", and \"Deleting\"."""
 
 
+class AttachedAksCluster(ProxyResource):
+    """An existing Azure Kubernetes Service cluster attached to a Cognitive Services account.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource. Required.
+    :vartype properties: "AttachedAksClusterProperties"
+    """
+
+    properties: Required["AttachedAksClusterProperties"]
+    """The resource-specific properties for this resource. Required."""
+
+
+class AttachedAksClusterAccountIdentityStatus(TypedDict, total=False):
+    """Account identity associated with the AI Manager integration.
+
+    :ivar resourceId: ARM resource ID of the account identity.
+    :vartype resourceId: str
+    :ivar principalId: Identity principal ID.
+    :vartype principalId: str
+    :ivar tenantId: Identity tenant ID.
+    :vartype tenantId: str
+    :ivar revision: Identity revision.
+    :vartype revision: int
+    """
+
+    resourceId: str
+    """ARM resource ID of the account identity."""
+    principalId: str
+    """Identity principal ID."""
+    tenantId: str
+    """Identity tenant ID."""
+    revision: int
+    """Identity revision."""
+
+
+class AttachedAksClusterAiManagerStatus(TypedDict, total=False):
+    """Status of the AI Manager integration on the attached cluster.
+
+    :ivar provisioningState: Provisioning state of the AI Manager integration.
+    :vartype provisioningState: str
+    :ivar message: Details of the integration state.
+    :vartype message: str
+    :ivar attachmentIncarnation: Attachment incarnation associated with this integration.
+    :vartype attachmentIncarnation: str
+    :ivar resourceId: ARM resource ID of the AI Manager resource.
+    :vartype resourceId: str
+    :ivar clusterResourceId: ARM resource ID of the AKS cluster.
+    :vartype clusterResourceId: str
+    :ivar ownerAccountId: ARM resource ID of the owning Cognitive Services account.
+    :vartype ownerAccountId: str
+    :ivar deletePolicy: Deletion policy for the underlying integration resource.
+    :vartype deletePolicy: str
+    :ivar effectiveAccountIdentity: Account identity used by the integration.
+    :vartype effectiveAccountIdentity: "AttachedAksClusterAccountIdentityStatus"
+    :ivar roleAssignments: Role assignment status for the integration.
+    :vartype roleAssignments: "AttachedAksClusterRoleAssignmentStatus"
+    :ivar dependencyEpoch: Dependency tracking epoch.
+    :vartype dependencyEpoch: int
+    :ivar consumerState: Current integration consumer state, such as Invalid, Degraded, or Ready.
+    :vartype consumerState: str
+    :ivar referenceAdmission: Whether new dependency references are admitted, such as Open or
+     Closed.
+    :vartype referenceAdmission: str
+    :ivar dependentDeploymentCount: Number of deployments that depend on the integration.
+    :vartype dependentDeploymentCount: int
+    """
+
+    provisioningState: str
+    """Provisioning state of the AI Manager integration."""
+    message: str
+    """Details of the integration state."""
+    attachmentIncarnation: str
+    """Attachment incarnation associated with this integration."""
+    resourceId: str
+    """ARM resource ID of the AI Manager resource."""
+    clusterResourceId: str
+    """ARM resource ID of the AKS cluster."""
+    ownerAccountId: str
+    """ARM resource ID of the owning Cognitive Services account."""
+    deletePolicy: str
+    """Deletion policy for the underlying integration resource."""
+    effectiveAccountIdentity: "AttachedAksClusterAccountIdentityStatus"
+    """Account identity used by the integration."""
+    roleAssignments: "AttachedAksClusterRoleAssignmentStatus"
+    """Role assignment status for the integration."""
+    dependencyEpoch: int
+    """Dependency tracking epoch."""
+    consumerState: str
+    """Current integration consumer state, such as Invalid, Degraded, or Ready."""
+    referenceAdmission: str
+    """Whether new dependency references are admitted, such as Open or Closed."""
+    dependentDeploymentCount: int
+    """Number of deployments that depend on the integration."""
+
+
+class AttachedAksClusterCapabilityStatus(TypedDict, total=False):
+    """Readiness of an individual attachment capability.
+
+    :ivar name: Capability name.
+    :vartype name: str
+    :ivar ready: Whether the capability is ready.
+    :vartype ready: bool
+    :ivar message: Details of the capability's readiness.
+    :vartype message: str
+    """
+
+    name: str
+    """Capability name."""
+    ready: bool
+    """Whether the capability is ready."""
+    message: str
+    """Details of the capability's readiness."""
+
+
+class AttachedAksClusterConnectorRegistration(TypedDict, total=False):
+    """Registration details of the attachment connector.
+
+    :ivar registrationId: Connector registration identifier.
+    :vartype registrationId: str
+    :ivar projectId: Project identifier associated with the registration.
+    :vartype projectId: str
+    :ivar attachmentName: Name of the attachment.
+    :vartype attachmentName: str
+    :ivar projectLocation: Region associated with the connector registration.
+    :vartype projectLocation: str
+    :ivar endpoint: Connector service endpoint.
+    :vartype endpoint: str
+    :ivar tokenAudience: Authentication audience for the connector service.
+    :vartype tokenAudience: str
+    :ivar connectorIdentityResourceId: ARM resource ID of the connector identity.
+    :vartype connectorIdentityResourceId: str
+    :ivar connectorClientId: Connector identity client ID.
+    :vartype connectorClientId: str
+    :ivar connectorTenantId: Connector identity tenant ID.
+    :vartype connectorTenantId: str
+    """
+
+    registrationId: str
+    """Connector registration identifier."""
+    projectId: str
+    """Project identifier associated with the registration."""
+    attachmentName: str
+    """Name of the attachment."""
+    projectLocation: str
+    """Region associated with the connector registration."""
+    endpoint: str
+    """Connector service endpoint."""
+    tokenAudience: str
+    """Authentication audience for the connector service."""
+    connectorIdentityResourceId: str
+    """ARM resource ID of the connector identity."""
+    connectorClientId: str
+    """Connector identity client ID."""
+    connectorTenantId: str
+    """Connector identity tenant ID."""
+
+
+class AttachedAksClusterExtensionConfiguration(TypedDict, total=False):
+    """User-configurable training extension settings.
+
+    :ivar rayVersion: Ray version used by the training extension.
+    :vartype rayVersion: str
+    """
+
+    rayVersion: str
+    """Ray version used by the training extension."""
+
+
+class AttachedAksClusterExtensionProfile(TypedDict, total=False):
+    """Configuration of the training extension.
+
+    :ivar installationMode: Extension installation mode. Defaults to Managed. Manual installation
+     requires service enablement and an exact chart version. Known values are: "Managed" and
+     "Manual".
+    :vartype installationMode: Union[str, "AttachedAksClusterExtensionInstallationMode"]
+    :ivar version: Extension package version, or the exact chart version for Manual installation.
+    :vartype version: str
+    :ivar releaseTrain: Extension package release train.
+    :vartype releaseTrain: str
+    :ivar useExistingKubeRayOperator: Whether to use an existing KubeRay operator instead of
+     installing one.
+    :vartype useExistingKubeRayOperator: bool
+    :ivar configuration: Supported extension configuration. Other Helm settings are
+     service-managed.
+    :vartype configuration: "AttachedAksClusterExtensionConfiguration"
+    """
+
+    installationMode: Union[str, "AttachedAksClusterExtensionInstallationMode"]
+    """Extension installation mode. Defaults to Managed. Manual installation requires service
+     enablement and an exact chart version. Known values are: \"Managed\" and \"Manual\"."""
+    version: str
+    """Extension package version, or the exact chart version for Manual installation."""
+    releaseTrain: str
+    """Extension package release train."""
+    useExistingKubeRayOperator: bool
+    """Whether to use an existing KubeRay operator instead of installing one."""
+    configuration: "AttachedAksClusterExtensionConfiguration"
+    """Supported extension configuration. Other Helm settings are service-managed."""
+
+
+class AttachedAksClusterHealthComponent(TypedDict, total=False):
+    """Health of an individual attachment component.
+
+    :ivar name: Component name.
+    :vartype name: str
+    :ivar state: Evaluated component health. Known values are: "Unknown", "Healthy", "Degraded",
+     and "Unhealthy".
+    :vartype state: Union[str, "AttachedAksClusterHealthState"]
+    :ivar message: Details of the component's health.
+    :vartype message: str
+    :ivar lastObservedAtUtc: Time at which component health was last observed.
+    :vartype lastObservedAtUtc: str
+    """
+
+    name: str
+    """Component name."""
+    state: Union[str, "AttachedAksClusterHealthState"]
+    """Evaluated component health. Known values are: \"Unknown\", \"Healthy\", \"Degraded\", and
+     \"Unhealthy\"."""
+    message: str
+    """Details of the component's health."""
+    lastObservedAtUtc: str
+    """Time at which component health was last observed."""
+
+
+class AttachedAksClusterHealthReason(TypedDict, total=False):
+    """A reason contributing to attachment health.
+
+    :ivar code: Machine-readable health reason code.
+    :vartype code: str
+    :ivar component: Component associated with the reason.
+    :vartype component: str
+    :ivar message: Description of the health condition.
+    :vartype message: str
+    :ivar recommendedAction: Recommended action for the health condition.
+    :vartype recommendedAction: str
+    """
+
+    code: str
+    """Machine-readable health reason code."""
+    component: str
+    """Component associated with the reason."""
+    message: str
+    """Description of the health condition."""
+    recommendedAction: str
+    """Recommended action for the health condition."""
+
+
+class AttachedAksClusterHealthStatus(TypedDict, total=False):
+    """Evaluated health of an attachment.
+
+    :ivar state: Overall attachment health. Known values are: "Unknown", "Healthy", "Degraded", and
+     "Unhealthy".
+    :vartype state: Union[str, "AttachedAksClusterHealthState"]
+    :ivar summary: Summary of the evaluated health.
+    :vartype summary: str
+    :ivar lastObservedAtUtc: Time at which health was last observed.
+    :vartype lastObservedAtUtc: str
+    :ivar newWorkAdmissionAllowed: Whether the attachment can admit new workloads.
+    :vartype newWorkAdmissionAllowed: bool
+    :ivar components: Health of individual attachment components.
+    :vartype components: list["AttachedAksClusterHealthComponent"]
+    :ivar reasons: Reasons contributing to the evaluated health.
+    :vartype reasons: list["AttachedAksClusterHealthReason"]
+    """
+
+    state: Union[str, "AttachedAksClusterHealthState"]
+    """Overall attachment health. Known values are: \"Unknown\", \"Healthy\", \"Degraded\", and
+     \"Unhealthy\"."""
+    summary: str
+    """Summary of the evaluated health."""
+    lastObservedAtUtc: str
+    """Time at which health was last observed."""
+    newWorkAdmissionAllowed: bool
+    """Whether the attachment can admit new workloads."""
+    components: list["AttachedAksClusterHealthComponent"]
+    """Health of individual attachment components."""
+    reasons: list["AttachedAksClusterHealthReason"]
+    """Reasons contributing to the evaluated health."""
+
+
+class AttachedAksClusterIdentityStatus(TypedDict, total=False):
+    """Identity status for training on the attached cluster.
+
+    :ivar resourceId: ARM resource ID of the identity.
+    :vartype resourceId: str
+    :ivar clientId: Identity client ID.
+    :vartype clientId: str
+    :ivar principalId: Identity principal ID.
+    :vartype principalId: str
+    :ivar tenantId: Identity tenant ID.
+    :vartype tenantId: str
+    :ivar federatedIdentityCredentialResourceId: ARM resource ID of the federated identity
+     credential.
+    :vartype federatedIdentityCredentialResourceId: str
+    :ivar kubernetesServiceAccountName: Kubernetes service account associated with the identity.
+    :vartype kubernetesServiceAccountName: str
+    """
+
+    resourceId: str
+    """ARM resource ID of the identity."""
+    clientId: str
+    """Identity client ID."""
+    principalId: str
+    """Identity principal ID."""
+    tenantId: str
+    """Identity tenant ID."""
+    federatedIdentityCredentialResourceId: str
+    """ARM resource ID of the federated identity credential."""
+    kubernetesServiceAccountName: str
+    """Kubernetes service account associated with the identity."""
+
+
+class AttachedAksClusterIntegrationResourceStatus(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Status of an integration resource associated with the attachment.
+
+    :ivar resourceId: ARM resource ID of the integration resource.
+    :vartype resourceId: str
+    :ivar provisioningState: Provisioning state of the integration resource.
+    :vartype provisioningState: str
+    :ivar message: Details of the integration state.
+    :vartype message: str
+    """
+
+    resourceId: str
+    """ARM resource ID of the integration resource."""
+    provisioningState: str
+    """Provisioning state of the integration resource."""
+    message: str
+    """Details of the integration state."""
+
+
+class AttachedAksClusterProjectBinding(TypedDict, total=False):
+    """A server-managed project binding on the attached cluster.
+
+    :ivar projectId: Identifier of the bound Foundry project.
+    :vartype projectId: str
+    :ivar projectName: Name of the bound Foundry project.
+    :vartype projectName: str
+    :ivar namespace: Kubernetes namespace assigned to the project.
+    :vartype namespace: str
+    :ivar serviceAccountName: Kubernetes service account used by the project.
+    :vartype serviceAccountName: str
+    :ivar workloadIdentityClientId: Client ID of the project's workload identity.
+    :vartype workloadIdentityClientId: str
+    :ivar allowedCapabilities: Capabilities available to the project binding.
+    :vartype allowedCapabilities: list[Union[str, "AttachedAksClusterCapability"]]
+    :ivar stage: Current project binding stage. Known values are: "Reconciling", "Ready",
+     "Degraded", and "Blocked".
+    :vartype stage: Union[str, "AttachedAksClusterProjectBindingStage"]
+    :ivar message: Details of the current binding state.
+    :vartype message: str
+    :ivar kubeRayReady: Whether the binding is ready for KubeRay workloads.
+    :vartype kubeRayReady: bool
+    :ivar foundryNativeReady: Whether the binding is ready for Foundry-native workloads.
+    :vartype foundryNativeReady: bool
+    """
+
+    projectId: str
+    """Identifier of the bound Foundry project."""
+    projectName: str
+    """Name of the bound Foundry project."""
+    namespace: str
+    """Kubernetes namespace assigned to the project."""
+    serviceAccountName: str
+    """Kubernetes service account used by the project."""
+    workloadIdentityClientId: str
+    """Client ID of the project's workload identity."""
+    allowedCapabilities: list[Union[str, "AttachedAksClusterCapability"]]
+    """Capabilities available to the project binding."""
+    stage: Union[str, "AttachedAksClusterProjectBindingStage"]
+    """Current project binding stage. Known values are: \"Reconciling\", \"Ready\", \"Degraded\", and
+     \"Blocked\"."""
+    message: str
+    """Details of the current binding state."""
+    kubeRayReady: bool
+    """Whether the binding is ready for KubeRay workloads."""
+    foundryNativeReady: bool
+    """Whether the binding is ready for Foundry-native workloads."""
+
+
+class AttachedAksClusterProperties(TypedDict, total=False):
+    """Properties of an account-level AKS attachment.
+
+    :ivar clusterResourceId: ARM resource ID of the existing AKS cluster. This value is immutable.
+     Required.
+    :vartype clusterResourceId: str
+    :ivar capabilities: The complete set of capabilities for this attachment, without duplicates.
+     PUT replaces the set. foundryNative is added automatically unless aiManager is the only
+     capability. After attach, the only supported change is adding kuberay; other changes return 409
+     Conflict and require detaching first. Required.
+    :vartype capabilities: list[Union[str, "AttachedAksClusterCapability"]]
+    :ivar extensionProfile: Configuration of the training extension on the attached cluster.
+    :vartype extensionProfile: "AttachedAksClusterExtensionProfile"
+    :ivar projectBindings: Server-managed project bindings on the attached cluster.
+    :vartype projectBindings: list["AttachedAksClusterProjectBinding"]
+    :ivar status: Server-reported attachment provisioning, integration, and health status.
+    :vartype status: "AttachedAksClusterStatus"
+    """
+
+    clusterResourceId: Required[str]
+    """ARM resource ID of the existing AKS cluster. This value is immutable. Required."""
+    capabilities: Required[list[Union[str, "AttachedAksClusterCapability"]]]
+    """The complete set of capabilities for this attachment, without duplicates. PUT replaces the set.
+     foundryNative is added automatically unless aiManager is the only capability. After attach, the
+     only supported change is adding kuberay; other changes return 409 Conflict and require
+     detaching first. Required."""
+    extensionProfile: "AttachedAksClusterExtensionProfile"
+    """Configuration of the training extension on the attached cluster."""
+    projectBindings: list["AttachedAksClusterProjectBinding"]
+    """Server-managed project bindings on the attached cluster."""
+    status: "AttachedAksClusterStatus"
+    """Server-reported attachment provisioning, integration, and health status."""
+
+
+class AttachedAksClusterReadinessStatus(TypedDict, total=False):
+    """Readiness of the attachment connector and capabilities.
+
+    :ivar connectorReady: Whether the connector is ready.
+    :vartype connectorReady: bool
+    :ivar capabilities: Readiness of individual capabilities.
+    :vartype capabilities: list["AttachedAksClusterCapabilityStatus"]
+    :ivar blockers: Conditions preventing readiness.
+    :vartype blockers: list[str]
+    """
+
+    connectorReady: bool
+    """Whether the connector is ready."""
+    capabilities: list["AttachedAksClusterCapabilityStatus"]
+    """Readiness of individual capabilities."""
+    blockers: list[str]
+    """Conditions preventing readiness."""
+
+
+class AttachedAksClusterRoleAssignmentStatus(TypedDict, total=False):
+    """Role assignments associated with the AI Manager integration.
+
+    :ivar contributorId: ARM resource ID of the contributor role assignment.
+    :vartype contributorId: str
+    :ivar inferenceOperatorId: ARM resource ID of the inference operator role assignment.
+    :vartype inferenceOperatorId: str
+    :ivar status: Current role assignment status.
+    :vartype status: str
+    """
+
+    contributorId: str
+    """ARM resource ID of the contributor role assignment."""
+    inferenceOperatorId: str
+    """ARM resource ID of the inference operator role assignment."""
+    status: str
+    """Current role assignment status."""
+
+
+class AttachedAksClusterStatus(TypedDict, total=False):
+    """Current provisioning and health status of an attachment.
+
+    :ivar stage: Current attachment provisioning stage. Known values are: "Accepted", "Validating",
+     "ProvisioningCluster", "ProvisioningIdentity", "PendingBootstrap", "ClusterReady", "Ready",
+     "Degraded", "Failed", "Deleting", and "Blocked".
+    :vartype stage: Union[str, "AttachedAksClusterProvisioningStage"]
+    :ivar clusterResourceId: ARM resource ID of the attached AKS cluster.
+    :vartype clusterResourceId: str
+    :ivar providerOperationId: Identifier of an underlying provider operation, when present.
+    :vartype providerOperationId: str
+    :ivar message: Details of the current attachment state.
+    :vartype message: str
+    :ivar identity: Identity provisioned for training on the attached cluster.
+    :vartype identity: "AttachedAksClusterIdentityStatus"
+    :ivar connectorRegistration: Connector registration associated with the attachment.
+    :vartype connectorRegistration: "AttachedAksClusterConnectorRegistration"
+    :ivar observedGeneration: Attachment generation observed by the connector.
+    :vartype observedGeneration: int
+    :ivar connectorObservedAtUtc: Time at which the connector was last observed.
+    :vartype connectorObservedAtUtc: str
+    :ivar readiness: Connector and capability readiness.
+    :vartype readiness: "AttachedAksClusterReadinessStatus"
+    :ivar aiManager: Status of the AI Manager integration.
+    :vartype aiManager: "AttachedAksClusterAiManagerStatus"
+    :ivar extension: Status of the training extension resource.
+    :vartype extension: "AttachedAksClusterIntegrationResourceStatus"
+    :ivar health: Evaluated attachment health and workload admission status.
+    :vartype health: "AttachedAksClusterHealthStatus"
+    :ivar lastUpdatedTimeUtc: Last update time of the attachment status.
+    :vartype lastUpdatedTimeUtc: str
+    """
+
+    stage: Union[str, "AttachedAksClusterProvisioningStage"]
+    """Current attachment provisioning stage. Known values are: \"Accepted\", \"Validating\",
+     \"ProvisioningCluster\", \"ProvisioningIdentity\", \"PendingBootstrap\", \"ClusterReady\",
+     \"Ready\", \"Degraded\", \"Failed\", \"Deleting\", and \"Blocked\"."""
+    clusterResourceId: str
+    """ARM resource ID of the attached AKS cluster."""
+    providerOperationId: str
+    """Identifier of an underlying provider operation, when present."""
+    message: str
+    """Details of the current attachment state."""
+    identity: "AttachedAksClusterIdentityStatus"
+    """Identity provisioned for training on the attached cluster."""
+    connectorRegistration: "AttachedAksClusterConnectorRegistration"
+    """Connector registration associated with the attachment."""
+    observedGeneration: int
+    """Attachment generation observed by the connector."""
+    connectorObservedAtUtc: str
+    """Time at which the connector was last observed."""
+    readiness: "AttachedAksClusterReadinessStatus"
+    """Connector and capability readiness."""
+    aiManager: "AttachedAksClusterAiManagerStatus"
+    """Status of the AI Manager integration."""
+    extension: "AttachedAksClusterIntegrationResourceStatus"
+    """Status of the training extension resource."""
+    health: "AttachedAksClusterHealthStatus"
+    """Evaluated attachment health and workload admission status."""
+    lastUpdatedTimeUtc: str
+    """Last update time of the attachment status."""
+
+
 class CalculateModelCapacityParameter(TypedDict, total=False):
     """Calculate Model Capacity parameter.
 
@@ -1702,6 +2285,27 @@ class CapabilitySettings(TypedDict, total=False):
     """Azure resource ID of the vector store used by agent retrieval and indexing."""
     blobStore: str
     """Azure resource ID of the blob store used by agent file and artifact storage."""
+
+
+class CertificateBundleReference(TypedDict, total=False):
+    """A reference to a specific version of a Key Vault secret containing a PEM-encoded CA certificate
+    or certificate bundle.
+
+    :ivar secretName: Name of the Key Vault secret containing the CA certificate or certificate
+     bundle. Required.
+    :vartype secretName: str
+    :ivar secretVersion: Required, pinned version of the Key Vault secret. Newer secret versions
+     are not followed automatically. To rotate a bundle, update this value and resubmit the complete
+     account trust configuration. Required.
+    :vartype secretVersion: str
+    """
+
+    secretName: Required[str]
+    """Name of the Key Vault secret containing the CA certificate or certificate bundle. Required."""
+    secretVersion: Required[str]
+    """Required, pinned version of the Key Vault secret. Newer secret versions are not followed
+     automatically. To rotate a bundle, update this value and resubmit the complete account trust
+     configuration. Required."""
 
 
 class ChannelsBuiltInAuthorizationPolicy(TypedDict, total=False):
@@ -2265,237 +2869,460 @@ class ContainerInstanceComputeProperties(TypedDict, total=False):
     """Network connectivity endpoints assigned to the container instance."""
 
 
-class CostControl(ProxyResource):
-    """A cost control owned by a Cognitive Services account.
+class CostControlAction(TypedDict, total=False):
+    """Blocks requests when consumption reaches the explicitly configured threshold. No implicit
+    blocking action is created.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype systemData: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "CostControlProperties"
-    :ivar etag: The entity tag used for optimistic concurrency.
-    :vartype etag: str
+    :ivar type: The enforcement action. Only ``Block`` is supported. Required. Default value is
+     "Block".
+    :vartype type: Literal["Block"]
+    :ivar thresholdType: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Required. Known values are: "Percentage" and "Absolute".
+    :vartype thresholdType: Union[str, "CostControlThresholdType"]
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets. Required.
+    :vartype threshold: float
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required.
+     Default value is "GreaterThanOrEqualTo".
+    :vartype operator: Literal["GreaterThanOrEqualTo"]
     """
 
-    properties: "CostControlProperties"
-    """The resource-specific properties for this resource."""
-    etag: str
-    """The entity tag used for optimistic concurrency."""
+    type: Required[Literal["Block"]]
+    """The enforcement action. Only ``Block`` is supported. Required. Default value is \"Block\"."""
+    thresholdType: Required[Union[str, "CostControlThresholdType"]]
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit.
+     Required. Known values are: \"Percentage\" and \"Absolute\"."""
+    threshold: Required[float]
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets. Required."""
+    operator: Required[Literal["GreaterThanOrEqualTo"]]
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required. Default value
+     is \"GreaterThanOrEqualTo\"."""
+
+
+class CostControlActionPatch(TypedDict, total=False):
+    """Edits to an existing named blocking action. New actions require all fields after merging;
+    supplied fields cannot be null.
+
+    :ivar type: The enforcement action. Only ``Block`` is supported. Default value is "Block".
+    :vartype type: Literal["Block"]
+    :ivar thresholdType: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Known values are: "Percentage" and "Absolute".
+    :vartype thresholdType: Union[str, "CostControlThresholdType"]
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets.
+    :vartype threshold: float
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default
+     value is "GreaterThanOrEqualTo".
+    :vartype operator: Literal["GreaterThanOrEqualTo"]
+    """
+
+    type: Literal["Block"]
+    """The enforcement action. Only ``Block`` is supported. Default value is \"Block\"."""
+    thresholdType: Union[str, "CostControlThresholdType"]
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit. Known
+     values are: \"Percentage\" and \"Absolute\"."""
+    threshold: float
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets."""
+    operator: Literal["GreaterThanOrEqualTo"]
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default value is
+     \"GreaterThanOrEqualTo\"."""
+
+
+class CostControlAdditionalInfoFilter(TypedDict, total=False):
+    """Selects traffic whose named additional-info attribute equals at least one of the supplied
+    values.
+
+    :ivar name: The built-in attribute: agent, sessionId, project, deployment, or tokenType.
+     Resource selectors use owner-scoped short names, not Azure resource IDs. Agent selections
+     require an explicit project filter selecting exactly one project; multiple agents in that
+     project are supported. A project-owned control can select only its owning project. Project,
+     agent, and deployment values must be plain names of 1-64 characters without leading or trailing
+     whitespace, control characters, path/query/fragment separators, percent signs, or . and .. path
+     segments. tokenType accepts input, output, or both for a Tokens budget; omission measures
+     overall tokens. Required. Known values are: "agent", "sessionId", "project", "deployment", and
+     "tokenType".
+    :vartype name: Union[str, "CostControlFilterName"]
+    :ivar operator: The comparison operator.``In`` is supported. Required. Default value is "In".
+    :vartype operator: Literal["In"]
+    :ivar values: One or more nonempty, non-whitespace strings to match. There is no per-condition
+     value-count limit; the serialized cost-control definition must not exceed 32 KiB. Required.
+    :vartype values: list[str]
+    """
+
+    name: Required[Union[str, "CostControlFilterName"]]
+    """The built-in attribute: agent, sessionId, project, deployment, or tokenType. Resource selectors
+     use owner-scoped short names, not Azure resource IDs. Agent selections require an explicit
+     project filter selecting exactly one project; multiple agents in that project are supported. A
+     project-owned control can select only its owning project. Project, agent, and deployment values
+     must be plain names of 1-64 characters without leading or trailing whitespace, control
+     characters, path/query/fragment separators, percent signs, or . and .. path segments. tokenType
+     accepts input, output, or both for a Tokens budget; omission measures overall tokens. Required.
+     Known values are: \"agent\", \"sessionId\", \"project\", \"deployment\", and \"tokenType\"."""
+    operator: Required[Literal["In"]]
+    """The comparison operator.``In`` is supported. Required. Default value is \"In\"."""
+    values: Required[list[str]]
+    """One or more nonempty, non-whitespace strings to match. There is no per-condition value-count
+     limit; the serialized cost-control definition must not exceed 32 KiB. Required."""
 
 
 class CostControlConnections(TypedDict, total=False):
-    """Defines account-level connections used to publish cost-control telemetry and events.
-    Application Insights is optional and may be removed while policies remain attached. Event Grid
-    is required for alerts; supplied connection references must still be valid.
+    """Account-level telemetry connections. Application Insights is optional and may be removed while
+    controls exist.
 
-    :ivar appInsightsConnectionId: Gets or sets the full resource ID of the optional Application
-     Insights connection.
+    :ivar appInsightsConnectionId: The full resource ID of the optional Application Insights
+     connection. Set to null in an account update to remove it.
     :vartype appInsightsConnectionId: str
-    :ivar eventGridConnectionId: The full resource ID of the Event Grid connection used for cost
-     control alerts. This connection must be configured when an attached cost control contains an
-     alert threshold action and cannot be removed while such an action remains attached.
-    :vartype eventGridConnectionId: str
     """
 
     appInsightsConnectionId: Optional[str]
-    """Gets or sets the full resource ID of the optional Application Insights connection."""
-    eventGridConnectionId: Optional[str]
-    """The full resource ID of the Event Grid connection used for cost control alerts. This connection
-     must be configured when an attached cost control contains an alert threshold action and cannot
-     be removed while such an action remains attached."""
+    """The full resource ID of the optional Application Insights connection. Set to null in an account
+     update to remove it."""
 
 
-class CostControlDimension(TypedDict, total=False):
-    """A request dimension used to partition cost control consumption.
+CostControlFilter = TypedDict(
+    "CostControlFilter",
+    {
+        "additionalInfo": "CostControlAdditionalInfoFilter",
+        "and": list["CostControlFilter"],
+    },
+    total=False,
+)
+CostControlFilter.__doc__ = """Traffic selection using exactly one of ``additionalInfo`` or ``and``. Additional-info names
+must be unique across the complete expression. Filters narrow the owner's scope and cannot
+extend a project-owned control to another project. Values within one condition are
+alternatives; conditions are combined with AND. An agent selection requires an explicit project
+filter selecting exactly one project, including for project-owned controls.
 
-    :ivar type: The kind of request dimension. Required. Known values are: "Agent", "Identity",
-     "Session", "Project", "Account", and "Custom".
-    :vartype type: Union[str, "CostControlDimensionType"]
-    :ivar attribute: Gets or sets the attribute path retained for legacy Custom counters. Authored
-     rules cannot select Custom; built-in dimensions must omit this property.
-    :vartype attribute: str
+:ivar additionalInfo: A single additional-info condition. Must not be combined with ``and`` on
+ the same filter object.
+:vartype additionalInfo: "CostControlAdditionalInfoFilter"
+:ivar and: A conjunction of at least two conditions. Must not be combined with
+ ``additionalInfo`` on the same filter object.
+:vartype and: list["CostControlFilter"]
+"""
+
+
+class CostControlGrouping(TypedDict, total=False):
+    """An additional built-in request attribute used to partition a budget into independent counters.
+
+    :ivar name: The built-in attribute to group by. project is available only for account-owned
+     controls. Required. Known values are: "project", "agent", and "sessionId".
+    :vartype name: Union[str, "CostControlGroupingName"]
+    :ivar type: The grouping kind. Only ``AdditionalInfoKey`` is supported. Required. Default value
+     is "AdditionalInfoKey".
+    :vartype type: Literal["AdditionalInfoKey"]
     """
 
-    type: Required[Union[str, "CostControlDimensionType"]]
-    """The kind of request dimension. Required. Known values are: \"Agent\", \"Identity\",
-     \"Session\", \"Project\", \"Account\", and \"Custom\"."""
-    attribute: str
-    """Gets or sets the attribute path retained for legacy Custom counters. Authored rules cannot
-     select Custom; built-in dimensions must omit this property."""
+    name: Required[Union[str, "CostControlGroupingName"]]
+    """The built-in attribute to group by. project is available only for account-owned controls.
+     Required. Known values are: \"project\", \"agent\", and \"sessionId\"."""
+    type: Required[Literal["AdditionalInfoKey"]]
+    """The grouping kind. Only ``AdditionalInfoKey`` is supported. Required. Default value is
+     \"AdditionalInfoKey\"."""
 
 
-class CostControlMatch(TypedDict, total=False):
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-    ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-    IDs use
-    /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-    their canonical key.
+class CostControlNotification(TypedDict, total=False):
+    """An alert notification with an explicit threshold, enabled state, and Event Grid destination.
 
-    :ivar agentResourceIds: Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-    :vartype agentResourceIds: list[str]
-    :ivar identityObjectIds: The authenticated principal object IDs to match.
-    :vartype identityObjectIds: list[str]
-    :ivar sessionIds: The Foundry session IDs to match.
-    :vartype sessionIds: list[str]
-    :ivar projectIds: The Foundry project resource IDs to match.
-    :vartype projectIds: list[str]
+    :ivar eventGridConnectionId: The full resource ID of the Cognitive Services Event Grid
+     connection used to publish this notification. Required.
+    :vartype eventGridConnectionId: str
+    :ivar thresholdType: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Required. Known values are: "Percentage" and "Absolute".
+    :vartype thresholdType: Union[str, "CostControlThresholdType"]
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets. Required.
+    :vartype threshold: float
+    :ivar enabled: Whether this notification is enabled. Disabled notifications remain configured
+     but do not publish alerts. Required.
+    :vartype enabled: bool
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required.
+     Default value is "GreaterThanOrEqualTo".
+    :vartype operator: Literal["GreaterThanOrEqualTo"]
     """
 
-    agentResourceIds: list[str]
-    """Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}."""
-    identityObjectIds: list[str]
-    """The authenticated principal object IDs to match."""
-    sessionIds: list[str]
-    """The Foundry session IDs to match."""
-    projectIds: list[str]
-    """The Foundry project resource IDs to match."""
+    eventGridConnectionId: Required[str]
+    """The full resource ID of the Cognitive Services Event Grid connection used to publish this
+     notification. Required."""
+    thresholdType: Required[Union[str, "CostControlThresholdType"]]
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit.
+     Required. Known values are: \"Percentage\" and \"Absolute\"."""
+    threshold: Required[float]
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets. Required."""
+    enabled: Required[bool]
+    """Whether this notification is enabled. Disabled notifications remain configured but do not
+     publish alerts. Required."""
+    operator: Required[Literal["GreaterThanOrEqualTo"]]
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Required. Default value
+     is \"GreaterThanOrEqualTo\"."""
+
+
+class CostControlNotificationPatch(TypedDict, total=False):
+    """Edits to an existing named notification. New notifications require all fields after merging;
+    supplied fields cannot be null.
+
+    :ivar eventGridConnectionId: The full resource ID of the Cognitive Services Event Grid
+     connection used to publish this notification.
+    :vartype eventGridConnectionId: str
+    :ivar thresholdType: Whether threshold is a percentage of amount or an absolute value in the
+     budget's unit. Known values are: "Percentage" and "Absolute".
+    :vartype thresholdType: Union[str, "CostControlThresholdType"]
+    :ivar threshold: The positive threshold. Percentages cannot exceed 100; absolute thresholds
+     cannot exceed amount and must be whole numbers for Tokens budgets.
+    :vartype threshold: float
+    :ivar enabled: Whether this notification is enabled. Disabled notifications remain configured
+     but do not publish alerts.
+    :vartype enabled: bool
+    :ivar operator: The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default
+     value is "GreaterThanOrEqualTo".
+    :vartype operator: Literal["GreaterThanOrEqualTo"]
+    """
+
+    eventGridConnectionId: str
+    """The full resource ID of the Cognitive Services Event Grid connection used to publish this
+     notification."""
+    thresholdType: Union[str, "CostControlThresholdType"]
+    """Whether threshold is a percentage of amount or an absolute value in the budget's unit. Known
+     values are: \"Percentage\" and \"Absolute\"."""
+    threshold: float
+    """The positive threshold. Percentages cannot exceed 100; absolute thresholds cannot exceed amount
+     and must be whole numbers for Tokens budgets."""
+    enabled: bool
+    """Whether this notification is enabled. Disabled notifications remain configured but do not
+     publish alerts."""
+    operator: Literal["GreaterThanOrEqualTo"]
+    """The threshold comparison. Only ``GreaterThanOrEqualTo`` is supported. Default value is
+     \"GreaterThanOrEqualTo\"."""
 
 
 class CostControlPatch(TypedDict, total=False):
-    """The request used to update a cost control.
+    """A partial budget update. Omitting properties preserves all existing budget properties. Setting
+    properties to null or an empty object ({}) clears all existing budget properties. A non-empty
+    properties object updates the supplied fields according to their merge semantics; omitted
+    fields retain their existing values.
 
-    :ivar properties: The cost control properties to update.
+    :ivar properties: The budget properties to update. Omission preserves existing properties. Null
+     or an empty object ({}) clears all existing properties.
     :vartype properties: "CostControlPatchProperties"
     """
 
-    properties: "CostControlPatchProperties"
-    """The cost control properties to update."""
+    properties: Optional["CostControlPatchProperties"]
+    """The budget properties to update. Omission preserves existing properties. Null or an empty
+     object ({}) clears all existing properties."""
 
 
 class CostControlPatchProperties(TypedDict, total=False):
-    """The properties that can be changed on a cost control.
+    """Edits applied when properties is a non-empty object. Omitted fields retain their existing
+    values; no defaults are applied. The complete merged result may contain at most one
+    notification, including disabled notifications, and one Block action. Exceeding either limit
+    returns HTTP 400 without changing the stored definition. Missing registration returns 403
+    FeatureNotRegistered before merging or no-op detection. Omitting or removing identity
+    selections does not require this registration; omitted stored selections are preserved, subject
+    to existing validation rules.
 
-    :ivar displayName: An optional human-readable name for the cost control. Set this property to
-     null to clear it.
-    :vartype displayName: str
-    :ivar rules: The complete replacement set of cost control rules.
-    :vartype rules: list["CostControlRule"]
+    :ivar provider: The resource provider. If supplied, it must be Microsoft.CognitiveServices and
+     cannot be null. Default value is "Microsoft.CognitiveServices".
+    :vartype provider: Literal["Microsoft.CognitiveServices"]
+    :ivar grouping: Replaces additional grouping. Omission preserves grouping; an empty array
+     restores the owner's default counter. Null is not accepted.
+    :vartype grouping: list["CostControlGrouping"]
+    :ivar category: The existing measurement category. Changing it after creation is not supported.
+     Known values are: "Cost" and "Tokens".
+    :vartype category: Union[str, "CostControlCategory"]
+    :ivar amount: Replaces the positive budget amount, measured in United States dollars for the
+     Cost category or in whole tokens for the Tokens category.
+    :vartype amount: float
+    :ivar timeGrain: Replaces the calendar-aligned UTC renewal interval. Known values are: "Daily",
+     "Weekly", and "Monthly".
+    :vartype timeGrain: Union[str, "CostControlTimeGrain"]
+    :ivar timePeriod: Merges supplied dates into the existing validity window; omitted dates remain
+     unchanged.
+    :vartype timePeriod: "CostControlTimePeriodPatch"
+    :ivar filter: Replaces the complete traffic filter. Set to null to select all eligible traffic
+     within the owner's scope.
+    :vartype filter: "CostControlFilter"
+    :ivar notifications: Merges notifications by case-insensitive name, preserving existing name
+     casing. Null entries delete notifications; null clears the collection. Omission or an empty
+     object preserves existing notifications. New entries must supply all required notification
+     fields after merging. The complete merged result may contain at most one notification,
+     including disabled notifications; otherwise the request returns HTTP 400.
+    :vartype notifications: dict[str, "CostControlNotificationPatch"]
+    :ivar providerProperties: Merges provider-specific settings. Set to null to remove all blocking
+     actions; omission preserves them.
+    :vartype providerProperties: "CostControlProviderPropertiesPatch"
     """
 
-    displayName: Optional[str]
-    """An optional human-readable name for the cost control. Set this property to null to clear it."""
-    rules: list["CostControlRule"]
-    """The complete replacement set of cost control rules."""
+    provider: Literal["Microsoft.CognitiveServices"]
+    """The resource provider. If supplied, it must be Microsoft.CognitiveServices and cannot be null.
+     Default value is \"Microsoft.CognitiveServices\"."""
+    grouping: list["CostControlGrouping"]
+    """Replaces additional grouping. Omission preserves grouping; an empty array restores the owner's
+     default counter. Null is not accepted."""
+    category: Union[str, "CostControlCategory"]
+    """The existing measurement category. Changing it after creation is not supported. Known values
+     are: \"Cost\" and \"Tokens\"."""
+    amount: float
+    """Replaces the positive budget amount, measured in United States dollars for the Cost category or
+     in whole tokens for the Tokens category."""
+    timeGrain: Union[str, "CostControlTimeGrain"]
+    """Replaces the calendar-aligned UTC renewal interval. Known values are: \"Daily\", \"Weekly\",
+     and \"Monthly\"."""
+    timePeriod: "CostControlTimePeriodPatch"
+    """Merges supplied dates into the existing validity window; omitted dates remain unchanged."""
+    filter: Optional["CostControlFilter"]
+    """Replaces the complete traffic filter. Set to null to select all eligible traffic within the
+     owner's scope."""
+    notifications: Optional[dict[str, "CostControlNotificationPatch"]]
+    """Merges notifications by case-insensitive name, preserving existing name casing. Null entries
+     delete notifications; null clears the collection. Omission or an empty object preserves
+     existing notifications. New entries must supply all required notification fields after merging.
+     The complete merged result may contain at most one notification, including disabled
+     notifications; otherwise the request returns HTTP 400."""
+    providerProperties: Optional["CostControlProviderPropertiesPatch"]
+    """Merges provider-specific settings. Set to null to remove all blocking actions; omission
+     preserves them."""
 
 
 class CostControlProperties(TypedDict, total=False):
-    """The customer-authored settings of a cost control.
+    """The consumption budget and its traffic selection, notifications, and enforcement actions. A
+    cost control applies within its owner's scope.
 
-    :ivar displayName: An optional human-readable name for the cost control.
-    :vartype displayName: str
-    :ivar rules: The rules enforced by the cost control. Required.
-    :vartype rules: list["CostControlRule"]
-    """
-
-    displayName: str
-    """An optional human-readable name for the cost control."""
-    rules: Required[list["CostControlRule"]]
-    """The rules enforced by the cost control. Required."""
-
-
-class CostControlRule(TypedDict, total=False):
-    """A cost limit and the population to which it applies.
-
-    :ivar name: The stable rule identifier, unique within the cost control without regard to case.
-     Required.
-    :vartype name: str
-    :ivar counterKey: Gets or sets the single built-in dimension used to partition consumption.
-     Custom dimensions are retained only for legacy reads and metadata-only updates. Legacy
-     singleton arrays are accepted on read; serialization always emits an object. To track another
-     field, create another rule. Required.
-    :vartype counterKey: "CostControlDimension"
-    :ivar unit: The unit used for the cost control amount and absolute thresholds. Required. "Usd"
-    :vartype unit: Union[str, "CostControlUnit"]
-    :ivar amount: The maximum consumption allowed by this rule, expressed in the selected unit.
-     Required.
+    :ivar provider: The resource provider for this budget. Omission selects
+     Microsoft.CognitiveServices; responses return that value. Default value is
+     "Microsoft.CognitiveServices".
+    :vartype provider: Literal["Microsoft.CognitiveServices"]
+    :ivar grouping: Optional additional partitioning of consumption. Omission or an empty array
+     uses one counter for the owning account or Foundry project. Responses omit owner-default
+     grouping. A project-owned control cannot explicitly group by project.
+    :vartype grouping: list["CostControlGrouping"]
+    :ivar category: Whether the budget measures estimated cost in United States dollars or token
+     consumption. This category cannot be changed after creation. Required. Known values are: "Cost"
+     and "Tokens".
+    :vartype category: Union[str, "CostControlCategory"]
+    :ivar amount: The positive budget amount, measured in United States dollars for the Cost
+     category or in tokens for the Tokens category. Token amounts must be whole numbers. Required.
     :vartype amount: float
-    :ivar period: Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day,
-     Week, or Month. This field is required for recurring rules and must be omitted for
-     non-recurring rules. Legacy stored minute, hour, and year periods are preserved when reading
-     definitions. Known values are: "Minute", "Hour", "Day", "Week", "Month", and "Year".
-    :vartype period: Union[str, "CostControlPeriod"]
-    :ivar recurring: Whether the cost control renews. The default is true.
-    :vartype recurring: bool
-    :ivar match: Gets or sets optional match arrays keyed by ``agentResourceIds``,
-     ``identityObjectIds``, ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty
-     values. Agent resource IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key.
-    :vartype match: "CostControlMatch"
-    :ivar thresholds: Gets or sets optional thresholds. Omitted or empty thresholds track usage
-     without explicit actions. Authored thresholds must explicitly specify Alert or Block; Audit is
-     retained for legacy reads.
-    :vartype thresholds: list["CostControlThreshold"]
+    :ivar timeGrain: The calendar-aligned UTC interval at which consumption counters renew within
+     the validity window. Required. Known values are: "Daily", "Weekly", and "Monthly".
+    :vartype timeGrain: Union[str, "CostControlTimeGrain"]
+    :ivar timePeriod: The finite UTC validity window during which the control applies. Required.
+    :vartype timePeriod: "CostControlTimePeriod"
+    :ivar filter: Optional traffic selection. Omission selects all eligible traffic within the
+     owner's scope.
+    :vartype filter: "CostControlFilter"
+    :ivar notifications: Alert notifications keyed by nonempty, case-insensitively unique names.
+     Each notification supplies its own Event Grid connection. PUT and the complete merged PATCH
+     result may contain at most one notification, including disabled notifications. Omission on
+     creation creates no notifications.
+    :vartype notifications: dict[str, "CostControlNotification"]
+    :ivar providerProperties: Optional provider-specific enforcement settings. Omission creates no
+     blocking actions.
+    :vartype providerProperties: "CostControlProviderProperties"
     """
 
-    name: Required[str]
-    """The stable rule identifier, unique within the cost control without regard to case. Required."""
-    counterKey: Required["CostControlDimension"]
-    """Gets or sets the single built-in dimension used to partition consumption. Custom dimensions are
-     retained only for legacy reads and metadata-only updates. Legacy singleton arrays are accepted
-     on read; serialization always emits an object. To track another field, create another rule.
-     Required."""
-    unit: Required[Union[str, "CostControlUnit"]]
-    """The unit used for the cost control amount and absolute thresholds. Required. \"Usd\""""
+    provider: Literal["Microsoft.CognitiveServices"]
+    """The resource provider for this budget. Omission selects Microsoft.CognitiveServices; responses
+     return that value. Default value is \"Microsoft.CognitiveServices\"."""
+    grouping: list["CostControlGrouping"]
+    """Optional additional partitioning of consumption. Omission or an empty array uses one counter
+     for the owning account or Foundry project. Responses omit owner-default grouping. A
+     project-owned control cannot explicitly group by project."""
+    category: Required[Union[str, "CostControlCategory"]]
+    """Whether the budget measures estimated cost in United States dollars or token consumption. This
+     category cannot be changed after creation. Required. Known values are: \"Cost\" and \"Tokens\"."""
     amount: Required[float]
-    """The maximum consumption allowed by this rule, expressed in the selected unit. Required."""
-    period: Union[str, "CostControlPeriod"]
-    """Gets or sets the calendar-aligned UTC renewal period. Authored rules support Day, Week, or
-     Month. This field is required for recurring rules and must be omitted for non-recurring rules.
-     Legacy stored minute, hour, and year periods are preserved when reading definitions. Known
-     values are: \"Minute\", \"Hour\", \"Day\", \"Week\", \"Month\", and \"Year\"."""
-    recurring: bool
-    """Whether the cost control renews. The default is true."""
-    match: "CostControlMatch"
-    """Gets or sets optional match arrays keyed by ``agentResourceIds``, ``identityObjectIds``,
-     ``sessionIds``, or ``projectIds``. Each array contains 1 to 20 non-empty values. Agent resource
-     IDs use
-     /subscriptions/{subscription_guid}/accounts/{account-name}/project/{project-name}/agent/{agent_name}.
-     Legacy dotted identity, session, and project keys remain accepted, but cannot be combined with
-     their canonical key."""
-    thresholds: Optional[list["CostControlThreshold"]]
-    """Gets or sets optional thresholds. Omitted or empty thresholds track usage without explicit
-     actions. Authored thresholds must explicitly specify Alert or Block; Audit is retained for
-     legacy reads."""
+    """The positive budget amount, measured in United States dollars for the Cost category or in
+     tokens for the Tokens category. Token amounts must be whole numbers. Required."""
+    timeGrain: Required[Union[str, "CostControlTimeGrain"]]
+    """The calendar-aligned UTC interval at which consumption counters renew within the validity
+     window. Required. Known values are: \"Daily\", \"Weekly\", and \"Monthly\"."""
+    timePeriod: Required["CostControlTimePeriod"]
+    """The finite UTC validity window during which the control applies. Required."""
+    filter: "CostControlFilter"
+    """Optional traffic selection. Omission selects all eligible traffic within the owner's scope."""
+    notifications: dict[str, "CostControlNotification"]
+    """Alert notifications keyed by nonempty, case-insensitively unique names. Each notification
+     supplies its own Event Grid connection. PUT and the complete merged PATCH result may contain at
+     most one notification, including disabled notifications. Omission on creation creates no
+     notifications."""
+    providerProperties: "CostControlProviderProperties"
+    """Optional provider-specific enforcement settings. Omission creates no blocking actions."""
 
 
-class CostControlThreshold(TypedDict, total=False):
-    """An action evaluated when cost control consumption reaches a threshold.
+class CostControlProviderProperties(TypedDict, total=False):
+    """Provider-specific budget enforcement settings.
 
-    :ivar type: How the threshold value is interpreted. Required. Known values are: "Percentage"
-     and "Absolute".
-    :vartype type: Union[str, "CostControlThresholdType"]
-    :ivar value: Gets or sets the threshold value. Legacy Audit definitions retain their stored
-     values; new thresholds support only Alert or Block. Required.
-    :vartype value: float
-    :ivar action: Gets or sets the threshold action. Authored thresholds must explicitly specify
-     Alert or Block. Legacy stored definitions with omitted actions continue to read as Audit.
-     Required. Known values are: "Audit", "Alert", and "Block".
-    :vartype action: Union[str, "CostControlThresholdAction"]
+    :ivar actions: Blocking actions keyed by nonempty, case-insensitively unique names. PUT and the
+     complete merged PATCH result may contain at most one Block action, independently of the
+     notification limit. Omission on creation creates no blocking actions.
+    :vartype actions: dict[str, "CostControlAction"]
     """
 
-    type: Required[Union[str, "CostControlThresholdType"]]
-    """How the threshold value is interpreted. Required. Known values are: \"Percentage\" and
-     \"Absolute\"."""
-    value: Required[float]
-    """Gets or sets the threshold value. Legacy Audit definitions retain their stored values; new
-     thresholds support only Alert or Block. Required."""
-    action: Required[Union[str, "CostControlThresholdAction"]]
-    """Gets or sets the threshold action. Authored thresholds must explicitly specify Alert or Block.
-     Legacy stored definitions with omitted actions continue to read as Audit. Required. Known
-     values are: \"Audit\", \"Alert\", and \"Block\"."""
+    actions: dict[str, "CostControlAction"]
+    """Blocking actions keyed by nonempty, case-insensitively unique names. PUT and the complete
+     merged PATCH result may contain at most one Block action, independently of the notification
+     limit. Omission on creation creates no blocking actions."""
+
+
+class CostControlProviderPropertiesPatch(TypedDict, total=False):
+    """Partial provider-specific edits. Named actions merge rather than replacing the complete
+    collection.
+
+    :ivar actions: Merges actions by case-insensitive name, preserving existing name casing. Null
+     entries delete actions; null clears the collection. Omission or an empty object preserves
+     existing actions. New entries must supply all required action fields after merging. The
+     complete merged result may contain at most one Block action; otherwise the request returns HTTP
+     400.
+    :vartype actions: dict[str, "CostControlActionPatch"]
+    """
+
+    actions: Optional[dict[str, "CostControlActionPatch"]]
+    """Merges actions by case-insensitive name, preserving existing name casing. Null entries delete
+     actions; null clears the collection. Omission or an empty object preserves existing actions.
+     New entries must supply all required action fields after merging. The complete merged result
+     may contain at most one Block action; otherwise the request returns HTTP 400."""
+
+
+class CostControlTimePeriod(TypedDict, total=False):
+    """A finite validity interval, including its start and excluding its end.
+
+    :ivar startDate: The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up
+     to seven fractional digits. Required.
+    :vartype startDate: str
+    :ivar endDate: The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp
+     ending in Z with up to seven fractional digits. Required.
+    :vartype endDate: str
+    """
+
+    startDate: Required[str]
+    """The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up to seven
+     fractional digits. Required."""
+    endDate: Required[str]
+    """The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp ending in Z with
+     up to seven fractional digits. Required."""
+
+
+class CostControlTimePeriodPatch(TypedDict, total=False):
+    """Partial edits to a validity interval. Supplied dates cannot be null, and the merged start must
+    precede the merged end.
+
+    :ivar startDate: The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up
+     to seven fractional digits.
+    :vartype startDate: str
+    :ivar endDate: The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp
+     ending in Z with up to seven fractional digits.
+    :vartype endDate: str
+    """
+
+    startDate: str
+    """The inclusive UTC start, encoded as an ISO 8601 timestamp ending in Z with up to seven
+     fractional digits."""
+    endDate: str
+    """The exclusive UTC end, later than startDate, encoded as an ISO 8601 timestamp ending in Z with
+     up to seven fractional digits."""
 
 
 class RaiBlocklistConfig(TypedDict, total=False):
@@ -2521,13 +3348,15 @@ class CustomBlocklistConfig(RaiBlocklistConfig):
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: Union[str, "RaiPolicyContentSource"]
     """
 
     source: Union[str, "RaiPolicyContentSource"]
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
 
 
 class CustomKeys(TypedDict, total=False):
@@ -2800,10 +3629,6 @@ class DeploymentProperties(TypedDict, total=False):
      select the models subset for routing and the routing mode (balanced, quality, cost) for routing
      across all supported models or the model subset.
     :vartype routing: "DeploymentRouting"
-    :ivar costControlIds: The full resource IDs of cost controls directly attached to this
-     deployment. At the moment the service only supports a single cost control. This will be
-     expanded in future API versions.
-    :vartype costControlIds: list[str]
     """
 
     provisioningState: Union[str, "DeploymentProvisioningState"]
@@ -2856,9 +3681,6 @@ class DeploymentProperties(TypedDict, total=False):
      the deployed model is 'model-router' version 2025-11-18 or later. Allows you to select the
      models subset for routing and the routing mode (balanced, quality, cost) for routing across all
      supported models or the model subset."""
-    costControlIds: list[str]
-    """The full resource IDs of cost controls directly attached to this deployment. At the moment the
-     service only supports a single cost control. This will be expanded in future API versions."""
 
 
 class DeploymentRouting(TypedDict, total=False):
@@ -4554,6 +5376,34 @@ class ProjectCapabilityHostProperties(TypedDict, total=False):
      \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
 
+class ProjectCostControl(ProxyResource):
+    """A budget that measures consumption and optionally alerts or blocks requests within its owning
+    Foundry project. Reading, deleting, and enforcing stored identity selections requires
+    Microsoft.CognitiveServices/CostControlsByIdentity registration.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype systemData: "SystemData"
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: "CostControlProperties"
+    :ivar etag: The opaque entity tag used for optimistic concurrency.
+    :vartype etag: str
+    """
+
+    properties: "CostControlProperties"
+    """The resource-specific properties for this resource."""
+    etag: str
+    """The opaque entity tag used for optimistic concurrency."""
+
+
 class ProjectProperties(TypedDict, total=False):
     """Properties of Cognitive Services Project'.
 
@@ -4573,6 +5423,10 @@ class ProjectProperties(TypedDict, total=False):
      override of the account defaults; omitted fields inherit from the parent account when present.
      Settable only at create time.
     :vartype capabilitySettings: "CapabilitySettings"
+    :ivar toolControls: The project-level tool access policy. Omitting this property in a PUT
+     request clears the policy. In PATCH requests, omission preserves the policy and an explicit
+     null clears it. Responses omit this property when no policy is configured.
+    :vartype toolControls: "ToolControls"
     """
 
     provisioningState: Union[str, "ProvisioningState"]
@@ -4591,6 +5445,10 @@ class ProjectProperties(TypedDict, total=False):
     """Effective agent capability settings for the project. Optional partial override of the account
      defaults; omitted fields inherit from the parent account when present. Settable only at create
      time."""
+    toolControls: Optional["ToolControls"]
+    """The project-level tool access policy. Omitting this property in a PUT request clears the
+     policy. In PATCH requests, omission preserves the policy and an explicit null clears it.
+     Responses omit this property when no policy is configured."""
 
 
 class QuotaLimit(TypedDict, total=False):
@@ -4686,8 +5544,88 @@ class QuotaTierUpgradeEligibilityInfo(TypedDict, total=False):
     """Reason in case the subscription is not eligible for upgrade to the next tier."""
 
 
-class RaiAcsEmptyObject(TypedDict, total=False):
-    """An object that must contain no properties."""
+class RaiAcsAgentShutdownInterventionPoint(TypedDict, total=False):
+    """Agent-shutdown binding with the canonical summary target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.summary".
+    :vartype policy_target: Literal["$snap.summary"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "agent_summary".
+    :vartype policy_target_kind: Literal["agent_summary"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """
+
+    policy_target: Required[Literal["$snap.summary"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.summary\"."""
+    policy_target_kind: Required[Literal["agent_summary"]]
+    """The semantic kind of the projected policy target. Required. Default value is \"agent_summary\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+
+class RaiAcsAgentStartupInterventionPoint(TypedDict, total=False):
+    """Agent-startup binding with the canonical initialization target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.agent_init".
+    :vartype policy_target: Literal["$snap.agent_init"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "agent_init".
+    :vartype policy_target_kind: Literal["agent_init"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """
+
+    policy_target: Required[Literal["$snap.agent_init"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.agent_init\"."""
+    policy_target_kind: Required[Literal["agent_init"]]
+    """The semantic kind of the projected policy target. Required. Default value is \"agent_init\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+
+RaiAcsAnnotationBinding = TypedDict(
+    "RaiAcsAnnotationBinding",
+    {
+        "from": Required[str],
+    },
+    total=False,
+)
+RaiAcsAnnotationBinding.__doc__ = """Binds an annotator to a subject at one intervention point. The map key selects its declaration.
+
+:ivar from: The Agent Control Specification path selecting the subject passed to the annotator.
+ Required.
+:vartype from: str
+"""
+
+
+class RaiAcsAnnotatorDefinition(TypedDict, total=False):
+    """A named Agent Control Specification annotator declaration with host-defined configuration.
+
+    :ivar type: The dispatcher kind. Supported configuration is determined by the evaluation host.
+     Required. Known values are: "classifier", "llm", and "endpoint".
+    :vartype type: Union[str, "RaiAcsAnnotatorType"]
+    """
+
+    type: Required[Union[str, "RaiAcsAnnotatorType"]]
+    """The dispatcher kind. Supported configuration is determined by the evaluation host. Required.
+     Known values are: \"classifier\", \"llm\", and \"endpoint\"."""
 
 
 class RaiAcsHarmConfiguration(TypedDict, total=False):
@@ -4715,54 +5653,73 @@ class RaiAcsInterventionPoint(TypedDict, total=False):
     """Binds one logical policy to an Agent Control Specification intervention point.
 
     :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
+     Required. Known values are: "$snap.agent_init", "$snap.input", "$snap.messages",
+     "$snap.response", "$snap.output", "$snap.tool_call.args", "$snap.tool_result.value", and
+     "$snap.summary".
     :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
     :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+     values are: "agent_init", "user_input", "messages", "model_response", "assistant_output",
+     "tool_args", "tool_result", and "agent_summary".
     :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
     :ivar policy: The logical policy evaluated at this intervention point. Required.
     :vartype policy: "RaiAcsPolicyBinding"
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: "RaiAcsEmptyObject"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
     """
 
     policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
     """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
+     are: \"$snap.agent_init\", \"$snap.input\", \"$snap.messages\", \"$snap.response\",
+     \"$snap.output\", \"$snap.tool_call.args\", \"$snap.tool_result.value\", and \"$snap.summary\"."""
     policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    """The semantic kind of the projected policy target. Required. Known values are: \"agent_init\",
+     \"user_input\", \"messages\", \"model_response\", \"assistant_output\", \"tool_args\",
+     \"tool_result\", and \"agent_summary\"."""
     policy: Required["RaiAcsPolicyBinding"]
     """The logical policy evaluated at this intervention point. Required."""
-    annotations: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
 
 
 class RaiAcsInterventionPoints(TypedDict, total=False):
     """Intervention points supported by the Azure AI Content Safety Unified Moderate host profile.
 
+    :ivar agent_startup: The policy evaluated when the agent execution session starts.
+    :vartype agent_startup: "RaiAcsAgentStartupInterventionPoint"
     :ivar input: The policy evaluated for user input.
     :vartype input: "RaiAcsInterventionPoint"
+    :ivar pre_model_call: The policy evaluated before a model call.
+    :vartype pre_model_call: "RaiAcsPreModelCallInterventionPoint"
+    :ivar post_model_call: The policy evaluated after a model call.
+    :vartype post_model_call: "RaiAcsPostModelCallInterventionPoint"
     :ivar pre_tool_call: The policy evaluated before a tool call.
     :vartype pre_tool_call: "RaiAcsToolInterventionPoint"
     :ivar post_tool_call: The policy evaluated after a tool call.
     :vartype post_tool_call: "RaiAcsToolInterventionPoint"
     :ivar output: The policy evaluated for final output.
     :vartype output: "RaiAcsInterventionPoint"
+    :ivar agent_shutdown: The policy evaluated when the agent execution session shuts down.
+    :vartype agent_shutdown: "RaiAcsAgentShutdownInterventionPoint"
     """
 
+    agent_startup: "RaiAcsAgentStartupInterventionPoint"
+    """The policy evaluated when the agent execution session starts."""
     input: "RaiAcsInterventionPoint"
     """The policy evaluated for user input."""
+    pre_model_call: "RaiAcsPreModelCallInterventionPoint"
+    """The policy evaluated before a model call."""
+    post_model_call: "RaiAcsPostModelCallInterventionPoint"
+    """The policy evaluated after a model call."""
     pre_tool_call: "RaiAcsToolInterventionPoint"
     """The policy evaluated before a tool call."""
     post_tool_call: "RaiAcsToolInterventionPoint"
     """The policy evaluated after a tool call."""
     output: "RaiAcsInterventionPoint"
     """The policy evaluated for final output."""
+    agent_shutdown: "RaiAcsAgentShutdownInterventionPoint"
+    """The policy evaluated when the agent execution session shuts down."""
 
 
 class RaiAcsManifest(TypedDict, total=False):
@@ -4783,9 +5740,9 @@ class RaiAcsManifest(TypedDict, total=False):
      empty when no tool selector is configured. A tool selector requires a non-empty catalog, and an
      unknown selected key fails closed.
     :vartype tools: dict[str, "RaiAcsToolDefinition"]
-    :ivar annotators: Standard Agent Control Specification annotator dispatch is disabled; when
-     present, this object must be empty.
-    :vartype annotators: "RaiAcsEmptyObject"
+    :ivar annotators: Optional annotator declarations keyed by name. Omitted or empty maps request
+     no annotator declarations.
+    :vartype annotators: dict[str, "RaiAcsAnnotatorDefinition"]
     """
 
     agent_control_specification_version: Required[str]
@@ -4801,9 +5758,9 @@ class RaiAcsManifest(TypedDict, total=False):
     """Static tool catalog keyed by canonical tool name. The catalog may be omitted or empty when no
      tool selector is configured. A tool selector requires a non-empty catalog, and an unknown
      selected key fails closed."""
-    annotators: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotator dispatch is disabled; when present, this object
-     must be empty."""
+    annotators: dict[str, "RaiAcsAnnotatorDefinition"]
+    """Optional annotator declarations keyed by name. Omitted or empty maps request no annotator
+     declarations."""
 
 
 class RaiAcsModerationBindingExtension(TypedDict, total=False):
@@ -4842,6 +5799,63 @@ class RaiAcsPolicyBinding(TypedDict, total=False):
     """An optional intervention-specific Rego query override."""
     aacs_moderation: "RaiAcsModerationBindingExtension"
     """Optional Azure AI Content Safety moderation capabilities invoked before Rego evaluation."""
+
+
+class RaiAcsPostModelCallInterventionPoint(TypedDict, total=False):
+    """Post-model binding with the canonical model-response target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.response".
+    :vartype policy_target: Literal["$snap.response"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "model_response".
+    :vartype policy_target_kind: Literal["model_response"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """
+
+    policy_target: Required[Literal["$snap.response"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.response\"."""
+    policy_target_kind: Required[Literal["model_response"]]
+    """The semantic kind of the projected policy target. Required. Default value is
+     \"model_response\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
+
+
+class RaiAcsPreModelCallInterventionPoint(TypedDict, total=False):
+    """Pre-model binding with the canonical messages target.
+
+    :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
+     Required. Default value is "$snap.messages".
+    :vartype policy_target: Literal["$snap.messages"]
+    :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Default
+     value is "messages".
+    :vartype policy_target_kind: Literal["messages"]
+    :ivar policy: The logical policy evaluated at this intervention point. Required.
+    :vartype policy: "RaiAcsPolicyBinding"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """
+
+    policy_target: Required[Literal["$snap.messages"]]
+    """The canonical Agent Hooks snapshot path projected as the policy target. Required. Default value
+     is \"$snap.messages\"."""
+    policy_target_kind: Required[Literal["messages"]]
+    """The semantic kind of the projected policy target. Required. Default value is \"messages\"."""
+    policy: Required["RaiAcsPolicyBinding"]
+    """The logical policy evaluated at this intervention point. Required."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
 
 
 class RaiAcsRegoPolicyDefinition(TypedDict, total=False):
@@ -4892,17 +5906,19 @@ class RaiAcsToolInterventionPoint(TypedDict, total=False):
     """Binds one logical policy to a tool-call intervention point.
 
     :ivar policy_target: The canonical Agent Hooks snapshot path projected as the policy target.
-     Required. Known values are: "$snap.input", "$snap.output", "$snap.tool_call.args", and
-     "$snap.tool_result.value".
+     Required. Known values are: "$snap.agent_init", "$snap.input", "$snap.messages",
+     "$snap.response", "$snap.output", "$snap.tool_call.args", "$snap.tool_result.value", and
+     "$snap.summary".
     :vartype policy_target: Union[str, "RaiAcsPolicyTarget"]
     :ivar policy_target_kind: The semantic kind of the projected policy target. Required. Known
-     values are: "user_input", "assistant_output", "tool_args", and "tool_result".
+     values are: "agent_init", "user_input", "messages", "model_response", "assistant_output",
+     "tool_args", "tool_result", and "agent_summary".
     :vartype policy_target_kind: Union[str, "RaiAcsPolicyTargetKind"]
     :ivar policy: The logical policy evaluated at this intervention point. Required.
     :vartype policy: "RaiAcsPolicyBinding"
-    :ivar annotations: Standard Agent Control Specification annotation bindings are disabled; when
-     present, this object must be empty.
-    :vartype annotations: "RaiAcsEmptyObject"
+    :ivar annotations: Optional annotator bindings keyed by declaration name. Results are available
+     to Rego as input.annotations.<name>.
+    :vartype annotations: dict[str, "RaiAcsAnnotationBinding"]
     :ivar tool_name_from: Selects the tool catalog key from the raw Agent Hooks snapshot using an
      extensible snapshot path. Known values are: "$snap.tool_call.name" and "$.tool_call.name".
     :vartype tool_name_from: Union[str, "RaiAcsToolNameSelector"]
@@ -4910,16 +5926,17 @@ class RaiAcsToolInterventionPoint(TypedDict, total=False):
 
     policy_target: Required[Union[str, "RaiAcsPolicyTarget"]]
     """The canonical Agent Hooks snapshot path projected as the policy target. Required. Known values
-     are: \"$snap.input\", \"$snap.output\", \"$snap.tool_call.args\", and
-     \"$snap.tool_result.value\"."""
+     are: \"$snap.agent_init\", \"$snap.input\", \"$snap.messages\", \"$snap.response\",
+     \"$snap.output\", \"$snap.tool_call.args\", \"$snap.tool_result.value\", and \"$snap.summary\"."""
     policy_target_kind: Required[Union[str, "RaiAcsPolicyTargetKind"]]
-    """The semantic kind of the projected policy target. Required. Known values are: \"user_input\",
-     \"assistant_output\", \"tool_args\", and \"tool_result\"."""
+    """The semantic kind of the projected policy target. Required. Known values are: \"agent_init\",
+     \"user_input\", \"messages\", \"model_response\", \"assistant_output\", \"tool_args\",
+     \"tool_result\", and \"agent_summary\"."""
     policy: Required["RaiAcsPolicyBinding"]
     """The logical policy evaluated at this intervention point. Required."""
-    annotations: "RaiAcsEmptyObject"
-    """Standard Agent Control Specification annotation bindings are disabled; when present, this
-     object must be empty."""
+    annotations: dict[str, "RaiAcsAnnotationBinding"]
+    """Optional annotator bindings keyed by declaration name. Results are available to Rego as
+     input.annotations.<name>."""
     tool_name_from: Union[str, "RaiAcsToolNameSelector"]
     """Selects the tool catalog key from the raw Agent Hooks snapshot using an extensible snapshot
      path. Known values are: \"$snap.tool_call.name\" and \"$.tool_call.name\"."""
@@ -5435,7 +6452,8 @@ class RaiPolicyContentFilter(TypedDict, total=False):
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: Union[str, "RaiPolicyContentSource"]
     :ivar action: The action types to apply to the content filters. Known values are: "None",
      "BLOCKING", "ANNOTATING", "HITL", and "RETRY".
@@ -5452,7 +6470,8 @@ class RaiPolicyContentFilter(TypedDict, total=False):
     """If blocking would occur."""
     source: Union[str, "RaiPolicyContentSource"]
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
     action: Union[str, "RaiActionType"]
     """The action types to apply to the content filters. Known values are: \"None\", \"BLOCKING\",
      \"ANNOTATING\", \"HITL\", and \"RETRY\"."""
@@ -5467,7 +6486,8 @@ class RaiPolicyCustomExternalSafetyProviderReference(TypedDict, total=False):  #
      safety provider.
     :vartype managedIdentityResourceId: str
     :ivar source: The request stage at which the provider runs. Required. Known values are:
-     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Prompt", "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: Union[str, "RaiPolicyContentSource"]
     :ivar blocking: Whether a provider rejection blocks the request.
     :vartype blocking: bool
@@ -5479,7 +6499,8 @@ class RaiPolicyCustomExternalSafetyProviderReference(TypedDict, total=False):  #
     """Optional managed identity used when invoking the external safety provider."""
     source: Required[Union[str, "RaiPolicyContentSource"]]
     """The request stage at which the provider runs. Required. Known values are: \"Prompt\",
-     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"Completion\", \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\",
+     \"PreModelCall\", \"PostModelCall\", and \"AgentShutdown\"."""
     blocking: bool
     """Whether a provider rejection blocks the request."""
 
@@ -5826,13 +6847,15 @@ class SafetyProviderConfig(RaiSafetyProviderConfig):
     :ivar blocking: If blocking would occur.
     :vartype blocking: bool
     :ivar source: Content source to apply the Content Filters. Known values are: "Prompt",
-     "Completion", "PreToolCall", "PostToolCall", "PreRun", and "PostRun".
+     "Completion", "PreToolCall", "PostToolCall", "PreRun", "PostRun", "AgentStartup",
+     "PreModelCall", "PostModelCall", and "AgentShutdown".
     :vartype source: Union[str, "RaiPolicyContentSource"]
     """
 
     source: Union[str, "RaiPolicyContentSource"]
     """Content source to apply the Content Filters. Known values are: \"Prompt\", \"Completion\",
-     \"PreToolCall\", \"PostToolCall\", \"PreRun\", and \"PostRun\"."""
+     \"PreToolCall\", \"PostToolCall\", \"PreRun\", \"PostRun\", \"AgentStartup\", \"PreModelCall\",
+     \"PostModelCall\", and \"AgentShutdown\"."""
 
 
 class SASAuthTypeConnectionProperties(TypedDict, total=False):
@@ -6263,6 +7286,74 @@ class ThrottlingRule(TypedDict, total=False):
     matchPatterns: list["RequestMatchPattern"]
 
 
+class ToolControlEntry(TypedDict, total=False):
+    """Identifies a tool by its canonical type and optional MCP server URL or connector.
+
+    :ivar type: The canonical tool type. For type mcp, exactly one of serverUrl or connectorId must
+     be specified. Other tool types must omit both properties. Required. Known values are: "a2a",
+     "azure_ai_search", "azure_function", "bing_grounding", "browser_automation",
+     "capture_structured_outputs", "openapi", "function", "file_search", "computer_use_preview",
+     "web_search", "mcp", "code_interpreter", "image_generation", "local_shell", "shell", "custom",
+     "web_search_preview", "apply_patch", "a2a_preview", "bing_custom_search_preview",
+     "browser_automation_preview", "fabric_dataagent_preview", "sharepoint_grounding_preview",
+     "memory_search_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", and
+     "web_iq_preview".
+    :vartype type: Union[str, "ToolControlType"]
+    :ivar serverUrl: The absolute HTTPS URL or URL pattern of an MCP server, stored as a string to
+     support wildcards. The entire URL may contain at most one literal '*' across its hostname,
+     path, query, and fragment. Supported patterns include https://*.contoso.com/mcp,
+     `https://contoso.com/mcp/ <https://contoso.com/mcp/>`_*, https://contoso.com/mcp?tenant=*, and
+     `https://contoso.com/mcp# <https://contoso.com/mcp#>`_*. A hostname wildcard must be the
+     leftmost label. The URL must not contain user information. Applies only to type mcp and cannot
+     be specified together with connectorId.
+    :vartype serverUrl: str
+    :ivar connectorId: The opaque MCP connector catalog identifier, not an Azure resource ID.
+     Applies only to type mcp and cannot be specified together with serverUrl.
+    :vartype connectorId: str
+    """
+
+    type: Required[Union[str, "ToolControlType"]]
+    """The canonical tool type. For type mcp, exactly one of serverUrl or connectorId must be
+     specified. Other tool types must omit both properties. Required. Known values are: \"a2a\",
+     \"azure_ai_search\", \"azure_function\", \"bing_grounding\", \"browser_automation\",
+     \"capture_structured_outputs\", \"openapi\", \"function\", \"file_search\",
+     \"computer_use_preview\", \"web_search\", \"mcp\", \"code_interpreter\", \"image_generation\",
+     \"local_shell\", \"shell\", \"custom\", \"web_search_preview\", \"apply_patch\",
+     \"a2a_preview\", \"bing_custom_search_preview\", \"browser_automation_preview\",
+     \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\", \"memory_search_preview\",
+     \"work_iq_preview\", \"fabric_iq_preview\", \"toolbox_search_preview\", and \"web_iq_preview\"."""
+    serverUrl: str
+    """The absolute HTTPS URL or URL pattern of an MCP server, stored as a string to support
+     wildcards. The entire URL may contain at most one literal '*' across its hostname, path, query,
+     and fragment. Supported patterns include https://*.contoso.com/mcp, `https://contoso.com/mcp/
+     <https://contoso.com/mcp/>`_*, https://contoso.com/mcp?tenant=*, and `https://contoso.com/mcp#
+     <https://contoso.com/mcp#>`_*. A hostname wildcard must be the leftmost label. The URL must not
+     contain user information. Applies only to type mcp and cannot be specified together with
+     connectorId."""
+    connectorId: str
+    """The opaque MCP connector catalog identifier, not an Azure resource ID. Applies only to type mcp
+     and cannot be specified together with serverUrl."""
+
+
+class ToolControls(TypedDict, total=False):
+    """Defines the default and per-tool access policy for a Foundry project.
+
+    :ivar defaultAction: The action applied when a tool is not listed explicitly. Only Deny is
+     currently supported. "Deny"
+    :vartype defaultAction: Union[str, "ToolControlsDefaultAction"]
+    :ivar allowedTools: The tools explicitly allowed by the policy. Omission or an empty array
+     specifies no explicitly allowed tools.
+    :vartype allowedTools: list["ToolControlEntry"]
+    """
+
+    defaultAction: Union[str, "ToolControlsDefaultAction"]
+    """The action applied when a tool is not listed explicitly. Only Deny is currently supported.
+     \"Deny\""""
+    allowedTools: list["ToolControlEntry"]
+    """The tools explicitly allowed by the policy. Omission or an empty array specifies no explicitly
+     allowed tools."""
+
+
 class TrafficRoutingRule(TypedDict, total=False):
     """Represents a rule for routing traffic to a specific deployment.
 
@@ -6285,6 +7376,35 @@ class TrafficRoutingRule(TypedDict, total=False):
     """The unique identifier of the deployment to which traffic is routed by this rule."""
     trafficPercentage: int
     """Gets or sets the percentage of traffic allocated to this instance."""
+
+
+class TrustedCertificateSource(TypedDict, total=False):
+    """An Azure resource containing the CA certificate bundles trusted by supported features in the
+    account.
+
+    :ivar type: Type of resource containing the certificate bundles. Currently only AzureKeyVault
+     is supported. Required. "AzureKeyVault"
+    :vartype type: Union[str, "TrustedCertificateSourceType"]
+    :ivar resourceId: Azure resource ID of the Key Vault containing the referenced secrets. The
+     account identity must have permission to read these secrets. Required.
+    :vartype resourceId: str
+    :ivar certificateBundleReferences: References to secrets containing one or more PEM-encoded CA
+     certificates. Each secret name and version pair must be unique within the source, using
+     case-insensitive comparison. The same secret name can be referenced with different versions.
+     Required.
+    :vartype certificateBundleReferences: list["CertificateBundleReference"]
+    """
+
+    type: Required[Union[str, "TrustedCertificateSourceType"]]
+    """Type of resource containing the certificate bundles. Currently only AzureKeyVault is supported.
+     Required. \"AzureKeyVault\""""
+    resourceId: Required[str]
+    """Azure resource ID of the Key Vault containing the referenced secrets. The account identity must
+     have permission to read these secrets. Required."""
+    certificateBundleReferences: Required[list["CertificateBundleReference"]]
+    """References to secrets containing one or more PEM-encoded CA certificates. Each secret name and
+     version pair must be unique within the source, using case-insensitive comparison. The same
+     secret name can be referenced with different versions. Required."""
 
 
 class UserAssignedIdentity(TypedDict, total=False):

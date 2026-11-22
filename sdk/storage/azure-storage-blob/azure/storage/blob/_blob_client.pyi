@@ -27,7 +27,7 @@ from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob._shared.session import SessionProvider
+from azure.storage.blob._session import SessionProvider
 from ._container_client import ContainerClient
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
@@ -215,6 +215,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -237,6 +238,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
@@ -259,6 +261,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         decompress: Optional[bool] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

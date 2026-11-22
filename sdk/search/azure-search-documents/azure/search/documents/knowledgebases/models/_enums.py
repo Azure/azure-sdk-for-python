@@ -13,6 +13,8 @@ from azure.core import CaseInsensitiveEnumMeta
 class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of activity record."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph retrieval over a graph-enabled knowledge source."""
     SEARCH_INDEX = "searchIndex"
     """Search index retrieval activity."""
     AZURE_BLOB = "azureBlob"
@@ -23,6 +25,16 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint retrieval activity."""
+    WORK_IQ = "workIQ"
+    """WorkIQ retrieval activity."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent retrieval activity."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology retrieval activity."""
+    MCP_SERVER = "mcpServer"
+    """MCP server retrieval activity."""
     FILE = "file"
     """File retrieval activity."""
     INDEXED_SQL = "indexedSql"
@@ -49,6 +61,8 @@ class KnowledgeBaseMessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMe
 class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of reference."""
 
+    GRAPH_SEARCH = "graphSearch"
+    """Graph result or hydrated graph-source document reference."""
     SEARCH_INDEX = "searchIndex"
     """Search index document reference."""
     AZURE_BLOB = "azureBlob"
@@ -59,6 +73,16 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indexed OneLake document reference."""
     WEB = "web"
     """Web document reference."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint document reference."""
+    WORK_IQ = "workIQ"
+    """Work IQ document reference."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent document reference."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology document reference."""
+    MCP_SERVER = "mcpServer"
+    """MCP server document reference."""
     FILE = "file"
     """File document reference."""
     INDEXED_SQL = "indexedSql"
@@ -99,6 +123,18 @@ class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitive
     """Use low reasoning during retrieval."""
     MEDIUM = "medium"
     """Use a moderate amount of reasoning during retrieval."""
+    AUTO = "auto"
+    """Automatically select the reasoning effort during retrieval, escalating from the cheapest tier
+    only as far as needed."""
+
+
+class KnowledgeSourceGraphProvenanceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source-document behavior for graph-based knowledge retrieval."""
+
+    NONE = "none"
+    """Return graph results without hydrating their source documents."""
+    HYDRATE = "hydrate"
+    """Also return selected source documents from the configured provenance index."""
 
 
 class KnowledgeSourceNetworkAccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

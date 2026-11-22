@@ -1,5 +1,28 @@
 # Release History
 
+## 19.0.0 (2026-11-16)
+
+### Features Added
+
+  - Model `SmbSettings` added property `smb_oplocks`
+  - Model `VolumePatchProperties` added property `smb_oplocks`
+  - Model `VolumeProperties` added property `ldap_server_type`
+  - Model `VolumeProperties` added property `smb_oplocks`
+  - Added enum `SmbOplocks`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `NetAppManagementClient.subvolumes`
+  - Model `VolumeProperties` deleted or renamed its instance variable `enable_subvolumes`
+  - Deleted or renamed model `EnableSubvolumes`
+  - Deleted or renamed model `SubvolumeInfo`
+  - Deleted or renamed model `SubvolumeModel`
+  - Deleted or renamed model `SubvolumeModelProperties`
+  - Deleted or renamed model `SubvolumePatchParams`
+  - Deleted or renamed model `SubvolumePatchRequest`
+  - Deleted or renamed model `SubvolumeProperties`
+  - Deleted or renamed model `SubvolumesOperations`
+
 ## 18.1.0b1 (2026-10-28)
 
 ### Features Added
