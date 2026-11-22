@@ -630,6 +630,12 @@ Please refer to [sample data](https://github.com/Azure/azure-sdk-for-python/tree
 
 ### Detect prompt attacks
 
+Prompt Shields requires `azure-ai-contentsafety` 1.1.0b1 or later, which is a prerelease. This example also uses `azure-identity` for Microsoft Entra ID authentication:
+
+```bash
+pip install --pre azure-ai-contentsafety azure-identity
+```
+
 <!-- SNIPPET:sample_shield_prompt.shield_prompt -->
 
 ```python

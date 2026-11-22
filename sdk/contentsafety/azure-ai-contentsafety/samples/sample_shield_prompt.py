@@ -15,6 +15,11 @@ DESCRIPTION:
     grounding document (indirect attack hidden in third-party content).
     The client authenticates with Microsoft Entra ID.
 
+PREREQUISITES:
+    Prompt Shields requires azure-ai-contentsafety 1.1.0b1 or later (a prerelease),
+    and this sample uses azure-identity:
+    pip install --pre azure-ai-contentsafety azure-identity
+
 USAGE:
     python sample_shield_prompt.py
 
