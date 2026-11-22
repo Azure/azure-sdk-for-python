@@ -99,8 +99,8 @@ class PreparedRequest:
     #: Target identifier used by the binding function, such as an item
     #: id or a database name. Create and upsert also carry the id already read out
     #: of the body when it is a non-empty string, which saves the binding
-    #: parsing the JSON a second time. Callers that have not been updated may
-    #: leave it unset, in which case the binding reads the body itself.
+    #: parsing the JSON a second time. For create and upsert, the binding reads
+    #: the id from the body when this field is None or empty.
     item_id: Optional[str] = None
 
     #: Limits on which partition keys a retained item query may search,

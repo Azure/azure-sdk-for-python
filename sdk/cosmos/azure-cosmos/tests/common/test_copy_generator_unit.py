@@ -16,6 +16,7 @@ generated tree with ``# Source:`` lines resolved against the real repo.
 """
 from __future__ import annotations
 
+import ast
 import importlib.util
 import pathlib
 import sys
@@ -154,8 +155,9 @@ class TestGeneratedShapesAreWellFormed(unittest.TestCase):
         for spec in (_gen.CREATE_ITEM_SYNC_NONE_OPTIONS, _gen.CREATE_ITEM_AIO_NONE_OPTIONS):
             with self.subTest(surface=spec.surface):
                 text = _gen.render_legacy_file(spec)
-                self.assertNotIn("pre_trigger_include", text)
-                self.assertNotIn("post_trigger_include", text)
+                keywords = {node.arg for node in ast.walk(ast.parse(text)) if isinstance(node, ast.keyword)}
+                self.assertNotIn("pre_trigger_include", keywords)
+                self.assertNotIn("post_trigger_include", keywords)
 
 
 class TestGeneratedLaneMarkers(unittest.TestCase):
@@ -212,36 +214,46 @@ class TestGeneratedSyncFixtureCleanup(unittest.TestCase):
     """Exercise the rendered scaffold without making service requests."""
 
     def test_cleanup_covers_setup_and_cleanup_failures_rust(self):
-        for failure in (None, "database", "container", "delete"):
+        for failure in (None, "data-client", "database", "container", "delete"):
             with self.subTest(failure=failure):
                 namespace = {"__name__": "generated_none_options"}
                 exec(_gen.render_legacy_file(_gen.CREATE_ITEM_SYNC_NONE_OPTIONS), namespace)
                 cleanup = Mock()
-                client = Mock(close=cleanup.close, delete_database=cleanup.delete)
-                container = client.create_database.return_value.create_container.return_value
+                key_client = Mock(close=cleanup.key_close, delete_database=cleanup.delete)
+                client = Mock(close=cleanup.data_close)
+                container = client.get_database_client.return_value.get_container_client.return_value
                 container.create_item.side_effect = lambda body, **kwargs: dict(body)
                 if failure == "database":
-                    client.create_database.side_effect = RuntimeError("database setup failed")
+                    key_client.create_database.side_effect = RuntimeError("database setup failed")
                 elif failure == "container":
-                    client.create_database.return_value.create_container.side_effect = RuntimeError(
+                    key_client.create_database.return_value.create_container.side_effect = RuntimeError(
                         "container setup failed"
                     )
                 elif failure == "delete":
                     cleanup.delete.side_effect = RuntimeError("database cleanup failed")
-                namespace["CosmosClient"] = Mock(return_value=client)
+                namespace["create_setup_client"] = Mock(return_value=key_client)
+                namespace["create_data_client"] = Mock(return_value=client)
+                if failure == "data-client":
+                    namespace["create_data_client"].side_effect = RuntimeError("data client setup failed")
                 case = namespace["TestNoneOptions"]("test_container_create_item_none_options_rust")
                 result = unittest.TestResult()
                 case.run(result)
                 self.assertEqual(result.testsRun, 1)
                 self.assertEqual(result.failures, [])
                 self.assertEqual(len(result.errors), int(failure is not None))
-                self.assertEqual(
-                    [call[0] for call in cleanup.mock_calls],
-                    ["close"] if failure == "database" else ["delete", "close"],
-                )
-                if failure != "database":
+                expected_cleanup = ["delete", "data_close", "key_close"]
+                if failure == "data-client":
+                    expected_cleanup = ["key_close"]
+                elif failure == "database":
+                    expected_cleanup = ["data_close", "key_close"]
+                self.assertEqual([call[0] for call in cleanup.mock_calls], expected_cleanup)
+                if failure not in ("data-client", "database"):
                     cleanup.delete.assert_called_once_with(case._db_id)
-                self.assertEqual(namespace["CosmosClient"].call_args.kwargs["_backend"], "rust")
+                namespace["create_setup_client"].assert_called_once_with(_backend="rust")
+                namespace["create_data_client"].assert_called_once_with(_backend="rust")
+                client.create_database.assert_not_called()
+                client.delete_database.assert_not_called()
+                key_client.get_database_client.assert_not_called()
 
 
 if __name__ == "__main__":

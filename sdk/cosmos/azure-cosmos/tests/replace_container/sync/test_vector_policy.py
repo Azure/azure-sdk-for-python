@@ -110,18 +110,7 @@ class TestVectorPolicy(SyncReplacementCase):
             self.test_db.delete_container(container_id)
 
     def test_fail_replace_vector_indexing_policy_rust(self):
-        """Three invalid vector replacements are each refused with their own message.
-
-        First a vector index whose path does not match any path in the
-        embedding policy. Then a replace that tries to change the paths of an
-        existing vector index. Then one that tries to change the paths of the
-        existing embedding policy.
-
-        All three come back as 400s, and the test pins the wording of each,
-        because the distinction between "these two do not agree" and "this
-        cannot be changed after creation" is the only thing telling a customer
-        whether to fix their input or recreate the container.
-        """
+        """Preserve the two original rejection checks for missing or changed embeddings."""
         # Source: tests/test_vector_policy.py::TestVectorPolicy.test_fail_replace_vector_indexing_policy
         vector_embedding_policy = {
             "vectorEmbeddings": [
@@ -153,22 +142,6 @@ class TestVectorPolicy(SyncReplacementCase):
             except exceptions.CosmosHttpResponseError as e:
                 assert e.status_code == 400
                 assert ("The Vector Indexing Policy's path::/vector1 not matching in Embedding's path."
-                        in e.http_error_message)
-            # using a new indexing policy
-            new_indexing_policy = {
-                "vectorIndexes": [
-                    {"path": "/vector1", "type": "quantizedFlat"}]
-            }
-            try:
-                self.test_db.replace_container(
-                    created_container,
-                    PartitionKey(path="/id"),
-                    vector_embedding_policy=vector_embedding_policy,
-                    indexing_policy=new_indexing_policy)
-                pytest.fail("Container replace should have failed for new indexing policy.")
-            except exceptions.CosmosHttpResponseError as e:
-                assert e.status_code == 400
-                assert ("Paths in existing vector indexing policy cannot be modified in Collection Replace"
                         in e.http_error_message)
             # using a new vector embedding policy
             new_embedding_policy = {

@@ -350,7 +350,7 @@ pub(crate) fn run_query_databases_operation_async<'py>(
     )
 }
 
-/// Add request ids and build the driver options for a database operation.
+/// Attach the activity id and session token, when supplied, and build database operation options.
 fn prepare_database_operation(
     mut op: CosmosOperation,
     modifiers: RequestHeadersAndOptions,

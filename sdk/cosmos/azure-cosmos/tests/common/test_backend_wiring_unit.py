@@ -14,6 +14,7 @@ from __future__ import annotations
 import ast
 from azure.cosmos._backend.capabilities import OperationRouting
 from common.request_preparation import call_create_item_helper
+from common.sdk_subprocess import sdk_python_command
 from common.typed_requests import key_from_legacy_header, legacy_partition_key_from_request
 
 import asyncio
@@ -1753,7 +1754,7 @@ def test_blocked_async_acquisition_does_not_prevent_process_exit_rust():
         print("main finished", flush=True)
     """)
     with subprocess.Popen(
-        [sys.executable, "-c", code], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        sdk_python_command(code), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
     ) as process:
         try:
             stdout, stderr = process.communicate(timeout=5)

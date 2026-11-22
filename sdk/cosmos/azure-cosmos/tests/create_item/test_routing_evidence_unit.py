@@ -237,6 +237,8 @@ async def test_live_matrix_keeps_overrides_native_capture_and_cleanup_rust(
     if test_data[1] is not None:
         expected_options["excluded_locations"] = test_data[1]
     assert options_seen == [expected_options]
-    factory.assert_called_once_with(preferred_locations=live.PREFERRED_LOCATIONS, excluded_locations=test_data[0])
+    factory.assert_called_once_with(
+        _backend="rust", preferred_locations=live.PREFERRED_LOCATIONS, excluded_locations=test_data[0]
+    )
     native.assert_called_once()
     assert test_data == before

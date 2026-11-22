@@ -42,7 +42,7 @@ class CosmosBackend(abc.ABC):
     and run_page_operation and does not send PreparedRequest objects.
     """
 
-    #: Short identifier used in the startup INFO log line. Subclasses
+    #: Short identifier used for execution-path routing. Subclasses
     #: set this from ``constants.BACKEND_NAME_RUST`` etc.
     name: str = "abstract"
 

@@ -48,7 +48,8 @@ use super::query::QueryTarget;
 
 /// Binding inputs extracted from `PreparedRequest.headers` and typed `settings`
 /// by `settings::extract_settings`. Activity id, session token, no-response,
-/// excluded regions, timeout, and availability strategy become typed fields.
+/// excluded regions, timeout, availability strategy, UTF-8 decoding mode, and
+/// throughput control (priority and throughput bucket) become typed fields.
 /// Other settings can generate or overwrite custom headers; operation-specific
 /// code can consume those headers before passing the remainder to the driver.
 pub(crate) struct RequestHeadersAndOptions {
@@ -265,7 +266,7 @@ pub(crate) fn extract_container_feed_prepared_inputs<'py>(
     Ok((database_id, modifiers))
 }
 
-/// Read database and container names plus request settings for a container read.
+/// Read database and container names plus settings for container read, replace, or delete.
 pub(crate) fn extract_container_point_prepared_inputs<'py>(
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<(String, String, RequestHeadersAndOptions)> {

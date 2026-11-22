@@ -4,6 +4,7 @@
 
 import ctypes
 from ctypes import wintypes
+from contextlib import ExitStack
 import os
 import subprocess
 import time
@@ -48,16 +49,10 @@ class _ExtendedLimits(ctypes.Structure):
     ]
 
 
-class _Accounting(ctypes.Structure):
+class _ProcessIdList(ctypes.Structure):
     _fields_ = [
-        ("TotalUserTime", ctypes.c_longlong),
-        ("TotalKernelTime", ctypes.c_longlong),
-        ("ThisPeriodTotalUserTime", ctypes.c_longlong),
-        ("ThisPeriodTotalKernelTime", ctypes.c_longlong),
-        ("TotalPageFaultCount", wintypes.DWORD),
-        ("TotalProcesses", wintypes.DWORD),
-        ("ActiveProcesses", wintypes.DWORD),
-        ("TotalTerminatedProcesses", wintypes.DWORD),
+        ("NumberOfAssignedProcesses", wintypes.DWORD),
+        ("NumberOfProcessIdsInList", wintypes.DWORD),
     ]
 
 
@@ -84,6 +79,9 @@ class OwnedProcessTree:
             ),
             "OpenProcess": ([wintypes.DWORD, wintypes.BOOL, wintypes.DWORD], wintypes.HANDLE),
             "AssignProcessToJobObject": ([wintypes.HANDLE, wintypes.HANDLE], wintypes.BOOL),
+            "IsProcessInJob": ([wintypes.HANDLE, wintypes.HANDLE, ctypes.POINTER(wintypes.BOOL)], wintypes.BOOL),
+            "TerminateProcess": ([wintypes.HANDLE, wintypes.UINT], wintypes.BOOL),
+            "WaitForSingleObject": ([wintypes.HANDLE, wintypes.DWORD], wintypes.DWORD),
             "TerminateJobObject": ([wintypes.HANDLE, wintypes.UINT], wintypes.BOOL),
             "CloseHandle": ([wintypes.HANDLE], wintypes.BOOL),
         }
@@ -108,28 +106,79 @@ class OwnedProcessTree:
         finally:
             _check(self.api.CloseHandle(process))
 
+    def _member_pids(self, deadline):
+        capacity = 16
+        while True:
+            buffer = ctypes.create_string_buffer(
+                ctypes.sizeof(_ProcessIdList) + capacity * ctypes.sizeof(ctypes.c_size_t)
+            )
+            result = self.api.QueryInformationJobObject(self.handle, 3, buffer, len(buffer), None)
+            error = ctypes.get_last_error() if not result else 0
+            if not result and error != 234:  # ERROR_MORE_DATA
+                raise ctypes.WinError(error)
+            info = _ProcessIdList.from_buffer(buffer)
+            if result and info.NumberOfProcessIdsInList == info.NumberOfAssignedProcesses:
+                pids = (ctypes.c_size_t * info.NumberOfProcessIdsInList).from_buffer(
+                    buffer, ctypes.sizeof(_ProcessIdList)
+                )
+                return list(pids)
+            if time.monotonic() >= deadline:
+                raise TimeoutError("Owned worker process list did not stabilize")
+            capacity = max(capacity * 2, info.NumberOfAssignedProcesses)
+
+    def _close_handle(self, handle):
+        _check(self.api.CloseHandle(handle))
+
     def close(self):
         if self.handle is None:
             return
         try:
-            _check(self.api.TerminateJobObject(self.handle, 1))
             deadline = time.monotonic() + 5
-            while True:
-                accounting = _Accounting()
-                _check(
-                    self.api.QueryInformationJobObject(
-                        self.handle, 1, ctypes.byref(accounting), ctypes.sizeof(accounting), None
-                    )
-                )
-                if accounting.ActiveProcesses == 0:
-                    self.stopped = True
-                    break
-                if time.monotonic() >= deadline:
-                    raise TimeoutError("Owned worker process tree did not stop")
-                time.sleep(0.01)
+            with ExitStack() as handles:
+                members = {}
+                while True:
+                    pids = self._member_pids(deadline)
+                    if not pids:
+                        break
+                    if time.monotonic() >= deadline:
+                        raise TimeoutError("Owned worker process tree did not stop")
+                    for pid in pids:
+                        if pid in members:
+                            continue
+                        # Pin the process identity and verify ownership before terminating it.
+                        process = self.api.OpenProcess(0x00100000 | 0x1000 | 0x0001, False, pid)
+                        if not process:
+                            error = ctypes.get_last_error()
+                            if error == 87:  # ERROR_INVALID_PARAMETER: process already exited
+                                continue
+                            raise ctypes.WinError(error)
+                        handles.callback(self._close_handle, process)
+                        member = wintypes.BOOL()
+                        _check(self.api.IsProcessInJob(process, self.handle, ctypes.byref(member)))
+                        if not member.value:
+                            continue
+                        members[pid] = process
+                        if not self.api.TerminateProcess(process, 1):
+                            error = ctypes.get_last_error()
+                            if error != 5 or self.api.WaitForSingleObject(process, 0) != 0:
+                                raise ctypes.WinError(error)
+                        remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
+                        result = self.api.WaitForSingleObject(process, remaining_ms)
+                        if result == 0x102:  # WAIT_TIMEOUT
+                            raise TimeoutError("Owned worker process tree did not stop")
+                        if result == 0xFFFFFFFF:  # WAIT_FAILED
+                            raise ctypes.WinError(ctypes.get_last_error())
+                        if result != 0:  # WAIT_OBJECT_0
+                            raise OSError(f"Unexpected process wait result: {result}")
+                    time.sleep(0.01)
         finally:
-            _check(self.api.CloseHandle(self.handle))
-            self.handle = None
+            try:
+                # Job-wide termination is a safety net, not proof that process teardown finished.
+                _check(self.api.TerminateJobObject(self.handle, 1))
+            finally:
+                self._close_handle(self.handle)
+                self.handle = None
+        self.stopped = True
 
 
 def run_owned_worker(command, *, cwd, env, log, state, timeout=600):

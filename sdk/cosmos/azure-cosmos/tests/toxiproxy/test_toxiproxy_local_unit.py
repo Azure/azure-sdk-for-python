@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+import ctypes
 import json
 import hashlib
 import io
@@ -14,7 +15,7 @@ from unittest.mock import Mock
 
 import pytest
 from toxiproxy import run_toxiproxy
-from toxiproxy import _toxiproxy_config
+from toxiproxy import _process_tree, _toxiproxy_config
 from toxiproxy._process_tree import OwnedProcessTree, run_owned_worker
 from toxiproxy._toxiproxy_config import digest
 from toxiproxy._toxiproxy_config import validate_endpoint
@@ -179,6 +180,115 @@ def gated_worker(tmp_path):
         encoding="utf-8",
     )
     return script
+
+
+@pytest.fixture
+def process_tree_api():
+    tree = OwnedProcessTree.__new__(OwnedProcessTree)
+    tree.handle = 7
+    tree.stopped = False
+    tree.api = Mock()
+    tree.api.OpenProcess.side_effect = lambda access, inherit, pid: pid + 100
+    tree.api.TerminateProcess.return_value = 1
+    tree.api.TerminateJobObject.return_value = 1
+    tree.api.CloseHandle.return_value = 1
+    tree.api.WaitForSingleObject.return_value = 0
+
+    def is_member(process, job, member):
+        member._obj.value = True
+        return 1
+
+    tree.api.IsProcessInJob.side_effect = is_member
+    return tree
+
+
+def job_process_lists(api, *snapshots):
+    remaining = iter(snapshots)
+
+    def query(job, kind, buffer, size, returned):
+        assert kind == 3
+        pids = next(remaining)
+        info = _process_tree._ProcessIdList.from_buffer(buffer)
+        info.NumberOfAssignedProcesses = info.NumberOfProcessIdsInList = len(pids)
+        entries = (ctypes.c_size_t * len(pids)).from_buffer(buffer, ctypes.sizeof(info))
+        entries[:] = pids
+        return 1
+
+    api.QueryInformationJobObject.side_effect = query
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_waits_for_members_and_discovers_late_descendants_rust(process_tree_api):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [11], [])
+    waited = []
+
+    def wait(process, timeout):
+        assert not tree.stopped
+        tree.api.TerminateJobObject.assert_not_called()
+        waited.append(process)
+        return 0
+
+    tree.api.WaitForSingleObject.side_effect = wait
+    tree.close()
+    assert waited == [110, 111]
+    assert [call.args[0] for call in tree.api.TerminateProcess.call_args_list] == [110, 111]
+    assert [call.args[0] for call in tree.api.CloseHandle.call_args_list] == [111, 110, 7]
+    assert tree.stopped and tree.handle is None
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+@pytest.mark.parametrize("wait_result, error", [(0x102, TimeoutError), (0xFFFFFFFF, OSError)])
+def test_cleanup_wait_failure_is_not_reported_as_stopped_rust(process_tree_api, wait_result, error):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [])
+    tree.api.WaitForSingleObject.return_value = wait_result
+    ctypes.set_last_error(5)
+    with pytest.raises(error):
+        tree.close()
+    assert not tree.stopped and tree.handle is None
+    tree.api.TerminateJobObject.assert_called_once_with(7, 1)
+    assert [call.args[0] for call in tree.api.CloseHandle.call_args_list] == [110, 7]
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_does_not_terminate_a_reused_foreign_pid_rust(process_tree_api):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [])
+
+    def not_member(process, job, member):
+        member._obj.value = False
+        return 1
+
+    tree.api.IsProcessInJob.side_effect = not_member
+    tree.close()
+    tree.api.TerminateProcess.assert_not_called()
+    tree.api.WaitForSingleObject.assert_not_called()
+    assert tree.stopped
+    assert [call.args[0] for call in tree.api.CloseHandle.call_args_list] == [110, 7]
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_reads_the_complete_job_process_list_rust(process_tree_api):
+    tree = process_tree_api
+    capacities = []
+
+    def query(job, kind, buffer, size, returned):
+        info = _process_tree._ProcessIdList.from_buffer(buffer)
+        capacity = (size - ctypes.sizeof(info)) // ctypes.sizeof(ctypes.c_size_t)
+        capacities.append(capacity)
+        info.NumberOfAssignedProcesses = 20
+        info.NumberOfProcessIdsInList = min(capacity, 20)
+        if capacity < 20:
+            ctypes.set_last_error(234)
+            return 0
+        entries = (ctypes.c_size_t * 20).from_buffer(buffer, ctypes.sizeof(info))
+        entries[:] = range(20)
+        return 1
+
+    tree.api.QueryInformationJobObject.side_effect = query
+    assert tree._member_pids(_process_tree.time.monotonic() + 5) == list(range(20))
+    assert capacities == [16, 32]
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")

@@ -6,7 +6,7 @@
 """Convert Python wrapper requests and Python/Rust binding responses.
 
 The binding adapts Python wrapper calls to the Rust driver. It receives
-PreparedRequest objects and returns tuples containing status,
+PreparedRequest objects and returns tuples containing status, sub-status,
 headers, body bytes, and diagnostics. Both synchronous and asynchronous
 Python wrappers use these conversions.
 """
@@ -46,8 +46,10 @@ def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRe
 
     Reuse query_body when the Python wrapper has converted the SQL and parameters
     to JSON bytes. Listing requests need no body; change-feed requests use their
-    own settings instead of SQL. Copy headers before applying the page size and
-    continuation token, so the original prepared page request is not changed.
+    own settings instead of SQL. Copy headers and put supplied page-size and
+    continuation values in typed query settings, removing their corresponding
+    headers from the copy except for the change-feed continuation header.
+    The original prepared page request is not changed.
     """
     if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
         body = json.dumps(
@@ -117,7 +119,8 @@ def build_backend_page(prepared: PreparedPageRequest, response: BackendResponse)
     """Convert a backend response into a backend page.
 
     Copy the continuation token from response headers. For retained item
-    queries and read-many operations, also copy has_more and continuation_supported from the feed cursor.
+    queries, read-many, and read-all operations, also copy has_more and
+    continuation_supported from the feed cursor.
     Other page paths leave has_more as None and apply their own completion rules.
     """
     cursor = prepared.cursor if prepared.op in (OP_QUERY_ITEMS, OP_READ_ITEMS, OP_READ_ALL_ITEMS) else None

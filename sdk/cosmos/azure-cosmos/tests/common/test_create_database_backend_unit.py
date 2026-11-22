@@ -3945,16 +3945,26 @@ def _use_legacy_delete(client):
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
-@pytest.mark.parametrize("option", ["session_token", "populate_query_metrics"])
+@pytest.mark.parametrize("option,key", [
+    ("session_token", "sessionToken"),
+    ("populate_query_metrics", "populateQueryMetrics"),
+])
+@pytest.mark.parametrize("source,other_source", [
+    ("keyword", None),
+    ("request_options", None),
+    ("feed_options", None),
+    ("request_options", "feed_options"),
+    ("feed_options", "request_options"),
+])
 @pytest.mark.parametrize("value", [None, False, True, "unused"])
 def test_delete_database_rejects_obsolete_options_before_dispatch_rust(
-    delete_database_client, use_legacy, option, value
+    delete_database_client, use_legacy, option, key, source, other_source, value
 ):
-    """Retired options are refused on both paths before anything is deleted.
+    """Excluded options are refused on both paths before anything is deleted.
 
-    Session token and query metrics no longer do anything. Each raises
-    ``TypeError`` naming the option, for every value including ``None`` and
-    ``False``.
+    Named and nested session-token and query-metrics options raise ``TypeError``,
+    including ``None`` and ``False``. Neither dictionary alias bypasses the check,
+    even when both aliases are supplied.
 
     Failing before anything is sent matters more here than anywhere else in this
     file: a delete cannot be undone, so the customer must be told their option is
@@ -3966,8 +3976,13 @@ def test_delete_database_rejects_obsolete_options_before_dispatch_rust(
     if use_legacy:
         _use_legacy_delete(client)
     hook = MagicMock()
+    kwargs = {option: value} if source == "keyword" else {source: {key: value}}
+    if other_source is not None:
+        kwargs[other_source] = {}
+    original = deepcopy(kwargs)
     with pytest.raises(TypeError, match=f"'{option}'"):
-        _call_delete_database(client, "db1", response_hook=hook, **{option: value})
+        _call_delete_database(client, "db1", response_hook=hook, **kwargs)
+    assert kwargs == original
     binding_adapter.execute.assert_not_called()
     client.client_connection.DeleteDatabase.assert_not_called()
     hook.assert_not_called()
@@ -4072,6 +4087,63 @@ def test_delete_database_hook_uses_request_headers_when_shared_state_changes_rus
     else:
         backend.execute.assert_called_once()
         client.client_connection.DeleteDatabase.assert_not_called()
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize("hook", [False, 0, "", object()], ids=["false", "zero", "empty-string", "object"])
+def test_delete_database_rejects_noncallable_hook_before_dispatch_rust(delete_database_client, use_legacy, hook):
+    client = delete_database_client
+    backend = client._adapter
+    if use_legacy:
+        _use_legacy_delete(client)
+    before = rust_compatibility_fallback_count()
+    # Invalid hooks must fail before deletion, not while reporting its success.
+    with pytest.raises(TypeError, match="delete_database response_hook must be callable or None"):
+        _call_delete_database(client, "db1", response_hook=hook)
+    backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
+
+
+@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
+@pytest.mark.parametrize("kind", [
+    "function", "method", "partial", "callable", "partial-callable", "async-generator",
+])
+def test_delete_database_rejects_async_hook_before_dispatch_rust(delete_database_client, use_legacy, kind):
+    async def hook(_headers):
+        pytest.fail("An asynchronous response hook must not run")
+
+    class AsyncHook:
+        def __bool__(self):
+            return False
+
+        async def __call__(self, _headers):
+            pytest.fail("An asynchronous response hook must not run")
+
+    async def generator_hook(headers):
+        pytest.fail("An asynchronous generator hook must not run")
+        yield headers
+
+    callable_hook = AsyncHook()
+    hooks = {
+        "function": hook,
+        "method": callable_hook.__call__,
+        "partial": partial(hook),
+        "callable": callable_hook,
+        "partial-callable": partial(callable_hook),
+        "async-generator": generator_hook,
+    }
+    client = delete_database_client
+    backend = client._adapter
+    if use_legacy:
+        _use_legacy_delete(client)
+    before = rust_compatibility_fallback_count()
+    # Reject async callbacks rather than deleting and leaving their bodies unexecuted.
+    with pytest.raises(TypeError, match="delete_database response_hook must be synchronous"):
+        _call_delete_database(client, "db1", response_hook=hooks[kind])
+    backend.execute.assert_not_called()
+    client.client_connection.DeleteDatabase.assert_not_called()
+    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
@@ -4212,7 +4284,6 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
     timeout, two headers the driver owns, and an unknown keyword. Bad timeout
     values are covered by the invalid-timeout test below.
 
-    Each raises ``NotImplementedError`` pointing at the legacy Python client.
     Nothing is sent on either path, the hook does not fire, and the fallback
     counter does not move -- a customer must not have a delete carried out on a
     transport they did not choose.
@@ -4220,7 +4291,8 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
     client = delete_database_client
     hook = MagicMock()
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError, match="delete_database.*legacy Python"):
+    # Unsupported arguments are validation errors; database deletion itself is implemented.
+    with pytest.raises(TypeError, match="delete_database.*legacy Python"):
         _call_delete_database(client, "db1", response_hook=hook, **kwargs)
     hook.assert_not_called()
     client._adapter.execute.assert_not_called()

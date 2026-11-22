@@ -238,13 +238,11 @@ class ItemHelper:
     ) -> Any:
         """Turn a backend response into the value the customer app receives.
 
-        Patch is the odd one out. The other five operations leave the
-        finishing work to the public method that called in, but patch
-        finishes here. That is why the caller's response hook ends up being
-        invoked from two different places depending on the operation.
-
-        Delete parses its reply so the headers are recorded, then returns
-        nothing.
+        Create and read leave response-hook invocation to their public methods.
+        Replace and upsert invoke the hook through process_backend_response here.
+        Patch uses complete_item_response here to check the deadline and invoke
+        the hook. Delete records headers, invokes the hook with a None body,
+        and returns None.
         """
         if op == "patch_item":
             parsed = process_backend_response(response, response_state=self._response_state)
@@ -297,9 +295,5 @@ class ItemHelper:
         return self._run("replace_item", kwargs)
 
     def patch_item(self, **kwargs: Any) -> Any:
-        """Apply a list of changes to one item.
-
-        Unlike the other five, this finishes the caller's result here rather
-        than leaving it to the public method.
-        """
+        """Apply changes to one item and complete its response, including the hook."""
         return self._run("patch_item", kwargs)

@@ -161,6 +161,9 @@ impl PyTokenCredential {
     }
 
     /// With Python's global interpreter lock (GIL) held, call `get_token(*scopes)`.
+    /// If the policy permits fallback and Python raises HttpResponseError containing
+    /// AADSTS500011, replace `scopes` with the global Cosmos scope and retry.
+    /// The policy stays switched to that scope even if the retry fails.
     /// Convert its `.token` and `.expires_on` fields into an `AccessToken`.
     /// Reject empty tokens and unrepresentable expiry timestamps, mapping these
     /// and Python extraction/call errors to credential errors. A newly fetched

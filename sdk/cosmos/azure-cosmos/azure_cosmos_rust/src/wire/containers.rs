@@ -375,7 +375,7 @@ pub(crate) fn run_query_containers_operation_async<'py>(
     )
 }
 
-/// Add request ids and build the driver options for a container operation.
+/// Attach the activity id and session token, when supplied, and build container operation options.
 fn prepare_container_operation(
     mut op: CosmosOperation,
     modifiers: RequestHeadersAndOptions,

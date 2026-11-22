@@ -343,9 +343,8 @@ OPTION_HEADER_NAMES = {
 }
 
 # The Rust driver intentionally owns these standard headers and overwrites
-# custom values after the binding adds ``initial_headers``. The legacy pipeline
-# keeps per-call overrides for the same names, so such reads must stay on
-# legacy until the driver offers a way to override them too.
+# custom values after the binding adds ``initial_headers``. Callers use this
+# set to reject unsupported overrides on Rust, not to select a legacy fallback.
 HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE = frozenset(
     {
         "accept",

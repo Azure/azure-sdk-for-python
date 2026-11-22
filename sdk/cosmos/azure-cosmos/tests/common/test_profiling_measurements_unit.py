@@ -4110,7 +4110,7 @@ def test_overflow_is_reported_instead_of_a_clipped_p99_rust(modules, capsys):
 
 
 def test_unknown_old_overflow_evidence_cannot_hide_known_clipping_rust(modules):
-    old = measurement(modules)
+    old = fixed_rate_row(modules)
     del old["latency_overflow_count"]
     clipped = fixed_rate_row(modules, delay_ms=70_000, sdk_ms=1)
     report = modules["latency_report"]

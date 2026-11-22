@@ -136,15 +136,32 @@ class TestQueryResponseHeaders(unittest.TestCase):
 
     def test_response_hook_parity_query_databases_and_query_containers_rust(self):
         # Source: tests/test_query_response_headers.py::TestQueryResponseHeaders.test_response_hook_parity_query_databases_and_query_containers
+        second_database_id = "response_hooks_" + uuid.uuid4().hex
+        self.key_client.create_database(second_database_id)
+        self.addCleanup(self.key_client.delete_database, second_database_id)
+        database_ids = [self.key_db.id, second_database_id]
         captured_db = []
 
-        def hook_db(*args):
-            captured_db.append(args[0])
+        def hook_db(headers):
+            captured_db.append(headers)
 
-        db_pager = self.client.query_databases(query="SELECT * FROM root r", response_hook=hook_db)
-        _ = list(db_pager)
-        self.assertEqual(len(captured_db), 1, "query_databases response_hook must fire exactly once")
-        self.assertIsInstance(captured_db[0], Mapping)
+        db_pager = self.client.query_databases(
+            query="SELECT * FROM root r WHERE r.id IN (@id0, @id1)",
+            parameters=[{"name": f"@id{index}", "value": value} for index, value in enumerate(database_ids)],
+            max_item_count=1,
+            response_hook=hook_db,
+        )
+        # Legacy called the hook once when creating the pager; this API calls it after each fetched page.
+        self.assertEqual(captured_db, [])
+        rows = []
+        page_count = 0
+        for page_count, page in enumerate(db_pager.by_page(), start=1):
+            self.assertEqual(len(captured_db), page_count, "query_databases must call its hook once per page")
+            self.assertIsInstance(captured_db[-1], Mapping)
+            rows.extend(page)
+        self.assertEqual(page_count, 2)
+        self.assertEqual(len(captured_db), page_count)
+        self.assertCountEqual([row["id"] for row in rows], database_ids)
         captured_c = []
 
         def hook_c(*args):

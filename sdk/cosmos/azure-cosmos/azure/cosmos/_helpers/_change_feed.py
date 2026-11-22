@@ -181,6 +181,13 @@ class ChangeFeedConfig(FeedConfig):
         self.resolve(self.options.get("continuation"))
 
     def resolve(self, token: Optional[str]) -> tuple[dict[str, Any], Optional[str]]:
+        """Return normalized feed settings and the continuation passed to the backend.
+
+        Without a token, normalize the requested settings. A wrapper checkpoint
+        restores its saved settings and inner token after backend/container checks.
+        Legacy tokens are accepted only on the legacy path; invalid or incompatible
+        tokens raise ValueError.
+        """
         if token is None:
             return _normalize_change_feed_settings(self.requested, rust=self.rust), None
         if not isinstance(token, str) or not token:
@@ -240,7 +247,7 @@ class ChangeFeedConfig(FeedConfig):
             raise ValueError("change-feed continuation belongs to an incompatible backend or operation.")
         if self.rust:
             raise ValueError(
-                "Rust-backed change feed requires a V5 continuation token; V4 tokens are not supported."
+                "This continuation token is not supported. Use a token returned by the Rust-backed change feed."
             )
         if token.strip('"').isdigit():
             values = dict(self.requested)

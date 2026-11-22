@@ -428,7 +428,7 @@ def test_legacy_checkpoints_rejected_and_native_resume_preserved_rust(asynchrono
                     for token, options, _ in checkpoints:
                         for channel in ("keyword", "by_page"):
                             for size in (1, 100):
-                                with pytest.raises(ValueError, match="V4 tokens are not supported"):
+                                with pytest.raises(ValueError, match="Use a token returned by the Rust-backed change feed"):
                                     resumed = _pages(native, token, channel, size, **options)
                                     async for page in resumed:
                                         async for _ in page:
@@ -456,7 +456,7 @@ def test_legacy_checkpoints_rejected_and_native_resume_preserved_rust(asynchrono
                     for token, options, _ in checkpoints:
                         for channel in ("keyword", "by_page"):
                             for size in (1, 100):
-                                with pytest.raises(ValueError, match="V4 tokens are not supported"):
+                                with pytest.raises(ValueError, match="Use a token returned by the Rust-backed change feed"):
                                     resumed = _pages(native, token, channel, size, **options)
                                     list(resumed)
                     resumed = _pages(native, None, "keyword", 2, partition_key=key, start_time="Beginning")

@@ -74,7 +74,7 @@ if os.path.exists(path):
     )
     print(f"    built (UTC)    : {built:%Y-%m-%dT%H:%M:%SZ}")
 
-# These three back the path proof in 03-path-proof-and-baseline.md.
+# These three back the path proof.
 counters = ("_debug_operation_count", "_debug_attempt_count", "_debug_retry_count")
 missing = [name for name in counters if not callable(getattr(_rust, name, None))]
 for name in counters:

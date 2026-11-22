@@ -58,7 +58,7 @@ class TestUserAgentOverwriteRegression(unittest.TestCase):
     connection_str = settings.TestSettings.connection_str
 
     def test_overwrite_via_from_connection_string_rust(self):
-        """accepted-vnext-change: User-Agent rejection (Gap 33, Bite 14).
+        """accepted-vnext-change: User-Agent rejection.
 
         This verifies the intentional exclusion, not legacy header parity.
         """

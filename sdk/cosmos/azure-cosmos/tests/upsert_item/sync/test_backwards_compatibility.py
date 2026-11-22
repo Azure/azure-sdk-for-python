@@ -55,9 +55,14 @@ class TestBackwardsCompatibility(unittest.TestCase):
             except CosmosResourceNotFoundError:
                 pass
 
-    @pytest.mark.skip(reason="accepted-vnext-change: create_database() now rejects etag/match_condition "
-                             "with TypeError on both backends (docs/api-review.md create_database proposal); the "
-                             "legacy original fails the same way at its first step.")
+    @pytest.mark.skip(
+        reason=(
+            "api-review-pending: docs/api-review.md#cosmosclientcreate_database records the "
+            "unapproved removal of etag/match_condition on creation. This Rust copy stops at "
+            "creation; the original passes on main. Supported deletion coverage runs in "
+            "tests/delete_database/sync/test_backwards_compatibility.py."
+        )
+    )
     def test_etag_match_condition_compatibility_rust(self):
         # Source: tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_etag_match_condition_compatibility
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods

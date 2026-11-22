@@ -54,6 +54,7 @@ class TestCommonOptionsTableContent(unittest.TestCase):
     """
 
     EXPECTED_ENTRIES = {
+        "utf8_decoding_mode": "utf8DecodingMode",
         "initial_headers": "initialHeaders",
         "access_condition": "accessCondition",
         "session_token": "sessionToken",

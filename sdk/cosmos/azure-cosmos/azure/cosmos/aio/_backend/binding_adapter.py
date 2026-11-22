@@ -84,8 +84,8 @@ try:
     _rust_module = _rust
 except ImportError:
     _LOGGER.debug(
-        "_rust module not available; AsyncBindingAdapter operations "
-        "will raise NotImplementedError until the Rust module is built."
+        "_rust module not available; AsyncBindingAdapter construction raises "
+        "ImportError if the compiled Rust extension cannot be loaded."
     )
 
 # The binding's transport error means no HTTP response was received, not that

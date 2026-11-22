@@ -99,7 +99,7 @@ pub(crate) fn run_get_throughput_operation_async<'py>(
     )
 }
 
-/// Replace the named offer and return its binding response tuple.
+/// Replace the offer identified by its resource id and return its binding response tuple.
 /// Wait on the calling thread with the GIL released; the body contains one record.
 pub(crate) fn run_replace_throughput_operation<'py>(
     py: Python<'py>,

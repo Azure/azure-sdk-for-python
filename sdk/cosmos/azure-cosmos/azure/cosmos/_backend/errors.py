@@ -17,10 +17,10 @@ UNSUPPORTED_AGGREGATE_QUERY_MESSAGE = (
 
 
 class PagePreflightError(RuntimeError):
-    """Report that page preflight cannot find the required binding function.
+    """Report an unavailable binding or unsupported operation during page preflight.
 
-    The Python wrapper propagates this error without choosing the legacy path,
-    whether it occurs before execution, during execution, or during processing.
+    Raised before page execution. The Python wrapper propagates this error
+    without choosing the legacy path.
     """
 
 

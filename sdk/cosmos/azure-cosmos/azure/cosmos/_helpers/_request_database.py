@@ -354,6 +354,19 @@ def _database_request_options_are_supported(
     return not overrides_driver_owned_header(request_options)
 
 
+def validate_database_delete_kwargs(kwargs: Mapping[str, Any]) -> None:
+    """Reject excluded delete options before building or sending a request."""
+    for option, key in (
+        ("session_token", "sessionToken"),
+        ("populate_query_metrics", "populateQueryMetrics"),
+    ):
+        if option in kwargs or any(
+            isinstance(options, Mapping) and key in options
+            for options in (kwargs.get("request_options"), kwargs.get("feed_options"))
+        ):
+            raise TypeError(f"delete_database() does not support the '{option}' option")
+
+
 def build_delete_database_prepared(
     database_link: Any,
     request_options: Mapping[str, Any],

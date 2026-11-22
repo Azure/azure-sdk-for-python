@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Read Rust read-many pages as needed, without saved continuation tokens."""
+"""Fetch Rust-backed read_all_items pages as needed, without saved continuation tokens."""
 
 from __future__ import annotations
 

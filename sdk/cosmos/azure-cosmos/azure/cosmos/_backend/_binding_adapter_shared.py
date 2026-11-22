@@ -176,7 +176,8 @@ def page_binding_call_errors(
     block therefore does not prove a request reached the service backend.
 
     Convert TimeoutError to CosmosClientTimeoutError only when a deadline was
-    supplied; otherwise let it propagate unchanged. Convert the binding's
+    supplied and the exception is not marked as a credential error; otherwise
+    let it propagate unchanged. Convert the binding's
     unsupported-query error to UnsupportedQueryError and its transport error
     to ServiceResponseError, preserving the original exception as the cause.
 

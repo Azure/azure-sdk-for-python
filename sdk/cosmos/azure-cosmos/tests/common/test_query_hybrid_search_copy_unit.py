@@ -40,6 +40,18 @@ METHODS = {
     "hybrid-weighted-local-scope": "test_weighted_rrf_with_full_text_score_scope_local",
     "hybrid-parameters-scope": "test_hybrid_search_parameterized_with_full_text_score_scope",
 }
+NEW_METHODS = {
+    "sync": {"test_hybrid_search_default_limit_rust"},
+    "aio": {"test_hybrid_search_default_limit_async_rust"},
+}
+DRIVER_GAP_METHODS = {
+    "sync": "test_hybrid_search_cross_partition_query_response_hook_rust",
+    "aio": "test_hybrid_search_cross_partition_query_response_hook_async_rust",
+}
+DRIVER_GAP_REASON = (
+    "driver-gap: Rust combines the cross-partition hybrid statistics and component responses into one "
+    "ranked page, so response_hook fires once instead of 6 times (known gap 30 item 7)."
+)
 
 
 def _paths(surface):
@@ -74,7 +86,13 @@ def _methods(cls):
 
 def _raw_method(text, method):
     start = min([method.lineno] + [node.lineno for node in method.decorator_list])
-    return "".join(text.splitlines(keepends=True)[start - 1:method.end_lineno])
+    lines = text.splitlines(keepends=True)[start - 1 : method.end_lineno]
+    # Migration provenance is additional metadata, not a change to the original test.
+    return "".join(
+        line
+        for line in lines
+        if not line.lstrip().startswith("# Source:") and line.strip() != "# pylint: disable-next=line-too-long"
+    )
 
 
 @pytest.mark.parametrize("surface", ["sync", "aio"])
@@ -84,16 +102,22 @@ def test_every_original_method_and_marker_is_preserved(surface):
     original_tree, original_class = _tree_class(original_text)
     copied_tree, copied_class = _tree_class(copied_text)
     original_methods, copied_methods = _methods(original_class), _methods(copied_class)
-    assert len(original_methods) == len(copied_methods) == 22
-    assert list(copied_methods) == [name + "_rust" for name in original_methods]
+    assert len(original_methods) == 22
+    expected_names = [name + "_rust" for name in original_methods]
+    assert set(copied_methods) == set(expected_names) | NEW_METHODS[surface]
+    assert [name for name in copied_methods if name not in NEW_METHODS[surface]] == expected_names
     for name, original_method in original_methods.items():
         copied_method = copied_methods[name + "_rust"]
         normalized = copy.deepcopy(copied_method)
         normalized.name = name
-        assert ast.dump(normalized) == ast.dump(original_method)
-        assert _raw_method(copied_text, copied_method).replace(
-            f"def {name}_rust(", f"def {name}(", 1
-        ) == _raw_method(original_text, original_method)
+        if copied_method.name == DRIVER_GAP_METHODS[surface]:
+            expected_skip = ast.parse(f"pytest.mark.skip(reason={DRIVER_GAP_REASON!r})", mode="eval").body
+            assert [ast.dump(node) for node in normalized.decorator_list] == [ast.dump(expected_skip)]
+            normalized.decorator_list = []
+        assert ast.dump(normalized) == ast.dump(original_method), name
+        assert _raw_method(copied_text, normalized).replace(f"def {name}_rust(", f"def {name}(", 1) == _raw_method(
+            original_text, original_method
+        )
     assert [ast.dump(node) for node in copied_class.decorator_list] == [
         ast.dump(node) for node in original_class.decorator_list
     ]
@@ -361,6 +385,15 @@ def test_pytest_collection_retains_original_markers_without_running_fixtures(mon
         str(_paths("sync")[1]), str(_paths("aio")[1]),
     ], plugins=[Collector()])
     assert result == 0
-    assert len(collected) == 44
-    assert all(markers == ["cosmosAADQuery", "cosmosSearchQuery"] for _, markers in collected)
+    expected_names = []
+    for surface in ("sync", "aio"):
+        _, original_class = _tree_class(_paths(surface)[0].read_text(encoding="utf-8"))
+        expected_names.extend(name + "_rust" for name in _methods(original_class))
+        expected_names.extend(NEW_METHODS[surface])
+    assert sorted(name for name, _ in collected) == sorted(expected_names)
+    for name, markers in collected:
+        expected_markers = ["cosmosAADQuery", "cosmosSearchQuery"]
+        if name in DRIVER_GAP_METHODS.values():
+            expected_markers.append("skip")
+        assert markers == expected_markers, name
     forbidden.assert_not_called()

@@ -15,7 +15,7 @@ from typing import Any
 BACKEND_NAME_CORE_PYTHON = "core-python"
 
 #: Identifier for the Rust path. Python backend construction requires the binding
-#: to check CosmosDriverRuntime settings; driver acquisition waits until use.
+#: to reject retired client-level network settings; driver acquisition waits until use.
 BACKEND_NAME_RUST = "rust"
 
 #: Values accepted by the temporary migration/test selector.

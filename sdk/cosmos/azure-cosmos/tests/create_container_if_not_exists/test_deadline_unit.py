@@ -4,15 +4,14 @@
 import asyncio
 import inspect
 import json
-import os
 import socket
 import subprocess
-import sys
 import time
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+
+from common.sdk_subprocess import sdk_python_command
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosClientTimeoutError
@@ -138,15 +137,12 @@ def test_conflict_reread_uses_remaining_budget_rust(case, clock, expires):
 @pytest.mark.parametrize("operation", ["create-if-missing", "delete", "replace"])
 def test_real_binding_bounds_container_workflows_rust(asynchronous, operation):
     # Isolate native runtimes from the mocked clocks and adapters in this suite.
-    environment = dict(os.environ)
-    environment["PYTHONPATH"] = os.pathsep.join(
-        [str(Path(__file__).resolve().parents[1]), *sys.path]
-    )
     result = subprocess.run(
-        [sys.executable, "-c",
-         "from create_container_if_not_exists.test_deadline_unit import _run_delayed_container_workflow; "
-         f"_run_delayed_container_workflow({asynchronous!r}, {operation!r})"],
-        env=environment,
+        sdk_python_command(
+            "from create_container_if_not_exists.test_deadline_unit import "
+            "_run_delayed_container_workflow; "
+            f"_run_delayed_container_workflow({asynchronous!r}, {operation!r})"
+        ),
         capture_output=True,
         text=True,
         timeout=30,

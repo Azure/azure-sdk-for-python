@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Validate runtime selection and connection-timeout placement.
+"""Validate runtime selection, network-setting placement, and operation timeout.
 
 Rust clients select an explicit CosmosRuntime or the default singleton.
 Network overrides belong to its ConnectionPoolOptions, not client keywords.
-These checks reject client overrides before backend construction. Legacy
-connection timeouts are handled separately by the legacy connection-policy builder.
+These checks reject client network overrides and invalid operation timeout
+values before backend construction. Legacy connection timeouts are handled
+separately by the legacy connection-policy builder.
 """
 from __future__ import annotations
 

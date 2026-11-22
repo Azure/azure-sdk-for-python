@@ -180,8 +180,7 @@ mod tests {
 
     #[test]
     fn subset_uppercases_lowercase_hex_bounds() {
-        // Lowercase in, subset still computed correctly (bounds are upper-cased
-        // exactly like the legacy parser).
+        // Hex decoding accepts lowercase bounds without uppercasing the input.
         let body = subset_body(
             &range_dict("", "ff", true, false),
             &range_dict("3f", "7f", true, false),

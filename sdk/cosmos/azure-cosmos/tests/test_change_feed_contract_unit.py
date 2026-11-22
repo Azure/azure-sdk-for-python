@@ -1068,7 +1068,7 @@ def test_change_feed_tokens_cannot_resume_on_another_backend(
         ).by_page()
     core_pages = legacy.proxy.query_items_change_feed().by_page()
     legacy.next_page(core_pages)
-    with pytest.raises(ValueError, match="V4 tokens are not supported"):
+    with pytest.raises(ValueError, match="Use a token returned by the Rust-backed change feed"):
         feed.proxy.query_items_change_feed(
             continuation=core_pages.continuation_token
         ).by_page()
@@ -1085,7 +1085,7 @@ def test_legacy_key_checkpoint_rejected_before_io_rust(
     token = core_pages.continuation_token
     kwargs = {"continuation": token} if channel == "keyword" else {channel: {"continuation": token}}
     original = deepcopy(kwargs)
-    with pytest.raises(ValueError, match="V4 tokens are not supported"):
+    with pytest.raises(ValueError, match="Use a token returned by the Rust-backed change feed"):
         if channel == "by_page":
             feed.proxy.query_items_change_feed(partition_key=key).by_page(continuation_token=token)
         else:
@@ -1113,7 +1113,7 @@ def test_legacy_v1_etag_rejected_even_with_complete_key_rust(
             },
         }).encode()).decode().rstrip("=")
     kwargs = {"continuation": token} if channel == "keyword" else {channel: {"continuation": token}}
-    with pytest.raises(ValueError, match="incompatible backend|V4 tokens are not supported"):
+    with pytest.raises(ValueError, match="incompatible backend|Use a token returned by the Rust-backed change feed"):
         if channel == "by_page":
             feed.proxy.query_items_change_feed(partition_key=None).by_page(continuation_token=token)
         else:
@@ -1130,7 +1130,7 @@ def test_multiple_legacy_positions_remain_unsupported_rust(feed, legacy):
     saved = json.loads(base64.b64decode(pages.continuation_token))
     saved["continuation"]["continuation"] *= 2
     token = base64.b64encode(json.dumps(saved).encode()).decode()
-    with pytest.raises(ValueError, match="V4 tokens are not supported"):
+    with pytest.raises(ValueError, match="Use a token returned by the Rust-backed change feed"):
         feed.proxy.query_items_change_feed(continuation=token)
     assert feed.calls == []
 
@@ -1342,7 +1342,9 @@ def test_legacy_range_id_checkpoint_is_not_restarted_on_rust(feed, legacy):
     legacy.next_page(pages)
     with pytest.raises(ValueError, match="incompatible backend"):
         feed.proxy.query_items_change_feed(continuation=pages.continuation_token)
-    with pytest.warns(DeprecationWarning), pytest.raises(ValueError, match="V4 tokens are not supported"):
+    with pytest.warns(DeprecationWarning), pytest.raises(
+        ValueError, match="Use a token returned by the Rust-backed change feed"
+    ):
         feed.proxy.query_items_change_feed(partition_key_range_id="0", continuation='"42"')
     assert not feed.calls
 

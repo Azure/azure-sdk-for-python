@@ -18,7 +18,12 @@ from azure.cosmos.exceptions import CosmosHttpResponseError
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.skip(
-    reason="accepted-vnext-change: query_databases rejects session_token; covered offline"
+    reason=(
+        "accepted-vnext-change: API review section 5 "
+        "(docs/api-review.md#5---querying-databases) excludes acceptance of ignored "
+        "session_token values; this is not a driver gap. TypeError coverage: "
+        "tests/common/test_query_databases_paging_unit.py::test_rejected_options_have_no_nested_bypass_rust"
+    )
 )
 class TestBackwardsCompatibility(unittest.TestCase):
     configs = settings.TestSettings
@@ -36,20 +41,12 @@ class TestBackwardsCompatibility(unittest.TestCase):
         cls.data_client.close()
 
     def test_session_token_compatibility_rust(self):
-        """Passing ``session_token`` to operations that ignore it must not break them.
+        """Retain the excluded legacy acceptance check for migration traceability.
 
-        Sweeps ``session_token`` through roughly a dozen database and container
-        operations: create, create-if-not-exists, list, query, read, replace
-        and delete.
-
-        Session tokens only mean something for item operations. None of these
-        do anything with the value. The point is that older code which passed
-        it everywhere keeps working: the argument has to be accepted and
-        ignored, not rejected and not forwarded somewhere it would cause a
-        failure.
-
-        Kept here for the ``query_databases`` call in that sweep. The same
-        legacy test is also copied into ``list_databases``.
+        This sweep passes non-None session tokens to database and container
+        operations. API review section 5 excludes that ignored-input behavior
+        for query_databases; its rejection coverage is named in the skip reason.
+        This exclusion does not approve every other option-rejection proposal.
         """
         # Source: tests/test_backwards_compatibility.py::TestBackwardsCompatibility.test_session_token_compatibility
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods

@@ -65,7 +65,8 @@ pub(super) enum FeedRangeFromPartitionKeyError {
     LegacyAttribute(String),
 }
 
-/// Handle empty partition-key forms whose result depends on the container definition.
+/// Return a fixed range for the empty sentinel. An explicit empty sequence falls
+/// through for MultiHash containers and returns a legacy attribute error otherwise.
 pub(super) fn maybe_handle_feed_range_partition_key_special_case(
     definition: &PartitionKeyDefinition,
     source: FeedRangePartitionKeySource,
@@ -272,8 +273,8 @@ async fn run_feed_range_from_partition_key_future(
     let (max, is_max_inclusive) =
         if definition.kind() == PartitionKeyKind::MultiHash && pk_len < path_len {
             // Prefix key semantics on MultiHash match the legacy Python helper:
-            // normal prefix -> max = min + "FF"; MIN/ MAX sentinels keep their
-            // dedicated closed forms.
+            // normal prefix -> max = min + "FF"; MIN/MAX sentinels keep max = min.
+            // All prefix ranges have an exclusive maximum.
             if epk.is_empty() {
                 (String::new(), false)
             } else if epk == "FF" {

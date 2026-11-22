@@ -25,6 +25,7 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         self.addAsyncCleanup(self.client.close)
 
     async def test_database_creation_header_contract_async_rust(self):
+        # Source: (new) Database creation headers preserve returned properties and reject response suppression.
         headers = {
             "Accept": "application/x-test",
             "Cache-Control": "max-age=123",

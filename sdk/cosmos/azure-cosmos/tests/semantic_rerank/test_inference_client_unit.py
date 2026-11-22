@@ -57,7 +57,6 @@ def setup(request, monkeypatch):
         credential,
         _backend="rust",
         connection_policy=policy,
-        retry_total=7,
         user_agent_suffix="contoso-bank",
         enable_diagnostics_logging=True,
     )

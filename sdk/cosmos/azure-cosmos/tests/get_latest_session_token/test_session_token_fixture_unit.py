@@ -7,10 +7,10 @@ import hashlib
 import os
 from pathlib import Path
 import subprocess
-import sys
 
 import pytest
 
+from common.sdk_subprocess import sdk_python_command
 from get_latest_session_token._fixtures import create_split_ranges
 
 
@@ -120,7 +120,11 @@ def test_copied_method_bodies_match_retained_manifest_rust(name):
             for line in source.splitlines()[method.lineno:method.end_lineno]
         )
     assert all(method_name.endswith("_rust") for method_name in methods)
-    assert source.count('_backend="rust"') == 1
+    expected_backend_pins = 2 if name in {
+        "sync/test_latest_session_token.py",
+        "aio/test_latest_session_token_async.py",
+    } else 1
+    assert source.count('_backend="rust"') == expected_backend_pins
     assert _lane_markers(copied) == LEGACY_MARKERS[name]
     if "real_split" not in name:
         assert not any(
@@ -142,13 +146,14 @@ def test_retained_write_helpers_and_split_inputs_are_unchanged_rust():
 
 
 @pytest.mark.parametrize("mode", ["collection", "units"])
-def test_retained_suite_collects_and_runs_units_without_original_sources_rust(mode):
+def test_retained_suite_collects_and_runs_units_without_original_sources_rust(mode, request):
     """Block original imports AND dynamic reads, without touching shared files."""
     script = r'''
 import os
 from pathlib import Path
 import sys
 
+sys.dont_write_bytecode = True
 blocked = {
     "test_session_token_helpers", "test_partition_split_scenarios",
     "test_partition_split_scenarios_async", "_split_test_utils", "test_config",
@@ -167,15 +172,15 @@ class Counts:
     def pytest_collection_finish(self, session):
         if sys.argv[1] == "collection":
             assert len(session.items) == 23, len(session.items)
-            print("OWNERSHIP: 23 marker-selected copied cases; legacy reads/imports blocked")
+            print("OWNERSHIP: 23 copied cases; legacy reads/imports blocked")
 
 options = ["--noconftest", "--import-mode=importlib", "-p", "no:cacheprovider", "-q"]
 root = Path("tests") / "get_latest_session_token"
 if sys.argv[1] == "collection":
-    options += ["--collect-only", "-m", "cosmosEmulator", str(root)]
+    options += ["--collect-only", str(root / "sync"), str(root / "aio")]
 else:
     options += [
-        "-k", "not test_retained_suite_collects_and_runs_units_without_legacy_sources",
+        "-k", "not " + sys.argv[2],
         str(root / "test_get_latest_session_token_unit.py"),
         str(root / "test_session_token_fixture_unit.py"),
         str(root / "test_session_token_split_fixture_unit.py"),
@@ -185,12 +190,10 @@ assert not blocked.intersection(sys.modules)
 raise SystemExit(code)
 '''
     env = dict(os.environ)
-    env["PYTHONPATH"] = os.pathsep.join((str(PACKAGE), str(PACKAGE / "tests")))
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.pop("COSMOS_SESSION_TOKEN_REAL_SPLIT", None)
     env.pop("PYTEST_ADDOPTS", None)
     result = subprocess.run(
-        [sys.executable, "-c", script, mode],
+        sdk_python_command(script, mode, request.node.originalname),
         cwd=PACKAGE, env=env, capture_output=True, text=True, timeout=120, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

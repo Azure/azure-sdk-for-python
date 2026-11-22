@@ -19,8 +19,8 @@ mod transport_error {
         azure_cosmos_rust,
         _DriverTransportError,
         pyo3::exceptions::PyRuntimeError,
-        "A Cosmos driver operation failed without a wire response (transport failure, \
-         client-side validation, or a pre-HTTP timeout)."
+        "A Cosmos driver operation failed without a response available to this error path. \
+         This does not imply that no request was sent."
     );
 }
 /// Raised when a driver error is returned without an accompanying response.

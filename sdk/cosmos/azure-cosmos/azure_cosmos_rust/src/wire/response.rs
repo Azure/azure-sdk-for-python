@@ -63,14 +63,15 @@ pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
     }
 }
 
-/// Opt-in telemetry envelope: (unchanged response tuple, attempt payload).
-/// A response-less driver exception carries the same payload privately.
+/// Whether the operation's attempt diagnostics have a known coverage gap.
 #[derive(Clone, Copy)]
 pub(super) enum AttemptCoverage {
     Complete,
     Incomplete(&'static str),
 }
 
+/// Opt-in telemetry envelope: (unchanged response tuple, attempt payload).
+/// A response-less driver exception carries the same payload privately.
 pub(super) fn tuple_from_result_with_attempts<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,
@@ -202,8 +203,10 @@ fn attempt_payload_or_error(py: Python<'_>, payload: PyResult<Bound<'_, PyDict>>
 /// Turn the Rust driver's `Result<CosmosResponse, CosmosError>` into a
 /// binding response tuple. A CosmosError carrying a response (404 / 409
 /// / 412 / ...) uses the same tuple shape as success for Python's error mapping.
-/// Without a response, the typed client-operation timeout becomes `TimeoutError`,
-/// and statuses 400 and 412 become synthesized error tuples. Other statuses
+/// Without an attached response, preserved Python credential exceptions are
+/// re-raised, and recognized synthetic 503 errors with a matching source response
+/// become error tuples. Otherwise, the typed client-operation timeout becomes
+/// `TimeoutError`, and statuses 400 and 412 become synthesized error tuples. Other statuses
 /// become `_DriverTransportError`, which does not prove a transport-only failure
 /// or that no request was sent.
 pub(super) fn tuple_from_result<'py>(
@@ -260,12 +263,13 @@ pub(super) fn tuple_from_result<'py>(
     }
 }
 
-/// Convert a query page, or synthesize an empty `{"Documents":[]}` page for `None`.
+/// Convert an item-feed page, or synthesize an empty `{"Documents":[]}` page for `None`.
 /// Unsupported-query status becomes `_UnsupportedQueryFeatureError` without
-/// replaying through legacy. Other errors return an attached response tuple or,
-/// without one, raise `TimeoutError` for the typed client-operation deadline
-/// or `ValueError` for a response-less bad request. Other response-less errors
-/// retain `_DriverTransportError`; no service response is synthesized here.
+/// replaying through legacy. Other errors return attached response tuples,
+/// re-raise preserved Python credential exceptions, or synthesize error tuples
+/// for recognized 503 errors with a matching source response. Remaining errors
+/// raise `TimeoutError` for the typed client-operation deadline, `ValueError`
+/// for a response-less bad request, or `_DriverTransportError` otherwise.
 pub(super) fn tuple_from_feed_result<'py>(
     py: Python<'py>,
     response_result: Result<Option<CosmosResponse>, CosmosError>,
@@ -1034,9 +1038,10 @@ fn restore_credential_exception(py: Python<'_>, error: &CosmosError) -> PyResult
     Ok(())
 }
 
-/// Convert an attached driver response, or the wire response kept by a synthetic
-/// terminal error. Return `None` when neither exists; absence alone does not
-/// distinguish a local failure from one after a request.
+/// Convert an attached driver response, or synthesize a terminal 503 error tuple
+/// using headers from its matching source response. Re-raise preserved Python
+/// credential exceptions when no response is attached. Return `None` otherwise;
+/// absence alone does not distinguish a local failure from one after a request.
 fn backend_response_tuple_from_cosmos_error<'py>(
     py: Python<'py>,
     error: &CosmosError,
@@ -1064,8 +1069,9 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     )?))
 }
 
-/// Query-page version of `backend_response_tuple_from_cosmos_error`: same handling
-/// of an error that carries a wire response, with the query body envelope.
+/// Feed-error variant of `backend_response_tuple_from_cosmos_error`, shared by
+/// item and resource feeds. Attached responses use feed-body conversion;
+/// credential exceptions and synthetic terminal 503 errors use the same handling.
 fn backend_response_tuple_from_cosmos_error_feed<'py>(
     py: Python<'py>,
     error: &CosmosError,

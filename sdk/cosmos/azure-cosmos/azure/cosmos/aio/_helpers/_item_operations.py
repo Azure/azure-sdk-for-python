@@ -59,8 +59,10 @@ class AsyncItemHelper:
         calling the synchronous response hook. Without a deadline, that work
         is awaited directly rather than placed in a separate task.
 
-        The other five operations await execution and parse the response here;
-        their public methods retain the remaining result-completion work.
+        Create and read leave response-hook invocation to their public methods.
+        Replace and upsert invoke the hook through process_backend_response here.
+        Delete uses process_delete_response to record headers, invoke the hook
+        with a None body, and return None.
         """
         args, options = normalize_item_arguments(
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,

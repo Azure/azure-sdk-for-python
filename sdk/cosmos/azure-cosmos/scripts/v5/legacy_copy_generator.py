@@ -167,7 +167,8 @@ class LegacyFileSpec:
 # Rendering
 # ---------------------------------------------------------------------------
 
-def build_docstring(surface: str, method_name: str, source_file: str, out_path: str) -> str:
+def build_docstring(surface: str, method_name: str, source_file: str, out_path: str,
+                    *, configured_data_auth: bool = False) -> str:
     """Return the module-docstring text for a single-method copy.
 
     Reproduces the wording of the existing copies so a spec need not
@@ -186,20 +187,28 @@ def build_docstring(surface: str, method_name: str, source_file: str, out_path: 
             "\n"
             "    pytest --noconftest {out} -v"
         ).format(method=method_name, src=source_file, out=out_path)
+    setup_description = (
+        "Self-contained: a key client builds its own database + container in\n"
+        "``setUp`` and registers cleanup after acquisition, including on setup\n"
+        "failure. The data client (AAD in AAD lanes) does the item work, as in the\n"
+        "source. The class name and method name match the\n"
+        if configured_data_auth else
+        "Self-contained: builds its own database + container in ``setUp`` and\n"
+        "registers cleanup after acquisition, including on setup failure.\n"
+        "The class name and method name match the\n"
+    )
     return (
         "Sync ``{method}`` test against the\n"
         '``_backend="rust"`` path.\n'
         "\n"
-        "Self-contained: builds its own database + container in ``setUp`` and\n"
-        "registers cleanup after acquisition, including on setup failure.\n"
-        "The class name and method name match the\n"
+        "{setup}"
         "source (apart from the method's ``_rust`` suffix) at ``{src}`` so\n"
         "test IDs differ by path and method suffix.\n"
         "\n"
         "Run with::\n"
         "\n"
         "    pytest --noconftest {out} -v"
-    ).format(method=method_name, src=source_file, out=out_path)
+    ).format(method=method_name, src=source_file, out=out_path, setup=setup_description)
 
 
 def render_init_py() -> str:
@@ -223,8 +232,15 @@ def _license_header(style: str) -> List[str]:
 
 
 def _import_block(spec: LegacyFileSpec) -> List[str]:
-    lines = ["import os", "import unittest", "import uuid", "", "import pytest", ""]
     cosmos_names = ", ".join(spec.cosmos_imports)
+    if spec.configured_data_auth and spec.surface == "sync" and spec.fixture == "instance":
+        lines = ["import unittest", "import uuid", "", "import pytest", ""]
+        if cosmos_names:
+            lines.append("from azure.cosmos import " + cosmos_names)
+        lines.append("from config.clients import create_data_client, create_setup_client")
+        lines.extend(spec.extra_imports)
+        return lines
+    lines = ["import os", "import unittest", "import uuid", "", "import pytest", ""]
     if spec.surface == "aio":
         if cosmos_names:
             lines.append("from azure.cosmos import " + cosmos_names)
@@ -261,6 +277,24 @@ def _fixture_block(spec: LegacyFileSpec) -> List[str]:
                 '        self.client = clients.create_data_client_async(_backend="rust")',
                 "        self.addAsyncCleanup(self.client.close)",
                 "        await self.client.__aenter__()",
+                "        self.database = self.client.get_database_client(self._db_id)",
+                "        self.container = self.database.get_container_client(self._container_id)",
+            ]
+        if spec.fixture == "instance":
+            return [
+                "    def setUp(self) -> None:",
+                '        self.key_client = create_setup_client(_backend="rust")',
+                "        self.addCleanup(self.key_client.close)",
+                '        self.client = create_data_client(_backend="rust")',
+                "        self.addCleanup(self.client.close)",
+                '        self._db_id = "' + spec.db_id_prefix + '_" + uuid.uuid4().hex',
+                '        self._container_id = "c_" + uuid.uuid4().hex[:8]',
+                "        key_database = self.key_client.create_database(self._db_id)",
+                "        self.addCleanup(self.key_client.delete_database, self._db_id)",
+                "        key_database.create_container(",
+                "            id=self._container_id,",
+                '            partition_key=PartitionKey(path="/pk"),',
+                "        )",
                 "        self.database = self.client.get_database_client(self._db_id)",
                 "        self.container = self.database.get_container_client(self._container_id)",
             ]
@@ -443,14 +477,15 @@ def render_legacy_file(spec: LegacyFileSpec, source_root=None) -> str:
     lines.append("")
     lines.append("")
 
-    # 4. HOST / KEY (emulator-default form, matching the existing copies).
-    lines.append('HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")')
-    lines.append("KEY = os.environ.get(")
-    lines.append('    "ACCOUNT_KEY",')
-    lines.append('    "' + _EMULATOR_KEY + '",')
-    lines.append(")")
-    lines.append("")
-    lines.append("")
+    # Configured sync instance fixtures obtain endpoints and credentials from their factories.
+    if not (spec.configured_data_auth and spec.surface == "sync" and spec.fixture == "instance"):
+        lines.append('HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")')
+        lines.append("KEY = os.environ.get(")
+        lines.append('    "ACCOUNT_KEY",')
+        lines.append('    "' + _EMULATOR_KEY + '",')
+        lines.append(")")
+        lines.append("")
+        lines.append("")
 
     # 5. Optional module-level helpers / constants.
     if spec.module_code.strip():
@@ -517,17 +552,23 @@ CREATE_ITEM_SYNC_NONE_OPTIONS = LegacyFileSpec(
     filename="test_none_options.py",
     class_name="TestNoneOptions",
     db_id_prefix="legacy_none_options",
+    configured_data_auth=True,
     docstring=build_docstring(
         "sync",
         "test_container_create_item_none_options",
         "tests/test_none_options.py",
         "tests/create_item/sync/test_none_options.py",
+        configured_data_auth=True,
     ),
     methods=(
         LegacyMethod(
             name="test_container_create_item_none_options",
             source="tests/test_none_options.py::TestNoneOptions.test_container_create_item_none_options",
             body="""\
+        # The source also passes pre_trigger_include=None and
+        # post_trigger_include=None. The Rust path rejects trigger arguments
+        # even when they are None (triggers are out of scope),
+        # so they are left out here.
         item = {"id": str(uuid.uuid4()), "pk": "pk-value", "value": 1}
         created = self.container.create_item(
             item,

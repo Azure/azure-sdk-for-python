@@ -13,6 +13,7 @@ from unittest.mock import Mock
 import pytest
 
 from azure.cosmos import exceptions
+from common.sdk_subprocess import sdk_python_command
 from config import clients, resources
 from config.settings import TestSettings, unique_database_id
 
@@ -256,6 +257,35 @@ assert TestSettings.TEST_DATABASE_ID
     assert result.returncode == 0, result.stdout + result.stderr
 
 
+def test_sdk_subprocess_preserves_package_with_shadowing_checkout_rust(tmp_path):
+    import azure.cosmos
+    from azure.cosmos import _rust
+
+    shadow = tmp_path / "azure" / "cosmos"
+    shadow.mkdir(parents=True)
+    (shadow / "__init__.py").write_text(
+        "raise AssertionError('Subprocess imported the shadow SDK')\n", encoding="utf-8"
+    )
+    code = """
+from pathlib import Path
+import azure.cosmos
+from azure.cosmos import _rust
+from common import sdk_subprocess
+assert Path(azure.cosmos.__file__).resolve() == Path(sys.argv[1])
+assert Path(_rust.__file__).resolve() == Path(sys.argv[2])
+assert Path(sdk_subprocess.__file__).resolve() == Path(sys.argv[3])
+"""
+    result = subprocess.run(
+        sdk_python_command(
+            code, str(Path(azure.cosmos.__file__).resolve()), str(Path(_rust.__file__).resolve()),
+            str(Path(__file__).with_name("sdk_subprocess.py").resolve()),
+        ),
+        cwd=tmp_path, env=dict(os.environ, PYTHONPATH=str(tmp_path)),
+        capture_output=True, text=True, timeout=30, check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 @pytest.mark.parametrize("selections,blocked", [
     ([
         "tests/create_item", "tests/execute_item_batch", "tests/from_connection_string",
@@ -286,9 +316,8 @@ result = pytest.main([
 assert not set({blocked!r}).intersection(sys.modules)
 raise SystemExit(result)
 """
-    environment = dict(os.environ, PYTHONPATH=str(ROOT / "tests") + os.pathsep + str(ROOT))
     result = subprocess.run(
-        [sys.executable, "-c", code], cwd=ROOT, env=environment,
+        sdk_python_command(code), cwd=ROOT,
         capture_output=True, text=True, timeout=90, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

@@ -136,7 +136,9 @@ def test_unsupported_requests_never_fall_back_for_any_operation_rust(dispatch, o
     policy = CAPABILITIES[op]
     wire_op = sorted(policy.operations)[0]
     before = rust_compatibility_fallback_count()
-    with pytest.raises(NotImplementedError):
+    # Deletion reports unsupported inputs as validation errors, without changing other APIs.
+    error_type = TypeError if op == "delete_database" else NotImplementedError
+    with pytest.raises(error_type):
         dispatch.run(wire_op, supported=False, capability=op, paged=paged)
     dispatch.legacy.assert_not_called()
     assert rust_compatibility_fallback_count() == before

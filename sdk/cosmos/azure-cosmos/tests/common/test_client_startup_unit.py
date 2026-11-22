@@ -13,7 +13,6 @@ import concurrent.futures
 import inspect
 import logging
 import subprocess
-import sys
 import threading
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock
@@ -30,6 +29,7 @@ from azure.cosmos._backend.contracts import PreparedClientConfig
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._retry_options import RetryOptions
 from azure.cosmos.documents import ConnectionPolicy
+from common.sdk_subprocess import sdk_python_command
 
 
 @pytest.fixture(params=[sync_client, async_client], ids=["sync", "async"])
@@ -218,7 +218,7 @@ async def run():
 asyncio.run(run())
 """
     result = subprocess.run(
-        [sys.executable, "-c", script], capture_output=True, text=True, timeout=30
+        sdk_python_command(script), capture_output=True, text=True, timeout=30
     )
     assert result.returncode == 0, result.stdout + result.stderr
 
@@ -903,7 +903,7 @@ for config in (
     assert _rust._runtime_configuration() is None
 """
     result = subprocess.run(
-        [sys.executable, "-c", code], capture_output=True, text=True, timeout=30, check=False
+        sdk_python_command(code), capture_output=True, text=True, timeout=30, check=False
     )
     assert result.returncode == 0, result.stdout + result.stderr
 

@@ -130,15 +130,33 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
 
     async def test_response_hook_parity_query_databases_and_query_containers_async_rust(self):
         # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_response_hook_parity_query_databases_and_query_containers_async
+        second_database_id = "response_hooks_async_" + uuid.uuid4().hex
+        await self.key_client.create_database(second_database_id)
+        self.addAsyncCleanup(self.key_client.delete_database, second_database_id)
+        database_ids = [self.key_db.id, second_database_id]
         captured_db = []
 
-        def hook_db(*args):
-            captured_db.append(args[0])
+        def hook_db(headers):
+            captured_db.append(headers)
 
-        db_pager = self.client.query_databases(query="SELECT * FROM root r", response_hook=hook_db)
-        _ = [item async for item in db_pager]
-        assert len(captured_db) == 1, "query_databases hook must fire exactly once"
-        assert isinstance(captured_db[0], Mapping)
+        db_pager = self.client.query_databases(
+            query="SELECT * FROM root r WHERE r.id IN (@id0, @id1)",
+            parameters=[{"name": f"@id{index}", "value": value} for index, value in enumerate(database_ids)],
+            max_item_count=1,
+            response_hook=hook_db,
+        )
+        # Legacy called the hook once when creating the pager; this API calls it after each fetched page.
+        assert captured_db == []
+        rows = []
+        page_count = 0
+        async for page in db_pager.by_page():
+            page_count += 1
+            assert len(captured_db) == page_count, "query_databases must call its hook once per page"
+            assert isinstance(captured_db[-1], Mapping)
+            rows.extend([item async for item in page])
+        assert page_count == 2
+        assert len(captured_db) == page_count
+        assert sorted(row["id"] for row in rows) == sorted(database_ids)
         captured_c = []
 
         def hook_c(*args):

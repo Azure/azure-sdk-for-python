@@ -55,7 +55,7 @@ from ._backend.factory import make_backend, resolve_backend_name
 from ._backend.transport_settings import validate_client_runtime_settings
 from .runtime import CosmosRuntime
 from ._base import build_options
-from ._helpers._request_database import prepare_create_database_options
+from ._helpers._request_database import prepare_create_database_options, validate_database_delete_kwargs
 from ._helpers._list_databases import list_databases as _list_databases
 from ._helpers._list_databases import query_databases as _query_databases
 from ._constants import _Constants as Constants
@@ -1009,7 +1009,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :type database: Union[str, dict[str, str], ~azure.cosmos.DatabaseProxy]
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword response_hook: A synchronous callable invoked once after a successful delete
-            with a separate snapshot of the response headers.
+            with a separate snapshot of the response headers. Non-callable values other than
+            ``None`` and asynchronous hooks raise ``TypeError`` before deletion.
         :paramtype response_hook: Callable[[Mapping[str, str]], None]
         :keyword int throughput_bucket: The desired throughput bucket for the client.
         :keyword str etag: ETag to use with a matching condition.
@@ -1024,13 +1025,14 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         Only ``database`` may be positional. ``session_token`` and
         ``populate_query_metrics`` are rejected, including explicit ``None`` or
-        ``False``. Conditional request arguments remain supported and are validated
-        before dispatch. Unsupported Rust requests raise without using legacy transport.
+        ``False``. Their ``sessionToken`` and ``populateQueryMetrics`` entries in
+        ``request_options`` or ``feed_options`` are also rejected, even when both
+        dictionaries are supplied. Conditional request arguments remain supported
+        and are validated before dispatch. Unsupported Rust requests raise without
+        using legacy transport.
         """
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
-        for option in ("session_token", "populate_query_metrics"):
-            if option in kwargs:
-                raise TypeError(f"delete_database() does not support the '{option}' keyword argument")
+        validate_database_delete_kwargs(kwargs)
         if throughput_bucket is not None:
             kwargs['throughput_bucket'] = throughput_bucket
         if initial_headers is not None:

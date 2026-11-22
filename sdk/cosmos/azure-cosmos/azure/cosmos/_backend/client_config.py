@@ -234,11 +234,11 @@ def _prepare_fault_injection_rules(
     tests can start with enabled=False and enable their owned rule afterward.
 
     Return a tuple of read-only PreparedFaultInjectionRule records with omitted
-    optional fields filled in. None or an empty sequence produces no rules.
+    optional fields filled in. None produces no rules without requiring the switch.
     The supplied mappings are not modified or retained as mutable rule data.
-    Any other value raises TypeError unless the test-only
-    COSMOS_ENABLE_FAULT_INJECTION switch is "1", so a customer app can't turn
-    on simulated failures in the shipped package.
+    Any non-None input, including an empty sequence, raises TypeError unless
+    the test-only COSMOS_ENABLE_FAULT_INJECTION switch is "1".
+    With the switch enabled, an empty sequence produces no rules.
     """
     if rules is None:
         return ()

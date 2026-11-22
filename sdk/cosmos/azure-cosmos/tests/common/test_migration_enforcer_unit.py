@@ -52,11 +52,11 @@ import ast
 import os
 import pathlib
 import subprocess
-import sys
 import unittest
 from unittest.mock import patch
 
 from common._retired_test_sources import RENAMED_TEST_SOURCES, RETIRED_SOURCE_MARKERS, RETIRED_TEST_SOURCES
+from common.sdk_subprocess import sdk_python_command
 
 
 # tests/common/<this file> -> parents[1] is .../azure-cosmos/tests
@@ -99,6 +99,7 @@ _STRUCTURED_SKIP_TAGS = (
     "sync-only",        # the operation's async surface has no equivalent test
     "async-only",       # the operation's sync surface has no equivalent test
     "accepted-vnext-change",  # an explicitly documented major-version contract change
+    "api-review-pending",  # implemented contract change still awaiting public API approval
 )
 
 #: Decorator names that mean "skip this test".
@@ -463,7 +464,6 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
         self.assertTrue(expected, "No legacy-copy test definitions found.")
 
         env = dict(os.environ)
-        env["PYTHONPATH"] = str(_PKG_ROOT / "tests") + os.pathsep + env.get("PYTHONPATH", "")
         env.pop("PYTEST_ADDOPTS", None)
 
         def collect(extra_args):
@@ -472,8 +472,11 @@ class LegacyMigrationEnforcerTests(unittest.TestCase):
             for start in range(0, len(files), 40):
                 batch = [os.path.relpath(path, _PKG_ROOT) for path in files[start:start + 40]]
                 result = subprocess.run(
-                    [sys.executable, "-m", "pytest", "--noconftest", "--import-mode=importlib",
-                     "--collect-only", "-q", *extra_args, *batch],
+                    sdk_python_command(
+                        "import pytest\nraise SystemExit(pytest.main(sys.argv[1:]))",
+                        "--noconftest", "--import-mode=importlib",
+                        "--collect-only", "-q", *extra_args, *batch,
+                    ),
                     cwd=_PKG_ROOT, env=env, capture_output=True, text=True, timeout=60, check=False,
                 )
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)

@@ -333,13 +333,17 @@ def test_read_items_lookup_failure_logs_its_summary_rust(native, monkeypatch):
 
 @pytest.fixture(name="async_setup")
 def async_initialization_harness(monkeypatch):
+    # Rust diagnostics must not depend on the surrounding suite's default backend.
+    monkeypatch.setenv("COSMOS_BACKEND", "core-python")
     logger, capture = make_logger()
     client = AsyncCosmosClient(
         "https://alpha-bank.invalid",
         "ZmFrZQ==",
+        _backend="rust",
         logger=logger,
         enable_diagnostics_logging=True,
     )
+    assert isinstance(client._adapter, async_binding.AsyncBindingAdapter), "Rust diagnostic mocks must be used"
     failure = async_binding._DRIVER_RESPONSE_ERROR((401, 0, {}, b'{"message":"setup failed"}', SUMMARY))
     acquire = Mock(side_effect=failure)
     monkeypatch.setattr(async_binding._rust_module, "acquire_driver_handle", acquire)

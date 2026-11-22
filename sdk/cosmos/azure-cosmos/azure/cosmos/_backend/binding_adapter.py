@@ -74,8 +74,8 @@ try:
     _rust_module = _rust
 except ImportError:
     _LOGGER.debug(
-        "_rust module not available; BindingAdapter operations "
-        "will raise NotImplementedError until the Rust module is built."
+        "_rust module not available; BindingAdapter construction raises "
+        "ImportError if the compiled Rust extension cannot be loaded."
     )
 
 # Save binding exception classes for conversion to public Python exceptions.

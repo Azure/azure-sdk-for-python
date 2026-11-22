@@ -20,7 +20,7 @@ The Python wrapper converts them into customer results or exceptions.
 Feed results arrive in pages; a feed can also finish in one page. The customer
 app uses a pager, such as ItemPaged, whose page iterator fetches those pages.
 
-Capabilities.py limits which requests may use the legacy path
+capabilities.py limits which requests may use the legacy path
 before execution. Execution, parsing, and callback failures must not cause
 a request to be repeated through the legacy path.
 

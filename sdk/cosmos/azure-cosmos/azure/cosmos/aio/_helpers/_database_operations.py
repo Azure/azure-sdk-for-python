@@ -190,6 +190,9 @@ class AsyncDatabaseHelper:
         """Delete a database."""
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("delete_database response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "delete_database")
         on_response = with_response_header_snapshot(
             (lambda headers, _body: response_hook(headers)) if response_hook is not None else None
         )

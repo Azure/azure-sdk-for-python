@@ -1359,8 +1359,7 @@ to list every database. A customer app that accidentally supplied `""` could
 therefore receive an unfiltered result instead of an error.
 
 The proposed changes reject invalid query inputs, align both clients'
-arguments and fix query parameters when the iterator is created. These are
-Python wrapper compatibility decisions, not missing Rust-driver capabilities.
+arguments and fix query parameters when the iterator is created.
 
 **Require the query and name optional settings**
 
@@ -1442,14 +1441,12 @@ this option. Passing it raises `TypeError` before iteration, including
 
 Live Windows-emulator comparisons found identical results with the legacy
 flag omitted, `False`, or `True` for filtering, no matches, projections,
-scalar values, and counts, on both sync and async paths. The `True` header
-was verified at the HTTP transport; Rust matched without it. `ORDER BY`
+scalar values, and counts, on both synchronous and asynchronous clients. `ORDER BY`
 queries returned the same HTTP 400 in every variant, so the flag did not
 enable that feature.
 
-This is an approved Python API removal, not a Rust-driver gap or a claim
-that legacy Python never forwarded the option. The evidence is limited to
-the tested emulator scenarios, not an Azure-account comparison.
+The evidence is limited to the tested emulator scenarios, not an
+Azure-account comparison.
 `ContainerProxy.query_items` retains its cross-partition option.
 
 **Shared changes from `CosmosClient.list_databases`**
@@ -1461,7 +1458,7 @@ name. Follow that section's response-hook guidance as well:
 `response_hook(headers)` runs after each successfully fetched service page,
 with no change to its arguments.
 
-The current wrapper also rejects `session_token`, `populate_query_metrics`,
+The API also rejects `session_token`, `populate_query_metrics`,
 `availability_strategy`, `no_response` and `content_type`, including explicit
 `None` or `False` and their entries in the selected settings dictionary.
 Removal approval remains limited to forms established to have been ignored;
@@ -1472,10 +1469,10 @@ the blanket rejection is not an approved compatibility decision.
 The maintained database-query paging and CRUD tests passed on the Windows
 emulator. Additional live checks covered fixed query inputs, scalar
 continuation replay, response hooks, `query=None`, and service errors.
-Unit regressions reject the removed cross-partition option before dispatch
-across both clients, backend selections, and supported settings dictionaries.
+Unit regressions verify that both clients reject the removed cross-partition
+option before sending a request, including settings-dictionary forms.
 Azure-account coverage remains outstanding; these checks and
-current-transport comparisons do not establish complete parity with a
+emulator comparisons do not establish complete parity with a
 released Python SDK.
 
 **Asynchronous-client signature for review**
@@ -1511,19 +1508,90 @@ it, including its `orders` container and stored orders.
 await client.delete_database("sales")
 ```
 
-Success returns `None`.
+**Current public contract**
+
+Both clients accept a database ID, a `DatabaseProxy`, or database properties
+containing `id`. Only `database` may be positional; optional arguments must
+be named. Success returns `None`. A missing database raises
+`CosmosResourceNotFoundError`; other service failures are reported through
+`CosmosHttpResponseError`.
+
+Conditional deletion remains supported. For example, use the version marker
+from an earlier read to delete only if the database still has that version:
+
+```python
+from azure.core import MatchConditions
+
+properties = await client.get_database_client("sales").read()
+await client.delete_database(
+    "sales",
+    etag=properties["_etag"],
+    match_condition=MatchConditions.IfNotModified,
+)
+```
+
+`IfNotModified` and `IfModified` require a nonempty `etag`; `IfPresent` and
+`IfMissing` do not require one. Supplying `etag` without a condition, or
+omitting the required version marker, raises `ValueError` before deletion.
+An invalid `match_condition` raises `TypeError`. The `if_match` and
+`if_none_match` keywords also remain supported.
+
+`response_hook(headers)` is a synchronous callback on both clients. It runs
+once after successful deletion with a separate snapshot of the response
+headers. A callback exception is propagated without repeating or undoing
+the deletion. Omit the callback or pass `None` when it is not needed.
+Non-callable values, including `False`, and asynchronous callbacks raise
+`TypeError` before deletion. This includes asynchronous callable objects
+and asynchronous generator functions. A synchronous callable that evaluates
+to `False` remains valid and is still called once.
+
+Supported settings include custom `initial_headers`, `throughput_bucket`,
+and `timeout` in seconds. Supply `timeout` as a named argument, not only
+inside `request_options`. It must be `None` or a finite number at least
+`1` and below `2**64`; booleans and invalid values raise `ValueError`.
+A timeout does not undo a deletion already accepted by the service.
+Timeout compatibility remains under review.
+
+Unsupported options, such as `connection_timeout`, unknown keywords, or
+overrides of reserved headers such as `User-Agent` and `x-ms-version`,
+raise `TypeError` before a deletion request is sent, not
+`NotImplementedError`.
 
 **Proposed breaking change: reject previously ignored arguments**
 
 Legacy Python accepted certain arguments without using them to configure
 database deletion. The proposal is to reject those arguments rather than
-continue accepting them. These are Python wrapper cleanup decisions, not
-Rust-driver limitations.
+continue accepting them.
 
 | Argument | Previous behavior | Proposed behavior |
 |---|---|---|
-| `session_token`, on both clients | Ignored for database deletion. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `None`. |
+| `session_token`, on both clients | Ignored for database deletion. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `None` or `False`. |
 | `populate_query_metrics`, on the synchronous client | Accepted positionally or by name but did not enable query metrics for deletion. A non-`None` value produced a warning. | Raise `TypeError` whenever supplied, including `False` or `None`. |
+
+These rejections are already enforced; approval of the breaking changes
+remains pending.
+
+**Dictionary forms included in the proposal**
+
+The same rejection applies to the following entries on both clients:
+
+| Named argument | Entry in `request_options` or `feed_options` |
+|---|---|
+| `session_token` | `sessionToken` |
+| `populate_query_metrics` | `populateQueryMetrics` |
+
+For example, this call raises `TypeError` before sending a deletion request:
+
+```python
+client.delete_database("sales", request_options={"sessionToken": None})
+```
+
+Remove the entry rather than replace its value with `None` or `False`.
+Supplying both dictionaries does not bypass rejection: an excluded entry in
+either dictionary causes the call to fail before deletion. Other supported
+settings, including conditional-deletion arguments, remain available.
+These dictionary-form removals are part of the proposal; approval is not
+recorded.
 
 **Customer impact and migration**
 
@@ -1568,13 +1636,20 @@ target may be positional. All remaining optional settings must be named.
 Approve or revise removal of `session_token` from both clients and the
 ignored `populate_query_metrics` argument from the synchronous client.
 
+The stricter response-hook validation also needs review: legacy calls could
+ignore `response_hook=False` or delete without executing an asynchronous
+callback's body. Such inputs now raise `TypeError` before deletion instead.
+Approval of this compatibility change is not recorded.
+
 For the synchronous client, the proposal removes `populate_query_metrics`
 both positionally and by name.
 
-The asynchronous client never declared this parameter, but callers could
-supply the keyword through `**kwargs`. The current implementation rejects
-it; whether legacy async ignored or forwarded it remains unverified.
-That rejection is not yet an approved removal decision.
+The asynchronous client never declared `populate_query_metrics`. On `main`,
+supplying it through `**kwargs` raised `TypeError` for `None`, `False`, and
+`True` in the live comparison. The current API rejects it before sending
+a deletion request. It is not a previously accepted asynchronous argument
+being removed; the pending removal decision concerns the synchronous
+parameter and the dictionary forms described above.
 
 **Asynchronous-client signature for review**
 
@@ -1593,6 +1668,8 @@ async def delete_database(
 
 The asynchronous signature is unchanged; the proposed rejection of
 `session_token` changes which arguments are accepted through `**kwargs`.
+The synchronous client uses the same named optional arguments and return
+type; its database-properties annotation is `Mapping[str, Any]`.
 
 <a id="7---reading-database-properties"></a>
 <a id="databaseproxyread"></a>
@@ -1783,7 +1860,7 @@ container = database.create_container(
 )
 ```
 
-As with `CosmosClient.delete_database` and `DatabaseProxy.read`, legacy asynchronous handling of
+As with `DatabaseProxy.read`, legacy asynchronous handling of
 `populate_query_metrics` through `**kwargs` remains unverified. The current
 implementation rejects it, but that rejection is not yet an approved
 removal decision.

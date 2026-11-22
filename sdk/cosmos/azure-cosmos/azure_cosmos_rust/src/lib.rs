@@ -28,7 +28,8 @@
 //!
 //! `wire/settings.rs` validates the request protocol and combines typed settings
 //! with prepared headers. Activity/session values become typed operation fields;
-//! no-response, timeout, excluded regions, and hedging become operation options.
+//! no-response, timeout, excluded regions, hedging, UTF-8 decoding mode, and
+//! throughput control (priority and throughput bucket) become operation options.
 //! Other settings become custom headers. Header names are lowercased and typed
 //! settings can replace prepared values; operation-specific code may also
 //! consume headers, such as PATCH's If-Match precondition.

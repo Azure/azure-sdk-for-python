@@ -4,8 +4,9 @@
 //! Execute individual-item operations with shared preparation and result conversion.
 //!
 //! For an order read, "dbs/sales/colls/orders", "order-42", and the typed
-//! "customer-17" partition key become a Rust driver ItemReference. Reads and
-//! replacements can retain the resource address supplied in the item's _self field.
+//! "customer-17" partition key become a Rust driver ItemReference. Reads,
+//! replacements, deletes, and patches can retain the resource address supplied
+//! in the item's _self field.
 
 use super::partition_key_input::BindingPartitionKey;
 use std::sync::Arc;
@@ -200,7 +201,8 @@ pub(crate) fn execute_item_operation_async<'py>(
 }
 
 /// Resolve the container, obtain the partition key, and build the item operation.
-/// Extract an omitted key from body bytes only when the operation permits it.
+/// Extract an omitted key from body bytes; callers enforce whether the operation
+/// permits key extraction.
 /// Then apply the request settings and execute through the Rust driver.
 /// Preparation failures are Python exceptions, separate from the item result,
 /// so metadata headers cannot be mistaken for an item response.

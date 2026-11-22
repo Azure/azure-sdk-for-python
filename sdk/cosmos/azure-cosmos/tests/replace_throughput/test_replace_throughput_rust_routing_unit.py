@@ -8,17 +8,15 @@
 from __future__ import annotations
 from common.typed_requests import legacy_partition_key_from_request
 from common.typed_requests import wire_headers, settings_options, legacy_settings
+from common.sdk_subprocess import sdk_python_command
 
 from copy import deepcopy
 from contextlib import contextmanager
 import json
-import os
 import subprocess
-import sys
 import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
@@ -185,16 +183,12 @@ def _native_driver():
 @pytest.mark.parametrize("asynchronous", [False, True])
 def test_native_replacement_accepts_deadline_and_attempt_controls_rust(asynchronous):
     # Native runtime setup must not inherit the suite's mocked clocks or adapters.
-    environment = dict(os.environ)
-    environment["PYTHONPATH"] = os.pathsep.join(
-        [str(Path(__file__).resolve().parents[1]), *sys.path]
-    )
     result = subprocess.run(
-        [sys.executable, "-c",
-         "from replace_throughput.test_replace_throughput_rust_routing_unit "
-         "import _check_native_replacement_controls; "
-         f"_check_native_replacement_controls({asynchronous!r})"],
-        env=environment,
+        sdk_python_command(
+            "from replace_throughput.test_replace_throughput_rust_routing_unit "
+            "import _check_native_replacement_controls; "
+            f"_check_native_replacement_controls({asynchronous!r})"
+        ),
         capture_output=True,
         text=True,
         timeout=30,

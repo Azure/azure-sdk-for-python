@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! Retain feed cursors across item-query, read-all, and change-feed pages.
+//! Retain feed cursors across item-query, read-items, read-all, and change-feed pages.
 //!
 //! A Python page iterator passes the same feed cursor for successive pages of
 //! orders. The binding retains the Rust driver's plan rather than planning
@@ -483,11 +483,15 @@ impl ItemFeedCursor {
     }
 
     #[getter]
+    /// Whether the last completed fetch allows another fetch, not a promise of rows.
+    /// False before the first completed fetch.
     fn has_more(&self) -> bool {
         self.published_status.load(Ordering::Acquire) & 1 != 0
     }
 
     #[getter]
+    /// Whether the published cursor state supports continuation tokens.
+    /// True before the first completed fetch; this does not guarantee a token is available.
     fn continuation_supported(&self) -> bool {
         self.published_status.load(Ordering::Acquire) & 2 == 0
     }
@@ -557,7 +561,7 @@ async fn next_plan_page(
             .is_some_and(|token| !token.starts_with("c1.") && !token.starts_with("c2."))
     {
         return Err(PyValueError::new_err(
-            "Rust-backed change feed requires a V5 continuation token; V4 tokens are not supported.",
+            "This continuation token is not supported. Use a token returned by the Rust-backed change feed.",
         ));
     }
     let mut state = state
@@ -1019,6 +1023,9 @@ fn inputs(
     Ok((link, modifiers, continuation, scope))
 }
 
+/// Fetch the next page using the cursor's retained plan, creating it on first use.
+/// Wait with the GIL released and return the binding response, optionally with
+/// attempt diagnostics. Concurrent use of the same cursor is rejected.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn fetch_page_with_cursor<'py>(
@@ -1053,6 +1060,9 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     catch_operation_panic(|| finish_page(py, result, include_attempts))
 }
 
+/// Validate inputs and return an awaitable for the retained cursor's next page.
+/// Uses the same page conversion as `fetch_page_with_cursor`; dropping the
+/// Rust wait aborts the spawned task.
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, cursor, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn fetch_page_with_cursor_async<'py>(
@@ -1715,7 +1725,7 @@ mod tests {
                 Python::with_gil(|py| {
                     assert!(error.is_instance_of::<PyValueError>(py), "{token}");
                 });
-                assert!(error.to_string().contains("V4 tokens are not supported"));
+                assert!(error.to_string().contains("Use a token returned by the Rust-backed change feed"));
                 assert!(!state.lock().await.started);
             }
         }

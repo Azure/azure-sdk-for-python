@@ -524,15 +524,15 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
     }
 }
 
-// ---------------------------------------------------------------------------
-// acquire_driver_handle
-// ---------------------------------------------------------------------------
-//
 #[pyfunction(name = "_runtime_configuration")]
 pub(crate) fn runtime_configuration() -> Option<(f64, f64, f64)> {
     crate::driver_runtime::default_configuration()
 }
 
+// ---------------------------------------------------------------------------
+// acquire_driver_handle
+// ---------------------------------------------------------------------------
+//
 /// Acquire a CosmosDriver object and return a driver handle for later binding calls.
 /// The Python adapter requests this during async `__aenter__()` or on the first
 /// operation needing a driver handle. This function does not enforce one
@@ -654,9 +654,8 @@ pub(crate) fn partition_failover_options() -> PyResult<PartitionFailoverOptions>
 }
 
 
-/// Convert PreparedClientConfig.preferred_locations into Rust driver Region values.
-/// For example, the tuple ("West US",) supplies one Region::from("West US").
-/// Reject blank names; a missing attribute or None yields an empty list.
+/// Convert the ClientSettings snapshot's preferred locations into driver Region values.
+/// Reject blank names; an empty input yields an empty list.
 fn preferred_regions_from_settings(settings: &ClientSettings) -> PyResult<Vec<Region>> {
     validate_region_names(&settings.preferred_locations)?;
     Ok(settings
@@ -801,10 +800,10 @@ fn fault_rules_from_settings(settings: &ClientSettings) -> PyResult<Vec<Arc<Faul
     Ok(rules)
 }
 
-/// Build Rust driver OperationOptions from PreparedClientConfig's operation
-/// defaults -- excluded regions, throttle-retry caps, the hedging threshold,
-/// and the chosen read consistency level. Individual operations can also supply
-/// options; this function does not establish their final merged values.
+/// Build Rust driver OperationOptions from the ClientSettings snapshot:
+/// UTF-8 decoding mode, operation timeout, custom headers, excluded regions,
+/// throttle-retry caps, hedging, and read consistency. Individual operations can
+/// also supply options; this function does not establish their final merged values.
 ///
 /// Missing config or threshold means Python's default: hedging disabled.
 /// Other absent fields keep the driver's defaults. An enabled per-operation
@@ -917,12 +916,7 @@ fn client_headers_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<BTr
     Ok(headers)
 }
 
-/// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
-///
-/// These are read overrides, not account-policy changes. `LatestCommitted`
-/// selects the latest committed version in the read region; it does not
-/// configure account staleness bounds or wait for cross-region replication.
-/// Unknown names return `None` for the caller to reject.
+/// Parse `Strict` or `Lossy`, returning `PyValueError` for any other name.
 pub(crate) fn utf8_decoding_mode_from_str(mode: &str) -> PyResult<Utf8DecodingMode> {
     match mode {
         "Strict" => Ok(Utf8DecodingMode::Strict),
@@ -933,6 +927,12 @@ pub(crate) fn utf8_decoding_mode_from_str(mode: &str) -> PyResult<Utf8DecodingMo
     }
 }
 
+/// Map a Python consistency-level string to the driver's `ReadConsistencyStrategy`.
+///
+/// These are read overrides, not account-policy changes. `LatestCommitted`
+/// selects the latest committed version in the read region; it does not
+/// configure account staleness bounds or wait for cross-region replication.
+/// Unknown names return `None` for the caller to reject.
 pub(crate) fn read_consistency_from_str(level: &str) -> Option<ReadConsistencyStrategy> {
     match level {
         "Eventual" | "ConsistentPrefix" => Some(ReadConsistencyStrategy::Eventual),

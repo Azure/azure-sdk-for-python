@@ -128,7 +128,8 @@ def process_backend_response(
     :type response: BackendResponse
     :param client_connection: When supplied, its
         ``last_response_headers`` attribute is updated with the parsed
-        headers. ``None`` skips that side effect (used by tests).
+        headers. ``None`` skips updating a connection; production callers can
+        supply ``response_state`` instead or leave client header state unchanged.
     :type client_connection: Optional[Any]
     :param response_state: Narrow client-owned header state for connection-free
         callers. The connection argument remains for unmigrated families.

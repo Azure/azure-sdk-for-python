@@ -284,8 +284,6 @@ class ConnectionPolicy:  # pylint: disable=too-many-instance-attributes
         # RequestTimeout is the connection timeout for all operations except database account
         self.RequestTimeout: int = self.__defaultRequestTimeout
         self.DBAConnectionTimeout: int = self.__defaultDBAConnectionTimeout
-        # The request timeout for a request trying to recover a unavailable partition
-        # This is only applicable if circuit breaker is enabled
         self.InferenceRequestTimeout: int = self.__defaultInferenceRequestTimeout
         self.MaxBackoff: int = self.__defaultMaxBackoff
         self.ConnectionMode: int = ConnectionMode.Gateway

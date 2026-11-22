@@ -121,6 +121,7 @@ def reject_rust_arguments(
 class OpCapability:
     operations: frozenset[str]
     unsupported_message: Optional[str] = None
+    unsupported_error_type: type[Exception] = NotImplementedError
 
 
 CAPABILITIES: dict[str, OpCapability] = {
@@ -166,6 +167,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_DELETE_DATABASE: OpCapability(
         frozenset({ops.OP_DELETE_DATABASE}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "delete_database cannot run on the Rust backend for this call because a per-call setting, "
             "request hook, or header override cannot be honored. Remove the unsupported option. The "
@@ -337,7 +339,7 @@ class OperationRouting:
         policy = self.policy
         if self.supported:
             return
-        raise NotImplementedError(
+        raise policy.unsupported_error_type(
             policy.unsupported_message
             or f"{self.capability or self.op} cannot honor this request on Rust; "
             "the request will not be sent through legacy Python."

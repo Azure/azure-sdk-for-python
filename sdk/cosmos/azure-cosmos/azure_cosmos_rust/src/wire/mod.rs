@@ -32,10 +32,11 @@ mod response;
 // Public-facing exception re-exports (lib.rs registers these) ------------
 pub use errors::{_DriverResponseError, _DriverTransportError, _UnsupportedQueryFeatureError};
 
-// Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
 pub(crate) use container_metadata::{
     driver_setup_error, get_container_metadata, get_container_metadata_async,
 };
+
+// Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // Request-side re-exports ------------------------------------------------

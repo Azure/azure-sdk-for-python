@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-"""Read Rust read-many pages asynchronously, without saved continuation tokens."""
+"""Fetch Rust-backed read_all_items pages asynchronously, without saved continuation tokens."""
 
 from typing import Any, AsyncIterator, Optional
 

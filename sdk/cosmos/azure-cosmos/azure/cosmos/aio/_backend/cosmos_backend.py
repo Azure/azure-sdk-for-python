@@ -51,7 +51,7 @@ class AsyncCosmosBackend(abc.ABC):
     calls; unsupported requests and failures on Rust propagate to the caller.
     """
 
-    #: Python backend identifier used in the startup INFO log. Subclasses set this from
+    #: Python backend identifier used for execution-path routing. Subclasses set this from
     #: ``BACKEND_NAME_RUST`` etc.
     name: str = "abstract"
 
