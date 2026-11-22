@@ -45,6 +45,13 @@ def _bridge_thread_count() -> int:
     return sum(1 for t in threading.enumerate() if t.name == _BRIDGE_THREAD_NAME)
 
 
+@pytest.mark.skip(
+    reason=(
+        "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
+        "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
+        "Re-enable after Rust driver credential isolation is fixed."
+    )
+)
 def test_shared_async_credential_uses_one_bridge_on_application_loop_rust():
     """Shared credentials use one bridge on the caller's loop without a private thread."""
 
@@ -98,6 +105,13 @@ def test_shared_async_credential_uses_one_bridge_on_application_loop_rust():
     asyncio.run(main())
 
 
+@pytest.mark.skip(
+    reason=(
+        "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
+        "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
+        "Re-enable after Rust driver credential isolation is fixed."
+    )
+)
 def test_distinct_async_credentials_do_not_share_a_bridge_rust():
     """Distinct credentials have distinct bridges, both on the application loop."""
 

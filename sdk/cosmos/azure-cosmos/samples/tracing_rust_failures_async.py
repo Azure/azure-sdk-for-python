@@ -37,6 +37,7 @@ from azure.core.exceptions import ServiceResponseError
 from azure.core.settings import settings
 from azure.cosmos import _rust
 from azure.cosmos.aio import CosmosClient
+from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosResourceNotFoundError
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -174,14 +175,14 @@ async def run_case(exporter, connection, failure, mode):
         connection,
         _fault_injection_rules=[rule],
     ) as client:
-        if client._adapter.name != "rust":
+        adapter = client._adapter
+        if not isinstance(adapter, AsyncBindingAdapter):
             raise RuntimeError("This sample requires an SDK with Rust as the default backend.")
         container = client.get_database_client("sales").get_container_client("orders")
         properties = await container.read()
         if properties["partitionKey"]["paths"] != ["/customerId"]:
             raise ValueError("sales.orders must be partitioned by /customerId")
         await require_absent(container, order)
-        adapter = container._get_item_helper()._backend
         driver_handle = await adapter._ensure_driver_handle()
 
         def hits():

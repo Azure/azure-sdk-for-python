@@ -5,11 +5,10 @@
 # -------------------------------------------------------------------------
 """Construct BindingAdapter or AsyncBindingAdapter with prepared client settings.
 
-The Rust path is the only release execution path. This checkout retains private
-controls for comparing it with the legacy path: _backend takes precedence over
-COSMOS_BACKEND, and the current unset value still uses core-python. That
-temporary default and those controls must be removed before release; they
-are not customer configuration.
+Rust is the default execution path. This checkout retains private controls for
+comparing it with the legacy path: _backend takes precedence over COSMOS_BACKEND,
+and an unset or blank selection uses Rust. These controls remain for migration
+tests, not customer configuration.
 
 This Python wrapper validates settings and prepares the credential before
 creating BindingAdapter or AsyncBindingAdapter. These are Python classes that call

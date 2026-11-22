@@ -12,7 +12,7 @@ from unittest.mock import Mock
 import pytest
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace import ReadableSpan, TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExportResult
 from opentelemetry.sdk.trace.export.in_memory_span_exporter import InMemorySpanExporter
 
@@ -77,6 +77,22 @@ def test_export_boundary_preserves_identity_but_removes_sensitive_fields_rust(sp
     exporter.verify(3)
     exporter.shutdown()
     delegate.shutdown.assert_called_once()
+
+
+def test_export_accepts_span_without_attributes_rust(spans):
+    originals, trace_id = spans
+    checkout = next(span for span in originals if span.name == "checkout")
+    span = ReadableSpan(name="checkout", context=checkout.context, attributes=None)
+    delegate = Mock()
+    delegate.export.return_value = SpanExportResult.SUCCESS
+    exporter = proof.MeasuredTraceExporter(delegate)
+    exporter.trace_id = trace_id
+
+    assert exporter.export([span]) == SpanExportResult.SUCCESS
+    selected, = delegate.export.call_args.args[0]
+    assert not selected.attributes
+    assert selected.context == checkout.context
+    exporter.verify(1)
 
 
 def test_unselected_trace_never_reaches_azure_rust(spans):

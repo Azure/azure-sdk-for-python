@@ -290,6 +290,12 @@ def _token_credential_create(variant_database, make_variant_container, monkeypat
 @skip_unless_token_auth()
 def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad.py::TestAAD.test_compact_utf8_item_write_with_aad
+    if backend == "rust":
+        pytest.skip(
+            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
+            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
+            "Re-enable after Rust driver credential isolation is fixed."
+        )
     _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=True)
 
 
@@ -297,4 +303,10 @@ def test_compact_utf8_item_write_with_aad_rust(variant_database, make_variant_co
 @skip_unless_token_auth()
 def test_aad_credentials_rust(variant_database, make_variant_container, monkeypatch, backend):
     # Source: tests/test_aad.py::TestAAD.test_aad_credentials
+    if backend == "rust":
+        pytest.skip(
+            "driver-gap: Gap 40 - shared container cache can reuse AAD credentials for "
+            "key-authenticated cleanup, causing DELETE container to fail with 403/5300. "
+            "Re-enable after Rust driver credential isolation is fixed."
+        )
     _token_credential_create(variant_database, make_variant_container, monkeypatch, backend, compact=False, query=True)

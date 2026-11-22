@@ -161,7 +161,14 @@ def test_interval_report_totals_rust(modules, name):
     assert current[histogram].total_count == 2
 
 
-def test_reporter_interval_numbers_and_execution_completion_rust(modules):
+@pytest.mark.parametrize("selection,expected", [
+    (None, "rust"), ("", "rust"), (" RUST ", "rust"), ("core-python", "core-python"),
+])
+def test_reporter_interval_numbers_and_execution_completion_rust(modules, monkeypatch, selection, expected):
+    if selection is None:
+        monkeypatch.delenv("COSMOS_BACKEND", raising=False)
+    else:
+        monkeypatch.setenv("COSMOS_BACKEND", selection)
     stats = modules["perf_stats"].Stats()
     reporter = modules["perf_reporter"].PerfReporter(
         stats, {"report_interval": 60, "workload_id": f"baseline-read-rust-{STAMP}",
@@ -176,6 +183,7 @@ def test_reporter_interval_numbers_and_execution_completion_rust(modules):
     summaries = [row for row in reporter._container.rows if row["record_type"] == "measurement"]
     assert sorted(row["interval_number"] for row in summaries) == [1, 1, 2]
     for row in summaries:
+        assert row["config_backend"] == expected
         assert row["interval_id"] == f'{row["process_id"]}-{row["interval_number"]}'
         assert row["interval_duration_seconds"] > 0
         assert "measurement_version" not in row
@@ -1381,7 +1389,8 @@ def test_query_build_identity_rejects_old_driver_and_tracks_loaded_files_rust(qu
     assert first["harness_sha256"] != second["harness_sha256"]
 
 
-def test_query_backend_page_counter_closes_retained_fetch_generator_rust(modules, monkeypatch):
+@pytest.mark.parametrize("selection", [None, "", "rust"])
+def test_query_backend_page_counter_closes_retained_fetch_generator_rust(modules, monkeypatch, selection):
     from types import SimpleNamespace
     from unittest.mock import Mock
 
@@ -1399,7 +1408,10 @@ def test_query_backend_page_counter_closes_retained_fetch_generator_rust(modules
             events.append("closed")
 
     backend = SimpleNamespace(name="rust", execute=execute, execute_pages=pages)
-    monkeypatch.setenv("COSMOS_BACKEND", "rust")
+    if selection is None:
+        monkeypatch.delenv("COSMOS_BACKEND", raising=False)
+    else:
+        monkeypatch.setenv("COSMOS_BACKEND", selection)
     monkeypatch.setattr(workload, "WORKLOAD_MEASUREMENT_SECONDS", 60)
     monkeypatch.setattr(workload, "WORKLOAD_READ_MEASUREMENT_SECONDS", 0)
     monkeypatch.setattr(workload, "WORKLOAD_OPERATIONS", {"query"})

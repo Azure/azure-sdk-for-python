@@ -172,7 +172,12 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
 
     async def initialize(self) -> None:
         """Await driver acquisition, including account setup when creating a driver."""
-        await self._ensure_driver_handle()
+        operation = get_operation(self, "initialize")
+        try:
+            await self._ensure_driver_handle()
+        except Exception as exc:
+            record_failed_lookup(operation, exc, setup=True)
+            raise
 
     async def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
         """Return how many Rust request attempts applied the named test rule."""

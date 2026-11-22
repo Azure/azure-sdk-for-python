@@ -4,7 +4,7 @@
 
 Set ACCOUNT_URI and ACCOUNT_KEY. Database sales and container orders must
 already contain order-42 with partition key customer-17. This sample only reads.
-For this migration checkout, also set COSMOS_BACKEND=rust.
+Rust is the default; no backend selection is needed.
 Run `python runtime_configuration.py` (sync) or add `--async`.
 """
 

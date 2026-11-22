@@ -331,6 +331,88 @@ def test_read_items_lookup_failure_logs_its_summary_rust(native, monkeypatch):
     assert _telemetry._OPERATION.get() is None
 
 
+@pytest.fixture(name="async_setup")
+def async_initialization_harness(monkeypatch):
+    logger, capture = make_logger()
+    client = AsyncCosmosClient(
+        "https://alpha-bank.invalid",
+        "ZmFrZQ==",
+        logger=logger,
+        enable_diagnostics_logging=True,
+    )
+    failure = async_binding._DRIVER_RESPONSE_ERROR((401, 0, {}, b'{"message":"setup failed"}', SUMMARY))
+    acquire = Mock(side_effect=failure)
+    monkeypatch.setattr(async_binding._rust_module, "acquire_driver_handle", acquire)
+
+    async def enter():
+        async with client:
+            pytest.fail("Client entry must fail before entering the body")
+
+    try:
+        yield SimpleNamespace(
+            client=client, logger=logger, capture=capture, failure=failure, acquire=acquire, enter=enter
+        )
+    finally:
+        asyncio.run(client.close())
+
+
+@pytest.mark.parametrize(
+    "diagnostics,debug,expected",
+    [(False, False, []), (True, False, [logging.INFO]), (False, True, [logging.DEBUG]), (True, True, [logging.INFO])],
+)
+def test_async_entry_failure_logs_summary_rust(async_setup, diagnostics, debug, expected):
+    client = async_setup.client
+    client._client_context = replace(
+        client._client_context,
+        diagnostic_logging=DiagnosticLogging(
+            logger=async_setup.logger, enable_diagnostics_logging=diagnostics, logging_enable=debug
+        ),
+    )
+    with pytest.raises(CosmosHttpResponseError) as caught:
+        asyncio.run(async_setup.enter())
+    assert caught.value.status_code == 401
+    assert caught.value.__cause__ is async_setup.failure
+    assert caught.value.headers[HEADER] == SUMMARY
+    assert [record.levelno for record in async_setup.capture.records] == expected
+    for record in async_setup.capture.records:
+        assert (record.operation_type, record.status_code, record.diagnostics) == ("initialize", 401, SUMMARY)
+    async_setup.acquire.assert_called_once()
+    assert client._adapter._closing
+    assert _telemetry._OPERATION.get() is None
+
+
+@pytest.mark.parametrize("failure", ["missing_summary", "timeout", "cancelled"])
+def test_async_entry_without_summary_does_not_invent_logs_rust(async_setup, monkeypatch, failure):
+    if failure == "missing_summary":
+        async_setup.acquire.side_effect = async_binding._DRIVER_RESPONSE_ERROR(
+            (401, 0, {}, b'{"message":"setup failed"}', None)
+        )
+        expected = CosmosHttpResponseError
+    else:
+        error = TimeoutError("setup timed out") if failure == "timeout" else asyncio.CancelledError()
+        monkeypatch.setattr(async_setup.client._adapter, "_ensure_driver_handle", AsyncMock(side_effect=error))
+        expected = type(error)
+    with pytest.raises(expected) as caught:
+        asyncio.run(async_setup.enter())
+    if failure != "missing_summary":
+        assert caught.value is error
+    assert not async_setup.capture.records
+    assert async_setup.client._adapter._closing
+    assert _telemetry._OPERATION.get() is None
+
+
+def test_async_entry_logging_failure_preserves_setup_error_rust(async_setup, monkeypatch, caplog):
+    monkeypatch.setattr(async_setup.capture, "emit", Mock(side_effect=RuntimeError("customer output failed")))
+    with caplog.at_level(logging.WARNING, logger="azure.cosmos._telemetry"):
+        with pytest.raises(CosmosHttpResponseError) as caught:
+            asyncio.run(async_setup.enter())
+    assert caught.value.status_code == 401
+    assert caught.value.__cause__ is async_setup.failure
+    assert caught.value.headers[HEADER] == SUMMARY
+    assert async_setup.client._adapter._closing
+    assert "Rust diagnostic logging failed; operation result is unchanged" in caplog.text
+
+
 def test_overlapping_calls_keep_logger_selection_rust(native):
     loggers = [make_logger() for _ in range(2)]
 

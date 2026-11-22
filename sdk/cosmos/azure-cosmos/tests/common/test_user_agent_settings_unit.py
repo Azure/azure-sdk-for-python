@@ -93,8 +93,9 @@ def test_public_operations_reject_user_agent_before_work(native, name, operation
 @pytest.mark.parametrize("from_connection_string", [False, True])
 @pytest.mark.parametrize("backend", ["core-python", None])
 def test_core_python_constructor_retains_user_agent_controls(
-    construct_client, client_module, name, value, from_connection_string, backend
+    construct_client, client_module, monkeypatch, name, value, from_connection_string, backend
 ):
+    monkeypatch.setenv("COSMOS_BACKEND", "core-python")
     construct_client(
         _backend=backend,
         from_connection_string=from_connection_string,

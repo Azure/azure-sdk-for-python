@@ -96,7 +96,7 @@ class MeasuredTraceExporter(SpanExporter):
                 start_time=span.start_time,
                 end_time=span.end_time,
                 status=trace.Status(span.status.status_code),
-                attributes={k: v for k, v in span.attributes.items() if k in _PROOF_ATTRIBUTES},
+                attributes={k: v for k, v in (span.attributes or {}).items() if k in _PROOF_ATTRIBUTES},
             )
             for span in spans
             if span.context.trace_id == self.trace_id and span.name in _PROOF_NAMES
@@ -181,8 +181,9 @@ async def run_telemetry_scenario(exporter, *, conflict=False, read=False, not_fo
     operation_name = "ContainerProxy.read_item" if read else "ContainerProxy.create_item"
     expected_driver_status = 404 if not_found else (200 if read else (409 if conflict else 201))
     failed = conflict or not_found
+    order_id = scenario_name + "-" + uuid.uuid4().hex
     order = {
-        "id": scenario_name + "-" + uuid.uuid4().hex,
+        "id": order_id,
         "customerId": scenario_name,
         "total": 125.5,
     }
@@ -205,8 +206,8 @@ async def run_telemetry_scenario(exporter, *, conflict=False, read=False, not_fo
                     azure_exporter.trace_id = checkout.get_span_context().trace_id
                 try:
                     if read:
-                        target = order["id"] + "-missing" if not_found else order["id"]
-                        result = await container.read_item(target, partition_key=order["customerId"], timeout=30)
+                        target = order_id + "-missing" if not_found else order_id
+                        result = await container.read_item(target, partition_key=scenario_name, timeout=30)
                     else:
                         result = await container.create_item(order, no_response=False, timeout=30)
                         created = True
@@ -224,7 +225,7 @@ async def run_telemetry_scenario(exporter, *, conflict=False, read=False, not_fo
                         raise AssertionError("The measured read did not return the saved order")
                     response_headers = result.get_response_headers()
             saved = await container.read_item(
-                order["id"], partition_key=order["customerId"], tracing_options={"enabled": False}
+                order_id, partition_key=scenario_name, tracing_options={"enabled": False}
             )
             if any(saved[key] != value for key, value in order.items()):
                 raise AssertionError("The service backend did not return the saved order")
@@ -300,9 +301,9 @@ async def run_telemetry_scenario(exporter, *, conflict=False, read=False, not_fo
             operation_error = sys.exc_info()[1]
             if created:
                 try:
-                    await container.delete_item(order["id"], partition_key=order["customerId"])
+                    await container.delete_item(order_id, partition_key=scenario_name)
                     try:
-                        await container.read_item(order["id"], partition_key=order["customerId"])
+                        await container.read_item(order_id, partition_key=scenario_name)
                     except CosmosResourceNotFoundError:
                         pass
                     else:

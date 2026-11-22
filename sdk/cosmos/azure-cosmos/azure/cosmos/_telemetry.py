@@ -314,6 +314,7 @@ class _DiagnosticCollector:
                     self.received += 1
                     previous = self.diagnostics
                     self._attempts.extend(diagnostics.attempts)
+                    summary: Optional[_Summary]
                     if previous is not None and previous.summary is not None and diagnostics.summary is not None:
                         summary = previous.summary.merge(diagnostics.summary)
                     else:
@@ -433,6 +434,8 @@ class _Contribution:
         incomplete_reason = None
         if payload is not None:
             try:
+                if not isinstance(payload, dict):
+                    raise ValueError("Missing attempt schema version")
                 total, _, attempts = _decode_payload(payload)
                 complete = payload["complete"]
                 reasons = payload["incomplete_reasons"]
@@ -771,7 +774,8 @@ def _local_error_type(error_type: type[Exception]) -> type[_LocalOperationError]
 
 
 def _hide_local_error(error: Exception) -> _LocalOperationError:
-    return _local_error_type(type(error))(error)
+    error_type: type = type(error)
+    return _local_error_type(error_type)(error)
 
 
 def trace_operation(
@@ -948,17 +952,29 @@ def log_error_diagnostics(backend: object, error: BaseException, operation: Opti
     operation name, use the active operation's name. Errors that wrap no
     service response, such as a client timeout, are not logged.
     """
-    # pylint: disable-next=import-outside-toplevel
-    from ._helpers._exceptions import backend_response_from_exception
-
     state = _logging_operation(backend)
     if state is None:
         return
-    response = backend_response_from_exception(error)
-    if response is None:
-        return
+    log_exception_diagnostics(state.diagnostic_logging, error, operation or state.operation)
+
+
+def log_exception_diagnostics(configuration: DiagnosticLogging, error: BaseException, operation: str) -> None:
+    """Log a supplied error summary using explicit settings, including outside an operation.
+
+    :param configuration: Logging settings resolved for this call or client.
+    :type configuration: DiagnosticLogging
+    :param error: The failure that may wrap a service response.
+    :type error: BaseException
+    :param operation: The name to attach to the diagnostic record.
+    :type operation: str
+    """
+    # pylint: disable-next=import-outside-toplevel
+    from ._helpers._exceptions import backend_response_from_exception
+
     try:
-        state.diagnostic_logging.record(operation or state.operation, response)
+        response = backend_response_from_exception(error)
+        if response is not None:
+            configuration.record(operation, response)
     except Exception:  # pylint: disable=broad-except
         _report("Rust diagnostic logging failed; operation result is unchanged")
 
@@ -978,9 +994,9 @@ def _optional_integer(value: object, maximum: int) -> Optional[int]:
 
 
 def _charge(value: object) -> float:
-    if type(value) not in (int, float) or not 0 <= value < float("inf"):  # pylint: disable=unidiomatic-typecheck
+    if (type(value) is not int and type(value) is not float) or not 0 <= value < float("inf"):  # pylint: disable=unidiomatic-typecheck
         raise ValueError("Invalid request charge")
-    return float(value)  # type: ignore[arg-type]
+    return float(value)
 
 
 def _optional_text(value: object) -> Optional[str]:

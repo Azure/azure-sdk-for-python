@@ -5,10 +5,9 @@
 # -------------------------------------------------------------------------
 """Names retained for migration checks in the Python wrapper.
 
-The Rust path is the only release execution path. The legacy identifier, private selector,
-and current legacy default below are temporary implementation details to
-remove, not supported customer choices. Both client types use these same
-values while migration checks still need them.
+Rust is the default execution path. The legacy identifier and private selector
+remain for migration tests until all methods are migrated. They are not
+supported customer choices. Both client types use these same values.
 """
 from typing import Any
 
@@ -22,8 +21,8 @@ BACKEND_NAME_RUST = "rust"
 #: Values accepted by the temporary migration/test selector.
 VALID_BACKEND_NAMES = (BACKEND_NAME_CORE_PYTHON, BACKEND_NAME_RUST)
 
-#: Current migration-checkout default, not the Rust-only release contract.
-DEFAULT_BACKEND_NAME = BACKEND_NAME_CORE_PYTHON
+#: Default execution path when no private migration/test selection is supplied.
+DEFAULT_BACKEND_NAME = BACKEND_NAME_RUST
 
 #: Private test/migration control. A ``_backend=`` argument wins; otherwise this
 #: env var decides; otherwise ``DEFAULT_BACKEND_NAME`` is used.

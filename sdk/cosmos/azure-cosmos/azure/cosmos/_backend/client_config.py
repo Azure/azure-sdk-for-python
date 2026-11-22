@@ -356,7 +356,8 @@ def _prepare_fault_injection_rules(
         if (
             isinstance(probability, bool)
             or not isinstance(probability, Real)
-            or not 0.0 <= probability <= 1.0
+            or probability < 0.0
+            or not probability <= 1.0
             or not math.isfinite(float(probability))
         ):
             raise ValueError(

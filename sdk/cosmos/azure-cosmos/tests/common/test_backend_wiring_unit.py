@@ -657,11 +657,54 @@ def test_import_guard_rust(guarded_name, allowed_files):
 # "core-python" or "rust"; anything else fails at construction so a typo does
 # not quietly fall back to the default.
 
-def test_factory_default_returns_core_python_backend_rust(monkeypatch):
-    """With nothing set, the factory returns the concrete default backend."""
+@pytest.mark.parametrize("factory,adapter_type", [
+    (make_backend, BindingAdapter), (make_async_backend, AsyncBindingAdapter),
+])
+def test_factory_default_returns_rust_backend_rust(monkeypatch, factory, adapter_type):
+    """With nothing set, both factories construct Rust adapters."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    backend = make_backend(None)
-    assert backend is LEGACY_BACKEND
+    backend = factory(None, url="https://default.invalid", credential="ZmFrZQ==")
+    try:
+        assert isinstance(backend, adapter_type)
+    finally:
+        closed = backend.close()
+        if inspect.isawaitable(closed):
+            asyncio.run(closed)
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("connection_string", [False, True])
+@pytest.mark.parametrize("environment,explicit,expected", [
+    (None, None, "rust"),
+    ("core-python", None, "core-python"),
+    ("rust", "core-python", "core-python"),
+    ("core-python", "rust", "rust"),
+    ("core-python", "", "rust"),
+])
+def test_public_client_default_and_private_selection_rust(
+    monkeypatch, asynchronous, connection_string, environment, explicit, expected,
+):
+    module = async_cosmos_client_module if asynchronous else sync_cosmos_client_module
+    if environment is None:
+        monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    else:
+        monkeypatch.setenv(BACKEND_ENV_VAR, environment)
+    connection = MagicMock()
+    monkeypatch.setattr(module, "CosmosClientConnection", connection)
+    options = {} if explicit is None else {"_backend": explicit}
+    if connection_string:
+        client = module.CosmosClient.from_connection_string(
+            "AccountEndpoint=https://default.invalid;AccountKey=ZmFrZQ==;", **options
+        )
+    else:
+        client = module.CosmosClient("https://default.invalid", "ZmFrZQ==", **options)
+    try:
+        assert client._adapter.name == expected
+        assert connection.call_args.kwargs["_backend"] is client._adapter
+    finally:
+        closed = client._adapter.close()
+        if inspect.isawaitable(closed):
+            asyncio.run(closed)
 
 
 def test_factory_env_var_picks_rust(monkeypatch):
@@ -706,7 +749,7 @@ def test_factory_rust_without_master_key_fails_loud_rust(monkeypatch):
 def test_async_factory_returns_async_backends_rust(monkeypatch):
     """The async factory returns concrete legacy and Rust backends."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert make_async_backend(None) is ASYNC_LEGACY_BACKEND
+    assert make_async_backend(BACKEND_NAME_CORE_PYTHON) is ASYNC_LEGACY_BACKEND
     assert isinstance(
         make_async_backend(
             BACKEND_NAME_RUST,
@@ -4080,13 +4123,13 @@ def test_resolve_backend_name_empty_means_default_rust(monkeypatch):
     """An empty or whitespace-only value counts as 'not specified' and uses the
     default rather than raising."""
     monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
-    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
-    assert resolve_backend_name("") == BACKEND_NAME_CORE_PYTHON
-    assert resolve_backend_name("   ") == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name(None) == BACKEND_NAME_RUST
+    assert resolve_backend_name("") == BACKEND_NAME_RUST
+    assert resolve_backend_name("   ") == BACKEND_NAME_RUST
     monkeypatch.setenv(BACKEND_ENV_VAR, "")
-    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name(None) == BACKEND_NAME_RUST
     monkeypatch.setenv(BACKEND_ENV_VAR, "   ")
-    assert resolve_backend_name(None) == BACKEND_NAME_CORE_PYTHON
+    assert resolve_backend_name(None) == BACKEND_NAME_RUST
 
 
 def test_resolve_backend_name_still_rejects_genuine_typos_rust(monkeypatch):

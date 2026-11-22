@@ -154,9 +154,9 @@ timeouts bound whole attempts, not response-read inactivity; they are not
 equivalent replacements. Per-call connection overrides remain unsupported on Rust.
 
 See `samples/runtime_configuration.py` for sharing and async initialization.
-These examples target the Rust-backed release; in this migration checkout,
-select it with the private `COSMOS_BACKEND=rust` test control. Runtime options
-are not supported by the retained legacy backend.
+These examples use Rust, the default. The private `_backend` argument and
+`COSMOS_BACKEND` environment variable remain for migration tests, not customer
+configuration. Runtime options are not supported by the retained legacy backend.
 
 ### Compact UTF-8 item writes
 

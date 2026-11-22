@@ -330,7 +330,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;
-        # otherwise it falls back to core-python.
+        # otherwise Rust is the default.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
             reject_rust_connection_policy_options(kwargs)

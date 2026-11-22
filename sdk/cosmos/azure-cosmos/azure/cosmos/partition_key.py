@@ -570,6 +570,6 @@ def _get_partition_key_from_partition_key_definition(
     version: int = partition_key_definition.get("version", 1)  # Default to version 1 if not provided
     return PartitionKey(path=path, kind=kind, version=version)
 
-def _build_partition_key_from_properties(container_properties: dict[str, Any]) -> PartitionKey:
+def _build_partition_key_from_properties(container_properties: Mapping[str, Any]) -> PartitionKey:
     partition_key_definition = container_properties["partitionKey"]
     return _get_partition_key_from_partition_key_definition(partition_key_definition)

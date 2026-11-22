@@ -14,6 +14,7 @@ from datetime import datetime, timezone
 import psutil
 from azure.cosmos import CosmosClient
 from azure.cosmos._backend.constants import BACKEND_NAME_CORE_PYTHON
+from azure.cosmos._backend.factory import resolve_backend_name
 from azure.identity import DefaultAzureCredential
 
 from perf_reporting_config import _safe_int_env
@@ -360,9 +361,8 @@ class PerfReporter:
         # use_sync == True was unpaced no matter what arrival_rate says.
         num_clients = _safe_int_env("WORKLOAD_NUM_CLIENTS", 1)
         use_sync = os.environ.get("WORKLOAD_USE_SYNC", "false").lower() == "true"
-        # Which backend produced these numbers: "rust" or "core-python" (the
-        # default). Tagged so the two can be told apart in the results store.
-        backend = os.environ.get("COSMOS_BACKEND", "core-python")
+        # Match the workload client's private selection, including the Rust default.
+        backend = resolve_backend_name(None)
         ppcb = (
             os.environ.get("AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER", "false").lower()
             == "true"

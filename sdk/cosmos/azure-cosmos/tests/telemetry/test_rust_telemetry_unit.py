@@ -769,6 +769,113 @@ def test_sync_driver_setup_failure_keeps_setup_diagnostics_rust(sync_create, rec
     assert telemetry._OPERATION.get() is None
 
 
+@pytest.mark.parametrize("enabled", [False, True])
+@pytest.mark.parametrize("failure_kind", ["response", "transport"])
+def test_async_client_entry_failure_records_setup_attempts_rust(recording, monkeypatch, enabled, failure_kind):
+    settings.tracing_enabled = enabled
+    logger = Mock(spec=logging.Logger)
+    client = AsyncCosmosClient(
+        "https://example.invalid", "ZmFrZQ==",  logger=logger, enable_diagnostics_logging=True
+    )
+    seen, failures = [], []
+    client._client_context = replace(
+        client._client_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append),)
+    )
+
+    def fail_acquisition(*_args, **_kwargs):
+        error = (
+            binding_adapter._DRIVER_RESPONSE_ERROR((401, 0, {}, b'{"message":"setup failed"}', "setup summary"))
+            if failure_kind == "response"
+            else binding_adapter._DRIVER_TRANSPORT_ERROR("setup failed")
+        )
+        error._cosmos_attempt_payload = failure_payload("setup_diagnostics_partial", 2)
+        failures.append(error)
+        raise error
+
+    acquire = Mock(side_effect=fail_acquisition)
+    monkeypatch.setattr(binding_adapter._rust_module, "acquire_driver_handle", acquire)
+    expected = CosmosHttpResponseError if failure_kind == "response" else ServiceResponseError
+
+    async def enter():
+        with trace.get_tracer("customer").start_as_current_span("startup") as parent:
+            with pytest.raises(expected) as caught:
+                async with client:
+                    pytest.fail("Setup failure must prevent entry")
+            assert trace.get_current_span() is parent
+        return caught.value, parent
+
+    try:
+        error, parent = asyncio.run(enter())
+        assert error.__cause__ is failures[0]
+        if failure_kind == "response":
+            assert error.status_code == 401
+            assert error.headers["x-ms-cosmos-sdk-diagnostics"] == "setup summary"
+        acquire.assert_called_once()
+        assert logger.log.call_count == (1 if failure_kind == "response" else 0)
+        assert client._adapter._closing
+        assert len(seen) == 1
+        completion = seen[0]
+        assert completion.operation == "initialize" and completion.outcome == "error"
+        spans = [s for s in recording.exporter.get_finished_spans() if s.name == "CosmosClient.__aenter__"]
+        assert len(spans) == int(enabled)
+        assert len(attempt_spans(recording)) == (2 if enabled else 0)
+        if enabled:
+            assert_setup_diagnostics(completion.diagnostics)
+            (span,) = spans
+            assert span.parent.span_id == parent.get_span_context().span_id
+            assert span.status.status_code is trace.StatusCode.ERROR
+            assert span.attributes["azure.cosmosdb.operation.diagnostics_complete"] is False
+            assert span.attributes["azure.cosmosdb.operation.diagnostics_incomplete_reasons"] == (
+                "setup_diagnostics_partial",
+            )
+            assert "azure.cosmosdb.operation.request_count" not in span.attributes
+            assert all(child.parent.span_id == span.context.span_id for child in attempt_spans(recording))
+        else:
+            assert completion.diagnostics is None
+        assert hasattr(failures[0], "_cosmos_attempt_payload") is not enabled
+        assert telemetry._OPERATION.get() is None
+    finally:
+        asyncio.run(client.close())
+
+
+@pytest.mark.parametrize("cancelled", [False, True])
+def test_async_client_entry_without_failure_diagnostics_does_not_invent_attempts_rust(
+    recording, monkeypatch, cancelled
+):
+    client = AsyncCosmosClient("https://example.invalid", "ZmFrZQ==")
+    seen = []
+    client._client_context = replace(
+        client._client_context, telemetry_handlers=(telemetry.CompletionHandler(seen.append, collect_attempts=True),)
+    )
+    cancellation = asyncio.CancelledError()
+    monkeypatch.setattr(
+        client._adapter, "_ensure_driver_handle",
+        AsyncMock(side_effect=cancellation) if cancelled else AsyncMock(return_value="unused-handle"),
+    )
+
+    async def enter():
+        if cancelled:
+            with pytest.raises(asyncio.CancelledError) as caught:
+                await client.__aenter__()
+            assert caught.value is cancellation
+        else:
+            assert await client.__aenter__() is client
+
+    try:
+        asyncio.run(enter())
+        assert len(seen) == 1
+        completion = seen[0]
+        assert completion.operation == "initialize"
+        assert completion.outcome == ("cancelled" if cancelled else "success")
+        assert completion.diagnostics is None
+        (span,) = [s for s in recording.exporter.get_finished_spans() if s.name == "CosmosClient.__aenter__"]
+        assert "azure.cosmosdb.operation.request_count" not in span.attributes
+        assert not attempt_spans(recording)
+        assert telemetry._OPERATION.get() is None
+    finally:
+        asyncio.run(client.close())
+
+
 @pytest.mark.parametrize("asynchronous", [True, False], ids=["async", "sync"])
 def test_read_items_lookup_failure_keeps_lookup_diagnostics_rust(request, monkeypatch, recording, asynchronous):
     harness = request.getfixturevalue("create" if asynchronous else "sync_create")

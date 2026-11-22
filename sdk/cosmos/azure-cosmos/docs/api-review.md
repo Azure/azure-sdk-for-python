@@ -1141,8 +1141,7 @@ customer recording the charge for listing databases could record the
 charge for creating `sales` instead.
 
 The proposal runs the hook after each successful service page. It also
-changes argument validation and how customers reuse settings. These are
-Python wrapper changes, not missing Rust-driver capabilities.
+changes argument validation and how customers reuse settings.
 
 **The response hook observes each fetched page**
 
@@ -1199,7 +1198,7 @@ Use `None` to disable the hook. A callable object whose boolean value is
 The page-size range also applies to the `x-ms-max-item-count` request header.
 A directly supplied, non-`None` `max_item_count` takes precedence.
 
-The current wrapper rejects `populate_query_metrics`, `session_token`,
+The API currently rejects `populate_query_metrics`, `session_token`,
 `availability_strategy` and `no_response`, including `None`,
 `False` and corresponding entries in the selected settings dictionary.
 Removal approval is limited to argument forms confirmed to have been ignored.
@@ -1232,9 +1231,7 @@ databases = client.list_databases()
 ```
 
 This approval is limited to `list_databases`. It does not approve rejection
-on other database/container APIs or retire the whole legacy compatibility
-test, which exercises several operations. Rejection coverage replaces the
-listing-specific accept-and-ignore expectation, not the other assertions.
+on other database/container APIs.
 
 **Use `request_options` for a settings dictionary**
 
@@ -1257,7 +1254,7 @@ accept both names, and deprecate `feed_options`. Existing calls would
 continue to work during the deprecation period. Warning policy and release
 timing remain undecided; deprecation is not yet implemented.
 
-Currently, if both dictionaries are supplied, the Python wrapper selects
+Currently, if both dictionaries are supplied, the API uses
 `request_options`, even when it is empty or `None`. It does not merge the
 dictionaries. This precedence remains unchanged during deprecation. A direct,
 non-`None` `max_item_count` overrides the selected dictionary's page size.

@@ -14,9 +14,11 @@
 10. [Why one release needs several wheels](#10-why-one-release-needs-several-wheels)
 11. [How QueryPlanInterop reaches the wheel and the running SDK](#11-how-queryplaninterop-reaches-the-wheel-and-the-running-sdk)
 12. [How the pipeline builds and releases the complete wheel set](#12-how-the-pipeline-builds-and-releases-the-complete-wheel-set)
-13. [What Alpha Bank installs](#13-what-alpha-bank-installs)
-14. [What changes if we also publish a source distribution](#14-what-changes-if-we-also-publish-a-source-distribution)
-15. [What still needs to be decided or proved before release](#15-what-still-needs-to-be-decided-or-proved-before-release)
+13. [How the pipeline chooses dependent-service regression tests](#13-how-the-pipeline-chooses-dependent-service-regression-tests)
+14. [How Sphinx generates the SDK documentation](#14-how-sphinx-generates-the-sdk-documentation)
+15. [What Alpha Bank installs](#15-what-alpha-bank-installs)
+16. [What changes if we also publish a source distribution](#16-what-changes-if-we-also-publish-a-source-distribution)
+17. [What still needs to be decided or proved before release](#17-what-still-needs-to-be-decided-or-proved-before-release)
 
 ## 1. Start with the complete build-to-install flow
 
@@ -195,7 +197,7 @@ The SDK team needed to collect the Python SDK files and prepare the wheel and
 source archive that customers could install. These are different outputs:
 a wheel supplies installation-ready files; a **source distribution**, or
 **sdist**, supplies source files and instructions for building a wheel.
-Section 14 covers the extra requirements for building from Rust-backed source.
+Section 16 covers the extra requirements for building from Rust-backed source.
 
 The legacy Cosmos build used **setuptools**, an open-source Python packaging
 tool. Setuptools is not Cosmos-specific. "Legacy"
@@ -352,7 +354,7 @@ The build check compares only versions. The rest of the package information
 written in both `setup.py` and `pyproject.toml` is compared by a unit test,
 `test_python_metadata_stays_aligned_rust` in
 `tests\common\test_build_configuration_unit.py`, which the pipeline's
-offline Python tests run (section 15). This covers the name, required Python version,
+offline Python tests run (section 17). This covers the name, required Python version,
 dependencies, the `aio` extra, classifiers, description, license, authors,
 maintainers, keywords, project links and readme. A difference fails the test,
 not the build.
@@ -1202,13 +1204,8 @@ On a pull request build, Azure Pipelines builds a temporary commit that
 merges the pull request into its target branch. `BUILD_SOURCEVERSION` names
 that merge commit, not the pull request's last commit.
 
-**Linux pipeline wheels record `unknown` for the Python commit today.** The
-Linux build runs in a container that sees only forwarded variables, and in
-the pipeline Central's list replaces ours (section 12, "Which settings reach
-the Linux build container"). Central's list does not include
-`BUILD_SOURCEVERSION`. Windows and macOS builds run on the build machine, so
-they see it. The driver label is not affected, because it comes from
-`Cargo.lock`, which is inside the container.
+For the pipeline-specific limitation on the Python commit label, see
+[Which settings reach the Linux build container](#which-settings-reach-the-linux-build-container).
 
 `--release` requests optimized Rust code. It does not mean the SDK is being
 published or approved for production.
@@ -1325,7 +1322,7 @@ native-future destruction after cancellation, a no-injection control, and
 recovery using the same client. A normal build fails with rebuild instructions
 instead of silently skipping this evidence. Its `cosmosRustProbes` marker
 keeps the standard emulator job, which installs a normal wheel, from selecting
-it. CI runs it in its own step (section 15).
+it. CI runs it in its own step (section 17).
 
 After testing, restore the normal build and restart Python processes that loaded
 the instrumented extension:
@@ -1801,69 +1798,111 @@ requirement becomes important for QueryPlanInterop.
 
 ## 11. How QueryPlanInterop reaches the wheel and the running SDK
 
-Alpha Bank stores orders in a Cosmos DB **container** named `orders`.
-A container holds items, and the service backend distributes those items
-across **physical partitions**, service-managed portions of its data.
+Alpha Bank's customer app stores orders in the `sales/orders` container.
+A **container** holds items, and the service backend distributes those items
+across **physical partitions**, separate portions of its storage.
+The bank wants to know: "How many orders does each customer have?"
 Consider this illustrative set:
 
-| Physical partition | Order ID | Total |
+| Physical partition | Order ID | Customer |
 |---|---|---|
-| A | `order-17` | `125.50` |
-| B | `order-18` | `200.00` |
-| B | `order-19` | `70.00` |
+| A | `order-42` | `customer-17` |
+| A | `order-43` | `customer-17` |
+| B | `order-44` | `customer-88` |
 
-The customer app asks for orders over 100, sorted by total:
+The customer app asks:
 
 ```sql
-SELECT c.id, c.total FROM c WHERE c.total > 100 ORDER BY c.total
+SELECT c.customerId, COUNT(1) AS orderCount
+FROM c
+GROUP BY c.customerId
 ```
 
-The expected result is `order-17`, then `order-18`. Reading only partition A
-would miss a matching order; combining unsorted replies could put them in the
-wrong order.
+`GROUP BY` gathers orders for the same customer. `COUNT` counts them;
+this calculation is called an **aggregate**. The required answer is two
+orders for `customer-17` and one for `customer-88`. Reading only partition A
+would omit `customer-88`.
+
+These are illustrative expected results, not an executed test or a claim
+that the pinned SDK supports this query from start to finish.
+
+### Planning and execution are different jobs
 
 A **query plan** tells the driver how to obtain and combine the results.
 For this example, the required work is:
 
 ```text
-Request matching orders from both partitions, sorted by total
-    -> combine the replies while preserving that order
-    -> return order-17, then order-18
+Prepare instructions for obtaining each customer's order count
+    -> request the required data from the service backend
+    -> combine the replies into the correct counts
+    -> return customer-17: 2 and customer-88: 1
 ```
 
 Those lines explain the work, not the literal format of a driver's plan.
 
-Creating that plan is different from executing the query and returning its
-results. The driver can obtain a plan from more than one place.
+**Planning** prepares the instructions. **Execution** carries them out.
+Adding execution support does not automatically teach every planner to
+produce the instructions it needs.
+
+Preparing a plan on the customer app's machine does not move the database
+there. The service backend still supplies the data.
+The driver can obtain a plan from more than one place.
 The **gateway** is the service backend's front end; it can return a plan to
 the SDK. That describes where the SDK obtains the plan, not which internal
 service component generates it.
 
-### There are three query-planning providers
+<a id="there-are-three-query-planning-providers"></a>
 
-A **provider** here means one implementation capable of supplying a query plan.
+### There are three ways to obtain a query plan
 
-| Provider | Where it runs | What the installed package needs |
+The code calls each source of plans a **provider**. This is simply a name
+for one of the three implementations below, not another SDK layer.
+
+| Source of the plan | Where it runs | What the installed package needs |
 |---|---|---|
-| QueryPlanInterop | Separate compiled library loaded on the application's machine | A matching library and its dependencies |
+| QueryPlanInterop | Separate compiled library loaded on the customer app's machine | A matching library and its dependencies |
 | Pure-Rust planner | Code compiled into the Rust driver inside `_rust` | No separate QueryPlanInterop library |
 | Gateway plan retrieval | Service backend's gateway | A request to the gateway for a plan |
 
 Here, **local** means on the customer app's machine, not in the remote
-service backend. The **planning mode** selects which providers the driver may try.
+service backend. Both QueryPlanInterop and the pure-Rust planner are local.
+The **planning mode** selects which sources the driver may try.
 The default `LocalPreferred` mode means the driver normally tries an enabled
-QueryPlanInterop provider, then the pure-Rust planner, then the gateway.
+QueryPlanInterop library, then the pure-Rust planner, then the gateway.
 The pure-Rust planner handles eligible query shapes, not every query.
 
-Trying the next provider when the previous one cannot supply a plan is
-**fallback**. `GatewayOnly` explicitly bypasses both local providers.
-These are provider-selection rules, not a requirement that every query
-contact every provider; the driver can recognize some queries as having
+Trying the next source when the previous one cannot supply a plan is
+**fallback**. `GatewayOnly` explicitly bypasses both local planners.
+These are selection rules, not a requirement that every query
+contact every source; the driver can recognize some queries as having
 no possible results.
 
 **No QueryPlanInterop library does not mean every query must use gateway
 planning.** Eligible queries can still use the Rust planner already compiled
 into the extension.
+
+### What the query discussion identifies as missing
+
+Return to Alpha Bank's order-count query. In the pinned driver revision
+`554dc96b730b4b802883552bc0dc9e6e017241f4`, the production pure-Rust
+planning path explicitly declines aggregates and `GROUP BY`. It also
+declines vector and hybrid-search functions, which are separate query
+families. The checks are in `query/local_plan_adapter.rs`.
+
+The shared query discussion describes execution improvements and a separate
+follow-up to extend local planning. Its participants describe missing
+implementation, not a permanent design restriction. However, the discussion
+does not identify the PRs here, prove they have merged, or establish that
+our Python SDK already includes their execution support.
+
+For the bank, a declined local plan does not by itself mean the query fails:
+another source may supply a usable plan. Execution must also support that
+plan. Without QueryPlanInterop, this example cannot rely on the current
+pure-Rust planning path; the driver tries the gateway instead.
+
+**Extending the pure-Rust planner and shipping QueryPlanInterop are separate
+tasks.** Adding the library does not fill in the pure-Rust planner's missing
+code, and extending that planner does not require packaging the library.
 
 ### Why QueryPlanInterop is a separate packaging task
 
@@ -1891,6 +1930,10 @@ and supplying these libraries is deferred and is not an immediate
 prototype-wheel blocker.**
 The producing team, approved source, matching versions, and distribution
 permissions still need confirmation.
+
+If Alpha Bank develops on Windows and deploys to Linux, each installed SDK
+needs the matching library if we promise QueryPlanInterop planning there.
+The bank should not have to find or compile those files itself.
 
 ### Build time: tell the helper which files to include
 
@@ -1989,12 +2032,12 @@ Do not confuse the two variables:
 | `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` | Wheel build | Select files to package |
 | `AZURE_COSMOS_QUERYPLANINTEROP_DIR` | Running SDK | Select where to load the library |
 
-When this provider is used, the driver loads the library and supplies the query
+When QueryPlanInterop is used, the driver loads the library and supplies the query
 and the container's partition-key definition: the fields used to group related
 items for storage. The library returns a
 plan. The driver then sends the required data requests to the service backend
 and combines its replies. QueryPlanInterop creates the plan; it does not read
-`order-17` or `order-18` from the database.
+`order-42`, `order-43`, or `order-44` from the database.
 
 The driver does not download or compile QueryPlanInterop automatically.
 
@@ -2034,13 +2077,19 @@ driver and stops writing the environment.
 A successful query is not enough evidence for the QueryPlanInterop feature.
 The Rust planner or gateway may have supplied the plan instead.
 
-The driver's diagnostic labels distinguish them:
+The driver writes a `provider` label in its diagnostic logs to identify
+the source of a plan or the source it attempted to use:
 
-| Label | Provider |
+| Log label | Meaning |
 |---|---|
 | `native_ffi` | QueryPlanInterop |
 | `local_rust` | Pure-Rust planner |
 | `gateway` | Plan returned by the gateway |
+
+These exact labels are more useful than the word "native" on its own.
+`native_ffi` identifies QueryPlanInterop in this code. In a conversation,
+"native" might instead mean the Rust driver's execution support. Do not
+assume which meaning the speakers intended without the referenced PRs.
 
 Installed-wheel tests must inspect the driver's reported planning result,
 not merely check that a library file exists or that the SDK imports. A label
@@ -2055,6 +2104,11 @@ pointing to an empty directory before importing the SDK, and ensure no other
 copy is discoverable. This does not turn off the pure-Rust planner.
 Use `GatewayOnly` for a test that explicitly requests its plan from the gateway.
 
+For Alpha Bank's example, require both the correct counts and evidence of
+which source supplied the plan. Then check the missing-library and
+unsupported-local-plan paths. A correct answer obtained through the gateway
+proves neither QueryPlanInterop use nor newly added pure-Rust planning support.
+
 ### Deferred work and completion criteria
 
 | Work | Owner |
@@ -2064,9 +2118,14 @@ Use `GatewayOnly` for a test that explicitly requests its plan from the gateway.
 | Supply each target's files before its wheel build, including inside Linux containers | Central team, using SDK-owned staging configuration |
 | Inspect final wheels and demonstrate QueryPlanInterop planning on supported targets | SDK team supplies tests; Central runs them |
 | Accept the library directory as a driver option, so the wrapper stops writing `AZURE_COSMOS_QUERYPLANINTEROP_DIR` into the process environment. Needed before the first wheel that ships QueryPlanInterop | Rust driver team, then Cosmos SDK team |
+| Extend production pure-Rust planning for the query families discussed, separately from query execution; verify the changes reach the driver revision Python uses | Rust driver team implements; Cosmos SDK team verifies integration |
+| Demonstrate Alpha Bank's expected counts, the successful planning source, and fallback behavior using the installed SDK | Cosmos SDK team |
 
-This work is complete only when the intended files reach the final wheel and
-the installed SDK proves this particular provider works.
+Keep the completion evidence separate: correct results establish execution
+for the tested query; successful planning logs identify the planner; final
+package checks establish which libraries actually ship. Packaging work is
+complete only when the installed SDK proves QueryPlanInterop works on the
+promised targets. Pure-Rust planning work needs its own successful evidence.
 
 ## 12. How the pipeline builds and releases the complete wheel set
 
@@ -2079,9 +2138,11 @@ The pipeline must answer a larger question:
 > "Can we build the whole required set from the intended source and
 > publish only the approved results?"
 
-This section covers build preparation, packaging, documentation generation,
-and release processing. Test coverage and execution belong in the
-testing guide.
+This section covers build preparation, packaging, and release processing.
+[Section 13](#13-how-the-pipeline-chooses-dependent-service-regression-tests)
+explains dependent-service test selection;
+[section 14](#14-how-sphinx-generates-the-sdk-documentation) follows the
+separate documentation-generation step.
 
 ### The SDK entry point calls shared Central instructions
 
@@ -2107,17 +2168,11 @@ that produces it.
 
 ### What Microsoft Rust installation means
 
-Before Maturin can ask Cargo to compile our Rust code, the build environment
-needs a **Rust toolchain**: Cargo, the `rustc` compiler, and Rust's standard
-library. Microsoft Rust installation means downloading and preparing the
-Microsoft-distributed toolchain selected for this SDK build. It does **not**
-install the Cosmos SDK into Alpha Bank's application, build a wheel, or
-publish anything.
-
-**msrustup** is Microsoft's toolchain manager: the program used to obtain
-and select these internal Rust build tools. It is different from the public
-`rustup` toolchain manager. Installing Maturin as a Python package does not
-install this Microsoft toolchain.
+The pipeline must install the Microsoft Rust tools selected in
+[section 5](#rust-toolchaintoml-selecting-the-build-tools) before building
+wheels. This prepares the compiler; it does not install or publish the SDK.
+Developer-machine installation follows the separate procedure in
+[section 7](#install-the-microsoft-rust-toolchain-on-a-developer-machine).
 
 ### Who creates rust-toolchain.toml, and where is it used?
 
@@ -2126,32 +2181,13 @@ install this Microsoft toolchain.
 and maintains it with the package source. It is not generated by the
 pipeline or by the tool installer.
 
-The file records our selected build tools:
-
-```toml
-[toolchain]
-channel = "ms-prod-1.97"
-profile = "minimal"
-components = ["clippy"]
-```
-
-`channel` names the Microsoft toolchain to select. `profile = "minimal"`
-requests its basic compilation components, not a smaller wheel. `components`
-adds clippy, which the minimal profile leaves out. The file
-contains settings; it does not contain the compiler or install it by itself.
-
-**The same file applies to local development and pipeline builds.**
+**The pipeline reads the same selection used for local development.**
+It must prepare the tools wherever compilation actually runs:
 
 | Environment | How the file is used |
 |---|---|
-| Developer's machine | Rust build commands in this checkout use the selected toolchain. The developer must first install `msrustup` and the toolchain, with authorized access to its downloads, as described in [section 7](#7-building-for-local-development). |
 | Pipeline build machine | The installation step reads the file from the configured package directory and prepares that toolchain before the wheel build. |
 | Linux wheel-build container | The compiler must also be installed inside the container. Our `before-all` preparation in `pyproject.toml` obtains `msrustup` with `scripts\install-msrustup.sh`, then runs `msrustup toolchain install` from the mounted source directory. Last, `scripts\configure-cargo-feed.sh` points Cargo at the dependency feed if the pipeline forwarded its address; without an address, Cargo keeps using crates.io. |
-| Alpha Bank installing a compatible wheel | No Rust compilation is needed, so the customer does not need these tools or this toolchain-selection file to install the wheel. |
-
-For example, a developer may already have public Rust installed and still
-receive "`ms-prod-1.97` is not installed." The missing prerequisite is the
-selected Microsoft toolchain, not the SDK source or a Cosmos API.
 
 ### What the pipeline installer is
 
@@ -2219,121 +2255,6 @@ setuptools extension setting would miss the Rust-backed build.
 The shared build command invokes cibuildwheel, which runs the SDK package
 builder for each requested target. The same package builder, Maturin, and Cargo
 steps from the local wheel build still perform the work.
-
-After the wheels are built, the pipeline also needs to produce the API
-documentation that explains how to use the installed SDK.
-
-### What Sphinx does and why the pipeline runs it
-
-A developer using the SDK needs to know how to call its methods. For example,
-before the customer app calls `database.replace_container`, the developer
-needs to know which values to pass and what the call returns.
-
-The SDK team maintains that information alongside the Python code:
-
-- A **method signature** describes how a method can be called. It names the
-  inputs, called **parameters**, and declares the types they accept.
-- A **docstring** is explanatory text inside a Python class or function.
-  It describes behavior, parameters, return values, and examples.
-
-**Sphinx** is the tool that turns these descriptions and supporting documents,
-such as the README, into documentation pages that a developer can read in a
-web browser.
-
-These are customer-facing SDK API reference pages: the kind of documentation
-Alpha Bank's developers consult on Microsoft Learn to understand classes,
-methods, parameters, and return values. They are different from this
-`build_and_release.md` guide, which explains how contributors build and release
-the SDK.
-
-In this pipeline, Sphinx imports the SDK into the documentation process
-so it can inspect the classes and methods.
-It uses their signatures and docstrings to generate the reference pages.
-It also turns references to other documented classes into links.
-
-This gives the pipeline another check before release: can the documentation
-be generated without errors or warnings? For example, a class reference that
-could point to two different classes needs to be corrected, not silently
-linked to whichever one happens to be found first.
-
-**Generating documentation is not the same as publishing it publicly.** The
-pull-request check verifies that the pages can be generated; it does not by
-itself update the public reference pages. Documentation publication is handled
-separately through release processing.
-
-Generating these pages does not build the customer package or prove that
-requests succeed against the service backend. The wheel supplies the code
-that the customer app runs; the documentation explains how to use that code.
-
-### Why documentation generation installs the built wheel
-
-Because Sphinx imports the SDK, the documentation environment needs an
-installed, usable package. The earlier package build has already compiled
-the Rust extension. The documentation step should use that result rather
-than compile the extension again.
-
-The documentation check therefore needs two different inputs:
-
-| Input | What the documentation check uses it for |
-|---|---|
-| Source distribution (`sdist`) | An archive supplying the README and source files used to prepare documentation pages |
-| Compatible wheel | The installed SDK, including its compiled extension, that Sphinx imports |
-
-**Pending Central work:** the shared documentation check still installs the sdist.
-That asks the SDK package builder to create a new wheel. For our package it invokes
-Maturin and Cargo, which require the selected Microsoft Rust toolchain.
-Installing Maturin alone does not supply that toolchain.
-
-Central needs to recognize packages that declare compiled extensions or
-cibuildwheel builds. For those packages, the check
-must stage the sdist without installing it, then install a compatible built
-wheel. In CI, `PREBUILT_WHEEL_DIR` identifies the existing artifacts.
-A missing compatible wheel must fail the check, not silently trigger a new
-source build.
-
-Ordinary Python packages should retain their existing sdist-installation
-path. Building a compiled package locally without prebuilt artifacts still
-requires its build tools. Using a wheel for documentation does not establish
-that customer installation from source is supported.
-
-### How documentation resolves types on traced methods
-
-Once Sphinx can import the SDK, it must describe each supported way to call
-a method correctly. Returning to `replace_container`, the customer app can
-request different results:
-
-| Setting | What the method returns |
-|---|---|
-| `return_properties=False`, the default | A `ContainerProxy` object representing the container |
-| `return_properties=True` | Both the `ContainerProxy` object and the container properties, returned together |
-
-A **tuple** groups values into one result. The SDK declares separate call
-signatures for these two cases, called **overloads**, so tools can describe
-which result corresponds to each setting.
-
-For the generated documentation to link `ContainerProxy` to the right class,
-Sphinx needs more than its short name. The SDK has separate synchronous and
-asynchronous classes with that name. A **qualified name** includes the path
-to the class, such as `azure.cosmos.ContainerProxy` or
-`azure.cosmos.aio.ContainerProxy`, to distinguish them.
-
-There is one more step between Sphinx and the original method. **Tracing**
-records information about SDK operations. The SDK adds a **wrapper function**
-around a method so it can record that information while calling the original
-method.
-
-The documentation check can look up an overload's type names where the
-tracing wrapper is defined, rather than where the original method is defined.
-Those locations do not necessarily make the same classes available.
-Consequently, a short name such as `ContainerProxy` can resolve to the wrong
-class or remain ambiguous, even when the docstring uses a qualified name.
-
-The correction belongs to the documentation tools, not the customer app.
-**Pending Central work:** resolve overloaded signatures using the
-original method's types, rather than the tracing wrapper's imports.
-
-The SDK must keep its tracing wrapper and runtime behavior, and documentation
-warnings must remain errors.
 
 ### Why package inspection must handle several wheels
 
@@ -2417,7 +2338,14 @@ The risk is a future change. If our Linux `before-all` step starts to need a
 new variable, adding it to `pyproject.toml` is not enough for pipeline
 builds. Central must add it to their list. `BUILD_SOURCEVERSION` is one
 such variable today: without it, Linux wheels record the Python commit as
-`unknown` (section 7, "Which commits the built extension records").
+`unknown` unless an explicit `AZURE_COSMOS_BUILD_PYTHON_COMMIT` override is
+supplied. This is the source-confirmed fallback, not a result from an
+inspected release wheel. Windows and macOS builds run on the build machine,
+so they see `BUILD_SOURCEVERSION`. The driver label is unaffected because
+it comes from `Cargo.lock`, which is inside the container.
+See [section 7](#which-commits-the-built-extension-records) for the label
+selection rules and [Central's follow-up](#central-changes-still-required)
+for the required change and final-wheel checks.
 
 ### The pipeline's login stays visible for the whole build
 
@@ -2439,7 +2367,7 @@ For example, if a compromised crate's `build.rs` read
 installer access. Our scripts only send the token in a `curl` header and
 never print it.
 
-This is the same on `main`, and Central owns the fix (section 15, "Central
+This is the same on `main`, and Central owns the fix (section 17, "Central
 changes still required").
 
 ### Where does the build download its Rust tools and dependencies?
@@ -2576,9 +2504,242 @@ Only after the required outputs, release checks, and approvals are complete
 should publication proceed. These are requirements for the finished release
 route, not a claim that the prototype has completed them.
 
-<a id="13-what-customer-installs"></a>
+## 13. How the pipeline chooses dependent-service regression tests
 
-## 13. What Alpha Bank installs
+The Cosmos SDK team's tests check that Cosmos operations still work after a
+change. But another package might use Cosmos and rely on behavior that changed.
+The pipeline therefore also needs to identify those packages for
+**regression testing**: checking that previously working behavior still works.
+
+### Start with one package that uses another
+
+Imagine a package called `azure-order-reporting` that reads orders through
+`azure-cosmos` and prepares reports for Alpha Bank. This is an illustrative
+package, not a dependent we have found in the repository.
+
+```text
+Alpha Bank's customer app
+    -> uses azure-order-reporting to prepare an order report
+    -> azure-order-reporting uses azure-cosmos to read the orders
+```
+
+In this example, `azure-cosmos` is a **dependency** of the reporting package:
+the reporting package needs it to work. A Cosmos change could therefore
+affect the bank's reports even if the Cosmos tests pass.
+
+Our repository contains many separately installable packages, grouped under
+folders such as `sdk\cosmos`, `sdk\storage`, and `sdk\monitor`. Sharing the
+repository does not mean they all depend on Cosmos.
+
+### What Ensure service coverage actually does
+
+`Ensure service coverage` is a pipeline step that prepares the list of
+dependent services to test. Here, coverage means selecting relevant services,
+not measuring the percentage of Cosmos source code exercised by tests.
+
+The shared tool reads **package metadata**: information such as the package
+name, version, and declared dependencies. Files such as `pyproject.toml`
+and `setup.py` provide that information.
+
+For a Cosmos run, the process is:
+
+```text
+Identify the packages targeted under sdk\cosmos
+    -> scan package metadata across the repository
+    -> find packages that declare those Cosmos packages as dependencies
+    -> select their service folders for the regression-test plan
+```
+
+The scan must look beyond `sdk\cosmos` because a dependent package can live
+in another service folder. In our example, it would find the reporting
+package's declared dependency on `azure-cosmos` and select its service.
+
+`scripts\devops_tasks\update_regression_services.py` coordinates this selection.
+Its dependency lookup is in `scripts\devops_tasks\test_regression.py`.
+This is discovery of declared dependencies inside the repository, not a
+search of every external package or customer app that uses Cosmos.
+
+### Why a Storage package can stop a Cosmos pipeline
+
+During the broad scan, the tool can encounter a package whose metadata it
+cannot read. If that error stops discovery, the pipeline cannot finish
+selecting the Cosmos-related services.
+
+That is where the reported `azure-storage-extensionstransfer` version error
+occurred. This is an Azure Storage SDK package under `sdk\storage`, not the
+storage used internally by the Cosmos DB service backend.
+
+**Encountering that package does not prove it depends on Cosmos.**
+The failure occurs while reading metadata, before the dependency selection
+finishes. It is not a failed Cosmos operation or regression test.
+
+Ownership depends on the cause: incomplete package metadata belongs to the
+package's team; valid metadata that the shared reader cannot understand
+requires Central's tooling work.
+
+### Does moving Cosmos to v5 avoid this scan?
+
+Return to the reporting package. Its dependency declaration decides which
+Cosmos versions an installer may select:
+
+| Illustrative declaration | Allows a final Cosmos v5 release? |
+|---|---|
+| `azure-cosmos==4.17.2` | No; it requests exactly that version |
+| `azure-cosmos>=4.0,<5.0` | No; it allows v4 but excludes v5 |
+| `azure-cosmos>=4.0` | Yes; it has no upper version limit |
+
+A major-version bump signals the breaking release, but does not automatically
+protect every dependent package from selecting it. A package that cannot use
+v5 needs a dependency constraint that excludes it.
+
+The regression discovery tool answers a different question: which package
+names are declared as dependencies? Its dependency map uses names, not the
+allowed version ranges. Even a reporting package restricted to v4 would
+still be identified as depending on `azure-cosmos`.
+
+Therefore, bumping Cosmos to v5 does not bypass the repository-wide metadata
+scan or resolve the Storage metadata failure.
+
+### Which packages currently depend on Cosmos?
+
+**No dependent package has been confirmed by this investigation.** The
+reported discovery run failed before producing the dependent-service list.
+The reporting package above remains only an example, and the Storage error
+does not establish a dependency.
+
+The current conclusion is "dependents not yet established," not "there are
+no dependents." A completed discovery result is needed before naming the
+packages and services that require regression testing.
+
+<a id="13-how-sphinx-generates-the-sdk-documentation"></a>
+
+## 14. How Sphinx generates the SDK documentation
+
+### What Sphinx does and why the pipeline runs it
+
+A developer using the SDK needs to know how to call its methods. For example,
+before the customer app calls `database.replace_container`, the developer
+needs to know which values to pass and what the call returns.
+
+The SDK team maintains that information alongside the Python code:
+
+- A **method signature** describes how a method can be called. It names the
+  inputs, called **parameters**, and declares the types they accept.
+- A **docstring** is explanatory text inside a Python class or function.
+  It describes behavior, parameters, return values, and examples.
+
+**Sphinx** is the tool that turns these descriptions and supporting documents,
+such as the README, into documentation pages that a developer can read in a
+web browser.
+
+These are customer-facing SDK API reference pages that help Alpha Bank's
+developers understand classes, methods, parameters, and return values.
+
+In this pipeline, Sphinx imports the SDK into the documentation process
+so it can inspect the classes and methods.
+It uses their signatures and docstrings to generate the reference pages.
+It also turns references to other documented classes into links.
+
+This gives the pipeline another check before release: can the documentation
+be generated without errors or warnings? For example, a class reference that
+could point to two different classes needs to be corrected, not silently
+linked to whichever one happens to be found first.
+
+**Generating documentation is not the same as publishing it publicly.** The
+pull-request check verifies that the pages can be generated; it does not by
+itself update the public reference pages. Documentation publication is handled
+separately through release processing.
+
+### Which jobs publish the documentation
+
+`Generate Docs` saves the Sphinx pages in a pipeline artifact named
+`documentation`. Saving that artifact does not publish the pages for customers.
+
+The release template, `eng\pipelines\templates\stages\release-artifact.yml`,
+defines two separate documentation jobs:
+
+| Job | Display name | What it does |
+|---|---|---|
+| `PublishGitHubIODocs` | Publish Docs to GitHubIO Blob Storage | Downloads the `documentation` artifact and uploads the generated Sphinx pages to documentation hosting |
+| `PublishDocs` | Docs.MS Release | Updates documentation metadata in `MicrosoftDocs/azure-docs-sdk-python` for the Microsoft Learn publishing process |
+
+Both jobs depend on `PublishPackage` and run after it succeeds, subject to
+the release conditions and documentation-publishing skip settings.
+
+**These are different publishing routes.** `PublishDocs` does not upload the
+Sphinx pages to Microsoft Learn; it updates the documentation repository.
+The Learn build and publication process is separate from the Sphinx upload.
+
+### Why documentation generation installs the built wheel
+
+Because Sphinx imports the SDK, the documentation environment needs an
+installed, usable package. The earlier package build has already compiled
+the Rust extension. The documentation step should use that result rather
+than compile the extension again.
+
+The documentation check therefore needs two different inputs:
+
+| Input | What the documentation check uses it for |
+|---|---|
+| Source distribution (`sdist`) | An archive supplying the README and source files used to prepare documentation pages |
+| Compatible wheel | The installed SDK, including its compiled extension, that Sphinx imports |
+
+**Pending Central work:** the shared documentation check still installs the
+source archive, triggering another Rust build that can fail when the selected
+toolchain is unavailable. Central owns updating this check to use a compatible,
+already-built SDK wheel instead.
+
+### How documentation resolves types on traced methods
+
+**Status: a possible issue to investigate, not a confirmed SDK documentation
+failure or an agreed fix.**
+
+Once Sphinx can import the SDK, it must describe each supported way to call
+a method correctly. Returning to `replace_container`, the customer app can
+request different results:
+
+| Setting | What the method returns |
+|---|---|
+| `return_properties=False`, the default | A `ContainerProxy` object representing the container |
+| `return_properties=True` | Both the `ContainerProxy` object and the container properties, returned together |
+
+A **tuple** groups values into one result. The SDK declares separate call
+signatures for these two cases, called **overloads**, so tools can describe
+which result corresponds to each setting.
+
+For the generated documentation to link `ContainerProxy` to the right class,
+Sphinx needs more than its short name. The SDK has separate synchronous and
+asynchronous classes with that name. A **qualified name** includes the path
+to the class, such as `azure.cosmos.ContainerProxy` or
+`azure.cosmos.aio.ContainerProxy`, to distinguish them.
+
+There is one more step between Sphinx and the original method. **Tracing**
+records information about SDK operations. The SDK adds a **wrapper function**
+around a method so it can record that information while calling the original
+method.
+
+One possibility to investigate is whether the documentation tools look up
+an overload's type names in the tracing wrapper's file instead of the
+original method's file. If so, they might not identify the intended
+`ContainerProxy` class. The presence of wrappers and overloads alone does
+not prove that this happens.
+
+Before proposing a fix, reproduce a type-resolution warning and check
+whether using the original method's type definitions removes it. Only then
+can we identify the cause and required change. Any change to shared
+documentation tooling under `eng/` belongs to Central.
+
+This is separate from documentation setup failing to build a source archive
+because the selected Rust toolchain is missing.
+
+The SDK must keep its tracing wrapper and runtime behavior, and documentation
+warnings must remain errors.
+
+<a id="13-what-customer-installs"></a>
+<a id="13-what-alpha-bank-installs"></a>
+<a id="14-what-alpha-bank-installs"></a>
+
+## 15. What Alpha Bank installs
 
 The purpose of all that SDK-team work is to avoid making every customer repeat
 the compilation process.
@@ -2647,9 +2808,9 @@ not be used for this Rust-backed release before that work is integrated.
 
 ### Which customers have no compatible wheel
 
-Section 10 lists the five targets we build. Customers on other platforms
-have no wheel for this version, even though the default `core-python`
-backend does not need the Rust extension:
+[Section 10](#the-prototypes-five-targets) lists the five configured targets.
+Customers on other platforms have no wheel for this version, even though
+the default `core-python` backend does not need the Rust extension:
 
 | Platform | Why no wheel matches |
 |---|---|
@@ -2676,14 +2837,17 @@ version 1.0 and a Linux-only version 2.0.
 The quiet case is the harder one to support: Alpha Bank's Intel Mac
 developer gets an older SDK than its Linux servers, with no warning.
 
-We accept this for the preview. Section 15 records the decision needed
+We accept this for the preview. Section 17 records the decision needed
 before general availability.
 
 Could we publish the source files so the customer can build a compatible wheel?
 That would offer a different installation path, with additional requirements.
 The next section explains why we do not yet support it.
 
-## 14. What changes if we also publish a source distribution
+<a id="14-what-changes-if-we-also-publish-a-source-distribution"></a>
+<a id="15-what-changes-if-we-also-publish-a-source-distribution"></a>
+
+## 16. What changes if we also publish a source distribution
 
 If no compatible wheel is available, a source archive could let Alpha Bank
 build one on its own machine. That moves compilation from the SDK team to
@@ -2799,7 +2963,11 @@ recursive-include doc *.rst
 
 **Maturin builds the archive now, and Maturin does not read `MANIFEST.in`.**
 Our `MANIFEST.in` says so in its first line. It stays only because the
-repository's sdist check requires its `py.typed` line. Maturin adds the
+repository's sdist check (`verify_sdist.py`) requires its `py.typed` line
+when the file exists. `setup.py` also refuses to build archives
+([section 4](#why-setuppy-must-remain)).
+To change archive contents, edit `include` and `exclude` under
+`[tool.maturin]` in `pyproject.toml`. Maturin adds the
 binding and the Python package on its own, and `README.md` because
 `pyproject.toml` names it as `readme`. Every other file
 must be listed under `[tool.maturin] include` in `pyproject.toml` with
@@ -2880,14 +3048,6 @@ For customers, `pip --no-binary` requests installation from source rather than
 a prebuilt wheel. Under the required wheels-only policy, that option will not
 provide an installation path for this release.
 
-Only Maturin's file selection matters for this package. `MANIFEST.in`, the
-file that chose archive contents for the old setuptools build, no longer
-controls anything: Maturin does not read it, and `setup.py` refuses to build
-archives (section 4). The file keeps a single `py.typed` line only because the
-repository's shared sdist check (`verify_sdist.py`) looks for that line when
-the file exists. To change what the archive contains, edit `include` and
-`exclude` under `[tool.maturin]` in `pyproject.toml`.
-
 The release tooling must use and validate this path. Preserving the
 production packaging path does not mean we can assume its source archive is
 sufficient for the Rust build.
@@ -2915,7 +3075,10 @@ installation, the SDK team must document supported source-build targets and
 prerequisites in the README, and Central must run the clean-archive validation
 above. Until then, every supported target needs a compatible prebuilt wheel.
 
-## 15. What still needs to be decided or proved before release
+<a id="15-what-still-needs-to-be-decided-or-proved-before-release"></a>
+<a id="16-what-still-needs-to-be-decided-or-proved-before-release"></a>
+
+## 17. What still needs to be decided or proved before release
 
 ### SDK pipeline wiring and Central ownership
 
@@ -2979,46 +3142,21 @@ continues to work.
 This concerns contributing to the SDK, not installing a compatible prebuilt
 wheel. Supporting installation from a published source archive is a separate
 question in
-[section 14](#the-internal-compiler-choice-is-a-release-decision-not-a-customer-prerequisite).
+[section 16](#the-internal-compiler-choice-is-a-release-decision-not-a-customer-prerequisite).
 
 ### Platforms without a wheel
 
-Alpha Bank needs a wheel matching the operating system and processor used
-by its Python installation. The current `pyproject.toml` configures these
-**five wheel targets**, not a platform-independent package:
+The configured targets and compatibility limits are defined in
+[section 10](#10-why-one-release-needs-several-wheels).
+[Section 15](#which-customers-have-no-compatible-wheel) explains the
+customer impact when no wheel matches.
 
-| Customer platform | Expected wheel filename |
-|---|---|
-| Windows, x64 processor | `azure_cosmos-<version>-cp310-abi3-win_amd64.whl` |
-| Windows, ARM64 processor | `azure_cosmos-<version>-cp310-abi3-win_arm64.whl` |
-| Linux, x64 processor, `manylinux_2_28` baseline | `azure_cosmos-<version>-cp310-abi3-manylinux_2_28_x86_64.whl` |
-| Linux, ARM64 processor, `manylinux_2_28` baseline | `azure_cosmos-<version>-cp310-abi3-manylinux_2_28_aarch64.whl` |
-| macOS, Apple Silicon processor | `azure_cosmos-<version>-cp310-abi3-macosx_<minimum-version-tag>_arm64.whl` |
-
-`<version>` stands for the package version being built. The macOS minimum
-version must be confirmed from the build and resulting wheel; its placeholder
-above is not a literal filename. The Linux baseline and Python compatibility
-tags are explained in
-[section 10](#the-operating-system-part-has-compatibility-limits-too).
-
-The binding's `abi3-py310` feature and the package's `requires-python = ">=3.10"`
-set a Python 3.10 baseline. The intended stable-interface wheels can serve
-later compatible CPython versions without a separate wheel for each version;
-that does not replace testing or define the final supported Python versions.
-
-**Configured does not mean released or validated.** This list comes from
-the build settings, not a successful five-platform release run.
 `_validate_native_wheel` in `azure_cosmos_package_builder.py` requires every
 wheel to contain the compiled Rust extension and rejects an `any` platform
 wheel. The current path therefore does not produce a Python-only fallback.
 
-The configuration does not request Intel Mac, Windows 32-bit, musl-based Linux,
-or an older Linux baseline than `manylinux_2_28`. It does not provide wheels
-for Python below 3.10 or PyPy. For example, an Alpha Bank developer using an
-Intel Mac has no matching target in this list.
-
 Before general availability, the SDK team and Central must decide how to
-handle platforms outside this list:
+handle platforms outside the configured targets:
 
 | Option | What it means | Cost |
 |---|---|---|
@@ -3141,22 +3279,16 @@ existing hook does not require changing those shared templates.
 The wheels-only publication fix belongs in Central's shared publishers;
 our Cosmos configuration already requests it. See
 [the file ownership and required publication check](#use-and-validate-the-actual-source-archive-creation-path)
-in section 14. Central also needs to agree on the
+in section 16. Central also needs to agree on the
 contributor toolchain question in
 [A supported build procedure for external contributors](#a-supported-build-procedure-for-external-contributors).
 
 **Central must pass the source commit into the Linux build container.**
-A Git commit ID identifies the source revision used to build the wheel.
-The pipeline supplies it as `BUILD_SOURCEVERSION`, but the forwarding list in
-`eng\pipelines\templates\steps\build-package-artifacts.yml` omits it.
-Without that value or an explicit `AZURE_COSMOS_BUILD_PYTHON_COMMIT`
-override, our binding records `_rust.__python_commit__` as `unknown`.
-This is the source-confirmed fallback, not a result from an inspected release wheel.
-
-Central must add `BUILD_SOURCEVERSION` to that forwarding list. Adding it
-only to our package's `environment-pass` list would not fix this pipeline
-path, because the shared pipeline replaces the package list. No Python
-wrapper or Rust driver change is needed.
+For the forwarding behavior and its effect on commit labels, see
+[section 12](#which-settings-reach-the-linux-build-container).
+Central must add `BUILD_SOURCEVERSION` to the forwarding list in
+`eng\pipelines\templates\steps\build-package-artifacts.yml`.
+No Python wrapper or Rust driver change is needed.
 
 Our Cosmos team must then install each final Linux wheel and compare
 `_rust.__python_commit__` with the source commit recorded by the build that
@@ -3164,15 +3296,8 @@ produced it. An absent value, `unknown`, or a different commit must fail the
 release check. Keep this item open until the final-wheel results exist.
 
 **Open follow-up with Central: limit access to the Rust installer token.**
-A token is a credential that lets a program access resources without entering
-a password. Our installer needs one to download from the internal Rust feed;
-Alpha Bank's customer app does not need this build credential.
-
-Today, `eng\pipelines\templates\steps\build-package-artifacts.yml` passes
-`System.AccessToken` as `MSRUSTUP_ACCESS_TOKEN` for the entire "Generate
-Packages" step. It also forwards that variable into the Linux build container.
-The installer uses it for its download, but other build tools and dependency
-build scripts can also read it from their inherited environment.
+The current exposure is explained in
+[section 12](#the-pipelines-login-stays-visible-for-the-whole-build).
 
 Central owns the shared pipeline change. The goal is to supply the credential
 only to the installation work that needs it, not to subsequent compilation.

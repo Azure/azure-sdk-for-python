@@ -134,7 +134,7 @@ class AsyncTokenCredentialBridge:
                     return
                 self._closed = True
                 pending = tuple(self._pending)
-            if _REGISTRY.get(self._registry_key) is self:
+            if self._registry_key is not None and _REGISTRY.get(self._registry_key) is self:
                 del _REGISTRY[self._registry_key]
         for future in pending:
             future.cancel()

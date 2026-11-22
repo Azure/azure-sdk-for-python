@@ -32,6 +32,7 @@ import time
 
 from azure.cosmos.aio import CosmosClient as AsyncClient
 from azure.cosmos import CosmosClient as SyncClient, documents
+from azure.cosmos._backend.factory import resolve_backend_name
 from azure.core.pipeline.transport import AioHttpTransport
 
 import perf_backend_counters as backend_counters
@@ -164,9 +165,7 @@ def _wrap_backend_for_counting(client, is_async, client_logger):
     runtime_name = type(backend).__name__
     backend_counters.set_runtime_backend(runtime_name)
 
-    labeled = os.environ.get("COSMOS_BACKEND", "core-python").strip().lower()
-    if labeled in ("", "core_python", "core-python", "python"):
-        labeled = "core-python"
+    labeled = resolve_backend_name(None)
     actual = backend.name
     if labeled != actual:
         raise RuntimeError(

@@ -62,7 +62,7 @@ from .._connection_policy import (
 )
 from .._connection_string import parse_connection_string
 from .._cosmos_responses import CosmosDict
-from .._telemetry import trace_operation_async
+from .._telemetry import log_exception_diagnostics, trace_operation_async
 from .._diagnostic_logging import DiagnosticLogging
 from ..documents import ConnectionPolicy
 from ._backend.cosmos_backend import AsyncCosmosBackend
@@ -325,7 +325,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         kwargs = resolve_connection_policy_kwargs(kwargs)
         # Choose which backend this client will use. A ``_backend=`` argument
         # wins; otherwise the COSMOS_BACKEND environment variable decides;
-        # otherwise it falls back to core-python.
+        # otherwise Rust is the default.
         backend_choice = resolve_backend_name(kwargs.pop("_backend", None))
         if backend_choice != "core-python":
             reject_rust_connection_policy_options(kwargs, is_async=True)
@@ -424,6 +424,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     def __repr__(self) -> str:
         return "<CosmosClient [{}]>".format(self.client_connection.url_connection)[:1024]
 
+    @trace_operation_async(
+        binding_operation="initialize", operation_name="initialize", name_of_span="CosmosClient.__aenter__"
+    )
+    async def _initialize_rust(self) -> None:
+        """Scope Rust driver acquisition separately from legacy entry and cleanup."""
+        await self._adapter.initialize()
+
     async def __aenter__(self) -> "CosmosClient":
         """Prepare account-level state before running statements inside ``async with``.
 
@@ -431,11 +438,13 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """
         try:
             if is_rust_backend(self._adapter):
-                await self._adapter.initialize()
+                await self._initialize_rust()
             else:
                 await self.client_connection.pipeline_client.__aenter__()
                 await self.client_connection._setup()
-        except BaseException:
+        except BaseException as exc:
+            if is_rust_backend(self._adapter):
+                log_exception_diagnostics(self._client_context.diagnostic_logging, exc, "initialize")
             try:
                 await self.close()
             except Exception:
