@@ -720,6 +720,16 @@ class DataLakeFileClient(PathClient):
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: ~typing.Callable[[int, Optional[int]], Awaitable[None]]
+        :keyword bool disable_etag_lock:
+            By default, the file's ETag from the initial request is used to ensure the file is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the file to change during the download, for example, when downloading
+            a file that is actively being appended to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the file is
+                overwritten or recreated during the download. If the file becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
             decompressed automatically before being returned. Default value is True.
         :keyword validate_content:

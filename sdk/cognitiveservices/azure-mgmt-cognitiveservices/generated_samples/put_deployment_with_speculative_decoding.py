@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,6 +40,15 @@ def main():
                 "deploymentState": "Running",
                 "model": {"format": "Fireworks", "name": "FW-Qwen3-14B", "version": "1"},
                 "serviceTier": "Default",
+                "speculativeDecoding": {
+                    "draftModel": {
+                        "format": "FireworksCustom",
+                        "name": "testDraftModel",
+                        "source": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/resourceGroupName/providers/Microsoft.CognitiveServices/accounts/accountName/projects/projectName",
+                        "version": "1",
+                    },
+                    "draftTokenCount": 4,
+                },
             },
             "sku": {"capacity": 80, "name": "GlobalProvisionedManaged"},
         },
@@ -46,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-11-01/PutDeploymentWithSpeculativeDecoding.json
+# x-ms-original-file: 2026-11-15-preview/PutDeploymentWithSpeculativeDecoding.json
 if __name__ == "__main__":
     main()

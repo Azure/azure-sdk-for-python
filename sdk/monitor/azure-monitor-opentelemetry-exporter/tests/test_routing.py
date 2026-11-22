@@ -1,11 +1,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import json
+import os
 import unittest
 from dataclasses import FrozenInstanceError
 from types import MappingProxyType
+from unittest import mock
 
-from azure.monitor.opentelemetry.exporter import _utils
+from opentelemetry._logs.severity import SeverityNumber
+from opentelemetry.sdk._logs import LoggerProvider
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.sampling import ALWAYS_ON
+from opentelemetry.trace import SpanKind
+
+from azure.core.pipeline.transport import HttpResponse, HttpTransport
+from azure.monitor.opentelemetry.exporter import (
+    AzureMonitorLogExporter,
+    AzureMonitorMetricExporter,
+    AzureMonitorTraceExporter,
+    _utils,
+)
+from azure.monitor.opentelemetry.exporter._constants import _MULTI_ENDPOINT_ROUTING_ATTRIBUTES
 from azure.monitor.opentelemetry.exporter._routing import (
     _get_cloud_role,
     _get_ingestion_endpoint,
@@ -282,3 +303,251 @@ class TestRoutingProperties(unittest.TestCase):
         self.assertEqual(properties, {"microsoft.custom": "preserved"})
         for attributes in (None, {}):
             self.assertEqual(_utils._filter_custom_properties(attributes), {})
+
+
+class _IngestionResponse(HttpResponse):
+    def __init__(self, request):
+        super().__init__(request, None)
+        self.status_code = 200
+        self.headers = {"Content-Type": "application/json"}
+        self.content_type = "application/json"
+        count = len(json.loads(request.body))
+        self._body = json.dumps({"itemsReceived": count, "itemsAccepted": count, "errors": []}).encode()
+
+    def body(self):
+        return self._body
+
+    def json(self):
+        return json.loads(self._body)
+
+    def stream_download(self, _pipeline, **_kwargs):
+        raise NotImplementedError("The test transport does not support streaming responses.")
+
+
+class TestMultiEndpointRoutingIntegration(unittest.TestCase):
+    """Exercise provider collection and flush through a mocked ingestion transport."""
+
+    def setUp(self):
+        patches = (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "true",
+                    "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "true",
+                    "APPLICATIONINSIGHTS_CONTROLPLANE_DISABLED": "true",
+                    "APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing",
+                    "APPLICATIONINSIGHTS_METRIC_NAMESPACE_OPT_IN": "true",
+                    "APPLICATIONINSIGHTS_OPENTELEMETRY_RESOURCE_METRIC_DISABLED": "true",
+                },
+            ),
+            mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None),
+            mock.patch("azure.monitor.opentelemetry.exporter._utils._is_on_aks", return_value=False),
+        )
+        for patch in patches:
+            patch.start()
+            self.addCleanup(patch.stop)
+        self.transport = mock.MagicMock(spec=HttpTransport)
+        self.transport.close.return_value = None
+        self.transport.__exit__.side_effect = lambda *args: self.transport.close()
+        self.transport.send.side_effect = lambda request, **kwargs: _IngestionResponse(request)
+        self.resource = Resource({"service.name": "resource-role", "service.instance.id": "resource-instance"})
+        self.destinations = (
+            ("key-one", "https://one.example/proxy/"),
+            ("key-two", "https://two.example/"),
+            ("key-three", "HTTPS://ONE.EXAMPLE:443/proxy"),
+            ("", "https://invalid.example/"),
+        )
+
+    def _exporter(self, exporter_class, *, routing):
+        with mock.patch.dict(
+            os.environ, {"APPLICATIONINSIGHTS_EXPERIMENTAL_FEATURES": "multi_endpoint_routing" if routing else ""}
+        ), mock.patch("azure.monitor.opentelemetry.exporter.export._base._enabled_experimental_features", None):
+            exporter = exporter_class(
+                connection_string="InstrumentationKey=1234abcd-5678-4efa-8abc-1234567890ab;"
+                "IngestionEndpoint=https://host.example/",
+                disable_offline_storage=True,
+                transport=self.transport,
+                retry_total=0,
+            )
+        self.addCleanup(exporter.client.close)
+        self.addCleanup(exporter.shutdown)
+        return exporter
+
+    def test_provider_flush_routes_log_records(self):
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                self.transport.send.reset_mock()
+                exporter = self._exporter(AzureMonitorLogExporter, routing=routing)
+                provider = LoggerProvider(resource=self.resource, shutdown_on_exit=False)
+                self.addCleanup(provider.shutdown)
+                provider.add_log_record_processor(BatchLogRecordProcessor(exporter, schedule_delay_millis=60_000))
+                logger = provider.get_logger("routing-e2e")
+                for index, (key, endpoint) in enumerate(self.destinations):
+                    logger.emit(
+                        body=f"record-{index}",
+                        severity_number=SeverityNumber.INFO,
+                        attributes={
+                            "microsoft.instrumentation_key": key,
+                            "microsoft.ingestion_endpoint": endpoint,
+                            "microsoft.multi_endpoint_cloud_role": f"role-{index}",
+                            "record.id": str(index),
+                        },
+                    )
+                self.transport.send.assert_not_called()
+                self.assertTrue(provider.force_flush(timeout_millis=5_000))
+                expected = (
+                    {
+                        "https://one.example/proxy/v2.1/track": (0, 2),
+                        "https://two.example/v2.1/track": (1,),
+                    }
+                    if routing
+                    else {"https://host.example//v2.1/track": (0, 1, 2, 3)}
+                )
+                requests = {
+                    call.args[0].url: json.loads(call.args[0].body) for call in self.transport.send.call_args_list
+                }
+                self.assertEqual(self.transport.send.call_count, len(expected))
+                self.assertEqual(requests.keys(), expected.keys())
+                for url, indexes in expected.items():
+                    items = requests[url]
+                    self.assertEqual(
+                        [item["data"]["baseData"]["properties"]["record.id"] for item in items],
+                        [str(index) for index in indexes],
+                    )
+                    for item, index in zip(items, indexes):
+                        self.assertEqual(item["data"]["baseType"], "MessageData")
+                        self.assertEqual(item["data"]["baseData"]["message"], f"record-{index}")
+                        self.assertEqual(
+                            item["iKey"],
+                            self.destinations[index][0] if routing else "1234abcd-5678-4efa-8abc-1234567890ab",
+                        )
+                        self.assertEqual(item["tags"]["ai.cloud.role"], f"role-{index}" if routing else "resource-role")
+                        self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
+                        if routing:
+                            for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
+                                self.assertNotIn(attribute, item["data"]["baseData"]["properties"])
+
+    def test_provider_flush_routes_spans_and_events(self):
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                self.transport.send.reset_mock()
+                exporter = self._exporter(AzureMonitorTraceExporter, routing=routing)
+                provider = TracerProvider(resource=self.resource, sampler=ALWAYS_ON, shutdown_on_exit=False)
+                self.addCleanup(provider.shutdown)
+                provider.add_span_processor(BatchSpanProcessor(exporter, schedule_delay_millis=60_000))
+                tracer = provider.get_tracer("routing-e2e")
+                for index, (key, endpoint) in enumerate(self.destinations):
+                    with tracer.start_as_current_span(
+                        f"record-{index}",
+                        kind=SpanKind.SERVER,
+                        attributes={
+                            "microsoft.instrumentation_key": key,
+                            "microsoft.ingestion_endpoint": endpoint,
+                            "microsoft.multi_endpoint_cloud_role": f"role-{index}",
+                            "record.id": str(index),
+                        },
+                    ) as span:
+                        span.add_event(
+                            f"event-{index}",
+                            attributes={
+                                "microsoft.instrumentation_key": "event-key",
+                                "microsoft.ingestion_endpoint": "https://event.example/",
+                                "record.id": str(index),
+                            },
+                        )
+                self.transport.send.assert_not_called()
+                self.assertTrue(provider.force_flush(timeout_millis=5_000))
+                expected = (
+                    {
+                        "https://one.example/proxy/v2.1/track": (0, 2),
+                        "https://two.example/v2.1/track": (1,),
+                    }
+                    if routing
+                    else {"https://host.example//v2.1/track": (0, 1, 2, 3)}
+                )
+                requests = {
+                    call.args[0].url: json.loads(call.args[0].body) for call in self.transport.send.call_args_list
+                }
+                self.assertEqual(self.transport.send.call_count, len(expected))
+                self.assertEqual(requests.keys(), expected.keys())
+                for url, indexes in expected.items():
+                    items = requests[url]
+                    self.assertEqual(
+                        [item["data"]["baseType"] for item in items], ["RequestData", "MessageData"] * len(indexes)
+                    )
+                    self.assertEqual(
+                        [item["data"]["baseData"]["properties"]["record.id"] for item in items],
+                        [str(index) for index in indexes for _ in range(2)],
+                    )
+                    for offset, index in enumerate(indexes):
+                        span_item, event_item = items[offset * 2 : offset * 2 + 2]
+                        self.assertEqual(span_item["data"]["baseData"]["name"], f"record-{index}")
+                        self.assertEqual(event_item["data"]["baseData"]["message"], f"event-{index}")
+                        self.assertEqual(span_item["tags"]["ai.operation.id"], event_item["tags"]["ai.operation.id"])
+                        for item in (span_item, event_item):
+                            self.assertEqual(
+                                item["iKey"],
+                                self.destinations[index][0] if routing else "1234abcd-5678-4efa-8abc-1234567890ab",
+                            )
+                            self.assertEqual(
+                                item["tags"]["ai.cloud.role"], f"role-{index}" if routing else "resource-role"
+                            )
+                            self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
+                            if routing:
+                                for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
+                                    self.assertNotIn(attribute, item["data"]["baseData"]["properties"])
+
+    def test_provider_flush_routes_metric_points(self):
+        for routing in (False, True):
+            with self.subTest(routing=routing):
+                self.transport.send.reset_mock()
+                exporter = self._exporter(AzureMonitorMetricExporter, routing=routing)
+                reader = PeriodicExportingMetricReader(exporter, export_interval_millis=float("inf"))
+                provider = MeterProvider(metric_readers=[reader], resource=self.resource, shutdown_on_exit=False)
+                self.addCleanup(provider.shutdown)
+                counter = provider.get_meter("routing-e2e").create_counter("routed_count")
+                for index, (key, endpoint) in enumerate(self.destinations):
+                    counter.add(
+                        index + 1,
+                        attributes={
+                            "microsoft.instrumentation_key": key,
+                            "microsoft.ingestion_endpoint": endpoint,
+                            "microsoft.multi_endpoint_cloud_role": f"role-{index}",
+                            "record.id": str(index),
+                        },
+                    )
+                self.transport.send.assert_not_called()
+                self.assertTrue(provider.force_flush(timeout_millis=5_000))
+                expected = (
+                    {
+                        "https://one.example/proxy/v2.1/track": (0, 2),
+                        "https://two.example/v2.1/track": (1,),
+                    }
+                    if routing
+                    else {"https://host.example//v2.1/track": (0, 1, 2, 3)}
+                )
+                requests = {
+                    call.args[0].url: json.loads(call.args[0].body) for call in self.transport.send.call_args_list
+                }
+                self.assertEqual(self.transport.send.call_count, len(expected))
+                self.assertEqual(requests.keys(), expected.keys())
+                for url, indexes in expected.items():
+                    items = requests[url]
+                    self.assertEqual(
+                        [item["data"]["baseData"]["properties"]["record.id"] for item in items],
+                        [str(index) for index in indexes],
+                    )
+                    for item, index in zip(items, indexes):
+                        self.assertEqual(item["data"]["baseType"], "MetricData")
+                        self.assertEqual(
+                            item["iKey"],
+                            self.destinations[index][0] if routing else "1234abcd-5678-4efa-8abc-1234567890ab",
+                        )
+                        self.assertEqual(item["tags"]["ai.cloud.role"], f"role-{index}" if routing else "resource-role")
+                        self.assertEqual(item["tags"]["ai.cloud.roleInstance"], "resource-instance")
+                        metric = item["data"]["baseData"]["metrics"][0]
+                        self.assertEqual(metric["name"], "routed_count")
+                        self.assertEqual(metric["value"], index + 1)
+                        if routing:
+                            for attribute in _MULTI_ENDPOINT_ROUTING_ATTRIBUTES:
+                                self.assertNotIn(attribute, item["data"]["baseData"]["properties"])

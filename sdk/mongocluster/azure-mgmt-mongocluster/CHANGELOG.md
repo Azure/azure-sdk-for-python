@@ -1,5 +1,11 @@
 # Release History
 
+## 1.3.0 (2026-11-17)
+
+### Features Added
+
+  - Enum `PromoteOption` added member `PLANNED`
+
 ## 1.3.0b1 (2026-07-28)
 
 ### Features Added

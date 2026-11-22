@@ -64,6 +64,8 @@ from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin,
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.validation import is_crc64_validation, parse_validation_option
 from ._serialize import get_lease_id, get_api_version, get_modify_conditions, get_version_id
+from ._session import _configure_session
+from ._transfer_native import try_native_download, try_native_upload
 from ._upload_helpers import upload_append_blob, upload_block_blob, upload_page_blob
 
 if TYPE_CHECKING:
@@ -185,6 +187,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
+        _configure_session(kwargs)
         super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._client = AzureBlobStorage(
             self.url,
@@ -488,6 +491,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
     ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob uploads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
+
         :param data: The blob data to upload.
         :type data: Union[bytes, str, Iterable[AnyStr], IO[bytes]]
         :param ~azure.storage.blob.BlobType blob_type: The type of the blob. This can be
@@ -627,6 +639,27 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
+
+        # Attempt native transfer acceleration (Rust extension)
+        native_result = try_native_upload(
+            blob_client=self,
+            data=data,
+            length=length,
+            blob_type=blob_type,
+            encryption_options={
+                "required": self.require_encryption,
+                "version": self.encryption_version,
+                "key": self.key_encryption_key,
+                "resolver": self.key_resolver_function,
+            },
+            validate_content=validate_content,
+            config=self._config,
+            metadata=metadata,
+            **kwargs,
+        )
+        if native_result is not None:
+            return native_result
+
         options = _upload_blob_options(
             data=data,
             blob_type=blob_type,
@@ -672,6 +705,18 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """Downloads a blob to the StorageStreamDownloader. The readall() method must
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
+
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob downloads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. Native downloaders support ``read()``, ``readall()``, and
+            ``readinto()``, but ``chunks()`` and direct iteration raise ``NotImplementedError``.
+            Set ``AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1`` before downloading to use ``chunks()``
+            through the Python implementation. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
 
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -742,6 +787,16 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
+        :keyword bool disable_etag_lock:
+            By default, the blob's ETag from the initial request is used to ensure the blob is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the blob to change during the download, for example, when downloading
+            an append blob that is actively being written to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the blob is
+                overwritten or recreated during the download. If the blob becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
             decompressed automatically before being returned. Default value is True.
         :keyword int timeout:
@@ -774,6 +829,26 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         validate_content = parse_validation_option(kwargs.pop("validate_content", None))
         if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
+
+        # Check if native download acceleration is possible
+        encryption_options = {
+            "required": self.require_encryption,
+            "version": self.encryption_version,
+            "key": self.key_encryption_key,
+            "resolver": self.key_resolver_function,
+        }
+        native_result = try_native_download(
+            blob_client=self,
+            offset=offset,
+            length=length,
+            encryption_options=encryption_options,
+            validate_content=validate_content,
+            encoding=encoding,
+            **kwargs,
+        )
+        if native_result is not None:
+            return native_result  # type: ignore
+
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
@@ -781,19 +856,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             offset=offset,
             length=length,
             encoding=encoding,
-            encryption_options={
-                "required": self.require_encryption,
-                "version": self.encryption_version,
-                "key": self.key_encryption_key,
-                "resolver": self.key_resolver_function,
-            },
+            encryption_options=encryption_options,
             validate_content=validate_content,
             config=self._config,
             sdk_moniker=self._sdk_moniker,
             client=self._client,
             **kwargs,
         )
-        return StorageStreamDownloader(**options)
+        downloader = StorageStreamDownloader(**options)
+        return downloader
 
     @distributed_trace
     def query_blob(self, query_expression: str, **kwargs: Any) -> BlobQueryReader:

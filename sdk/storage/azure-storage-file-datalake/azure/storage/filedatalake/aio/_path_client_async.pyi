@@ -17,7 +17,7 @@ from typing import (
 from types import TracebackType
 from typing_extensions import Self
 
-from azure.storage.filedatalake._shared.session_async import SessionProvider
+from azure.storage.filedatalake.aio._session_async import SessionProvider
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.credentials_async import AsyncTokenCredential
