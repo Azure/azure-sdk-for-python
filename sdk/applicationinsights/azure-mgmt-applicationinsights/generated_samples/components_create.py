@@ -39,6 +39,8 @@ def main():
             "location": "South Central US",
             "properties": {
                 "Application_Type": "web",
+                "AzureMonitorWorkspaceIngestionMode": "Enabled",
+                "AzureMonitorWorkspaceResourceId": "/subscriptions/subid/resourcegroups/my-resource-group/providers/microsoft.monitor/accounts/my-azure-monitor-workspace",
                 "Flow_Type": "Bluefield",
                 "Request_Source": "rest",
                 "WorkspaceResourceId": "/subscriptions/subid/resourcegroups/my-resource-group/providers/microsoft.operationalinsights/workspaces/my-workspace",
@@ -48,6 +50,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2020-02-02/ComponentsCreate.json
+# x-ms-original-file: 2025-01-23-preview/ComponentsCreate.json
 if __name__ == "__main__":
     main()

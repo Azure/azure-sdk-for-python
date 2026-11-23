@@ -18,6 +18,7 @@ from test_content_validation import (
     assert_structured_message,
     assert_structured_message_get,
 )
+from test_helpers import CaptureAuthHeader
 
 from azure.storage.filedatalake import FileSystemClient as SyncFileSystemClient
 from azure.storage.filedatalake.aio import DataLakeServiceClient
@@ -315,3 +316,31 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert content == data
         assert partial == data[5 * 1024 * 1024 : 30 * 1024 * 1024]
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
+    async def test_create_session_download_crc64(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+
+        await self._setup(datalake_storage_account_name)
+        capture_auth_header = CaptureAuthHeader()
+
+        async with DataLakeServiceClient(
+            self.account_url(datalake_storage_account_name, "dfs"),
+            credential=self.get_credential(DataLakeServiceClient, is_async=True),
+            use_session=True,
+        ) as service:
+            file = service.get_file_system_client(self.file_system.file_system_name).get_file_client(
+                self._get_file_reference()
+            )
+            data = b"abcd" * 1024
+            await file.upload_data(data, overwrite=True)
+
+            downloader = await file.download_file(
+                validate_content="crc64", raw_response_hook=capture_auth_header.hook("download")
+            )
+            result = await downloader.readall()
+
+            assert result == data
+            is_session_auth = capture_auth_header["download"].startswith("Session ")
+            assert is_session_auth

@@ -623,6 +623,7 @@
         "azure.mgmt.network.models.NetworkVirtualApplianceExecuteMigrationRequest": "Microsoft.Network.NetworkVirtualApplianceExecuteMigrationRequest",
         "azure.mgmt.network.models.NetworkVirtualApplianceInstanceId": "Microsoft.Network.NetworkVirtualApplianceInstanceId",
         "azure.mgmt.network.models.NetworkVirtualApplianceInstanceIds": "Microsoft.Network.NetworkVirtualApplianceInstanceIds",
+        "azure.mgmt.network.models.NetworkVirtualApplianceLoadBalancerConfiguration": "Microsoft.Network.NetworkVirtualApplianceLoadBalancerConfiguration",
         "azure.mgmt.network.models.NetworkVirtualApplianceMigrationStatus": "Microsoft.Network.NetworkVirtualApplianceMigrationStatus",
         "azure.mgmt.network.models.NetworkVirtualAppliancePrepareMigrationProperties": "Microsoft.Network.NetworkVirtualAppliancePrepareMigrationProperties",
         "azure.mgmt.network.models.NetworkVirtualAppliancePrepareMigrationRequest": "Microsoft.Network.NetworkVirtualAppliancePrepareMigrationRequest",
@@ -1006,6 +1007,7 @@
         "azure.mgmt.network.models.ApplicationGatewaySkuName": "Microsoft.Network.ApplicationGatewaySkuName",
         "azure.mgmt.network.models.ApplicationGatewayTier": "Microsoft.Network.ApplicationGatewayTier",
         "azure.mgmt.network.models.ApplicationGatewaySkuFamily": "Microsoft.Network.ApplicationGatewaySkuFamily",
+        "azure.mgmt.network.models.ApplicationGatewayDeploymentTier": "Microsoft.Network.ApplicationGatewayDeploymentTier",
         "azure.mgmt.network.models.ApplicationGatewaySslProtocol": "Microsoft.Network.ApplicationGatewaySslProtocol",
         "azure.mgmt.network.models.ApplicationGatewaySslPolicyType": "Microsoft.Network.ApplicationGatewaySslPolicyType",
         "azure.mgmt.network.models.ApplicationGatewaySslPolicyName": "Microsoft.Network.ApplicationGatewaySslPolicyName",
@@ -1161,6 +1163,7 @@
         "azure.mgmt.network.models.NspProvisioningState": "Microsoft.Network.NspProvisioningState",
         "azure.mgmt.network.models.NetworkProtocol": "Microsoft.Network.NetworkProtocol",
         "azure.mgmt.network.models.VnetLocalRouteOverrideCriteria": "Microsoft.Network.VnetLocalRouteOverrideCriteria",
+        "azure.mgmt.network.models.NetworkVirtualApplianceLoadDistribution": "Microsoft.Network.NetworkVirtualApplianceLoadDistribution",
         "azure.mgmt.network.models.NicTypeInResponse": "Microsoft.Network.NicTypeInResponse",
         "azure.mgmt.network.models.NicTypeInRequest": "Microsoft.Network.NicTypeInRequest",
         "azure.mgmt.network.models.NvaNicType": "Microsoft.Network.NvaNicType",
@@ -2983,5 +2986,5 @@
         "azure.mgmt.network.NetworkManagementClient.check_dns_name_availability": "Microsoft.Network.CheckDnsNameAvailability.checkDnsNameAvailability",
         "azure.mgmt.network.aio.NetworkManagementClient.check_dns_name_availability": "Microsoft.Network.CheckDnsNameAvailability.checkDnsNameAvailability"
     },
-    "CrossLanguageVersion": "87f8650c606c"
+    "CrossLanguageVersion": "8d6ad3b01653"
 }
