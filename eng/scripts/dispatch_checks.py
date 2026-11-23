@@ -413,9 +413,10 @@ async def run_all_checks(
     wheel_dir,
     mark_arg: Optional[str],
     injected_packages: str,
-    disablecov: bool,
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    *,
+    disablecov: bool = False,
 ):
     """Run all checks for all packages concurrently and return the worst exit code.
 
@@ -428,6 +429,8 @@ async def run_all_checks(
     :param wheel_dir: The directory where wheels should be located and stored when built.
         In CI should correspond to `$(Build.ArtifactStagingDirectory)`.
     :type wheel_dir: str
+    :param disablecov: Disable coverage collection in test checks. Defaults to False.
+    :type disablecov: bool
     :returns: The worst exit code from all checks (0 if all passed).
     :rtype: int
     """
@@ -770,9 +773,9 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 temp_wheel_dir,
                 args.mark_arg,
                 args.injected_packages,
-                args.disablecov,
                 args.dest_dir,
                 effective_service,
+                disablecov=args.disablecov,
             )
         )
     except KeyboardInterrupt:
