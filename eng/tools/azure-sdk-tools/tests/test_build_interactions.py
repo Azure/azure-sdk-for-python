@@ -149,14 +149,18 @@ def build_commands(monkeypatch):
 )
 @pytest.mark.parametrize("enable_wheel,enable_sdist", [(True, False), (True, True), (False, True)])
 def test_create_package_build_routing(
-    tmp_path, build_commands, scenario, cibuildwheel_config, compiled, enable_wheel, enable_sdist
+    tmp_path, maturin_package, build_commands, scenario, cibuildwheel_config, compiled, enable_wheel, enable_sdist
 ):
     package = tmp_path / "package"
-    shutil.copytree(os.path.join(integration_folder, "scenarios", scenario), package)
+    source = (
+        maturin_package
+        if cibuildwheel_config and scenario.startswith("pyproject")
+        else os.path.join(integration_folder, "scenarios", scenario)
+    )
+    shutil.copytree(source, package)
     if cibuildwheel_config:
         pyproject = package / "pyproject.toml"
         contents = pyproject.read_text() if pyproject.exists() else ""
-        contents = contents.replace("setuptools.build_meta", "maturin")
         pyproject.write_text(contents + cibuildwheel_config)
 
     destination = tmp_path / "dist"
@@ -194,12 +198,11 @@ def test_create_package_build_routing(
         assert commands == expected_commands
 
 
-def test_sdist_only_does_not_invoke_cibuildwheel(tmp_path, build_commands):
+def test_sdist_only_does_not_invoke_cibuildwheel(tmp_path, maturin_package, build_commands):
     package = tmp_path / "package"
-    shutil.copytree(os.path.join(integration_folder, "scenarios", "pyproject_project_def"), package)
+    shutil.copytree(maturin_package, package)
     pyproject = package / "pyproject.toml"
-    contents = pyproject.read_text().replace("setuptools.build_meta", "maturin")
-    contents = contents.replace('requires = ["setuptools>=61.0.0", "wheel"]', 'requires = ["maturin"]')
+    contents = pyproject.read_text()
     pyproject.write_text(contents + '\n[tool.cibuildwheel]\nbuild = "cp310-*"\n')
 
     destination = tmp_path / "dist"
