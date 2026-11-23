@@ -233,6 +233,8 @@ async def with_keep_alive(
         try:
             async for item in source:
                 queue.put_nowait(item)
+        except asyncio.CancelledError as exc:
+            pump_error = exc
         except Exception as exc:  # pylint: disable=broad-exception-caught
             pump_error = exc
         finally:

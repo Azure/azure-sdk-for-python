@@ -13,6 +13,7 @@ import sys
 import json
 import logging
 from contextlib import AbstractAsyncContextManager
+from types import SimpleNamespace
 from urllib.parse import urlparse, urlunparse, urlencode, parse_qs
 from typing import Any, Mapping, Optional, Sequence, Union, AsyncIterator, cast, overload
 
@@ -537,10 +538,18 @@ class VoiceLiveConnection:
                 log.debug("Received websocket binary message: %s", msg.data)
                 return msg.data
             if msg.type == aiohttp.WSMsgType.CLOSE:
-                code = self._connection.close_code or 1000
-                reason = ""
+                # For CLOSE frames aiohttp puts the close code in ``msg.data`` and the
+                # close reason sent by the peer in ``msg.extra``.
+                code = msg.data or self._connection.close_code or 1000
+                reason = msg.extra or ""
                 log.debug("WebSocket connection closed with code %s: %s", code, reason)
                 raise ConnectionClosed(code, reason)
+            if msg.type == aiohttp.WSMsgType.CLOSING:
+                # aiohttp returns CLOSING when the connection is being closed (for example
+                # ``close()`` was called from another task while ``receive()`` was waiting).
+                code = self._connection.close_code or 1000
+                log.debug("WebSocket connection closing with code %s", code)
+                raise ConnectionClosed(code, "Connection closing")
             if msg.type == aiohttp.WSMsgType.ERROR:
                 log.error("WebSocket connection error: %s", self._connection.exception())
                 raise ConnectionClosed(1006, str(self._connection.exception()))
@@ -665,6 +674,15 @@ class WebsocketConnectionOptions(TypedDict, total=False):
     vendor_options: NotRequired[Mapping[str, Any]]
 
 
+async def _reject_websocket_redirect(
+    _session: aiohttp.ClientSession,
+    _trace_config_ctx: SimpleNamespace,
+    params: aiohttp.TraceRequestRedirectParams,
+) -> None:
+    params.response.close()
+    raise aiohttp.ClientError("WebSocket redirects are not supported.")
+
+
 class _VoiceLiveConnectionManager(
     AbstractAsyncContextManager["VoiceLiveConnection"]
 ):  # pylint: disable=too-many-instance-attributes
@@ -782,7 +800,10 @@ class _VoiceLiveConnectionManager(
             if not any(name.lower() == "user-agent" for name in headers):
                 headers["User-Agent"] = _USER_AGENT
 
-            session = aiohttp.ClientSession()
+            # ws_connect does not expose allow_redirects; reject before credentials can be forwarded.
+            trace_config = aiohttp.TraceConfig()
+            trace_config.on_request_redirect.append(_reject_websocket_redirect)
+            session = aiohttp.ClientSession(trace_configs=[trace_config])
             try:
                 connection_obj = await session.ws_connect(str(url), headers=headers, **self.__connection_options)
                 self.__connection = VoiceLiveConnection(

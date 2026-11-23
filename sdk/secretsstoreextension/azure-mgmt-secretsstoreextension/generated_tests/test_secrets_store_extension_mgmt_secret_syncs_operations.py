@@ -86,7 +86,6 @@ class TestSecretsStoreExtensionMgmtSecretSyncsOperations(AzureMgmtRecordedTestCa
             properties={
                 "properties": {
                     "forceSynchronization": "str",
-                    "kubernetesSecretType": "str",
                     "objectSecretMapping": [{"sourcePath": "str", "targetKey": "str"}],
                     "secretProviderClassName": "str",
                     "serviceAccountName": "str",

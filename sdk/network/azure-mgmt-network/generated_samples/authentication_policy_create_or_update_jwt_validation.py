@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/AuthenticationPolicyCreateOrUpdateJwtValidation.json
+# x-ms-original-file: 2026-03-01/AuthenticationPolicyCreateOrUpdateJwtValidation.json
 if __name__ == "__main__":
     main()

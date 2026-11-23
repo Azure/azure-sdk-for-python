@@ -333,14 +333,19 @@ class CacheRuleUpdateProperties(TypedDict, total=False):
      with the Cache rule.
     :vartype credentialSetResourceId: str
     :ivar additionalAuthenticationProperties: Authentication configuration used by the cache rule
-     to access the upstream source repository.
-    :vartype additionalAuthenticationProperties: "AdditionalAuthenticationProperties"
+     to access the upstream source repository. Omitted fields retain their current values. When
+     authentication is first configured, all required fields of the selected authentication type
+     must be supplied. Changing an existing authentication type is not supported.
+    :vartype additionalAuthenticationProperties: "AdditionalAuthenticationUpdateProperties"
     """
 
     credentialSetResourceId: str
     """The ARM resource ID of the credential store which is associated with the Cache rule."""
-    additionalAuthenticationProperties: "AdditionalAuthenticationProperties"
-    """Authentication configuration used by the cache rule to access the upstream source repository."""
+    additionalAuthenticationProperties: "AdditionalAuthenticationUpdateProperties"
+    """Authentication configuration used by the cache rule to access the upstream source repository.
+     Omitted fields retain their current values. When authentication is first configured, all
+     required fields of the selected authentication type must be supplied. Changing an existing
+     authentication type is not supported."""
 
 
 class ConnectedRegistry(ProxyResource):
@@ -592,6 +597,122 @@ class CredentialSetUpdateProperties(TypedDict, total=False):
      optional secondary credential."""
 
 
+class EcrAuthenticationProperties(TypedDict, total=False):
+    """Amazon Elastic Container Registry (ECR) authentication configuration.
+
+    :ivar authenticationType: Required. Amazon Elastic Container Registry (ECR) authentication via
+     workload identity federation.
+    :vartype authenticationType:
+     Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+    :ivar accountNumber: The AWS account that owns the IAM role used for authentication. The IAM
+     role is assumed via AWS Security Token Service (STS) when exchanging a federated Entra access
+     token for an ECR access token. The full IAM role ARN is derived from ``accountNumber``,
+     ``rolePath``, and ``roleName`` as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}``
+     (the initial path defaults to ``/``). Required.
+    :vartype accountNumber: str
+    :ivar region: The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``).
+     Only commercial AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and
+     Secret/Top Secret ISO (``us-iso*``) partitions are rejected. The pattern stays
+     forward-compatible for new commercial regions without requiring a contract change. Required.
+    :vartype region: str
+    :ivar roleName: The name of the AWS IAM role assumed for authentication. This is the role name
+     only, not the full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not
+     permitted here. Required.
+    :vartype roleName: str
+    :ivar rolePath: Optional IAM path of the role (for example ``/team/`` or ``/division/team/``).
+     The value must be supplied in canonical form with a leading and trailing '/'; it is validated
+     as-is and is never normalized. A non-root path must contain at least one character between the
+     surrounding slashes. When authentication is first configured, an omitted path defaults to the
+     root (``/``). When updating an existing authentication configuration, an omitted path retains
+     its current value.
+    :vartype rolePath: str
+    """
+
+    authenticationType: Required[Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]]
+    """Required. Amazon Elastic Container Registry (ECR) authentication via workload identity
+     federation."""
+    accountNumber: Required[str]
+    """The AWS account that owns the IAM role used for authentication. The IAM role is assumed via AWS
+     Security Token Service (STS) when exchanging a federated Entra access token for an ECR access
+     token. The full IAM role ARN is derived from ``accountNumber``, ``rolePath``, and ``roleName``
+     as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}`` (the initial path defaults to
+     ``/``). Required."""
+    region: Required[str]
+    """The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``). Only commercial
+     AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and Secret/Top Secret
+     ISO (``us-iso*``) partitions are rejected. The pattern stays forward-compatible for new
+     commercial regions without requiring a contract change. Required."""
+    roleName: Required[str]
+    """The name of the AWS IAM role assumed for authentication. This is the role name only, not the
+     full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not permitted here.
+     Required."""
+    rolePath: str
+    """Optional IAM path of the role (for example ``/team/`` or ``/division/team/``). The value must
+     be supplied in canonical form with a leading and trailing '/'; it is validated as-is and is
+     never normalized. A non-root path must contain at least one character between the surrounding
+     slashes. When authentication is first configured, an omitted path defaults to the root (``/``).
+     When updating an existing authentication configuration, an omitted path retains its current
+     value."""
+
+
+class EcrAuthenticationUpdateProperties(TypedDict, total=False):
+    """Partial Amazon Elastic Container Registry (ECR) authentication configuration. When
+    authentication is first configured, accountNumber, region, and roleName must be supplied.
+
+    :ivar authenticationType: Required. Amazon Elastic Container Registry (ECR) authentication via
+     workload identity federation.
+    :vartype authenticationType:
+     Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]
+    :ivar accountNumber: The AWS account that owns the IAM role used for authentication. The IAM
+     role is assumed via AWS Security Token Service (STS) when exchanging a federated Entra access
+     token for an ECR access token. The full IAM role ARN is derived from ``accountNumber``,
+     ``rolePath``, and ``roleName`` as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}``
+     (the initial path defaults to ``/``).
+    :vartype accountNumber: str
+    :ivar region: The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``).
+     Only commercial AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and
+     Secret/Top Secret ISO (``us-iso*``) partitions are rejected. The pattern stays
+     forward-compatible for new commercial regions without requiring a contract change.
+    :vartype region: str
+    :ivar roleName: The name of the AWS IAM role assumed for authentication. This is the role name
+     only, not the full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not
+     permitted here.
+    :vartype roleName: str
+    :ivar rolePath: Optional IAM path of the role (for example ``/team/`` or ``/division/team/``).
+     The value must be supplied in canonical form with a leading and trailing '/'; it is validated
+     as-is and is never normalized. A non-root path must contain at least one character between the
+     surrounding slashes. When authentication is first configured, an omitted path defaults to the
+     root (``/``). When updating an existing authentication configuration, an omitted path retains
+     its current value.
+    :vartype rolePath: str
+    """
+
+    authenticationType: Required[Literal[AdditionalAuthenticationType.AWS_ELASTIC_CONTAINER_REGISTRY]]
+    """Required. Amazon Elastic Container Registry (ECR) authentication via workload identity
+     federation."""
+    accountNumber: str
+    """The AWS account that owns the IAM role used for authentication. The IAM role is assumed via AWS
+     Security Token Service (STS) when exchanging a federated Entra access token for an ECR access
+     token. The full IAM role ARN is derived from ``accountNumber``, ``rolePath``, and ``roleName``
+     as ``arn:aws:iam::{accountNumber}:role{rolePath}{roleName}`` (the initial path defaults to
+     ``/``)."""
+    region: str
+    """The AWS region of the upstream Elastic Container Registry (e.g. ``us-west-2``). Only commercial
+     AWS regions are supported; the GovCloud (``us-gov-*``), China (``cn-*``), and Secret/Top Secret
+     ISO (``us-iso*``) partitions are rejected. The pattern stays forward-compatible for new
+     commercial regions without requiring a contract change."""
+    roleName: str
+    """The name of the AWS IAM role assumed for authentication. This is the role name only, not the
+     full ARN; the IAM path is supplied separately via ``rolePath``, so '/' is not permitted here."""
+    rolePath: str
+    """Optional IAM path of the role (for example ``/team/`` or ``/division/team/``). The value must
+     be supplied in canonical form with a leading and trailing '/'; it is validated as-is and is
+     never normalized. A non-root path must contain at least one character between the surrounding
+     slashes. When authentication is first configured, an omitted path defaults to the root (``/``).
+     When updating an existing authentication configuration, an omitted path retains its current
+     value."""
+
+
 class EncryptionProperty(TypedDict, total=False):
     """EncryptionProperty.
 
@@ -607,6 +728,74 @@ class EncryptionProperty(TypedDict, total=False):
      \"enabled\" and \"disabled\"."""
     keyVaultProperties: "KeyVaultProperties"
     """Key vault properties."""
+
+
+class EntraFederatedIdentityCredentialAuthenticationProperties(TypedDict, total=False):  # pylint: disable=name-too-long
+    """Microsoft Entra federated identity credential authentication configuration.
+
+    :ivar authenticationType: Required. Microsoft Entra authentication via a federated identity
+     credential on an application in another tenant.
+    :vartype authenticationType:
+     Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+    :ivar sourceTenantId: The upstream tenant that issues the token for
+     ``federatedApplicationClientId`` and contains the application's enterprise application (service
+     principal). Required.
+    :vartype sourceTenantId: str
+    :ivar federatedApplicationClientId: The client ID of the multi-tenant application. Its
+     application registration and federated identity credential must be in the cache rule managed
+     identity's home tenant. The credential's subject is the managed identity's principal/object ID,
+     not its client ID. Its enterprise application (service principal) must exist in
+     ``sourceTenantId``. Required.
+    :vartype federatedApplicationClientId: str
+    """
+
+    authenticationType: Required[Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]]
+    """Required. Microsoft Entra authentication via a federated identity credential on an application
+     in another tenant."""
+    sourceTenantId: Required[str]
+    """The upstream tenant that issues the token for ``federatedApplicationClientId`` and contains the
+     application's enterprise application (service principal). Required."""
+    federatedApplicationClientId: Required[str]
+    """The client ID of the multi-tenant application. Its application registration and federated
+     identity credential must be in the cache rule managed identity's home tenant. The credential's
+     subject is the managed identity's principal/object ID, not its client ID. Its enterprise
+     application (service principal) must exist in ``sourceTenantId``. Required."""
+
+
+class EntraFederatedIdentityCredentialAuthenticationUpdateProperties(
+    TypedDict, total=False
+):  # pylint: disable=name-too-long
+    """Partial Microsoft Entra federated identity credential authentication configuration. When
+    authentication is first configured, sourceTenantId and federatedApplicationClientId must be
+    supplied.
+
+    :ivar authenticationType: Required. Microsoft Entra authentication via a federated identity
+     credential on an application in another tenant.
+    :vartype authenticationType:
+     Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]
+    :ivar sourceTenantId: The upstream tenant that issues the token for
+     ``federatedApplicationClientId`` and contains the application's enterprise application (service
+     principal).
+    :vartype sourceTenantId: str
+    :ivar federatedApplicationClientId: The client ID of the multi-tenant application. Its
+     application registration and federated identity credential must be in the cache rule managed
+     identity's home tenant. The credential's subject is the managed identity's principal/object ID,
+     not its client ID. Its enterprise application (service principal) must exist in
+     ``sourceTenantId``.
+    :vartype federatedApplicationClientId: str
+    """
+
+    authenticationType: Required[Literal[AdditionalAuthenticationType.ENTRA_FEDERATED_IDENTITY_CREDENTIAL]]
+    """Required. Microsoft Entra authentication via a federated identity credential on an application
+     in another tenant."""
+    sourceTenantId: str
+    """The upstream tenant that issues the token for ``federatedApplicationClientId`` and contains the
+     application's enterprise application (service principal)."""
+    federatedApplicationClientId: str
+    """The client ID of the multi-tenant application. Its application registration and federated
+     identity credential must be in the cache rule managed identity's home tenant. The credential's
+     subject is the managed identity's principal/object ID, not its client ID. Its enterprise
+     application (service principal) must exist in ``sourceTenantId``."""
 
 
 class ExportPipeline(ProxyResource):
@@ -737,6 +926,38 @@ class GarAuthenticationProperties(TypedDict, total=False):
     """The Google Cloud platform workload identity pool used for authentication. Required."""
     workloadIdentityProvider: Required[str]
     """The Google Cloud Platform workload identity provider used for authentication. Required."""
+
+
+class GarAuthenticationUpdateProperties(TypedDict, total=False):
+    """Partial Google Artifact Registry (GAR) authentication configuration. When authentication is
+    first configured, projectNumber, workloadIdentityPool, and workloadIdentityProvider must be
+    supplied.
+
+    :ivar authenticationType: Required. Google Artifact Registry (GAR) authentication via workload
+     identity federation.
+    :vartype authenticationType: Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]
+    :ivar projectNumber: The Google Cloud Platform project that is configured for authentication
+     Permissions should be granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}.
+    :vartype projectNumber: str
+    :ivar workloadIdentityPool: The Google Cloud platform workload identity pool used for
+     authentication.
+    :vartype workloadIdentityPool: str
+    :ivar workloadIdentityProvider: The Google Cloud Platform workload identity provider used for
+     authentication.
+    :vartype workloadIdentityProvider: str
+    """
+
+    authenticationType: Required[Literal[AdditionalAuthenticationType.GOOGLE_ARTIFACT_REGISTRY]]
+    """Required. Google Artifact Registry (GAR) authentication via workload identity federation."""
+    projectNumber: str
+    """The Google Cloud Platform project that is configured for authentication Permissions should be
+     granted to
+     principal://iam.googleapis.com/projects/{ProjectNumber}/locations/global/workloadIdentityPools/{WorkloadIdentityPool}/providers/{WorkloadIdentityProvider}/subject/{ManagedIdentityPrincipal}."""
+    workloadIdentityPool: str
+    """The Google Cloud platform workload identity pool used for authentication."""
+    workloadIdentityProvider: str
+    """The Google Cloud Platform workload identity provider used for authentication."""
 
 
 class GarbageCollectionProperties(TypedDict, total=False):
@@ -2567,4 +2788,11 @@ class WebhookUpdateParameters(TypedDict, total=False):
     """The properties that the webhook will be updated with."""
 
 
-AdditionalAuthenticationProperties = Union[GarAuthenticationProperties]
+AdditionalAuthenticationProperties = Union[
+    EcrAuthenticationProperties, EntraFederatedIdentityCredentialAuthenticationProperties, GarAuthenticationProperties
+]
+AdditionalAuthenticationUpdateProperties = Union[
+    EcrAuthenticationUpdateProperties,
+    EntraFederatedIdentityCredentialAuthenticationUpdateProperties,
+    GarAuthenticationUpdateProperties,
+]

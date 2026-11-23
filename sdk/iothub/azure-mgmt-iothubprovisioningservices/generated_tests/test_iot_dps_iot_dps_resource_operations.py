@@ -56,6 +56,17 @@ class TestIotDpsIotDpsResourceOperations(AzureMgmtRecordedTestCase):
                         {"keyName": "str", "rights": "str", "primaryKey": "str", "secondaryKey": "str"}
                     ],
                     "deviceProvisioningHostName": "str",
+                    "deviceRegistryNamespaces": [
+                        {
+                            "authenticationType": "str",
+                            "resourceId": "str",
+                            "dataAddress": "str",
+                            "linkingState": "str",
+                            "location": "str",
+                            "namespaceUuid": "str",
+                            "selectedUserAssignedIdentityResourceId": "str",
+                        }
+                    ],
                     "disableLocalAuth": bool,
                     "enableDataResidency": bool,
                     "idScope": "str",

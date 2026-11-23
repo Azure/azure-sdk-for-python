@@ -9,8 +9,8 @@ DESCRIPTION:
     This sample demonstrates how to perform CRUD operations on External Agents
     using the synchronous AIProjectClient.
 
-    External Agents are a preview feature. They register third-party agents hosted
-    outside Microsoft Foundry. Registration is metadata-only: Foundry uses the
+    External Agents register third-party agents hosted outside Microsoft Foundry.
+    Registration is metadata-only: Foundry uses the
     OpenTelemetry agent identifier to light up traces and evaluations for spans
     emitted by your external agent.
 
@@ -19,7 +19,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.11.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -45,7 +45,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     agent_name = "sample-external-agent"
     otel_agent_id = "sample-external-agent"

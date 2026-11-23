@@ -60,6 +60,17 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The entity was created by a key."""
 
 
+class DeviceRegistryNamespaceAuthenticationType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Device Registry Namespace MI authentication type: UserAssigned, SystemAssigned."""
+
+    USER_ASSIGNED = "UserAssigned"
+    """User assigned authentication type."""
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """System assigned authentication type."""
+
+
 class IotDpsSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Sku name."""
 
@@ -96,6 +107,19 @@ class IpFilterTargetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SERVICE_API."""
     DEVICE_API = "deviceApi"
     """DEVICE_API."""
+
+
+class LinkingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of ADR linking for a provisioning service."""
+
+    NOT_LINKED = "NotLinked"
+    """The provisioning service is not linked to a Device Registry namespace."""
+    IN_PROGRESS = "InProgress"
+    """The linking process is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The linking process succeeded."""
+    ORPHANED = "Orphaned"
+    """The linked Device Registry namespace no longer exists."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

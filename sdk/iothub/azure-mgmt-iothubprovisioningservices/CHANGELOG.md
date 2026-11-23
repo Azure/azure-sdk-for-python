@@ -1,5 +1,14 @@
 # Release History
 
+## 2.1.0 (2026-10-08)
+
+### Features Added
+
+  - Model `IotDpsPropertiesDescription` added property `device_registry_namespaces`
+  - Added enum `DeviceRegistryNamespaceAuthenticationType`
+  - Added model `DeviceRegistryNamespaceDescription`
+  - Added enum `LinkingState`
+
 ## 2.0.0 (2026-08-26)
 
 ### Features Added

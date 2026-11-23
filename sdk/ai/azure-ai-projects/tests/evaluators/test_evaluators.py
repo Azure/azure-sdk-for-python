@@ -7,12 +7,12 @@
 from unittest.mock import MagicMock
 
 from azure.ai.projects.models import EvaluatorGenerationLROPoller
-from azure.ai.projects.operations._patch_evaluators import BetaEvaluatorsOperations
+from azure.ai.projects.operations._patch_evaluators import EvaluatorsOperations
 
 
 def test_begin_create_generation_job_exposes_job_id():
     """The sync create operation exposes its job ID without SDK polling."""
-    operation = BetaEvaluatorsOperations.__new__(BetaEvaluatorsOperations)
+    operation = EvaluatorsOperations.__new__(EvaluatorsOperations)
     operation._client = MagicMock()  # pylint: disable=protected-access
     operation._config = MagicMock(polling_interval=0)  # pylint: disable=protected-access
     operation._serialize = MagicMock()  # pylint: disable=protected-access
@@ -29,3 +29,6 @@ def test_begin_create_generation_job_exposes_job_id():
 
     assert isinstance(poller, EvaluatorGenerationLROPoller)
     assert poller.details["job_id"] == "evaluator-job-sync"
+    initial_call = operation._create_generation_job_initial.call_args  # pylint: disable=protected-access
+    assert initial_call.kwargs["job"] == {}
+    assert "body" not in initial_call.kwargs

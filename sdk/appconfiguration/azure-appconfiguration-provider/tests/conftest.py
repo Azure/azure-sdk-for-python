@@ -104,16 +104,16 @@ def add_sanitizers(test_proxy):
         (
             os.environ.get(
                 "APPCONFIGURATION_KEYVAULT_SECRET_URL2",
-                "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+                "https://sanitized.vault.azure.net/secrets/SecondSecret/",
             ),
-            "https://sanitized.vault.azure.net/secrets/fake-secret2/",
+            "https://sanitized.vault.azure.net/secrets/SecondSecret/",
         ),
         (
             os.environ.get(
                 "APPCONFIGURATION_KEYVAULT_SECRET_URL",
-                "https://sanitized.vault.azure.net/secrets/fake-secret/",
+                "https://sanitized.vault.azure.net/secrets/TestSecret/",
             ),
-            "https://sanitized.vault.azure.net/secrets/fake-secret/",
+            "https://sanitized.vault.azure.net/secrets/TestSecret/",
         ),
     )
 

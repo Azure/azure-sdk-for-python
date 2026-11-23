@@ -15,6 +15,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, NoReturn, Sequence, cast
 
+from azure.ai.agentserver.core import FoundryOriginalSubject
+
 
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
@@ -84,7 +86,14 @@ class PlatformContext:
     ``is None`` to detect whether the header was present at all.
     """
 
-    def __init__(self, *, user_id_key: str | None = None, call_id: str | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        user_id_key: str | None = None,
+        call_id: str | None = None,
+        original_subject: FoundryOriginalSubject | None = None,
+    ) -> None:
+        self.original_subject = original_subject
         self.user_id_key = user_id_key
         """Partition key for per-user state (from ``x-agent-user-id``).
         ``None`` when the header was not sent."""
@@ -109,7 +118,13 @@ def _history_ids_key(
 
 
 def _snapshot_platform_context(context: PlatformContext | None) -> PlatformContext | None:
-    return None if context is None else PlatformContext(user_id_key=context.user_id_key, call_id=context.call_id)
+    return (
+        None
+        if context is None
+        else PlatformContext(
+            user_id_key=context.user_id_key, call_id=context.call_id, original_subject=context.original_subject
+        )
+    )
 
 
 class _HistoryIdsEntry:
@@ -260,7 +275,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         input_items: list[_generated_unions.InputParam] | list[_generated_models.OutputItem] | None = None,
         previous_response_id: str | None = None,
         conversation_id: str | None = None,
-        history_limit: int = 100,
+        history_limit: int = -1,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
         platform_context: PlatformContext | None = None,

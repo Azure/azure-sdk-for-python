@@ -55,7 +55,7 @@ class BlobClient:  # pylint: disable=client-accepts-api-version-keyword,docstrin
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :keyword version: Specifies the version of the operation to use for this request. Known values
-     are "2026-12-06" and None. Default value is None. If not set, the operation's default API
+     are "2027-03-07" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype version: str

@@ -33,9 +33,8 @@
     Defaults to $env:COSMOS_ACCOUNT_SELECTOR.
 
 .PARAMETER VariablePrefix
-    Optional prefix for emitted variable names. The live-test pipeline uses COSMOS_FIXED_
-    so deployment outputs can overwrite ACCOUNT_HOST / ACCOUNT_KEY without losing the
-    selected fixed-account credentials.
+    Optional prefix for emitted variable names. The live-test pipeline leaves this empty
+    to export ACCOUNT_* directly; fixed-account jobs do not deploy resources.
 
 .PARAMETER Local
     Print NAME=VALUE to stdout instead of emitting Azure DevOps ##vso logging commands.

@@ -21,12 +21,36 @@ class AbusePenaltyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class AdapterDeploymentOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation states reported by an adapter deployment."""
+
+    ACCEPTED = "Accepted"
+    """The operation was accepted."""
+    RUNNING = "Running"
+    """The operation is running."""
+    SUCCEEDED = "Succeeded"
+    """The operation completed successfully."""
+    FAILED = "Failed"
+    """The operation failed."""
+
+
+class AdapterDeploymentOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Lifecycle operation types reported by an adapter deployment."""
+
+    CREATE = "Create"
+    """Creates the adapter deployment."""
+    UPDATE = "Update"
+    """Re-targets the adapter deployment."""
+    DELETE = "Delete"
+    """Deletes the adapter deployment."""
 
 
 class AgentDeploymentProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,6 +162,81 @@ class ArcDeploymentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ARC = "Arc"
     """Arc SKU."""
+
+
+class AttachedAksClusterCapability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A capability supported by an AKS attachment."""
+
+    FOUNDRY_NATIVE = "foundryNative"
+    """Foundry-native training workloads."""
+    KUBERAY = "kuberay"
+    """KubeRay workloads."""
+    AI_MANAGER = "aiManager"
+    """AI Manager inference workloads."""
+
+
+class AttachedAksClusterExtensionInstallationMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """How the training extension is installed."""
+
+    MANAGED = "Managed"
+    """The service manages installation of the extension."""
+    MANUAL = "Manual"
+    """The extension is installed manually, when enabled by the service."""
+
+
+class AttachedAksClusterHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Health state of an attachment or one of its components."""
+
+    UNKNOWN = "Unknown"
+    """Health has not yet been established."""
+    HEALTHY = "Healthy"
+    """The attachment or component is healthy."""
+    DEGRADED = "Degraded"
+    """The attachment or component is degraded."""
+    UNHEALTHY = "Unhealthy"
+    """The attachment or component is unhealthy."""
+
+
+class AttachedAksClusterProjectBindingStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning stage of a project binding."""
+
+    RECONCILING = "Reconciling"
+    """The binding is being reconciled."""
+    READY = "Ready"
+    """The binding is ready."""
+    DEGRADED = "Degraded"
+    """The binding is degraded."""
+    BLOCKED = "Blocked"
+    """The binding is blocked."""
+
+
+class AttachedAksClusterProvisioningStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning stage reported by an attachment."""
+
+    ACCEPTED = "Accepted"
+    """The attachment request was accepted."""
+    VALIDATING = "Validating"
+    """The attachment is being validated."""
+    PROVISIONING_CLUSTER = "ProvisioningCluster"
+    """Cluster provisioning is in progress."""
+    PROVISIONING_IDENTITY = "ProvisioningIdentity"
+    """Identity provisioning is in progress."""
+    PENDING_BOOTSTRAP = "PendingBootstrap"
+    """Cluster bootstrap is pending."""
+    CLUSTER_READY = "ClusterReady"
+    """The cluster is ready."""
+    READY = "Ready"
+    """The attachment is ready."""
+    DEGRADED = "Degraded"
+    """The attachment is degraded."""
+    FAILED = "Failed"
+    """Attachment provisioning failed."""
+    DELETING = "Deleting"
+    """The attachment is being deleted."""
+    BLOCKED = "Blocked"
+    """The attachment is blocked."""
 
 
 class BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -450,6 +549,8 @@ class ConnectionCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """GENERIC_REST."""
     REMOTE_TOOL = "RemoteTool"
     """REMOTE_TOOL."""
+    OPEN_API = "OpenAPI"
+    """Connection to an endpoint described by an OpenAPI specification."""
     AMAZON_MWS = "AmazonMws"
     """AMAZON_MWS."""
     CONCUR = "Concur"
@@ -570,6 +671,63 @@ class ContentLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEDIUM."""
     HIGH = "High"
     """HIGH."""
+
+
+class CostControlCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The measurement used for the budget amount and absolute thresholds."""
+
+    COST = "Cost"
+    """Estimated consumption cost in United States dollars."""
+    TOKENS = "Tokens"
+    """The number of consumed tokens, optionally selected by a tokenType filter."""
+
+
+class CostControlFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-in request attributes supported for traffic filtering."""
+
+    AGENT = "agent"
+    """The Foundry agent name within the single explicitly selected Foundry project."""
+    SESSION_ID = "sessionId"
+    """The Foundry session ID."""
+    PROJECT = "project"
+    """The Foundry project name within the owning account."""
+    DEPLOYMENT = "deployment"
+    """The deployment name within the owning account."""
+    TOKEN_TYPE = "tokenType"
+    """The input or output token category."""
+
+
+class CostControlGroupingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-in attributes supported for additional budget partitioning."""
+
+    PROJECT = "project"
+    """Creates an independent counter for each Foundry project in the owning account."""
+    AGENT = "agent"
+    """Creates an independent counter for each Foundry agent, qualified by its Foundry project so
+    identical agent names in different projects do not share counters."""
+    SESSION_ID = "sessionId"
+    """Creates an independent counter for each Foundry session ID."""
+
+
+class CostControlThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The interpretation of a notification or blocking-action threshold."""
+
+    PERCENTAGE = "Percentage"
+    """The threshold is a percentage of the configured budget amount."""
+    ABSOLUTE = "Absolute"
+    """The threshold is expressed in United States dollars or tokens, according to the budget
+    category."""
+
+
+class CostControlTimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Calendar-aligned UTC renewal intervals."""
+
+    DAILY = "Daily"
+    """Renews each day at 00:00 UTC."""
+    WEEKLY = "Weekly"
+    """Renews each Monday at 00:00 UTC."""
+    MONTHLY = "Monthly"
+    """Renews on the first day of each month at 00:00 UTC."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -892,7 +1050,7 @@ class NspAccessRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -998,6 +1156,108 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class RaiAcsAnnotatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible kinds of Agent Control Specification annotator dispatchers."""
+
+    CLASSIFIER = "classifier"
+    """Obtains annotations from a classifier dispatcher."""
+    LLM = "llm"
+    """Obtains annotations from a language-model dispatcher."""
+    ENDPOINT = "endpoint"
+    """Obtains annotations from an external endpoint dispatcher."""
+
+
+class RaiAcsHarmCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Harm categories supported by the Unified Moderate text profile."""
+
+    HATE = "Hate"
+    """Hate-related content."""
+    SELF_HARM = "SelfHarm"
+    """Self-harm-related content."""
+    SEXUAL = "Sexual"
+    """Sexual content."""
+    VIOLENCE = "Violence"
+    """Violent content."""
+    PROMPT_INJECTION = "PromptInjection"
+    """Prompt-injection content."""
+    PROTECTED_MATERIAL_TEXT = "ProtectedMaterialText"
+    """Protected text material."""
+    PROTECTED_MATERIAL_CODE = "ProtectedMaterialCode"
+    """Protected source-code material."""
+
+
+class RaiAcsModerationSubjectFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The representation sent to Azure AI Content Safety moderation capabilities."""
+
+    TEXT = "text"
+    """Moderates the selected policy target as text."""
+    CANONICAL_JSON = "canonical_json"
+    """Moderates the canonical JSON representation of the selected policy target."""
+
+
+class RaiAcsPolicyDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy language supported by the Azure AI Content Safety Unified Moderate host profile."""
+
+    REGO = "rego"
+    """A policy evaluated by Rego."""
+
+
+class RaiAcsPolicyTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical policy targets supported by the Azure AI Content Safety Unified Moderate host
+    profile.
+    """
+
+    AGENT_INITIALIZATION = "$snap.agent_init"
+    """Selects the agent initialization payload."""
+    INPUT = "$snap.input"
+    """Selects the incoming user input."""
+    MODEL_MESSAGES = "$snap.messages"
+    """Selects the model messages proposed for dispatch."""
+    MODEL_RESPONSE = "$snap.response"
+    """Selects the completed model response."""
+    OUTPUT = "$snap.output"
+    """Selects the assistant output."""
+    TOOL_ARGUMENTS = "$snap.tool_call.args"
+    """Selects tool-call arguments."""
+    TOOL_RESULT = "$snap.tool_result.value"
+    """Selects a tool result."""
+    AGENT_SUMMARY = "$snap.summary"
+    """Selects the final agent execution summary."""
+
+
+class RaiAcsPolicyTargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Canonical target kinds supported by the Azure AI Content Safety Unified Moderate host profile."""
+
+    AGENT_INITIALIZATION = "agent_init"
+    """The target contains agent initialization state."""
+    USER_INPUT = "user_input"
+    """The target contains user input."""
+    MODEL_MESSAGES = "messages"
+    """The target contains model messages."""
+    MODEL_RESPONSE = "model_response"
+    """The target contains a completed model response."""
+    ASSISTANT_OUTPUT = "assistant_output"
+    """The target contains assistant output."""
+    TOOL_ARGUMENTS = "tool_args"
+    """The target contains tool-call arguments."""
+    TOOL_RESULT = "tool_result"
+    """The target contains a tool result."""
+    AGENT_SUMMARY = "agent_summary"
+    """The target contains the final agent execution summary."""
+
+
+class RaiAcsToolNameSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Snapshot paths for selecting a tool catalog entry. The listed values are recognized by the
+    Azure AI Content Safety Unified Moderate host profile; other values are allowed for forward
+    compatibility.
+    """
+
+    TOOL_CALL_NAME = "$snap.tool_call.name"
+    """Selects the tool-call name from the canonical snapshot root."""
+    TOOL_CALL_NAME_ALIAS = "$.tool_call.name"
+    """Selects the tool-call name through the snapshot-root alias."""
+
+
 class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The action types to apply to the content filters."""
 
@@ -1089,6 +1349,23 @@ class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PRE_RUN."""
     POST_RUN = "PostRun"
     """POST_RUN."""
+    AGENT_STARTUP = "AgentStartup"
+    """Content evaluated when an agent execution session starts."""
+    PRE_MODEL_CALL = "PreModelCall"
+    """Content evaluated before a model call is made."""
+    POST_MODEL_CALL = "PostModelCall"
+    """Content evaluated after a model call returns."""
+    AGENT_SHUTDOWN = "AgentShutdown"
+    """Content evaluated when an agent execution session shuts down."""
+
+
+class RaiPolicyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The public representation used by a RAI policy body."""
+
+    CONTENT_FILTERS = "ContentFilters"
+    """A legacy content-filter policy."""
+    ACS = "ACS"
+    """An Agent Control Specification policy."""
 
 
 class RaiPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1114,6 +1391,15 @@ class RaiPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """USER_MANAGED."""
     SYSTEM_MANAGED = "SystemManaged"
     """SYSTEM_MANAGED."""
+
+
+class RaiRegoEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport encoding of reusable Rego source."""
+
+    NONE = "None"
+    """The Rego property contains plain UTF-8 source."""
+    BASE64 = "Base64"
+    """The Rego property contains Base64-encoded UTF-8 source."""
 
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1269,6 +1555,78 @@ class TierUpgradePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NO_AUTO_UPGRADE."""
 
 
+class ToolControlsDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the default action for a tool that is not listed explicitly."""
+
+    DENY = "Deny"
+    """Tools that are not listed explicitly are denied."""
+
+
+class ToolControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The canonical tool type supported by Foundry agents. Additional tool types may be specified as
+    strings.
+    """
+
+    A2_A = "a2a"
+    """Agent-to-agent tool."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """Azure AI Search tool."""
+    AZURE_FUNCTION = "azure_function"
+    """Azure Function tool."""
+    BING_GROUNDING = "bing_grounding"
+    """Grounding with Bing Search tool."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """Browser automation tool."""
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    """Capture structured outputs tool."""
+    OPENAPI = "openapi"
+    """OpenAPI tool."""
+    FUNCTION = "function"
+    """Function tool."""
+    FILE_SEARCH = "file_search"
+    """File search tool."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """Computer use tool."""
+    WEB_SEARCH = "web_search"
+    """Web search tool."""
+    MCP = "mcp"
+    """Model Context Protocol (MCP) tool."""
+    CODE_INTERPRETER = "code_interpreter"
+    """Code interpreter tool."""
+    IMAGE_GENERATION = "image_generation"
+    """Image generation tool."""
+    LOCAL_SHELL = "local_shell"
+    """Local shell tool."""
+    SHELL = "shell"
+    """Shell tool."""
+    CUSTOM = "custom"
+    """Custom tool."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """Web search preview tool."""
+    APPLY_PATCH = "apply_patch"
+    """Apply patch tool."""
+    A2_A_PREVIEW = "a2a_preview"
+    """Agent-to-agent preview tool."""
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
+    """Grounding with Bing Custom Search preview tool."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """Browser automation preview tool."""
+    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+    """Fabric data agent preview tool."""
+    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
+    """SharePoint grounding preview tool."""
+    MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+    """Memory search preview tool."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """Work IQ preview tool."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """Fabric IQ preview tool."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """Toolbox search preview tool."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """Web IQ preview tool."""
+
+
 class TrafficRoutingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Traffic routing protocol, used to distribute an application's inbound traffic to its
     deployments.
@@ -1276,6 +1634,13 @@ class TrafficRoutingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """Percentage based routing."""
+
+
+class TrustedCertificateSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Azure resource containing trusted CA certificate bundles."""
+
+    AZURE_KEY_VAULT = "AzureKeyVault"
+    """Azure Key Vault secrets containing CA certificates or certificate bundles."""
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1313,3 +1678,41 @@ class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Regular VM priority."""
     SPOT = "Spot"
     """Spot VM priority."""
+
+
+class WorkbenchProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of a workbench resource, independent of runtime lifecycle status."""
+
+    CREATING = "Creating"
+    """The workbench resource is being created."""
+    SUCCEEDED = "Succeeded"
+    """The workbench resource has been provisioned."""
+    FAILED = "Failed"
+    """Provisioning of the workbench resource failed."""
+    CANCELED = "Canceled"
+    """Provisioning of the workbench resource was canceled."""
+
+
+class WorkbenchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Runtime lifecycle status of a workbench."""
+
+    UNKNOWN = "Unknown"
+    """The runtime status is unknown."""
+    CREATING = "Creating"
+    """The runtime is being created."""
+    STARTING = "Starting"
+    """The runtime is starting."""
+    RUNNING = "Running"
+    """The runtime is running."""
+    STOPPING = "Stopping"
+    """The runtime is stopping."""
+    STOPPED = "Stopped"
+    """The runtime is stopped."""
+    RESTARTING = "Restarting"
+    """The runtime is restarting."""
+    UPDATING = "Updating"
+    """The runtime is being updated."""
+    DELETING = "Deleting"
+    """The runtime is being deleted."""
+    FAILED = "Failed"
+    """The runtime has failed."""

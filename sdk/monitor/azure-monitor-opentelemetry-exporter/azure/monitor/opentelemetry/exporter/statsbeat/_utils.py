@@ -5,6 +5,7 @@ import logging
 import json
 from collections.abc import Iterable  # pylint: disable=import-error
 from typing import Optional, Dict, List
+from urllib.parse import urlparse
 from opentelemetry.metrics import CallbackOptions, Observation
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -32,11 +33,17 @@ def _get_stats_connection_string(endpoint: str) -> str:
     cs_env = os.environ.get(_APPLICATIONINSIGHTS_STATS_CONNECTION_STRING_ENV_NAME)
     if cs_env:
         return cs_env
-    for endpoint_location in _EU_ENDPOINTS:
-        if endpoint_location in endpoint:
-            # Use statsbeat EU endpoint if user is in EU region
-            return _DEFAULT_EU_STATS_CONNECTION_STRING
+    if _get_region_from_endpoint(endpoint) in _EU_ENDPOINTS:
+        return _DEFAULT_EU_STATS_CONNECTION_STRING
     return _DEFAULT_NON_EU_STATS_CONNECTION_STRING
+
+
+def _get_region_from_endpoint(endpoint: str) -> Optional[str]:
+    try:
+        hostname = urlparse(endpoint).hostname
+    except ValueError:
+        return None
+    return hostname.split(".")[0].split("-")[0] if hostname else None
 
 
 # seconds

@@ -32,6 +32,7 @@ from ._models import (
 )
 from ._shared.base_client import parse_connection_str, parse_query, TransportWrapper, StorageAccountHostsMixin
 from ._serialize import convert_dfs_url_to_blob_url, get_api_version
+from ._session import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -72,6 +73,19 @@ class FileSystemClient(StorageAccountHostsMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -119,7 +133,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
-
+        _configure_session(kwargs)
         super(FileSystemClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs
         )
@@ -372,6 +386,16 @@ class FileSystemClient(StorageAccountHostsMixin):
 
         The file system and any files contained within it are later deleted during garbage collection.
         If the file system is not found, a ResourceNotFoundError will be raised.
+
+        When a file system is deleted, a file system with the same name can't be created
+        for at least 30 seconds.  The file system might not be available for more than
+        30 seconds if the service is still processing the request.  While the file system
+        is being deleted, attempts to create a file system of the same name fail with
+        status code 409 (Conflict).  The service indicates that the file system is being
+        deleted.  Operations on files within the file system, including reads and writes,
+        may continue to succeed for up to 30 seconds after the delete request is
+        accepted.  After this period, all operations on the file system and its files
+        fail with status code 404 (Not Found).
 
         :keyword str or ~azure.storage.filedatalake.DataLakeLeaseClient lease:
             If specified, delete_file_system only succeeds if the

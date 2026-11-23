@@ -251,10 +251,11 @@ def start_span(
         if model:
             span.add_attribute(GEN_AI_REQUEST_MODEL, model)
 
-        if temperature:
+        # 0 is a valid value for these parameters, so only skip them when they are not set.
+        if temperature is not None:
             span.add_attribute(GEN_AI_REQUEST_TEMPERATURE, str(temperature))
 
-        if top_p:
+        if top_p is not None:
             span.add_attribute(GEN_AI_REQUEST_TOP_P, str(top_p))
 
         if max_prompt_tokens:

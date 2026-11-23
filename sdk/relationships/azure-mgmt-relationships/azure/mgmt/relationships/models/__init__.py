@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 
 from ._models import (  # type: ignore
+    ContainsRelationship,
+    ContainsRelationshipProperties,
     DependencyOfRelationship,
     DependencyOfRelationshipProperties,
     ErrorAdditionalInfo,
@@ -26,7 +28,7 @@ from ._models import (  # type: ignore
     RelationshipOriginInformation,
     Resource,
     ServiceGroupMemberRelationship,
-    ServiceGroupMemberRelationshipProperties,
+    ServiceGroupMemberRelationshipPropertiesV2,
     SystemData,
 )
 
@@ -42,6 +44,8 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ContainsRelationship",
+    "ContainsRelationshipProperties",
     "DependencyOfRelationship",
     "DependencyOfRelationshipProperties",
     "ErrorAdditionalInfo",
@@ -54,7 +58,7 @@ __all__ = [
     "RelationshipOriginInformation",
     "Resource",
     "ServiceGroupMemberRelationship",
-    "ServiceGroupMemberRelationshipProperties",
+    "ServiceGroupMemberRelationshipPropertiesV2",
     "SystemData",
     "ActionType",
     "CreatedByType",

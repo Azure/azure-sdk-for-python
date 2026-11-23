@@ -65,8 +65,20 @@ app = ResponsesAgentServerHost(
 )
 ```
 
-Without `resilient_background=True`, a crash mid-handler leaves the
-response in the "crash-failed" state (the next process lifetime marks
-it `failed` instead of re-invoking the handler). Without
-`steerable_conversations=True`, concurrent multi-turn requests for the
-same conversation return `409 conversation_locked` instead of queueing.
+Either option initializes the Responses task runtime automatically; no
+`set_resilient_tasks_enabled` call is needed. That switch controls Invocations,
+not Responses.
+
+With `steerable_conversations=True` and `resilient_background=False`, steering
+uses the normal persistent task backend. On restart, an interrupted stored
+response is marked `failed` without re-invoking its handler; persisted queued
+turns may still be promoted and executed.
+
+With both options `False`, there is no Responses task runtime or task-based
+crash cleanup. An interrupted stored response can remain `in_progress` after a
+hard crash. Graceful shutdown still attempts to persist a failed terminal.
+
+When the task runtime is active, concurrent requests for the same explicit
+conversation queue with steering enabled or receive `409 conversation_locked`
+with steering disabled. Without a task runtime, overlapping requests execute
+independently rather than acquiring a task-backed conversation lock.

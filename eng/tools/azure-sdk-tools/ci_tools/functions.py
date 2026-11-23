@@ -65,9 +65,12 @@ MANAGEMENT_PACKAGES_FILTER_EXCLUSIONS = [
 # We need to actively prevent ourselves from discovering the package in its old location. To do that we:
 #  - Add the path to this list, any entrypoints that use discover_targeted_packages should exclude these paths
 #  - This will also affect usage of get_package_properties.py (Save-Package-Properties stage of CI), so please be aware of this!
-PATHS_EXCLUDED_FROM_DISCOVERY = []
+PATHS_EXCLUDED_FROM_DISCOVERY = [
+    "sdk/textanalytics/azure-ai-textanalytics",
+]
 
-TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7"}
+# TODO: Remove the azure-identity-broker override once pymsalruntime publishes cp315 wheels.
+TEST_COMPATIBILITY_MAP = {"azure-ai-ml": ">=3.7", "azure-identity-broker": ">=3.10,<3.15"}
 TEST_PYTHON_DISTRO_INCOMPATIBILITY_MAP = {}
 
 omit_regression = (
@@ -322,7 +325,7 @@ def update_requires(setup_path, requires_dict):
         contents = setup_file.readlines()
 
     # find and replace all existing package requirement with new requirement
-    for i in range(0, len(contents) - 1):
+    for i in range(len(contents)):
         keys = [k for k in requires_dict.keys() if k in contents[i]]
         for key in keys:
             contents[i] = contents[i].replace(key, requires_dict[key])
@@ -422,16 +425,16 @@ def process_requires(setup_py_path: str, is_dev_build: bool = False):
     """
 
     pkg_details = ParsedSetup.from_path(setup_py_path)
-    azure_requirements = [Requirement(r) for r in pkg_details.requires if r.startswith("azure")]
+    azure_requirements = [r for r in pkg_details.requires if r.startswith("azure")]
 
     # Find package requirements that are not available on PyPI
     requirement_to_update = {}
-    for req in azure_requirements:
+    for old_req in azure_requirements:
+        req = Requirement(old_req)
         pkg_name = req.name
         spec = SpecifierSet(str(req).replace(pkg_name, ""))
 
         if not is_required_version_on_pypi(pkg_name, spec) or is_dev_build:
-            old_req = str(req)
             version = get_version_from_repo(pkg_name)
             base_version = get_base_version(pkg_name)
             logging.info("Updating version {0} in requirement {1} to dev build version".format(version, old_req))

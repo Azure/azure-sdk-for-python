@@ -35,6 +35,12 @@ def main():
         resource_group_name="TestingMetricsScaleSet",
         autoscale_setting_name="MySetting",
         parameters={
+            "identity": {
+                "type": "UserAssigned",
+                "userAssignedIdentities": {
+                    "/subscriptions/b67f7fec-69fc-4974-9099-a26bd6ffeda3/resourceGroups/TestingMetricsScaleSet/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myIdentity": {}
+                },
+            },
             "location": "West US",
             "properties": {
                 "enabled": True,
@@ -157,6 +163,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2022-10-01/createOrUpdateAutoscaleSetting.json
+# x-ms-original-file: 2025-09-01-preview/createOrUpdateAutoscaleSetting.json
 if __name__ == "__main__":
     main()

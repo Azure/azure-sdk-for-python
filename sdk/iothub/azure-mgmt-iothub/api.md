@@ -854,10 +854,10 @@ namespace azure.mgmt.iothub.models
 
     class azure.mgmt.iothub.models.CertificateProperties(_Model):
         certificate: Optional[str]
+        certificate_authority_resource_id: Optional[str]
         created: Optional[datetime]
         expiry: Optional[datetime]
         is_verified: Optional[bool]
-        policy_resource_id: Optional[str]
         subject: Optional[str]
         thumbprint: Optional[str]
         updated: Optional[datetime]
@@ -867,8 +867,8 @@ namespace azure.mgmt.iothub.models
                 self, 
                 *, 
                 certificate: Optional[str] = ..., 
-                is_verified: Optional[bool] = ..., 
-                policy_resource_id: Optional[str] = ...
+                certificate_authority_resource_id: Optional[str] = ..., 
+                is_verified: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -877,10 +877,10 @@ namespace azure.mgmt.iothub.models
 
     class azure.mgmt.iothub.models.CertificatePropertiesWithNonce(_Model):
         certificate: Optional[str]
+        certificate_authority_resource_id: Optional[str]
         created: Optional[datetime]
         expiry: Optional[datetime]
         is_verified: Optional[bool]
-        policy_resource_id: Optional[str]
         subject: Optional[str]
         thumbprint: Optional[str]
         updated: Optional[datetime]
@@ -890,7 +890,7 @@ namespace azure.mgmt.iothub.models
         def __init__(
                 self, 
                 *, 
-                policy_resource_id: Optional[str] = ...
+                certificate_authority_resource_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -960,35 +960,57 @@ namespace azure.mgmt.iothub.models
 
 
     class azure.mgmt.iothub.models.DeviceRegistry(_Model):
-        identity_resource_id: Optional[str]
+        data_plane_host_name: Optional[str]
+        identity: Optional[DeviceRegistryIdentity]
+        linking_properties: Optional[DeviceRegistryLinkingProperties]
         namespace_resource_id: Optional[str]
+        namespace_uuid: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                identity_resource_id: Optional[str] = ..., 
-                namespace_resource_id: Optional[str] = ...
+                data_plane_host_name: Optional[str] = ..., 
+                identity: Optional[DeviceRegistryIdentity] = ..., 
+                namespace_resource_id: Optional[str] = ..., 
+                namespace_uuid: Optional[str] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.iothub.models.EncryptionPropertiesDescription(_Model):
-        key_source: Optional[str]
-        key_vault_properties: Optional[list[KeyVaultKeyProperties]]
+    class azure.mgmt.iothub.models.DeviceRegistryIdentity(_Model):
+        type: Optional[Union[str, DeviceRegistryIdentityType]]
+        user_assigned_identity: Optional[str]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                key_source: Optional[str] = ..., 
-                key_vault_properties: Optional[list[KeyVaultKeyProperties]] = ...
+                type: Optional[Union[str, DeviceRegistryIdentityType]] = ..., 
+                user_assigned_identity: Optional[str] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.iothub.models.DeviceRegistryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        USER_ASSIGNED = "UserAssigned"
+
+
+    class azure.mgmt.iothub.models.DeviceRegistryLinkingProperties(_Model):
+        error: Optional[ErrorDetails]
+        state: Optional[Union[str, DeviceRegistryLinkingState]]
+
+
+    class azure.mgmt.iothub.models.DeviceRegistryLinkingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FAILED = "Failed"
+        IN_PROGRESS = "InProgress"
+        ORPHANED = "Orphaned"
+        SUCCESS = "Success"
 
 
     class azure.mgmt.iothub.models.EndpointHealthData(_Model):
@@ -1163,7 +1185,7 @@ namespace azure.mgmt.iothub.models
         endpoint_names: list[str]
         is_enabled: bool
         name: Optional[str]
-        source: Union[str, RoutingSource]
+        source: Union[str, FallbackRouteSource]
 
         @overload
         def __init__(
@@ -1173,11 +1195,15 @@ namespace azure.mgmt.iothub.models
                 endpoint_names: list[str], 
                 is_enabled: bool, 
                 name: Optional[str] = ..., 
-                source: Union[str, RoutingSource]
+                source: Union[str, FallbackRouteSource]
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.iothub.models.FallbackRouteSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEVICE_MESSAGES = "DeviceMessages"
 
 
     class azure.mgmt.iothub.models.FeedbackProperties(_Model):
@@ -1359,19 +1385,16 @@ namespace azure.mgmt.iothub.models
         comments: Optional[str]
         device_host_name: Optional[str]
         device_registry: Optional[DeviceRegistry]
-        device_streams: Optional[IotHubPropertiesDeviceStreams]
         disable_device_sas: Optional[bool]
         disable_local_auth: Optional[bool]
         disable_module_sas: Optional[bool]
         enable_data_residency: Optional[bool]
         enable_file_upload_notifications: Optional[bool]
-        encryption: Optional[EncryptionPropertiesDescription]
         event_hub_endpoints: Optional[dict[str, EventHubProperties]]
         features: Optional[Union[str, Capabilities]]
         host_name: Optional[str]
         iot_hub_details: Optional[IotHubDetails]
         ip_filter_rules: Optional[list[IpFilterRule]]
-        ip_version: Optional[Union[str, IpVersion]]
         locations: Optional[list[IotHubLocationDescription]]
         messaging_endpoints: Optional[dict[str, MessagingEndpointProperties]]
         min_tls_version: Optional[str]
@@ -1380,7 +1403,6 @@ namespace azure.mgmt.iothub.models
         provisioning_state: Optional[str]
         public_network_access: Optional[Union[str, PublicNetworkAccess]]
         restrict_outbound_network_access: Optional[bool]
-        root_certificate: Optional[RootCertificateProperties]
         routing: Optional[RoutingProperties]
         service_host_name: Optional[str]
         state: Optional[str]
@@ -1394,41 +1416,22 @@ namespace azure.mgmt.iothub.models
                 authorization_policies: Optional[list[SharedAccessSignatureAuthorizationRule]] = ..., 
                 cloud_to_device: Optional[CloudToDeviceProperties] = ..., 
                 comments: Optional[str] = ..., 
-                device_registry: Optional[DeviceRegistry] = ..., 
-                device_streams: Optional[IotHubPropertiesDeviceStreams] = ..., 
                 disable_device_sas: Optional[bool] = ..., 
                 disable_local_auth: Optional[bool] = ..., 
                 disable_module_sas: Optional[bool] = ..., 
                 enable_data_residency: Optional[bool] = ..., 
                 enable_file_upload_notifications: Optional[bool] = ..., 
-                encryption: Optional[EncryptionPropertiesDescription] = ..., 
                 event_hub_endpoints: Optional[dict[str, EventHubProperties]] = ..., 
                 features: Optional[Union[str, Capabilities]] = ..., 
                 ip_filter_rules: Optional[list[IpFilterRule]] = ..., 
-                ip_version: Optional[Union[str, IpVersion]] = ..., 
                 messaging_endpoints: Optional[dict[str, MessagingEndpointProperties]] = ..., 
                 min_tls_version: Optional[str] = ..., 
                 network_rule_sets: Optional[NetworkRuleSetProperties] = ..., 
                 private_endpoint_connections: Optional[list[PrivateEndpointConnection]] = ..., 
                 public_network_access: Optional[Union[str, PublicNetworkAccess]] = ..., 
                 restrict_outbound_network_access: Optional[bool] = ..., 
-                root_certificate: Optional[RootCertificateProperties] = ..., 
                 routing: Optional[RoutingProperties] = ..., 
                 storage_endpoints: Optional[dict[str, StorageEndpointProperties]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.iothub.models.IotHubPropertiesDeviceStreams(_Model):
-        streaming_endpoints: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                streaming_endpoints: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -1525,12 +1528,6 @@ namespace azure.mgmt.iothub.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.iothub.models.IpVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        IPV4 = "ipv4"
-        IPV4_IPV6 = "ipv4ipv6"
-        IPV6 = "ipv6"
-
-
     class azure.mgmt.iothub.models.JobResponse(_Model):
         end_time_utc: Optional[datetime]
         failure_reason: Optional[str]
@@ -1562,22 +1559,6 @@ namespace azure.mgmt.iothub.models
         UNKNOWN = "unknown"
         UPDATE_DEVICE_CONFIGURATION = "updateDeviceConfiguration"
         WRITE_DEVICE_PROPERTIES = "writeDeviceProperties"
-
-
-    class azure.mgmt.iothub.models.KeyVaultKeyProperties(_Model):
-        identity: Optional[ManagedIdentity]
-        key_identifier: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                identity: Optional[ManagedIdentity] = ..., 
-                key_identifier: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.iothub.models.ManagedIdentity(_Model):
@@ -1825,21 +1806,6 @@ namespace azure.mgmt.iothub.models
         SYSTEM_ASSIGNED = "SystemAssigned"
         SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
         USER_ASSIGNED = "UserAssigned"
-
-
-    class azure.mgmt.iothub.models.RootCertificateProperties(_Model):
-        enable_root_certificate_v2: Optional[bool]
-        last_updated_time_utc: Optional[datetime]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_root_certificate_v2: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.iothub.models.RouteCompilationError(_Model):
@@ -2142,9 +2108,7 @@ namespace azure.mgmt.iothub.models
         DEVICE_JOB_LIFECYCLE_EVENTS = "DeviceJobLifecycleEvents"
         DEVICE_LIFECYCLE_EVENTS = "DeviceLifecycleEvents"
         DEVICE_MESSAGES = "DeviceMessages"
-        DIGITAL_TWIN_CHANGE_EVENTS = "DigitalTwinChangeEvents"
         INVALID = "Invalid"
-        MQTT_BROKER_MESSAGES = "MqttBrokerMessages"
         TWIN_CHANGE_EVENTS = "TwinChangeEvents"
 
 
@@ -3154,18 +3118,17 @@ namespace azure.mgmt.iothub.types
         key "principalId": str
         key "tenantId": str
         key "type": Union[str, ResourceIdentityType]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, ArmUserIdentity]
-        user_assigned_identities: dict[str, ArmUserIdentity]
 
 
     class azure.mgmt.iothub.types.ArmUserIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.iothub.types.CertificateDescription(ProxyResource):
@@ -3179,24 +3142,24 @@ namespace azure.mgmt.iothub.types
         id: str
         name: str
         properties: CertificateProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iothub.types.CertificateProperties(TypedDict, total=False):
         key "certificate": str
+        key "certificateAuthorityResourceId": str
         key "created": str
         key "expiry": str
         key "isVerified": bool
-        key "policyResourceId": str
         key "subject": str
         key "thumbprint": str
         key "updated": str
         certificate: str
+        certificateAuthorityResourceId: str
         created: str
         expiry: str
-        is_verified: bool
-        policy_resource_id: str
+        isVerified: bool
         subject: str
         thumbprint: str
         updated: str
@@ -3211,32 +3174,56 @@ namespace azure.mgmt.iothub.types
         key "defaultTtlAsIso8601": str
         key "feedback": ForwardRef('FeedbackProperties', module='types')
         key "maxDeliveryCount": int
-        default_ttl_as_iso8601: str
+        defaultTtlAsIso8601: str
         feedback: FeedbackProperties
-        max_delivery_count: int
+        maxDeliveryCount: int
 
 
     class azure.mgmt.iothub.types.DeviceRegistry(TypedDict, total=False):
-        key "identityResourceId": str
+        key "dataPlaneHostName": str
+        key "identity": ForwardRef('DeviceRegistryIdentity', module='types')
+        key "linkingProperties": ForwardRef('DeviceRegistryLinkingProperties', module='types')
         key "namespaceResourceId": str
-        identity_resource_id: str
-        namespace_resource_id: str
+        key "namespaceUuid": str
+        dataPlaneHostName: str
+        identity: DeviceRegistryIdentity
+        linkingProperties: DeviceRegistryLinkingProperties
+        namespaceResourceId: str
+        namespaceUuid: str
 
 
-    class azure.mgmt.iothub.types.EncryptionPropertiesDescription(TypedDict, total=False):
-        key "keySource": str
-        keyVaultProperties: list[KeyVaultKeyProperties]
-        key_source: str
-        key_vault_properties: list[KeyVaultKeyProperties]
+    class azure.mgmt.iothub.types.DeviceRegistryIdentity(TypedDict, total=False):
+        key "type": Union[str, DeviceRegistryIdentityType]
+        key "userAssignedIdentity": str
+        type: Union[str, DeviceRegistryIdentityType]
+        userAssignedIdentity: str
+
+
+    class azure.mgmt.iothub.types.DeviceRegistryLinkingProperties(TypedDict, total=False):
+        key "error": ForwardRef('ErrorDetails', module='types')
+        key "state": Union[str, DeviceRegistryLinkingState]
+        error: ErrorDetails
+        state: Union[str, DeviceRegistryLinkingState]
 
 
     class azure.mgmt.iothub.types.EnrichmentProperties(TypedDict, total=False):
         key "endpointNames": Required[list[str]]
         key "key": Required[str]
         key "value": Required[str]
-        endpoint_names: list[str]
+        endpointNames: list[str]
         key: str
         value: str
+
+
+    class azure.mgmt.iothub.types.ErrorDetails(TypedDict, total=False):
+        key "code": str
+        key "details": str
+        key "httpStatusCode": str
+        key "message": str
+        code: str
+        details: str
+        httpStatusCode: str
+        message: str
 
 
     class azure.mgmt.iothub.types.EventHubConsumerGroupBodyDescription(TypedDict, total=False):
@@ -3255,11 +3242,10 @@ namespace azure.mgmt.iothub.types
         key "path": str
         key "retentionTimeInDays": int
         endpoint: str
+        partitionCount: int
         partitionIds: list[str]
-        partition_count: int
-        partition_ids: list[str]
         path: str
-        retention_time_in_days: int
+        retentionTimeInDays: int
 
 
     class azure.mgmt.iothub.types.ExportDevicesRequest(TypedDict, total=False):
@@ -3270,18 +3256,18 @@ namespace azure.mgmt.iothub.types
         key "exportBlobName": str
         key "identity": ForwardRef('ManagedIdentity', module='types')
         key "includeConfigurations": bool
-        authentication_type: Union[str, AuthenticationType]
-        configurations_blob_name: str
-        exclude_keys: bool
-        export_blob_container_uri: str
-        export_blob_name: str
+        authenticationType: Union[str, AuthenticationType]
+        configurationsBlobName: str
+        excludeKeys: bool
+        exportBlobContainerUri: str
+        exportBlobName: str
         identity: ManagedIdentity
-        include_configurations: bool
+        includeConfigurations: bool
 
 
     class azure.mgmt.iothub.types.FailoverInput(TypedDict, total=False):
         key "failoverRegion": Required[str]
-        failover_region: str
+        failoverRegion: str
 
 
     class azure.mgmt.iothub.types.FallbackRouteProperties(TypedDict, total=False):
@@ -3289,21 +3275,21 @@ namespace azure.mgmt.iothub.types
         key "endpointNames": Required[list[str]]
         key "isEnabled": Required[bool]
         key "name": str
-        key "source": Required[Union[str, RoutingSource]]
+        key "source": Required[Union[str, FallbackRouteSource]]
         condition: str
-        endpoint_names: list[str]
-        is_enabled: bool
+        endpointNames: list[str]
+        isEnabled: bool
         name: str
-        source: Union[str, RoutingSource]
+        source: Union[str, FallbackRouteSource]
 
 
     class azure.mgmt.iothub.types.FeedbackProperties(TypedDict, total=False):
         key "lockDurationAsIso8601": str
         key "maxDeliveryCount": int
         key "ttlAsIso8601": str
-        lock_duration_as_iso8601: str
-        max_delivery_count: int
-        ttl_as_iso8601: str
+        lockDurationAsIso8601: str
+        maxDeliveryCount: int
+        ttlAsIso8601: str
 
 
     class azure.mgmt.iothub.types.ImportDevicesRequest(TypedDict, total=False):
@@ -3315,14 +3301,14 @@ namespace azure.mgmt.iothub.types
         key "inputBlobName": str
         key "outputBlobContainerUri": Required[str]
         key "outputBlobName": str
-        authentication_type: Union[str, AuthenticationType]
-        configurations_blob_name: str
+        authenticationType: Union[str, AuthenticationType]
+        configurationsBlobName: str
         identity: ManagedIdentity
-        include_configurations: bool
-        input_blob_container_uri: str
-        input_blob_name: str
-        output_blob_container_uri: str
-        output_blob_name: str
+        includeConfigurations: bool
+        inputBlobContainerUri: str
+        inputBlobName: str
+        outputBlobContainerUri: str
+        outputBlobName: str
 
 
     class azure.mgmt.iothub.types.IotHubDescription(TrackedResource):
@@ -3342,14 +3328,14 @@ namespace azure.mgmt.iothub.types
         name: str
         properties: IotHubProperties
         sku: IotHubSkuInfo
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
 
     class azure.mgmt.iothub.types.IotHubDetails(TypedDict, total=False):
         key "gatewayVersion": Union[str, GatewayVersion]
-        gateway_version: Union[str, GatewayVersion]
+        gatewayVersion: Union[str, GatewayVersion]
 
 
     class azure.mgmt.iothub.types.IotHubLocationDescription(TypedDict, total=False):
@@ -3364,70 +3350,50 @@ namespace azure.mgmt.iothub.types
         key "comments": str
         key "deviceHostName": str
         key "deviceRegistry": ForwardRef('DeviceRegistry', module='types')
-        key "deviceStreams": ForwardRef('IotHubPropertiesDeviceStreams', module='types')
         key "disableDeviceSAS": bool
         key "disableLocalAuth": bool
         key "disableModuleSAS": bool
         key "enableDataResidency": bool
         key "enableFileUploadNotifications": bool
-        key "encryption": ForwardRef('EncryptionPropertiesDescription', module='types')
         key "features": Union[str, Capabilities]
         key "hostName": str
         key "iotHubDetails": ForwardRef('IotHubDetails', module='types')
-        key "ipVersion": Union[str, IpVersion]
         key "minTlsVersion": str
         key "networkRuleSets": ForwardRef('NetworkRuleSetProperties', module='types')
         key "provisioningState": str
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "restrictOutboundNetworkAccess": bool
-        key "rootCertificate": ForwardRef('RootCertificateProperties', module='types')
         key "routing": ForwardRef('RoutingProperties', module='types')
         key "serviceHostName": str
         key "state": str
         allowedFqdnList: list[str]
-        allowed_fqdn_list: list[str]
         authorizationPolicies: list[SharedAccessSignatureAuthorizationRule]
-        authorization_policies: list[SharedAccessSignatureAuthorizationRule]
-        cloud_to_device: CloudToDeviceProperties
+        cloudToDevice: CloudToDeviceProperties
         comments: str
-        device_host_name: str
-        device_registry: DeviceRegistry
-        device_streams: IotHubPropertiesDeviceStreams
-        disable_device_sas: bool
-        disable_local_auth: bool
-        disable_module_sas: bool
-        enable_data_residency: bool
-        enable_file_upload_notifications: bool
-        encryption: EncryptionPropertiesDescription
+        deviceHostName: str
+        deviceRegistry: DeviceRegistry
+        disableDeviceSAS: bool
+        disableLocalAuth: bool
+        disableModuleSAS: bool
+        enableDataResidency: bool
+        enableFileUploadNotifications: bool
         eventHubEndpoints: dict[str, EventHubProperties]
-        event_hub_endpoints: dict[str, EventHubProperties]
         features: Union[str, Capabilities]
-        host_name: str
-        iot_hub_details: IotHubDetails
+        hostName: str
+        iotHubDetails: IotHubDetails
         ipFilterRules: list[IpFilterRule]
-        ip_filter_rules: list[IpFilterRule]
-        ip_version: Union[str, IpVersion]
         locations: list[IotHubLocationDescription]
         messagingEndpoints: dict[str, MessagingEndpointProperties]
-        messaging_endpoints: dict[str, MessagingEndpointProperties]
-        min_tls_version: str
-        network_rule_sets: NetworkRuleSetProperties
+        minTlsVersion: str
+        networkRuleSets: NetworkRuleSetProperties
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccess]
-        restrict_outbound_network_access: bool
-        root_certificate: RootCertificateProperties
+        provisioningState: str
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        restrictOutboundNetworkAccess: bool
         routing: RoutingProperties
-        service_host_name: str
+        serviceHostName: str
         state: str
         storageEndpoints: dict[str, StorageEndpointProperties]
-        storage_endpoints: dict[str, StorageEndpointProperties]
-
-
-    class azure.mgmt.iothub.types.IotHubPropertiesDeviceStreams(TypedDict, total=False):
-        streamingEndpoints: list[str]
-        streaming_endpoints: list[str]
 
 
     class azure.mgmt.iothub.types.IotHubSkuInfo(TypedDict, total=False):
@@ -3444,29 +3410,22 @@ namespace azure.mgmt.iothub.types
         key "filterName": Required[str]
         key "ipMask": Required[str]
         action: Union[str, IpFilterActionType]
-        filter_name: str
-        ip_mask: str
-
-
-    class azure.mgmt.iothub.types.KeyVaultKeyProperties(TypedDict, total=False):
-        key "identity": ForwardRef('ManagedIdentity', module='types')
-        key "keyIdentifier": str
-        identity: ManagedIdentity
-        key_identifier: str
+        filterName: str
+        ipMask: str
 
 
     class azure.mgmt.iothub.types.ManagedIdentity(TypedDict, total=False):
         key "userAssignedIdentity": str
-        user_assigned_identity: str
+        userAssignedIdentity: str
 
 
     class azure.mgmt.iothub.types.MessagingEndpointProperties(TypedDict, total=False):
         key "lockDurationAsIso8601": str
         key "maxDeliveryCount": int
         key "ttlAsIso8601": str
-        lock_duration_as_iso8601: str
-        max_delivery_count: int
-        ttl_as_iso8601: str
+        lockDurationAsIso8601: str
+        maxDeliveryCount: int
+        ttlAsIso8601: str
 
 
     class azure.mgmt.iothub.types.NetworkRuleSetIpRule(TypedDict, total=False):
@@ -3474,17 +3433,17 @@ namespace azure.mgmt.iothub.types
         key "filterName": Required[str]
         key "ipMask": Required[str]
         action: Union[str, NetworkRuleIPAction]
-        filter_name: str
-        ip_mask: str
+        filterName: str
+        ipMask: str
 
 
     class azure.mgmt.iothub.types.NetworkRuleSetProperties(TypedDict, total=False):
         key "applyToBuiltInEventHubEndpoint": Required[bool]
         key "defaultAction": Union[str, DefaultAction]
         key "ipRules": Required[list[NetworkRuleSetIpRule]]
-        apply_to_built_in_event_hub_endpoint: bool
-        default_action: Union[str, DefaultAction]
-        ip_rules: list[NetworkRuleSetIpRule]
+        applyToBuiltInEventHubEndpoint: bool
+        defaultAction: Union[str, DefaultAction]
+        ipRules: list[NetworkRuleSetIpRule]
 
 
     class azure.mgmt.iothub.types.OperationInputs(TypedDict, total=False):
@@ -3506,22 +3465,22 @@ namespace azure.mgmt.iothub.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.iothub.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
         key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
 
 
     class azure.mgmt.iothub.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
         key "actionsRequired": str
         key "description": Required[str]
         key "status": Required[Union[str, PrivateLinkServiceConnectionStatus]]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateLinkServiceConnectionStatus]
 
@@ -3533,7 +3492,7 @@ namespace azure.mgmt.iothub.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -3544,15 +3503,8 @@ namespace azure.mgmt.iothub.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.iothub.types.RootCertificateProperties(TypedDict, total=False):
-        key "enableRootCertificateV2": bool
-        key "lastUpdatedTimeUtc": str
-        enable_root_certificate_v2: bool
-        last_updated_time_utc: str
 
 
     class azure.mgmt.iothub.types.RouteProperties(TypedDict, total=False):
@@ -3562,8 +3514,8 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "source": Required[Union[str, RoutingSource]]
         condition: str
-        endpoint_names: list[str]
-        is_enabled: bool
+        endpointNames: list[str]
+        isEnabled: bool
         name: str
         source: Union[str, RoutingSource]
 
@@ -3582,34 +3534,28 @@ namespace azure.mgmt.iothub.types
         key "resourceGroup": str
         key "secondaryKey": str
         key "subscriptionId": str
-        authentication_type: Union[str, AuthenticationType]
-        container_name: str
-        database_name: str
-        endpoint_uri: str
+        authenticationType: Union[str, AuthenticationType]
+        containerName: str
+        databaseName: str
+        endpointUri: str
         id: str
         identity: ManagedIdentity
         name: str
-        partition_key_name: str
-        partition_key_template: str
-        primary_key: str
-        resource_group: str
-        secondary_key: str
-        subscription_id: str
+        partitionKeyName: str
+        partitionKeyTemplate: str
+        primaryKey: str
+        resourceGroup: str
+        secondaryKey: str
+        subscriptionId: str
 
 
     class azure.mgmt.iothub.types.RoutingEndpoints(TypedDict, total=False):
         cosmosDBSqlContainers: list[RoutingCosmosDBSqlApiProperties]
-        cosmos_db_sql_containers: list[RoutingCosmosDBSqlApiProperties]
         eventHubs: list[RoutingEventHubProperties]
         eventStreams: list[RoutingEventStreamProperties]
-        event_hubs: list[RoutingEventHubProperties]
-        event_streams: list[RoutingEventStreamProperties]
         serviceBusQueues: list[RoutingServiceBusQueueEndpointProperties]
         serviceBusTopics: list[RoutingServiceBusTopicEndpointProperties]
-        service_bus_queues: list[RoutingServiceBusQueueEndpointProperties]
-        service_bus_topics: list[RoutingServiceBusTopicEndpointProperties]
         storageContainers: list[RoutingStorageContainerProperties]
-        storage_containers: list[RoutingStorageContainerProperties]
 
 
     class azure.mgmt.iothub.types.RoutingEventHubProperties(TypedDict, total=False):
@@ -3622,15 +3568,15 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "resourceGroup": str
         key "subscriptionId": str
-        authentication_type: Union[str, AuthenticationType]
-        connection_string: str
-        endpoint_uri: str
-        entity_path: str
+        authenticationType: Union[str, AuthenticationType]
+        connectionString: str
+        endpointUri: str
+        entityPath: str
         id: str
         identity: ManagedIdentity
         name: str
-        resource_group: str
-        subscription_id: str
+        resourceGroup: str
+        subscriptionId: str
 
 
     class azure.mgmt.iothub.types.RoutingEventStreamProperties(TypedDict, total=False):
@@ -3643,24 +3589,22 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "sourceId": str
         key "workspaceId": str
-        authentication_type: Union[str, EventStreamAuthenticationType]
-        endpoint_uri: str
-        entity_path: str
-        event_stream_id: str
+        authenticationType: Union[str, EventStreamAuthenticationType]
+        endpointUri: str
+        entityPath: str
+        eventStreamId: str
         id: str
         identity: ManagedIdentity
         name: str
-        source_id: str
-        workspace_id: str
+        sourceId: str
+        workspaceId: str
 
 
     class azure.mgmt.iothub.types.RoutingMessage(TypedDict, total=False):
         key "body": str
         appProperties: dict[str, str]
-        app_properties: dict[str, str]
         body: str
         systemProperties: dict[str, str]
-        system_properties: dict[str, str]
 
 
     class azure.mgmt.iothub.types.RoutingProperties(TypedDict, total=False):
@@ -3668,7 +3612,7 @@ namespace azure.mgmt.iothub.types
         key "fallbackRoute": ForwardRef('FallbackRouteProperties', module='types')
         endpoints: RoutingEndpoints
         enrichments: list[EnrichmentProperties]
-        fallback_route: FallbackRouteProperties
+        fallbackRoute: FallbackRouteProperties
         routes: list[RouteProperties]
 
 
@@ -3682,15 +3626,15 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "resourceGroup": str
         key "subscriptionId": str
-        authentication_type: Union[str, AuthenticationType]
-        connection_string: str
-        endpoint_uri: str
-        entity_path: str
+        authenticationType: Union[str, AuthenticationType]
+        connectionString: str
+        endpointUri: str
+        entityPath: str
         id: str
         identity: ManagedIdentity
         name: str
-        resource_group: str
-        subscription_id: str
+        resourceGroup: str
+        subscriptionId: str
 
 
     class azure.mgmt.iothub.types.RoutingServiceBusTopicEndpointProperties(TypedDict, total=False):
@@ -3703,15 +3647,15 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "resourceGroup": str
         key "subscriptionId": str
-        authentication_type: Union[str, AuthenticationType]
-        connection_string: str
-        endpoint_uri: str
-        entity_path: str
+        authenticationType: Union[str, AuthenticationType]
+        connectionString: str
+        endpointUri: str
+        entityPath: str
         id: str
         identity: ManagedIdentity
         name: str
-        resource_group: str
-        subscription_id: str
+        resourceGroup: str
+        subscriptionId: str
 
 
     class azure.mgmt.iothub.types.RoutingStorageContainerProperties(TypedDict, total=False):
@@ -3728,19 +3672,19 @@ namespace azure.mgmt.iothub.types
         key "name": Required[str]
         key "resourceGroup": str
         key "subscriptionId": str
-        authentication_type: Union[str, AuthenticationType]
-        batch_frequency_in_seconds: int
-        connection_string: str
-        container_name: str
+        authenticationType: Union[str, AuthenticationType]
+        batchFrequencyInSeconds: int
+        connectionString: str
+        containerName: str
         encoding: Union[str, RoutingStorageContainerPropertiesEncoding]
-        endpoint_uri: str
-        file_name_format: str
+        endpointUri: str
+        fileNameFormat: str
         id: str
         identity: ManagedIdentity
-        max_chunk_size_in_bytes: int
+        maxChunkSizeInBytes: int
         name: str
-        resource_group: str
-        subscription_id: str
+        resourceGroup: str
+        subscriptionId: str
 
 
     class azure.mgmt.iothub.types.RoutingTwin(TypedDict, total=False):
@@ -3759,10 +3703,10 @@ namespace azure.mgmt.iothub.types
         key "primaryKey": str
         key "rights": Required[Union[str, AccessRights]]
         key "secondaryKey": str
-        key_name: str
-        primary_key: str
+        keyName: str
+        primaryKey: str
         rights: Union[str, AccessRights]
-        secondary_key: str
+        secondaryKey: str
 
 
     class azure.mgmt.iothub.types.StorageEndpointProperties(TypedDict, total=False):
@@ -3771,11 +3715,11 @@ namespace azure.mgmt.iothub.types
         key "containerName": Required[str]
         key "identity": ForwardRef('ManagedIdentity', module='types')
         key "sasTtlAsIso8601": str
-        authentication_type: Union[str, AuthenticationType]
-        connection_string: str
-        container_name: str
+        authenticationType: Union[str, AuthenticationType]
+        connectionString: str
+        containerName: str
         identity: ManagedIdentity
-        sas_ttl_as_iso8601: str
+        sasTtlAsIso8601: str
 
 
     class azure.mgmt.iothub.types.SystemData(TypedDict, total=False):
@@ -3785,12 +3729,12 @@ namespace azure.mgmt.iothub.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.iothub.types.TagsResource(TypedDict, total=False):
@@ -3802,7 +3746,7 @@ namespace azure.mgmt.iothub.types
         key "routingSource": Union[str, RoutingSource]
         key "twin": ForwardRef('RoutingTwin', module='types')
         message: RoutingMessage
-        routing_source: Union[str, RoutingSource]
+        routingSource: Union[str, RoutingSource]
         twin: RoutingTwin
 
 
@@ -3824,7 +3768,7 @@ namespace azure.mgmt.iothub.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 

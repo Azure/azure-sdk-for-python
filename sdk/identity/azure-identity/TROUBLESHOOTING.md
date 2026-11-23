@@ -293,6 +293,12 @@ Get-AzAccessToken -ResourceUrl "https://management.core.windows.net"
 |---|---|---|
 |<ul><li>AADSTS700211: No matching federated identity record found for presented assertion issuer ...</li><li>AADSTS700212: No matching federated identity record found for presented assertion audience 'api://AKSIdentityBinding'.</li></ul> |`WorkloadIdentityCredential` isn't configured to use the identity binding proxy|Set the `enable_azure_proxy` keyword argument to `True` when creating `WorkloadIdentityCredential`. Note that identity binding mode isn't supported when `WorkloadIdentityCredential` is used via `DefaultAzureCredential`. `WorkloadIdentityCredential` should be used directly in this scenario.|
 
+For asynchronous identity binding requests, the credential uses aiohttp when it supports the `server_hostname` argument (aiohttp 3.9 and later). If aiohttp is missing or lacks this support, the credential falls back to Requests running in an executor thread.
+
+Identity binding mode forwards `connection_timeout`, `read_timeout`, `connection_data_block_size`, and `use_env_settings` to its transport. It continues to select its own transport and session and uses the AKS-provided SNI and CA configuration; credential constructor options for custom transports, sessions, and TLS settings do not override that configuration.
+
+Token caching uses the original Microsoft Entra endpoint, not the proxy URL. A path prefix in `AZURE_KUBERNETES_TOKEN_PROXY` therefore doesn't change the tenant used for cache entries or prevent token reuse.
+
 ## Troubleshoot `AzurePipelinesCredential` authentication issues
 
 [comment]: # ( cspell:ignore oidcrequesturi )

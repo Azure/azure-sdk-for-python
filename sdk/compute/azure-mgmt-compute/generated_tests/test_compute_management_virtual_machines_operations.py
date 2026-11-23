@@ -79,6 +79,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                     "evictionPolicy": "str",
                     "extensionsTimeBudget": "str",
+                    "flexProfile": {"preferredVMSize": "str"},
                     "hardwareProfile": {
                         "processorMode": "str",
                         "vmSize": "str",
@@ -272,6 +273,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                                 "applicationSecurityGroups": [{"id": "str"}],
                                                 "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                 "primary": bool,
+                                                "privateIPAddressPrefixLength": 0,
                                                 "privateIPAddressVersion": "str",
                                                 "publicIPAddressConfiguration": {
                                                     "name": "str",
@@ -621,6 +623,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                     "diagnosticsProfile": {"bootDiagnostics": {"enabled": bool, "storageUri": "str"}},
                     "evictionPolicy": "str",
                     "extensionsTimeBudget": "str",
+                    "flexProfile": {"preferredVMSize": "str"},
                     "hardwareProfile": {
                         "processorMode": "str",
                         "vmSize": "str",
@@ -814,6 +817,7 @@ class TestComputeManagementVirtualMachinesOperations(AzureMgmtRecordedTestCase):
                                                 "applicationSecurityGroups": [{"id": "str"}],
                                                 "loadBalancerBackendAddressPools": [{"id": "str"}],
                                                 "primary": bool,
+                                                "privateIPAddressPrefixLength": 0,
                                                 "privateIPAddressVersion": "str",
                                                 "publicIPAddressConfiguration": {
                                                     "name": "str",

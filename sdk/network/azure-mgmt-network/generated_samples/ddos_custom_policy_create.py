@@ -44,13 +44,48 @@ def main():
                             "trafficDetectionRule": {"packetsPerSecond": 1000000, "trafficType": "Tcp"},
                         },
                     }
-                ]
+                ],
+                "mitigationRules": [
+                    {
+                        "name": "mitigationRuleTcp",
+                        "properties": {
+                            "sourcePolicyOverrides": [
+                                {
+                                    "conditions": {
+                                        "geoMatches": [{"countryCode": "CA"}],
+                                        "ipPrefixes": ["198.51.100.0/24"],
+                                    },
+                                    "policyAction": {"actionType": "Deny"},
+                                },
+                                {
+                                    "conditions": {
+                                        "geoMatches": [{"continent": "NorthAmerica"}],
+                                        "ipPrefixes": ["203.0.113.0/24"],
+                                    },
+                                    "policyAction": {"actionType": "Permit"},
+                                },
+                            ],
+                            "tcpDefaultMitigations": {
+                                "perSourceConnectionRateLimiting": {"connectionsPerSecond": 1000},
+                                "perSourceRateLimiting": {"packetsPerSecond": 100000},
+                            },
+                            "trafficScope": "Tcp",
+                        },
+                    },
+                    {
+                        "name": "mitigationRuleUdp",
+                        "properties": {
+                            "trafficScope": "Udp",
+                            "udpDefaultMitigations": {"perSourceRateLimiting": {"packetsPerSecond": 50000}},
+                        },
+                    },
+                ],
             },
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-01-01/DdosCustomPolicyCreate.json
+# x-ms-original-file: 2026-03-01/DdosCustomPolicyCreate.json
 if __name__ == "__main__":
     main()

@@ -12,7 +12,6 @@ from collections.abc import AsyncIterator
 from dataclasses import dataclass
 
 from azure.ai.agentserver.invocations.voice import (
-    BargeIn,
     InputTextPart,
     ResponseCancel,
     ResponseCancelled,
@@ -32,6 +31,7 @@ from azure.ai.agentserver.invocations.voice import (
     TargetTurn,
     TargetTurnOrigin,
     TargetTurnOutcome,
+    UserBargeIn,
     UserMessage,
     VoiceAgentServerHost,
     new_item_id,
@@ -321,8 +321,8 @@ async def on_user_message(session: Session, event: UserMessage) -> None:
         raise
 
 
-@app.on_barge_in
-async def on_barge_in(session: Session, event: BargeIn) -> None:
+@app.on_user_barge_in
+async def on_user_barge_in(session: Session, event: UserBargeIn) -> None:
     """Stop generation and reconcile history from the playback snapshot."""
     cancel_generation(session, event.response_id, TargetTurnOutcome.CANCELLED)
     logger.info("Voice response interrupted")

@@ -16,12 +16,12 @@ extends:
       # All 5 service stages run in parallel, and with no parallel limits the tests may get throttled.
       MaxParallel: 2
       ServiceDirectory: storage
+      InstallMsRustToolchain: true
+      MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensionstransfer
+      MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
       InjectedPackages: $(InjectedPackages)
       Packages: ${{ parameters.Services }}
       MatrixReplace:
-        # Use dedicated storage pool in canadacentral with higher memory capacity
-        - Pool=.*LINUXPOOL.*/azsdk-pool-storage
-        - Pool=.*WINDOWSPOOL.*/azsdk-pool-storage
         - TestSamples=.*/true
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'

@@ -156,6 +156,12 @@ class TestAzureStackHCIClustersOperationsAsync(AzureMgmtRecordedTestCase):
                         "supportedCapabilities": ["str"],
                     },
                     "resourceProviderObjectId": "str",
+                    "sdnProperties": {
+                        "sdnApiAddress": "str",
+                        "sdnDomainName": "str",
+                        "sdnIntegrationIntent": "str",
+                        "sdnStatus": "str",
+                    },
                     "secretsLocations": [{"secretsLocation": "str", "secretsType": "str"}],
                     "serviceEndpoint": "str",
                     "softwareAssuranceProperties": {

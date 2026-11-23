@@ -32,15 +32,15 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import MonitorManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._utils.utils import ClientMixinABC
 from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -1252,7 +1252,7 @@ def build_autoscale_settings_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1280,7 +1280,7 @@ def build_autoscale_settings_create_or_update_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1311,7 +1311,7 @@ def build_autoscale_settings_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -1341,7 +1341,7 @@ def build_autoscale_settings_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}"
     path_format_arguments = {
@@ -1364,7 +1364,7 @@ def build_autoscale_settings_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1391,7 +1391,7 @@ def build_autoscale_settings_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1426,7 +1426,7 @@ def build_predictive_metric_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2248,7 +2248,7 @@ def build_metric_alerts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2276,7 +2276,7 @@ def build_metric_alerts_create_or_update_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2307,7 +2307,7 @@ def build_metric_alerts_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2337,7 +2337,7 @@ def build_metric_alerts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/metricAlerts/{ruleName}"
     path_format_arguments = {
@@ -2360,7 +2360,7 @@ def build_metric_alerts_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2389,7 +2389,7 @@ def build_metric_alerts_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2415,7 +2415,7 @@ def build_metric_alerts_status_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2443,7 +2443,7 @@ def build_metric_alerts_status_list_by_name_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3030,7 +3030,391 @@ def build_action_groups_reconcile_nsp_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class PrivateLinkResourcesOperations:
+def build_tenant_action_groups_get_request(
+    management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups/{tenantActionGroupName}"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_tenant_action_groups_create_or_update_request(  # pylint: disable=name-too-long
+    management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups/{tenantActionGroupName}"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_tenant_action_groups_update_request(  # pylint: disable=name-too-long
+    management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups/{tenantActionGroupName}"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_tenant_action_groups_delete_request(  # pylint: disable=name-too-long
+    management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups/{tenantActionGroupName}"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_tenant_action_groups_list_by_management_group_id_request(  # pylint: disable=name-too-long
+    management_group_id: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_vm_insights_get_onboarding_status_request(  # pylint: disable=name-too-long
+    resource_uri: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/vmInsightsOnboardingStatuses/default"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_diagnostic_settings_get_request(resource_uri: str, name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_diagnostic_settings_create_or_update_request(  # pylint: disable=name-too-long
+    resource_uri: str, name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_diagnostic_settings_delete_request(resource_uri: str, name: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings/{name}"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_diagnostic_settings_list_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettings"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_diagnostic_settings_category_get_request(  # pylint: disable=name-too-long
+    resource_uri: str, name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories/{name}"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_diagnostic_settings_category_list_request(  # pylint: disable=name-too-long
+    resource_uri: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceUri}/providers/Microsoft.Insights/diagnosticSettingsCategories"
+    path_format_arguments = {
+        "resourceUri": _SERIALIZER.url("resource_uri", resource_uri, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_monitor_management_create_notifications_at_tenant_action_group_resource_level_request(  # pylint: disable=name-too-long
+    management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/Microsoft.Management/managementGroups/{managementGroupId}/providers/Microsoft.Insights/tenantActionGroups/{tenantActionGroupName}/createNotifications"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_monitor_management_get_test_notifications_at_tenant_action_group_resource_level_request(  # pylint: disable=name-too-long
+    management_group_id: str,
+    tenant_action_group_name: str,
+    notification_id: str,
+    *,
+    x_ms_client_tenant_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/providers/microsoft.Management/managementGroups/{managementGroupId}/providers/microsoft.Insights/tenantActionGroups/{tenantActionGroupName}/notificationStatus/{notificationId}"
+    path_format_arguments = {
+        "managementGroupId": _SERIALIZER.url("management_group_id", management_group_id, "str"),
+        "tenantActionGroupName": _SERIALIZER.url("tenant_action_group_name", tenant_action_group_name, "str"),
+        "notificationId": _SERIALIZER.url("notification_id", notification_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["x-ms-client-tenant-id"] = _SERIALIZER.header("x_ms_client_tenant_id", x_ms_client_tenant_id, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3213,7 +3597,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3313,7 +3697,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3424,7 +3808,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: JSON,
+        parameters: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3440,7 +3824,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3488,7 +3872,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         scope_name: str,
         private_endpoint_connection_name: str,
-        parameters: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        parameters: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Approve or reject a private endpoint connection with a given name.
@@ -3501,9 +3885,9 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param parameters: Is one of the following types: PrivateEndpointConnection, JSON, IO[bytes]
-         Required.
-        :type parameters: ~azure.mgmt.monitor.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param parameters: Is either a PrivateEndpointConnection type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.PrivateEndpointConnection or
+         ~azure.mgmt.monitor.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.PrivateEndpointConnection]
@@ -3782,7 +4166,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataCollectionEndpointsOperations:
+class DataCollectionEndpointsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3925,7 +4309,7 @@ class DataCollectionEndpointsOperations:
         self,
         resource_group_name: str,
         data_collection_endpoint_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.DataCollectionEndpointResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3941,7 +4325,7 @@ class DataCollectionEndpointsOperations:
          case insensitive. Required.
         :type data_collection_endpoint_name: str
         :param body: The payload. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.DataCollectionEndpointResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4001,7 +4385,9 @@ class DataCollectionEndpointsOperations:
         self,
         resource_group_name: str,
         data_collection_endpoint_name: str,
-        body: Optional[Union[_models.DataCollectionEndpointResource, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.DataCollectionEndpointResource, _types.DataCollectionEndpointResource, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.DataCollectionEndpointResource:
         """Creates or updates a data collection endpoint.
@@ -4014,9 +4400,10 @@ class DataCollectionEndpointsOperations:
         :param data_collection_endpoint_name: The name of the data collection endpoint. The name is
          case insensitive. Required.
         :type data_collection_endpoint_name: str
-        :param body: The payload. Is one of the following types: DataCollectionEndpointResource, JSON,
-         IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.monitor.models.DataCollectionEndpointResource or JSON or IO[bytes]
+        :param body: The payload. Is either a DataCollectionEndpointResource type or a IO[bytes] type.
+         Default value is None.
+        :type body: ~azure.mgmt.monitor.models.DataCollectionEndpointResource or
+         ~azure.mgmt.monitor.types.DataCollectionEndpointResource or IO[bytes]
         :return: DataCollectionEndpointResource. The DataCollectionEndpointResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.DataCollectionEndpointResource
@@ -4130,7 +4517,7 @@ class DataCollectionEndpointsOperations:
         self,
         resource_group_name: str,
         data_collection_endpoint_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ResourceForUpdate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4146,7 +4533,7 @@ class DataCollectionEndpointsOperations:
          case insensitive. Required.
         :type data_collection_endpoint_name: str
         :param body: The payload. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.ResourceForUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4206,7 +4593,7 @@ class DataCollectionEndpointsOperations:
         self,
         resource_group_name: str,
         data_collection_endpoint_name: str,
-        body: Optional[Union[_models.ResourceForUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ResourceForUpdate, _types.ResourceForUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DataCollectionEndpointResource:
         """Updates part of a data collection endpoint.
@@ -4219,9 +4606,10 @@ class DataCollectionEndpointsOperations:
         :param data_collection_endpoint_name: The name of the data collection endpoint. The name is
          case insensitive. Required.
         :type data_collection_endpoint_name: str
-        :param body: The payload. Is one of the following types: ResourceForUpdate, JSON, IO[bytes]
-         Default value is None.
-        :type body: ~azure.mgmt.monitor.models.ResourceForUpdate or JSON or IO[bytes]
+        :param body: The payload. Is either a ResourceForUpdate type or a IO[bytes] type. Default value
+         is None.
+        :type body: ~azure.mgmt.monitor.models.ResourceForUpdate or
+         ~azure.mgmt.monitor.types.ResourceForUpdate or IO[bytes]
         :return: DataCollectionEndpointResource. The DataCollectionEndpointResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.DataCollectionEndpointResource
@@ -4919,7 +5307,7 @@ class DataCollectionEndpointsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ScheduledQueryRuleOperations:
+class ScheduledQueryRuleOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5244,7 +5632,7 @@ class ScheduledQueryRuleOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class DataCollectionRuleAssociationsOperations:
+class DataCollectionRuleAssociationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5443,7 +5831,8 @@ class DataCollectionRuleAssociationsOperations:
 
         Creates or updates an association.
 
-        :param resource_uri: The identifier of the resource. Required.
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
         :type resource_uri: str
         :param association_name: The name of the association. The name is case insensitive. Required.
         :type association_name: str
@@ -5463,7 +5852,7 @@ class DataCollectionRuleAssociationsOperations:
         self,
         resource_uri: str,
         association_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.DataCollectionRuleAssociationProxyOnlyResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5472,12 +5861,13 @@ class DataCollectionRuleAssociationsOperations:
 
         Creates or updates an association.
 
-        :param resource_uri: The identifier of the resource. Required.
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
         :type resource_uri: str
         :param association_name: The name of the association. The name is case insensitive. Required.
         :type association_name: str
         :param body: The payload. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.DataCollectionRuleAssociationProxyOnlyResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5501,7 +5891,8 @@ class DataCollectionRuleAssociationsOperations:
 
         Creates or updates an association.
 
-        :param resource_uri: The identifier of the resource. Required.
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
         :type resource_uri: str
         :param association_name: The name of the association. The name is case insensitive. Required.
         :type association_name: str
@@ -5521,21 +5912,28 @@ class DataCollectionRuleAssociationsOperations:
         self,
         resource_uri: str,
         association_name: str,
-        body: Optional[Union[_models.DataCollectionRuleAssociationProxyOnlyResource, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[
+                _models.DataCollectionRuleAssociationProxyOnlyResource,
+                _types.DataCollectionRuleAssociationProxyOnlyResource,
+                IO[bytes],
+            ]
+        ] = None,
         **kwargs: Any
     ) -> _models.DataCollectionRuleAssociationProxyOnlyResource:
         """Creates or updates an association.
 
         Creates or updates an association.
 
-        :param resource_uri: The identifier of the resource. Required.
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
         :type resource_uri: str
         :param association_name: The name of the association. The name is case insensitive. Required.
         :type association_name: str
-        :param body: The payload. Is one of the following types:
-         DataCollectionRuleAssociationProxyOnlyResource, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResource or JSON
-         or IO[bytes]
+        :param body: The payload. Is either a DataCollectionRuleAssociationProxyOnlyResource type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResource or
+         ~azure.mgmt.monitor.types.DataCollectionRuleAssociationProxyOnlyResource or IO[bytes]
         :return: DataCollectionRuleAssociationProxyOnlyResource. The
          DataCollectionRuleAssociationProxyOnlyResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.DataCollectionRuleAssociationProxyOnlyResource
@@ -5868,7 +6266,7 @@ class DataCollectionRuleAssociationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DataCollectionRulesOperations:
+class DataCollectionRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5998,7 +6396,7 @@ class DataCollectionRulesOperations:
         self,
         resource_group_name: str,
         data_collection_rule_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.DataCollectionRuleResource] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6014,7 +6412,7 @@ class DataCollectionRulesOperations:
          insensitive. Required.
         :type data_collection_rule_name: str
         :param body: The payload. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.DataCollectionRuleResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6060,7 +6458,7 @@ class DataCollectionRulesOperations:
         self,
         resource_group_name: str,
         data_collection_rule_name: str,
-        body: Optional[Union[_models.DataCollectionRuleResource, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.DataCollectionRuleResource, _types.DataCollectionRuleResource, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DataCollectionRuleResource:
         """Creates or updates a data collection rule.
@@ -6073,9 +6471,10 @@ class DataCollectionRulesOperations:
         :param data_collection_rule_name: The name of the data collection rule. The name is case
          insensitive. Required.
         :type data_collection_rule_name: str
-        :param body: The payload. Is one of the following types: DataCollectionRuleResource, JSON,
-         IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.monitor.models.DataCollectionRuleResource or JSON or IO[bytes]
+        :param body: The payload. Is either a DataCollectionRuleResource type or a IO[bytes] type.
+         Default value is None.
+        :type body: ~azure.mgmt.monitor.models.DataCollectionRuleResource or
+         ~azure.mgmt.monitor.types.DataCollectionRuleResource or IO[bytes]
         :return: DataCollectionRuleResource. The DataCollectionRuleResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.DataCollectionRuleResource
@@ -6189,7 +6588,7 @@ class DataCollectionRulesOperations:
         self,
         resource_group_name: str,
         data_collection_rule_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ResourceForUpdate] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6205,7 +6604,7 @@ class DataCollectionRulesOperations:
          insensitive. Required.
         :type data_collection_rule_name: str
         :param body: The payload. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.ResourceForUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6251,7 +6650,7 @@ class DataCollectionRulesOperations:
         self,
         resource_group_name: str,
         data_collection_rule_name: str,
-        body: Optional[Union[_models.ResourceForUpdate, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ResourceForUpdate, _types.ResourceForUpdate, IO[bytes]]] = None,
         **kwargs: Any
     ) -> _models.DataCollectionRuleResource:
         """Updates part of a data collection rule.
@@ -6264,9 +6663,10 @@ class DataCollectionRulesOperations:
         :param data_collection_rule_name: The name of the data collection rule. The name is case
          insensitive. Required.
         :type data_collection_rule_name: str
-        :param body: The payload. Is one of the following types: ResourceForUpdate, JSON, IO[bytes]
-         Default value is None.
-        :type body: ~azure.mgmt.monitor.models.ResourceForUpdate or JSON or IO[bytes]
+        :param body: The payload. Is either a ResourceForUpdate type or a IO[bytes] type. Default value
+         is None.
+        :type body: ~azure.mgmt.monitor.models.ResourceForUpdate or
+         ~azure.mgmt.monitor.types.ResourceForUpdate or IO[bytes]
         :return: DataCollectionRuleResource. The DataCollectionRuleResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.DataCollectionRuleResource
@@ -6587,7 +6987,7 @@ class DataCollectionRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkScopesOperations:
+class PrivateLinkScopesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6712,7 +7112,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        azure_monitor_private_link_scope_payload: JSON,
+        azure_monitor_private_link_scope_payload: _types.AzureMonitorPrivateLinkScope,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6727,7 +7127,8 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :param azure_monitor_private_link_scope_payload: Properties that need to be specified to create
          or update a Azure Monitor PrivateLinkScope. Required.
-        :type azure_monitor_private_link_scope_payload: JSON
+        :type azure_monitor_private_link_scope_payload:
+         ~azure.mgmt.monitor.types.AzureMonitorPrivateLinkScope
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6772,7 +7173,9 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        azure_monitor_private_link_scope_payload: Union[_models.AzureMonitorPrivateLinkScope, JSON, IO[bytes]],
+        azure_monitor_private_link_scope_payload: Union[
+            _models.AzureMonitorPrivateLinkScope, _types.AzureMonitorPrivateLinkScope, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AzureMonitorPrivateLinkScope:
         """Creates (or updates) a Azure Monitor PrivateLinkScope. Note: You cannot specify a different
@@ -6784,10 +7187,11 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Monitor PrivateLinkScope resource. Required.
         :type scope_name: str
         :param azure_monitor_private_link_scope_payload: Properties that need to be specified to create
-         or update a Azure Monitor PrivateLinkScope. Is one of the following types:
-         AzureMonitorPrivateLinkScope, JSON, IO[bytes] Required.
+         or update a Azure Monitor PrivateLinkScope. Is either a AzureMonitorPrivateLinkScope type or a
+         IO[bytes] type. Required.
         :type azure_monitor_private_link_scope_payload:
-         ~azure.mgmt.monitor.models.AzureMonitorPrivateLinkScope or JSON or IO[bytes]
+         ~azure.mgmt.monitor.models.AzureMonitorPrivateLinkScope or
+         ~azure.mgmt.monitor.types.AzureMonitorPrivateLinkScope or IO[bytes]
         :return: AzureMonitorPrivateLinkScope. The AzureMonitorPrivateLinkScope is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.AzureMonitorPrivateLinkScope
@@ -6896,7 +7300,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        private_link_scope_tags: JSON,
+        private_link_scope_tags: _types.TagsResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6911,7 +7315,7 @@ class PrivateLinkScopesOperations:
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
          instance. Required.
-        :type private_link_scope_tags: JSON
+        :type private_link_scope_tags: ~azure.mgmt.monitor.types.TagsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6956,7 +7360,7 @@ class PrivateLinkScopesOperations:
         self,
         resource_group_name: str,
         scope_name: str,
-        private_link_scope_tags: Union[_models.TagsResource, JSON, IO[bytes]],
+        private_link_scope_tags: Union[_models.TagsResource, _types.TagsResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureMonitorPrivateLinkScope:
         """Updates an existing PrivateLinkScope's tags. To update other fields use the CreateOrUpdate
@@ -6968,8 +7372,9 @@ class PrivateLinkScopesOperations:
         :param scope_name: The name of the Azure Monitor PrivateLinkScope resource. Required.
         :type scope_name: str
         :param private_link_scope_tags: Updated tag information to set into the PrivateLinkScope
-         instance. Is one of the following types: TagsResource, JSON, IO[bytes] Required.
-        :type private_link_scope_tags: ~azure.mgmt.monitor.models.TagsResource or JSON or IO[bytes]
+         instance. Is either a TagsResource type or a IO[bytes] type. Required.
+        :type private_link_scope_tags: ~azure.mgmt.monitor.models.TagsResource or
+         ~azure.mgmt.monitor.types.TagsResource or IO[bytes]
         :return: AzureMonitorPrivateLinkScope. The AzureMonitorPrivateLinkScope is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.AzureMonitorPrivateLinkScope
@@ -7329,7 +7734,7 @@ class PrivateLinkScopesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkScopedResourcesOperations:
+class PrivateLinkScopedResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7425,7 +7830,7 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         name: str,
-        parameters: Union[_models.ScopedResource, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedResource, _types.ScopedResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7539,7 +7944,7 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         name: str,
-        parameters: JSON,
+        parameters: _types.ScopedResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7554,7 +7959,7 @@ class PrivateLinkScopedResourcesOperations:
         :param name: The name of the scoped resource object. Required.
         :type name: str
         :param parameters: Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.ScopedResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7601,7 +8006,7 @@ class PrivateLinkScopedResourcesOperations:
         resource_group_name: str,
         scope_name: str,
         name: str,
-        parameters: Union[_models.ScopedResource, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedResource, _types.ScopedResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.ScopedResource]:
         """Add an Azure monitor scoped resource in the private link scope.
@@ -7613,8 +8018,9 @@ class PrivateLinkScopedResourcesOperations:
         :type scope_name: str
         :param name: The name of the scoped resource object. Required.
         :type name: str
-        :param parameters: Is one of the following types: ScopedResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.ScopedResource or JSON or IO[bytes]
+        :param parameters: Is either a ScopedResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.ScopedResource or
+         ~azure.mgmt.monitor.types.ScopedResource or IO[bytes]
         :return: An instance of LROPoller that returns ScopedResource. The ScopedResource is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.ScopedResource]
@@ -7892,7 +8298,7 @@ class PrivateLinkScopedResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-long
+class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7982,7 +8388,7 @@ class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-lon
         return deserialized  # type: ignore
 
 
-class AutoscaleSettingsOperations:
+class AutoscaleSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8026,7 +8432,7 @@ class AutoscaleSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         cls: ClsType[_models.AutoscaleSettingResource] = kwargs.pop("cls", None)
 
         _request = build_autoscale_settings_get_request(
@@ -8106,7 +8512,7 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        parameters: JSON,
+        parameters: _types.AutoscaleSettingResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8119,7 +8525,7 @@ class AutoscaleSettingsOperations:
         :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.AutoscaleSettingResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8162,7 +8568,7 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        parameters: Union[_models.AutoscaleSettingResource, JSON, IO[bytes]],
+        parameters: Union[_models.AutoscaleSettingResource, _types.AutoscaleSettingResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.AutoscaleSettingResource:
         """Creates or updates an autoscale setting.
@@ -8172,9 +8578,10 @@ class AutoscaleSettingsOperations:
         :type resource_group_name: str
         :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
-        :param parameters: Parameters supplied to the operation. Is one of the following types:
-         AutoscaleSettingResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.AutoscaleSettingResource or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the operation. Is either a AutoscaleSettingResource
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.AutoscaleSettingResource or
+         ~azure.mgmt.monitor.types.AutoscaleSettingResource or IO[bytes]
         :return: AutoscaleSettingResource. The AutoscaleSettingResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource
@@ -8191,7 +8598,7 @@ class AutoscaleSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AutoscaleSettingResource] = kwargs.pop("cls", None)
 
@@ -8282,7 +8689,7 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        autoscale_setting_resource: JSON,
+        autoscale_setting_resource: _types.AutoscaleSettingResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8296,7 +8703,7 @@ class AutoscaleSettingsOperations:
         :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
         :param autoscale_setting_resource: Parameters supplied to the operation. Required.
-        :type autoscale_setting_resource: JSON
+        :type autoscale_setting_resource: ~azure.mgmt.monitor.types.AutoscaleSettingResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8340,7 +8747,9 @@ class AutoscaleSettingsOperations:
         self,
         resource_group_name: str,
         autoscale_setting_name: str,
-        autoscale_setting_resource: Union[_models.AutoscaleSettingResourcePatch, JSON, IO[bytes]],
+        autoscale_setting_resource: Union[
+            _models.AutoscaleSettingResourcePatch, _types.AutoscaleSettingResourcePatch, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AutoscaleSettingResource:
         """Updates an existing AutoscaleSettingsResource. To update other fields use the CreateOrUpdate
@@ -8351,10 +8760,10 @@ class AutoscaleSettingsOperations:
         :type resource_group_name: str
         :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
-        :param autoscale_setting_resource: Parameters supplied to the operation. Is one of the
-         following types: AutoscaleSettingResourcePatch, JSON, IO[bytes] Required.
+        :param autoscale_setting_resource: Parameters supplied to the operation. Is either a
+         AutoscaleSettingResourcePatch type or a IO[bytes] type. Required.
         :type autoscale_setting_resource: ~azure.mgmt.monitor.models.AutoscaleSettingResourcePatch or
-         JSON or IO[bytes]
+         ~azure.mgmt.monitor.types.AutoscaleSettingResourcePatch or IO[bytes]
         :return: AutoscaleSettingResource. The AutoscaleSettingResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.AutoscaleSettingResource
@@ -8371,7 +8780,7 @@ class AutoscaleSettingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.AutoscaleSettingResource] = kwargs.pop("cls", None)
 
@@ -8454,7 +8863,7 @@ class AutoscaleSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_autoscale_settings_delete_request(
@@ -8504,7 +8913,7 @@ class AutoscaleSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         cls: ClsType[List[_models.AutoscaleSettingResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8585,7 +8994,7 @@ class AutoscaleSettingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         cls: ClsType[List[_models.AutoscaleSettingResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -8655,7 +9064,7 @@ class AutoscaleSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PredictiveMetricOperations:
+class PredictiveMetricOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8720,7 +9129,7 @@ class PredictiveMetricOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
         cls: ClsType[_models.PredictiveResponse] = kwargs.pop("cls", None)
 
         _request = build_predictive_metric_get_request(
@@ -8773,7 +9182,7 @@ class PredictiveMetricOperations:
         return deserialized  # type: ignore
 
 
-class ActivityLogsOperations:
+class ActivityLogsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8895,7 +9304,7 @@ class ActivityLogsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EventCategoriesOperations:
+class EventCategoriesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8994,7 +9403,7 @@ class EventCategoriesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TenantActivityLogsOperations:
+class TenantActivityLogsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9121,7 +9530,7 @@ class TenantActivityLogsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricDefinitionsOperations:
+class MetricDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9318,7 +9727,7 @@ class MetricDefinitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricNamespacesOperations:
+class MetricNamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9424,7 +9833,7 @@ class MetricNamespacesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricsOperations:
+class MetricsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9682,7 +10091,7 @@ class MetricsOperations:
     @overload
     def list_at_subscription_scope_post(
         self,
-        body: Optional[JSON] = None,
+        body: Optional[_types.SubscriptionScopeMetricsRequestBodyParameters] = None,
         *,
         region: str,
         timespan: Optional[str] = None,
@@ -9705,7 +10114,7 @@ class MetricsOperations:
         <https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling>`_.
 
         :param body: The request body. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.monitor.types.SubscriptionScopeMetricsRequestBodyParameters
         :keyword region: The region where the metrics you want reside. Required.
         :paramtype region: str
         :keyword timespan: The timespan of the query. It is a string with the following format
@@ -9860,7 +10269,13 @@ class MetricsOperations:
     @distributed_trace
     def list_at_subscription_scope_post(  # pylint: disable=too-many-locals
         self,
-        body: Optional[Union[_models.SubscriptionScopeMetricsRequestBodyParameters, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[
+                _models.SubscriptionScopeMetricsRequestBodyParameters,
+                _types.SubscriptionScopeMetricsRequestBodyParameters,
+                IO[bytes],
+            ]
+        ] = None,
         *,
         region: str,
         timespan: Optional[str] = None,
@@ -9881,10 +10296,10 @@ class MetricsOperations:
         params or the body. This API used the `default ARM throttling limits
         <https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling>`_.
 
-        :param body: The request body. Is one of the following types:
-         SubscriptionScopeMetricsRequestBodyParameters, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.monitor.models.SubscriptionScopeMetricsRequestBodyParameters or JSON or
-         IO[bytes]
+        :param body: The request body. Is either a SubscriptionScopeMetricsRequestBodyParameters type
+         or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.monitor.models.SubscriptionScopeMetricsRequestBodyParameters or
+         ~azure.mgmt.monitor.types.SubscriptionScopeMetricsRequestBodyParameters or IO[bytes]
         :keyword region: The region where the metrics you want reside. Required.
         :paramtype region: str
         :keyword timespan: The timespan of the query. It is a string with the following format
@@ -10176,7 +10591,7 @@ class MetricsOperations:
         return deserialized  # type: ignore
 
 
-class ServiceDiagnosticSettingsOperations:
+class ServiceDiagnosticSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10290,7 +10705,12 @@ class ServiceDiagnosticSettingsOperations:
 
     @overload
     def create_or_update(
-        self, resource_uri: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_uri: str,
+        parameters: _types.ServiceDiagnosticSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.ServiceDiagnosticSettingsResource:
         """Create or update new diagnostic settings for the specified resource. **WARNING**: This method
         will be deprecated in future releases.
@@ -10299,7 +10719,7 @@ class ServiceDiagnosticSettingsOperations:
          Required.
         :type resource_uri: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.ServiceDiagnosticSettingsResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10334,7 +10754,9 @@ class ServiceDiagnosticSettingsOperations:
     def create_or_update(
         self,
         resource_uri: str,
-        parameters: Union[_models.ServiceDiagnosticSettingsResource, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ServiceDiagnosticSettingsResource, _types.ServiceDiagnosticSettingsResource, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ServiceDiagnosticSettingsResource:
         """Create or update new diagnostic settings for the specified resource. **WARNING**: This method
@@ -10343,10 +10765,10 @@ class ServiceDiagnosticSettingsOperations:
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_uri: str
-        :param parameters: Parameters supplied to the operation. Is one of the following types:
-         ServiceDiagnosticSettingsResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource or JSON or
-         IO[bytes]
+        :param parameters: Parameters supplied to the operation. Is either a
+         ServiceDiagnosticSettingsResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource or
+         ~azure.mgmt.monitor.types.ServiceDiagnosticSettingsResource or IO[bytes]
         :return: ServiceDiagnosticSettingsResource. The ServiceDiagnosticSettingsResource is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource
@@ -10449,7 +10871,7 @@ class ServiceDiagnosticSettingsOperations:
     def update(
         self,
         resource_uri: str,
-        service_diagnostic_settings_resource: JSON,
+        service_diagnostic_settings_resource: _types.ServiceDiagnosticSettingsResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10461,7 +10883,8 @@ class ServiceDiagnosticSettingsOperations:
          Required.
         :type resource_uri: str
         :param service_diagnostic_settings_resource: Parameters supplied to the operation. Required.
-        :type service_diagnostic_settings_resource: JSON
+        :type service_diagnostic_settings_resource:
+         ~azure.mgmt.monitor.types.ServiceDiagnosticSettingsResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10501,7 +10924,9 @@ class ServiceDiagnosticSettingsOperations:
     def update(
         self,
         resource_uri: str,
-        service_diagnostic_settings_resource: Union[_models.ServiceDiagnosticSettingsResourcePatch, JSON, IO[bytes]],
+        service_diagnostic_settings_resource: Union[
+            _models.ServiceDiagnosticSettingsResourcePatch, _types.ServiceDiagnosticSettingsResourcePatch, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ServiceDiagnosticSettingsResource:
         """Updates an existing ServiceDiagnosticSettingsResource. To update other fields use the
@@ -10510,10 +10935,11 @@ class ServiceDiagnosticSettingsOperations:
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_uri: str
-        :param service_diagnostic_settings_resource: Parameters supplied to the operation. Is one of
-         the following types: ServiceDiagnosticSettingsResourcePatch, JSON, IO[bytes] Required.
+        :param service_diagnostic_settings_resource: Parameters supplied to the operation. Is either a
+         ServiceDiagnosticSettingsResourcePatch type or a IO[bytes] type. Required.
         :type service_diagnostic_settings_resource:
-         ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResourcePatch or JSON or IO[bytes]
+         ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResourcePatch or
+         ~azure.mgmt.monitor.types.ServiceDiagnosticSettingsResourcePatch or IO[bytes]
         :return: ServiceDiagnosticSettingsResource. The ServiceDiagnosticSettingsResource is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ServiceDiagnosticSettingsResource
@@ -10586,7 +11012,7 @@ class ServiceDiagnosticSettingsOperations:
         return deserialized  # type: ignore
 
 
-class AlertRuleIncidentsOperations:
+class AlertRuleIncidentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10767,7 +11193,7 @@ class AlertRuleIncidentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LogProfilesOperations:
+class LogProfilesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10876,14 +11302,19 @@ class LogProfilesOperations:
 
     @overload
     def create_or_update(
-        self, log_profile_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        log_profile_name: str,
+        parameters: _types.LogProfileResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.LogProfileResource:
         """Create or update a log profile in Azure Monitoring REST API.
 
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
         :param parameters: Parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.LogProfileResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10912,15 +11343,19 @@ class LogProfilesOperations:
 
     @distributed_trace
     def create_or_update(
-        self, log_profile_name: str, parameters: Union[_models.LogProfileResource, JSON, IO[bytes]], **kwargs: Any
+        self,
+        log_profile_name: str,
+        parameters: Union[_models.LogProfileResource, _types.LogProfileResource, IO[bytes]],
+        **kwargs: Any
     ) -> _models.LogProfileResource:
         """Create or update a log profile in Azure Monitoring REST API.
 
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
-        :param parameters: Parameters supplied to the operation. Is one of the following types:
-         LogProfileResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.LogProfileResource or JSON or IO[bytes]
+        :param parameters: Parameters supplied to the operation. Is either a LogProfileResource type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.LogProfileResource or
+         ~azure.mgmt.monitor.types.LogProfileResource or IO[bytes]
         :return: LogProfileResource. The LogProfileResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11019,7 +11454,7 @@ class LogProfilesOperations:
     def update(
         self,
         log_profile_name: str,
-        log_profiles_resource: JSON,
+        log_profiles_resource: _types.LogProfileResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11029,7 +11464,7 @@ class LogProfilesOperations:
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
         :param log_profiles_resource: Parameters supplied to the operation. Required.
-        :type log_profiles_resource: JSON
+        :type log_profiles_resource: ~azure.mgmt.monitor.types.LogProfileResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11065,17 +11500,17 @@ class LogProfilesOperations:
     def update(
         self,
         log_profile_name: str,
-        log_profiles_resource: Union[_models.LogProfileResourcePatch, JSON, IO[bytes]],
+        log_profiles_resource: Union[_models.LogProfileResourcePatch, _types.LogProfileResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.LogProfileResource:
         """Updates an existing LogProfilesResource. To update other fields use the CreateOrUpdate method.
 
         :param log_profile_name: The name of the log profile. Required.
         :type log_profile_name: str
-        :param log_profiles_resource: Parameters supplied to the operation. Is one of the following
-         types: LogProfileResourcePatch, JSON, IO[bytes] Required.
-        :type log_profiles_resource: ~azure.mgmt.monitor.models.LogProfileResourcePatch or JSON or
-         IO[bytes]
+        :param log_profiles_resource: Parameters supplied to the operation. Is either a
+         LogProfileResourcePatch type or a IO[bytes] type. Required.
+        :type log_profiles_resource: ~azure.mgmt.monitor.models.LogProfileResourcePatch or
+         ~azure.mgmt.monitor.types.LogProfileResourcePatch or IO[bytes]
         :return: LogProfileResource. The LogProfileResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.LogProfileResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11282,7 +11717,7 @@ class LogProfilesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ActivityLogAlertsOperations:
+class ActivityLogAlertsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11407,7 +11842,7 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_rule: JSON,
+        activity_log_alert_rule: _types.ActivityLogAlertResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11421,7 +11856,7 @@ class ActivityLogAlertsOperations:
         :type activity_log_alert_name: str
         :param activity_log_alert_rule: The Activity Log Alert rule to create or use for the update.
          Required.
-        :type activity_log_alert_rule: JSON
+        :type activity_log_alert_rule: ~azure.mgmt.monitor.types.ActivityLogAlertResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11465,7 +11900,7 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_rule: Union[_models.ActivityLogAlertResource, JSON, IO[bytes]],
+        activity_log_alert_rule: Union[_models.ActivityLogAlertResource, _types.ActivityLogAlertResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
         """Create a new Activity Log Alert rule or update an existing one.
@@ -11476,9 +11911,9 @@ class ActivityLogAlertsOperations:
         :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
         :param activity_log_alert_rule: The Activity Log Alert rule to create or use for the update. Is
-         one of the following types: ActivityLogAlertResource, JSON, IO[bytes] Required.
-        :type activity_log_alert_rule: ~azure.mgmt.monitor.models.ActivityLogAlertResource or JSON or
-         IO[bytes]
+         either a ActivityLogAlertResource type or a IO[bytes] type. Required.
+        :type activity_log_alert_rule: ~azure.mgmt.monitor.models.ActivityLogAlertResource or
+         ~azure.mgmt.monitor.types.ActivityLogAlertResource or IO[bytes]
         :return: ActivityLogAlertResource. The ActivityLogAlertResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ActivityLogAlertResource
@@ -11587,7 +12022,7 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_rule_patch: JSON,
+        activity_log_alert_rule_patch: _types.AlertRulePatchObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11602,7 +12037,7 @@ class ActivityLogAlertsOperations:
         :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
         :param activity_log_alert_rule_patch: Parameters supplied to the operation. Required.
-        :type activity_log_alert_rule_patch: JSON
+        :type activity_log_alert_rule_patch: ~azure.mgmt.monitor.types.AlertRulePatchObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11647,7 +12082,7 @@ class ActivityLogAlertsOperations:
         self,
         resource_group_name: str,
         activity_log_alert_name: str,
-        activity_log_alert_rule_patch: Union[_models.AlertRulePatchObject, JSON, IO[bytes]],
+        activity_log_alert_rule_patch: Union[_models.AlertRulePatchObject, _types.AlertRulePatchObject, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActivityLogAlertResource:
         """Updates 'tags' and 'enabled' fields in an existing Alert rule. This method is used to update
@@ -11659,10 +12094,10 @@ class ActivityLogAlertsOperations:
         :type resource_group_name: str
         :param activity_log_alert_name: The name of the Activity Log Alert rule. Required.
         :type activity_log_alert_name: str
-        :param activity_log_alert_rule_patch: Parameters supplied to the operation. Is one of the
-         following types: AlertRulePatchObject, JSON, IO[bytes] Required.
-        :type activity_log_alert_rule_patch: ~azure.mgmt.monitor.models.AlertRulePatchObject or JSON or
-         IO[bytes]
+        :param activity_log_alert_rule_patch: Parameters supplied to the operation. Is either a
+         AlertRulePatchObject type or a IO[bytes] type. Required.
+        :type activity_log_alert_rule_patch: ~azure.mgmt.monitor.models.AlertRulePatchObject or
+         ~azure.mgmt.monitor.types.AlertRulePatchObject or IO[bytes]
         :return: ActivityLogAlertResource. The ActivityLogAlertResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ActivityLogAlertResource
@@ -11963,7 +12398,7 @@ class ActivityLogAlertsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricAlertsOperations:
+class MetricAlertsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12004,7 +12439,7 @@ class MetricAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[_models.MetricAlertResource] = kwargs.pop("cls", None)
 
         _request = build_metric_alerts_get_request(
@@ -12083,7 +12518,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: JSON,
+        parameters: _types.MetricAlertResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12096,7 +12531,7 @@ class MetricAlertsOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param parameters: The parameters of the rule to create or update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.MetricAlertResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12137,7 +12572,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: Union[_models.MetricAlertResource, JSON, IO[bytes]],
+        parameters: Union[_models.MetricAlertResource, _types.MetricAlertResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.MetricAlertResource:
         """Create or update an metric alert definition.
@@ -12147,9 +12582,10 @@ class MetricAlertsOperations:
         :type resource_group_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param parameters: The parameters of the rule to create or update. Is one of the following
-         types: MetricAlertResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.MetricAlertResource or JSON or IO[bytes]
+        :param parameters: The parameters of the rule to create or update. Is either a
+         MetricAlertResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.MetricAlertResource or
+         ~azure.mgmt.monitor.types.MetricAlertResource or IO[bytes]
         :return: MetricAlertResource. The MetricAlertResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.MetricAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12165,7 +12601,7 @@ class MetricAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MetricAlertResource] = kwargs.pop("cls", None)
 
@@ -12254,7 +12690,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: JSON,
+        parameters: _types.MetricAlertResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12267,7 +12703,7 @@ class MetricAlertsOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param parameters: The parameters of the rule to update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.MetricAlertResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12308,7 +12744,7 @@ class MetricAlertsOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: Union[_models.MetricAlertResourcePatch, JSON, IO[bytes]],
+        parameters: Union[_models.MetricAlertResourcePatch, _types.MetricAlertResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.MetricAlertResource:
         """Update an metric alert definition.
@@ -12318,9 +12754,10 @@ class MetricAlertsOperations:
         :type resource_group_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param parameters: The parameters of the rule to update. Is one of the following types:
-         MetricAlertResourcePatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.MetricAlertResourcePatch or JSON or IO[bytes]
+        :param parameters: The parameters of the rule to update. Is either a MetricAlertResourcePatch
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.MetricAlertResourcePatch or
+         ~azure.mgmt.monitor.types.MetricAlertResourcePatch or IO[bytes]
         :return: MetricAlertResource. The MetricAlertResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.MetricAlertResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12336,7 +12773,7 @@ class MetricAlertsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.MetricAlertResource] = kwargs.pop("cls", None)
 
@@ -12419,7 +12856,7 @@ class MetricAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_metric_alerts_delete_request(
@@ -12469,7 +12906,7 @@ class MetricAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[List[_models.MetricAlertResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -12550,7 +12987,7 @@ class MetricAlertsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[List[_models.MetricAlertResource]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -12620,7 +13057,7 @@ class MetricAlertsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetricAlertsStatusOperations:
+class MetricAlertsStatusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12662,7 +13099,7 @@ class MetricAlertsStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[_models.MetricAlertStatusCollection] = kwargs.pop("cls", None)
 
         _request = build_metric_alerts_status_list_request(
@@ -12738,7 +13175,7 @@ class MetricAlertsStatusOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-03-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[_models.MetricAlertStatusCollection] = kwargs.pop("cls", None)
 
         _request = build_metric_alerts_status_list_by_name_request(
@@ -12787,7 +13224,7 @@ class MetricAlertsStatusOperations:
         return deserialized  # type: ignore
 
 
-class ScheduledQueryRulesOperations:
+class ScheduledQueryRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12909,7 +13346,7 @@ class ScheduledQueryRulesOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: JSON,
+        parameters: _types.ScheduledQueryRuleResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12922,7 +13359,7 @@ class ScheduledQueryRulesOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param parameters: The parameters of the rule to create or update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.ScheduledQueryRuleResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12965,7 +13402,7 @@ class ScheduledQueryRulesOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: Union[_models.ScheduledQueryRuleResource, JSON, IO[bytes]],
+        parameters: Union[_models.ScheduledQueryRuleResource, _types.ScheduledQueryRuleResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ScheduledQueryRuleResource:
         """Creates or updates a scheduled query rule.
@@ -12975,9 +13412,10 @@ class ScheduledQueryRulesOperations:
         :type resource_group_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param parameters: The parameters of the rule to create or update. Is one of the following
-         types: ScheduledQueryRuleResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.ScheduledQueryRuleResource or JSON or IO[bytes]
+        :param parameters: The parameters of the rule to create or update. Is either a
+         ScheduledQueryRuleResource type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.ScheduledQueryRuleResource or
+         ~azure.mgmt.monitor.types.ScheduledQueryRuleResource or IO[bytes]
         :return: ScheduledQueryRuleResource. The ScheduledQueryRuleResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ScheduledQueryRuleResource
@@ -13084,7 +13522,7 @@ class ScheduledQueryRulesOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: JSON,
+        parameters: _types.ScheduledQueryRuleResourcePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13097,7 +13535,7 @@ class ScheduledQueryRulesOperations:
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
         :param parameters: The parameters of the rule to update. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.monitor.types.ScheduledQueryRuleResourcePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13140,7 +13578,7 @@ class ScheduledQueryRulesOperations:
         self,
         resource_group_name: str,
         rule_name: str,
-        parameters: Union[_models.ScheduledQueryRuleResourcePatch, JSON, IO[bytes]],
+        parameters: Union[_models.ScheduledQueryRuleResourcePatch, _types.ScheduledQueryRuleResourcePatch, IO[bytes]],
         **kwargs: Any
     ) -> _models.ScheduledQueryRuleResource:
         """Update a scheduled query rule.
@@ -13150,10 +13588,10 @@ class ScheduledQueryRulesOperations:
         :type resource_group_name: str
         :param rule_name: The name of the rule. Required.
         :type rule_name: str
-        :param parameters: The parameters of the rule to update. Is one of the following types:
-         ScheduledQueryRuleResourcePatch, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.monitor.models.ScheduledQueryRuleResourcePatch or JSON or
-         IO[bytes]
+        :param parameters: The parameters of the rule to update. Is either a
+         ScheduledQueryRuleResourcePatch type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.ScheduledQueryRuleResourcePatch or
+         ~azure.mgmt.monitor.types.ScheduledQueryRuleResourcePatch or IO[bytes]
         :return: ScheduledQueryRuleResource. The ScheduledQueryRuleResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ScheduledQueryRuleResource
@@ -13454,7 +13892,7 @@ class ScheduledQueryRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class BaselinesOperations:
+class BaselinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13610,7 +14048,7 @@ class BaselinesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ActionGroupsOperations:
+class ActionGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13743,7 +14181,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        action_group: JSON,
+        action_group: _types.ActionGroupResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13756,7 +14194,7 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param action_group: The action group to create or use for the update. Required.
-        :type action_group: JSON
+        :type action_group: ~azure.mgmt.monitor.types.ActionGroupResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13811,7 +14249,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        action_group: Union[_models.ActionGroupResource, JSON, IO[bytes]],
+        action_group: Union[_models.ActionGroupResource, _types.ActionGroupResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActionGroupResource:
         """Create a new action group or update an existing one.
@@ -13821,9 +14259,10 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param action_group: The action group to create or use for the update. Is one of the following
-         types: ActionGroupResource, JSON, IO[bytes] Required.
-        :type action_group: ~azure.mgmt.monitor.models.ActionGroupResource or JSON or IO[bytes]
+        :param action_group: The action group to create or use for the update. Is either a
+         ActionGroupResource type or a IO[bytes] type. Required.
+        :type action_group: ~azure.mgmt.monitor.models.ActionGroupResource or
+         ~azure.mgmt.monitor.types.ActionGroupResource or IO[bytes]
         :return: ActionGroupResource. The ActionGroupResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13928,7 +14367,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        action_group_patch: JSON,
+        action_group_patch: _types.ActionGroupPatchBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13941,7 +14380,7 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param action_group_patch: Parameters supplied to the operation. Required.
-        :type action_group_patch: JSON
+        :type action_group_patch: ~azure.mgmt.monitor.types.ActionGroupPatchBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13996,7 +14435,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        action_group_patch: Union[_models.ActionGroupPatchBody, JSON, IO[bytes]],
+        action_group_patch: Union[_models.ActionGroupPatchBody, _types.ActionGroupPatchBody, IO[bytes]],
         **kwargs: Any
     ) -> _models.ActionGroupResource:
         """Updates an existing action group's tags. To update other fields use the CreateOrUpdate method.
@@ -14006,9 +14445,10 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param action_group_patch: Parameters supplied to the operation. Is one of the following types:
-         ActionGroupPatchBody, JSON, IO[bytes] Required.
-        :type action_group_patch: ~azure.mgmt.monitor.models.ActionGroupPatchBody or JSON or IO[bytes]
+        :param action_group_patch: Parameters supplied to the operation. Is either a
+         ActionGroupPatchBody type or a IO[bytes] type. Required.
+        :type action_group_patch: ~azure.mgmt.monitor.models.ActionGroupPatchBody or
+         ~azure.mgmt.monitor.types.ActionGroupPatchBody or IO[bytes]
         :return: ActionGroupResource. The ActionGroupResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.ActionGroupResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14342,7 +14782,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        notification_request: Union[_models.NotificationRequestBody, JSON, IO[bytes]],
+        notification_request: Union[_models.NotificationRequestBody, _types.NotificationRequestBody, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14449,7 +14889,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        notification_request: JSON,
+        notification_request: _types.NotificationRequestBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14463,7 +14903,7 @@ class ActionGroupsOperations:
         :type action_group_name: str
         :param notification_request: The notification request body which includes the contact details.
          Required.
-        :type notification_request: JSON
+        :type notification_request: ~azure.mgmt.monitor.types.NotificationRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14523,7 +14963,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        notification_request: Union[_models.NotificationRequestBody, JSON, IO[bytes]],
+        notification_request: Union[_models.NotificationRequestBody, _types.NotificationRequestBody, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.TestNotificationDetailsResponse]:
         """Send test notifications to a set of provided receivers.
@@ -14534,9 +14974,9 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param notification_request: The notification request body which includes the contact details.
-         Is one of the following types: NotificationRequestBody, JSON, IO[bytes] Required.
-        :type notification_request: ~azure.mgmt.monitor.models.NotificationRequestBody or JSON or
-         IO[bytes]
+         Is either a NotificationRequestBody type or a IO[bytes] type. Required.
+        :type notification_request: ~azure.mgmt.monitor.models.NotificationRequestBody or
+         ~azure.mgmt.monitor.types.NotificationRequestBody or IO[bytes]
         :return: An instance of LROPoller that returns TestNotificationDetailsResponse. The
          TestNotificationDetailsResponse is compatible with MutableMapping
         :rtype:
@@ -14721,7 +15161,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        enable_request: JSON,
+        enable_request: _types.EnableRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14735,7 +15175,7 @@ class ActionGroupsOperations:
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
         :param enable_request: The receiver to re-enable. Required.
-        :type enable_request: JSON
+        :type enable_request: ~azure.mgmt.monitor.types.EnableRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14790,7 +15230,7 @@ class ActionGroupsOperations:
         self,
         resource_group_name: str,
         action_group_name: str,
-        enable_request: Union[_models.EnableRequest, JSON, IO[bytes]],
+        enable_request: Union[_models.EnableRequest, _types.EnableRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Enable a receiver in an action group. This changes the receiver's status from Disabled to
@@ -14801,9 +15241,10 @@ class ActionGroupsOperations:
         :type resource_group_name: str
         :param action_group_name: The name of the action group. Required.
         :type action_group_name: str
-        :param enable_request: The receiver to re-enable. Is one of the following types: EnableRequest,
-         JSON, IO[bytes] Required.
-        :type enable_request: ~azure.mgmt.monitor.models.EnableRequest or JSON or IO[bytes]
+        :param enable_request: The receiver to re-enable. Is either a EnableRequest type or a IO[bytes]
+         type. Required.
+        :type enable_request: ~azure.mgmt.monitor.models.EnableRequest or
+         ~azure.mgmt.monitor.types.EnableRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15216,3 +15657,1681 @@ class ActionGroupsOperations:
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+
+class TenantActionGroupsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
+        :attr:`tenant_action_groups` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(
+        self, management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Get a tenant action group.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        cls: ClsType[_models.TenantActionGroupResource] = kwargs.pop("cls", None)
+
+        _request = build_tenant_action_groups_get_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TenantActionGroupResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        action_group: _models.TenantActionGroupResource,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Create a new tenant action group or update an existing one.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param action_group: The tenant action group to create or use for the update. Required.
+        :type action_group: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        action_group: _types.TenantActionGroupResource,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Create a new tenant action group or update an existing one.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param action_group: The tenant action group to create or use for the update. Required.
+        :type action_group: ~azure.mgmt.monitor.types.TenantActionGroupResource
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        action_group: IO[bytes],
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Create a new tenant action group or update an existing one.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param action_group: The tenant action group to create or use for the update. Required.
+        :type action_group: IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        action_group: Union[_models.TenantActionGroupResource, _types.TenantActionGroupResource, IO[bytes]],
+        *,
+        x_ms_client_tenant_id: str,
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Create a new tenant action group or update an existing one.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param action_group: The tenant action group to create or use for the update. Is either a
+         TenantActionGroupResource type or a IO[bytes] type. Required.
+        :type action_group: ~azure.mgmt.monitor.models.TenantActionGroupResource or
+         ~azure.mgmt.monitor.types.TenantActionGroupResource or IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TenantActionGroupResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(action_group, (IOBase, bytes)):
+            _content = action_group
+        else:
+            _content = json.dumps(action_group, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_tenant_action_groups_create_or_update_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TenantActionGroupResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        tenant_action_group_patch: _models.TenantActionGroupPatchBody,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Updates an existing tenant action group's tags. To update other fields use the CreateOrUpdate
+        method.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param tenant_action_group_patch: Parameters supplied to the operation. Required.
+        :type tenant_action_group_patch: ~azure.mgmt.monitor.models.TenantActionGroupPatchBody
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        tenant_action_group_patch: _types.TenantActionGroupPatchBody,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Updates an existing tenant action group's tags. To update other fields use the CreateOrUpdate
+        method.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param tenant_action_group_patch: Parameters supplied to the operation. Required.
+        :type tenant_action_group_patch: ~azure.mgmt.monitor.types.TenantActionGroupPatchBody
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        tenant_action_group_patch: IO[bytes],
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Updates an existing tenant action group's tags. To update other fields use the CreateOrUpdate
+        method.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param tenant_action_group_patch: Parameters supplied to the operation. Required.
+        :type tenant_action_group_patch: IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update(
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        tenant_action_group_patch: Union[
+            _models.TenantActionGroupPatchBody, _types.TenantActionGroupPatchBody, IO[bytes]
+        ],
+        *,
+        x_ms_client_tenant_id: str,
+        **kwargs: Any
+    ) -> _models.TenantActionGroupResource:
+        """Updates an existing tenant action group's tags. To update other fields use the CreateOrUpdate
+        method.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param tenant_action_group_patch: Parameters supplied to the operation. Is either a
+         TenantActionGroupPatchBody type or a IO[bytes] type. Required.
+        :type tenant_action_group_patch: ~azure.mgmt.monitor.models.TenantActionGroupPatchBody or
+         ~azure.mgmt.monitor.types.TenantActionGroupPatchBody or IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: TenantActionGroupResource. The TenantActionGroupResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TenantActionGroupResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(tenant_action_group_patch, (IOBase, bytes)):
+            _content = tenant_action_group_patch
+        else:
+            _content = json.dumps(tenant_action_group_patch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_tenant_action_groups_update_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TenantActionGroupResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, management_group_id: str, tenant_action_group_name: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+    ) -> None:
+        """Delete a tenant action group.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_tenant_action_groups_delete_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_by_management_group_id(
+        self, management_group_id: str, *, x_ms_client_tenant_id: str, **kwargs: Any
+    ) -> ItemPaged["_models.TenantActionGroupResource"]:
+        """Get a list of all tenant action groups in a management group.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: An iterator like instance of TenantActionGroupResource
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.models.TenantActionGroupResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        cls: ClsType[List[_models.TenantActionGroupResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_tenant_action_groups_list_by_management_group_id_request(
+                    management_group_id=management_group_id,
+                    x_ms_client_tenant_id=x_ms_client_tenant_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TenantActionGroupResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class VMInsightsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
+        :attr:`vm_insights` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get_onboarding_status(self, resource_uri: str, **kwargs: Any) -> _models.VMInsightsOnboardingStatus:
+        """Retrieves the VM Insights onboarding status for the specified resource or resource scope.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: VMInsightsOnboardingStatus. The VMInsightsOnboardingStatus is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.VMInsightsOnboardingStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2018-11-27-preview"))
+        cls: ClsType[_models.VMInsightsOnboardingStatus] = kwargs.pop("cls", None)
+
+        _request = build_vm_insights_get_onboarding_status_request(
+            resource_uri=resource_uri,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ResponseWithError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.VMInsightsOnboardingStatus, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class DiagnosticSettingsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
+        :attr:`diagnostic_settings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, resource_uri: str, name: str, **kwargs: Any) -> _models.DiagnosticSettingsResource:
+        """Gets the active diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :return: DiagnosticSettingsResource. The DiagnosticSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsResource] = kwargs.pop("cls", None)
+
+        _request = build_diagnostic_settings_get_request(
+            resource_uri=resource_uri,
+            name=name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DiagnosticSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        resource_uri: str,
+        name: str,
+        parameters: _models.DiagnosticSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DiagnosticSettingsResource:
+        """Creates or updates diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :param parameters: Parameters supplied to the operation. Required.
+        :type parameters: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DiagnosticSettingsResource. The DiagnosticSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        resource_uri: str,
+        name: str,
+        parameters: _types.DiagnosticSettingsResource,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DiagnosticSettingsResource:
+        """Creates or updates diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :param parameters: Parameters supplied to the operation. Required.
+        :type parameters: ~azure.mgmt.monitor.types.DiagnosticSettingsResource
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DiagnosticSettingsResource. The DiagnosticSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        resource_uri: str,
+        name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DiagnosticSettingsResource:
+        """Creates or updates diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :param parameters: Parameters supplied to the operation. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DiagnosticSettingsResource. The DiagnosticSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self,
+        resource_uri: str,
+        name: str,
+        parameters: Union[_models.DiagnosticSettingsResource, _types.DiagnosticSettingsResource, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.DiagnosticSettingsResource:
+        """Creates or updates diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :param parameters: Parameters supplied to the operation. Is either a DiagnosticSettingsResource
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.monitor.models.DiagnosticSettingsResource or
+         ~azure.mgmt.monitor.types.DiagnosticSettingsResource or IO[bytes]
+        :return: DiagnosticSettingsResource. The DiagnosticSettingsResource is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DiagnosticSettingsResource] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_diagnostic_settings_create_or_update_request(
+            resource_uri=resource_uri,
+            name=name,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DiagnosticSettingsResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def delete(  # pylint: disable=inconsistent-return-statements
+        self, resource_uri: str, name: str, **kwargs: Any
+    ) -> None:
+        """Deletes existing diagnostic settings for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_diagnostic_settings_delete_request(
+            resource_uri=resource_uri,
+            name=name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.DiagnosticSettingsResource"]:
+        """Gets the active diagnostic settings list for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of DiagnosticSettingsResource
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.models.DiagnosticSettingsResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[List[_models.DiagnosticSettingsResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_diagnostic_settings_list_request(
+                    resource_uri=resource_uri,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DiagnosticSettingsResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class DiagnosticSettingsCategoryOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
+        :attr:`diagnostic_settings_category` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: MonitorManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def get(self, resource_uri: str, name: str, **kwargs: Any) -> _models.DiagnosticSettingsCategoryResource:
+        """Gets the diagnostic settings category for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param name: The name of the diagnostic setting. Required.
+        :type name: str
+        :return: DiagnosticSettingsCategoryResource. The DiagnosticSettingsCategoryResource is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsCategoryResource] = kwargs.pop("cls", None)
+
+        _request = build_diagnostic_settings_category_get_request(
+            resource_uri=resource_uri,
+            name=name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DiagnosticSettingsCategoryResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(self, resource_uri: str, **kwargs: Any) -> ItemPaged["_models.DiagnosticSettingsCategoryResource"]:
+        """Lists the diagnostic settings categories for the specified resource.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :return: An iterator like instance of DiagnosticSettingsCategoryResource
+        :rtype:
+         ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[List[_models.DiagnosticSettingsCategoryResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_diagnostic_settings_category_list_request(
+                    resource_uri=resource_uri,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.DiagnosticSettingsCategoryResource],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class _MonitorManagementClientOperationsMixin(
+    ClientMixinABC[PipelineClient[HttpRequest, HttpResponse], MonitorManagementClientConfiguration]
+):
+
+    @api_version_validation(
+        method_added_on="2023-05-01-preview",
+        params_added_on={
+            "2023-05-01-preview": [
+                "api_version",
+                "management_group_id",
+                "tenant_action_group_name",
+                "x_ms_client_tenant_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2023-05-01-preview"],
+    )
+    def _create_notifications_at_tenant_action_group_resource_level_initial(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_request: Union[
+            _models.TenantNotificationRequestBody, _types.TenantNotificationRequestBody, IO[bytes]
+        ],
+        *,
+        x_ms_client_tenant_id: str,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(notification_request, (IOBase, bytes)):
+            _content = notification_request
+        else:
+            _content = json.dumps(notification_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_monitor_management_create_notifications_at_tenant_action_group_resource_level_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponseAutoGenerated,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_notifications_at_tenant_action_group_resource_level(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_request: _models.TenantNotificationRequestBody,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse]:
+        """Send test notifications to a set of provided receivers.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param notification_request: The notification request body which includes the contact details.
+         Required.
+        :type notification_request: ~azure.mgmt.monitor.models.TenantNotificationRequestBody
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns
+         TenantActionGroupTestNotificationDetailsResponse. The
+         TenantActionGroupTestNotificationDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.TenantActionGroupTestNotificationDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_notifications_at_tenant_action_group_resource_level(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_request: _types.TenantNotificationRequestBody,
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse]:
+        """Send test notifications to a set of provided receivers.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param notification_request: The notification request body which includes the contact details.
+         Required.
+        :type notification_request: ~azure.mgmt.monitor.types.TenantNotificationRequestBody
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns
+         TenantActionGroupTestNotificationDetailsResponse. The
+         TenantActionGroupTestNotificationDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.TenantActionGroupTestNotificationDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_notifications_at_tenant_action_group_resource_level(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_request: IO[bytes],
+        *,
+        x_ms_client_tenant_id: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse]:
+        """Send test notifications to a set of provided receivers.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param notification_request: The notification request body which includes the contact details.
+         Required.
+        :type notification_request: IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns
+         TenantActionGroupTestNotificationDetailsResponse. The
+         TenantActionGroupTestNotificationDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.TenantActionGroupTestNotificationDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-05-01-preview",
+        params_added_on={
+            "2023-05-01-preview": [
+                "api_version",
+                "management_group_id",
+                "tenant_action_group_name",
+                "x_ms_client_tenant_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2023-05-01-preview"],
+    )
+    def begin_create_notifications_at_tenant_action_group_resource_level(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_request: Union[
+            _models.TenantNotificationRequestBody, _types.TenantNotificationRequestBody, IO[bytes]
+        ],
+        *,
+        x_ms_client_tenant_id: str,
+        **kwargs: Any
+    ) -> LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse]:
+        """Send test notifications to a set of provided receivers.
+
+        :param management_group_id: The management group ID. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param notification_request: The notification request body which includes the contact details.
+         Is either a TenantNotificationRequestBody type or a IO[bytes] type. Required.
+        :type notification_request: ~azure.mgmt.monitor.models.TenantNotificationRequestBody or
+         ~azure.mgmt.monitor.types.TenantNotificationRequestBody or IO[bytes]
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: An instance of LROPoller that returns
+         TenantActionGroupTestNotificationDetailsResponse. The
+         TenantActionGroupTestNotificationDetailsResponse is compatible with MutableMapping
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.mgmt.monitor.models.TenantActionGroupTestNotificationDetailsResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TenantActionGroupTestNotificationDetailsResponse] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_notifications_at_tenant_action_group_resource_level_initial(
+                management_group_id=management_group_id,
+                tenant_action_group_name=tenant_action_group_name,
+                notification_request=notification_request,
+                x_ms_client_tenant_id=x_ms_client_tenant_id,
+                api_version=api_version,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TenantActionGroupTestNotificationDetailsResponse, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TenantActionGroupTestNotificationDetailsResponse](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2023-05-01-preview",
+        params_added_on={
+            "2023-05-01-preview": [
+                "api_version",
+                "management_group_id",
+                "tenant_action_group_name",
+                "notification_id",
+                "x_ms_client_tenant_id",
+                "accept",
+            ]
+        },
+        api_versions_list=["2023-05-01-preview"],
+    )
+    def get_test_notifications_at_tenant_action_group_resource_level(  # pylint: disable=name-too-long
+        self,
+        management_group_id: str,
+        tenant_action_group_name: str,
+        notification_id: str,
+        *,
+        x_ms_client_tenant_id: str,
+        **kwargs: Any
+    ) -> _models.TenantActionGroupTestNotificationDetailsResponse:
+        """Get the test notifications by the notification id.
+
+        :param management_group_id: The management group id. Required.
+        :type management_group_id: str
+        :param tenant_action_group_name: The name of the action group. Required.
+        :type tenant_action_group_name: str
+        :param notification_id: The notification id. Required.
+        :type notification_id: str
+        :keyword x_ms_client_tenant_id: The tenant ID of the client making the request. Required.
+        :paramtype x_ms_client_tenant_id: str
+        :return: TenantActionGroupTestNotificationDetailsResponse. The
+         TenantActionGroupTestNotificationDetailsResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.monitor.models.TenantActionGroupTestNotificationDetailsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2023-05-01-preview"))
+        cls: ClsType[_models.TenantActionGroupTestNotificationDetailsResponse] = kwargs.pop("cls", None)
+
+        _request = build_monitor_management_get_test_notifications_at_tenant_action_group_resource_level_request(
+            management_group_id=management_group_id,
+            tenant_action_group_name=tenant_action_group_name,
+            notification_id=notification_id,
+            x_ms_client_tenant_id=x_ms_client_tenant_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TenantActionGroupTestNotificationDetailsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

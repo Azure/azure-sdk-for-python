@@ -15,10 +15,12 @@ if TYPE_CHECKING:
         AccessRightsDescription,
         AllocationPolicy,
         CreatedByType,
+        DeviceRegistryNamespaceAuthenticationType,
         IotDpsSku,
         IotHubAuthenticationType,
         IpFilterActionType,
         IpFilterTargetType,
+        LinkingState,
         ManagedServiceIdentityType,
         PrivateLinkServiceConnectionStatus,
         PublicNetworkAccess,
@@ -133,6 +135,48 @@ class CertificateResponse(ProxyResource):
     """The entity tag."""
 
 
+class DeviceRegistryNamespaceDescription(TypedDict, total=False):
+    """Description of the Device Registry namespace that is linked to the provisioning service.
+
+    :ivar resourceId: The ARM resource ID of the Device Registry namespace. Required.
+    :vartype resourceId: str
+    :ivar authenticationType: Device Registry Namespace MI authentication type: UserAssigned,
+     SystemAssigned. Required. Known values are: "UserAssigned" and "SystemAssigned".
+    :vartype authenticationType: Union[str, "DeviceRegistryNamespaceAuthenticationType"]
+    :ivar selectedUserAssignedIdentityResourceId: The selected user-assigned identity resource Id
+     associated with Device Registry namespace. This is required when authenticationType is
+     UserAssigned.
+    :vartype selectedUserAssignedIdentityResourceId: str
+    :ivar namespaceUuid: Unique identifier of the linked Device Registry namespace.
+    :vartype namespaceUuid: str
+    :ivar dataAddress: The data plane address of the linked Azure Device Registry namespace.
+    :vartype dataAddress: str
+    :ivar location: Azure location of the linked Device Registry namespace.
+    :vartype location: str
+    :ivar linkingState: The linking state of this namespace. Known values are: "NotLinked",
+     "InProgress", "Succeeded", and "Orphaned".
+    :vartype linkingState: Union[str, "LinkingState"]
+    """
+
+    resourceId: Required[str]
+    """The ARM resource ID of the Device Registry namespace. Required."""
+    authenticationType: Required[Union[str, "DeviceRegistryNamespaceAuthenticationType"]]
+    """Device Registry Namespace MI authentication type: UserAssigned, SystemAssigned. Required. Known
+     values are: \"UserAssigned\" and \"SystemAssigned\"."""
+    selectedUserAssignedIdentityResourceId: str
+    """The selected user-assigned identity resource Id associated with Device Registry namespace. This
+     is required when authenticationType is UserAssigned."""
+    namespaceUuid: str
+    """Unique identifier of the linked Device Registry namespace."""
+    dataAddress: str
+    """The data plane address of the linked Azure Device Registry namespace."""
+    location: str
+    """Azure location of the linked Device Registry namespace."""
+    linkingState: Union[str, "LinkingState"]
+    """The linking state of this namespace. Known values are: \"NotLinked\", \"InProgress\",
+     \"Succeeded\", and \"Orphaned\"."""
+
+
 class IotDpsPropertiesDescription(TypedDict, total=False):
     """the service specific properties of a provisioning service, including keys, linked iot hubs,
     current state, and system generated properties such as hostname and idScope.
@@ -152,6 +196,9 @@ class IotDpsPropertiesDescription(TypedDict, total=False):
     :vartype provisioningState: str
     :ivar iotHubs: List of IoT hubs associated with this provisioning service.
     :vartype iotHubs: list["IotHubDefinitionDescription"]
+    :ivar deviceRegistryNamespaces: The Device Registry namespaces linked to the provisioning
+     service.
+    :vartype deviceRegistryNamespaces: list["DeviceRegistryNamespaceDescription"]
     :ivar allocationPolicy: Allocation policy to be used by this provisioning service. Known values
      are: "Hashed", "GeoLatency", and "Static".
     :vartype allocationPolicy: Union[str, "AllocationPolicy"]
@@ -188,6 +235,8 @@ class IotDpsPropertiesDescription(TypedDict, total=False):
     """The ARM provisioning state of the provisioning service."""
     iotHubs: list["IotHubDefinitionDescription"]
     """List of IoT hubs associated with this provisioning service."""
+    deviceRegistryNamespaces: list["DeviceRegistryNamespaceDescription"]
+    """The Device Registry namespaces linked to the provisioning service."""
     allocationPolicy: Union[str, "AllocationPolicy"]
     """Allocation policy to be used by this provisioning service. Known values are: \"Hashed\",
      \"GeoLatency\", and \"Static\"."""

@@ -4,20 +4,26 @@
 import logging
 import math
 import os
-from typing import Dict, Union, List
+from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._exceptions import EvaluationException, ErrorBlame, ErrorCategory, ErrorTarget
-from ..._common.utils import reformat_conversation_history, reformat_agent_response
-
-from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._decision_rubric import rubric_strategy
+from azure.ai.evaluation._evaluators._common._prompty_strategy import (
+    judge_output_diagnostic,
+    log_judge_output_diagnostic,
+    parse_judge_score,
+)
 from azure.ai.evaluation._evaluators._common._validators import (
     ConversationValidator,
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
 )
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
+from azure.ai.evaluation._model_configurations import Conversation
+
+from ..._common.utils import reformat_agent_response, reformat_conversation_history
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +41,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     Relevance scores range from 1 to 5, with 1 being the worst and 5 being the best.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the relevance evaluator. Default is 3.
@@ -83,7 +90,9 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
 
     # Constants must be defined within eval's directory to be save/loadable
     _PROMPTY_FILE = "relevance.prompty"
+    _DECISION_FILE = "relevance.decision.yaml"
     _RESULT_KEY = "relevance"
+    _supports_decision_models = True
 
     _validator: ValidatorInterface
 
@@ -106,6 +115,11 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             credential=credential,
             _higher_is_better=True,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.RELEVANCE_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -229,6 +243,8 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
             eval_input["query"] = reformat_conversation_history(eval_input["query"], logger)
         if not isinstance(eval_input["response"], str):
             eval_input["response"] = reformat_agent_response(eval_input["response"], logger)
+        if self._uses_decision_model:
+            return await self._decision.evaluate({"query": eval_input["query"], "response": eval_input["response"]})
         result = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = result.get("llm_output", result)
         score = math.nan
@@ -240,7 +256,7 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self._threshold)
 
-            score = float(llm_output.get("score", math.nan))
+            score = parse_judge_score(llm_output.get("score", math.nan), result, missing="score" not in llm_output)
             reason = llm_output.get("reason", "")
             llm_properties = llm_output.get("properties", {}) or {}
             score_result = self._get_binary_result(score)
@@ -256,8 +272,10 @@ class RelevanceEvaluator(PromptyEvaluatorBase):
                 f"{self._result_key}_properties": llm_properties,
             }
 
+        diagnostic = judge_output_diagnostic(result)
+        log_judge_output_diagnostic(diagnostic)
         raise EvaluationException(
-            message="Evaluator returned invalid output.",
+            message=f"Evaluator returned invalid output. {diagnostic}",
             blame=ErrorBlame.SYSTEM_ERROR,
             category=ErrorCategory.FAILED_EXECUTION,
             target=ErrorTarget.EVALUATE,

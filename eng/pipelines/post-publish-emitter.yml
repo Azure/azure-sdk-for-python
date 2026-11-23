@@ -1,5 +1,6 @@
 # Updates the Python emitter package dependencies through the authenticated CFS feed,
-# regenerates the lock file, and opens a draft pull request when files change.
+# resolves upstream pnpm catalog references, regenerates the lock file, and opens
+# a draft pull request when files change.
 trigger: none
 pr: none
 
@@ -47,10 +48,15 @@ extends:
                   targetType: inline
                   script: |
                     $ErrorActionPreference = 'Stop'
-                    $packageJsonPath = '$(Build.SourcesDirectory)/eng/emitter-package.json'
+
+                    . (Join-Path '$(Build.SourcesDirectory)' 'eng' 'common' 'scripts' 'Helpers' 'PSModule-Helpers.ps1')
+                    Install-ModuleIfNotInstalled 'powershell-yaml' '0.4.7' | Import-Module
+
+                    $packageJsonPath = Join-Path '$(Build.SourcesDirectory)' 'eng' 'emitter-package.json'
                     $alignmentSources = [ordered]@{
                       'azure-rest-api-specs' = @{
-                        packageJsonUrl = 'https://github.com/Azure/azure-rest-api-specs/blob/main/package.json'
+                        repository = 'Azure/azure-rest-api-specs'
+                        ref = 'main'
                         packages = @(
                           '@azure-tools/openai-typespec'
                           '@azure-tools/typespec-liftr-base'
@@ -68,21 +74,73 @@ extends:
 
                     foreach ($sourceName in $alignmentSources.Keys | Sort-Object) {
                       $source = $alignmentSources[$sourceName]
-                      $packageJsonUrl = $source.packageJsonUrl -replace '^https://github\.com/([^/]+)/([^/]+)/blob/([^/]+)/(.*)$', 'https://raw.githubusercontent.com/$1/$2/$3/$4'
-                      Write-Host "Reading aligned package versions from $sourceName ($packageJsonUrl)"
+                      $encodedRef = [Uri]::EscapeDataString($source.ref)
+                      $commitUrl = "https://api.github.com/repos/$($source.repository)/commits/$encodedRef"
+                      $commit = Invoke-RestMethod -Uri $commitUrl
+                      $sha = $commit.sha
+                      if ($sha -notmatch '^[0-9a-f]{40}$') {
+                        throw "Could not resolve '$($source.ref)' to a commit for alignment source '$sourceName' ($commitUrl)"
+                      }
+
+                      # Use immutable URLs so package.json and its catalogs stay consistent.
+                      $sourceRoot = "https://raw.githubusercontent.com/$($source.repository)/$sha"
+                      $packageJsonUrl = "$sourceRoot/package.json"
+                      $workspaceUrl = "$sourceRoot/pnpm-workspace.yaml"
+
+                      Write-Host "Reading aligned package versions from $sourceName at $sha ($packageJsonUrl)"
                       $sourcePackageJson = Invoke-RestMethod -Uri $packageJsonUrl
+                      $workspace = $null
 
                       foreach ($packageName in $source.packages) {
                         $alignedVersion = $sourcePackageJson.dependencies.$packageName
                         if (-not $alignedVersion) {
                           $alignedVersion = $sourcePackageJson.devDependencies.$packageName
                         }
-                        if (-not $alignedVersion) {
-                          throw "Package '$packageName' was not found in dependencies or devDependencies at $packageJsonUrl"
+                        if ($alignedVersion -isnot [string] -or [string]::IsNullOrWhiteSpace($alignedVersion)) {
+                          throw "Package '$packageName' has no valid version in dependencies or devDependencies at $packageJsonUrl"
+                        }
+
+                        if ($alignedVersion.StartsWith('catalog:')) {
+                          $catalogReference = $alignedVersion
+                          if ($null -eq $workspace) {
+                            Write-Host "Resolving '$catalogReference' for '$packageName' from $sourceName ($workspaceUrl)"
+                            $workspaceResponse = Invoke-WebRequest -Uri $workspaceUrl
+                            $workspace = ConvertFrom-Yaml -Yaml $workspaceResponse.Content
+                            if ($workspace -isnot [System.Collections.IDictionary]) {
+                              throw "Invalid workspace configuration for package '$packageName' from source '$sourceName' at $workspaceUrl"
+                            }
+                          }
+
+                          $catalogName = $catalogReference.Substring('catalog:'.Length)
+                          if ([string]::IsNullOrEmpty($catalogName) -or $catalogName -eq 'default') {
+                            $catalog = $workspace['catalog']
+                          } else {
+                            $catalogs = $workspace['catalogs']
+                            $catalog = $null
+                            if ($catalogs -is [System.Collections.IDictionary]) {
+                              $catalog = $catalogs[$catalogName]
+                            }
+                          }
+
+                          if ($catalog -isnot [System.Collections.IDictionary] -or -not $catalog.Contains($packageName)) {
+                            throw "Cannot resolve '$catalogReference' for package '$packageName' from source '$sourceName': catalog or package entry is missing at $workspaceUrl"
+                          }
+
+                          $alignedVersion = $catalog[$packageName]
+                          if ($alignedVersion -isnot [string] -or [string]::IsNullOrWhiteSpace($alignedVersion)) {
+                            throw "Cannot resolve '$catalogReference' for package '$packageName' from source '$sourceName': the entry at $workspaceUrl must be a nonempty version string"
+                          }
+                        }
+
+                        if ($alignedVersion -match '^\s*(catalog|workspace|link|patch):') {
+                          throw "Unsupported reference '$alignedVersion' for package '$packageName' from source '$sourceName' at commit '$sha'. Provide an npm-compatible version in the upstream manifest or catalog."
                         }
 
                         $targetSection = @('dependencies', 'devDependencies') |
-                          Where-Object { $packageJson[$_].Contains($packageName) } |
+                          Where-Object {
+                            $packageJson[$_] -is [System.Collections.IDictionary] -and
+                            $packageJson[$_].Contains($packageName)
+                          } |
                           Select-Object -First 1
                         if (-not $targetSection) {
                           throw "Package '$packageName' from alignment source '$sourceName' was not found in $packageJsonPath"

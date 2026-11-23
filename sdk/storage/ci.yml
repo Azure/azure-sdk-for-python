@@ -39,9 +39,16 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
+    # Allow two serial SBOM scans plus build time while investigating slow detection.
+    SbomGenerationTimeoutInMinutes: 45
+    BuildTimeoutInMinutes: 150
     # Enable Compiled CodeQL because azure-storage-extensions has C code that 
     # must be scanned
     EnableCompiledCodeql: true
+    InstallMsRustToolchain: true
+    MsRustWorkingDirectory: $(Build.SourcesDirectory)/sdk/storage/azure-storage-extensionstransfer
+    MsRustToolchainFeed: https://pkgs.dev.azure.com/azure-sdk/_packaging/azure-sdk-for-rust-org-test/nuget/v3/index.json
+    MsRustAdditionalTargets: aarch64-pc-windows-msvc
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob
@@ -55,6 +62,9 @@ extends:
       safeName: azurestoragequeue
     - name: azure-storage-extensions
       safeName: azurestorageextensions
+      # Ships compiled binaries, so its wheels are routed through a dedicated
+      # Sign_azurestorageextensions stage before release and dev feed publishing.
+      signBinaries: true
       triggeringPaths:
         - /sdk/storage/azure-storage-blob
         - /sdk/storage/azure-storage-file-datalake
@@ -63,6 +73,9 @@ extends:
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true
+    - name: azure-storage-extensionstransfer
+      safeName: azurestorageextensionstransfer
+      signBinaries: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache

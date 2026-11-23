@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -38,7 +39,15 @@ def main():
         parameters={
             "properties": {
                 "creationData": {"createSource": "None", "sourceId": "mdonegivjquite"},
-                "managedBy": {"resourceId": "pclpkrpkpmvcsegcubrakcoodrubo"},
+                "managedBy": [
+                    {
+                        "clientId": "pclpkrpkpmvcsegcubrakcoodrubo",
+                        "resourceIds": [
+                            "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.SomeProvider/someResource/myResource"
+                        ],
+                        "version": 1,
+                    }
+                ],
                 "sizeGiB": 23,
             }
         },
@@ -46,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/Volumes_Create_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/Volumes_Create_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

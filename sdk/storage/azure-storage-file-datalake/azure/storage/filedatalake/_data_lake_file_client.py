@@ -65,6 +65,19 @@ class DataLakeFileClient(PathClient):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
 
     .. admonition:: Example:
 
@@ -685,6 +698,16 @@ class DataLakeFileClient(PathClient):
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: ~typing.Callable[[int, int], None]
+        :keyword bool disable_etag_lock:
+            By default, the file's ETag from the initial request is used to ensure the file is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the file to change during the download, for example, when downloading
+            a file that is actively being appended to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the file is
+                overwritten or recreated during the download. If the file becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
             decompressed automatically before being returned. Default value is True.
         :keyword validate_content:

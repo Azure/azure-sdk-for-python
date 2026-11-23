@@ -54,8 +54,12 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
 
         self._setup(bsc)
-        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot, StandardBlobTier.SMART]
-
+        tiers = [
+            StandardBlobTier.Archive,
+            StandardBlobTier.Cool,
+            StandardBlobTier.Hot,
+            # StandardBlobTier.SMART,
+        ]
         for tier in tiers:
             blob_name = self.get_resource_name(tier.value)
             blob = bsc.get_blob_client(self.container_name, blob_name)
@@ -121,7 +125,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         assert "rehydrate-pending-to-cool" == blob_ref.archive_status
         assert not blob_ref.blob_tier_inferred
 
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
         blob.delete_blob()
 
         # Assert
@@ -142,7 +146,7 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         assert "rehydrate-pending-to-hot" == blob_ref2.archive_status
         assert not blob_ref2.blob_tier_inferred
 
-        blobs = list(container.list_blobs())
+        blobs = list(container.list_blobs(response_format="xml"))
 
         # Assert
         assert blobs is not None

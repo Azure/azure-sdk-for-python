@@ -35,6 +35,7 @@ from ._path_client_helpers import (
     _set_access_control_options,
     _set_access_control_recursive_options,
 )
+from ._session import _configure_session
 from ._shared.base_client import StorageAccountHostsMixin, parse_query
 from ._serialize import (
     compare_api_versions,
@@ -77,6 +78,19 @@ class PathClient(StorageAccountHostsMixin):
     :keyword str audience: The audience to use when requesting tokens for Azure Active Directory
         authentication. Only has an effect when credential is of type TokenCredential. The value could be
         https://storage.azure.com/ (default) or https://<account>.blob.core.windows.net.
+    :keyword bool use_session: If True, enable session-based authentication for this file system.
+        When enabled, eligible GET requests issued by this client will be authenticated using
+        a short-lived session credential obtained from the service instead
+        of the provided TokenCredential. Only supported with a TokenCredential;
+        TypeError is raised otherwise. Defaults to False.
+    :keyword session_provider: Creates, caches, and invalidates the session credentials used for
+        session-based authentication. Supply a shared instance to reuse the session cache across
+        multiple clients; when omitted, one is created and scoped to this client. Only has an
+        effect when `use_session` is True.
+    :paramtype session_provider: ~azure.storage.filedatalake.SessionProvider
+    :keyword str session_account_name: The storage account name used to sign session-authenticated
+        requests. If omitted, it is derived from the account URL. Required when using a custom
+        endpoint, where the account name cannot be determined from the URL.
     """
 
     def __init__(
@@ -122,6 +136,7 @@ class PathClient(StorageAccountHostsMixin):
         self.path_name = path_name
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
 
         super(PathClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs

@@ -20,6 +20,9 @@ parameters:
   - name: RunApiStubGen
     type: boolean
     default: true
+  - name: SbomGenerationTimeoutInMinutes
+    type: number
+    default: 30
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -46,8 +49,8 @@ steps:
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
-      PackageName: "azure-template"
-      ServiceDirectory: "template"
+      Artifacts: ${{ parameters.Artifacts }}
+      ServiceDirectory: ${{ parameters.ServiceDirectory }}
       TestPipeline: ${{ parameters.TestPipeline }}
 
   - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
@@ -128,6 +131,7 @@ steps:
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'packages_extended'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}
 
   - ${{ if eq(parameters.BuildDocs, 'true') }}:
     - pwsh: |
@@ -140,3 +144,4 @@ steps:
         ArtifactPath: '$(Build.SourcesDirectory)/_docs'
         CustomCondition: eq(variables['DirectoryExists'], 'True')
         ArtifactName: 'documentation'
+        SbomGenerationTimeoutInMinutes: ${{ parameters.SbomGenerationTimeoutInMinutes }}

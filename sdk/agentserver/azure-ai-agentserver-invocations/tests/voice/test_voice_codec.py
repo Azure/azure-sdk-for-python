@@ -13,7 +13,6 @@ import pytest
 import azure.ai.agentserver.invocations.voice as voice
 from azure.ai.agentserver.invocations.voice import (
     AgentError,
-    BargeIn,
     EndCall,
     InputTextPart,
     ResponseCancel,
@@ -29,6 +28,7 @@ from azure.ai.agentserver.invocations.voice import (
     SessionReady,
     SessionRejected,
     SessionStart,
+    UserBargeIn,
     UserMessage,
 )
 from azure.ai.agentserver.invocations.voice._codec import (
@@ -51,6 +51,57 @@ def _frame(message_type: str, **fields):
     )
 
 
+class TestDataPassthrough:
+    def test_decode_preserves_mixed_content_and_freezes_data(self) -> None:
+        event = decode_inbound_message(
+            _frame(
+                "user.message",
+                item_id="in_data",
+                content=[
+                    {"type": "input_text", "text": "hello"},
+                    {"type": "input_data", "data": {"nested": [1, True, None, {"key": "value"}]}},
+                ],
+            )
+        )
+        assert isinstance(event, UserMessage)
+        assert len(event.content) == 2
+        assert event.content[1].data["nested"] == (1, True, None, {"key": "value"})
+        with pytest.raises(TypeError):
+            event.content[1].data["nested"][3]["key"] = "changed"
+
+    @pytest.mark.parametrize("payload", [None, [], "text", 1])
+    def test_decode_rejects_non_object_data(self, payload: object) -> None:
+        with pytest.raises(VoiceProtocolError):
+            decode_inbound_message(
+                _frame(
+                    "user.message",
+                    item_id="in_data",
+                    content=[{"type": "input_data", "data": payload}],
+                )
+            )
+
+    def test_encode_data_item_copies_payload_and_redacts_repr(self) -> None:
+        payload = {"type": "hubagent.metadata", "data": {"secret": ["private-value"]}}
+        message = voice.ResponseOutputDataDone(response_id="r_data", item_id="it_data", data=payload)
+        payload["data"]["secret"].append("mutated")
+        encoded = json.loads(encode_outbound_message(message))
+        assert encoded["type"] == "response.output_data.done"
+        assert encoded["data"]["data"]["secret"] == ["private-value"]
+        assert "private-value" not in repr(message)
+
+    def test_empty_data_object_is_valid(self) -> None:
+        event = decode_inbound_message(
+            _frame(
+                "user.message",
+                item_id="in_data",
+                content=[{"type": "input_data", "data": {}}],
+            )
+        )
+        assert event.content[0].data == {}
+        message = voice.ResponseOutputDataDone(response_id="r_data", item_id="it_data", data={})
+        assert json.loads(encode_outbound_message(message))["data"] == {}
+
+
 @pytest.mark.parametrize(
     "frame",
     [
@@ -63,7 +114,7 @@ def _frame(message_type: str, **fields):
         _frame("user.message", item_id="in_1", content=[{"type": "input_text", "text": "hello"}]),
         _frame("user.no_input", item_id="in_2", count=1),
         _frame("user.speech_started"),
-        _frame("barge_in", response_id="r_1", heard_text="heard"),
+        _frame("user.barge_in", response_id="r_1", heard_text="heard"),
         _frame("response.accepted", response_id="r_2"),
         _frame("response.dropped", response_id="r_3", reason="queue_full"),
         _frame("response.cancelled", response_id="r_4", heard_text="heard"),
@@ -76,6 +127,26 @@ def test_decode_all_selected_inbound_messages(frame):
     assert event is not None
     assert dataclasses.is_dataclass(event)
     assert event.id == "m_1"
+
+
+def test_user_barge_in_decodes_with_playback_snapshot():
+    event = decode_inbound_message(_frame("user.barge_in", response_id="r_1", item_id="it_1", heard_text="heard"))
+    assert event is not None
+    assert isinstance(event, UserBargeIn)
+    assert event.type == "user.barge_in"
+    assert event.response_id == "r_1"
+    assert event.item_id == "it_1"
+    assert event.heard_text == "heard"
+
+
+def test_legacy_barge_in_is_not_a_supported_event():
+    assert decode_inbound_message(_frame("barge_in", response_id="r_1", heard_text="heard")) is None
+
+
+def test_old_barge_in_public_names_are_not_retained():
+    assert not hasattr(voice, "BargeIn")
+    assert not hasattr(voice, "BargeInCallback")
+    assert not hasattr(voice.VoiceAgentServerHost, "on_barge_in")
 
 
 def test_session_start_caller_is_deeply_read_only():
@@ -338,13 +409,14 @@ def test_session_start_reconnect_rejects_present_greeting():
         )
 
 
-def test_selected_registry_is_exactly_ten_each_direction():
+def test_selected_registry_includes_data_output() -> None:
     inbound = InboundVoiceMessage.__args__
     outbound = OutboundVoiceMessage.__args__
     assert len(inbound) == 10
-    assert len(outbound) == 10
+    assert len(outbound) == 11
+    assert voice.ResponseOutputDataDone in outbound
     assert len({message.type for message in inbound}) == 10
-    assert len({message.type for message in outbound}) == 10
+    assert len({message.type for message in outbound}) == 11
 
 
 def test_all_public_voice_callables_are_experimental():
@@ -388,7 +460,7 @@ def test_voice_model_repr_redacts_sensitive_payloads():
             item_id="in_1",
             content=(InputTextPart(text=sensitive),),
         ),
-        BargeIn(
+        UserBargeIn(
             id="m_3",
             ts="2026-08-12T00:00:00Z",
             response_id="r_1",

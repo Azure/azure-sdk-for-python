@@ -46,6 +46,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/cassandrarbac/CosmosDBCassandraRoleAssignmentCreateUpdate.json
+# x-ms-original-file: 2026-07-15/cassandrarbac/CosmosDBCassandraRoleAssignmentCreateUpdate.json
 if __name__ == "__main__":
     main()

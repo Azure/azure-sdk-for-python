@@ -40,6 +40,7 @@ class TestContainerServiceIdentityBindingsOperations(AzureMgmtRecordedTestCase):
             parameters={
                 "eTag": "str",
                 "id": "str",
+                "managedBy": "str",
                 "name": "str",
                 "properties": {
                     "managedIdentity": {"resourceId": "str", "clientId": "str", "objectId": "str", "tenantId": "str"},

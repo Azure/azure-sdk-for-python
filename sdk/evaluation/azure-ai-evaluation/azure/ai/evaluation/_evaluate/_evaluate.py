@@ -59,12 +59,11 @@ from ._utils import (
 from ._batch_run.batch_clients import BatchClient, BatchClientRun
 
 from ._evaluate_aoai import (
-    _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
-    _MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
     _begin_aoai_evaluation,
     _split_evaluators_and_grader_configs,
     _get_evaluation_run_results,
     OAIEvalRunCreationInfo,
+    WRAPPER_KEY,
 )
 
 LOGGER = logging.getLogger(__name__)
@@ -274,7 +273,10 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
     """
     Aggregate binary output results (pass/fail) from evaluation dataframe.
 
-    For each evaluator, calculates the proportion of "pass" results.
+    For each evaluator, calculates the proportion of "pass" results among the rows whose result is "pass" or "fail".
+    Other rows, such as not applicable or errored rows, are left out, as they are from the mean score, and a result
+    column without "pass" or "fail" rows gives no binary aggregate. An evaluator with several result columns reports
+    its last one.
 
     :param df: The dataframe of evaluation results.
     :type df: ~pandas.DataFrame
@@ -313,14 +315,16 @@ def _aggregation_binary_output(df: pd.DataFrame) -> Dict[str, float]:
                 )
                 continue
 
-            # Calculate the proportion of EVALUATION_PASS_FAIL_MAPPING[True] results
-            total_rows = len(df)
             pass_count = value_counts.get(EVALUATION_PASS_FAIL_MAPPING[True], 0)
-            proportion = pass_count / total_rows if total_rows > 0 else 0.0
+            judged_rows = pass_count + value_counts.get(EVALUATION_PASS_FAIL_MAPPING[False], 0)
 
             # Set the result with the evaluator name as the key
             result_key = f"{evaluator_name}.{BINARY_AGGREGATE_SUFFIX}"
-            results[result_key] = round(proportion, 2)
+            if judged_rows == 0:
+                # The evaluator's last result column decides, so an earlier column's rate is not kept.
+                results.pop(result_key, None)
+                continue
+            results[result_key] = round(pass_count / judged_rows, 2)
 
     return results
 
@@ -820,25 +824,6 @@ def _rename_columns_conditionally(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _validate_aoai_output_items_page_size(aoai_output_items_page_size: int) -> None:
-    if (
-        not isinstance(aoai_output_items_page_size, int)
-        or isinstance(aoai_output_items_page_size, bool)
-        or not 1 <= aoai_output_items_page_size <= _MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE
-    ):
-        msg = (
-            "'aoai_output_items_page_size' must be an integer between 1 and "
-            f"{_MAX_AOAI_OUTPUT_ITEMS_PAGE_SIZE}, inclusive."
-        )
-        raise EvaluationException(
-            message=msg,
-            internal_message=msg,
-            target=ErrorTarget.EVALUATE,
-            category=ErrorCategory.INVALID_VALUE,
-            blame=ErrorBlame.USER_ERROR,
-        )
-
-
 def evaluate(
     *,
     data: Union[str, os.PathLike],
@@ -849,7 +834,6 @@ def evaluate(
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
-    aoai_output_items_page_size: int = 100,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
@@ -883,11 +867,6 @@ def evaluate(
         Defaults to false, which means that evaluations will continue regardless of failures.
         If such failures occur, metrics may be missing, and evidence of failures can be found in the evaluation's logs.
     :paramtype fail_on_evaluator_errors: bool
-    :keyword aoai_output_items_page_size: The maximum number of native Azure OpenAI grader output items requested
-        per HTTP response page. Defaults to 100. This does not limit response bytes, request latency, or the number
-        of dataset rows evaluated; all output-item result pages are fetched. If an output-items request times out or
-        returns HTTP 408 or 504, the same page is retried with a smaller page size.
-    :paramtype aoai_output_items_page_size: int
     :keyword tags: A dictionary of tags to be added to the evaluation run for tracking and organization purposes.
         Keys and values must be strings. For more information about tag limits, see:
         https://learn.microsoft.com/en-us/azure/machine-learning/resource-limits-capacity?view=azureml-api-2#runs
@@ -917,7 +896,6 @@ def evaluate(
                 https://{resource_name}.services.ai.azure.com/api/projects/{project_name}
     """
     try:
-        _validate_aoai_output_items_page_size(aoai_output_items_page_size)
         user_agent: Optional[str] = kwargs.get("user_agent")
         with UserAgentSingleton().add_useragent_product(user_agent) if user_agent else contextlib.nullcontext():
             results = _evaluate(
@@ -929,7 +907,6 @@ def evaluate(
                 azure_ai_project=azure_ai_project,
                 output_path=output_path,
                 fail_on_evaluator_errors=fail_on_evaluator_errors,
-                aoai_output_items_page_size=aoai_output_items_page_size,
                 tags=tags,
                 **kwargs,
             )
@@ -1000,7 +977,6 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     azure_ai_project: Optional[Union[str, AzureAIProject]] = None,
     output_path: Optional[Union[str, os.PathLike]] = None,
     fail_on_evaluator_errors: bool = False,
-    aoai_output_items_page_size: int = _DEFAULT_AOAI_OUTPUT_ITEMS_PAGE_SIZE,
     tags: Optional[Dict[str, str]] = None,
     **kwargs,
 ) -> EvaluationResult:
@@ -1040,7 +1016,8 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     if need_oai_run:
         try:
             aoi_name = evaluation_name if evaluation_name else DEFAULT_OAI_EVAL_RUN_NAME
-            eval_run_info_list = _begin_aoai_evaluation(graders, column_mapping, input_data_df, aoi_name, **kwargs)
+            aoai_column_mapping = _complete_aoai_default_column_mapping(column_mapping, input_data_df)
+            eval_run_info_list = _begin_aoai_evaluation(graders, aoai_column_mapping, input_data_df, aoi_name, **kwargs)
             need_get_oai_results = len(eval_run_info_list) > 0
         except EvaluationException as e:
             if need_local_run:
@@ -1078,9 +1055,7 @@ def _evaluate(  # pylint: disable=too-many-locals,too-many-statements
     # Retrieve OAI eval run results if needed.
     if need_get_oai_results:
         try:
-            aoai_results, aoai_metrics = _get_evaluation_run_results(
-                eval_run_info_list, aoai_output_items_page_size
-            )  # type: ignore
+            aoai_results, aoai_metrics = _get_evaluation_run_results(eval_run_info_list)  # type: ignore
             # Post build TODO: add equivalent of  _print_summary(per_evaluator_results) here
 
             # Combine results if both evaluators and graders are present
@@ -1169,6 +1144,14 @@ def _build_internal_log_attributes(
     # Add threshold if present
     if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
+
+    status = event_data.get("status")
+    if isinstance(status, str) and status:
+        internal_log_attributes["gen_ai.evaluation.status"] = status
+
+    passed = event_data.get("passed")
+    if isinstance(passed, bool):
+        internal_log_attributes["gen_ai.evaluation.passed"] = str(passed).lower()
 
     # Add testing criteria details if present
     testing_criteria_name = event_data.get("name")
@@ -1778,6 +1761,41 @@ def _preprocess_data(
         batch_run_client=batch_run_client,
         batch_run_data=batch_run_data,
     )
+
+
+def _complete_aoai_default_column_mapping(
+    column_mapping: Dict[str, Dict[str, str]], input_data_df: pd.DataFrame
+) -> Dict[str, Dict[str, str]]:
+    """Copy automatic mappings for AOAI, retaining nested sources with colliding leaf names."""
+    completed = {name: mapping.copy() for name, mapping in column_mapping.items()}
+    default_mapping = completed.setdefault("default", {})
+    mapped_sources = set(default_mapping.values())
+    # Run outputs occupy root fields inside AOAI's item wrapper, regardless of alias.
+    target_paths = {
+        f"{WRAPPER_KEY}.{source[2:-1].split('.')[-1]}"
+        for source in mapped_sources
+        if source.startswith("${run.outputs.")
+    }
+    for col in sorted(input_data_df.columns):
+        if "." not in col or col.startswith(Prefixes.TSG_OUTPUTS) or col in target_paths:
+            continue
+        source = f"${{data.{col}}}"
+        if source in mapped_sources:
+            continue
+        parts = col.split(".")
+        for depth in range(1, len(parts) + 1):
+            alias = ".".join(parts[-depth:])
+            if alias not in default_mapping:
+                break
+        else:
+            suffix = 1
+            alias = f"{col}__{suffix}"
+            while alias in default_mapping:
+                suffix += 1
+                alias = f"{col}__{suffix}"
+        default_mapping[alias] = source
+        mapped_sources.add(source)
+    return completed
 
 
 def _flatten_object_columns_for_default_mapping(
@@ -2822,6 +2840,9 @@ def _extract_metric_values(
                     type(metric_value).__name__,
                 )
             continue
+        # Skip per-turn breakdown columns; they are per-turn lists, not scalar AOAI result fields, and misroute by suffix into scalar slots.
+        if metric_key == "evaluation_per_turn" or metric_key.startswith("evaluation_per_turn."):
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -3285,6 +3306,8 @@ def _add_error_summaries(
     for criteria that failed during evaluation, ensuring proper error reporting.
     When per-line errors are available, only the error for the current row is used;
     rows that succeeded are not stamped with another row's error.
+    Decision-only per-line metadata preserves known usage/provenance in ``properties`` and the
+    existing ``sample`` schema, without treating failed attempts as completed scoring results.
 
     :param run_output_results: List to append error result objects to
     :type run_output_results: List[Dict[str, Any]]
@@ -3341,6 +3364,7 @@ def _add_error_summaries(
         # Use per-line error if available, otherwise fall back to batch-level error
         per_line_errors = criteria_summary.get("per_line_errors", {})
         per_line_error_msg = per_line_errors.get(row_idx, None)
+        decision_error_metadata = criteria_summary.get("per_line_error_metadata", {}).get(row_idx)
 
         if per_line_error_msg is not None:
             # This row has a specific error
@@ -3348,6 +3372,9 @@ def _add_error_summaries(
                 "code": criteria_summary.get("error_code"),
                 "message": per_line_error_msg,
             }
+            if decision_error_metadata is not None:
+                error_info["code"] = decision_error_metadata["code"]
+                error_info["blame"] = decision_error_metadata["blame"]
         elif per_line_errors:
             # Per-line errors exist but not for this row — this row succeeded, skip error stamping
             continue
@@ -3362,6 +3389,12 @@ def _add_error_summaries(
 
         metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
         criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "azure_ai_evaluator")
+        if decision_error_metadata is not None:
+            evaluator_name = testing_criteria_metadata.get(criteria_name, {}).get("evaluator_name")
+            if isinstance(evaluator_name, str):
+                primary_metric = evaluator_name.removeprefix("builtin.")
+                metrics = sorted(metrics, key=lambda metric: metric != primary_metric)
+        decision_usage_added = False
 
         for metric in metrics:
             if not _should_add_error_summary(run_output_results, criteria_name, metric):
@@ -3379,6 +3412,22 @@ def _add_error_summaries(
                 "status": "error",
                 "sample": sample,
             }
+            if decision_error_metadata is not None:
+                properties = decision_error_metadata["properties"]
+                error_result["properties"] = properties
+                # One failed evaluator invocation may produce several metric errors, but only one billed usage.
+                error_result["sample"] = {"error": error_info}
+                usage = {
+                    key: properties[key]
+                    for key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                    if key in properties
+                }
+                if not decision_usage_added:
+                    if usage:
+                        error_result["sample"]["usage"] = usage
+                    if "model" in properties:
+                        error_result["sample"]["model"] = properties["model"]
+                    decision_usage_added = True
             run_output_results.append(error_result)
 
 

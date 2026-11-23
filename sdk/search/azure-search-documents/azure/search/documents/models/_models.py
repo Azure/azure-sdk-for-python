@@ -11,10 +11,110 @@
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from ._enums import VectorQueryKind, VectorThresholdKind
+from ._enums import VectorQueryKind, VectorSearchTopicGraphKind, VectorThresholdKind
 
 if TYPE_CHECKING:
     from .. import models as _models
+
+
+class AgenticSearchDebugInfo(_Model):
+    """Bounded diagnostics returned for agentic search when debug selects agentic or all. Retrieved
+    documents remain in value; prompts and raw model reasoning are excluded. Disabling diagnostics
+    does not disable usage accounting or actionable error reporting.
+
+    :ivar termination_reason: The reason agentic processing stopped, when available. Known values
+     are: "modelStopped", "maxRuntimeExceeded", and "modelFailed".
+    :vartype termination_reason: str or
+     ~azure.search.documents.models.AgenticSearchTerminationReason
+    :ivar sub_queries: Issued subqueries with their originating model turns. This is not a
+     per-document trace or a stable pagination contract.
+    :vartype sub_queries: list[~azure.search.documents.models.AgenticSearchSubQuery]
+    :ivar usage: Token usage for agentic query planning and ranking across this request.
+    :vartype usage: ~azure.search.documents.models.AgenticSearchUsage
+    """
+
+    termination_reason: Optional[Union[str, "_models.AgenticSearchTerminationReason"]] = rest_field(
+        name="terminationReason", visibility=["read"]
+    )
+    """The reason agentic processing stopped, when available. Known values are: \"modelStopped\",
+     \"maxRuntimeExceeded\", and \"modelFailed\"."""
+    sub_queries: Optional[list["_models.AgenticSearchSubQuery"]] = rest_field(name="subQueries", visibility=["read"])
+    """Issued subqueries with their originating model turns. This is not a per-document trace or a
+     stable pagination contract."""
+    usage: Optional["_models.AgenticSearchUsage"] = rest_field(visibility=["read"])
+    """Token usage for agentic query planning and ranking across this request."""
+
+
+class AgenticSearchOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request-scoped runtime options for agentic search; service safety limits apply independently.
+
+    :ivar max_runtime_in_seconds: Maximum duration in seconds for the complete agentic search
+     request, including retrieval, ranking and retries.
+    :vartype max_runtime_in_seconds: int
+    """
+
+    max_runtime_in_seconds: Optional[int] = rest_field(
+        name="maxRuntimeInSeconds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum duration in seconds for the complete agentic search request, including retrieval,
+     ranking and retries."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_runtime_in_seconds: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgenticSearchSubQuery(_Model):
+    """One issued subquery from agentic search. The object permits future query metadata without
+    changing the subquery collection shape.
+
+    :ivar search: The text of the issued search query. Does not expose model prompts, raw reasoning
+     or retrieved document content. Required.
+    :vartype search: str
+    :ivar iteration: One-based logical model turn that produced the query. Multiple subqueries can
+     share the same iteration. Required.
+    :vartype iteration: int
+    """
+
+    search: str = rest_field(visibility=["read"])
+    """The text of the issued search query. Does not expose model prompts, raw reasoning or retrieved
+     document content. Required."""
+    iteration: int = rest_field(visibility=["read"])
+    """One-based logical model turn that produced the query. Multiple subqueries can share the same
+     iteration. Required."""
+
+
+class AgenticSearchUsage(_Model):
+    """Token usage for agentic query planning and ranking across the search request, including
+    documents not returned in the response.
+
+    :ivar agentic_planning_tokens: The number of tokens consumed by the agentic model for query
+     planning, excluding ranking work. Required.
+    :vartype agentic_planning_tokens: int
+    :ivar reasoning_tokens: The number of tokens consumed for semantic ranking, including documents
+     not returned in the response. Excludes agentic query-planning tokens. Required.
+    :vartype reasoning_tokens: int
+    """
+
+    agentic_planning_tokens: int = rest_field(name="agenticPlanningTokens", visibility=["read"])
+    """The number of tokens consumed by the agentic model for query planning, excluding ranking work.
+     Required."""
+    reasoning_tokens: int = rest_field(name="reasoningTokens", visibility=["read"])
+    """The number of tokens consumed for semantic ranking, including documents not returned in the
+     response. Excludes agentic query-planning tokens. Required."""
 
 
 class AutocompleteItem(_Model):
@@ -49,15 +149,145 @@ class AutocompleteResult(_Model):
     """The list of returned Autocompleted items. Required."""
 
 
+class VectorQueryTopicGraph(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Base type for topic graph vector search options.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    BalancedVectorQueryTopicGraph, DiverseVectorQueryTopicGraph, NoneVectorQueryTopicGraph
+
+    :ivar kind: The kind of topic graph vector search to use. Required. Known values are: "none",
+     "diverse", and "balanced".
+    :vartype kind: str or ~azure.search.documents.models.VectorSearchTopicGraphKind
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The kind of topic graph vector search to use. Required. Known values are: \"none\",
+     \"diverse\", and \"balanced\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BalancedVectorQueryTopicGraph(
+    VectorQueryTopicGraph, discriminator="balanced"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Blends pure vector similarity with diversity-aware retrieval. Recommended default to balance
+    diversity with relevance.
+
+    :ivar kind: The discriminator value. Required. Blends pure vector similarity with
+     diversity-aware retrieval. Recommended default to balance diversity with relevance.
+    :vartype kind: str or ~azure.search.documents.models.BALANCED
+    :ivar min_diversity_pool_size: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype min_diversity_pool_size: int
+    """
+
+    kind: Literal[VectorSearchTopicGraphKind.BALANCED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Blends pure vector similarity with diversity-aware
+     retrieval. Recommended default to balance diversity with relevance."""
+    min_diversity_pool_size: Optional[int] = rest_field(
+        name="minDiversityPoolSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        min_diversity_pool_size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VectorSearchTopicGraphKind.BALANCED  # type: ignore
+
+
 class DebugInfo(_Model):
     """Contains debugging information that can be used to further explore your search results.
 
     :ivar query_rewrites: Contains debugging information specific to query rewrites.
     :vartype query_rewrites: ~azure.search.documents.models.QueryRewritesDebugInfo
+    :ivar agentic: Contains request-wide agentic diagnostics when debug selects agentic or all.
+     Does not imply that classic query rewriting executed.
+    :vartype agentic: ~azure.search.documents.models.AgenticSearchDebugInfo
     """
 
     query_rewrites: Optional["_models.QueryRewritesDebugInfo"] = rest_field(name="queryRewrites", visibility=["read"])
     """Contains debugging information specific to query rewrites."""
+    agentic: Optional["_models.AgenticSearchDebugInfo"] = rest_field(visibility=["read"])
+    """Contains request-wide agentic diagnostics when debug selects agentic or all. Does not imply
+     that classic query rewriting executed."""
+
+
+class DiverseVectorQueryTopicGraph(
+    VectorQueryTopicGraph, discriminator="diverse"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Uses topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use topic graph diverse retrieval.
+    :vartype kind: str or ~azure.search.documents.models.DIVERSE
+    :ivar diversity_factor: The diversity factor used for topic graph diverse retrieval. If
+     omitted, the default configured on the topic graph profile is used.
+    :vartype diversity_factor: float
+    :ivar min_diversity_pool_size: The minimum number of vector candidates to retrieve before topic
+     graph sampling. The default is 1,000.
+    :vartype min_diversity_pool_size: int
+    """
+
+    kind: Literal[VectorSearchTopicGraphKind.DIVERSE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Use topic graph diverse retrieval."""
+    diversity_factor: Optional[float] = rest_field(
+        name="diversityFactor", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The diversity factor used for topic graph diverse retrieval. If omitted, the default configured
+     on the topic graph profile is used."""
+    min_diversity_pool_size: Optional[int] = rest_field(
+        name="minDiversityPoolSize", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum number of vector candidates to retrieve before topic graph sampling. The default is
+     1,000."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        diversity_factor: Optional[float] = None,
+        min_diversity_pool_size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VectorSearchTopicGraphKind.DIVERSE  # type: ignore
 
 
 class DocumentDebugInfo(_Model):
@@ -196,6 +426,515 @@ class FacetResult(_Model):
     facets: Optional[dict[str, list["_models.FacetResult"]]] = rest_field(name="@search.facets", visibility=["read"])
     """The nested facet query results for the search operation, organized as a collection of buckets
      for each faceted field; null if the query did not contain any nested facets."""
+
+
+class GraphQueryDiagnostic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A graph planning or execution diagnostic.
+
+    :ivar code: Stable machine-readable diagnostic identifier.
+    :vartype code: str
+    :ivar severity: The diagnostic's importance. Known values are: "error", "warning", and "info".
+    :vartype severity: str or ~azure.search.documents.models.GraphQueryDiagnosticSeverity
+    :ivar phase: The stage that produced the diagnostic. Known values are: "parse", "bind",
+     "validation", "planning", and "execution".
+    :vartype phase: str or ~azure.search.documents.models.GraphQueryDiagnosticPhase
+    :ivar message: Human-readable explanation; applications should use code rather than parse this
+     text.
+    :vartype message: str
+    :ivar span: Optional source-span description associated with the diagnostic.
+    :vartype span: str
+    :ivar suggestions: Suggested corrections or alternatives.
+    :vartype suggestions: list[str]
+    """
+
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Stable machine-readable diagnostic identifier."""
+    severity: Optional[Union[str, "_models.GraphQueryDiagnosticSeverity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The diagnostic's importance. Known values are: \"error\", \"warning\", and \"info\"."""
+    phase: Optional[Union[str, "_models.GraphQueryDiagnosticPhase"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The stage that produced the diagnostic. Known values are: \"parse\", \"bind\", \"validation\",
+     \"planning\", and \"execution\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable explanation; applications should use code rather than parse this text."""
+    span: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional source-span description associated with the diagnostic."""
+    suggestions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Suggested corrections or alternatives."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        severity: Optional[Union[str, "_models.GraphQueryDiagnosticSeverity"]] = None,
+        phase: Optional[Union[str, "_models.GraphQueryDiagnosticPhase"]] = None,
+        message: Optional[str] = None,
+        span: Optional[str] = None,
+        suggestions: Optional[list[str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A failed graph request with standard Search error information and optional graph diagnostics.
+
+    :ivar count: Number of projected rows in this response, not the size of an unbounded graph
+     population.
+    :vartype count: int
+    :ivar value: Query projection rows. planOnly returns an empty collection.
+    :vartype value: list[~azure.search.documents.models.GraphQueryRow]
+    :ivar statistics: Execution statistics, when requested and available.
+    :vartype statistics: ~azure.search.documents.models.GraphQueryStatistics
+    :ivar diagnostics: Structured errors, warnings, and requested informational diagnostics.
+    :vartype diagnostics: list[~azure.search.documents.models.GraphQueryDiagnostic]
+    :ivar explain: Requested diagnostic stages. Absent stages are omitted.
+    :vartype explain: ~azure.search.documents.models.GraphQueryExplain
+    :ivar provenance_documents: Hydrated source documents keyed by document ID, shared across
+     result rows.
+    :vartype provenance_documents: ~azure.search.documents.models.GraphQueryProvenanceDocuments
+    :ivar error: Standard Search error information. Graph query rejections use
+     InvalidRequestParameter and preserve their specific codes in graph diagnostics. Required.
+    :vartype error: ~azure.search.documents.models.ErrorDetail
+    """
+
+    count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
+    """Number of projected rows in this response, not the size of an unbounded graph population."""
+    value: Optional[list["_models.GraphQueryRow"]] = rest_field(visibility=["read"])
+    """Query projection rows. planOnly returns an empty collection."""
+    statistics: Optional["_models.GraphQueryStatistics"] = rest_field(name="@search.graphStats", visibility=["read"])
+    """Execution statistics, when requested and available."""
+    diagnostics: Optional[list["_models.GraphQueryDiagnostic"]] = rest_field(
+        name="@search.graphDiagnostics", visibility=["read"]
+    )
+    """Structured errors, warnings, and requested informational diagnostics."""
+    explain: Optional["_models.GraphQueryExplain"] = rest_field(name="@search.graphExplain", visibility=["read"])
+    """Requested diagnostic stages. Absent stages are omitted."""
+    provenance_documents: Optional["_models.GraphQueryProvenanceDocuments"] = rest_field(
+        name="@search.graphProvenanceDocuments", visibility=["read"]
+    )
+    """Hydrated source documents keyed by document ID, shared across result rows."""
+    error: "_models.ErrorDetail" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Standard Search error information. Graph query rejections use InvalidRequestParameter and
+     preserve their specific codes in graph diagnostics. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        error: "_models.ErrorDetail",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryEvidence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Source assertion identifiers and confidence values retained as graph evidence.
+
+    :ivar edge_id: Assertion document identifier in the graph index.
+    :vartype edge_id: str
+    :ivar chunk_id: Source chunk identifier used for source-document lookup.
+    :vartype chunk_id: str
+    :ivar parent_id: Parent source document identifier.
+    :vartype parent_id: str
+    :ivar confidence: Confidence values associated with the assertion and its components.
+    :vartype confidence: ~azure.search.documents.models.GraphQueryEvidenceConfidence
+    """
+
+    edge_id: Optional[str] = rest_field(name="edgeId", visibility=["read", "create", "update", "delete", "query"])
+    """Assertion document identifier in the graph index."""
+    chunk_id: Optional[str] = rest_field(name="chunkId", visibility=["read", "create", "update", "delete", "query"])
+    """Source chunk identifier used for source-document lookup."""
+    parent_id: Optional[str] = rest_field(name="parentId", visibility=["read", "create", "update", "delete", "query"])
+    """Parent source document identifier."""
+    confidence: Optional["_models.GraphQueryEvidenceConfidence"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Confidence values associated with the assertion and its components."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        edge_id: Optional[str] = None,
+        chunk_id: Optional[str] = None,
+        parent_id: Optional[str] = None,
+        confidence: Optional["_models.GraphQueryEvidenceConfidence"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryEvidenceConfidence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Confidence values recorded on a supporting assertion.
+
+    :ivar edge: Confidence in the complete relationship.
+    :vartype edge: float
+    :ivar subject: Confidence in the subject grounding.
+    :vartype subject: float
+    :ivar predicate: Confidence in predicate alignment.
+    :vartype predicate: float
+    :ivar object: Confidence in the object grounding.
+    :vartype object: float
+    """
+
+    edge: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Confidence in the complete relationship."""
+    subject: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Confidence in the subject grounding."""
+    predicate: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Confidence in predicate alignment."""
+    object: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Confidence in the object grounding."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        edge: Optional[float] = None,
+        subject: Optional[float] = None,
+        predicate: Optional[float] = None,
+        object: Optional[float] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryEvidenceCount(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An evidence count whose relation describes whether collection was complete.
+
+    :ivar value: Number of supporting evidence entries observed.
+    :vartype value: int
+    :ivar relation: Whether value is the exact count or a lower bound. Known values are: "exact"
+     and "lowerBound".
+    :vartype relation: str or ~azure.search.documents.models.GraphQueryEvidenceCountRelation
+    """
+
+    value: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of supporting evidence entries observed."""
+    relation: Optional[Union[str, "_models.GraphQueryEvidenceCountRelation"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether value is the exact count or a lower bound. Known values are: \"exact\" and
+     \"lowerBound\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[int] = None,
+        relation: Optional[Union[str, "_models.GraphQueryEvidenceCountRelation"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryExplain(_Model):
+    """Diagnostic query-plan representations keyed by requested explain stage."""
+
+
+class GraphQueryProvenanceDocument(_Model):
+    """A source document containing the selected retrievable fields."""
+
+
+class GraphQueryProvenanceDocuments(_Model):
+    """Source documents keyed by document ID. Each document contains the selected retrievable source
+    fields.
+
+    """
+
+
+class GraphQueryProvenanceHydrateDocumentsParameters(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Selects fields from the source index configured by graphProfile.provenanceIndexName.
+
+    :ivar select: Comma-separated source document fields to return; omitted selects the service's
+     default retrievable fields.
+    :vartype select: str
+    """
+
+    select: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Comma-separated source document fields to return; omitted selects the service's default
+     retrievable fields."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        select: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryProvenanceParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Bounded provenance collection options for a graph query.
+
+    :ivar kind: Whether to return evidence identifiers or also hydrate their source documents.
+     Required. Known values are: "ids" and "hydrate".
+    :vartype kind: str or ~azure.search.documents.models.GraphQueryProvenanceKind
+    :ivar max_evidence_per_row: Maximum evidence entries collected per result row. When bounded,
+     the response indicates whether the evidence count is exact or a lower bound.
+    :vartype max_evidence_per_row: int
+    :ivar hydrate_documents: Source-document selection options. Required when kind is hydrate.
+    :vartype hydrate_documents:
+     ~azure.search.documents.models.GraphQueryProvenanceHydrateDocumentsParameters
+    """
+
+    kind: Union[str, "_models.GraphQueryProvenanceKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to return evidence identifiers or also hydrate their source documents. Required. Known
+     values are: \"ids\" and \"hydrate\"."""
+    max_evidence_per_row: Optional[int] = rest_field(
+        name="maxEvidencePerRow", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Maximum evidence entries collected per result row. When bounded, the response indicates whether
+     the evidence count is exact or a lower bound."""
+    hydrate_documents: Optional["_models.GraphQueryProvenanceHydrateDocumentsParameters"] = rest_field(
+        name="hydrateDocuments", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Source-document selection options. Required when kind is hydrate."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Union[str, "_models.GraphQueryProvenanceKind"],
+        max_evidence_per_row: Optional[int] = None,
+        hydrate_documents: Optional["_models.GraphQueryProvenanceHydrateDocumentsParameters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryResult(_Model):
+    """A graph query's projected rows and optional execution information.
+
+    :ivar count: Number of projected rows in this response, not the size of an unbounded graph
+     population.
+    :vartype count: int
+    :ivar value: Query projection rows. planOnly returns an empty collection. Required.
+    :vartype value: list[~azure.search.documents.models.GraphQueryRow]
+    :ivar statistics: Execution statistics, when requested and available.
+    :vartype statistics: ~azure.search.documents.models.GraphQueryStatistics
+    :ivar diagnostics: Structured errors, warnings, and requested informational diagnostics.
+    :vartype diagnostics: list[~azure.search.documents.models.GraphQueryDiagnostic]
+    :ivar explain: Requested diagnostic stages. Absent stages are omitted.
+    :vartype explain: ~azure.search.documents.models.GraphQueryExplain
+    :ivar provenance_documents: Hydrated source documents keyed by document ID, shared across
+     result rows.
+    :vartype provenance_documents: ~azure.search.documents.models.GraphQueryProvenanceDocuments
+    """
+
+    count: Optional[int] = rest_field(name="@odata.count", visibility=["read"])
+    """Number of projected rows in this response, not the size of an unbounded graph population."""
+    value: list["_models.GraphQueryRow"] = rest_field(visibility=["read"])
+    """Query projection rows. planOnly returns an empty collection. Required."""
+    statistics: Optional["_models.GraphQueryStatistics"] = rest_field(name="@search.graphStats", visibility=["read"])
+    """Execution statistics, when requested and available."""
+    diagnostics: Optional[list["_models.GraphQueryDiagnostic"]] = rest_field(
+        name="@search.graphDiagnostics", visibility=["read"]
+    )
+    """Structured errors, warnings, and requested informational diagnostics."""
+    explain: Optional["_models.GraphQueryExplain"] = rest_field(name="@search.graphExplain", visibility=["read"])
+    """Requested diagnostic stages. Absent stages are omitted."""
+    provenance_documents: Optional["_models.GraphQueryProvenanceDocuments"] = rest_field(
+        name="@search.graphProvenanceDocuments", visibility=["read"]
+    )
+    """Hydrated source documents keyed by document ID, shared across result rows."""
+
+
+class GraphQueryRow(_Model):
+    """A dynamic graph projection row with optional bounded assertion evidence.
+
+    :ivar provenance: Assertion evidence supporting this projected row.
+    :vartype provenance: ~azure.search.documents.models.GraphQueryRowProvenance
+    """
+
+    provenance: Optional["_models.GraphQueryRowProvenance"] = rest_field(
+        name="@search.graphProvenance", visibility=["read"]
+    )
+    """Assertion evidence supporting this projected row."""
+
+
+class GraphQueryRowProvenance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Assertion evidence supporting one projected graph row.
+
+    :ivar kind: Whether the query requested evidence IDs or source hydration. Known values are:
+     "ids" and "hydrate".
+    :vartype kind: str or ~azure.search.documents.models.GraphQueryProvenanceKind
+    :ivar evidence_count: Number of supporting assertions and the completeness relation of that
+     count.
+    :vartype evidence_count: ~azure.search.documents.models.GraphQueryEvidenceCount
+    :ivar evidence: Bounded evidence entries for this result row.
+    :vartype evidence: list[~azure.search.documents.models.GraphQueryEvidence]
+    """
+
+    kind: Optional[Union[str, "_models.GraphQueryProvenanceKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the query requested evidence IDs or source hydration. Known values are: \"ids\" and
+     \"hydrate\"."""
+    evidence_count: Optional["_models.GraphQueryEvidenceCount"] = rest_field(
+        name="evidenceCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Number of supporting assertions and the completeness relation of that count."""
+    evidence: Optional[list["_models.GraphQueryEvidence"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounded evidence entries for this result row."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: Optional[Union[str, "_models.GraphQueryProvenanceKind"]] = None,
+        evidence_count: Optional["_models.GraphQueryEvidenceCount"] = None,
+        evidence: Optional[list["_models.GraphQueryEvidence"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GraphQueryStatistics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Execution statistics for a graph query; counters describe work performed rather than result-row
+    counts.
+
+    :ivar execution_mode: Whether the request executed or only produced a plan. Known values are:
+     "execute" and "planOnly".
+    :vartype execution_mode: str or ~azure.search.documents.models.GraphQueryExecutionMode
+    :ivar query_count: Backend search requests performed by the graph query.
+    :vartype query_count: int
+    :ivar documents_fetched: Backend assertion documents fetched during execution.
+    :vartype documents_fetched: int
+    :ivar is_estimated: Whether execution reports an estimated result.
+    :vartype is_estimated: bool
+    :ivar total_ms: Reported total execution time in milliseconds.
+    :vartype total_ms: int
+    :ivar search_ms: Reported search time in milliseconds.
+    :vartype search_ms: int
+    :ivar planning_ms: Time spent producing the query plan, in milliseconds.
+    :vartype planning_ms: int
+    """
+
+    execution_mode: Optional[Union[str, "_models.GraphQueryExecutionMode"]] = rest_field(
+        name="executionMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the request executed or only produced a plan. Known values are: \"execute\" and
+     \"planOnly\"."""
+    query_count: Optional[int] = rest_field(
+        name="queryCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend search requests performed by the graph query."""
+    documents_fetched: Optional[int] = rest_field(
+        name="documentsFetched", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Backend assertion documents fetched during execution."""
+    is_estimated: Optional[bool] = rest_field(
+        name="isEstimated", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether execution reports an estimated result."""
+    total_ms: Optional[int] = rest_field(name="totalMs", visibility=["read", "create", "update", "delete", "query"])
+    """Reported total execution time in milliseconds."""
+    search_ms: Optional[int] = rest_field(name="searchMs", visibility=["read", "create", "update", "delete", "query"])
+    """Reported search time in milliseconds."""
+    planning_ms: Optional[int] = rest_field(
+        name="planningMs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Time spent producing the query plan, in milliseconds."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        execution_mode: Optional[Union[str, "_models.GraphQueryExecutionMode"]] = None,
+        query_count: Optional[int] = None,
+        documents_fetched: Optional[int] = None,
+        is_estimated: Optional[bool] = None,
+        total_ms: Optional[int] = None,
+        search_ms: Optional[int] = None,
+        planning_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class HybridSearch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -358,6 +1097,35 @@ class IndexingResult(_Model):
 
 class LookupDocument(_Model):
     """A document retrieved via a document lookup operation."""
+
+
+class NoneVectorQueryTopicGraph(VectorQueryTopicGraph, discriminator="none"):
+    """Uses normal vector search without topic graph diverse retrieval.
+
+    :ivar kind: The discriminator value. Required. Use normal vector search when topic graph
+     diverse retrieval is off.
+    :vartype kind: str or ~azure.search.documents.models.NONE
+    """
+
+    kind: Literal[VectorSearchTopicGraphKind.NONE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The discriminator value. Required. Use normal vector search when topic graph diverse retrieval
+     is off."""
+
+    @overload
+    def __init__(
+        self,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = VectorSearchTopicGraphKind.NONE  # type: ignore
 
 
 class QueryAnswerResult(_Model):
@@ -633,6 +1401,9 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
      parameter can be useful for ensuring search availability even for services with only one
      replica. The default is 100.
     :vartype minimum_coverage: float
+    :ivar more_like_this: The key of the document to use as the basis for finding similar
+     documents. This parameter cannot be used together with search text.
+    :vartype more_like_this: str
     :ivar order_by: The comma-separated list of OData $orderby expressions by which to sort the
      results. Each expression can be either a field name or a call to either the geo.distance() or
      the search.score() functions. Each expression can be followed by asc to indicate ascending, or
@@ -642,8 +1413,11 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
     :vartype order_by: list[str]
     :ivar query_type: A value that specifies the syntax of the search query. The default is
      'simple'. Use 'full' if your query uses the Lucene query syntax. Known values are: "simple",
-     "full", and "semantic".
+     "full", "semantic", and "agentic".
     :vartype query_type: str or ~azure.search.documents.models.QueryType
+    :ivar agentic_options: Request-scoped runtime options when queryType is set to 'agentic'. Not
+     supported with other query modes. Use the existing debug selector for diagnostics.
+    :vartype agentic_options: ~azure.search.documents.models.AgenticSearchOptions
     :ivar scoring_statistics: A value that specifies whether we want to calculate scoring
      statistics (such as document frequency) globally for more consistent scoring, or locally, for
      lower latency. The default is 'local'. Use 'global' to aggregate scoring statistics globally
@@ -666,8 +1440,8 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
      documents in order to sort the results.
     :vartype scoring_profile: str
     :ivar debug: Enables a debugging tool that can be used to further explore your reranked
-     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "innerHits", and
-     "all".
+     results. Known values are: "disabled", "semantic", "vector", "queryRewrites", "agentic",
+     "innerHits", and "all".
     :vartype debug: str or ~azure.search.documents.models.QueryDebugMode
     :ivar search_text: A full-text search query expression; Use "*" or omit this parameter to match
      all documents.
@@ -773,6 +1547,11 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
     """A number between 0 and 100 indicating the percentage of the index that must be covered by a
      search query in order for the query to be reported as a success. This parameter can be useful
      for ensuring search availability even for services with only one replica. The default is 100."""
+    more_like_this: Optional[str] = rest_field(
+        name="moreLikeThis", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The key of the document to use as the basis for finding similar documents. This parameter
+     cannot be used together with search text."""
     order_by: Optional[list[str]] = rest_field(
         name="orderby", visibility=["read", "create", "update", "delete", "query"], format="commaDelimited"
     )
@@ -786,8 +1565,13 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
         name="queryType", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value that specifies the syntax of the search query. The default is 'simple'. Use 'full' if
-     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", and
-     \"semantic\"."""
+     your query uses the Lucene query syntax. Known values are: \"simple\", \"full\", \"semantic\",
+     and \"agentic\"."""
+    agentic_options: Optional["_models.AgenticSearchOptions"] = rest_field(
+        name="agenticOptions", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Request-scoped runtime options when queryType is set to 'agentic'. Not supported with other
+     query modes. Use the existing debug selector for diagnostics."""
     scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = rest_field(
         name="scoringStatistics", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -818,8 +1602,8 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables a debugging tool that can be used to further explore your reranked results. Known
-     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"innerHits\", and
-     \"all\"."""
+     values are: \"disabled\", \"semantic\", \"vector\", \"queryRewrites\", \"agentic\",
+     \"innerHits\", and \"all\"."""
     search_text: Optional[str] = rest_field(name="search", visibility=["read", "create", "update", "delete", "query"])
     """A full-text search query expression; Use \"*\" or omit this parameter to match all documents."""
     search_fields: Optional[list[str]] = rest_field(
@@ -931,8 +1715,10 @@ class SearchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-k
         highlight_post_tag: Optional[str] = None,
         highlight_pre_tag: Optional[str] = None,
         minimum_coverage: Optional[float] = None,
+        more_like_this: Optional[str] = None,
         order_by: Optional[list[str]] = None,
         query_type: Optional[Union[str, "_models.QueryType"]] = None,
+        agentic_options: Optional["_models.AgenticSearchOptions"] = None,
         scoring_statistics: Optional[Union[str, "_models.ScoringStatistics"]] = None,
         session_id: Optional[str] = None,
         scoring_parameters: Optional[list[str]] = None,
@@ -1228,6 +2014,8 @@ class VectorQuery(_Model):  # pylint: disable=docstring-keyword-should-match-key
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
+    :ivar topic_graph: Topic graph vector search options.
+    :vartype topic_graph: ~azure.search.documents.models.VectorQueryTopicGraph
     :ivar kind: Type of query. Required. Known values are: "vector", "text", "imageUrl", and
      "imageBinary".
     :vartype kind: str or ~azure.search.documents.models.VectorQueryKind
@@ -1273,6 +2061,10 @@ class VectorQuery(_Model):  # pylint: disable=docstring-keyword-should-match-key
      it to 1 ensures at most one vector per document is matched, guaranteeing results come from
      distinct documents. Setting it to 0 (unlimited) allows multiple relevant vectors from the same
      document to be matched. Default is 0."""
+    topic_graph: Optional["_models.VectorQueryTopicGraph"] = rest_field(
+        name="topicGraph", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Topic graph vector search options."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of query. Required. Known values are: \"vector\", \"text\", \"imageUrl\", and
      \"imageBinary\"."""
@@ -1290,6 +2082,7 @@ class VectorQuery(_Model):  # pylint: disable=docstring-keyword-should-match-key
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        topic_graph: Optional["_models.VectorQueryTopicGraph"] = None,
     ) -> None: ...
 
     @overload
@@ -1342,6 +2135,8 @@ class VectorizableImageBinaryQuery(
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
+    :ivar topic_graph: Topic graph vector search options.
+    :vartype topic_graph: ~azure.search.documents.models.VectorQueryTopicGraph
     :ivar base64_image: The base 64 encoded binary of an image to be vectorized to perform a vector
      search query.
     :vartype base64_image: str
@@ -1370,6 +2165,7 @@ class VectorizableImageBinaryQuery(
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        topic_graph: Optional["_models.VectorQueryTopicGraph"] = None,
         base64_image: Optional[str] = None,
     ) -> None: ...
 
@@ -1424,6 +2220,8 @@ class VectorizableImageUrlQuery(
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
+    :ivar topic_graph: Topic graph vector search options.
+    :vartype topic_graph: ~azure.search.documents.models.VectorQueryTopicGraph
     :ivar url: The URL of an image to be vectorized to perform a vector search query.
     :vartype url: str
     :ivar kind: The kind of vector query being performed. Required. Vector query where an url that
@@ -1449,6 +2247,7 @@ class VectorizableImageUrlQuery(
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        topic_graph: Optional["_models.VectorQueryTopicGraph"] = None,
         url: Optional[str] = None,
     ) -> None: ...
 
@@ -1503,6 +2302,8 @@ class VectorizableTextQuery(
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
+    :ivar topic_graph: Topic graph vector search options.
+    :vartype topic_graph: ~azure.search.documents.models.VectorQueryTopicGraph
     :ivar text: The text to be vectorized to perform a vector search query. Required.
     :vartype text: str
     :ivar query_rewrites: Can be configured to let a generative model rewrite the query before
@@ -1537,6 +2338,7 @@ class VectorizableTextQuery(
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        topic_graph: Optional["_models.VectorQueryTopicGraph"] = None,
         query_rewrites: Optional[Union[str, "_models.QueryRewritesType"]] = None,
     ) -> None: ...
 
@@ -1590,6 +2392,8 @@ class VectorizedQuery(
      guaranteeing results come from distinct documents. Setting it to 0 (unlimited) allows multiple
      relevant vectors from the same document to be matched. Default is 0.
     :vartype per_document_vector_limit: int
+    :ivar topic_graph: Topic graph vector search options.
+    :vartype topic_graph: ~azure.search.documents.models.VectorQueryTopicGraph
     :ivar vector: The vector representation of a search query. Required.
     :vartype vector: list[float]
     :ivar kind: The kind of vector query being performed. Required. Vector query where a raw vector
@@ -1616,6 +2420,7 @@ class VectorizedQuery(
         threshold: Optional["_models.VectorThreshold"] = None,
         filter_override: Optional[str] = None,
         per_document_vector_limit: Optional[int] = None,
+        topic_graph: Optional["_models.VectorQueryTopicGraph"] = None,
     ) -> None: ...
 
     @overload

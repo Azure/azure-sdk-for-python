@@ -39,6 +39,7 @@ def main():
         protected_item_name="VM;iaasvmcontainerv2;netsdktestrg;netvmtestv2vm1",
         parameters={
             "properties": {
+                "existingBasicVMProtection": "DisableWithDeleteRPsNow",
                 "policyId": "/Subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/SwaggerTestRg/providers/Microsoft.RecoveryServices/vaults/NetSDKTestRsVault/backupPolicies/DefaultPolicy",
                 "protectedItemType": "Microsoft.Compute/virtualMachines",
                 "sourceResourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/netsdktestrg/providers/Microsoft.Compute/virtualMachines/netvmtestv2vm1",
@@ -48,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-08-01/AzureIaasVm/ConfigureProtection.json
+# x-ms-original-file: 2026-10-01/AzureIaasVm/ConfigureProtection.json
 if __name__ == "__main__":
     main()

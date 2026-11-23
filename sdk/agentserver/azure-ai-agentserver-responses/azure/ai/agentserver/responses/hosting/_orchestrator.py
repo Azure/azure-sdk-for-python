@@ -14,9 +14,10 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import logging
+import os
 from copy import deepcopy
-from contextlib import aclosing
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Callable, cast
+from contextlib import aclosing, asynccontextmanager
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, NoReturn, cast
 
 import anyio
 
@@ -71,12 +72,27 @@ from ..streaming._state_machine import EventStreamValidator
 from ._execution_context import _ExecutionContext
 from ._dispatch import decide_disposition
 from ._runtime_state import _RuntimeState
+from ._task_id import derive_lifecycle_id
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+_MEMORY_SNAPSHOT_ENV = "FOUNDRY_MEMORY_SNAPSHOT_ENABLED"
+
+
+def _task_activation_deferred() -> bool:
+    """Return whether Core defers task startup until session activation.
+
+    Core defers enabled tasks only when the memory snapshot variable is
+    explicitly ``true``. An absent or ``false`` value uses ordinary startup.
+
+    :return: True when a missing task runtime can mean activation is pending.
+    :rtype: bool
+    """
+    return os.environ.get(_MEMORY_SNAPSHOT_ENV, "").strip().lower() == "true"
 
 
 _STORAGE_ERROR_MESSAGE = (
@@ -125,20 +141,29 @@ async def _iter_handler_with_request_context(
             user_id=platform_context.user_id_key,
             call_id=platform_context.call_id,
             session_id=agent_session_id,
+            original_subject=platform_context.original_subject,
         )
 
     handler_iterator = create_fn(parsed, context, cancellation_signal)
-    while True:
+    try:
+        while True:
+            token = set_request_context(request_context) if request_context is not None else None
+            try:
+                try:
+                    event = await handler_iterator.__anext__()
+                except StopAsyncIteration:
+                    return
+            finally:
+                if token is not None:
+                    reset_request_context(token)
+            yield event
+    finally:
         token = set_request_context(request_context) if request_context is not None else None
         try:
-            try:
-                event = await handler_iterator.__anext__()
-            except StopAsyncIteration:
-                return
+            await _close_iterator(handler_iterator)
         finally:
             if token is not None:
                 reset_request_context(token)
-        yield event
 
 
 async def _resolve_input_items_for_persistence(
@@ -1120,7 +1145,7 @@ async def _run_background_non_stream(
     store: bool = True,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
-    history_limit: int = 100,
+    history_limit: int = -1,
     runtime_state: _RuntimeState | None = None,
     runtime_options: ResponsesServerOptions | None = None,
 ) -> None:
@@ -1163,6 +1188,7 @@ async def _run_background_non_stream(
     :return: None
     :rtype: None
     """
+    record.execution_task = asyncio.current_task()
     record.transition_to("in_progress")
     st = _BgRunState()
     try:
@@ -1235,7 +1261,7 @@ async def _run_background_non_stream(
         # Eager eviction: free memory once terminal (or store=False). Skip when
         # persistence failed — the in-memory record is the only GET source.
         if runtime_state is not None and record.is_terminal and not record.persistence_failed:
-            await runtime_state.try_evict(response_id)
+            await runtime_state.try_evict(response_id, record.user_id_key)
 
 
 def _refresh_background_status(record: ResponseExecution) -> None:
@@ -1280,6 +1306,10 @@ class _HandlerError(Exception):
         super().__init__(str(original))
 
 
+class _ServerShuttingDown(RuntimeError):
+    """Fresh execution was rejected because shutdown closed admission."""
+
+
 def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") -> "ResponseExecution":
     """Create a transient ResponseExecution for non-bg streams needing persistence.
 
@@ -1308,6 +1338,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
         status="in_progress",
         input_items=deepcopy(ctx.input_items),
         previous_response_id=ctx.previous_response_id,
+        response_context=ctx.context,
         agent_session_id=ctx.agent_session_id,
         conversation_id=ctx.conversation_id,
         user_id_key=ctx.user_id,
@@ -1317,7 +1348,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
     return record
 
 
-class _PipelineState:
+class _PipelineState:  # pylint: disable=too-many-instance-attributes
     """Mutable in-flight state for a single create-response invocation.
 
     Intentionally separate from :class:`_ExecutionContext` (which is a pure
@@ -1336,6 +1367,9 @@ class _PipelineState:
         "stream_interrupted",
         "pending_terminal",
         "provider_created",
+        "deferred_terminal_persist",
+        "defer_evict",
+        "execution_task",
         "next_seq",
         "leave_stream_open_for_recovery",
         "last_persisted_snapshot",
@@ -1349,6 +1383,16 @@ class _PipelineState:
         self.stream_interrupted: bool = False
         self.pending_terminal: generated_models.ResponseStreamEvent | None = None
         self.provider_created: bool = False
+        self.deferred_terminal_persist: Callable[[], Awaitable[None]] | None = None
+        self.defer_evict: bool = False
+        # The in-process task draining the handler for a store=True stream
+        # (the ``_resilient_stream_fallback`` task). Tracked so it can be
+        # attached to the canonical runtime-state record at registration —
+        # graceful shutdown drains records whose ``execution_task`` is live, so
+        # attaching it up front (rather than after the handler drains) prevents
+        # the shutdown wait loop from returning before the deferred terminal
+        # write completes.
+        self.execution_task: "asyncio.Task[Any] | None" = None
         # Next sequence number to stamp on the outgoing event. Seeded
         # from the prior persisted event count on recovered entry so
         # the recovered attempt's events have seq numbers strictly
@@ -1762,29 +1806,25 @@ class _ResponseOrchestrator:
         state.pending_terminal = await self._normalize_and_append(ctx, state, override_event)
         return response_payload, "cancelled"
 
-    async def _persist_and_resolve_terminal(
+    async def _prepare_terminal_resolution(
         self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
-    ) -> generated_models.ResponseStreamEvent:
-        """Attempt persistence and resolve the terminal event to yield.
+    ) -> "generated_models.ResponseObject | None":
+        """Build the terminal snapshot and apply in-memory terminal state.
 
-        This method implements the buffer-then-persist-then-yield pattern:
-        1. Builds the response snapshot from accumulated events.
-        2. Attempts provider persistence (create or update).
-        3. On success: returns the original ``state.pending_terminal``.
-        4. On failure: replaces the terminal with a ``response.failed`` event
-           carrying ``error_code="storage_error"`` and sets
-           ``record.persistence_failed``.
+        This is the no-I/O portion of terminal resolution shared by the
+        traditional persist-then-emit path and the in-process stream fallback's
+        emit-then-persist path.
 
-        The caller must yield the returned event to the SSE stream.
-
-        :param ctx: Current execution context (immutable inputs).
+        :param ctx: Current execution context.
         :type ctx: _ExecutionContext
-        :param state: Mutable pipeline state for this invocation.
+        :param state: Mutable pipeline state.
         :type state: _PipelineState
-        :param record: The execution record to update on failure.
+        :param record: The execution record to update.
         :type record: ResponseExecution
-        :return: The resolved terminal event (original or storage-error replacement).
-        :rtype: ResponseStreamEvent
+        :return: The response payload to persist, or ``None`` when persistence
+            should be skipped because a cancel race or prior persistence failure
+            already determined the terminal state.
+        :rtype: ResponseObject | None
         """
         assert state.pending_terminal is not None
 
@@ -1820,103 +1860,271 @@ class _ResponseOrchestrator:
         # Guard: if the cancel endpoint already transitioned this record to a
         # terminal state (race between cancel endpoint and B11), skip the
         # transition. We still emit the pending terminal to the per-response
-        # stream below so the live wire iterator (and replay subscribers)
-        # see exactly one terminal event.
+        # stream so the live wire iterator (and replay subscribers) see exactly
+        # one terminal event.
         cancel_race = bool(record.is_terminal and record.cancel_requested)
+        if cancel_race:
+            return None
 
-        if not cancel_race:
-            # Update snapshot on record before persistence attempt
-            record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
-            record.transition_to(status)
+        record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
+        record.transition_to(status)
 
-            # Attempt persistence
-            if ctx.store and record.response is not None:
-                if record.persistence_failed:
-                    # Phase 1 already failed — skip persistence attempt, emit storage error directly.
-                    self._apply_storage_error_replacement(ctx, state, record)
-                else:
-                    record.response["background"] = record.mode_flags.background
-                    _context = ctx.context.platform_context if ctx.context else None
-                    try:
-                        if state.provider_created:
-                            # bg+stream: initial create already done at response.created — use update
-                            await self._provider.update_response(record.response, context=_context)
-                        else:
-                            # non-bg stream or bg stream where initial create was never registered:
-                            # full create
-                            _history_ids = (
-                                await _resolve_history_item_ids(
-                                    self._provider,
-                                    ctx.previous_response_id,
-                                    None,
-                                    self._runtime_options.default_fetch_history_count,
-                                    context=_context,
-                                    request_context=ctx.context,
-                                )
-                                if ctx.previous_response_id
-                                else None
-                            )
-                            _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
-                            await self._provider.create_response(
-                                cast("generated_models.ResponseObject", response_payload),
-                                _resolved_items,
-                                _history_ids,
-                                context=_context,
-                            )
-                    except ResponseAlreadyExistsError:
-                        # Recovery: response was persisted by a prior attempt. Convert
-                        # this terminal-side create attempt into an update so the final
-                        # state still lands in the store. (Spec 013 US1 deliverable (b).)
-                        logger.info(
-                            "Response %s already exists in store at terminal create (recovery — switching to update).",
-                            ctx.response_id,
-                        )
-                        try:
-                            await self._provider.update_response(record.response, context=_context)
-                        except Exception as update_exc:  # pylint: disable=broad-exception-caught
-                            setattr(update_exc, PLATFORM_ERROR_TAG, True)
-                            logger.error(
-                                "Terminal update_response after already-exists swallow failed (response_id=%s): %s",
-                                ctx.response_id,
-                                update_exc,
-                                exc_info=True,
-                            )
-                            record.persistence_failed = True
-                            record.persistence_exception = update_exc
-                    except Exception as persist_exc:  # pylint: disable=broad-exception-caught
-                        setattr(persist_exc, PLATFORM_ERROR_TAG, True)
-                        logger.error(
-                            "Persistence failed at terminal event (response_id=%s): %s",
-                            ctx.response_id,
-                            persist_exc,
-                            exc_info=True,
-                        )
-                        record.persistence_failed = True
-                        record.persistence_exception = persist_exc
-                        self._apply_storage_error_replacement(ctx, state, record)
+        if ctx.store and record.response is not None:
+            if record.persistence_failed:
+                # Phase 1 already failed — skip persistence attempt and emit
+                # storage_error directly. This failure is known before terminal
+                # emission, so the existing wire contract is preserved.
+                self._apply_storage_error_replacement(ctx, state, record)
+                return None
+            record.response["background"] = record.mode_flags.background
+
+        return cast(generated_models.ResponseObject, response_payload)
+
+    def _mark_terminal_persist_failed(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        record: ResponseExecution,
+        exc: Exception,
+        *,
+        replace_terminal: bool,
+    ) -> None:
+        """Stamp terminal persistence failure state without raising.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param record: The execution record to update.
+        :type record: ResponseExecution
+        :param exc: Persistence exception.
+        :type exc: Exception
+        :keyword replace_terminal: Whether to replace the pending terminal with
+            a ``storage_error`` failed event.
+        :paramtype replace_terminal: bool
+        """
+        setattr(exc, PLATFORM_ERROR_TAG, True)
+        record.persistence_failed = True
+        record.persistence_exception = exc
+        if replace_terminal:
+            self._apply_storage_error_replacement(ctx, state, record)
+
+    async def _persist_terminal_io(
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        record: ResponseExecution,
+        response_payload: generated_models.ResponseObject,
+        *,
+        replace_already_exists_update_failure: bool = False,
+    ) -> None:
+        """Persist a terminal response snapshot, swallowing all failures.
+
+        Performs only provider I/O. It never emits stream events and never
+        raises; callers decide whether the stream has already been closed or is
+        still waiting for terminal emission.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param record: The execution record to persist and update on failure.
+        :type record: ResponseExecution
+        :param response_payload: Response payload to pass to ``create_response``
+            when terminal creation is required.
+        :type response_payload: ResponseObject
+        :keyword replace_already_exists_update_failure: Whether a failed update
+            after ``ResponseAlreadyExistsError`` should also stamp the in-memory
+            record with ``storage_error``. The deferred fallback uses this so a
+            later GET observes the failure after the stream is already closed;
+            the synchronous path keeps the pre-existing wire behavior.
+        :paramtype replace_already_exists_update_failure: bool
+        :return: None
+        :rtype: None
+        """
+        if not (ctx.store and record.response is not None):
+            return
+
+        _context = ctx.context.platform_context if ctx.context else None
+        try:
+            if state.provider_created:
+                # bg+stream: initial create already done at response.created — use update
+                await self._provider.update_response(record.response, context=_context)
+            else:
+                # non-bg stream or bg stream where initial create was never registered: full create
+                _history_ids = (
+                    await _resolve_history_item_ids(
+                        self._provider,
+                        ctx.previous_response_id,
+                        None,
+                        self._runtime_options.default_fetch_history_count,
+                        context=_context,
+                        request_context=ctx.context,
+                    )
+                    if ctx.previous_response_id
+                    else None
+                )
+                _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
+                await self._provider.create_response(
+                    response_payload,
+                    _resolved_items,
+                    _history_ids,
+                    context=_context,
+                )
+        except ResponseAlreadyExistsError:
+            # Recovery: response was persisted by a prior attempt. Convert this
+            # terminal-side create attempt into an update so the final state
+            # still lands in the store. (Spec 013 US1 deliverable (b).)
+            logger.info(
+                "Response %s already exists in store at terminal create (recovery — switching to update).",
+                ctx.response_id,
+            )
+            try:
+                await self._provider.update_response(record.response, context=_context)
+            except Exception as update_exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Terminal update_response after already-exists swallow failed (response_id=%s): %s",
+                    ctx.response_id,
+                    update_exc,
+                    exc_info=True,
+                )
+                self._mark_terminal_persist_failed(
+                    ctx,
+                    state,
+                    record,
+                    update_exc,
+                    replace_terminal=replace_already_exists_update_failure,
+                )
+        except Exception as persist_exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Persistence failed at terminal event (response_id=%s): %s",
+                ctx.response_id,
+                persist_exc,
+                exc_info=True,
+            )
+            self._mark_terminal_persist_failed(ctx, state, record, persist_exc, replace_terminal=True)
+
+    async def _emit_pending_terminal_to_stream(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
+        """Emit the resolved pending terminal event to its stream target.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :return: None
+        :rtype: None
+        """
+        if state.pending_terminal is None:
+            return
+        if state.bg_record is not None and state.bg_record.subject is not None:
+            await self._safe_emit(state.bg_record.subject, state.pending_terminal)
+        elif ctx.store and ctx.stream:
+            # (Spec 024 Phase 2) For ALL store=True streaming responses (Row
+            # 1/2/3 stream=T) — emit to the per-response stream so the wire
+            # iterator subscribed in ``_live_stream`` receives the terminal
+            # event. Pre-Phase-2 this was gated on ``ctx.background and
+            # ctx.store`` because only Row 1 used the wire_stream pattern;
+            # unified Row 2/3 stream now also subscribe to wire_stream and need
+            # the terminal emit.
+            _term_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
+            await self._safe_emit(_term_stream, state.pending_terminal)
+
+    async def _resolve_emit_and_defer_terminal_persist(
+        self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
+    ) -> None:
+        """Resolve and emit terminal before deferring provider persistence.
+
+        Used only by the in-process, non-resilient streaming fallback. The
+        terminal event reaches the client before the terminal provider write.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :param record: The execution record to update and eventually persist.
+        :type record: ResponseExecution
+        :return: None
+        :rtype: None
+        """
+        response_payload = await self._prepare_terminal_resolution(ctx, state, record)
+        if response_payload is not None:
+            if not await self._runtime_state.add(record):
+                return
+        await self._emit_pending_terminal_to_stream(ctx, state)
+        if response_payload is None or not (ctx.store and record.response is not None):
+            return
+
+        async def _deferred_terminal_persist() -> None:
+            # ``_finalize_stream`` (Path B) registers a fresh canonical record
+            # in runtime_state AFTER this resolution but BEFORE the deferred
+            # persist runs, so stamp the failure on whatever record GET will
+            # actually serve (fall back to the captured record if absent).
+            target = await self._runtime_state.get(ctx.response_id, ctx.user_id) or record
+            await self._persist_terminal_io(
+                ctx,
+                state,
+                target,
+                response_payload,
+                replace_already_exists_update_failure=True,
+            )
+
+        state.deferred_terminal_persist = _deferred_terminal_persist
+        state.defer_evict = True
+
+    async def _drain_deferred_terminal_persist(self, ctx: _ExecutionContext, state: _PipelineState) -> None:
+        """Persist the terminal after closing the wire, then release runtime state.
+
+        :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state.
+        :type state: _PipelineState
+        :return: None
+        :rtype: None
+        """
+        persist = state.deferred_terminal_persist
+        if persist is None:
+            return
+        await persist()
+        state.deferred_terminal_persist = None
+        state.defer_evict = False
+        record = await self._runtime_state.get(ctx.response_id, ctx.user_id)
+        if record is not None and record.is_terminal and not record.persistence_failed:
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
+
+    async def _persist_and_resolve_terminal(
+        self, ctx: _ExecutionContext, state: _PipelineState, record: ResponseExecution
+    ) -> generated_models.ResponseStreamEvent:
+        """Attempt persistence and resolve the terminal event to yield.
+
+        This method implements the buffer-then-persist-then-yield pattern:
+        1. Builds the response snapshot from accumulated events.
+        2. Attempts provider persistence (create or update).
+        3. On success: returns the original ``state.pending_terminal``.
+        4. On failure: replaces the terminal with a ``response.failed`` event
+           carrying ``error_code="storage_error"`` and sets
+           ``record.persistence_failed``.
+
+        The caller must yield the returned event to the SSE stream.
+
+        :param ctx: Current execution context (immutable inputs).
+        :type ctx: _ExecutionContext
+        :param state: Mutable pipeline state for this invocation.
+        :type state: _PipelineState
+        :param record: The execution record to update on failure.
+        :type record: ResponseExecution
+        :return: The resolved terminal event (original or storage-error replacement).
+        :rtype: ResponseStreamEvent
+        """
+        assert state.pending_terminal is not None
+        response_payload = await self._prepare_terminal_resolution(ctx, state, record)
+        if response_payload is not None:
+            await self._persist_terminal_io(ctx, state, record, response_payload)
 
         # Emit the resolved terminal event to the per-response stream for
         # replay subscribers. This is deferred from _normalize_and_append
         # to ensure subscribers see the correct terminal (original on
         # success, storage_error replacement on failure).
-        #
-        # For bg+store paths the per-response stream is the only fan-out
-        # target for GET ?stream=true replay — emit even if the in-memory
-        # record has no subject bound (ephemeral records from the
-        # empty-handler fallback path).
-        if state.pending_terminal is not None:
-            if state.bg_record is not None and state.bg_record.subject is not None:
-                await self._safe_emit(state.bg_record.subject, state.pending_terminal)
-            elif ctx.store and ctx.stream:
-                # (Spec 024 Phase 2) For ALL store=True streaming responses
-                # (Row 1/2/3 stream=T) — emit to the per-response stream so
-                # the wire iterator subscribed in ``_live_stream`` receives
-                # the terminal event. Pre-Phase-2 this was gated on
-                # ``ctx.background and ctx.store`` because only Row 1 used
-                # the wire_stream pattern; unified Row 2/3 stream now also
-                # subscribe to wire_stream and need the terminal emit.
-                _term_stream = await streams.get_or_create(ctx.response_id)
-                await self._safe_emit(_term_stream, state.pending_terminal)
+        await self._emit_pending_terminal_to_stream(ctx, state)
 
         # (Spec 024 Phase 2) Bookkeeping-task signal removed. The handler
         # now runs inside the resilient task body for all store=True rows
@@ -1986,10 +2194,18 @@ class _ResponseOrchestrator:
         # guarantees the same instance for the same id, so any other caller
         # that does ``streams.get_or_create(response_id)`` for this id sees
         # the same fan-out target.
-        execution.subject = await streams.get_or_create(ctx.response_id)
+        execution.subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         state.bg_record = execution
         assert state.bg_record.subject is not None
-        await self._runtime_state.add(execution)
+        # Attach the draining task (set by the in-process store=True fallback)
+        # to the canonical record at registration so a shutdown that snapshots
+        # runtime state mid-stream waits for the deferred terminal write to
+        # finish instead of racing event-loop teardown. Harmless (stays None)
+        # for the resilient body, which tracks its own task separately.
+        if state.execution_task is not None:
+            execution.execution_task = state.execution_task
+        if not await self._runtime_state.add(execution):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
         if ctx.store:
             _context = ctx.context.platform_context if ctx.context else None
             _initial_response_obj = cast("generated_models.ResponseObject", initial_payload)
@@ -2149,8 +2365,9 @@ class _ResponseOrchestrator:
         *,
         message: str = "An internal server error occurred.",
         code: str | None = None,
+        publish_to_stream: bool = True,
     ) -> generated_models.ResponseStreamEvent:
-        """Build a standalone ``error`` event and emit it to the wire stream.
+        """Build a standalone ``error`` event and optionally publish it to the wire stream.
 
         Shared by the pre-creation error paths (B8 / B30 / first-event-contract):
         each constructs the same ``error`` event shape and, for store+stream
@@ -2163,6 +2380,8 @@ class _ResponseOrchestrator:
         :paramtype message: str
         :keyword code: The optional error code.
         :paramtype code: str | None
+        :keyword publish_to_stream: Whether to publish to the response's registry stream.
+        :paramtype publish_to_stream: bool
         :returns: The constructed ``error`` event.
         :rtype: generated_models.ResponseStreamEvent
         """
@@ -2175,8 +2394,8 @@ class _ResponseOrchestrator:
                 "sequence_number": 0,
             }
         )
-        if ctx.store and ctx.stream:
-            _err_stream = await streams.get_or_create(ctx.response_id)
+        if publish_to_stream and ctx.store and ctx.stream:
+            _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_err_stream, event)
         return event
 
@@ -2232,7 +2451,7 @@ class _ResponseOrchestrator:
                 # yet — bind the per-response stream so the wire iterator sees the
                 # fallback events. Skip terminal (the caller emits the resolved one).
                 if ctx.store and (ctx.background or ctx.stream) and event.get("type") not in self._TERMINAL_SSE_TYPES:
-                    _fallback_stream = await streams.get_or_create(ctx.response_id)
+                    _fallback_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                     await self._safe_emit(_fallback_stream, event)
                 if event.get("type") in self._TERMINAL_SSE_TYPES:
                     state.pending_terminal = event
@@ -2456,7 +2675,7 @@ class _ResponseOrchestrator:
                 error_code="storage_error",
                 error_message=_STORAGE_ERROR_MESSAGE,
             )
-            _wire_stream = await streams.get_or_create(ctx.response_id)
+            _wire_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_emit(_wire_stream, first_normalized)
             evs.append(first_normalized)
             # Build, validate, and APPEND the terminal BEFORE emitting it so a
@@ -2475,7 +2694,7 @@ class _ResponseOrchestrator:
             evs.append(failed_normalized)
             return True, evs
         # Bg+stream: standalone error event (no response.created).
-        await self._runtime_state.try_evict(ctx.response_id)
+        await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         error_event = construct_event_model(
             {
                 "type": "error",
@@ -2485,7 +2704,7 @@ class _ResponseOrchestrator:
                 "sequence_number": 0,
             }
         )
-        _err_stream = await streams.get_or_create(ctx.response_id)
+        _err_stream = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
         await self._safe_emit(_err_stream, error_event)
         evs.append(error_event)
         return True, evs
@@ -2736,7 +2955,7 @@ class _ResponseOrchestrator:
             # ``GET ?stream=true`` correctly reports "no stream available".
             if record.status == "cancelled":
                 try:
-                    await streams.delete(ctx.response_id)
+                    await streams.delete(derive_lifecycle_id(ctx.response_id, ctx.user_id))
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
                         "Cancelled stream cleanup failed (response_id=%s)",
@@ -2752,8 +2971,8 @@ class _ResponseOrchestrator:
             # Eager eviction: free memory once terminal state is reached.
             # Skip eviction when persistence failed — the in-memory record is
             # the only remaining source of truth for GET.
-            if record.is_terminal and not record.persistence_failed:
-                await self._runtime_state.try_evict(ctx.response_id)
+            if record.is_terminal and not record.persistence_failed and not state.defer_evict:
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id, expected_record=record)
             return
 
         # --- Path B: No pre-existing record ---
@@ -2847,7 +3066,7 @@ class _ResponseOrchestrator:
         # for them, so no stream is needed.
         replay_subject: EventStream | None = None
         if ctx.store and ctx.background:
-            replay_subject = await streams.get_or_create(ctx.response_id)
+            replay_subject = await streams.get_or_create(derive_lifecycle_id(ctx.response_id, ctx.user_id))
             await self._safe_close(replay_subject)
 
         execution = ResponseExecution(
@@ -2858,6 +3077,7 @@ class _ResponseOrchestrator:
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
+            response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
@@ -2867,15 +3087,25 @@ class _ResponseOrchestrator:
         if state.bg_record is not None:
             execution.persistence_failed = state.bg_record.persistence_failed
             execution.persistence_exception = state.bg_record.persistence_exception
-        await self._runtime_state.add(execution)
+        # Preserve the in-flight execution task onto the replacement record.
+        # This add() overwrites the record that carried ``state.execution_task``
+        # (foreground store=True Path B, and the in-process fallback whose
+        # ``finally`` funnels here). Without copying it, ``handle_shutdown``
+        # would see ``execution_task is None`` and could complete shutdown while
+        # the deferred terminal provider write is still running.
+        if state.execution_task is not None:
+            execution.execution_task = state.execution_task
+        if not await self._runtime_state.add(execution):
+            ctx.span.end(state.captured_error)
+            return
 
         ctx.span.end(state.captured_error)
 
         # Eager eviction: free memory once terminal state is reached (or store=False).
         # Skip eviction when persistence failed — the in-memory record is the
         # only remaining source of truth for GET.
-        if execution.is_terminal and not execution.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+        if execution.is_terminal and not execution.persistence_failed and not state.defer_evict:
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id, expected_record=execution)
 
     # ------------------------------------------------------------------
     # Public execution methods
@@ -2960,7 +3190,7 @@ class _ResponseOrchestrator:
             keep_alive_task.cancel()
             events_task.cancel()
 
-    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:
+    async def _live_stream(self, ctx: _ExecutionContext) -> AsyncIterator[str]:  # pylint: disable=too-many-statements
         """Drive the SSE streaming pipeline using the shared event pipeline.
 
         Delegates all event processing (first-event handling, normalisation,
@@ -2998,8 +3228,6 @@ class _ResponseOrchestrator:
             store=ctx.store,
         )
 
-        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
-
         # Stored responses (background / resilient) ALWAYS run via the resilient
         # task + per-response wire stream, regardless of SSE keep-alive. The
         # resilient body runs in its own task, independent of the client
@@ -3019,26 +3247,75 @@ class _ResponseOrchestrator:
             # same instance for the same id, so the resilient body's
             # ``_register_bg_execution`` gets back this exact stream — every
             # emit fans out to the wire iterator below.
-            wire_stream = await streams.get_or_create(ctx.response_id)
+            lifecycle_id = derive_lifecycle_id(ctx.response_id, ctx.user_id)
+            stream_created = False
+            try:
+                wire_stream = await streams.get(lifecycle_id)
+            except EventStreamNotFoundError:
+                wire_stream = await streams.get_or_create(lifecycle_id)
+                stream_created = True
 
             async def _resilient_stream_fallback() -> None:
                 # In-process fallback if ``_start_resilient_background`` cannot
                 # start a resilient task. Runs the same ``_process_handler_events``
                 # pipeline as the resilient body so events still reach the
                 # per-response wire stream this connection subscribes to.
+                #
+                # Track THIS task from the start so it is attached to the
+                # canonical record at registration (``_register_bg_execution``);
+                # graceful shutdown drains records with a live ``execution_task``,
+                # so attaching it up front — not after the handler drains —
+                # prevents the shutdown wait loop from returning before the
+                # deferred terminal write below completes.
+                state.execution_task = asyncio.current_task()
+                start_record.execution_task = state.execution_task
+                state.bg_record = start_record
                 try:
+                    try:
+                        handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+                    except Exception as exc:  # pylint: disable=broad-exception-caught
+                        logger.error(
+                            "Handler raised before response.created (response_id=%s)",
+                            ctx.response_id,
+                            exc_info=exc,
+                        )
+                        state.captured_error = exc
+                        await self._emit_standalone_error(ctx)
+                        return
                     async for _event in self._process_handler_events(ctx, state, handler_iterator):
                         pass
                     if state.pending_terminal is not None:
-                        r = state.bg_record or _make_ephemeral_record(ctx, state)
-                        await self._persist_and_resolve_terminal(ctx, state, r)
+                        # Resolve/persist the terminal on the canonical
+                        # runtime_state record so a later GET (and the deferred
+                        # persistence-failure stamping) observes the same object
+                        # the GET read-through serves.
+                        r = await self._runtime_state.get(ctx.response_id, ctx.user_id) or state.bg_record
+                        if r is None:
+                            # No canonical record was registered (e.g. the
+                            # handler produced a terminal without a create
+                            # event, so ``_register_bg_execution`` never ran).
+                            # Synthesize one AND register it before emitting the
+                            # terminal, so a GET during the deferred-persist
+                            # window serves it (not 404) and any stamped
+                            # persistence failure is reachable.
+                            r = _make_ephemeral_record(ctx, state)
+                            if not await self._runtime_state.add(r):
+                                return
+                        r.execution_task = state.execution_task
+                        await self._resolve_emit_and_defer_terminal_persist(ctx, state, r)
                 finally:
-                    await self._finalize_stream(ctx, state)
-                    await self._safe_close(wire_stream)
+                    try:
+                        await self._finalize_stream(ctx, state)
+                        await self._safe_close(wire_stream)
+                        await self._drain_deferred_terminal_persist(ctx, state)
+                    finally:
+                        await self._runtime_state.discard_pending(
+                            ctx.response_id, ctx.user_id, expected_record=start_record
+                        )
 
             # Minimal record only for ``_start_resilient_background``'s parameter
-            # shape. It is NOT added to runtime_state — the resilient body (or the
-            # fallback) creates the canonical record via ``_register_bg_execution``.
+            # shape. The fallback tracks it as unpublished shutdown work until
+            # the handler publishes a canonical response record.
             start_record = ResponseExecution(
                 response_id=ctx.response_id,
                 mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
@@ -3054,6 +3331,20 @@ class _ResponseOrchestrator:
                 initial_agent_reference=ctx.agent_reference,
             )
             start_record.subject = wire_stream
+            # Close the admission race with graceful shutdown. The current
+            # request task is a temporary drain handle until resilient startup
+            # attaches the actual execution task to this same record.
+            request_task = asyncio.current_task()
+            assert request_task is not None
+            start_record.execution_task = request_task
+            if not await self._runtime_state.add_pending(start_record):
+                with anyio.CancelScope(shield=True):
+                    if stream_created and await self._runtime_state.get(ctx.response_id, ctx.user_id) is None:
+                        await streams.delete(lifecycle_id)
+                yield encode_sse_any_event(
+                    await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+                )
+                return
 
             try:
                 await self._start_resilient_background(
@@ -3062,8 +3353,20 @@ class _ResponseOrchestrator:
                     _resilient_stream_fallback,
                     disposition=_unified_disposition,
                 )
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                if not getattr(exc, PLATFORM_ERROR_TAG, False):
+            except (Exception, asyncio.CancelledError) as exc:  # pylint: disable=broad-exception-caught
+                # The HTTP response still owns the create reservation. Finish
+                # rejected admission cleanup before it can release that identity.
+                with anyio.CancelScope(shield=True):
+                    await self._runtime_state.discard_pending(
+                        ctx.response_id, ctx.user_id, expected_record=start_record
+                    )
+                    if (
+                        stream_created
+                        and getattr(start_record, "resilient_task_run", None) is None
+                        and start_record.execution_task is request_task
+                    ):
+                        await streams.delete(lifecycle_id)
+                if not isinstance(exc, Exception) or not getattr(exc, PLATFORM_ERROR_TAG, False):
                     # 409 conflicts (TaskConflictError / LastInputIdPreconditionFailed)
                     # and any non-platform error propagate unchanged.
                     raise
@@ -3072,10 +3375,12 @@ class _ResponseOrchestrator:
                 # is impossible; surface the failure the streaming-native way —
                 # a standalone ``error`` SSE event (the same B8 pre-creation
                 # contract used for every other streaming creation failure) —
-                # then close the wire stream. The platform error is already
-                # logged + tagged by ``_start_resilient_background``.
-                yield encode_sse_any_event(await self._emit_standalone_error(ctx, code="server_error"))
-                await self._safe_close(wire_stream)
+                # on this HTTP connection only. Never recreate deleted replay
+                # or close a stream owned by an existing/started execution.
+                # The platform error is already logged + tagged by startup.
+                yield encode_sse_any_event(
+                    await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+                )
                 return
 
             # Relay the resilient wire stream to this client, interleaving
@@ -3088,9 +3393,17 @@ class _ResponseOrchestrator:
         # --- Ephemeral (non-stored) responses: no resilient task ---
         # The request owns this producer even without keep-alives. Keeping handler
         # iteration in one task lets cleanup finish outside the ASGI cancel scope.
-        async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
-            async for chunk in ephemeral_stream:
-                yield chunk
+        try:
+            async with self._track_ephemeral_execution(ctx) as pending:
+                state.execution_task = pending.execution_task
+                handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
+                async with aclosing(self._live_stream_keep_alive(ctx, state, handler_iterator)) as ephemeral_stream:
+                    async for chunk in ephemeral_stream:
+                        yield chunk
+        except _ServerShuttingDown:
+            yield encode_sse_any_event(
+                await self._emit_standalone_error(ctx, code="server_error", publish_to_stream=False)
+            )
 
     async def _live_stream_keep_alive(  # pylint: disable=too-many-statements
         self,
@@ -3233,7 +3546,7 @@ class _ResponseOrchestrator:
                             task_exc,
                             exc_info=True,
                         )
-            elif execution_task is not None:
+            elif execution_task is not None and execution_task is not asyncio.current_task():
                 try:
                     await execution_task
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
@@ -3266,7 +3579,7 @@ class _ResponseOrchestrator:
             # Try to remove the record so GET returns 404. Best-effort; the
             # record may already be evicted.
             try:
-                await self._runtime_state.try_evict(ctx.response_id)
+                await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass
             ctx.span.end(None)
@@ -3338,7 +3651,7 @@ class _ResponseOrchestrator:
             ctx.response_id,
         )
         try:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
         except Exception:  # pylint: disable=broad-exception-caught
             pass
         ctx.span.end(None)
@@ -3380,7 +3693,9 @@ class _ResponseOrchestrator:
         if not ctx.store:
             # No store ⇒ no resilient task possible. Run handler inline; the
             # response is ephemeral (not retrievable via GET).
-            return await self._run_sync_inner(ctx, state)
+            async with self._track_ephemeral_execution(ctx) as pending:
+                state.execution_task = pending.execution_task
+                return await self._run_sync_inner(ctx, state)
 
         # (Spec 024 Phase 2 — bookkeeping unification) Row 3 unified path:
         # handler runs inside the resilient task body, HTTP request awaits the
@@ -3401,7 +3716,9 @@ class _ResponseOrchestrator:
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
         )
-        await self._runtime_state.add(record)
+        record.execution_task = asyncio.current_task()
+        if not await self._runtime_state.add(record):
+            await self._raise_publication_rejection()
 
         async def _runner() -> None:
             """Fallback runner if _start_resilient_background's resilient start fails.
@@ -3531,6 +3848,42 @@ class _ResponseOrchestrator:
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)
 
+    async def _raise_publication_rejection(self) -> NoReturn:
+        """Surface shutdown admission separately from lifecycle conflicts."""
+        if await self._runtime_state.is_draining():
+            raise _ServerShuttingDown("Server is shutting down.")
+        raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
+
+    @asynccontextmanager
+    async def _track_ephemeral_execution(self, ctx: _ExecutionContext) -> AsyncIterator[ResponseExecution]:
+        """Track non-stored handler work before its first invocation.
+
+        :param ctx: The admitted create request.
+        :type ctx: _ExecutionContext
+        :return: The exact pending execution included in shutdown snapshots.
+        :rtype: AsyncIterator[ResponseExecution]
+        """
+        record = ResponseExecution(
+            response_id=ctx.response_id,
+            mode_flags=ResponseModeFlags(stream=ctx.stream, store=False, background=ctx.background),
+            status="in_progress",
+            response_context=ctx.context,
+            cancel_signal=ctx.cancellation_signal,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            user_id_key=ctx.user_id,
+            initial_model=ctx.model,
+            initial_agent_reference=ctx.agent_reference,
+        )
+        record.execution_task = asyncio.current_task()
+        if not await self._runtime_state.add_pending(record):
+            await self._raise_publication_rejection()
+        try:
+            yield record
+        finally:
+            with anyio.CancelScope(shield=True):
+                await self._runtime_state.discard_pending(ctx.response_id, ctx.user_id, expected_record=record)
+
     async def _run_sync_inner(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
         """Inner body of :meth:`run_sync` — extracted so the bookkeeping
         task can be signalled in a ``try/finally`` wrapper in the caller.
@@ -3595,11 +3948,13 @@ class _ResponseOrchestrator:
             user_id_key=ctx.user_id,
         )
         record.set_response_snapshot(cast("generated_models.ResponseObject", response_payload))
+        record.execution_task = state.execution_task
 
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
         # Always register so cancel/GET can find this record.
-        await self._runtime_state.add(record)
+        if not await self._runtime_state.add(record):
+            raise _HandlerError(RuntimeError("Response lifecycle ownership changed before publication."))
 
         if ctx.store:
             # Persist via provider (non-bg sync: single create at terminal state).
@@ -3655,13 +4010,13 @@ class _ResponseOrchestrator:
         # Skip eviction when persistence failed — sync failures are handled below
         # where we evict before raising HTTP 500.
         if record.is_terminal and not record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
 
         # §3.1: For sync mode, persistence failure surfaces as HTTP 500.
         # The client never receives a response_id on 500, so evict the record
         # to avoid unbounded memory growth during storage outages.
         if record.persistence_failed:
-            await self._runtime_state.try_evict(ctx.response_id)
+            await self._runtime_state.try_evict(ctx.response_id, ctx.user_id)
             ctx.span.end(record.persistence_exception)
             raise _HandlerError(
                 record.persistence_exception or RuntimeError("Persistence failed")
@@ -3703,7 +4058,9 @@ class _ResponseOrchestrator:
         )
 
         # Register so GET can observe in-flight state
-        await self._runtime_state.add(record)
+        record.execution_task = asyncio.current_task()
+        if not await self._runtime_state.add(record):
+            await self._raise_publication_rejection()
 
         # Launch handler immediately (S-003: handler runs asynchronously)
         # Use anyio.CancelScope(shield=True) + suppress CancelledError so the
@@ -3901,12 +4258,14 @@ class _ResponseOrchestrator:
         )
 
         state = _PipelineState()
+        state.execution_task = asyncio.current_task()
+        record.execution_task = state.execution_task
         # The wire iterator on _live_stream's side subscribed to the
         # per-response stream BEFORE this body started. Looking it up from
         # the registry returns the SAME instance — every emit fans out to
         # the wire iterator. Bind it on ``record`` so the helpers that read
         # ``record.subject`` (publish, close) target this stream.
-        wire_stream = await streams.get_or_create(response_id)
+        wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
         record.subject = wire_stream
         # Seed the per-attempt sequence counter from the prior persisted
         # event count. On fresh entry the persisted log is empty →
@@ -3922,8 +4281,8 @@ class _ResponseOrchestrator:
         except EventStreamNotFoundError:
             # The previous run completed AND every persisted event has
             # since expired. Start fresh.
-            await streams.delete(response_id)
-            wire_stream = await streams.get_or_create(response_id)
+            await streams.delete(derive_lifecycle_id(response_id, ctx.user_id))
+            wire_stream = await streams.get_or_create(derive_lifecycle_id(response_id, ctx.user_id))
             record.subject = wire_stream
             state.next_seq = 0
         except Exception:  # pylint: disable=broad-exception-caught
@@ -4017,14 +4376,19 @@ class _ResponseOrchestrator:
 
         - **No manager installed** — the start raises
           :class:`~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized`.
-          Because ``AgentServerHost`` fails the lifespan when resilient tasks are
-          ENABLED but construction/startup fails, a missing manager in a running
-          deployment means resilient tasks are DISABLED (opt-out) — durability
-          was not requested (this also covers in-process test clients whose
-          lifespan never ran). The signal is **swallowed** and the handler runs
-          in-process via ``fallback_runner`` — the response still executes and
-          persists (GET works); it is simply not crash-recoverable. NOT a
-          failure.
+          When ``FOUNDRY_MEMORY_SNAPSHOT_ENABLED`` is absent or ``false`` (cold startup),
+          ``AgentServerHost`` fails the lifespan when resilient tasks are
+          ENABLED but construction/startup fails, so a missing manager in a
+          running deployment means resilient tasks are DISABLED (opt-out) —
+          durability was not requested (this also covers in-process test clients
+          whose lifespan never ran). The signal is **swallowed** and the handler
+          runs in-process via ``fallback_runner`` — the response still executes
+          and persists (GET works); it is simply not crash-recoverable. NOT a
+          failure. When the variable is ``true``, startup is deferred
+          to the after-restore hook, so a missing manager with resilient tasks
+          ENABLED means session activation is pending or failed; the error is
+          tagged as a platform infrastructure error and re-raised instead of
+          running the handler non-durably.
         - **Subsystem present but the start fails**: fail immediately. The
           exception is tagged as a platform infrastructure error and re-raised
           (no silent degradation to a non-durable task — that would hide a real
@@ -4049,8 +4413,13 @@ class _ResponseOrchestrator:
             tagged with ``PLATFORM_ERROR_TAG`` so the endpoint surfaces
             ``x-platform-error-source: platform``. A missing subsystem
             (``TaskManagerNotInitialized``) is NOT raised — it is swallowed and
-            handled via the in-process fallback (see above).
+            handled via the in-process fallback — unless resilient tasks are
+            enabled and activation is deferred (see above).
         """
+        if not (self._runtime_options.resilient_background or self._runtime_options.steerable_conversations):
+            record.execution_task = asyncio.create_task(fallback_runner())
+            return
+
         from ._resilient_orchestrator import (
             ResilientResponseOrchestrator,
         )  # pylint: disable=import-outside-toplevel
@@ -4098,20 +4467,21 @@ class _ResponseOrchestrator:
             # `previous_response_id`. Propagate so the endpoint layer
             # surfaces HTTP 409 `conversation_fork_not_supported`.
             raise
-        except TaskManagerNotInitialized:
-            # No manager is installed. Because ``AgentServerHost`` fails the
-            # lifespan when resilient tasks are ENABLED but construction/startup
-            # fails, a missing manager in a running deployment means resilient
-            # tasks are simply DISABLED (opt-out) — recovery/durability was not
-            # requested. (It also covers in-process test clients whose lifespan
-            # never ran.) SWALLOW and run the handler in-process: the response
-            # still executes and persists (GET works), it is simply not
-            # crash-recoverable. This is the deliberate non-durable path, NOT a
-            # failure.
+        except TaskManagerNotInitialized as exc:
+            if _task_activation_deferred():
+                logger.error(
+                    "Task runtime is not initialized for enabled resilient response %s",
+                    ctx.response_id,
+                )
+                setattr(exc, PLATFORM_ERROR_TAG, True)
+                await self._runtime_state.delete(ctx.response_id, ctx.user_id, expected_record=record)
+                raise
+            # Without deferred activation, a missing runtime means resilient
+            # tasks are disabled or the lifespan never ran (in-process clients).
             logger.info(
                 "Resilient task subsystem not enabled for response %s; running handler "
-                "in-process (non-durable). Enable via set_resilient_tasks_enabled(True) "
-                "(or resilient_background) for crash recovery.",
+                "in-process (non-durable). Run the host lifespan to initialize "
+                "the requested Responses task runtime.",
                 ctx.response_id,
             )
             record.execution_task = asyncio.create_task(fallback_runner())
@@ -4132,5 +4502,5 @@ class _ResponseOrchestrator:
             # Best-effort cleanup of the in-flight record so a later GET does not
             # observe a phantom ``in_progress`` response (no-op for callers that
             # never registered the record, e.g. the streaming path).
-            await self._runtime_state.delete(ctx.response_id)
+            await self._runtime_state.delete(ctx.response_id, ctx.user_id)
             raise

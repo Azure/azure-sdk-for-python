@@ -154,12 +154,14 @@ class TestFeatureSetOperations:
             resource_group_name=mock_feature_set_operations._resource_group_name,
         )
 
-    def test_create(self, mock_feature_set_operations: FeatureSetOperations):
-        import os
+    def test_create(self, mock_feature_set_operations: FeatureSetOperations, tmp_path):
+        import shutil
         import sys
-        import uuid
         from pathlib import Path
-        from tempfile import gettempdir
+
+        # Wheel and sdist runs must not rewrite the same fixture's .amlignore.
+        spec_path = tmp_path / "spec"
+        shutil.copytree(Path("./tests/test_configs/feature_set/sample_feature_set/spec"), spec_path)
 
         with patch(
             "azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", side_effect=mock_artifact_storage
@@ -171,14 +173,14 @@ class TestFeatureSetOperations:
                 description="7-day and 3-day rolling aggregation of transactions featureset",
                 entities=["azureml:account:1"],
                 stage="Development",
-                specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+                specification=FeatureSetSpecification(path=str(spec_path)),
                 tags={"data_type": "nonPII"},
             )
 
             mock_feature_set_operations.begin_create_or_update(featureset=fs)
             if sys.version_info >= (3, 8):
                 call_args = mock_upload_to_datastore.call_args.args
-                assert call_args[2] == Path("./tests/test_configs/feature_set/sample_feature_set/spec").resolve()
+                assert call_args[2] == spec_path.resolve()
             mock_upload_to_datastore.assert_called_once()
             mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()
 
@@ -190,13 +192,12 @@ class TestFeatureSetOperations:
                 description="7-day and 3-day rolling aggregation of transactions featureset",
                 entities=["azureml:account:1"],
                 stage="Development",
-                specification=FeatureSetSpecification(path="./tests/test_configs/feature_set/sample_feature_set/spec"),
+                specification=FeatureSetSpecification(path=str(spec_path)),
                 tags={"data_type": "nonPII"},
             )
-            temp_folder = uuid.uuid4().hex
-            temp_folder = os.path.join(gettempdir(), temp_folder)
-            dump_path = os.path.join(temp_folder, "feature_set_asset.yaml")
-            os.makedirs(temp_folder)
+            dump_folder = tmp_path / "dumped"
+            dump_folder.mkdir()
+            dump_path = dump_folder / "feature_set_asset.yaml"
             fs.dump(dest=dump_path)
             from azure.ai.ml.entities._load_functions import load_feature_set
 
@@ -205,5 +206,5 @@ class TestFeatureSetOperations:
 
             if sys.version_info >= (3, 8):
                 call_args = mock_upload_to_datastore.call_args.args
-                assert call_args[2] == Path(os.path.dirname(dump_path), "spec").resolve()
+                assert call_args[2] == (dump_folder / "spec").resolve()
             mock_feature_set_operations._operation.begin_create_or_update.assert_called_once()

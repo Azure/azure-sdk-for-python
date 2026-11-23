@@ -10,6 +10,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from packaging.requirements import Requirement
 
 import azure.ai.agentserver.invocations.voice as voice
 from azure.ai.agentserver.invocations.voice import (
@@ -27,6 +28,7 @@ from azure.ai.agentserver.invocations.voice import (
     SessionStart,
     SessionTermination,
     TargetTurnOutcome,
+    UserBargeIn,
     UserMessage,
 )
 
@@ -185,12 +187,23 @@ def test_sample_includes_setup_run_and_bridge_manifest():
     assert "python -m pip install -r requirements.txt" in readme
     assert "python basic_voice_agent.py" in readme
     assert "/invocations_ws" in readme
-    assert requirements == ["azure-ai-agentserver-invocations>=1.2.0b1,<2.0.0"]
+    assert requirements == ["azure-ai-agentserver-invocations>=1.3.0b1,<2.0.0"]
+    assert "azure_ai_agentserver_invocations-1.3.0b1-py3-none-any.whl" in readme
 
     manifest = yaml.safe_load((_SAMPLE_ROOT / "agent.manifest.yaml").read_text(encoding="utf-8"))
     assert manifest["protocols"] == ["invocations_ws"]
     assert manifest["voiceLiveCompatible"] == "true"
     assert manifest["bridgeProtocolVersion"] == "1.0"
+
+
+@pytest.mark.parametrize(
+    ("version", "supported"),
+    [("1.2.0b1", False), ("1.2.0", False), ("1.3.0b1", True), ("1.3.0", True), ("2.0.0", False)],
+)
+def test_sample_dependency_requires_user_barge_in_sdk(version, supported):
+    requirement = Requirement((_SAMPLE_ROOT / "requirements.txt").read_text(encoding="utf-8").strip())
+    assert requirement.name == "azure-ai-agentserver-invocations"
+    assert requirement.specifier.contains(version) is supported
 
 
 @pytest.mark.asyncio
@@ -252,6 +265,35 @@ async def test_connection_termination_cancels_sample_owned_generation(sample_mod
             "output_item_count": 0,
         }
     ]
+    assert not sample_module.generations
+    assert not sample_module.input_generations
+
+
+@pytest.mark.asyncio
+async def test_user_barge_in_cancels_sample_owned_generation(sample_module, monkeypatch):
+    started = asyncio.Event()
+
+    async def blocked_generation(_text):
+        started.set()
+        await asyncio.Event().wait()
+        yield "not reached"
+
+    monkeypatch.setattr(sample_module, "generate_answer", blocked_generation)
+    session = _CapturingSession()
+    await sample_module.on_user_message(
+        session,
+        UserMessage(id="m_user", ts="2026-10-19T00:00:00Z", item_id="in_1", content=(InputTextPart(text="hello"),)),
+    )
+    await asyncio.wait_for(started.wait(), timeout=1)
+    generation = next(iter(sample_module.generations.values()))
+    await sample_module.on_user_barge_in(
+        session,
+        UserBargeIn(id="m_interrupt", ts="2026-10-19T00:00:01Z", response_id=generation.response_id, heard_text=""),
+    )
+    with pytest.raises(asyncio.CancelledError):
+        await generation.task
+    assert generation.task.cancelled()
+    assert generation.turn.completions[0]["outcome"] == TargetTurnOutcome.CANCELLED
     assert not sample_module.generations
     assert not sample_module.input_generations
 

@@ -33,11 +33,11 @@ def main():
     response = client.arc_deployments.get(
         resource_group_name="resourceGroupName",
         account_name="accountName",
-        deployment_name="qwen-template-arc",
+        deployment_name="phi-3-gpu-arc",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-07-15-preview/GetArcDeployment.json
+# x-ms-original-file: 2026-11-15-preview/GetArcDeployment.json
 if __name__ == "__main__":
     main()

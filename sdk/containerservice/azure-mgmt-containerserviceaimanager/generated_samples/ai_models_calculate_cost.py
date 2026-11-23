@@ -33,11 +33,10 @@ def main():
     response = client.ai_models.calculate_cost(
         location="eastus",
         ai_model_name="9806f0c862fdd920",
-        body={},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-05-02-preview/AIModels_CalculateCost.json
+# x-ms-original-file: 2026-09-02-preview/AIModels_CalculateCost.json
 if __name__ == "__main__":
     main()

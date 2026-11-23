@@ -22,6 +22,7 @@ from ._models import (  # type: ignore
     AzureMonitorWorkspaceSignals,
     AzureResourceHealthSignal,
     AzureResourceHealthSignalStatus,
+    AzureResourceMetricRecommendationConfiguration,
     AzureResourceSignal,
     AzureResourceSignals,
     DataAnnotation,
@@ -52,6 +53,7 @@ from ._models import (  # type: ignore
     HealthReportRequest,
     HealthStateTransition,
     IconDefinition,
+    LogAnalyticsQueryRecommendationConfiguration,
     LogAnalyticsQuerySignalDefinitionProperties,
     LogAnalyticsSignal,
     LogAnalyticsSignals,
@@ -59,6 +61,7 @@ from ._models import (  # type: ignore
     ManagedServiceIdentity,
     Operation,
     OperationDisplay,
+    PrometheusMetricsRecommendationConfiguration,
     PrometheusMetricsSignal,
     PrometheusMetricsSignalDefinitionProperties,
     ProxyResource,
@@ -76,6 +79,7 @@ from ._models import (  # type: ignore
     SignalHistoryRequest,
     SignalHistoryResponse,
     SignalInstanceProperties,
+    SignalRecommendationConfiguration,
     SignalStatus,
     SystemData,
     ThresholdRuleV2,
@@ -108,6 +112,7 @@ from ._enums import (  # type: ignore
     ResourceHealthReasonType,
     SignalKind,
     SignalOperator,
+    SignalRecommendationKind,
 )
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -122,6 +127,7 @@ __all__ = [
     "AzureMonitorWorkspaceSignals",
     "AzureResourceHealthSignal",
     "AzureResourceHealthSignalStatus",
+    "AzureResourceMetricRecommendationConfiguration",
     "AzureResourceSignal",
     "AzureResourceSignals",
     "DataAnnotation",
@@ -152,6 +158,7 @@ __all__ = [
     "HealthReportRequest",
     "HealthStateTransition",
     "IconDefinition",
+    "LogAnalyticsQueryRecommendationConfiguration",
     "LogAnalyticsQuerySignalDefinitionProperties",
     "LogAnalyticsSignal",
     "LogAnalyticsSignals",
@@ -159,6 +166,7 @@ __all__ = [
     "ManagedServiceIdentity",
     "Operation",
     "OperationDisplay",
+    "PrometheusMetricsRecommendationConfiguration",
     "PrometheusMetricsSignal",
     "PrometheusMetricsSignalDefinitionProperties",
     "ProxyResource",
@@ -176,6 +184,7 @@ __all__ = [
     "SignalHistoryRequest",
     "SignalHistoryResponse",
     "SignalInstanceProperties",
+    "SignalRecommendationConfiguration",
     "SignalStatus",
     "SystemData",
     "ThresholdRuleV2",
@@ -205,6 +214,7 @@ __all__ = [
     "ResourceHealthReasonType",
     "SignalKind",
     "SignalOperator",
+    "SignalRecommendationKind",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

@@ -7,7 +7,13 @@ from typing import Dict, List, Union
 
 from typing_extensions import overload, override
 
+from azure.ai.evaluation._common.utils import _is_intermediate_response, _preprocess_messages
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase, hoist_messages_to_conversation
+from azure.ai.evaluation._evaluators._common._decision_rubric import (
+    decode_message_list,
+    final_assistant_text,
+    rubric_strategy,
+)
 from azure.ai.evaluation._evaluators._common._validators import (
     MessagesOrQueryResponseInputValidator,
     ValidatorInterface,
@@ -25,7 +31,8 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     Fluency scores range from 1 to 5, with 1 being the least fluent and 5 being the most fluent.
 
-    :param model_config: Configuration for the Azure OpenAI model.
+    :param model_config: Configuration for the Azure OpenAI model, or a decision model configuration with
+        ``type="decision"``, ``azure_endpoint`` and ``azure_deployment``.
     :type model_config: Union[~azure.ai.evaluation.AzureOpenAIModelConfiguration,
         ~azure.ai.evaluation.OpenAIModelConfiguration]
     :param threshold: The threshold for the fluency evaluator. Default is 3.
@@ -72,7 +79,9 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "fluency.prompty"
+    _DECISION_FILE = "fluency.decision.yaml"
     _RESULT_KEY = "fluency"
+    _supports_decision_models = True
 
     _validator: ValidatorInterface
 
@@ -100,6 +109,11 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             credential=credential,
             _higher_is_better=self._higher_is_better,
             **kwargs,
+        )
+        self._decision = (
+            rubric_strategy(self, os.path.join(current_dir, self._DECISION_FILE), ErrorTarget.FLUENCY_EVALUATOR)
+            if self._uses_decision_model
+            else None
         )
 
     @overload
@@ -175,3 +189,14 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         self._validator.validate_eval_input(kwargs)
 
         return await super()._real_call(**kwargs)
+
+    @override
+    async def _do_decision_eval(self, eval_input: Dict) -> Dict[str, Union[str, float]]:
+        # Like the catalog evaluator, judge only the final assistant text, also of a JSON-encoded message list.
+        response = decode_message_list(eval_input["response"])
+        if _is_intermediate_response(response):
+            return self._return_not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self._threshold,
+            )
+        return await self._decision.evaluate({"response": final_assistant_text(_preprocess_messages(response))})

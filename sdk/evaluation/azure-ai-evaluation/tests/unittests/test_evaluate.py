@@ -782,6 +782,43 @@ class TestEvaluate:
             f"got: {[r.getMessage() for r in caplog.records]}"
         )
 
+    def test_binary_aggregation_counts_only_rows_that_passed_or_failed(self):
+        data = {
+            "outputs.mixed.mixed_result": ["pass", "fail", "not_applicable", None, "pass", np.nan],
+            "outputs.mixed.mixed": [1.0, 0.0, None, np.nan, 1.0, np.nan],
+            "outputs.skipped.skipped_result": ["not_applicable", None, "not_applicable", np.nan, None, np.nan],
+            "outputs.skipped.skipped": [None, np.nan, None, np.nan, None, np.nan],
+            "outputs.passing.passing_result": ["pass"] * 6,
+            "outputs.failing.failing_result": ["fail", None, "fail", "not_applicable", np.nan, "fail"],
+            "outputs.custom.custom_result": [True, False, True, True, False, True],
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        assert aggregation["mixed.binary_aggregate"] == 0.67
+        assert aggregation["mixed.mixed"] == pytest.approx(2 / 3)
+        assert aggregation["passing.binary_aggregate"] == 1.0
+        assert aggregation["failing.binary_aggregate"] == 0.0
+        # Like the mean score, the binary aggregate is left out when no row has a result.
+        assert "skipped.binary_aggregate" not in aggregation
+        assert "skipped.skipped" not in aggregation
+        # Only "pass" and "fail" are results, so a column of other values has no binary aggregate.
+        assert "custom.binary_aggregate" not in aggregation
+
+    def test_binary_aggregation_reports_the_last_result_column_of_an_evaluator(self):
+        data = {
+            "outputs.qa.f1_score_result": ["pass", "pass", "fail"],
+            "outputs.qa.groundedness_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_precision_result": ["not_applicable", None, "not_applicable"],
+            "outputs.rouge.rouge_recall_result": ["pass", "fail", None],
+        }
+
+        aggregation = _aggregate_metrics(pd.DataFrame(data), {})
+
+        # An earlier column's rate does not stand in for a last column without results.
+        assert "qa.binary_aggregate" not in aggregation
+        assert aggregation["rouge.binary_aggregate"] == 0.5
+
     def test_aggregate_label_defect_metrics_with_nan_in_details(self):
         """Test that NaN/None values in details column are properly ignored during aggregation."""
         data = {
@@ -2172,6 +2209,60 @@ class TestBuildInternalLogAttributesThreshold:
 
 
 @pytest.mark.unittest
+class TestBuildInternalLogAttributesOutcome:
+    """Tests for service-owned evaluation outcome telemetry."""
+
+    @pytest.mark.parametrize(
+        "status,passed,expected",
+        [
+            (
+                "completed",
+                True,
+                {
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "true",
+                },
+            ),
+            (
+                "completed",
+                False,
+                {
+                    "gen_ai.evaluation.status": "completed",
+                    "gen_ai.evaluation.passed": "false",
+                },
+            ),
+            ("error", None, {"gen_ai.evaluation.status": "error"}),
+            ("skipped", None, {"gen_ai.evaluation.status": "skipped"}),
+        ],
+    )
+    def test_status_and_passed_are_included(self, status, passed, expected):
+        """Canonical output-item outcome fields should be queryable."""
+        attrs = _build_internal_log_attributes(
+            {"status": status, "passed": passed},
+            "score",
+            None,
+            {},
+        )
+
+        for key, value in expected.items():
+            assert attrs[key] == value
+        if passed is None:
+            assert "gen_ai.evaluation.passed" not in attrs
+
+    def test_invalid_or_missing_values_are_excluded(self):
+        """Unknown value types should not become misleading telemetry."""
+        attrs = _build_internal_log_attributes(
+            {"status": 42, "passed": "true"},
+            "score",
+            None,
+            {},
+        )
+
+        assert "gen_ai.evaluation.status" not in attrs
+        assert "gen_ai.evaluation.passed" not in attrs
+
+
+@pytest.mark.unittest
 class TestExtractTestingCriteriaMetadataPassThreshold:
     """Tests for pass_threshold propagation in _extract_testing_criteria_metadata."""
 
@@ -2365,6 +2456,32 @@ class TestLogEventsTokenUsage:
         # Should NOT be in standard attributes
         assert "gen_ai.evaluation.usage.input_tokens" not in attrs
         assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_status_and_passed_emitted_in_internal_properties(self):
+        """Evaluation outcome should be present on the exported event."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "status": "completed",
+                "passed": False,
+            }
+        ]
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config={"connection_string": "fake"},
+        )
+
+        assert len(emitted) == 1
+        attributes = emitted[0].attributes
+        internal_properties = json.loads(attributes["internal_properties"])
+        assert internal_properties["gen_ai.evaluation.status"] == "completed"
+        assert internal_properties["gen_ai.evaluation.passed"] == "false"
+        assert "gen_ai.evaluation.status" not in attributes
+        assert "gen_ai.evaluation.passed" not in attributes
 
     def test_token_usage_not_in_standard_attributes(self):
         """Token usage should be in internal_properties, not in standard attributes."""
@@ -3552,6 +3669,83 @@ class TestUpdateMetricValuePreservesExplicitPassed:
         assert len(results) == 1
         assert results[0]["passed"] is True
         assert results[0]["label"] == "Pass"
+
+
+@pytest.mark.unittest
+class TestEvaluationPerTurnNotRoutedToScalar:
+    """Tests for the root-cause fix: per-turn breakdown columns (``evaluation_per_turn.*``)
+    must NOT be suffix-routed into scalar AOAI result fields.
+
+    Multi-turn (conversation-level) evaluators such as retrieval aggregate per-turn results,
+    producing both a top-level scalar metric (e.g. ``retrieval_total_tokens``) and a flattened
+    per-turn breakdown column (``evaluation_per_turn.retrieval_total_tokens``) whose value is a
+    *list*. The latter ends with ``_total_tokens`` and previously got routed into the scalar
+    ``sample.usage.total_tokens`` slot, double-writing over the real scalar and crashing the
+    converter with ``TypeError: float() argument must be a string or a real number, not 'list'``.
+    """
+
+    @staticmethod
+    def _extract(metrics):
+        return _extract_metric_values(
+            criteria_name="retrieval",
+            criteria_type="azure_ai_evaluator",
+            metrics=metrics,
+            expected_metrics=["retrieval"],
+            logger=logging.getLogger("test"),
+        )
+
+    def test_per_turn_token_list_does_not_reach_usage(self):
+        """The per-turn token list must be dropped from scalar routing (no crash, no list in usage)."""
+        metrics = {
+            "score": 4.0,
+            "retrieval_total_tokens": 300,
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        # Scalar top-level value populates usage; per-turn list is not present anywhere in usage.
+        assert usage["total_tokens"] == 300
+        assert [100, 200] not in usage.values()
+
+    def test_scalar_token_survives_regardless_of_order(self):
+        """Whichever order the columns iterate, the scalar (not the per-turn list) wins usage."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+            "retrieval_total_tokens": 300,
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["sample"]["usage"]["total_tokens"] == 300
+
+    def test_per_turn_prompt_and_completion_tokens_skipped(self):
+        """All *_tokens per-turn breakdowns are skipped, only scalars reach usage."""
+        metrics = {
+            "retrieval_prompt_tokens": 12,
+            "retrieval_completion_tokens": 8,
+            "evaluation_per_turn.retrieval_prompt_tokens": [5, 7],
+            "evaluation_per_turn.retrieval_completion_tokens": [3, 5],
+        }
+        result = self._extract(metrics)
+        usage = result["retrieval"]["sample"]["usage"]
+        assert usage["prompt_tokens"] == 12
+        assert usage["completion_tokens"] == 8
+
+    def test_per_turn_score_does_not_clobber_scalar_score(self):
+        """A per-turn score list must not overwrite the scalar score."""
+        metrics = {
+            "score": 4.0,
+            "evaluation_per_turn.retrieval_score": [3, 5],
+        }
+        result = self._extract(metrics)
+        assert result["retrieval"]["score"] == 4.0
+
+    def test_per_turn_columns_absent_when_no_scalar(self):
+        """With only per-turn columns present, nothing is routed (no spurious scalar metric)."""
+        metrics = {
+            "evaluation_per_turn.retrieval_total_tokens": [100, 200],
+        }
+        result = self._extract(metrics)
+        # No usable scalar metric was produced from the per-turn-only input.
+        assert "retrieval" not in result or "sample" not in result.get("retrieval", {})
 
 
 @pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")

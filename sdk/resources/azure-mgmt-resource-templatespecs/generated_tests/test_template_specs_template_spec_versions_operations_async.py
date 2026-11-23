@@ -46,7 +46,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
                 "type": "str",
                 "uiFormDefinition": {},
             },
-            api_version="2021-05-01",
+            api_version="2022-02-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             template_spec_name="str",
             template_spec_version="str",
-            api_version="2021-05-01",
+            api_version="2022-02-01",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             template_spec_name="str",
             template_spec_version="str",
-            api_version="2021-05-01",
+            api_version="2022-02-01",
         )
 
         # please add some check logic here by yourself
@@ -85,7 +85,7 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             template_spec_name="str",
             template_spec_version="str",
-            api_version="2021-05-01",
+            api_version="2022-02-01",
         )
 
         # please add some check logic here by yourself
@@ -97,8 +97,31 @@ class TestTemplateSpecsTemplateSpecVersionsOperationsAsync(AzureMgmtRecordedTest
         response = self.client.template_spec_versions.list(
             resource_group_name=resource_group.name,
             template_spec_name="str",
-            api_version="2021-05-01",
+            api_version="2022-02-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_template_spec_versions_list_built_ins(self, resource_group):
+        response = self.client.template_spec_versions.list_built_ins(
+            template_spec_name="str",
+            api_version="2022-02-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_template_spec_versions_get_built_in(self, resource_group):
+        response = await self.client.template_spec_versions.get_built_in(
+            template_spec_name="str",
+            template_spec_version="str",
+            api_version="2022-02-01",
+        )
+
         # please add some check logic here by yourself
         # ...

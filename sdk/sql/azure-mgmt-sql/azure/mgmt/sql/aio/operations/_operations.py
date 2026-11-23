@@ -4183,7 +4183,7 @@ class DatabasesOperations:  # pylint: disable=docstring-missing-param,too-many-p
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-02-01-preview": ["top", "skip", "filter", "orderby"]},
-        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
     )
     def list_by_server(
         self,
@@ -38537,12 +38537,18 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         )
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["skiptoken", "top"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
+    )
     def list_by_location(
         self,
         location_name: str,
         *,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, _models.DatabaseState]] = None,
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given location.
@@ -38555,6 +38561,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         :keyword database_state: Whether to query against just live databases, just deleted databases,
          or all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :paramtype database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :keyword skiptoken: An opaque token that identifies a starting point in the collection. Default
+         value is None.
+        :paramtype skiptoken: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of LongTermRetentionBackup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.LongTermRetentionBackup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38580,6 +38591,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
+                    skiptoken=skiptoken,
+                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -38648,6 +38661,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["skiptoken", "top"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
+    )
     def list_by_server(
         self,
         location_name: str,
@@ -38655,6 +38672,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         *,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, _models.DatabaseState]] = None,
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given server.
@@ -38669,6 +38688,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         :keyword database_state: Whether to query against just live databases, just deleted databases,
          or all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :paramtype database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :keyword skiptoken: An opaque token that identifies a starting point in the collection. Default
+         value is None.
+        :paramtype skiptoken: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of LongTermRetentionBackup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.LongTermRetentionBackup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38695,6 +38719,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
+                    skiptoken=skiptoken,
+                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -38763,6 +38789,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["skiptoken", "top"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
+    )
     def list_by_resource_group_location(
         self,
         resource_group_name: str,
@@ -38770,6 +38800,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         *,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, _models.DatabaseState]] = None,
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given location based on resource group.
@@ -38785,6 +38817,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         :keyword database_state: Whether to query against just live databases, just deleted databases,
          or all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :paramtype database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :keyword skiptoken: An opaque token that identifies a starting point in the collection. Default
+         value is None.
+        :paramtype skiptoken: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of LongTermRetentionBackup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.LongTermRetentionBackup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38811,6 +38848,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
+                    skiptoken=skiptoken,
+                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -38879,6 +38918,10 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["skiptoken", "top"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
+    )
     def list_by_resource_group_server(
         self,
         resource_group_name: str,
@@ -38887,6 +38930,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         *,
         only_latest_per_database: Optional[bool] = None,
         database_state: Optional[Union[str, _models.DatabaseState]] = None,
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.LongTermRetentionBackup"]:
         """Lists the long term retention backups for a given server based on resource groups.
@@ -38904,6 +38949,11 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
         :keyword database_state: Whether to query against just live databases, just deleted databases,
          or all databases. Known values are: "All", "Live", and "Deleted". Default value is None.
         :paramtype database_state: str or ~azure.mgmt.sql.models.DatabaseState
+        :keyword skiptoken: An opaque token that identifies a starting point in the collection. Default
+         value is None.
+        :paramtype skiptoken: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of LongTermRetentionBackup
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.LongTermRetentionBackup]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -38931,6 +38981,8 @@ class LongTermRetentionBackupsOperations:  # pylint: disable=docstring-missing-p
                     subscription_id=self._config.subscription_id,
                     only_latest_per_database=only_latest_per_database,
                     database_state=database_state,
+                    skiptoken=skiptoken,
+                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -50675,8 +50727,18 @@ class RestorableDroppedDatabasesOperations:  # pylint: disable=docstring-missing
         return deserialized  # type: ignore
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-08-01-preview": ["skiptoken", "top"]},
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
+    )
     def list_by_server(
-        self, resource_group_name: str, server_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        server_name: str,
+        *,
+        skiptoken: Optional[str] = None,
+        top: Optional[int] = None,
+        **kwargs: Any
     ) -> AsyncItemPaged["_models.RestorableDroppedDatabase"]:
         """Gets a list of restorable dropped databases.
 
@@ -50685,6 +50747,11 @@ class RestorableDroppedDatabasesOperations:  # pylint: disable=docstring-missing
         :type resource_group_name: str
         :param server_name: The name of the server. Required.
         :type server_name: str
+        :keyword skiptoken: An opaque token that identifies a starting point in the collection. Default
+         value is None.
+        :paramtype skiptoken: str
+        :keyword top: The number of elements to return from the collection. Default value is None.
+        :paramtype top: int
         :return: An iterator like instance of RestorableDroppedDatabase
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.sql.models.RestorableDroppedDatabase]
@@ -50710,6 +50777,8 @@ class RestorableDroppedDatabasesOperations:  # pylint: disable=docstring-missing
                     resource_group_name=resource_group_name,
                     server_name=server_name,
                     subscription_id=self._config.subscription_id,
+                    skiptoken=skiptoken,
+                    top=top,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -69794,7 +69863,7 @@ class DataMaskingRulesOperations:  # pylint: disable=docstring-missing-param
     @distributed_trace
     @api_version_validation(
         params_added_on={"2025-02-01-preview": ["skip"]},
-        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview"],
+        api_versions_list=["2025-01-01", "2025-02-01-preview", "2025-08-01-preview", "2026-08-01-preview"],
     )
     def list_by_database(
         self,

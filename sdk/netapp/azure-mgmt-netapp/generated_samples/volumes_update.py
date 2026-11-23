@@ -77,6 +77,7 @@ def main():
                 "serviceLevel": "str",
                 "smbAccessBasedEnumeration": "str",
                 "smbNonBrowsable": "str",
+                "smbOplocks": "str",
                 "snapshotDirectoryVisible": bool,
                 "throughputMibps": 0.0,
                 "unixPermissions": "str",
@@ -89,6 +90,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-15-preview/Volumes_Update.json
+# x-ms-original-file: 2026-09-01/Volumes_Update.json
 if __name__ == "__main__":
     main()

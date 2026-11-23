@@ -372,7 +372,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         processed_feature_flags: List[Dict[str, Any]],
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
     ) -> Dict[str, Any]:
-        if feature_flags:
+        if feature_flags is not None:
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
             processed_feature_flags = [self._process_feature_flag(ff) for ff in feature_flags]

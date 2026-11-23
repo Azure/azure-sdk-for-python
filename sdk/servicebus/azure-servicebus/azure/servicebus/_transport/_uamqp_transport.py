@@ -895,7 +895,7 @@ try:
         def drain_and_release_messages(handler: "ReceiveClient") -> None:
             """
             No-op for uamqp: drain-on-close is only implemented for the pyamqp
-            transport (the default). uamqp is deprecated.
+            transport (the default).
             :param ~uamqp.ReceiveClient handler: The handler.
             :rtype: None
             """
@@ -1083,6 +1083,16 @@ try:
                 timeout=timeout * UamqpTransport.TIMEOUT_FACTOR if timeout else None,
                 callback=functools.partial(callback, amqp_transport=UamqpTransport),
             )
+
+        @staticmethod
+        def mgmt_client_setup(mgmt_client, *, node: Union[str, bytes], timeout: Optional[float]) -> None:
+            """uAMQP does not expose management-link setup separately from request dispatch.
+
+            :param ~uamqp.AMQPClient mgmt_client: Client used for management requests.
+            :keyword str or bytes node: Management target.
+            :keyword float or None timeout: Timeout in seconds, or None for no timeout.
+            """
+            del mgmt_client, node, timeout
 
         @staticmethod
         def _handle_amqp_exception_with_condition(

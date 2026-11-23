@@ -34,11 +34,10 @@ def main():
         resource_group_name="rg1",
         resource_name="clustername1",
         agent_pool_name="flexnode1",
-        body={},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-02-preview/AgentPoolsListBootstrapData.json
+# x-ms-original-file: 2026-09-02-preview/AgentPoolsListBootstrapData.json
 if __name__ == "__main__":
     main()

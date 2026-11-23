@@ -87,6 +87,28 @@ class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow."""
 
 
+class DeviceRegistryIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the identity."""
+
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    """Use a system-assigned managed identity to manage the ADR namespace."""
+    USER_ASSIGNED = "UserAssigned"
+    """Use a user-assigned managed identity to manage the ADR namespace."""
+
+
+class DeviceRegistryLinkingState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the IoT Hub is linked with an Azure Device Registry."""
+
+    IN_PROGRESS = "InProgress"
+    """The IoT Hub linking with an Azure Device Registry is in progress."""
+    SUCCESS = "Success"
+    """The IoT Hub is successfully linked with an Azure Device Registry."""
+    ORPHANED = "Orphaned"
+    """The linked Azure Device Registry is no longer associated with the IoT Hub."""
+    FAILED = "Failed"
+    """The IoT Hub failed to link with an Azure Device Registry."""
+
+
 class EndpointHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Health statuses have following meanings. The 'healthy' status shows that the endpoint is
     accepting messages as expected. The 'unhealthy' status shows that the endpoint is not accepting
@@ -116,6 +138,13 @@ class EventStreamAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta
 
     IDENTITY_BASED = "identityBased"
     """identityBased authentication."""
+
+
+class FallbackRouteSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source to which the fallback route is applied."""
+
+    DEVICE_MESSAGES = "DeviceMessages"
+    """Device-to-cloud messages sent by devices."""
 
 
 class GatewayVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -196,17 +225,6 @@ class IpFilterActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Accept."""
     REJECT = "Reject"
     """Reject."""
-
-
-class IpVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property specifies the IP Version the hub is currently utilizing."""
-
-    IPV4 = "ipv4"
-    """ipv4."""
-    IPV6 = "ipv6"
-    """ipv6."""
-    IPV4_IPV6 = "ipv4ipv6"
-    """ipv4ipv6."""
 
 
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -318,12 +336,8 @@ class RoutingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DeviceLifecycleEvents."""
     DEVICE_JOB_LIFECYCLE_EVENTS = "DeviceJobLifecycleEvents"
     """DeviceJobLifecycleEvents."""
-    DIGITAL_TWIN_CHANGE_EVENTS = "DigitalTwinChangeEvents"
-    """DigitalTwinChangeEvents."""
     DEVICE_CONNECTION_STATE_EVENTS = "DeviceConnectionStateEvents"
     """DeviceConnectionStateEvents."""
-    MQTT_BROKER_MESSAGES = "MqttBrokerMessages"
-    """MqttBrokerMessages."""
 
 
 class RoutingStorageContainerPropertiesEncoding(  # pylint: disable=name-too-long

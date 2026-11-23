@@ -1,23 +1,34 @@
 import re
 import time
 from collections import OrderedDict
+from datetime import datetime, timedelta, timezone
 from io import StringIO
 from typing import Dict
 from unittest.mock import Mock
+from urllib.parse import parse_qs, urlsplit
 
 import pytest
+from devtools_testutils.fake_credentials import FakeTokenCredential
 from mock import mock_open, patch
 
+from azure.ai.ml._artifacts._artifact_utilities import list_logs_in_datastore
+from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
+from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
+from azure.ai.ml._restclient.arm_ml_service.models import DatastoreType, JobBase
 from azure.ai.ml._restclient.runhistory.models import RunDetails, RunDetailsWarning
 from azure.ai.ml._scope_dependent_operations import OperationScope
+from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations._job_ops_helper import (
     _get_sorted_filtered_logs,
-    has_pat_token,
     _incremental_print,
+    get_job_output_uris_from_dataplane,
+    has_pat_token,
     list_logs,
     stream_logs_until_completion,
 )
 from azure.ai.ml.operations._run_operations import RunOperations
+from azure.identity import ChainedTokenCredential
+from azure.storage.blob import ContainerSasPermissions, generate_container_sas
 
 from .test_vcr_utils import before_record_cb
 
@@ -65,6 +76,37 @@ def mock_run_operations(mock_workspace_scope: OperationScope, mock_aml_services_
     yield RunOperations(mock_workspace_scope, mock_aml_services_run_history)
 
 
+@pytest.fixture
+def streaming_job() -> JobBase:
+    return JobBase(
+        {
+            "name": "job-name",
+            "properties": {
+                "jobType": "Command",
+                "properties": {},
+                "services": {},
+                "outputs": {
+                    "default": {
+                        "jobOutputType": "uri_folder",
+                        "uri": "azureml://datastores/workspaceblobstore/paths/azureml/job-name/",
+                    }
+                },
+            },
+        }
+    )
+
+
+@pytest.fixture
+def datastore_sas_token(fake_datastore_key: str) -> str:
+    return generate_container_sas(
+        account_name="teststorage",
+        container_name="testcontainer",
+        account_key=fake_datastore_key,
+        permission=ContainerSasPermissions(read=True, list=True),
+        expiry=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
+
+
 @pytest.mark.unittest
 @pytest.mark.training_experiences_test
 class TestJobOpsHelper:
@@ -73,6 +115,220 @@ class TestJobOpsHelper:
         assert has_pat_token("https://mypattoken@dev.azure.com/<organization>/<project>/_git/<repo>")
         assert not has_pat_token("https://dev.azure.com/organization/project/_apis/pipelines/1/runs")
         assert not has_pat_token("https://learn.microsoft.com/en-us/ai/?tabs=developer")
+
+    @pytest.mark.parametrize(
+        "data_type,model_type",
+        [
+            # RunHistory reports PascalCase, the ARM contract reports snake_case. Both must resolve.
+            ("UriFolder", "MLFlowModel"),
+            ("uri_folder", "mlflow_model"),
+            ("UriFile", "CustomModel"),
+            ("uri_file", "custom_model"),
+            ("MLTable", "TritonModel"),
+            ("mltable", "triton_model"),
+        ],
+    )
+    def test_get_job_output_uris_from_dataplane_matches_both_type_spellings(self, data_type, model_type) -> None:
+        run_outputs = {
+            "forecast_data": Mock(asset_id="data-asset-id", type=data_type),
+            "trained_model": Mock(asset_id="model-asset-id", type=model_type),
+        }
+        run_operations = Mock()
+        run_operations.get_run_data.return_value.run_metadata.outputs = run_outputs
+
+        dataset_dataplane_operations = Mock()
+        dataset_dataplane_operations.get_batch_dataset_uris.return_value.values_property = {
+            "data-asset-id": Mock(uri="azureml://datastores/ds/paths/forecast_data")
+        }
+
+        model_dataplane_operations = Mock()
+        model_dataplane_operations.get_batch_model_uris.return_value.values = {
+            "model-asset-id": Mock(path="azureml://datastores/ds/paths/trained_model")
+        }
+
+        uris = get_job_output_uris_from_dataplane(
+            "job-name",
+            run_operations,
+            dataset_dataplane_operations,
+            model_dataplane_operations,
+        )
+
+        dataset_dataplane_operations.get_batch_dataset_uris.assert_called_once_with(["data-asset-id"])
+        model_dataplane_operations.get_batch_model_uris.assert_called_once_with(["model-asset-id"])
+        assert uris == {
+            "forecast_data": "azureml://datastores/ds/paths/forecast_data",
+            "trained_model": "azureml://datastores/ds/paths/trained_model",
+        }
+
+    @pytest.mark.parametrize(
+        "credential_kind,expects_datastore_logs",
+        [
+            ("account_key", True),
+            ("sas_token", False),
+            ("sas_with_question_mark", False),
+            ("sas_with_empty_signature", False),
+            ("identity", False),
+            ("missing", False),
+            ("empty", False),
+        ],
+    )
+    def test_stream_logs_falls_back_to_run_history_for_unsignable_datastore(
+        self,
+        credential_kind,
+        expects_datastore_logs,
+        streaming_job: JobBase,
+        fake_datastore_key: str,
+        datastore_sas_token: str,
+        capsys,
+        caplog,
+    ) -> None:
+        credentials = {
+            "account_key": fake_datastore_key,
+            "sas_token": datastore_sas_token,
+            "sas_with_question_mark": "?" + datastore_sas_token,
+            "sas_with_empty_signature": "sp=rl&sig=",
+            "identity": ChainedTokenCredential(FakeTokenCredential()),
+            "missing": None,
+            "empty": "",
+        }
+        log_name = "user_logs/std_log.txt"
+        run_history_url = "https://test.invalid/run-history/log"
+        datastore_url = "https://test.invalid/datastore/log"
+        run_operations = Mock()
+        run_operations.get_run_details.side_effect = [
+            RunDetails(status="Running", log_files={}),
+            RunDetails(status="Running", log_files={log_name: run_history_url}),
+            RunDetails(status="Completed", log_files={log_name: run_history_url}),
+        ]
+        requests_pipeline = Mock()
+        requests_pipeline.with_policies.return_value = requests_pipeline
+        requests_pipeline.get.side_effect = [
+            Mock(status_code=200, text=Mock(return_value="first line\n")),
+            Mock(status_code=200, text=Mock(return_value="first line\nsecond line\n")),
+        ]
+
+        ds_info = {"credential": credentials[credential_kind], "storage_type": DatastoreType.AZURE_BLOB}
+        caplog.set_level("DEBUG", logger="azure.ai.ml.operations._job_ops_helper")
+
+        with patch("azure.ai.ml.operations._job_ops_helper.get_datastore_info", return_value=ds_info), patch(
+            "azure.ai.ml.operations._job_ops_helper.list_logs_in_datastore",
+            return_value={log_name: datastore_url},
+        ) as mock_list_logs_in_datastore, patch("azure.ai.ml.operations._job_ops_helper.time.sleep"):
+            stream_logs_until_completion(
+                run_operations,
+                streaming_job,
+                datastore_operations=Mock(),
+                requests_pipeline=requests_pipeline,
+            )
+
+        assert mock_list_logs_in_datastore.called is expects_datastore_logs
+        expected_url = datastore_url if expects_datastore_logs else run_history_url
+        assert [call.args[0] for call in requests_pipeline.get.call_args_list] == [expected_url, expected_url]
+        output = capsys.readouterr().out
+        assert output.count("\nfirst line\n") == 1
+        assert output.count("\nsecond line\n") == 1
+        assert "Execution Summary" in output
+        assert fake_datastore_key not in output + caplog.text
+        assert datastore_sas_token not in output + caplog.text
+
+    @pytest.mark.parametrize(
+        "storage_type,storage_class,endpoint",
+        [
+            (DatastoreType.AZURE_BLOB, BlobStorageClient, "blob"),
+            (DatastoreType.AZURE_DATA_LAKE_GEN2, Gen2StorageClient, "dfs"),
+        ],
+    )
+    @pytest.mark.parametrize("path", ["azureml/job-name", "azureml/job-name/"])
+    @pytest.mark.parametrize("long_uri", [False, True])
+    @pytest.mark.parametrize("log_name", ["user_logs/std_log.txt", "azureml-logs/70_driver_log.txt"])
+    def test_stream_logs_from_key_datastore_uses_storage_path(
+        self, storage_type, storage_class, endpoint, path, long_uri, log_name, streaming_job, fake_datastore_key, capsys
+    ) -> None:
+        uri_prefix = "azureml://subscriptions/sub/resourcegroups/rg/workspaces/ws/" if long_uri else "azureml://"
+        streaming_job.properties.outputs["default"].uri = f"{uri_prefix}datastores/workspaceblobstore/paths/{path}"
+        blob_prefix = "azureml/job-name/"
+        item_name = blob_prefix + log_name
+        storage_client = Mock(spec=storage_class)
+        storage_client.list.side_effect = lambda starts_with: [item_name] if item_name.startswith(starts_with) else []
+        ds_info = {
+            "storage_type": storage_type,
+            "storage_account": "teststorage",
+            "account_url": f"https://teststorage.{endpoint}.core.windows.net",
+            "container_name": "testcontainer",
+            "credential": fake_datastore_key,
+        }
+        run_operations = Mock()
+        run_operations.get_run_details.side_effect = [
+            RunDetails(status="Running", log_files={}),
+            RunDetails(status="Completed", log_files={}),
+        ]
+        requests_pipeline = Mock()
+        requests_pipeline.with_policies.return_value = requests_pipeline
+        requests_pipeline.get.return_value = Mock(status_code=200, text=Mock(return_value="datastore log\n"))
+
+        with patch("azure.ai.ml.operations._job_ops_helper.get_datastore_info", return_value=ds_info), patch(
+            "azure.ai.ml._artifacts._artifact_utilities.get_storage_client", return_value=storage_client
+        ), patch("azure.ai.ml.operations._job_ops_helper.time.sleep"):
+            stream_logs_until_completion(
+                run_operations, streaming_job, datastore_operations=Mock(), requests_pipeline=requests_pipeline
+            )
+
+        assert [call.kwargs["starts_with"] for call in storage_client.list.call_args_list] == [
+            blob_prefix + "user_logs/",
+            blob_prefix + "azureml-logs/",
+        ]
+        requests_pipeline.get.assert_called_once()
+        log_url = urlsplit(requests_pipeline.get.call_args.args[0])
+        assert log_url.netloc == f"teststorage.{endpoint}.core.windows.net"
+        assert log_url.path == f"/testcontainer/{item_name}"
+        assert parse_qs(log_url.query)["sp"] == ["r"]
+        assert parse_qs(log_url.query)["sig"]
+        assert "\ndatastore log\n" in capsys.readouterr().out
+
+    @pytest.mark.parametrize(
+        "uri",
+        [
+            "azureml://datastores/workspaceblobstore/paths/",
+            "azureml://subscriptions/sub/resourcegroups/rg/workspaces/ws/datastores/workspaceblobstore/paths/",
+        ],
+    )
+    def test_stream_logs_rejects_empty_datastore_path(self, uri, streaming_job) -> None:
+        streaming_job.properties.outputs["default"].uri = uri
+        datastore_operations = Mock()
+        with pytest.raises(ValidationException, match="Invalid AzureML datastore path URI"):
+            stream_logs_until_completion(
+                Mock(), streaming_job, datastore_operations=datastore_operations, requests_pipeline=Mock()
+            )
+        datastore_operations.get.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "storage_type,storage_class",
+        [
+            (DatastoreType.AZURE_BLOB, BlobStorageClient),
+            (DatastoreType.AZURE_DATA_LAKE_GEN2, Gen2StorageClient),
+        ],
+    )
+    def test_list_logs_in_datastore_with_empty_prefix(self, storage_type, storage_class, fake_datastore_key) -> None:
+        log_name = "user_logs/std_log.txt"
+        storage_client = Mock(spec=storage_class)
+        storage_client.list.side_effect = [[log_name], []]
+        ds_info = {
+            "storage_type": storage_type,
+            "storage_account": "teststorage",
+            "account_url": "https://teststorage.blob.core.windows.net",
+            "container_name": "testcontainer",
+            "credential": fake_datastore_key,
+        }
+
+        with patch("azure.ai.ml._artifacts._artifact_utilities.get_storage_client", return_value=storage_client):
+            logs = list_logs_in_datastore(ds_info, prefix="", legacy_log_folder_name="/azureml-logs/")
+
+        assert [call.kwargs["starts_with"] for call in storage_client.list.call_args_list] == [
+            "user_logs/",
+            "azureml-logs/",
+        ]
+        assert set(logs) == {log_name}
+        assert urlsplit(logs[log_name]).path == f"/testcontainer/{log_name}"
 
 
 @pytest.mark.skip("TODO 1907352: Relies on a missing VCR.py recording + test suite needs to be reworked")

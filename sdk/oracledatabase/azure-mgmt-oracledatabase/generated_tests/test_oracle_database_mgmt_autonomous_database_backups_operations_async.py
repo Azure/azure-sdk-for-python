@@ -32,6 +32,7 @@ class TestOracleDatabaseMgmtAutonomousDatabaseBackupsOperationsAsync(AzureMgmtRe
                     "name": "str",
                     "properties": {
                         "autonomousDatabaseOcid": "str",
+                        "backupDestination": "str",
                         "backupType": "str",
                         "databaseSizeInTbs": 0.0,
                         "dbVersion": "str",

@@ -37,13 +37,22 @@ def main():
         container_name="containerName",
         update_throughput_parameters={
             "location": "West US",
-            "properties": {"resource": {"throughput": 400}},
+            "properties": {
+                "resource": {
+                    "throughput": 400,
+                    "throughputBuckets": [
+                        {"id": 1, "isDefaultBucket": True, "maxThroughputPercentage": 10},
+                        {"id": 2, "isDefaultBucket": False, "maxThroughputPercentage": 20},
+                        {"id": 3, "maxThroughputPercentage": 15},
+                    ],
+                }
+            },
             "tags": {},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-04-01-preview/CosmosDBSqlContainerThroughputUpdate.json
+# x-ms-original-file: 2026-07-15/CosmosDBSqlContainerThroughputUpdate.json
 if __name__ == "__main__":
     main()

@@ -127,5 +127,6 @@ async def merge_or_upload_document_async():
 if __name__ == "__main__":
     asyncio.run(upload_document_async())
     asyncio.run(merge_document_async())
+    asyncio.run(merge_or_upload_document_async())
     asyncio.run(get_document_async())
     asyncio.run(delete_document_async())

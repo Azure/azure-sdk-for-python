@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-01/PrivateLinkResources_ListByElasticSan_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/PrivateLinkResources_ListByElasticSan_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

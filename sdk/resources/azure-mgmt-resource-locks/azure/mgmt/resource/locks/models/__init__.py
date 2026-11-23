@@ -14,15 +14,20 @@ if TYPE_CHECKING:
 
 
 from ._models_py3 import (  # type: ignore
+    ErrorAdditionalInfo,
+    ErrorDetail,
+    ErrorResponse,
     ManagementLockListResult,
     ManagementLockObject,
     ManagementLockOwner,
     Operation,
     OperationDisplay,
     OperationListResult,
+    SystemData,
 )
 
 from ._management_lock_client_enums import (  # type: ignore
+    CreatedByType,
     LockLevel,
 )
 from ._patch import __all__ as _patch_all
@@ -30,12 +35,17 @@ from ._patch import *
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ManagementLockListResult",
     "ManagementLockObject",
     "ManagementLockOwner",
     "Operation",
     "OperationDisplay",
     "OperationListResult",
+    "SystemData",
+    "CreatedByType",
     "LockLevel",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

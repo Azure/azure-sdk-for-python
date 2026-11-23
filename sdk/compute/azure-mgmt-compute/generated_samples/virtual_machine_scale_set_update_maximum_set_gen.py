@@ -138,6 +138,7 @@ def main():
                                                     }
                                                 ],
                                                 "primary": True,
+                                                "privateIPAddressPrefixLength": 28,
                                                 "privateIPAddressVersion": "IPv4",
                                                 "publicIPAddressConfiguration": {
                                                     "name": "a",
