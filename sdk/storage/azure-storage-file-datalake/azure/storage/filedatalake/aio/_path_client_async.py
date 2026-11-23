@@ -39,6 +39,7 @@ from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.policies_async import ExponentialRetry
 from ._data_lake_lease_async import DataLakeLeaseClient
+from ._session_async import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
@@ -136,6 +137,7 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
         self.path_name = path_name
 
         self._query_str, self._raw_credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
 
         super(PathClient, self).__init__(
             parsed_url, service="dfs", credential=self._raw_credential, _hosts=datalake_hosts, **kwargs

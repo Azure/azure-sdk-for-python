@@ -45,6 +45,7 @@ from ._serialize import get_lease_id, get_api_version, get_container_cpk_scope_i
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from ._session import _configure_session
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -149,6 +150,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
+        _configure_session(kwargs)
         super(ContainerClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()
@@ -1109,6 +1111,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
     ) -> BlobClient:
         """Creates a new blob from a data source with automatic chunking.
 
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob uploads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
+
         :param str name: The blob with which to interact.
         :param data: The blob data to upload.
         :type data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
@@ -1337,6 +1348,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         be used to read all the content or readinto() must be used to download the blob into
         a stream. Using chunks() returns an iterator which allows the user to iterate over the content in chunks.
 
+        .. admonition:: Experimental native transfers
+
+            Installing ``pip install "azure-storage-blob[ext-transfer]"`` enables an optional
+            Rust-based extension that could increase performance for synchronous block blob downloads.
+            The extension is experimental, is not intended for production use, and may have breaking
+            changes in minor releases. See the `native transfers section of the README
+            <https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-blob#experimental-native-transfers>`__
+            for limitations, behavior differences, and how to disable native transfers.
+
         :param str blob: The blob with which to interact.
         :param int offset:
             Start of byte range to use for downloading a section of the blob.
@@ -1399,6 +1419,16 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             function(current: int, total: int) where current is the number of bytes transferred
             so far, and total is the total size of the download.
         :paramtype progress_hook: Callable[[int, int], None]
+        :keyword bool disable_etag_lock:
+            By default, the blob's ETag from the initial request is used to ensure the blob is not
+            modified during the download, and a ResourceModifiedError is raised if it is. Set to
+            True to allow the blob to change during the download, for example, when downloading
+            an append blob that is actively being written to. Default value is False.
+
+            .. warning::
+                When set to True, the downloaded data may be inconsistent if the blob is
+                overwritten or recreated during the download. If the blob becomes smaller
+                during the download, a ResourceModifiedError is raised.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.

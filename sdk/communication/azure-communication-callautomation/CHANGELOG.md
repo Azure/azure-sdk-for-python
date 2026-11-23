@@ -1,12 +1,33 @@
 # Release History
 
-## 1.6.0 (Unreleased)
+## 1.7.0b1 (Unreleased)
 
 ### Features Added
 
 - Added support for moving a participant from one call to another, enabling seamless participant transfer between active calls.
 - Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
 - Added `operation_callback_url` keyword argument to `start_continuous_dtmf_recognition`, allowing the default callback URL set by `create_call`/`answer_call` to be overridden for this operation.
+
+### Bugs Fixed
+
+- Fixed synchronous and asynchronous client construction with custom policy lists that omit a retry policy, while preserving recording URL validation before authentication.
+
+## 1.6.1 (2026-10-29)
+
+### Bugs Fixed
+
+- Security: Hardened recording URL validation against ambiguous authorities that could send authenticated requests to unintended endpoints. Synchronous and asynchronous recording downloads and deletes now validate each redirect destination before authentication.
+
+### Other Changes
+
+- Deprecated version 1.6.0 as of 2026-10-22 due to the recording URL validation security issue. Upgrade to 1.6.1 or a later fixed release to receive the security fix. This deprecation applies to version 1.6.0 only, not to the library as a whole.
+
+## 1.6.0 (2026-06-24)
+
+### Features Added
+
+- Added support for moving a participant from one call to another, enabling seamless participant transfer between active calls.
+- Added support for retrieving Teams phone call details, including the ability to specify a custom calling context for enhanced integration scenarios.
 
 ## 1.5.0 (2025-09-10)
 
