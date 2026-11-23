@@ -9,6 +9,7 @@ build-backend = "maturin"
 
 [project]
 name = "azure-storage-extensionstransfer"
+version = "0.1.0"
 authors = [
   { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
@@ -29,7 +30,6 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = []
 keywords = ["azure", "azure sdk"]
-dynamic = ["version"]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer"
