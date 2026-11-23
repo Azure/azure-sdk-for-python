@@ -73,9 +73,6 @@ extends:
       # Pure C-based storage extension package, not generating docs at this moment.
       skipPublishDocGithubIo: true
       skipPublishDocMs: true
-    - name: azure-storage-extensionstransfer
-      safeName: azurestorageextensionstransfer
-      signBinaries: true
     - name: azure-mgmt-storage
       safeName: azuremgmtstorage
     - name: azure-mgmt-storagecache
