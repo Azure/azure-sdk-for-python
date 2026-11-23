@@ -51,7 +51,21 @@
 
 ### Breaking Changes
 
+  - Model `ApprovalActionRequest` changed type of property `approval_status` from `Union[Literal['Approved'], Literal['Rejected'], str]` to `Union[str, '_models.ApprovalActionRequestApprovalStatus']`
+  - Model `ApprovalCallbackRequest` changed type of property `resource_request_action` from `Union[Literal['Create'], Literal['Delete'], Literal['Update'], Literal['Reset'], str]` to `Union[str, '_models.ApprovalCallbackRequestResourceRequestAction']`
+  - Model `ApprovalCallbackRequest` changed type of property `approval_status` from `Union[Literal['Approved'], Literal['Rejected'], str]` to `Union[str, '_models.ApprovalCallbackRequestApprovalStatus']`
+  - Model `ApprovalDeletionCallbackRequest` changed type of property `resource_request_action` from `Union[Literal['Create'], Literal['Delete'], Literal['Update'], str]` to `Union[str, '_models.ApprovalDeletionCallbackRequestResourceRequestAction']`
   - Model `CheckAddressSpaceAvailabilityRequest` deleted or renamed its instance variable `enclave_virtual_network`
+  - Model `CommunityPatchProperties` changed type of property `policy_override` from `Optional[Union[Literal['Enclave'], Literal['None'], str]]` to `Optional[Union[str, '_models.CommunityPropertiesPolicyOverride']]`
+  - Model `CommunityProperties` changed type of property `policy_override` from `Optional[Union[Literal['Enclave'], Literal['None'], str]]` to `Optional[Union[str, '_models.CommunityPropertiesPolicyOverride']]`
+  - Model `GovernedServiceItem` changed type of property `option` from `Optional[Union[Literal['Allow'], Literal['Deny'], Literal['ExceptionOnly'], Literal['NotApplicable'], str]]` to `Optional[Union[str, '_models.GovernedServiceItemOption']]`
+  - Model `GovernedServiceItem` changed type of property `enforcement` from `Optional[Union[Literal['Enabled'], Literal['Disabled'], str]]` to `Optional[Union[str, '_models.GovernedServiceItemEnforcement']]`
+  - Model `GovernedServiceItem` changed type of property `policy_action` from `Optional[Union[Literal['AuditOnly'], Literal['Enforce'], Literal['None'], str]]` to `Optional[Union[str, '_models.GovernedServiceItemPolicyAction']]`
+  - Model `MaintenanceModeConfigurationModel` changed type of property `mode` from `Union[Literal['On'], Literal['CanNotDelete'], Literal['Off'], Literal['General'], Literal['Advanced'], str]` to `Union[str, '_models.MaintenanceModeConfigurationModelMode']`
+  - Model `MaintenanceModeConfigurationModel` changed type of property `justification` from `Optional[Union[Literal['Networking'], Literal['Governance'], Literal['Off'], str]]` to `Optional[Union[str, '_models.MaintenanceModeConfigurationModelJustification']]`
+  - Model `MaintenanceModeConfigurationPatchModel` changed type of property `mode` from `Union[Literal['On'], Literal['CanNotDelete'], Literal['Off'], Literal['General'], Literal['Advanced'], str]` to `Union[str, '_models.MaintenanceModeConfigurationModelMode']`
+  - Model `MaintenanceModeConfigurationPatchModel` changed type of property `justification` from `Optional[Union[Literal['Networking'], Literal['Governance'], Literal['Off'], str]]` to `Optional[Union[str, '_models.MaintenanceModeConfigurationModelJustification']]`
+  - Model `Principal` changed type of property `type` from `Union[Literal['User'], Literal['Group'], Literal['ServicePrincipal'], str]` to `Union[str, '_models.PrincipalType']`
   - Model `VirtualEnclavePatchProperties` deleted or renamed its instance variable `enclave_virtual_network`
   - Model `VirtualEnclaveProperties` deleted or renamed its instance variable `enclave_address_spaces`
   - Model `VirtualEnclaveProperties` deleted or renamed its instance variable `enclave_virtual_network`
