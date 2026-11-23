@@ -31,64 +31,6 @@ Install the Azure Storage Blobs client library for Python with [pip](https://pyp
 pip install azure-storage-blob
 ```
 
-#### Experimental native transfers
-
-For synchronous block blob uploads and downloads, the optional Rust-based transfer extension
-could increase performance:
-
-```bash
-pip install "azure-storage-blob[ext-transfer]"
-```
-
-The extension is experimental, is not intended for production use, and may introduce breaking
-changes in minor releases. Native transfer return types, request counts, and error handling
-may differ from transfers without the extension; explicitly rejected options raise errors rather than
-automatically falling back to Python. Set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use
-Python transfers even when the extension is installed. Asynchronous APIs do not use the extension.
-See the [transfer extension README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensionstransfer#readme)
-for prerequisites and implementation details.
-
-##### Limitations
-
-Native transfers do not support:
-- **Shared key authentication** — Storage account keys cannot be used directly for native
-  transfers. Use a token credential or SAS token instead.
-- **Page blob and append blob uploads** — Native uploads support block blobs only.
-- **Streaming upload sources** — Upload data must be immutable `bytes` or `str` already fully
-  in memory. File objects, iterators, `bytearray`, and other input types are not supported.
-- **Client-side encryption** — Uploading or downloading client-side encrypted content is not
-  supported.
-- **Text-mode downloads** — Download encoding is not supported; downloads return bytes.
-- **Download decompression** — Automatic content decompression is not supported.
-- **Download chunk iteration** — Native downloaders raise `NotImplementedError` for `chunks()`
-  and direct iteration. Use `read()`, `readall()`, or `readinto()` instead, or disable native
-  transfers before downloading to use `chunks()` through the Python implementation.
-- **Transactional content validation** — Checksum validation with `validate_content=True` is
-  not supported for uploads or downloads.
-- **Progress callbacks** — The `progress_hook` option is not supported for uploads or downloads.
-- **Asynchronous transfers** — Asynchronous APIs do not use the extension.
-
-When the extension is installed and native transfers are enabled, the unsupported inputs and options listed above
-raise errors rather than automatically falling back to Python transfers. To use these features,
-set `AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` before starting a transfer.
-
-###### Per-call and client configuration
-
-Native transfers use the Rust SDK's HTTP pipeline rather than the Python client's pipeline.
-The client's `api_version` is used for native upload and download requests.
-Many undocumented per-call keyword arguments and client configuration options are not supported
-and may be ignored without an error. For example:
-
-- **Per-call options** such as custom request `headers` are not forwarded to native transfers.
-- **Client retry settings** such as `retry_total` and a custom `retry_policy` do not configure
-  the native retry behavior.
-- **HTTP logging options** such as `logging_enable` do not enable Python HTTP request/response
-  logging for native transfers.
-
-These are examples, not an exhaustive list. Do not assume that options accepted by the Python
-client also apply to native transfers. If your application relies on these options, set
-`AZURE_STORAGE_DISABLE_NATIVE_TRANSFER=1` to use the Python transfer path.
-
 ### Create a storage account
 If you wish to create a new storage account, you can use the
 [Azure Portal](https://learn.microsoft.com/azure/storage/common/storage-quickstart-create-account?tabs=azure-portal),
