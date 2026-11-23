@@ -1644,9 +1644,8 @@ def test_quoted_client_operation_group_annotation_classification():
     operation_group_properties = {}
     client_class = ast.parse(
         'class ContosoClient:\n'
-        '    widgets: "WidgetsOperations"\n'
         '    def __init__(self):\n'
-        '        self.widgets = WidgetsOperations()\n'
+        '        self.widgets: "WidgetsOperations" = WidgetsOperations()\n'
     ).body[0]
     get_property_names(client_class, operation_group_properties)
     assert operation_group_properties == {
