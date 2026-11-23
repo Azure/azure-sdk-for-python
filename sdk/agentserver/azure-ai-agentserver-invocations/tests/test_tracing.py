@@ -417,6 +417,8 @@ class TestErrorTelemetry:
             "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT",
             "true" if environment_enabled else "false",
         )
+        # Older supported core releases expose only the environment-based fallback.
+        expected_capture = enabled if hasattr(_tracing, "_is_sensitive_data_enabled") else environment_enabled
 
         def configure(**kwargs):
             kwargs["enable_sensitive_data"] = enabled
@@ -457,14 +459,14 @@ class TestErrorTelemetry:
         assert len(exported) == 1
         assert exported[0].status.status_code == trace.StatusCode.ERROR
         assert exported[0].attributes["error.type"] == "RuntimeError"
-        if enabled:
+        if expected_capture:
             assert exported[0].status.description == "private-error-marker"
             assert exported[0].events[0].attributes["exception.message"] == "private-error-marker"
         else:
             assert exported[0].status.description is None
             assert not exported[0].events
             assert "private-error-marker" not in exported[0].to_json()
-        self._assert_logs(log_exporter, enabled, "RuntimeError")
+        self._assert_logs(log_exporter, expected_capture, "RuntimeError")
 
     @pytest.mark.asyncio
     async def test_streaming_opt_out_supports_older_core(self, telemetry, monkeypatch):
@@ -494,10 +496,14 @@ class TestErrorTelemetry:
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("enabled", [False, True])
-    async def test_skipped_setup_inherits_configured_error_logging_policy(self, telemetry, monkeypatch, enabled):
+    async def test_skipped_setup_error_logging_follows_supported_core_policy(self, telemetry, monkeypatch, enabled):
         _, _, log_exporter = telemetry
         _tracing.configure_observability(enable_sensitive_data=enabled)
-        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false" if enabled else "true")
+        environment_enabled = not enabled
+        monkeypatch.setenv(
+            "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true" if environment_enabled else "false"
+        )
+        expected_capture = enabled if hasattr(_tracing, "_is_sensitive_data_enabled") else environment_enabled
         app = InvocationAgentServerHost(configure_observability=None)
 
         @app.invoke_handler
@@ -507,7 +513,7 @@ class TestErrorTelemetry:
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
             response = await client.post("/invocations")
         assert response.status_code == 500
-        self._assert_logs(log_exporter, enabled, "ValueError")
+        self._assert_logs(log_exporter, expected_capture, "ValueError")
 
     @pytest.mark.asyncio
     @pytest.mark.parametrize("enabled", [False, True])

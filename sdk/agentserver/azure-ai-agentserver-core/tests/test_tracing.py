@@ -122,15 +122,15 @@ class TestErrorCapture:
         assert not collector.spans[0].events
 
     def test_disabled_capture_never_formats_the_exception(self, telemetry):
-        class UnformattableError(ValueError):
+        class FormattingError(ValueError):
             def __str__(self):
                 raise AssertionError("Exception text must not be evaluated")
 
         tracer, collector = telemetry
         _tracing.configure_observability(enable_sensitive_data=False)
         span = tracer.start_span("failed-operation")
-        _tracing.end_span(span, UnformattableError())
-        assert collector.spans[0].attributes["error.type"] == "UnformattableError"
+        _tracing.end_span(span, FormattingError())
+        assert collector.spans[0].attributes["error.type"] == "FormattingError"
         assert not collector.spans[0].events
 
     @pytest.mark.asyncio
