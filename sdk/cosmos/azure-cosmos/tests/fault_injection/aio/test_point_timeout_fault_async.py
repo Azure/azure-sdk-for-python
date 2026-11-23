@@ -13,9 +13,15 @@ from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
 from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._delayed_create import assert_control, assert_route, emit
+from fault_injection._query_resume import set_rule
 from fault_injection._point_timeout import (
-    OPERATION_TIMEOUT, assert_point_timeout, assert_read_budget, assert_read_elapsed,
-    capture_read_budget, read_operation_timeout_rule,
+    OPERATION_TIMEOUT,
+    assert_point_timeout,
+    assert_read_budget,
+    assert_read_elapsed,
+    capture_read_budget,
+    read_operation_timeout_rule,
+    database_read_operation_timeout_rule,
 )
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -70,3 +76,72 @@ async def test_point_read_operation_timeout_async_rust(owned_target, monkeypatch
             assert error is None, "The no-injection read timed out"
             assert_read_elapsed(elapsed)
             assert_control(returned, stored, item, hits)
+
+
+@pytest.mark.asyncio
+@pytest.mark.timeout(90)
+@pytest.mark.parametrize("inject", [True, False], ids=["delayed-read", "no-injection"])
+async def test_database_read_operation_timeout_async_rust(
+    owned_target, monkeypatch, inject
+):
+    database_id, _ = owned_target
+    rule_id = "database-read-timeout-" + uuid.uuid4().hex
+    async with CosmosClient(
+        os.environ["ACCOUNT_HOST"],
+        os.environ["ACCOUNT_KEY"],
+        _backend="rust",
+        _fault_injection_rules=[database_read_operation_timeout_rule(rule_id, inject)],
+    ) as client:
+        database = client.get_database_client(database_id)
+        expected = await database.read(timeout=30)
+        handle = await client._adapter._ensure_driver_handle()
+        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        budgets = capture_read_budget(
+            monkeypatch, asynchronous=True, operation="read_database"
+        )
+        hooks = []
+        before = (_binding_operation_count(), _rust_fallback_count())
+        error, returned = None, None
+        set_rule(handle, rule_id, True)
+        start = time.perf_counter()
+        try:
+            try:
+                returned = await database.read(
+                    timeout=OPERATION_TIMEOUT,
+                    response_hook=lambda headers, body: hooks.append(body),
+                )
+            except (
+                exceptions.CosmosClientTimeoutError,
+                exceptions.CosmosHttpResponseError,
+                ServiceResponseError,
+                TimeoutError,
+            ) as caught:
+                error = caught
+        finally:
+            set_rule(handle, rule_id, False)
+        elapsed = time.perf_counter() - start
+        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = (_binding_operation_count(), _rust_fallback_count())
+        emit(
+            "database_read_timeout",
+            surface="async",
+            inject=inject,
+            hits=hits,
+            elapsed=elapsed,
+            native_budgets=budgets,
+            error_type=None if error is None else type(error).__name__,
+        )
+        assert_route(before, after, "rust")
+        assert_read_budget(budgets)
+        if inject:
+            assert_point_timeout(error, elapsed, hits)
+            assert returned is None and not hooks
+            assert database._properties is expected
+        else:
+            assert error is None and hits == 0
+            assert returned == expected and hooks == [expected]
+            assert_read_elapsed(elapsed)
+        assert await database.read(timeout=30) == expected
+        assert (
+            await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+        )

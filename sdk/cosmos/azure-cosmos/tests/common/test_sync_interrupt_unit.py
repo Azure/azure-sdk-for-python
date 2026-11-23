@@ -13,11 +13,17 @@ from unittest.mock import MagicMock
 
 import pytest
 
+from common.sdk_subprocess import sdk_python_command
+
 
 @pytest.mark.parametrize("phase", ["setup-reuse", "setup-close", "read-item", "create-item", "metadata", "page", "offers"])
 def test_sync_wait_honors_sigint_rust(phase):
     result = subprocess.run(
-        [sys.executable, __file__, phase], capture_output=True, text=True, timeout=30
+        sdk_python_command(
+            "from common.test_sync_interrupt_unit import _interrupt_case; _interrupt_case(sys.argv[1])",
+            phase,
+        ),
+        capture_output=True, text=True, timeout=30,
     )
     assert result.returncode == 0, result.stdout + result.stderr
 
@@ -25,7 +31,11 @@ def test_sync_wait_honors_sigint_rust(phase):
 @pytest.mark.parametrize("phase", ["setup-reuse", "read-item", "create-item"])
 def test_sync_wait_preserves_returning_signal_handler_rust(phase):
     result = subprocess.run(
-        [sys.executable, __file__, phase, "continue"], capture_output=True, text=True, timeout=30
+        sdk_python_command(
+            "from common.test_sync_interrupt_unit import _interrupt_case; _interrupt_case(sys.argv[1], True)",
+            phase,
+        ),
+        capture_output=True, text=True, timeout=30,
     )
     assert result.returncode == 0, result.stdout + result.stderr
 

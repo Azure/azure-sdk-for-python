@@ -12,6 +12,8 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
+from common.sdk_subprocess import sdk_python_command
+
 from azure.cosmos._backend.client_config import build_client_config
 from azure.cosmos._helpers._request_settings import (
     build_request_headers_and_settings,
@@ -87,7 +89,10 @@ def test_utf8_decoding_reaches_retained_feed_request_rust(operation):
 def test_utf8_decoding_real_binding_rust(surface):
     # Isolate native connection-pool settings and cached client configurations.
     result = subprocess.run(
-        [sys.executable, __file__, surface],
+        sdk_python_command(
+            "from common.test_utf8_decoding_unit import _run_binding_cases; _run_binding_cases(sys.argv[1])",
+            surface,
+        ),
         capture_output=True,
         text=True,
         timeout=90,

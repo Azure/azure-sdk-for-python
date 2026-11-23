@@ -26,6 +26,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from common.sdk_subprocess import sdk_python_command
+
 import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
 import azure.cosmos.cosmos_client as sync_cosmos_client_module
 import azure.cosmos.aio._backend.binding_adapter as async_rust_module
@@ -315,7 +317,7 @@ def test_finalizer_cleans_up_at_interpreter_exit_without_warning_rust():
         resources = AbandonedResources()
     """)
     result = subprocess.run(
-        [sys.executable, "-c", script], capture_output=True, text=True, timeout=15, check=False,
+        sdk_python_command(script), capture_output=True, text=True, timeout=15, check=False,
     )
     assert result.returncode == 0, result.stderr
     assert result.stdout.splitlines() == ["bridge", "released:True"]

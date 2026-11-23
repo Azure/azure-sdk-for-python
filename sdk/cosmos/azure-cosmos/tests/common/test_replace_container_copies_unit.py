@@ -3,10 +3,10 @@
 """Protect unchanged replacement assertions and distinct sync/aio collection."""
 
 import ast
-import os
 from pathlib import Path
 import subprocess
-import sys
+
+from common.sdk_subprocess import sdk_python_command
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -80,12 +80,12 @@ def test_replacement_collection_keeps_both_surfaces_rust():
         f"{path.relative_to(ROOT).as_posix()}::{cls}::{method}"
         for path in files for cls, method in _methods(path)
     }
-    env = dict(os.environ)
-    env["PYTHONPATH"] = str(ROOT / "tests") + os.pathsep + env.get("PYTHONPATH", "")
     result = subprocess.run(
-        [sys.executable, "-m", "pytest", "--noconftest", "--import-mode=importlib",
-         "--collect-only", "-q", *map(str, files)],
-        cwd=ROOT, env=env, capture_output=True, text=True, timeout=60, check=False,
+        sdk_python_command(
+            "import pytest; raise SystemExit(pytest.main(sys.argv[1:]))",
+            "--noconftest", "--import-mode=importlib", "--collect-only", "-q", *map(str, files),
+        ),
+        cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr
     collected = {line for line in result.stdout.splitlines() if "::test_" in line}

@@ -343,19 +343,25 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         prepared = self._with_client_headers(prepared)
         deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         if _rust_module is None:
-            raise NotImplementedError(
+            raise ImportError(
                 "AsyncBindingAdapter.execute: the compiled "
                 "azure.cosmos._rust module is not present in this "
-                "environment. Build it with `maturin develop` from "
-                "the repo root."
+                "environment. Install an azure-cosmos wheel built for this "
+                "operating system, processor, and Python version, or rebuild "
+                "the extension from the current source.",
+                name="azure.cosmos._rust",
             )
 
         # Resolve the operation name to an async binding function before acquisition.
         binding_function = _binding_function_for_op(prepared.op)
-        if binding_function is None:
-            raise NotImplementedError(
-                "AsyncBindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
-            )
+        if not callable(binding_function):
+            binding_name = OP_TO_BINDING_FUNCTION_NAME.get(prepared.op)
+            if binding_name is not None:
+                raise RuntimeError(
+                    f"The compiled azure.cosmos._rust extension does not export a callable {binding_name}_async; "
+                    "install a matching azure-cosmos wheel or rebuild the extension from the current source."
+                )
+            raise NotImplementedError("AsyncBindingAdapter.execute does not yet support op={!r}.".format(prepared.op))
         operation = get_operation(self, prepared.op)
         contribution = operation.begin_contribution() if operation is not None else None
         # Bound this caller's wait, not the shielded acquisition shared with other callers.

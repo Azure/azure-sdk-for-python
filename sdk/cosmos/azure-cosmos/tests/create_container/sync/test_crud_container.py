@@ -29,52 +29,27 @@ Run with::
 
     pytest --noconftest tests/create_container/sync/test_crud_container.py -v
 """
-import os
+
 import unittest
 import uuid
 
 import pytest
 
 import azure.cosmos.documents as documents
-from azure.cosmos import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from create_container._setup import SyncCreationCase
 
 
 @pytest.mark.cosmosLong
-class TestCRUDContainerOperations(unittest.TestCase):
+class TestCRUDContainerOperations(SyncCreationCase):
 
     def setUp(self) -> None:
-        self.key_client = CosmosClient(HOST, KEY, _backend="rust")
-        self._database_id = "create_container_legacy_" + str(uuid.uuid4())
-        self.databaseForTest = self.key_client.create_database(self._database_id)
-        # The original test's first leg reads a container that already exists
-        # and was created with no indexing policy. This copy has to make that
-        # container itself. It is created through the low-level client
-        # connection rather than DatabaseProxy.create_container so that this
-        # scaffolding does not add an extra call to the sequence the parity
-        # audit records for the operation under test.
+        super().setUp()
         self._default_policy_container_id = "default_policy_" + uuid.uuid4().hex[:8]
-        self.databaseForTest.client_connection.CreateContainer(
-            "dbs/" + self._database_id,
-            {
-                "id": self._default_policy_container_id,
-                "partitionKey": {"paths": ["/id"], "kind": "Hash"},
-            },
+        self.databaseForTest.create_container(
+            self._default_policy_container_id,
+            PartitionKey(path="/id", kind="Hash"),
         )
-
-    def tearDown(self) -> None:
-        try:
-            self.key_client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        self.key_client.close()
 
     def _check_default_indexing_policy_paths(self, indexing_policy):
         # Source: tests/test_crud_container.py::TestCRUDContainerOperations._check_default_indexing_policy_paths
@@ -85,13 +60,18 @@ class TestCRUDContainerOperations(unittest.TestCase):
                 return None
 
         # '/_etag' is present in excluded paths by default
-        self.assertEqual(1, len(indexing_policy['excludedPaths']))
+        self.assertEqual(1, len(indexing_policy["excludedPaths"]))
         # included paths should be 1: '/'.
-        self.assertEqual(1, len(indexing_policy['includedPaths']))
+        self.assertEqual(1, len(indexing_policy["includedPaths"]))
 
-        root_included_path = __get_first([included_path for included_path in indexing_policy['includedPaths']
-                                          if included_path['path'] == '/*'])
-        self.assertFalse(root_included_path.get('indexes'))
+        root_included_path = __get_first(
+            [
+                included_path
+                for included_path in indexing_policy["includedPaths"]
+                if included_path["path"] == "/*"
+            ]
+        )
+        self.assertFalse(root_included_path.get("indexes"))
 
     def test_create_default_indexing_policy_rust(self):
         """Five ways of leaving the indexing policy incomplete all produce the same defaults.
@@ -114,70 +94,79 @@ class TestCRUDContainerOperations(unittest.TestCase):
         collection = db.get_container_client(self._default_policy_container_id)
 
         collection_properties = collection.read()
-        self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        self._check_default_indexing_policy_paths(
+            collection_properties["indexingPolicy"]
+        )
 
         # partial policy specified
         collection = db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy01' + str(uuid.uuid4()),
+            id="test_create_default_indexing_policy TestCreateDefaultPolicy01"
+            + str(uuid.uuid4()),
             indexing_policy={
-                'indexingMode': documents.IndexingMode.Consistent, 'automatic': True
+                "indexingMode": documents.IndexingMode.Consistent,
+                "automatic": True,
             },
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path="/id", kind="Hash"),
         )
         collection_properties = collection.read()
-        self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        self._check_default_indexing_policy_paths(
+            collection_properties["indexingPolicy"]
+        )
         db.delete_container(container=collection)
 
         # default policy
         collection = db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy03' + str(uuid.uuid4()),
+            id="test_create_default_indexing_policy TestCreateDefaultPolicy03"
+            + str(uuid.uuid4()),
             indexing_policy={},
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path="/id", kind="Hash"),
         )
         collection_properties = collection.read()
-        self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        self._check_default_indexing_policy_paths(
+            collection_properties["indexingPolicy"]
+        )
         db.delete_container(container=collection)
 
         # missing indexes
         collection = db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy04' + str(uuid.uuid4()),
-            indexing_policy={
-                'includedPaths': [
-                    {
-                        'path': '/*'
-                    }
-                ]
-            },
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            id="test_create_default_indexing_policy TestCreateDefaultPolicy04"
+            + str(uuid.uuid4()),
+            indexing_policy={"includedPaths": [{"path": "/*"}]},
+            partition_key=PartitionKey(path="/id", kind="Hash"),
         )
         collection_properties = collection.read()
-        self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        self._check_default_indexing_policy_paths(
+            collection_properties["indexingPolicy"]
+        )
         db.delete_container(container=collection)
 
         # missing precision
         collection = db.create_container(
-            id='test_create_default_indexing_policy TestCreateDefaultPolicy05' + str(uuid.uuid4()),
+            id="test_create_default_indexing_policy TestCreateDefaultPolicy05"
+            + str(uuid.uuid4()),
             indexing_policy={
-                'includedPaths': [
+                "includedPaths": [
                     {
-                        'path': '/*',
-                        'indexes': [
+                        "path": "/*",
+                        "indexes": [
                             {
-                                'kind': documents.IndexKind.Hash,
-                                'dataType': documents.DataType.String
+                                "kind": documents.IndexKind.Hash,
+                                "dataType": documents.DataType.String,
                             },
                             {
-                                'kind': documents.IndexKind.Range,
-                                'dataType': documents.DataType.Number
-                            }
-                        ]
+                                "kind": documents.IndexKind.Range,
+                                "dataType": documents.DataType.Number,
+                            },
+                        ],
                     }
                 ]
             },
-            partition_key=PartitionKey(path='/id', kind='Hash')
+            partition_key=PartitionKey(path="/id", kind="Hash"),
         )
         collection_properties = collection.read()
-        self._check_default_indexing_policy_paths(collection_properties['indexingPolicy'])
+        self._check_default_indexing_policy_paths(
+            collection_properties["indexingPolicy"]
+        )
         db.delete_container(container=collection)
 
 

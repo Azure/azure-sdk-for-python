@@ -7,11 +7,12 @@ import importlib.util
 import os
 from pathlib import Path
 import subprocess
-import sys
 import unittest
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+
+from common.sdk_subprocess import sdk_python_command
 
 from azure.cosmos import ThroughputProperties, exceptions
 from replace_database_throughput import _fixtures
@@ -260,6 +261,7 @@ import os
 from pathlib import Path
 import sys
 
+sys.dont_write_bytecode = True
 root = Path.cwd()
 blocked = {
     "test_auto_scale", "test_auto_scale_async", "test_crud_database", "test_crud_database_async",
@@ -275,7 +277,6 @@ def guard(event, args):
         if os.path.normcase(os.path.abspath(os.fsdecode(args[0]))) in paths:
             raise AssertionError("Read retired test source")
 sys.addaudithook(guard)
-sys.path[:0] = [str(root), str(root / "tests")]
 from common._throughput_copy_inventory import database_test_files, database_test_targets
 targets = [target for path in database_test_files("replace") for target in database_test_targets(path, "replace")]
 class Counts:
@@ -290,11 +291,9 @@ raise SystemExit(pytest.main([
 ], plugins=[Counts()]))
 '''
     env = dict(os.environ)
-    env["PYTHONPATH"] = os.pathsep.join((str(ROOT), str(ROOT / "tests")))
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.pop("PYTEST_ADDOPTS", None)
     result = subprocess.run(
-        [sys.executable, "-c", script], cwd=ROOT, env=env,
+        sdk_python_command(script), cwd=ROOT, env=env,
         capture_output=True, text=True, timeout=60, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

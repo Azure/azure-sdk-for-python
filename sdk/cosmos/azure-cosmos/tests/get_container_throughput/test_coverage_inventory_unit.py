@@ -7,12 +7,12 @@ import os
 from pathlib import Path
 import re
 import subprocess
-import sys
 
 import pytest
 
 from common._retired_test_sources import RETIRED_THROUGHPUT_SOURCES
 from common._throughput_copy_inventory import container_test_files, container_test_targets
+from common.sdk_subprocess import sdk_python_command
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -110,8 +110,8 @@ import os
 from pathlib import Path
 import sys
 
+sys.dont_write_bytecode = True
 root = Path.cwd()
-sys.path[:0] = [str(root), str(root / "tests")]
 blocked = {path.stem for path in (root / "tests").glob("test_*.py")}
 paths = {os.path.normcase(str(root / "tests" / (name + ".py"))) for name in blocked}
 def guard(event, args):
@@ -138,11 +138,9 @@ raise SystemExit(pytest.main([
 ], plugins=[Counts()]))
 '''
     env = dict(os.environ)
-    env["PYTHONPATH"] = os.pathsep.join((str(ROOT), str(ROOT / "tests")))
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.pop("PYTEST_ADDOPTS", None)
     result = subprocess.run(
-        [sys.executable, "-c", script, selection, str(expected)], cwd=ROOT, env=env,
+        sdk_python_command(script, selection, str(expected)), cwd=ROOT, env=env,
         capture_output=True, text=True, timeout=60, check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr

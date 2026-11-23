@@ -167,6 +167,8 @@ LEGACY_MODULES = frozenset({
     "test_vector_policy.py",
     "test_vector_policy_async.py",
     "common/test_core_python_backend_unit.py",
+    "common/test_container_legacy_unit.py",
+    "read_database/test_read_database_legacy_unit.py",
     "patch_item/sync/core_python/test_headers.py",
     "patch_item/aio/core_python/test_headers.py",
 })
@@ -174,6 +176,7 @@ LEGACY_MODULES = frozenset({
 LOCAL_COMPARISON_MODULES = frozenset({
     "binding/test_binding_contract_parity.py",
     "common/test_write_session_token_emulator.py",
+    "read_item/test_consistency_parity.py",
 })
 
 # These existing files mix local comparisons with independently useful Rust

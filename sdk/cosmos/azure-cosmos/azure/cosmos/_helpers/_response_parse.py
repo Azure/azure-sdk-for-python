@@ -81,6 +81,17 @@ def with_response_header_snapshot(
     return on_response
 
 
+def process_create_response(
+    response: BackendResponse,
+    *,
+    client_connection: Any,
+) -> CosmosDict:
+    """A not-modified read response is not a successful creation."""
+    if response.status_code == 304:
+        raise map_backend_response_to_exception(response, message="Container creation returned HTTP 304, not success.")
+    return process_backend_response(response, client_connection=client_connection)
+
+
 def process_database_read_response(
     response: BackendResponse,
     *,

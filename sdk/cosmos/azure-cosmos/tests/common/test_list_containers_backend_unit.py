@@ -44,7 +44,7 @@ from azure.cosmos._backend.errors import PagePreflightError
 from azure.cosmos._backend.operations import OP_LIST_CONTAINERS
 from azure.cosmos._query_rust_routing import can_use_rust_backend_for_query_containers_page
 from azure.cosmos.http_constants import ResourceType
-from .test_container_backend_unit import (
+from .container_feed_stubs import (
     _CapturingPagedBackend, _CapturingAsyncPagedBackend,
     _new_sync_connection, _new_async_connection,
 )

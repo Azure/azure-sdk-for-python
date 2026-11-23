@@ -19,13 +19,14 @@ import time
 from typing import Any, Mapping, Optional, Union
 
 from .._backend.contracts import PreparedRequest
+from .._backend.capabilities import OperationRouting
 from .._backend.operations import OP_CREATE_CONTAINER, OP_READ_CONTAINER, OP_DELETE_CONTAINER, OP_REPLACE_CONTAINER
 from .._backend.partition_key_input import BindingPartitionKey
 from .._base import _validate_resource, build_options, _set_throughput_options
 from .._constants import _Constants as Constants
 from ..offer import ThroughputProperties
 from ._request_database import _database_id_from_link, is_read_database_rust_eligible
-from ._request_settings import account_request_settings
+from ._request_settings import OPTION_HEADER_NAMES, account_request_settings, build_customer_headers
 from ._wire_encoding import serialize_body_to_bytes
 
 
@@ -108,6 +109,38 @@ def prepare_container_get_or_create_read(
     return read_options, read_kwargs, rust_eligible, deadline
 
 
+def container_creation_read_options(
+    request_options: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Preserve read settings without replaying creation conditions or provisioning."""
+    create_only = {
+        "accessCondition",
+        "responsePayloadOnWriteDisabled",
+        Constants.Kwargs.RETRY_WRITE,
+        "offerThroughput",
+        "autoUpgradePolicy",
+        "offerType",
+        "offerEnableRUPerMinuteThroughput",
+    }
+    create_headers = {"if-match", "if-none-match"} | {
+        OPTION_HEADER_NAMES[name] for name in create_only if name in OPTION_HEADER_NAMES
+    }
+    read_options = {
+        name: value
+        for name, value in request_options.items()
+        if name not in create_only and name.lower() not in create_headers
+    }
+    if "initialHeaders" in read_options:
+        read_options["initialHeaders"] = {
+            name: value
+            for name, value in build_customer_headers(
+                read_options["initialHeaders"]
+            ).items()
+            if name not in create_headers
+        }
+    return read_options
+
+
 def build_create_container_prepared(
     database_link: Any,
     container_definition: Mapping[str, Any],
@@ -129,6 +162,19 @@ def build_create_container_prepared(
         settings=settings,
         item_id=_database_id_from_link(database_link),
     )
+
+
+def preflight_create_container(
+    database_link: Any,
+    container_definition: Mapping[str, Any],
+    request_options: Mapping[str, Any],
+    kwargs: Mapping[str, Any],
+) -> PreparedRequest:
+    """Prepare creation before a GSI source lookup, without sending a request."""
+    OperationRouting(
+        OP_CREATE_CONTAINER, is_create_container_rust_eligible(request_options, kwargs)
+    ).require_rust_support()
+    return build_create_container_prepared(database_link, container_definition, request_options, kwargs=kwargs)
 
 
 def _is_container_mutation_rust_eligible(

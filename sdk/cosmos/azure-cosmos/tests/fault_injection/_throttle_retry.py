@@ -13,6 +13,7 @@ import math
 import pytest
 
 from azure.cosmos.exceptions import CosmosHttpResponseError
+from azure.cosmos.http_constants import HttpHeaders
 
 OPERATION_TIMEOUT = 30.0  # Also determines the driver's forced-final retry delay.
 
@@ -26,6 +27,44 @@ THROTTLE_RETRY_CASES = [
         {"retry_throttle_total": 5, "throttle_retry_wait_threshold_seconds": 10.0}, 5, id="wait-budget-allows-retries",
     ),
 ]
+
+DATABASE_READ_THROTTLE_CASES = [
+    pytest.param(0, None, True, id="zero-retries"),
+    pytest.param(2, None, True, id="retry-limit-exhausted"),
+    pytest.param(2, 1, True, id="recover-after-one-429"),
+    pytest.param(2, None, False, id="no-injection"),
+]
+
+
+def database_read_throttle_rule(rule_id, inject, hit_limit):
+    """Keep the rule disabled until the dedicated client's database read."""
+    return {
+        "id": rule_id,
+        # There is no database-read selector. Enable only around one read on
+        # an initialized, dedicated client; setup and cleanup use another client.
+        "operation_type": "All",
+        "status_code": 429,
+        "response_headers": {"x-ms-retry-after-ms": "100"},
+        "probability": 1.0 if inject else 0.0,
+        "hit_limit": hit_limit,
+        "enabled": False,
+    }
+
+
+def assert_database_retry_metadata(channels, expected_retries):
+    """Check SDK-selected delay totals, not elapsed time or fault counters."""
+    for channel, headers in channels.items():
+        assert (
+            HttpHeaders.ThrottleRetryCount in headers
+        ), f"{channel}: missing throttle retry count"
+        assert (
+            HttpHeaders.ThrottleRetryWaitTimeInMs in headers
+        ), f"{channel}: missing throttle retry waiting total"
+        assert int(headers[HttpHeaders.ThrottleRetryCount]) == expected_retries, channel
+        assert (
+            float(headers[HttpHeaders.ThrottleRetryWaitTimeInMs])
+            == expected_retries * 100
+        ), channel
 
 
 def throttle_rule(rule_id, container_id, inject, *, wait_budget=False):

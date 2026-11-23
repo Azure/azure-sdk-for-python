@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 # Rust behavior test
 """``create_container`` on Rust reports a taken container id as a typed 409 conflict."""
+
 from __future__ import annotations
 
 import os
@@ -16,9 +17,13 @@ from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust
 
+pytestmark = pytest.mark.cosmosLong
+
 
 def _rust_client():
-    return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+    return CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+    )
 
 
 @pytest.fixture(scope="module")
@@ -41,11 +46,16 @@ def test_create_existing_container_raises_conflict_rust(database_id):
     taken_id = "already_taken_" + uuid.uuid4().hex[:8]
     with _rust_client() as client:
         database = client.get_database_client(database_id)
-        database.create_container(id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash"))
+        database.create_container(
+            id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash")
+        )
 
         with pytest.raises(exceptions.CosmosResourceExistsError) as raised:
-            run_on_rust(client, lambda: database.create_container(
-                id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash")
-            ))
+            run_on_rust(
+                client,
+                lambda: database.create_container(
+                    id=taken_id, partition_key=PartitionKey(path="/pk", kind="Hash")
+                ),
+            )
 
     assert raised.value.status_code == 409

@@ -27,38 +27,20 @@ Run with::
 
     pytest --noconftest tests/create_container/sync/test_cosmos_responses.py -v
 """
-import os
+
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos import CosmosClient, ContainerProxy
+from azure.cosmos import ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from create_container._setup import SyncCreationCase
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
-class TestCosmosResponses(unittest.TestCase):
-
-    def setUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._database_id = "create_container_responses_" + str(uuid.uuid4())
-        self.test_database = self.client.create_database(self._database_id)
-
-    def tearDown(self) -> None:
-        try:
-            self.client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        self.client.close()
+class TestCosmosResponses(SyncCreationCase):
 
     def test_create_container_headers_rust(self):
         """With ``return_properties=True``, the response headers come back populated.
@@ -67,9 +49,11 @@ class TestCosmosResponses(unittest.TestCase):
         request unit charge from, so it must not be empty.
         """
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_create_container_headers
-        first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                             partition_key=PartitionKey(path="/company"),
-                                                             return_properties=True)
+        first_response = self.test_database.create_container(
+            id="responses_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/company"),
+            return_properties=True,
+        )
         assert len(first_response[1].get_response_headers()) > 0
 
     def test_create_container_returns_container_proxy_rust(self):
@@ -80,8 +64,10 @@ class TestCosmosResponses(unittest.TestCase):
         break every existing caller.
         """
         # Source: tests/test_cosmos_responses.py::TestCosmosResponses.test_create_container_returns_container_proxy
-        first_response = self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                             partition_key=PartitionKey(path="/company"))
+        first_response = self.test_database.create_container(
+            id="responses_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/company"),
+        )
         assert isinstance(first_response, ContainerProxy)
 
 

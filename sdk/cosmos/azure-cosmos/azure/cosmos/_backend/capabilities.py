@@ -159,6 +159,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_READ_DATABASE: OpCapability(
         frozenset({ops.OP_READ_DATABASE}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "DatabaseProxy.read cannot run on the Rust backend for this call because a per-call "
             "setting, request hook, or header override cannot be honored. Remove the unsupported "
@@ -176,6 +177,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_CREATE_CONTAINER: OpCapability(
         frozenset({ops.OP_CREATE_CONTAINER}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "create_container cannot run on the Rust backend for this call because a per-call "
             "setting, request hook, or header override cannot be honored. Remove the unsupported "
@@ -323,6 +325,7 @@ class OperationRouting:
     op: str
     supported: bool = True
     capability: Optional[str] = None
+    unsupported_message: Optional[str] = None
 
     @property
     def policy(self) -> OpCapability:
@@ -340,7 +343,8 @@ class OperationRouting:
         if self.supported:
             return
         raise policy.unsupported_error_type(
-            policy.unsupported_message
+            self.unsupported_message
+            or policy.unsupported_message
             or f"{self.capability or self.op} cannot honor this request on Rust; "
             "the request will not be sent through legacy Python."
         )

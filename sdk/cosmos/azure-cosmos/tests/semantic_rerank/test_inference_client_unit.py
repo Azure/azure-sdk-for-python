@@ -71,7 +71,12 @@ def setup(request, monkeypatch):
     _resolve(client._adapter.close())
 
 
-def test_rerank_is_lazy_shared_and_independent_of_connection_rust(setup, monkeypatch):
+@pytest.mark.parametrize("environment_agent", [None, "VSTS_pipeline_regression"], ids=["no-agent", "ci-agent"])
+def test_rerank_is_lazy_shared_and_independent_of_connection_rust(setup, monkeypatch, environment_agent):
+    if environment_agent is None:
+        monkeypatch.delenv("AZURE_HTTP_USER_AGENT", raising=False)
+    else:
+        monkeypatch.setenv("AZURE_HTTP_USER_AGENT", environment_agent)
     setup.factory.assert_not_called()
     client = setup.client
     client.client_connection = _ForbiddenConnection()
@@ -117,7 +122,10 @@ def test_rerank_is_lazy_shared_and_independent_of_connection_rust(setup, monkeyp
     expected_agent = (get_user_agent_async if setup.asynchronous else get_user_agent)("contoso-bank")
     assert settings.user_agent == expected_agent
     policies = pipeline_factory.call_args.kwargs["policies"]
-    assert policies[1].user_agent == expected_agent + ("_inference" if setup.asynchronous else "")
+    expected_policy_agent = expected_agent + ("_inference" if setup.asynchronous else "")
+    if environment_agent is not None:
+        expected_policy_agent += " " + environment_agent
+    assert policies[1].user_agent == expected_policy_agent
     assert policies[4]._credential is setup.credential
     assert policies[4]._scopes == (setup.service_module._InferenceService.inference_service_default_scope,)
     assert policies[-1]._enable_diagnostics_logging is True

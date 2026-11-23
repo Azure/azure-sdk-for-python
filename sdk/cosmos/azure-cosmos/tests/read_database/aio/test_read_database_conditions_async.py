@@ -33,6 +33,7 @@ def readable_database_id():
                 pass
 
 
+@pytest.mark.cosmosLong
 @pytest.mark.asyncio
 async def test_read_database_with_stale_if_match_returns_database_async_rust(readable_database_id):
     """The service does not enforce If-Match on a database read, so a stale etag still returns the database."""

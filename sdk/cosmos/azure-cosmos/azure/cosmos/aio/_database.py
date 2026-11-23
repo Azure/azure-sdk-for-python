@@ -45,6 +45,7 @@ from .._backend.capabilities import prepare_operation_kwargs
 
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
 
+import time
 import warnings
 from azure.core.async_paging import AsyncItemPaged
 from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
@@ -62,13 +63,23 @@ from .._operation_deadline import remaining_timeout
 from .._helpers._item_arguments import get_selected_backend
 from ._helpers._list_containers import list_containers as _list_containers, query_containers as _query_containers
 from ._helpers._container_operations import AsyncContainerHelper
-from .._helpers._response_parse import with_response_header_snapshot
+from .._helpers._response_parse import (
+    validate_response_hook_is_synchronous,
+    with_response_header_snapshot,
+)
 from .._helpers._request_container import (
+    container_creation_read_options,
     parse_container_create_args,
+    preflight_create_container,
     prepare_container_get_or_create_read,
     validate_container_create_kwargs,
 )
+from .._helpers._request_settings import validate_operation_timeout
 from ._helpers._database_operations import AsyncDatabaseHelper
+from .._helpers._request_database import (
+    validate_database_read_kwargs,
+    validate_obsolete_resource_options,
+)
 from .._helpers._database_throughput import (
     get_database_throughput_async,
     replace_database_throughput_async,
@@ -187,17 +198,19 @@ class DatabaseProxy(object):
         :keyword float timeout: Operation timeout in seconds. On Rust, must be a finite
             numeric duration of at least one second within its duration range.
             ``None`` leaves the override unset.
-        :raises TypeError: An obsolete option or a per-call read timeout was supplied.
-        :raises NotImplementedError: A setting cannot be honored by the Rust backend.
+        :raises TypeError: An obsolete or unsupported argument or header override was supplied.
+        :raises ValueError: The operation timeout is not a supported numeric duration.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the given database couldn't be retrieved.
         :returns: A dict representing the database properties
         :rtype: ~azure.cosmos.CosmosDict
         """
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
-        for option in ("session_token", "populate_query_metrics"):
-            if option in kwargs:
-                raise TypeError("DatabaseProxy.read() does not support the '{}' keyword argument".format(option))
+        validate_database_read_kwargs(kwargs)
 
+        # build_options mutates its options dictionary; keep caller inputs reusable.
+        for name in ("request_options", "feed_options"):
+            if isinstance(kwargs.get(name), Mapping):
+                kwargs[name] = dict(kwargs[name])
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         response_hook = kwargs.pop("response_hook", None)
@@ -417,13 +430,17 @@ class DatabaseProxy(object):
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: Called after success with a response-header copy and
             a deep copy of the created container properties. Hook edits do not change
-            the returned properties or cached partition key. The callback is synchronous.
+            the returned properties or cached partition key. The callback must be
+            synchronous; invalid callbacks are rejected before creation or a GSI source lookup.
         :paramtype response_hook: Callable[[Mapping[str, Any], CosmosDict], None]
         :keyword float timeout: Operation timeout in seconds. Rust supports finite,
             non-boolean numeric durations of at least one second within its duration
-            range; ``None`` leaves the override unset.
-        :raises TypeError: An obsolete keyword, per-call read timeout, or extra positional setting was supplied.
-        :raises NotImplementedError: A setting cannot be honored by the Rust backend; no legacy fallback occurs.
+            range; ``None`` leaves the override unset. GSI source lookup, creation,
+            and any required properties read share the same timeout budget.
+        :raises TypeError: An obsolete or unsupported setting, header override,
+            invalid response hook, or extra positional setting was supplied.
+            Unsupported calls do not fall back to legacy Python.
+        :raises ValueError: The operation timeout is invalid.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL. Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -448,6 +465,10 @@ class DatabaseProxy(object):
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container creation failed.
         :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
             and CosmosDict with the container properties.
+            A successful empty creation response returns a proxy using the requested ID.
+            If properties were requested, an additional read retrieves current properties
+            within the remaining timeout. Its failure propagates without repeating creation.
+            The response hook observes only the original creation response.
         :rtype: ~azure.cosmos.aio.ContainerProxy or tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
 
         .. admonition:: Example:
@@ -468,11 +489,22 @@ class DatabaseProxy(object):
                 :caption: Create a container with specific settings; in this case, a custom partition key:
                 :name: create_container_with_settings
         """
+        started = time.monotonic()
         deadline = kwargs.pop("_item_operation_deadline", None)
         prepare_operation_kwargs(self, kwargs)
 
         id, partition_key = parse_container_create_args(args, kwargs)
-        validate_container_create_kwargs(kwargs)
+        validate_obsolete_resource_options(kwargs, "create_container")
+        response_hook = kwargs.pop("response_hook", None)
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("create_container response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "create_container")
+        if get_selected_backend(self.client_connection).name == "rust":
+            timeout = kwargs.get("timeout")
+            validate_operation_timeout(timeout)
+            if deadline is None and timeout is not None:
+                deadline = started + float(timeout)
+        remaining_timeout(deadline)
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -512,16 +544,21 @@ class DatabaseProxy(object):
             definition["changeFeedPolicy"] = change_feed_policy
         if full_text_policy is not None:
             definition["fullTextPolicy"] = full_text_policy
-        if global_secondary_index is not None:
-            gsi_dict = await self._resolve_gsi_definition(global_secondary_index, deadline=deadline)
-            definition["globalSecondaryIndexDefinition"] = gsi_dict
-            definition["materializedViewDefinition"] = gsi_dict
-        response_hook = kwargs.pop("response_hook", None)
+        for name in ("request_options", "feed_options"):
+            if name in kwargs:
+                kwargs[name] = dict(kwargs[name])
         request_options = _build_options(kwargs)
         # A wildcard match condition does not need an etag, so one may be left
         # over in kwargs after the options are built. Drop it.
         kwargs.pop("etag", None)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
+        prepared = None
+        if global_secondary_index is not None:
+            if get_selected_backend(self.client_connection).name == "rust":
+                prepared = preflight_create_container(self.database_link, definition, request_options, kwargs)
+            gsi_dict = await self._resolve_gsi_definition(global_secondary_index, deadline=deadline)
+            definition["globalSecondaryIndexDefinition"] = gsi_dict
+            definition["materializedViewDefinition"] = gsi_dict
 
         data = await AsyncContainerHelper(
             self.client_connection,
@@ -533,13 +570,27 @@ class DatabaseProxy(object):
             response_hook=response_hook,
             kwargs=kwargs,
             deadline=deadline,
+            prepared=prepared,
         )
         _normalize_gsi_container_properties(data)
+        container = ContainerProxy(
+            self.client_connection,
+            self.database_link,
+            data["id"] if data else id,
+            properties=data,
+            _client_context=self._client_context,
+            _inference_client=self._inference_client,
+        )
         if not return_properties:
-            return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
-                                  _client_context=self._client_context, _inference_client=self._inference_client)
-        return ContainerProxy(self.client_connection, self.database_link, data["id"], properties=data,
-                              _client_context=self._client_context, _inference_client=self._inference_client), data
+            return container
+        if not data:
+            remaining_timeout(deadline)
+            data = await container.read(
+                request_options=container_creation_read_options(request_options),
+                _item_operation_deadline=deadline,
+                **kwargs,
+            )
+        return container, data
 
     @overload
     async def create_container_if_not_exists(
@@ -560,7 +611,7 @@ class DatabaseProxy(object):
         full_text_policy: Optional[dict[str, Any]] = None,
         global_secondary_index: Optional[Union[GlobalSecondaryIndexDefinition, dict[str, Any]]] = None,
         return_properties: Literal[False] = False,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> ContainerProxy:
         """Create a container if it does not exist already.
 

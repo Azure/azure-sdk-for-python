@@ -11,8 +11,16 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import CosmosClient, exceptions
 from config.diagnostics import _binding_operation_count, _rust_fallback_count
 from fault_injection._delayed_create import assert_control, assert_route, emit
+from fault_injection._query_resume import set_rule
 from fault_injection._throttle_retry import (
-    OPERATION_TIMEOUT, THROTTLE_RETRY_CASES, assert_throttle_failure, assert_throttle_wait_failure, throttle_rule,
+    OPERATION_TIMEOUT,
+    THROTTLE_RETRY_CASES,
+    assert_throttle_failure,
+    assert_throttle_wait_failure,
+    throttle_rule,
+    DATABASE_READ_THROTTLE_CASES,
+    database_read_throttle_rule,
+    assert_database_retry_metadata,
 )
 
 pytestmark = pytest.mark.cosmosEmulator
@@ -73,3 +81,95 @@ def test_point_read_throttle_retry_limit_rust(owned_target, retry_settings, retr
         else:
             assert error is None, "The no-injection read failed"
             assert_control(returned, stored, item, hits)
+
+
+@pytest.mark.timeout(90)
+@pytest.mark.parametrize("retry_limit,hit_limit,inject", DATABASE_READ_THROTTLE_CASES)
+def test_database_read_throttle_retry_rust(
+    owned_target, retry_limit, hit_limit, inject
+):
+    _run_database_read_throttle(owned_target, retry_limit, hit_limit, inject)
+
+
+@pytest.mark.skip(
+    reason="driver-gap: gap 29 - complete throttle retry totals are not exposed in Python "
+    "response metadata (Azure/azure-sdk-for-rust#5521, item 11)"
+)
+@pytest.mark.timeout(90)
+@pytest.mark.parametrize(
+    "hit_limit,expected_retries",
+    [(1, 1), (None, 2)],
+    ids=["recovered-response", "terminal-error"],
+)
+def test_database_read_retry_metadata_rust(owned_target, hit_limit, expected_retries):
+    channels = _run_database_read_throttle(owned_target, 2, hit_limit, True)
+    assert_database_retry_metadata(channels, expected_retries)
+
+
+def _run_database_read_throttle(owned_target, retry_limit, hit_limit, inject):
+    database_id, _ = owned_target
+    rule_id = "throttle-database-read-" + uuid.uuid4().hex
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"],
+        os.environ["ACCOUNT_KEY"],
+        _backend="rust",
+        retry_throttle_total=retry_limit,
+        _fault_injection_rules=[
+            database_read_throttle_rule(rule_id, inject, hit_limit)
+        ],
+    ) as client:
+        database = client.get_database_client(database_id)
+        expected = database.read(timeout=OPERATION_TIMEOUT)
+        handle = client._adapter._ensure_driver_handle()
+        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        hooks = []
+        before = (_binding_operation_count(), _rust_fallback_count())
+        error, returned = None, None
+        set_rule(handle, rule_id, True)
+        start = time.perf_counter()
+        try:
+            try:
+                returned = database.read(
+                    timeout=OPERATION_TIMEOUT,
+                    response_hook=lambda headers, body: hooks.append(
+                        (dict(headers), body)
+                    ),
+                )
+            except exceptions.CosmosHttpResponseError as caught:
+                error = caught
+        finally:
+            set_rule(handle, rule_id, False)
+        elapsed = time.perf_counter() - start
+        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = (_binding_operation_count(), _rust_fallback_count())
+        emit(
+            "database_read_throttle_retry",
+            surface="sync",
+            database_id=database_id,
+            retry_limit=retry_limit,
+            hit_limit=hit_limit,
+            inject=inject,
+            hits=hits,
+            elapsed=elapsed,
+            status=None if error is None else error.status_code,
+        )
+        assert_route(before, after, "rust")
+        if inject and hit_limit is None:
+            assert_throttle_failure(error, elapsed, hits, retry_limit)
+            assert returned is None and not hooks
+        else:
+            assert error is None, "The database read did not recover"
+            assert hits == (hit_limit if inject else 0)
+            assert returned == expected
+            assert len(hooks) == 1 and hooks[0][1] == expected
+        channels = {
+            "error" if error is not None else "response": dict(
+                error.headers if error is not None else returned.get_response_headers()
+            ),
+            "last_response": dict(client.client_connection.last_response_headers),
+        }
+        if hooks:
+            channels["response_hook"] = hooks[0][0]
+        assert database.read(timeout=OPERATION_TIMEOUT) == expected
+        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+        return channels

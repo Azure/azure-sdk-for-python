@@ -22,6 +22,7 @@ import time
 from copy import deepcopy
 from typing import Any, Dict, Mapping, Optional
 
+from .._backend.capabilities import OperationRouting
 from .._backend.contracts import PreparedRequest
 from .._backend.operations import OP_CREATE_DATABASE, OP_DELETE_DATABASE, OP_READ_DATABASE
 from .._backend.partition_key_input import BindingPartitionKey
@@ -33,10 +34,10 @@ from ._request_settings import (
     account_request_settings,
     build_customer_headers,
     compose_options_from_kwargs,
+    HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE,
     OPTION_FIELDS,
     OPTION_HEADER_NAMES,
     is_supported_operation_timeout,
-    overrides_driver_owned_header,
     reject_unsupported_feed_options,
     validate_operation_timeout,
 )
@@ -336,26 +337,57 @@ def is_read_database_rust_eligible(
     :rtype: bool
     :raises ValueError: If ``timeout`` is not a supported number of seconds.
     """
-    return _database_request_options_are_supported(request_options, operation_kwargs)
+    return _database_request_options_error(request_options, operation_kwargs) is None
 
 
-def _database_request_options_are_supported(
+def read_database_routing(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
-) -> bool:
+) -> OperationRouting:
+    """Keep argument-specific rejection messages on the Rust database-read path."""
+    error = _database_request_options_error(request_options, operation_kwargs)
+    return OperationRouting(
+        OP_READ_DATABASE,
+        error is None,
+        unsupported_message=f"DatabaseProxy.read() {error}" if error is not None else None,
+    )
+
+
+def _database_request_options_error(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> Optional[str]:
     timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
     validate_operation_timeout(timeout)
     option_timeout = request_options.get(Constants.Kwargs.TIMEOUT)
     # The prepared request forwards kwargs, not a timeout supplied only in options.
     if option_timeout is not None and option_timeout != timeout:
-        return False
-    if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
-        return False
-    return not overrides_driver_owned_header(request_options)
+        return "does not accept timeout inside an options dictionary; pass timeout directly to read()."
+    if "connection_timeout" in operation_kwargs:
+        return (
+            "does not accept per-call connection_timeout; configure "
+            "ConnectionPoolOptions.connection_timeout on the client's CosmosRuntime instead."
+        )
+    unsupported_kwargs = set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS)
+    if unsupported_kwargs:
+        names = ", ".join(sorted(repr(name) for name in unsupported_kwargs))
+        return f"does not support keyword argument(s): {names}; remove these arguments."
+    initial_headers = request_options.get("initialHeaders")
+    if isinstance(initial_headers, Mapping):
+        unsupported_headers = [
+            name
+            for name in initial_headers
+            if isinstance(name, str) and name.lower() in HEADERS_THE_DRIVER_WOULD_SILENTLY_OVERWRITE
+        ]
+        if unsupported_headers:
+            names = ", ".join(sorted(repr(name) for name in unsupported_headers))
+            return f"does not support initial_headers override(s): {names}; remove these overrides."
+    return None
 
 
-def validate_database_delete_kwargs(kwargs: Mapping[str, Any]) -> None:
-    """Reject excluded delete options before building or sending a request."""
+def validate_obsolete_resource_options(
+    kwargs: Mapping[str, Any], operation: str
+) -> None:
     for option, key in (
         ("session_token", "sessionToken"),
         ("populate_query_metrics", "populateQueryMetrics"),
@@ -364,7 +396,17 @@ def validate_database_delete_kwargs(kwargs: Mapping[str, Any]) -> None:
             isinstance(options, Mapping) and key in options
             for options in (kwargs.get("request_options"), kwargs.get("feed_options"))
         ):
-            raise TypeError(f"delete_database() does not support the '{option}' option")
+            raise TypeError(f"{operation}() does not support the '{option}' option")
+
+
+def validate_database_read_kwargs(kwargs: Mapping[str, Any]) -> None:
+    """Reject excluded read options before either options dictionary is consumed."""
+    validate_obsolete_resource_options(kwargs, "DatabaseProxy.read")
+
+
+def validate_database_delete_kwargs(kwargs: Mapping[str, Any]) -> None:
+    """Reject excluded delete options before building or sending a request."""
+    validate_obsolete_resource_options(kwargs, "delete_database")
 
 
 def build_delete_database_prepared(
@@ -412,4 +454,4 @@ def is_delete_database_rust_eligible(
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
     """Check database-delete options and timeout eligibility."""
-    return _database_request_options_are_supported(request_options, operation_kwargs)
+    return _database_request_options_error(request_options, operation_kwargs) is None

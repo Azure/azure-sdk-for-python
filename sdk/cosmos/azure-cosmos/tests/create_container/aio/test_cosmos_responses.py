@@ -30,38 +30,20 @@ Run with::
 
     pytest --noconftest tests/create_container/aio/test_cosmos_responses.py -v
 """
-import os
+
 import unittest
 import uuid
 
 import pytest
 
-from azure.cosmos.aio import CosmosClient, ContainerProxy
+from azure.cosmos.aio import ContainerProxy
 from azure.cosmos.partition_key import PartitionKey
-
-
-HOST = os.environ.get("ACCOUNT_HOST", "https://localhost:8081/")
-KEY = os.environ.get(
-    "ACCOUNT_KEY",
-    "C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==",
-)
+from create_container._setup import AsyncCreationCase
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
-class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
-
-    async def asyncSetUp(self) -> None:
-        self.client = CosmosClient(HOST, KEY, _backend="rust")
-        self._database_id = "create_container_responses_async_" + str(uuid.uuid4())
-        self.test_database = await self.client.create_database(self._database_id)
-
-    async def asyncTearDown(self) -> None:
-        try:
-            await self.client.delete_database(self._database_id)
-        except Exception:  # pylint: disable=broad-except
-            pass
-        await self.client.close()
+class TestCosmosResponsesAsync(AsyncCreationCase):
 
     async def test_create_container_headers_async_rust(self):
         """With ``return_properties=True``, the response headers come back populated.
@@ -70,9 +52,11 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         request unit charge from, so it must not be empty.
         """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_create_container_headers_async
-        first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                                   partition_key=PartitionKey(path="/company"),
-                                                                   return_properties=True)
+        first_response = await self.test_database.create_container(
+            id="responses_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/company"),
+            return_properties=True,
+        )
         assert len(first_response[1].get_response_headers()) > 0
 
     async def test_create_container_returns_container_proxy_async_rust(self):
@@ -83,8 +67,10 @@ class TestCosmosResponsesAsync(unittest.IsolatedAsyncioTestCase):
         break every existing caller.
         """
         # Source: tests/test_cosmos_responses_async.py::TestCosmosResponsesAsync.test_create_container_returns_container_proxy_async
-        first_response = await self.test_database.create_container(id="responses_test" + str(uuid.uuid4()),
-                                                                   partition_key=PartitionKey(path="/company"))
+        first_response = await self.test_database.create_container(
+            id="responses_test" + str(uuid.uuid4()),
+            partition_key=PartitionKey(path="/company"),
+        )
         assert isinstance(first_response, ContainerProxy)
 
 

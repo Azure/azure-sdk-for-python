@@ -158,13 +158,17 @@ class OwnedProcessTree:
                         if not member.value:
                             continue
                         members[pid] = process
+                        termination_error = None
                         if not self.api.TerminateProcess(process, 1):
-                            error = ctypes.get_last_error()
-                            if error != 5 or self.api.WaitForSingleObject(process, 0) != 0:
-                                raise ctypes.WinError(error)
+                            termination_error = ctypes.get_last_error()
+                            if termination_error != 5:
+                                raise ctypes.WinError(termination_error)
+                        # Repeated termination can be denied while process teardown is still pending.
                         remaining_ms = max(0, int((deadline - time.monotonic()) * 1000))
                         result = self.api.WaitForSingleObject(process, remaining_ms)
                         if result == 0x102:  # WAIT_TIMEOUT
+                            if termination_error is not None:
+                                raise ctypes.WinError(termination_error)
                             raise TimeoutError("Owned worker process tree did not stop")
                         if result == 0xFFFFFFFF:  # WAIT_FAILED
                             raise ctypes.WinError(ctypes.get_last_error())

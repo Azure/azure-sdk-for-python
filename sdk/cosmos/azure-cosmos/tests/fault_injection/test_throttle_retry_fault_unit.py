@@ -4,10 +4,59 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import exceptions
+from azure.cosmos.http_constants import HttpHeaders
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
 from fault_injection._throttle_retry import (
-    OPERATION_TIMEOUT, assert_throttle_failure, assert_throttle_wait_failure, throttle_rule,
+    OPERATION_TIMEOUT,
+    assert_throttle_failure,
+    assert_throttle_wait_failure,
+    throttle_rule,
+    assert_database_retry_metadata,
 )
+
+
+@pytest.mark.parametrize(
+    "channel,headers",
+    [
+        ("response", {}),
+        ("response", {HttpHeaders.ThrottleRetryCount: 2}),
+        (
+            "last_response",
+            {
+                HttpHeaders.ThrottleRetryCount: 1,
+                HttpHeaders.ThrottleRetryWaitTimeInMs: 200,
+            },
+        ),
+        (
+            "response_hook",
+            {
+                HttpHeaders.ThrottleRetryCount: 2,
+                HttpHeaders.ThrottleRetryWaitTimeInMs: 100,
+            },
+        ),
+    ],
+)
+def test_database_retry_metadata_rejects_missing_or_incorrect_totals_rust(
+    channel, headers
+):
+    correct = {
+        HttpHeaders.ThrottleRetryCount: 2,
+        HttpHeaders.ThrottleRetryWaitTimeInMs: 200,
+    }
+    channels = {
+        name: dict(correct) for name in ("response", "last_response", "response_hook")
+    }
+    channels[channel] = headers
+    with pytest.raises(AssertionError, match=channel):
+        assert_database_retry_metadata(channels, 2)
+
+
+def test_database_retry_metadata_accepts_complete_selected_delay_totals_rust():
+    headers = {
+        HttpHeaders.ThrottleRetryCount: 2,
+        HttpHeaders.ThrottleRetryWaitTimeInMs: 200,
+    }
+    assert_database_retry_metadata({"response": headers, "response_hook": headers}, 2)
 
 
 @pytest.mark.parametrize("inject", [True, False])

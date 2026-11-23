@@ -94,12 +94,10 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
     ``replace_throughput``. ``OP_TO_BINDING_FUNCTION_NAME`` holds the mapping, and
     ``BindingAdapter.execute`` is the only caller.
 
-    ``None`` means the binding cannot run ``op`` in this process, which
-    ``execute`` reports as ``NotImplementedError``. It covers four cases: the
-    binding is not installed; the installed binding is too old to export this
-    operation; the operation has no binding function at all; or the operation
-    is a feed such as ``query_items``, left out of the mapping on
-    purpose because feeds go through ``execute_pages``.
+    ``None`` means the binding is absent, its export is missing, or the
+    operation has no mapping. For example, ``query_items`` has no mapping here
+    because feeds go through ``execute_pages``. ``execute`` distinguishes an
+    installation problem from an operation this entry point does not support.
 
     A match only means the binding exposes that name. It acquires no Rust
     driver, checks no arguments, and promises nothing about service support.
@@ -276,18 +274,24 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         prepared = self._with_client_headers(prepared)
         deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
         if _rust_module is None:
-            raise NotImplementedError(
+            raise ImportError(
                 "BindingAdapter.execute: the compiled "
                 "azure.cosmos._rust module is not present in "
-                "this environment. Build it with `maturin develop` from "
-                "the repo root."
+                "this environment. Install an azure-cosmos wheel built for this "
+                "operating system, processor, and Python version, or rebuild "
+                "the extension from the current source.",
+                name="azure.cosmos._rust",
             )
 
         binding_function = _binding_function_for_op(prepared.op)
-        if binding_function is None:
-            raise NotImplementedError(
-                "BindingAdapter.execute does not yet support op={!r}.".format(prepared.op)
-            )
+        if not callable(binding_function):
+            binding_name = OP_TO_BINDING_FUNCTION_NAME.get(prepared.op)
+            if binding_name is not None:
+                raise RuntimeError(
+                    f"The compiled azure.cosmos._rust extension does not export a callable {binding_name}; "
+                    "install a matching azure-cosmos wheel or rebuild the extension from the current source."
+                )
+            raise NotImplementedError("BindingAdapter.execute does not yet support op={!r}.".format(prepared.op))
         operation = get_operation(self, prepared.op)
         contribution = operation.begin_contribution() if operation is not None else None
         try:

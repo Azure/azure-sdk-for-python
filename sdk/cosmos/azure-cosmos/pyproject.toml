@@ -111,8 +111,9 @@ include = [
     { path = "scripts/*.sh", format = "sdist" },
 ]
 
-# Do not package extensions or bytecode left by a previous local build.
+# Do not package IDE metadata, bytecode, or extensions left by local builds.
 exclude = [
+    "**/.idea/**",
     "**/__pycache__/**",
     "**/*.py[co]",
     "azure/cosmos/_rust.*.so",

@@ -325,6 +325,12 @@ def test_offline_inventory_keeps_shared_backend_contracts_not_core_python_rust()
     legacy = PACKAGE / "tests" / "common" / "test_core_python_backend_unit.py"
     assert shared in files
     assert legacy not in files
+    reads = PACKAGE / "tests" / "read_database"
+    assert reads / "test_read_database_backend_unit.py" in files
+    assert reads / "test_read_database_legacy_unit.py" not in files
+    containers = PACKAGE / "tests" / "common"
+    assert containers / "test_container_backend_unit.py" in files
+    assert containers / "test_container_legacy_unit.py" not in files
     assert runner.declared_tests(shared) == {
         "TestBackendContract::test_operation_routing_is_frozen_rust",
         "TestBackendContract::test_backend_execution_errors_never_replay_rust",

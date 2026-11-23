@@ -25,7 +25,7 @@ from telemetry.test_rust_telemetry_unit import (  # pylint: disable=unused-impor
     contribution_response,
     recording_setup,
 )
-from common.test_container_backend_unit import (
+from common.container_feed_stubs import (
     _new_sync_connection,
     _new_async_connection,
 )

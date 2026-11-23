@@ -26,7 +26,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 import textwrap
 import threading
 import time
@@ -407,7 +406,7 @@ def test_backend_import_does_not_configure_process_query_plan_path_rust(module_n
     )
 
     result = subprocess.run(
-        [sys.executable, "-c", script],
+        sdk_python_command(script),
         cwd=Path(__file__).resolve().parents[2],
         capture_output=True,
         text=True,
@@ -1210,7 +1209,7 @@ def test_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
         partition_key=key_from_legacy_header('["a"]'),
         headers={},
     )
-    with pytest.raises(NotImplementedError, match="not present"):
+    with pytest.raises(ImportError, match="not present"):
         backend.execute(prepared)
 
 
@@ -1574,7 +1573,7 @@ def test_async_rust_backend_raises_when_binding_not_built_rust(monkeypatch):
             partition_key=key_from_legacy_header('["a"]'),
             headers={},
         )
-        with pytest.raises(NotImplementedError, match="not present"):
+        with pytest.raises(ImportError, match="not present"):
             await backend.execute(prepared)
     asyncio.run(_run())
 

@@ -1694,9 +1694,9 @@ containers.
 
 **Proposed breaking change: reject previously ignored arguments**
 
-As with deletion in `CosmosClient.delete_database`, the proposal removes arguments that legacy
-Python accepted but ignored for this operation. These are Python wrapper
-cleanup decisions, not Rust-driver limitations.
+The proposal removes arguments that the previous client accepted but ignored
+for this operation. Removing them changes which customer calls are accepted;
+it does not change the database properties returned by a successful read.
 
 | Argument | Previous behavior | Proposed behavior |
 |---|---|---|
@@ -1735,16 +1735,126 @@ that previously supplied `None` without receiving a warning.
 After removing the synchronous query-metrics argument, `read()` accepts no
 positional arguments. Supported optional settings must be named.
 
+The same rejection applies to `sessionToken` and `populateQueryMetrics`
+inside `request_options` or `feed_options`, including `None` and `False`.
+Moving an unsupported argument into a settings dictionary does not make
+the call supported.
+
+**Async query-metrics calls already failed**
+
+On the previous asynchronous client, supplying `populate_query_metrics`
+with `None`, `False` or `True` already raised `TypeError`. It was not a
+working option that the client silently ignored.
+
+The Rust-backed client rejects those calls before sending the database read,
+with an error naming the unsupported argument. For async callers, this is
+an earlier, clearer error, not the removal of a previously successful call.
+Remove the argument and use `await database.read()`.
+
+**Response hooks must be synchronous on both clients**
+
+Alpha Bank wants to record the cost of reading `sales`. Its callback is an
+ordinary function, even when the database read itself is awaited:
+
+```python
+def record_read(headers, properties):
+    print(headers.get("x-ms-request-charge"))
+
+properties = await database.read(response_hook=record_read)
+```
+
+After a successful read, the callback receives its own response-header
+dictionary and the database properties. A not-modified response (HTTP 304)
+passes `None` as the callback's properties and returns an empty `CosmosDict`.
+Keep the previously saved properties when handling that empty result.
+
+The previous clients did not await an `async def` callback. Its body could
+remain unexecuted even though the read succeeded. Such callbacks now raise
+`TypeError` before the read is sent. Non-callable values, including `False`,
+also raise `TypeError`; use `None` to omit the hook. A synchronous callable
+that evaluates to false is still invoked.
+
+If a synchronous hook raises, its exception reaches the customer app.
+The read is not repeated to rerun the hook, and the database proxy keeps
+its previously stored properties.
+
+**Timeout and unsupported settings**
+
+Pass the operation timeout directly, for example
+`await database.read(timeout=3.5)`. A supplied duration must be a finite
+`int` or `float`, measured in seconds, at least `1` and less than `2**64`.
+Booleans are not durations. Invalid durations raise `ValueError`.
+`None` leaves the per-call override unset.
+
+Do not use `request_options` or `feed_options` to set the operation timeout;
+pass it directly. A conflicting nested timeout raises `TypeError`.
+Per-call `connection_timeout` is also rejected; configure
+connection establishment through `ConnectionPoolOptions.connection_timeout`
+on the client's `CosmosRuntime` instead.
+
+Unsupported keyword arguments and unsupported `initial_headers` overrides,
+such as `User-Agent`, `Accept`, `Cache-Control` and `x-ms-version`, raise
+`TypeError` naming the setting before the read is sent. The SDK does not
+silently ignore these settings or switch execution paths to accept them.
+
+**Reusing a settings dictionary**
+
+A per-call choice must not become an accidental default for the next read:
+
+```python
+options = {}
+properties = await database.read(request_options=options, timeout=3.5)
+properties = await database.read(request_options=options)
+assert options == {}
+```
+
+Both `request_options` and `feed_options` remain unchanged after successful
+reads and input-validation failures. The second call uses the client's
+timeout policy, not the first call's `3.5`-second override. When both
+dictionaries are supplied, `request_options` takes precedence; supported
+keyword settings override entries in that selected dictionary.
+
+**Proposed behavior: ignore an unnecessary version with `IfPresent`**
+
+Suppose the customer saved the database's `_etag`, its version marker, but
+now only wants to read the database if it exists:
+
+```python
+from azure.core import MatchConditions
+
+saved_etag = properties["_etag"]
+properties = await database.read(
+    etag=saved_etag,
+    match_condition=MatchConditions.IfPresent,
+)
+```
+
+`IfPresent` asks whether the database exists. It does not ask whether the
+database still has `saved_etag`, so the `etag` argument is unnecessary.
+
+The previous synchronous and asynchronous clients raised `TypeError` when
+both arguments were supplied. The Rust-backed clients accept this combination
+and return the database properties when it exists.
+
+The proposal is to keep accepting this call and ignore `etag` with
+`IfPresent`. **A successful read does not prove that the database still has
+the saved version.** This accepts a previously failing call; it does not
+remove a working version check. Customers who only need the existence
+condition can omit `etag`.
+
 **Decision requested; approval is not recorded**
 
-Approve or revise removal of `session_token` from both clients and
-`populate_query_metrics` from the synchronous client, both positionally
-and by name.
+Approve or revise these distinct decisions:
 
-The asynchronous client never declared `populate_query_metrics`, but callers
-could supply the keyword through `**kwargs`. The current implementation
-rejects it; whether legacy async ignored or forwarded it remains unverified.
-That rejection is not yet an approved removal decision.
+- Remove `session_token` from both clients and `populate_query_metrics` from
+  the synchronous client, including its positional form.
+- Reject async `populate_query_metrics` calls early with `TypeError`, rather
+  than allowing the same calls to fail later.
+- Require synchronous response hooks on both clients and reject invalid
+  hooks before sending the read, including previously ignored false values.
+- Apply the timeout limits and unsupported-setting errors described above.
+- Accept `etag` together with `IfPresent`, with the explicit rule that the
+  supplied version is ignored, not checked.
 
 **Asynchronous-client signature for review**
 
@@ -1890,10 +2000,46 @@ Approve or revise the named-optional-argument requirement, rejection of
 the verified ignored arguments, and consistent `TypeError` handling for
 missing or duplicate required arguments.
 
+**Approved: reject invalid settings before creation**
+
+Alpha Bank may assemble its creation settings in a dictionary. Moving an
+obsolete option into that dictionary must not bypass its rejection.
+`sessionToken` and `populateQueryMetrics` inside either `request_options` or
+`feed_options` raise `TypeError`, including when their values are `None` or
+`False`. Remove the entries rather than setting them to an empty value.
+For example, `request_options={"sessionToken": None}` is rejected before
+creation or a global secondary index (GSI) source-container lookup.
+
+The same early validation applies to `response_hook`. Alpha Bank uses this
+callback to observe the response, so an invalid callback must not cause
+creation to succeed before the SDK reports the mistake. Supply a synchronous
+callable, or `None`, on both clients. A non-callable value such as
+`response_hook=42`, or an `async def` callback, raises `TypeError` before
+creation or the GSI source-container lookup. The asynchronous client does not
+await this callback.
+
+Unsupported per-call settings and header overrides also raise `TypeError`
+before those requests. The Rust-backed SDK does not silently ignore them or
+switch to legacy Python to execute the call.
+
+**Approved: one operation timeout**
+
+When Alpha Bank creates a GSI container with `timeout=10`, the source-container
+lookup and creation share ten seconds; creation does not receive a fresh
+ten-second allowance after the lookup. If the lookup takes three seconds,
+at most seven remain for creation and any required properties read.
+If the budget expires before creation starts, the SDK does not send creation.
+
+A supplied timeout must be a finite, non-boolean number of seconds greater
+than or equal to one and less than `2**64`; invalid values raise `ValueError`.
+`None` leaves the per-call override unset. Expiry raises
+`CosmosClientTimeoutError`. If creation was already sent, the container may
+exist despite that error; a timeout is not confirmation that nothing was
+created.
+
 **Asynchronous-client signature for review**
 
-The expanded calling contract is shown below; the implementation currently
-accepts `*args` and `**kwargs` and enforces these argument rules.
+The public calling contract is shown below.
 
 ```python
 async def create_container(
@@ -1921,9 +2067,31 @@ async def create_container(
     ...
 ```
 
-The return remains a `ContainerProxy`, or a container client plus creation
+The return remains a `ContainerProxy`, or a container client plus
 properties when `return_properties=True`. The synchronous client follows
 the same argument rules and is called without `await`.
+
+**Approved: successful creation without returned properties**
+
+Alpha Bank creates `orders`, but the successful creation response contains no
+properties. With `return_properties=False`, the call returns a container client
+whose `id` is `orders`; no additional read is needed.
+
+With `return_properties=True`, the call uses the creation properties when
+available. Otherwise, it reads `orders` and returns those properties with the
+container client. This read uses the remaining operation timeout, without
+the create condition. The properties and their response headers describe that
+read, not a guaranteed creation-time snapshot. A read failure propagates even
+though creation succeeded; it does not cause another create request.
+
+The response hook runs once for the creation response. If that response is
+empty, the hook receives empty properties and creation headers, not the later
+read's result.
+
+**Related limitations**
+
+- [Conditional-creation behavior](V5/api-review/REQUEST_OPTIONS.md#resource-metadata-differs-from-item-contents)
+- [Conditional-create verification and outstanding global secondary index checks](V5/api-review/LIVE_VERIFICATION.md#container-creation-verification)
 
 <a id="9---creating-a-container-if-it-does-not-exist"></a>
 <a id="databaseproxycreate_container_if_not_exists"></a>

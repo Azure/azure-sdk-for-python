@@ -41,7 +41,7 @@ from ..._helpers._request_database import (
     build_read_database_prepared,
     database_existence_read_options,
     is_delete_database_rust_eligible,
-    is_read_database_rust_eligible,
+    read_database_routing,
     is_create_database_rust_eligible,
 )
 from ..._helpers._response_parse import (
@@ -139,6 +139,9 @@ class AsyncDatabaseHelper:
         A 304 response means the database has not changed. The hook receives
         None instead of a body for that response.
         """
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("read_database response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "read_database")
         response_hook = with_response_header_snapshot(response_hook)
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -155,13 +158,7 @@ class AsyncDatabaseHelper:
         result = await run_with_deadline(
             lambda: self._backend.run_operation(
                 build_request=build_request,
-                routing=OperationRouting(
-                    OP_READ_DATABASE,
-                    is_read_database_rust_eligible(
-                        request_options,
-                        operation_kwargs,
-                    ),
-                ),
+                routing=read_database_routing(request_options, operation_kwargs),
                 legacy_call=lambda: self._client_connection.ReadDatabase(
                     "dbs/{}".format(database_id),
                     options=legacy_deadline_options(request_options, deadline),

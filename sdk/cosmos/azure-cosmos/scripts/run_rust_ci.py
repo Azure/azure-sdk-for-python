@@ -55,7 +55,6 @@ _COLLECTION_SPEC.loader.exec_module(test_collection)
 # Parameter cross-products deliberately contain cases that do not apply to one
 # surface/backend. These exact existing reasons are not environment exemptions.
 OFFLINE_SKIPS = {
-    "common/test_container_backend_unit.py": {"A genuine initial 404 is the create branch, covered separately."},
     "common/test_container_metadata_unit.py": {"Async cancellation contract"},
     "common/test_list_containers_backend_unit.py": {
         "Rust-specific option rejection",

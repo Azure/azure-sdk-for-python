@@ -25584,8 +25584,8 @@
               "path": "tests\\response_hook\\sync\\test_query_response_headers.py",
               "symbol": "TestQueryResponseHeaders.test_response_hook_parity_execute_item_batch_rust",
               "kind": "assertion-call",
-              "line": 228,
-              "end_line": 228,
+              "line": 245,
+              "end_line": 245,
               "column": 12,
               "ast_sha256": "321d6b1be98494606d3fc59a69c279f7cb70f70e67a59459d5fe8cee2756fcc7",
               "snippet": "self.assertEqual(len(captured), 1)"
@@ -25613,8 +25613,8 @@
               "path": "tests\\response_hook\\sync\\test_query_response_headers.py",
               "symbol": "TestQueryResponseHeaders.test_response_hook_parity_execute_item_batch_rust",
               "kind": "assertion-call",
-              "line": 230,
-              "end_line": 230,
+              "line": 247,
+              "end_line": 247,
               "column": 12,
               "ast_sha256": "e667219ff45f957d9448385446b70731d56558cb5af509694f52fa0ccf5cd181",
               "snippet": "self.assertEqual(result_headers[\"x-ms-request-charge\"], captured[0][\"x-ms-request-charge\"])"
@@ -25642,8 +25642,8 @@
               "path": "tests\\response_hook\\sync\\test_query_response_headers.py",
               "symbol": "TestQueryResponseHeaders.test_response_hook_parity_execute_item_batch_rust",
               "kind": "assertion-call",
-              "line": 231,
-              "end_line": 231,
+              "line": 248,
+              "end_line": 248,
               "column": 12,
               "ast_sha256": "bbf066ccd39c558f3507fafeea54f81c33ade10cb261bf04dd690b7ebb1bf81a",
               "snippet": "self.assertEqual(result_headers[\"x-ms-activity-id\"], captured[0][\"x-ms-activity-id\"])"
@@ -25671,8 +25671,8 @@
               "path": "tests\\response_hook\\sync\\test_query_response_headers.py",
               "symbol": "TestQueryResponseHeaders.test_response_hook_parity_execute_item_batch_rust",
               "kind": "assertion-call",
-              "line": 232,
-              "end_line": 232,
+              "line": 249,
+              "end_line": 249,
               "column": 12,
               "ast_sha256": "702605b55bb4bdd4784fd0db2c3afedbaeee76714beff4e4cf898b77cfbdc9ff",
               "snippet": "self.assertEqual(len(result), 2)"
@@ -25700,8 +25700,8 @@
               "path": "tests\\response_hook\\sync\\test_query_response_headers.py",
               "symbol": "TestQueryResponseHeaders.test_response_hook_parity_execute_item_batch_rust",
               "kind": "batch-call",
-              "line": 225,
-              "end_line": 227,
+              "line": 242,
+              "end_line": 244,
               "column": 21,
               "ast_sha256": "26d61f58765966005b19157690267acd1d33509341bf239a97a544dece022919",
               "snippet": "created_collection.execute_item_batch(\n                batch_operations=batch_ops, partition_key=\"p\", response_hook=hook,\n            )"
@@ -26048,8 +26048,8 @@
               "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
               "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_execute_item_batch_async_rust",
               "kind": "assertion",
-              "line": 222,
-              "end_line": 222,
+              "line": 240,
+              "end_line": 240,
               "column": 12,
               "ast_sha256": "0c9101362de4b7e547bc5f5fe82a8fe6089aa6c13b765905dab7832aa3c234ad",
               "snippet": "assert len(captured) == 1"
@@ -26077,8 +26077,8 @@
               "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
               "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_execute_item_batch_async_rust",
               "kind": "assertion",
-              "line": 224,
-              "end_line": 224,
+              "line": 242,
+              "end_line": 242,
               "column": 12,
               "ast_sha256": "310425f9f058b8629de10ea8ea9f3c64c528db17eadacf9a8b2cd7232c3f92fc",
               "snippet": "assert result_headers[\"x-ms-request-charge\"] == captured[0][\"x-ms-request-charge\"]"
@@ -26106,8 +26106,8 @@
               "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
               "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_execute_item_batch_async_rust",
               "kind": "assertion",
-              "line": 225,
-              "end_line": 225,
+              "line": 243,
+              "end_line": 243,
               "column": 12,
               "ast_sha256": "cadbfe1f3a32f496dcec60a1cdb7e2d60461ce17c7237ee7b77a324b376547a4",
               "snippet": "assert result_headers[\"x-ms-activity-id\"] == captured[0][\"x-ms-activity-id\"]"
@@ -26135,8 +26135,8 @@
               "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
               "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_execute_item_batch_async_rust",
               "kind": "assertion",
-              "line": 226,
-              "end_line": 226,
+              "line": 244,
+              "end_line": 244,
               "column": 12,
               "ast_sha256": "9012b8f6cfbc83999ddd006a9c6dd38089ce6f2dab251d759e05ca2dc3ff4165",
               "snippet": "assert len(result) == 2"
@@ -26164,8 +26164,8 @@
               "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
               "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_execute_item_batch_async_rust",
               "kind": "batch-call",
-              "line": 219,
-              "end_line": 221,
+              "line": 237,
+              "end_line": 239,
               "column": 27,
               "ast_sha256": "26d61f58765966005b19157690267acd1d33509341bf239a97a544dece022919",
               "snippet": "created_collection.execute_item_batch(\n                batch_operations=batch_ops, partition_key=\"p\", response_hook=hook,\n            )"
@@ -44166,8 +44166,8 @@
     "tests\\execute_item_batch\\test_serialization_compatibility_unit.py": "d489738387269b31742ea24ad023a6d34b92753a952efd8d733cd750ca2dd43d",
     "tests\\execute_item_batch\\test_service_failures.py": "734e5ac15cae8ca038ce3e04c9bd8fab6003577ba4d97b0dfeb4007534add9b4",
     "tests\\execute_item_batch\\test_shared_contracts.py": "b74baa8994526332bee16df20690e04bec142d00c293fce075ba285b618ed4c0",
-    "tests\\response_hook\\aio\\test_query_response_headers_async.py": "71632dbce7d83972ca6f570de8354214803b119077c10c28ca50012769755423",
-    "tests\\response_hook\\sync\\test_query_response_headers.py": "2ae726e3f59a221f3a8916a218d25f6253f4d7684edf9c4f4b90bf6e4de19f99"
+    "tests\\response_hook\\aio\\test_query_response_headers_async.py": "8cdd624dbdc063db0323b71c4f87e372cb0c696bed7d87028c4156e14de971a4",
+    "tests\\response_hook\\sync\\test_query_response_headers.py": "60c7105195900118c253035e6fc4259c81d862bbde578bd5b3b760f434f12958"
   },
   "fixture_boundary": {
     "path": "tests\\execute_item_batch\\test_service_failures.py",

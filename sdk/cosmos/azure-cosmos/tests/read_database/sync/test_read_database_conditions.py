@@ -36,6 +36,7 @@ def readable_database_id():
                 pass
 
 
+@pytest.mark.cosmosLong
 def test_read_database_with_stale_if_match_returns_database_rust(readable_database_id):
     """The service does not enforce If-Match on a database read, so a stale etag still returns the database."""
     with _rust_client() as client:

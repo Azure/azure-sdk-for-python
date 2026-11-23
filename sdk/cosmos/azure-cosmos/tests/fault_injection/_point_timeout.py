@@ -28,11 +28,18 @@ def read_operation_timeout_rule(rule_id, container_id, inject):
     }
 
 
-def capture_read_budget(monkeypatch, *, asynchronous=False):
+def database_read_operation_timeout_rule(rule_id, inject):
+    """Activate only around one database read on an initialized, dedicated client."""
+    rule = read_operation_timeout_rule(rule_id, None, inject)
+    rule.update(operation_type="All", enabled=False)
+    return rule
+
+
+def capture_read_budget(monkeypatch, *, asynchronous=False, operation="read_item"):
     """Observe the real binding call without replacing its execution or timer."""
     from azure.cosmos import _rust
 
-    name = "read_item_async" if asynchronous else "read_item"
+    name = operation + "_async" if asynchronous else operation
     original = getattr(_rust, name)
     budgets = []
 
@@ -45,7 +52,7 @@ def capture_read_budget(monkeypatch, *, asynchronous=False):
 
 
 def assert_read_budget(budgets):
-    assert len(budgets) == 1, "Expected one native point-read call"
+    assert len(budgets) == 1, "Expected one native read call"
     budget = budgets[0]
     assert (
         budget is not None and math.isfinite(budget) and 0 < budget <= OPERATION_TIMEOUT
@@ -53,10 +60,13 @@ def assert_read_budget(budgets):
 
 
 def assert_point_timeout(error, elapsed, hits):
-    assert isinstance(error, CosmosClientTimeoutError), "Expected CosmosClientTimeoutError, not success or another error"
-    assert hits > 0, "The intended ReadItem fault did not apply"
+    assert isinstance(
+        error, CosmosClientTimeoutError
+    ), "Expected CosmosClientTimeoutError, not success or another error"
+    assert hits > 0, "The intended read fault did not apply"
     assert (
-        math.isfinite(elapsed) and MIN_TIMEOUT_ELAPSED <= elapsed <= MAX_OPERATION_ELAPSED
+        math.isfinite(elapsed)
+        and MIN_TIMEOUT_ELAPSED <= elapsed <= MAX_OPERATION_ELAPSED
     ), "The read did not stop within the operation budget's scheduling allowance"
 
 

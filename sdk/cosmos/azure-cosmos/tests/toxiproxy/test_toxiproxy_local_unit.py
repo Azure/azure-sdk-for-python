@@ -238,6 +238,53 @@ def test_cleanup_waits_for_members_and_discovers_late_descendants_rust(process_t
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_waits_for_exit_when_termination_is_already_in_progress_rust(process_tree_api):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [])
+    tree.api.TerminateProcess.return_value = 0
+    ctypes.set_last_error(5)
+    tree.api.WaitForSingleObject.side_effect = lambda process, timeout: 0x102 if timeout == 0 else 0
+
+    tree.close()
+
+    assert tree.stopped and tree.handle is None
+    tree.api.WaitForSingleObject.assert_called_once()
+    assert tree.api.WaitForSingleObject.call_args.args[1] > 0
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_access_denied_does_not_hide_a_live_process_rust(process_tree_api):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [])
+    tree.api.TerminateProcess.return_value = 0
+    tree.api.WaitForSingleObject.return_value = 0x102
+    ctypes.set_last_error(5)
+
+    with pytest.raises(PermissionError) as caught:
+        tree.close()
+
+    assert caught.value.winerror == 5
+    assert not tree.stopped and tree.handle is None
+    tree.api.TerminateJobObject.assert_called_once_with(7, 1)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
+def test_cleanup_other_termination_errors_are_not_ignored_rust(process_tree_api):
+    tree = process_tree_api
+    job_process_lists(tree.api, [10], [])
+    tree.api.TerminateProcess.return_value = 0
+    ctypes.set_last_error(87)
+
+    with pytest.raises(OSError) as caught:
+        tree.close()
+
+    assert caught.value.winerror == 87
+    assert not tree.stopped and tree.handle is None
+    tree.api.WaitForSingleObject.assert_not_called()
+    tree.api.TerminateJobObject.assert_called_once_with(7, 1)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="Windows process-tree ownership")
 @pytest.mark.parametrize("wait_result, error", [(0x102, TimeoutError), (0xFFFFFFFF, OSError)])
 def test_cleanup_wait_failure_is_not_reported_as_stopped_rust(process_tree_api, wait_result, error):
     tree = process_tree_api

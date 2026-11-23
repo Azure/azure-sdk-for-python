@@ -40,9 +40,11 @@ from ..._helpers._request_container import (
 )
 from ..._helpers._response_parse import (
     process_backend_response,
+    process_create_response,
     process_delete_response,
     with_response_header_snapshot,
 )
+from ..._helpers._wire_encoding import serialize_body_to_bytes
 from .._backend.cosmos_backend import AsyncCosmosBackend
 
 
@@ -63,12 +65,16 @@ class AsyncContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
         deadline: Optional[float] = None,
+        prepared: Optional[PreparedRequest] = None,
     ) -> CosmosDict:
         """Create a container and return its properties."""
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 
         def build_request() -> PreparedRequest:
+            if prepared is not None:
+                # GSI resolution changes the body, not the preflighted settings.
+                return replace(prepared, body_bytes=serialize_body_to_bytes(container_definition))
             return build_create_container_prepared(
                 database_link,
                 container_definition,
@@ -93,7 +99,7 @@ class AsyncContainerHelper:
                     options=legacy_deadline_options(request_options, deadline),
                     **legacy_deadline_kwargs(operation_kwargs, deadline),
                 ),
-                process_response=lambda response: process_backend_response(
+                process_response=lambda response: process_create_response(
                     response,
                     client_connection=self._client_connection,
                 ),
