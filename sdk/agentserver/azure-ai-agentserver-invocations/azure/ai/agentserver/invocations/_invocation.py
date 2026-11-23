@@ -9,6 +9,7 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 import contextvars
 import inspect
 import logging
+import os
 import re
 import threading
 import uuid
@@ -28,6 +29,7 @@ from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     reset_request_context,
     set_request_context,
 )
+from azure.ai.agentserver.core import _tracing
 from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
     ERROR_DETAIL,
     ERROR_SOURCE,
@@ -51,6 +53,15 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 _ERROR_SOURCE_UPSTREAM: str = "upstream"
 _ERROR_SOURCE_PLATFORM: str = "platform"
+
+
+def _is_sensitive_data_enabled() -> bool:
+    resolver = getattr(_tracing, "_is_sensitive_data_enabled", None)
+    if resolver is not None:
+        return bool(resolver())
+    # Keep older supported core versions usable until the coordinated SDK release.
+    value = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+    return value.lower() not in ("false", "0")
 
 
 def _apply_error_source_headers(
@@ -508,18 +519,21 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 async for chunk in original_iterator:
                     yield chunk
             except Exception as exc:  # pylint: disable=broad-exception-caught
+                capture_sensitive_data = _is_sensitive_data_enabled()
                 logger.error(
                     "Error processing invocation %s: %s",
                     invocation_id,
-                    exc,
-                    exc_info=True,
+                    exc if capture_sensitive_data else type(exc).__name__,
+                    exc_info=capture_sensitive_data,
                 )
                 # Record the exception on the current span.
                 span = trace.get_current_span()
                 if span and span.is_recording():
-                    span.set_status(trace.StatusCode.ERROR, str(exc))
-                    span.set_attribute("error.type", type(exc).__name__)
-                    span.record_exception(exc)
+                    if capture_sensitive_data or hasattr(_tracing, "_is_sensitive_data_enabled"):
+                        _tracing.record_error(span, exc)
+                    else:
+                        span.set_status(trace.StatusCode.ERROR)
+                        span.set_attribute("error.type", type(exc).__name__)
                 raise
             finally:
                 _invocation_id_var.reset(stream_inv_token)
@@ -586,7 +600,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
             response.headers[InvocationConstants.SESSION_ID_HEADER] = session_id
         except NotImplementedError as exc:
-            logger.error("Invocation %s failed: %s", invocation_id, exc)
+            logger.error(
+                "Invocation %s failed: %s",
+                invocation_id,
+                exc if _is_sensitive_data_enabled() else type(exc).__name__,
+            )
             return create_error_response(
                 "not_implemented",
                 str(exc),
@@ -601,7 +619,13 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             error_source, error_detail = _classify_error(exc)
-            logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+            capture_sensitive_data = _is_sensitive_data_enabled()
+            logger.error(
+                "Error processing invocation %s: %s",
+                invocation_id,
+                exc if capture_sensitive_data else type(exc).__name__,
+                exc_info=capture_sensitive_data,
+            )
             return create_error_response(
                 "internal_error",
                 "Internal server error",
@@ -676,7 +700,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
             return response
         except Exception as exc:  # pylint: disable=broad-exception-caught
             error_source, error_detail = _classify_error(exc)
-            logger.error("Error in %s %s: %s", span_operation, invocation_id, exc, exc_info=True)
+            capture_sensitive_data = _is_sensitive_data_enabled()
+            logger.error(
+                "Error in %s %s: %s",
+                span_operation,
+                invocation_id,
+                exc if capture_sensitive_data else type(exc).__name__,
+                exc_info=capture_sensitive_data,
+            )
             return create_error_response(
                 "internal_error",
                 "Internal server error",
