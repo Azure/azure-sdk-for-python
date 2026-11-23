@@ -40,6 +40,7 @@ pip install azure-appconfiguration
 | [list_revision_sample.py][list_revision_sample] / [list_revision_sample_async.py][list_revision_sample_async] | demos how to get configuration setting revision history |
 | [sync_token_sample.py][sync_token_sample] / [sync_token_sample_async.py][sync_token_sample_async] | demos how to update sync_token for an AzureAppConfigurationClient |
 | [snapshot_sample.py][snapshot_sample] / [snapshot_sample_async.py][snapshot_sample_async] | demos how to create/retrieve/archive/recover/list configuration settings snapshot and list configuration settings of a snapshot |
+| [feature_flag_sample.py][feature_flag_sample] / [feature_flag_sample_async.py][feature_flag_sample_async] | demos how to set/get/list/delete feature flags using the dedicated feature flag endpoint, including the full FeatureFlag model (conditions, variants, allocation, telemetry) |
 | [send_request_sample.py][send_request_sample] / [send_request_sample_async.py][send_request_sample_async] | demos how to make custom HTTP requests through a client pipeline |
 
 
@@ -63,5 +64,7 @@ pip install azure-appconfiguration
 [sync_token_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/sync_token_sample_async.py
 [snapshot_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_sample.py
 [snapshot_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/snapshot_sample_async.py
+[feature_flag_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/feature_flag_sample.py
+[feature_flag_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/feature_flag_sample_async.py
 [send_request_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/send_request_sample.py
 [send_request_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration/samples/send_request_sample_async.py

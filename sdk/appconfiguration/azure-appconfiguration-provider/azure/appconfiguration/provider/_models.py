@@ -103,6 +103,46 @@ class SettingSelector:
         self.snapshot_name = snapshot_name
 
 
+class FeatureFlagSelector:
+    """
+    Selects a set of feature flags from the dedicated enhanced feature flag endpoint.
+
+    :keyword name_filter: A filter to select feature flags based on their name.
+    :type name_filter: str
+    :keyword label_filter: A filter to select feature flags based on their labels. Default
+     value is \0 i.e. (No Label) as seen in the portal.
+    :type label_filter: Optional[str]
+    :keyword tag_filters: A filter to select feature flags based on their tags. This is a
+     list of strings that will be used to match tags on the feature flags. Reserved characters (\\*, \\, ,)
+     must be escaped with backslash if they are part of the value. Tag filters must follow the format
+     "tagName=tagValue", for empty values use "tagName=" and for null values use "tagName=\\0".
+    :type tag_filters: Optional[List[str]]
+    """
+
+    def __init__(
+        self,
+        *,
+        name_filter: Optional[str] = None,
+        label_filter: Optional[str] = NULL_CHAR,
+        tag_filters: Optional[List[str]] = None,
+    ):
+        if name_filter is None:
+            raise ValueError("name_filter must be specified.")
+
+        if tag_filters is not None:
+            if not isinstance(tag_filters, list):
+                raise TypeError("tag_filters must be a list of strings.")
+            for tag in tag_filters:
+                if not tag:
+                    raise ValueError("Tag filter cannot be an empty string or None.")
+                if not isinstance(tag, str) or "=" not in tag or tag.startswith("="):
+                    raise ValueError("Tag filter " + tag + ' does not follow the format "tagName=tagValue".')
+
+        self.name_filter = name_filter
+        self.label_filter = label_filter
+        self.tag_filters = tag_filters
+
+
 class WatchKey(NamedTuple):
     key: str
     label: str = NULL_CHAR

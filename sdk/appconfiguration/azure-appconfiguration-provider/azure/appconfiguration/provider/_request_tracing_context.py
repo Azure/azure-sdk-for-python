@@ -35,6 +35,7 @@ FEATURE_FLAG_USES_SEED_TAG = "Seed"
 LOAD_BALANCING_FEATURE = "LB"
 AI_CONFIGURATION_FEATURE = "AI"
 AI_CHAT_COMPLETION_FEATURE = "AICC"
+ENHANCED_FEATURE_FLAG_TAG = "EnhFF"
 
 # Correlation context constants
 FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
@@ -82,6 +83,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         self.uses_ai_configuration = False
         self.uses_aicc_configuration = False  # AI Chat Completion
         self.uses_snapshot_reference = False
+        self.uses_enhanced_feature_flags = False
         self.uses_telemetry = False
         self.uses_seed = False
         self.max_variants: Optional[int] = None
@@ -239,15 +241,26 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         :type feature_flag: FeatureFlagConfigurationSetting
         """
         if feature_flag.filters:
-            for feature_filter in feature_flag.filters:
-                if feature_filter.get("name") in PERCENTAGE_FILTER_NAMES:
-                    self.feature_filter_usage[PERCENTAGE_FILTER_KEY] = True
-                elif feature_filter.get("name") in TIME_WINDOW_FILTER_NAMES:
-                    self.feature_filter_usage[TIME_WINDOW_FILTER_KEY] = True
-                elif feature_filter.get("name") in TARGETING_FILTER_NAMES:
-                    self.feature_filter_usage[TARGETING_FILTER_KEY] = True
-                else:
-                    self.feature_filter_usage[CUSTOM_FILTER_KEY] = True
+            self.update_feature_filter_telemetry_by_names(filter.get("name") for filter in feature_flag.filters)
+
+    def update_feature_filter_telemetry_by_names(self, filter_names) -> None:
+        """
+        Track feature filter usage for App Configuration telemetry, given the filter names directly. Used for feature
+        flags that don't expose their filters as dictionaries, e.g. feature flags loaded from the feature flag
+        resource endpoint.
+
+        :param filter_names: The names of the filters used by a feature flag.
+        :type filter_names: Iterable[Optional[str]]
+        """
+        for name in filter_names:
+            if name in PERCENTAGE_FILTER_NAMES:
+                self.feature_filter_usage[PERCENTAGE_FILTER_KEY] = True
+            elif name in TIME_WINDOW_FILTER_NAMES:
+                self.feature_filter_usage[TIME_WINDOW_FILTER_KEY] = True
+            elif name in TARGETING_FILTER_NAMES:
+                self.feature_filter_usage[TARGETING_FILTER_KEY] = True
+            else:
+                self.feature_filter_usage[CUSTOM_FILTER_KEY] = True
 
     def reset_feature_filter_usage(self) -> None:
         """Reset the feature filter usage tracking."""
@@ -270,6 +283,8 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             features_list.append(AI_CHAT_COMPLETION_FEATURE)
         if self.uses_snapshot_reference:
             features_list.append(SNAPSHOT_REFERENCE_TAG)
+        if self.uses_enhanced_feature_flags:
+            features_list.append(ENHANCED_FEATURE_FLAG_TAG)
 
         return Delimiter.join(features_list)
 

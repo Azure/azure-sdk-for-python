@@ -1,6 +1,6 @@
 # Release History
 
-## 2.5.2 (Unreleased)
+## 2.6.0b2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,28 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 2.6.0b1 (2026-08-25)
+
+### Features Added
+
+- Enhanced feature flags created via the dedicated feature flag resource endpoint (`FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`) are now loaded automatically alongside key-value based feature flags whenever `feature_flag_enabled=True`. Both kinds are merged into the same `feature_management.feature_flags` list, with resource-based feature flags taking precedence over key-value based ones when they share the same name. No new `load()` options are required to opt in, and existing `feature_flag_selectors` filter both kinds.
+
+### Breaking Changes
+
+- Raised the minimum supported Python version to 3.10, matching the minimum required by `azure-appconfiguration>=1.10.0b1`. Dropped support for Python 3.7, 3.8, and 3.9.
+
+### Bugs Fixed
+
+- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh.
+- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout (for either the origin or replica records) is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval.
+- Fixed a thread-safety issue by publishing refreshed secret values through a new configuration mapping instead of mutating the existing mapping while readers may be iterating.
+- Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character.
+- Fixed a `KeyError` when loading with an endpoint and credential (no connection string).
+### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`.
+- Bumped minimum dependency on `azure-appconfiguration` to `>=1.10.0b1` for `FeatureFlagClient`/`FeatureFlag` support.
 
 ## 2.5.1 (2026-10-30)
 

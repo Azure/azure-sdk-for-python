@@ -11,13 +11,15 @@ from azure.appconfiguration import (
     AzureAppConfigurationClient,
     ConfigurationSetting,
     ConfigurationSettingsFilter,
+    FeatureFlag,
+    FeatureFlagClient,
     FeatureFlagConfigurationSetting,
     SecretReferenceConfigurationSetting,
     SnapshotComposition,
     SnapshotStatus,
 )
 from azure.appconfiguration.provider import load, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider._constants import NULL_CHAR
+from azure.appconfiguration.provider._constants import NULL_CHAR, FEATURE_FLAG_ID_FIELD
 
 
 class AppConfigTestCase(AzureRecordedTestCase):
@@ -43,6 +45,10 @@ class AppConfigTestCase(AzureRecordedTestCase):
     def create_appconfig_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
+
+    def create_enhanced_feature_flag_client(self, appconfiguration_endpoint_string):
+        cred = self.get_credential(FeatureFlagClient)
+        return FeatureFlagClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
 
 def setup_configs(client, keyvault_secret_url, keyvault_secret_url2):
@@ -164,6 +170,38 @@ def create_feature_flag_config_setting(key, label, enabled, tags=None):
     return FeatureFlagConfigurationSetting(feature_id=key, label=label, enabled=enabled, tags=tags)
 
 
+def create_enhanced_feature_flag(name, enabled, label=None, **kwargs):
+    """
+    Create a FeatureFlag object for use with the dedicated enhanced feature flag endpoint
+    (``FeatureFlagClient``), as opposed to the key-value based ``FeatureFlagConfigurationSetting``.
+
+    :param name: The name/identifier of the feature flag.
+    :param enabled: Whether the feature flag is enabled.
+    :param label: The label of the feature flag.
+    :return: A FeatureFlag object.
+    :rtype: ~azure.appconfiguration.FeatureFlag
+    """
+    return FeatureFlag(name=name, enabled=enabled, label=label, **kwargs)
+
+
+def cleanup_enhanced_feature_flags(feature_flag_client, feature_flags):
+    """
+    Delete enhanced feature flags created via the dedicated enhanced feature flag endpoint.
+
+    :param feature_flag_client: The FeatureFlagClient to use for cleanup.
+    :param feature_flags: List of FeatureFlag objects (or (name, label) tuples) to delete.
+    """
+    for feature_flag in feature_flags:
+        if isinstance(feature_flag, tuple):
+            name, label = feature_flag
+        else:
+            name, label = feature_flag.name, feature_flag.label
+        try:
+            feature_flag_client.delete_feature_flag(name, label=label)
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+
 def cleanup_test_resources(
     client,
     settings=None,
@@ -245,7 +283,7 @@ def create_snapshot(client, snapshot_name, key_filters, composition_type=None, r
 
 def get_feature_flag(client, feature_id):
     for feature_flag in client[FEATURE_MANAGEMENT_KEY][FEATURE_FLAG_KEY]:
-        if feature_flag["id"] == feature_id:
+        if feature_flag[FEATURE_FLAG_ID_FIELD] == feature_id:
             return feature_flag
     return None
 
