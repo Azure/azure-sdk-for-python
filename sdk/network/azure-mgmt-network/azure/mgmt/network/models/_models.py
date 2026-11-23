@@ -432,7 +432,7 @@ class ActiveDefaultSecurityAdminRule(
     :ivar properties: Indicates the properties of the default security admin rule.
     :vartype properties: ~azure.mgmt.network.models.DefaultAdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Default.
-    :vartype kind: str or ~azure.mgmt.network.models.DEFAULT
+    :vartype kind: str or ~azure.mgmt.network.models.EffectiveAdminRuleKind
     """
 
     properties: Optional["_models.DefaultAdminPropertiesFormat"] = rest_field(
@@ -523,7 +523,7 @@ class ActiveSecurityAdminRule(
     :ivar properties: Indicates the properties of the security admin rule.
     :vartype properties: ~azure.mgmt.network.models.AdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Custom.
-    :vartype kind: str or ~azure.mgmt.network.models.CUSTOM
+    :vartype kind: str or ~azure.mgmt.network.models.EffectiveAdminRuleKind
     """
 
     properties: Optional["_models.AdminPropertiesFormat"] = rest_field(
@@ -1013,7 +1013,7 @@ class AdminRule(BaseAdminRule, discriminator="Custom"):  # pylint: disable=docst
     :ivar properties: Indicates the properties of the security admin rule.
     :vartype properties: ~azure.mgmt.network.models.AdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Custom.
-    :vartype kind: str or ~azure.mgmt.network.models.CUSTOM
+    :vartype kind: str or ~azure.mgmt.network.models.AdminRuleKind
     """
 
     properties: Optional["_models.AdminPropertiesFormat"] = rest_field(
@@ -1333,6 +1333,7 @@ class ApplicationGateway(Resource):  # pylint: disable=docstring-keyword-should-
 
     __flattened_items = [
         "sku",
+        "deployment_tier",
         "ssl_policy",
         "operational_state",
         "gateway_ip_configurations",
@@ -1360,6 +1361,7 @@ class ApplicationGateway(Resource):  # pylint: disable=docstring-keyword-should-
         "firewall_policy",
         "enable_http2",
         "enable_fips",
+        "enable_confidential_compute",
         "autoscale_configuration",
         "reserved_capacity",
         "private_link_configurations",
@@ -5782,6 +5784,10 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
 
     :ivar sku: SKU of the application gateway resource.
     :vartype sku: ~azure.mgmt.network.models.ApplicationGatewaySku
+    :ivar deployment_tier: Deployment tier of the application gateway resource. Only valid on
+     Standard_v2 and WAF_v2 SKUs. Known values are: "Standard", "NetworkIsolated", "Accelerated",
+     and "Elastic".
+    :vartype deployment_tier: str or ~azure.mgmt.network.models.ApplicationGatewayDeploymentTier
     :ivar ssl_policy: SSL policy of the application gateway resource.
     :vartype ssl_policy: ~azure.mgmt.network.models.ApplicationGatewaySslPolicy
     :ivar operational_state: Operational state of the application gateway resource. Known values
@@ -5885,6 +5891,9 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
     :vartype enable_http2: bool
     :ivar enable_fips: Whether FIPS is enabled on the application gateway resource.
     :vartype enable_fips: bool
+    :ivar enable_confidential_compute: Whether Confidential Compute is enabled on the application
+     gateway resource.
+    :vartype enable_confidential_compute: bool
     :ivar autoscale_configuration: Autoscale Configuration.
     :vartype autoscale_configuration:
      ~azure.mgmt.network.models.ApplicationGatewayAutoscaleConfiguration
@@ -5932,6 +5941,11 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         visibility=["read", "create", "update", "delete", "query"]
     )
     """SKU of the application gateway resource."""
+    deployment_tier: Optional[Union[str, "_models.ApplicationGatewayDeploymentTier"]] = rest_field(
+        name="deploymentTier", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Deployment tier of the application gateway resource. Only valid on Standard_v2 and WAF_v2 SKUs.
+     Known values are: \"Standard\", \"NetworkIsolated\", \"Accelerated\", and \"Elastic\"."""
     ssl_policy: Optional["_models.ApplicationGatewaySslPolicy"] = rest_field(
         name="sslPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6077,6 +6091,10 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         name="enableFips", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether FIPS is enabled on the application gateway resource."""
+    enable_confidential_compute: Optional[bool] = rest_field(
+        name="enableConfidentialCompute", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Confidential Compute is enabled on the application gateway resource."""
     autoscale_configuration: Optional["_models.ApplicationGatewayAutoscaleConfiguration"] = rest_field(
         name="autoscaleConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6136,6 +6154,7 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         self,
         *,
         sku: Optional["_models.ApplicationGatewaySku"] = None,
+        deployment_tier: Optional[Union[str, "_models.ApplicationGatewayDeploymentTier"]] = None,
         ssl_policy: Optional["_models.ApplicationGatewaySslPolicy"] = None,
         gateway_ip_configurations: Optional[list["_models.ApplicationGatewayIPConfiguration"]] = None,
         authentication_certificates: Optional[list["_models.ApplicationGatewayAuthenticationCertificate"]] = None,
@@ -6164,6 +6183,7 @@ class ApplicationGatewayPropertiesFormat(_Model):  # pylint: disable=docstring-k
         firewall_policy: Optional["_models.SubResource"] = None,
         enable_http2: Optional[bool] = None,
         enable_fips: Optional[bool] = None,
+        enable_confidential_compute: Optional[bool] = None,
         autoscale_configuration: Optional["_models.ApplicationGatewayAutoscaleConfiguration"] = None,
         reserved_capacity: Optional[int] = None,
         private_link_configurations: Optional[list["_models.ApplicationGatewayPrivateLinkConfiguration"]] = None,
@@ -8156,7 +8176,7 @@ class ApplicationRule(
     :vartype http_headers_to_insert:
      list[~azure.mgmt.network.models.FirewallPolicyHttpHeaderToInsert]
     :ivar rule_type: Rule Type. Required. ApplicationRule.
-    :vartype rule_type: str or ~azure.mgmt.network.models.APPLICATION_RULE
+    :vartype rule_type: str or ~azure.mgmt.network.models.FirewallPolicyRuleType
     """
 
     source_addresses: Optional[list[str]] = rest_field(
@@ -9189,6 +9209,7 @@ class AzureFirewall(Resource):  # pylint: disable=docstring-keyword-should-match
         "autoscale_configuration",
         "afc_configuration",
         "ai_security_add_on",
+        "tcp_idle_timeout_in_minutes",
     ]
 
     @overload
@@ -10313,6 +10334,9 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
     :ivar ai_security_add_on: Indicates whether the AI security add-on is enabled for the Azure
      Firewall.
     :vartype ai_security_add_on: bool
+    :ivar tcp_idle_timeout_in_minutes: The TCP idle timeout for the Azure Firewall, in minutes.
+     Valid values range from 4 to 64, inclusive.
+    :vartype tcp_idle_timeout_in_minutes: int
     """
 
     application_rule_collections: Optional[list["_models.AzureFirewallApplicationRuleCollection"]] = rest_field(
@@ -10374,6 +10398,11 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
         name="aiSecurityAddOn", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether the AI security add-on is enabled for the Azure Firewall."""
+    tcp_idle_timeout_in_minutes: Optional[int] = rest_field(
+        name="tcpIdleTimeoutInMinutes", visibility=["read", "create", "update"]
+    )
+    """The TCP idle timeout for the Azure Firewall, in minutes. Valid values range from 4 to 64,
+     inclusive."""
 
     @overload
     def __init__(
@@ -10392,6 +10421,7 @@ class AzureFirewallPropertiesFormat(_Model):  # pylint: disable=docstring-keywor
         additional_properties: Optional[dict[str, str]] = None,
         autoscale_configuration: Optional["_models.AzureFirewallAutoscaleConfiguration"] = None,
         ai_security_add_on: Optional[bool] = None,
+        tcp_idle_timeout_in_minutes: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -16416,7 +16446,7 @@ class DefaultAdminRule(
     :ivar properties: Indicates the properties of the security admin rule.
     :vartype properties: ~azure.mgmt.network.models.DefaultAdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Default.
-    :vartype kind: str or ~azure.mgmt.network.models.DEFAULT
+    :vartype kind: str or ~azure.mgmt.network.models.AdminRuleKind
     """
 
     properties: Optional["_models.DefaultAdminPropertiesFormat"] = rest_field(
@@ -17199,7 +17229,7 @@ class EffectiveDefaultSecurityAdminRule(
     :ivar properties: Indicates the properties of the default security admin rule.
     :vartype properties: ~azure.mgmt.network.models.DefaultAdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Default.
-    :vartype kind: str or ~azure.mgmt.network.models.DEFAULT
+    :vartype kind: str or ~azure.mgmt.network.models.EffectiveAdminRuleKind
     """
 
     properties: Optional["_models.DefaultAdminPropertiesFormat"] = rest_field(
@@ -17766,7 +17796,7 @@ class EffectiveSecurityAdminRule(
     :ivar properties: Indicates the properties of the security admin rule.
     :vartype properties: ~azure.mgmt.network.models.AdminPropertiesFormat
     :ivar kind: Whether the rule is custom or default. Required. Custom.
-    :vartype kind: str or ~azure.mgmt.network.models.CUSTOM
+    :vartype kind: str or ~azure.mgmt.network.models.EffectiveAdminRuleKind
     """
 
     properties: Optional["_models.AdminPropertiesFormat"] = rest_field(
@@ -23239,7 +23269,7 @@ class FirewallPolicyFilterRuleCollection(
     :ivar rule_collection_type: The type of the rule collection. Required.
      FirewallPolicyFilterRuleCollection.
     :vartype rule_collection_type: str or
-     ~azure.mgmt.network.models.FIREWALL_POLICY_FILTER_RULE_COLLECTION
+     ~azure.mgmt.network.models.FirewallPolicyRuleCollectionType
     """
 
     action: Optional["_models.FirewallPolicyFilterRuleCollectionAction"] = rest_field(
@@ -23787,7 +23817,7 @@ class FirewallPolicyNatRuleCollection(
     :ivar rule_collection_type: The type of the rule collection. Required.
      FirewallPolicyNatRuleCollection.
     :vartype rule_collection_type: str or
-     ~azure.mgmt.network.models.FIREWALL_POLICY_NAT_RULE_COLLECTION
+     ~azure.mgmt.network.models.FirewallPolicyRuleCollectionType
     """
 
     action: Optional["_models.FirewallPolicyNatRuleCollectionAction"] = rest_field(
@@ -27241,6 +27271,13 @@ class InboundSecurityRules(_Model):  # pylint: disable=docstring-keyword-should-
     :ivar applies_on: Public IP name in case of Permanent Rule type & Interface Name in case of
      Auto Expire Rule type.
     :vartype applies_on: list[str]
+    :ivar load_balancer_configuration: Configuration of the Internet Ingress load-balancing rule
+     for a managed Network Virtual Appliance. Supported only when the enclosing ruleType is
+     Permanent; supplying this configuration for AutoExpire rules is rejected with HTTP 400 Bad
+     Request. When omitted on create or update, Default distribution and a 5-minute idle timeout are
+     used.
+    :vartype load_balancer_configuration:
+     ~azure.mgmt.network.models.NetworkVirtualApplianceLoadBalancerConfiguration
     """
 
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -27267,6 +27304,13 @@ class InboundSecurityRules(_Model):  # pylint: disable=docstring-keyword-should-
     )
     """Public IP name in case of Permanent Rule type & Interface Name in case of Auto Expire Rule
      type."""
+    load_balancer_configuration: Optional["_models.NetworkVirtualApplianceLoadBalancerConfiguration"] = rest_field(
+        name="loadBalancerConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of the Internet Ingress load-balancing rule for a managed Network Virtual
+     Appliance. Supported only when the enclosing ruleType is Permanent; supplying this
+     configuration for AutoExpire rules is rejected with HTTP 400 Bad Request. When omitted on
+     create or update, Default distribution and a 5-minute idle timeout are used."""
 
     @overload
     def __init__(
@@ -27278,6 +27322,7 @@ class InboundSecurityRules(_Model):  # pylint: disable=docstring-keyword-should-
         destination_port_range: Optional[int] = None,
         destination_port_ranges: Optional[list[str]] = None,
         applies_on: Optional[list[str]] = None,
+        load_balancer_configuration: Optional["_models.NetworkVirtualApplianceLoadBalancerConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -30923,7 +30968,7 @@ class Nat64Capability(
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
     :ivar kind: The NAT64 capability kind. Required. NAT64 (stateful IPv6-to-IPv4 translation).
-    :vartype kind: str or ~azure.mgmt.network.models.NAT64
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
     """
 
     kind: Literal[VirtualNetworkApplianceCapabilityKind.NAT64] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -31197,7 +31242,7 @@ class NatRule(
     :ivar translated_fqdn: The translated FQDN for this NAT rule.
     :vartype translated_fqdn: str
     :ivar rule_type: Rule Type. Required. NatRule.
-    :vartype rule_type: str or ~azure.mgmt.network.models.NAT_RULE
+    :vartype rule_type: str or ~azure.mgmt.network.models.FirewallPolicyRuleType
     """
 
     ip_protocols: Optional[list[Union[str, "_models.FirewallPolicyRuleNetworkProtocol"]]] = rest_field(
@@ -31684,6 +31729,7 @@ class NetworkInterface(Resource):  # pylint: disable=docstring-keyword-should-ma
         "tap_configurations",
         "dns_settings",
         "mac_address",
+        "network_adapter_index",
         "primary",
         "vnet_encryption_supported",
         "default_outbound_connectivity_enabled",
@@ -32101,6 +32147,8 @@ class NetworkInterfacePropertiesFormat(_Model):  # pylint: disable=docstring-key
     :vartype dns_settings: ~azure.mgmt.network.models.NetworkInterfaceDnsSettings
     :ivar mac_address: The MAC address of the network interface.
     :vartype mac_address: str
+    :ivar network_adapter_index: The index of the physical network adapter.
+    :vartype network_adapter_index: int
     :ivar primary: Whether this is a primary network interface on a virtual machine.
     :vartype primary: bool
     :ivar vnet_encryption_supported: Whether the virtual machine this nic is attached to supports
@@ -32166,6 +32214,10 @@ class NetworkInterfacePropertiesFormat(_Model):  # pylint: disable=docstring-key
     """The DNS settings in network interface."""
     mac_address: Optional[str] = rest_field(name="macAddress", visibility=["read"])
     """The MAC address of the network interface."""
+    network_adapter_index: Optional[int] = rest_field(
+        name="networkAdapterIndex", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The index of the physical network adapter."""
     primary: Optional[bool] = rest_field(visibility=["read"])
     """Whether this is a primary network interface on a virtual machine."""
     vnet_encryption_supported: Optional[bool] = rest_field(name="vnetEncryptionSupported", visibility=["read"])
@@ -32233,6 +32285,7 @@ class NetworkInterfacePropertiesFormat(_Model):  # pylint: disable=docstring-key
         network_security_group: Optional["_models.NetworkSecurityGroup"] = None,
         ip_configurations: Optional[list["_models.NetworkInterfaceIPConfiguration"]] = None,
         dns_settings: Optional["_models.NetworkInterfaceDnsSettings"] = None,
+        network_adapter_index: Optional[int] = None,
         enable_accelerated_networking: Optional[bool] = None,
         disable_tcp_state_tracking: Optional[bool] = None,
         enable_ip_forwarding: Optional[bool] = None,
@@ -33252,7 +33305,7 @@ class NetworkRule(
      alpha-2 country codes, e.g. "US", "CA") for this rule.
     :vartype destination_geo_locations: list[str]
     :ivar rule_type: Rule Type. Required. NetworkRule.
-    :vartype rule_type: str or ~azure.mgmt.network.models.NETWORK_RULE
+    :vartype rule_type: str or ~azure.mgmt.network.models.FirewallPolicyRuleType
     """
 
     ip_protocols: Optional[list[Union[str, "_models.FirewallPolicyRuleNetworkProtocol"]]] = rest_field(
@@ -33775,6 +33828,7 @@ class NetworkVirtualAppliance(Resource):  # pylint: disable=docstring-keyword-sh
 
     __flattened_items = [
         "nva_sku",
+        "load_balancer_configuration",
         "address_prefix",
         "address_prefix_v6",
         "boot_strap_configuration_blobs",
@@ -34232,6 +34286,59 @@ class NetworkVirtualApplianceInstanceIds(_Model):  # pylint: disable=docstring-k
         super().__init__(*args, **kwargs)
 
 
+class NetworkVirtualApplianceLoadBalancerConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """Load balancer settings shared by managed Network Virtual Appliances and their Permanent inbound
+    security rules.
+
+    :ivar load_distribution: The load distribution policy. Default uses a five-tuple hash of source
+     IP, destination IP, source port, destination port, and protocol. SourceIP uses a two-tuple hash
+     of source IP and destination IP. SourceIPProtocol uses a three-tuple hash of source IP,
+     destination IP, and protocol. When omitted, Default is used. Known values are: "Default",
+     "SourceIP", and "SourceIPProtocol".
+    :vartype load_distribution: str or
+     ~azure.mgmt.network.models.NetworkVirtualApplianceLoadDistribution
+    :ivar idle_timeout_in_minutes: The idle timeout of the load-balancing rule, in minutes. When
+     omitted, the managed NVA platform default of 5 minutes is used. Values outside 4 through 100
+     are rejected with HTTP 400 InvalidParameter.
+    :vartype idle_timeout_in_minutes: int
+    """
+
+    load_distribution: Optional[Union[str, "_models.NetworkVirtualApplianceLoadDistribution"]] = rest_field(
+        name="loadDistribution", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The load distribution policy. Default uses a five-tuple hash of source IP, destination IP,
+     source port, destination port, and protocol. SourceIP uses a two-tuple hash of source IP and
+     destination IP. SourceIPProtocol uses a three-tuple hash of source IP, destination IP, and
+     protocol. When omitted, Default is used. Known values are: \"Default\", \"SourceIP\", and
+     \"SourceIPProtocol\"."""
+    idle_timeout_in_minutes: Optional[int] = rest_field(
+        name="idleTimeoutInMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The idle timeout of the load-balancing rule, in minutes. When omitted, the managed NVA platform
+     default of 5 minutes is used. Values outside 4 through 100 are rejected with HTTP 400
+     InvalidParameter."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        load_distribution: Optional[Union[str, "_models.NetworkVirtualApplianceLoadDistribution"]] = None,
+        idle_timeout_in_minutes: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class NetworkVirtualApplianceMigrationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The migration status of a Network Virtual Appliance.
 
@@ -34359,6 +34466,12 @@ class NetworkVirtualAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
 
     :ivar nva_sku: Network Virtual Appliance SKU.
     :vartype nva_sku: ~azure.mgmt.network.models.VirtualApplianceSkuProperties
+    :ivar load_balancer_configuration: Configuration of the internal load balancer for a managed
+     Network Virtual Appliance in a virtual hub or virtual network. Not applicable to
+     partner-managed load balancers on SaaS NVAs. When omitted on create or update, Default
+     distribution and a 5-minute idle timeout are used.
+    :vartype load_balancer_configuration:
+     ~azure.mgmt.network.models.NetworkVirtualApplianceLoadBalancerConfiguration
     :ivar address_prefix: Address Prefix.
     :vartype address_prefix: str
     :ivar address_prefix_v6: Address Prefix for Dual-Stack NVAs.
@@ -34427,6 +34540,12 @@ class NetworkVirtualAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
         name="nvaSku", visibility=["read", "create", "update", "delete", "query"]
     )
     """Network Virtual Appliance SKU."""
+    load_balancer_configuration: Optional["_models.NetworkVirtualApplianceLoadBalancerConfiguration"] = rest_field(
+        name="loadBalancerConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration of the internal load balancer for a managed Network Virtual Appliance in a
+     virtual hub or virtual network. Not applicable to partner-managed load balancers on SaaS NVAs.
+     When omitted on create or update, Default distribution and a 5-minute idle timeout are used."""
     address_prefix: Optional[str] = rest_field(name="addressPrefix", visibility=["read"])
     """Address Prefix."""
     address_prefix_v6: Optional[str] = rest_field(name="addressPrefixV6", visibility=["read"])
@@ -34522,10 +34641,11 @@ class NetworkVirtualAppliancePropertiesFormat(_Model):  # pylint: disable=docstr
     """The migration status of the Network Virtual Appliance."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         nva_sku: Optional["_models.VirtualApplianceSkuProperties"] = None,
+        load_balancer_configuration: Optional["_models.NetworkVirtualApplianceLoadBalancerConfiguration"] = None,
         boot_strap_configuration_blobs: Optional[list[str]] = None,
         virtual_hub: Optional["_models.SubResource"] = None,
         cloud_init_configuration_blobs: Optional[list[str]] = None,
@@ -38019,7 +38139,7 @@ class PLGatewayCapability(
     :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
     :ivar kind: The Private Link Gateway (slow-path) capability kind. Required. Private Link
      Gateway (slow-path).
-    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
     """
 
     kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -38066,7 +38186,7 @@ class PLGatewayFastpathCapability(
     :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
     :ivar kind: The Private Link Gateway FastPath capability kind. Required. Private Link Gateway
      FastPath.
-    :vartype kind: str or ~azure.mgmt.network.models.PL_GATEWAY_FASTPATH
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
     """
 
     kind: Literal[VirtualNetworkApplianceCapabilityKind.PL_GATEWAY_FASTPATH] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -38112,7 +38232,7 @@ class PLIPForwardersCapability(
     :vartype properties: ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityProperties
     :ivar kind: The Private Link IP-forwarders (NVA) capability kind. Required. Private Link
      IP-forwarders (NVA).
-    :vartype kind: str or ~azure.mgmt.network.models.PLIP_FORWARDERS
+    :vartype kind: str or ~azure.mgmt.network.models.VirtualNetworkApplianceCapabilityKind
     """
 
     kind: Literal[VirtualNetworkApplianceCapabilityKind.PLIP_FORWARDERS] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore

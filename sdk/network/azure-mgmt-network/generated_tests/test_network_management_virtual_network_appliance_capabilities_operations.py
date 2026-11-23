@@ -25,7 +25,7 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperations(AzureMg
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             capability_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -53,7 +53,7 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperations(AzureMg
                 },
                 "type": "str",
             },
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -66,7 +66,7 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperations(AzureMg
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             capability_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestNetworkManagementVirtualNetworkApplianceCapabilitiesOperations(AzureMg
         response = self.client.virtual_network_appliance_capabilities.list(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

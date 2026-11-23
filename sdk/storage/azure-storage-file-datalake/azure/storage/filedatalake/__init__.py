@@ -56,7 +56,7 @@ from ._shared_access_signature import (
 
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.models import StorageErrorCode, Services
-from ._shared.session import Session, SessionProvider, ContainerSessionProvider
+from ._session import Session, SessionProvider, ContainerSessionProvider
 from ._version import VERSION
 
 __version__ = VERSION

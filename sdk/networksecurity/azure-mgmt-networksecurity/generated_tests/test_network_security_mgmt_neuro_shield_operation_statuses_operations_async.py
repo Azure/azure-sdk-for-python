@@ -25,6 +25,7 @@ class TestNetworkSecurityMgmtNeuroShieldOperationStatusesOperationsAsync(AzureMg
         response = await self.client.neuro_shield_operation_statuses.get(
             location="str",
             operation_id="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
