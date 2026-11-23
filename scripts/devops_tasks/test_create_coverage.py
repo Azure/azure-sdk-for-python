@@ -67,7 +67,7 @@ def test_collect_coverage_files_relocates_duplicate_package_names(tmp_path, monk
 
     combined_coverage = CoverageData(basename=os.fspath(tmp_path / ".coverage"))
     combined_coverage.read()
-    assert set(combined_coverage.measured_files()) == {
+    assert {f.replace(os.sep, "/") for f in combined_coverage.measured_files()} == {
         "sdk/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_client.py",
         "sdk/cognitivelanguage/azure-ai-textanalytics/azure/ai/textanalytics/_client.py",
     }
@@ -216,8 +216,8 @@ def test_normalize_venv_paths_leaves_unknown_packages_unchanged(tmp_path, monkey
 
 def test_create_coverage_report_dedupes_by_full_origin(tmp_path, monkeypatch):
     """End-to-end assertion: identically-named distributions under different
-    service directories must produce disjoint class sets in the final XML,
-    not duplicated class entries."""
+    service directories must not have classes cross-attributed between them
+    in the final XML."""
     coverage_xml = tmp_path / "coverage.xml"
     coverage_xml.write_text(
         """<?xml version="1.0" ?>
