@@ -31,7 +31,7 @@ use pyo3::prelude::*;
 use tokio::runtime::Runtime;
 
 use credentials::{get_cached_credential, CredentialCache};
-use download::{download_blob, NativeDownloadStream};
+use download::{download_blob, NativeBuffer, NativeDownloadStream};
 use errors::{AzureError, NativeTransferError};
 use upload::upload_blob;
 
@@ -215,6 +215,7 @@ fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(upload_blob, m)?)?;
     m.add_function(wrap_pyfunction!(download_blob, m)?)?;
     m.add_class::<NativeDownloadStream>()?;
+    m.add_class::<NativeBuffer>()?;
     Ok(())
 }
 

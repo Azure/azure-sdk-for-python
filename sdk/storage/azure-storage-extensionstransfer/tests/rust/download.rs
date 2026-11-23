@@ -119,6 +119,53 @@ fn next_bytes(stream: &mut NativeDownloadStream, py: Python<'_>) -> Option<Vec<u
         .map(|chunk| chunk.bind(py).as_bytes().to_vec())
 }
 
+#[test]
+fn next_buffer_yields_read_only_views_matching_the_bytes_iterator() {
+    use pyo3::buffer::PyBuffer;
+    Python::initialize();
+    Python::attach(|py| {
+        let payload = b"abcdefghijklmnopqrstuvwxyz";
+        let mock = mock_blob(payload);
+        let mut download = stream(py, &mock, 2, Some(20), 3, 6).unwrap();
+        let mut collected = Vec::new();
+        let mut views = Vec::new();
+        while let Some(buffer) = download.next_buffer(py).unwrap() {
+            assert_eq!(buffer.bind(py).len().unwrap(), buffer.get().data.len());
+            let view = PyBuffer::<u8>::get(buffer.bind(py)).unwrap();
+            assert!(view.readonly());
+            assert!(view.is_c_contiguous());
+            collected.extend(view.to_vec(py).unwrap());
+            // A held view keeps its data valid after the next partition is requested.
+            views.push(view);
+        }
+        assert_eq!(collected, payload[2..22]);
+        assert_eq!(
+            views
+                .iter()
+                .flat_map(|view| view.to_vec(py).unwrap())
+                .collect::<Vec<_>>(),
+            payload[2..22]
+        );
+        assert!(download.next_buffer(py).unwrap().is_none());
+
+        // Mixing partition kinds on one stream keeps offsets consistent.
+        let mock = mock_blob(payload);
+        let mut mixed = stream(py, &mock, 0, None, 2, 5).unwrap();
+        let first = next_bytes(&mut mixed, py).unwrap();
+        let second = mixed.next_buffer(py).unwrap().unwrap();
+        let rest = read_all(&mut mixed, py).unwrap();
+        let mut all = first;
+        all.extend(
+            PyBuffer::<u8>::get(second.bind(py))
+                .unwrap()
+                .to_vec(py)
+                .unwrap(),
+        );
+        all.extend(rest);
+        assert_eq!(all, payload);
+    });
+}
+
 fn collect_chunks(stream: &mut NativeDownloadStream, py: Python<'_>) -> Vec<Vec<u8>> {
     std::iter::from_fn(|| next_bytes(stream, py)).collect()
 }

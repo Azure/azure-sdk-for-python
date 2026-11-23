@@ -548,6 +548,9 @@ class NativeStorageStreamDownloader:
     def readinto(self, stream: Any) -> int:
         """Write the full content to a writable stream, one chunk at a time.
 
+        Chunks are passed to ``stream.write`` as read-only ``memoryview`` objects, so the stream
+        must accept bytes-like objects (as files and ``BytesIO`` do).
+
         :param any stream: A writable stream (file-like object).
         :returns: Number of bytes written.
         :rtype: int
@@ -557,10 +560,22 @@ class NativeStorageStreamDownloader:
             stream.write(self._buffer)
             total += len(self._buffer)
             self._buffer = bytearray()
-        for chunk in self._iter:
-            stream.write(chunk)
-            total += len(chunk)
-        return total
+        next_buffer = getattr(self._stream, "next_buffer", None)
+        if next_buffer is None:
+            for chunk in self._iter:
+                stream.write(chunk)
+                total += len(chunk)
+            return total
+        # Pass each partition as a read-only memoryview over native memory instead of a copy.
+        # The view is dropped before the next partition is requested.
+        while True:
+            buffer = self._iter.call(next_buffer)
+            if buffer is None:
+                return total
+            view = memoryview(buffer)
+            stream.write(view)
+            total += len(view)
+            del view, buffer
 
     def chunks(self) -> Iterator[bytes]:
         """Chunk iteration is not supported for native downloads.

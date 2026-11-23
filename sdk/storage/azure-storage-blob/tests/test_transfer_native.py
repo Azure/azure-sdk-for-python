@@ -814,6 +814,42 @@ class TestNativeStorageStreamDownloader(_NativeTransferTestCase):
             ],
         )
 
+    def test_readinto_passes_native_buffers_as_memoryviews_and_propagates_errors(self):
+        class Buffers:
+            size = 5
+
+            def __init__(self, parts, failure=None):
+                self.parts, self.failure = list(parts), failure
+
+            def __iter__(self):
+                return iter(())  # Yields nothing: data must come from next_buffer.
+
+            def next_buffer(self):
+                if self.parts:
+                    return self.parts.pop(0)
+                if self.failure:
+                    raise self.failure
+                return None
+
+        stream = Buffers([b"ab", bytearray(b"cde")])
+        downloader = NativeStorageStreamDownloader(stream, "blob", "container")
+        seen = []
+
+        def write(chunk):
+            seen.append((type(chunk), bytes(chunk)))
+            return len(chunk)
+
+        self.assertEqual(downloader.readinto(SimpleNamespace(write=write)), 5)
+        self.assertEqual(seen, [(memoryview, b"ab"), (memoryview, b"cde")])
+
+        failure = ValueError("incomplete native download")
+        downloader = NativeStorageStreamDownloader(Buffers([b"ab"], failure=failure), "blob", "container")
+        destination = BytesIO()
+        with self.assertRaises(ValueError) as caught:
+            downloader.readinto(destination)
+        self.assertIs(caught.exception, failure)
+        self.assertEqual(destination.getvalue(), b"ab")
+
     def test_stream_errors_propagate_from_consumption_methods(self):
         for method in ("readall", "read", "readinto"):
             with self.subTest(method=method):

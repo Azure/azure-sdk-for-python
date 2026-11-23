@@ -4,6 +4,7 @@
 // license information.
 // --------------------------------------------------------------------------
 
+use std::ffi::c_int;
 use std::mem::ManuallyDrop;
 use std::num::NonZero;
 use std::str::FromStr;
@@ -364,6 +365,69 @@ fn drain_into(
     Ok(())
 }
 
+/// A read-only view of one completed partition that implements the buffer protocol.
+///
+/// It lets Python consume a partition without first copying it into a `bytes` object. The
+/// partition's memory stays alive until the buffer, and every `memoryview` of it, is released.
+#[pyclass(frozen)]
+pub struct NativeBuffer {
+    data: Bytes,
+}
+
+#[pymethods]
+impl NativeBuffer {
+    fn __len__(&self) -> usize {
+        self.data.len()
+    }
+
+    unsafe fn __getbuffer__(
+        slf: Bound<'_, Self>,
+        view: *mut ffi::Py_buffer,
+        flags: c_int,
+    ) -> PyResult<()> {
+        if view.is_null() {
+            return Err(pyo3::exceptions::PyBufferError::new_err("View is null"));
+        }
+        if flags & ffi::PyBUF_WRITABLE == ffi::PyBUF_WRITABLE {
+            return Err(pyo3::exceptions::PyBufferError::new_err(
+                "The buffer is read-only",
+            ));
+        }
+        let data = &slf.get().data;
+        // SAFETY: `view` is a valid, writable Py_buffer supplied by the interpreter. The data
+        // pointer stays valid because `obj` holds a strong reference to this object, which owns
+        // the bytes and never mutates them.
+        unsafe {
+            (*view).obj = slf.clone().into_ptr();
+            (*view).buf = data.as_ptr().cast_mut().cast();
+            (*view).len = data.len() as ffi::Py_ssize_t;
+            (*view).readonly = 1;
+            (*view).itemsize = 1;
+            (*view).format = if flags & ffi::PyBUF_FORMAT == ffi::PyBUF_FORMAT {
+                c"B".as_ptr().cast_mut()
+            } else {
+                std::ptr::null_mut()
+            };
+            (*view).ndim = 1;
+            (*view).shape = if flags & ffi::PyBUF_ND == ffi::PyBUF_ND {
+                &raw mut (*view).len
+            } else {
+                std::ptr::null_mut()
+            };
+            (*view).strides = if flags & ffi::PyBUF_STRIDES == ffi::PyBUF_STRIDES {
+                &raw mut (*view).itemsize
+            } else {
+                std::ptr::null_mut()
+            };
+            (*view).suboffsets = std::ptr::null_mut();
+            (*view).internal = std::ptr::null_mut();
+        }
+        Ok(())
+    }
+
+    unsafe fn __releasebuffer__(&self, _view: *mut ffi::Py_buffer) {}
+}
+
 /// A lazy blob download exposed to Python as an iterator of `bytes` chunks.
 ///
 /// Construction sends a single ranged request for the first partition and waits only for its
@@ -400,6 +464,24 @@ impl Drop for NativeDownloadStream {
 }
 
 impl NativeDownloadStream {
+    /// Receive the next partition, advancing the stream.
+    fn next_partition(&mut self, py: Python<'_>) -> PyResult<Option<Bytes>> {
+        self.check_process()?;
+        let (offset, remaining) = (self.next_offset, self.end_offset - self.next_offset);
+        let Some(receiver) = self.receiver(py)? else {
+            return Ok(None);
+        };
+        let chunk = match py.detach(|| recv_partition(receiver, offset, remaining)) {
+            Ok(chunk) => chunk,
+            Err(error) => return Err(self.fail(py, error)),
+        };
+        self.next_offset += chunk.len() as u64;
+        if self.next_offset == self.end_offset {
+            *self.state_mut() = StreamState::Done;
+        }
+        Ok(Some(chunk))
+    }
+
     fn new(
         py: Python<'_>,
         client: BlobClient,
@@ -538,20 +620,19 @@ impl NativeDownloadStream {
 
     /// Return the next partition as `bytes`, or `None` (StopIteration) when the blob is exhausted.
     fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
-        self.check_process()?;
-        let (offset, remaining) = (self.next_offset, self.end_offset - self.next_offset);
-        let Some(receiver) = self.receiver(py)? else {
-            return Ok(None);
-        };
-        let chunk = match py.detach(|| recv_partition(receiver, offset, remaining)) {
-            Ok(chunk) => chunk,
-            Err(error) => return Err(self.fail(py, error)),
-        };
-        self.next_offset += chunk.len() as u64;
-        if self.next_offset == self.end_offset {
-            *self.state_mut() = StreamState::Done;
-        }
-        Ok(Some(PyBytes::new(py, &chunk).unbind()))
+        Ok(self
+            .next_partition(py)?
+            .map(|chunk| PyBytes::new(py, &chunk).unbind()))
+    }
+
+    /// Return the next partition as a read-only buffer, or `None` when the blob is exhausted.
+    ///
+    /// The buffer views the partition's memory without copying it into a Python `bytes`.
+    /// Use `memoryview(buffer)` or pass it to any API accepting bytes-like objects.
+    fn next_buffer(&mut self, py: Python<'_>) -> PyResult<Option<Py<NativeBuffer>>> {
+        self.next_partition(py)?
+            .map(|data| Py::new(py, NativeBuffer { data }))
+            .transpose()
     }
 
     /// Return all remaining content as a single `bytes` object.
