@@ -85,7 +85,7 @@ def test_rust_credentials_and_target_setup_are_opt_in():
     build = load_template("steps/build-package-artifacts.yml")
     install = next(step[RUST_GATE][0] for step in build["steps"] if RUST_GATE in step)
     assert install["template"].endswith("install-msrust-toolchain.yml")
-    assert install["parameters"]["Condition"] == "and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))"
+    assert install["parameters"]["Condition"] == "and(succeeded(), eq(variables['ENABLE_RUST_BUILD'], 'true'))"
     assert install["parameters"]["ToolchainFeed"] == "${{ parameters.MsRustToolchainFeed }}"
     assert install["parameters"]["${{ if eq(parameters.ArtifactSuffix, 'windows') }}"] == {
         "AdditionalTargets": "${{ parameters.MsRustAdditionalTargets }}"
@@ -237,6 +237,40 @@ def test_platform_selection_uses_artifact_opt_in(tmp_path, sign_binaries):
     assert f"variable=SDK_BUILD_LOGLEVEL]{'DEBUG' if sign_binaries else 'INFO'}" in result.stdout
 
 
+@pytest.mark.parametrize("relative", [False, True])
+@pytest.mark.parametrize("rust", [False, True])
+def test_platform_selection_enables_rust_only_for_rust_packages(tmp_path, rust, relative):
+    package_directory = tmp_path / "sdk" / "example" / "example-native-package"
+    package_directory.mkdir(parents=True)
+    if rust:
+        (package_directory / "rust-toolchain.toml").write_text('[toolchain]\nchannel = "ms-prod-1.97"\n')
+    info_folder = tmp_path / "PackageInfo"
+    info_folder.mkdir()
+    package_info = {
+        "Name": "example-native-package",
+        "DirectoryPath": "sdk/example/example-native-package" if relative else str(package_directory),
+        "ArtifactDetails": {"signBinaries": True},
+    }
+    (info_folder / "example-native-package.json").write_text(json.dumps(package_info))
+    resolver = load_template("steps/resolve-build-platforms.yml")["steps"][0]["pwsh"]
+    resolver = resolver.replace("${{ parameters.PackagePropertiesFolder }}", str(info_folder))
+
+    result = run_powershell(resolver, BUILD_SOURCESDIRECTORY=str(tmp_path))
+
+    assert result.returncode == 0, result.stderr
+    assert "variable=ENABLE_EXTENSION_BUILD]true" in result.stdout
+    assert ("variable=ENABLE_RUST_BUILD]true" in result.stdout) is rust
+    assert "No targeted package declares compiled binaries" not in result.stdout
+
+
+def test_pull_request_pipeline_enables_rust_for_transfer_package():
+    pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "pullrequest.yml").read_text())
+    storage = yaml.safe_load((REPO_ROOT / "sdk" / "storage" / "ci.yml").read_text())
+    parameters = pipeline["extends"]["parameters"]
+    assert parameters["InstallMsRustToolchain"] is True
+    assert all(parameters[name] == storage["extends"]["parameters"][name] for name in RUST_PARAMETERS)
+
+
 @pytest.mark.parametrize("enabled", [False, True])
 def test_container_forwarding_preserves_non_rust_builds(enabled):
     build = load_template("steps/build-package-artifacts.yml")
@@ -308,6 +342,7 @@ def test_cargo_feed_configuration_uses_default_cargo_home(tmp_path):
         CARGO_HOME="",
         CARGO_FEED_URL=feed,
         HOME=str(tmp_path),
+        USERPROFILE=str(tmp_path),
         RUST_TOOLCHAIN_FEED="example-feed",
     )
 

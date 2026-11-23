@@ -16,6 +16,7 @@ steps:
     # variable carries only package names and the decision below needs an artifact property.
     - pwsh: |
         $binaryPackages = @()
+        $rustPackages = @()
         $logLevel = "INFO"
 
         foreach ($packageInfoPath in (Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json")) {
@@ -23,6 +24,15 @@ steps:
 
           if ($packageInfo.ArtifactDetails.signBinaries -eq $true) {
             $binaryPackages += $packageInfo.Name
+
+            # Rust packages pin their compiler with rust-toolchain.toml; only these need the Rust toolchain setup.
+            $packageDirectory = "$($packageInfo.DirectoryPath)"
+            if ($packageDirectory -and -not [System.IO.Path]::IsPathRooted($packageDirectory)) {
+              $packageDirectory = Join-Path "$env:BUILD_SOURCESDIRECTORY" $packageDirectory
+            }
+            if ($packageDirectory -and (Test-Path (Join-Path $packageDirectory 'rust-toolchain.toml') -PathType Leaf)) {
+              $rustPackages += $packageInfo.Name
+            }
           }
         }
 
@@ -34,6 +44,10 @@ steps:
         }
         else {
           Write-Host "No targeted package declares compiled binaries, building on linux only."
+        }
+        if ($rustPackages) {
+          Write-Host "Targeting Rust package(s) ($($rustPackages -join ', ')), enabling Rust toolchain setup."
+          Write-Host "##vso[task.setvariable variable=ENABLE_RUST_BUILD]true"
         }
         # Always define the variable used by the build step's LOGLEVEL mapping.
         Write-Host "##vso[task.setvariable variable=SDK_BUILD_LOGLEVEL]$logLevel"

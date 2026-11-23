@@ -140,7 +140,7 @@ steps:
         WorkingDirectory: ${{ parameters.MsRustWorkingDirectory }}
         ${{ if eq(parameters.ArtifactSuffix, 'windows') }}:
           AdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
-        Condition: and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+        Condition: and(succeeded(), eq(variables['ENABLE_RUST_BUILD'], 'true'))
 
   # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
   # sdk_build provisions each package's selected interpreters from this feed,
