@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.costmanagementpriceestimation import CostManagementClient
+from azure.mgmt.costmanagementpriceestimation import CostManagementPriceEstimationMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.costmanagementpriceestimation import CostManagementClient
 
 
 def main():
-    client = CostManagementClient(
+    client = CostManagementPriceEstimationMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

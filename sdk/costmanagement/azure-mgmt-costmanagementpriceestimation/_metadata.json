@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.CostManagement": "2026-10-01-preview"
   },
-  "commit": "03baad733d8173f754e4881cf1a336a6349dacaf",
+  "commit": "6f85bbb3b12e33f8b08eebcf220a4fb8086fffb1",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/cost-management/resource-manager/Microsoft.CostManagement/PriceEstimation",
   "emitterVersion": "0.63.12",

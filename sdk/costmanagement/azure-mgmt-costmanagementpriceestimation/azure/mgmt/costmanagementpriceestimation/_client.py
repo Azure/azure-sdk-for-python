@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import CostManagementClientConfiguration
+from ._configuration import CostManagementPriceEstimationMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import Operations, PriceEstimationOperations
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CostManagementClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
+class CostManagementPriceEstimationMgmtClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Estimates prices for proposed configurations using subscription-applicable prices.
 
     :ivar operations: Operations operations
@@ -72,7 +72,7 @@ class CostManagementClient:  # pylint: disable=docstring-keyword-should-match-ke
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = CostManagementClientConfiguration(
+        self._config = CostManagementPriceEstimationMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

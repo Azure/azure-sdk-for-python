@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.costmanagementpriceestimation
 
-    class azure.mgmt.costmanagementpriceestimation.CostManagementClient: implements ContextManager 
+    class azure.mgmt.costmanagementpriceestimation.CostManagementPriceEstimationMgmtClient: implements ContextManager 
         operations: Operations
         price_estimation: PriceEstimationOperations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.costmanagementpriceestimation
 
 namespace azure.mgmt.costmanagementpriceestimation.aio
 
-    class azure.mgmt.costmanagementpriceestimation.aio.CostManagementClient: implements AsyncContextManager 
+    class azure.mgmt.costmanagementpriceestimation.aio.CostManagementPriceEstimationMgmtClient: implements AsyncContextManager 
         operations: Operations
         price_estimation: PriceEstimationOperations
 

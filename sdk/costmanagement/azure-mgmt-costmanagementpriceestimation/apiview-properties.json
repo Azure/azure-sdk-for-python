@@ -34,5 +34,5 @@
         "azure.mgmt.costmanagementpriceestimation.operations.PriceEstimationOperations.begin_get_estimate_prices_operation_result": "Microsoft.CostManagement.PriceEstimation.getEstimatePricesOperationResult",
         "azure.mgmt.costmanagementpriceestimation.aio.operations.PriceEstimationOperations.begin_get_estimate_prices_operation_result": "Microsoft.CostManagement.PriceEstimation.getEstimatePricesOperationResult"
     },
-    "CrossLanguageVersion": "e5508ea61017"
+    "CrossLanguageVersion": "c4ac1431eb99"
 }

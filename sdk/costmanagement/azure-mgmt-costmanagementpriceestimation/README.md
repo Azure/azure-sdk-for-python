@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.costmanagementpriceestimation import CostManagementClient
+from azure.mgmt.costmanagementpriceestimation import CostManagementPriceEstimationMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = CostManagementClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = CostManagementPriceEstimationMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples
