@@ -1,5 +1,24 @@
 # Release History
 
+## 34.0.0 (2026-11-23)
+
+### Features Added
+
+  - Client `NetworkManagementClient` added parameter `api_version` in method `__init__`
+  - Model `ApplicationGatewayPropertiesFormat` added property `deployment_tier`
+  - Model `ApplicationGatewayPropertiesFormat` added property `enable_confidential_compute`
+  - Model `AzureFirewallPropertiesFormat` added property `tcp_idle_timeout_in_minutes`
+  - Model `InboundSecurityRules` added property `load_balancer_configuration`
+  - Model `NetworkInterfacePropertiesFormat` added property `network_adapter_index`
+  - Model `NetworkVirtualAppliancePropertiesFormat` added property `load_balancer_configuration`
+  - Added enum `ApplicationGatewayDeploymentTier`
+  - Added model `NetworkVirtualApplianceLoadBalancerConfiguration`
+  - Added enum `NetworkVirtualApplianceLoadDistribution`
+
+### Breaking Changes
+
+  - Deleted or renamed model `ProxyResourceVirtualNetworkApplianceCapabilityProperties`
+
 ## 33.2.0 (2026-11-18)
 
 ### Features Added

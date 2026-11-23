@@ -26,7 +26,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
         response = await self.client.private_endpoints.get(
             resource_group_name=resource_group.name,
             private_endpoint_name="str",
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -7315,7 +7314,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7329,7 +7327,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
             await self.client.private_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
                 private_endpoint_name="str",
-                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -7341,7 +7338,6 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     async def test_private_endpoints_list(self, resource_group):
         response = self.client.private_endpoints.list(
             resource_group_name=resource_group.name,
-            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -7350,9 +7346,7 @@ class TestNetworkManagementPrivateEndpointsOperationsAsync(AzureMgmtRecordedTest
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_private_endpoints_list_by_subscription(self, resource_group):
-        response = self.client.private_endpoints.list_by_subscription(
-            api_version="2026-05-01",
-        )
+        response = self.client.private_endpoints.list_by_subscription()
         result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

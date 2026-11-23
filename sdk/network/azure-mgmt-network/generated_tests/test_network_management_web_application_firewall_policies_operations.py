@@ -25,7 +25,6 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.get(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15317,7 +15316,6 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -15329,7 +15327,6 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
         response = self.client.web_application_firewall_policies.begin_delete(
             resource_group_name=resource_group.name,
             policy_name="str",
-            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -15340,7 +15337,6 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     def test_web_application_firewall_policies_list(self, resource_group):
         response = self.client.web_application_firewall_policies.list(
             resource_group_name=resource_group.name,
-            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -15349,9 +15345,7 @@ class TestNetworkManagementWebApplicationFirewallPoliciesOperations(AzureMgmtRec
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_web_application_firewall_policies_list_all(self, resource_group):
-        response = self.client.web_application_firewall_policies.list_all(
-            api_version="2026-05-01",
-        )
+        response = self.client.web_application_firewall_policies.list_all()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

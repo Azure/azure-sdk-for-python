@@ -25,7 +25,6 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
         response = self.client.virtual_network_appliances.get(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2807,7 +2806,6 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2820,7 +2818,6 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -2832,7 +2829,6 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
         response = self.client.virtual_network_appliances.begin_delete(
             resource_group_name=resource_group.name,
             virtual_network_appliance_name="str",
-            api_version="2026-05-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -2843,7 +2839,6 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
     def test_virtual_network_appliances_list(self, resource_group):
         response = self.client.virtual_network_appliances.list(
             resource_group_name=resource_group.name,
-            api_version="2026-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -2852,9 +2847,7 @@ class TestNetworkManagementVirtualNetworkAppliancesOperations(AzureMgmtRecordedT
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_virtual_network_appliances_list_all(self, resource_group):
-        response = self.client.virtual_network_appliances.list_all(
-            api_version="2026-05-01",
-        )
+        response = self.client.virtual_network_appliances.list_all()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

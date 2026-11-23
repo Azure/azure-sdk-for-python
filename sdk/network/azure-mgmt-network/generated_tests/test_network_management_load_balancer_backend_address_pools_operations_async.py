@@ -27,7 +27,6 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -5670,7 +5669,6 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                     },
                     "type": "str",
                 },
-                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5685,7 +5683,6 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
                 resource_group_name=resource_group.name,
                 load_balancer_name="str",
                 backend_address_pool_name="str",
-                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5698,7 +5695,6 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperationsAsync(AzureM
         response = self.client.load_balancer_backend_address_pools.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
