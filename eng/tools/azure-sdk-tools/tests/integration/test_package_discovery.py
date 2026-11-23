@@ -49,6 +49,7 @@ def test_discovery_omit_mgmt():
         "azure-storage-queue",
     ]
 
+
 def test_discovery_omit_build():
     results = discover_targeted_packages("*", core_service_root, filter_type="Build")
 

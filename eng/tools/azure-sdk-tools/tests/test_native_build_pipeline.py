@@ -78,10 +78,7 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
 
     job_defaults = {parameter["name"]: parameter.get("default") for parameter in jobs["parameters"]}
     assert job_defaults["BuildTimeoutInMinutes"] == 90
-    timeout_gate = (
-        "${{ if and(or(parameters.InstallMsRustToolchain, eq(parameters.ServiceDirectory, 'auto')), "
-        "lt(parameters.BuildTimeoutInMinutes, 240)) }}"
-    )
+    timeout_gate = "${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}"
     for job in jobs["jobs"]:
         if job.get("job") not in ("Build_Linux", "Build_Windows", "Build_MacOS"):
             continue
