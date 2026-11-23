@@ -8,6 +8,9 @@
 ### Bugs Fixed
 - Fixed an issue where `BlobClient.commit_block_list` sent every block in the `Latest` list of the request, ignoring `BlobBlock.state`. Blocks with `BlockState.COMMITTED` or `BlockState.UNCOMMITTED` are now sent as `Committed` or `Uncommitted`.
 
+### Other Changes
+- When native transfer acceleration is used, `StorageStreamDownloader.readinto` now passes each downloaded chunk to the destination's `write()` as a read-only `memoryview` instead of a `bytes` object, avoiding an extra copy of every chunk. Destinations that accept bytes-like objects, such as files and `BytesIO`, are unaffected. `read()`, `readall()` and iteration still return `bytes`.
+
 ## 12.32.0b1 (2026-11-05)
 
 ### Breaking Changes
