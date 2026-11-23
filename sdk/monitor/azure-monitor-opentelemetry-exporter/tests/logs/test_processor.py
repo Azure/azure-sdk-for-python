@@ -202,9 +202,7 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
 
     def test_batch_preserves_sample_rate_and_user_attribute(self):
         exporter = InMemoryLogRecordExporter()
-        processor = _AzureBatchLogRecordProcessor(
-            exporter, options={"enable_trace_based_sampling_for_logs": True}
-        )
+        processor = _AzureBatchLogRecordProcessor(exporter, options={"enable_trace_based_sampling_for_logs": True})
         self.addCleanup(processor.shutdown)
         provider = TracerProvider(sampler=ApplicationInsightsSampler(0.05))
         self.addCleanup(provider.shutdown)
