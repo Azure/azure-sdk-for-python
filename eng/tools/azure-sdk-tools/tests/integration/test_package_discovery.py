@@ -43,6 +43,7 @@ def test_discovery_omit_mgmt():
         "azure-storage-blob",
         "azure-storage-blob-changefeed",
         "azure-storage-extensions",
+        "azure-storage-extensionstransfer",
         "azure-storage-file-datalake",
         "azure-storage-file-share",
         "azure-storage-queue",
@@ -101,10 +102,22 @@ def test_discovery_omit_regression():
         "azure-storage-blob",
         "azure-storage-blob-changefeed",
         "azure-storage-extensions",
+        "azure-storage-extensionstransfer",
         "azure-storage-file-datalake",
         "azure-storage-file-share",
         "azure-storage-queue",
     ]
+
+
+def test_regression_dependency_scan_includes_maturin_package(maturin_package, monkeypatch):
+    pyproject = maturin_package / "pyproject.toml"
+    pyproject.write_text(pyproject.read_text().replace("dependencies = []", 'dependencies = ["azure-core>=1.0.0"]'))
+    monkeypatch.syspath_prepend(os.path.join(repo_root, "scripts", "devops_tasks"))
+    from test_regression import find_package_dependency
+
+    dependencies = find_package_dependency("azure*", str(maturin_package.parents[2]), "")
+
+    assert str(maturin_package) in dependencies["azure-core"]
 
 
 def test_discovery_honors_contains_filter():

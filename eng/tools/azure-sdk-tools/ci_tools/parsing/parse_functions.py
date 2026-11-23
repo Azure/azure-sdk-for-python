@@ -19,6 +19,7 @@ from packaging.requirements import Requirement
 from packaging.version import Version, InvalidVersion
 from setuptools import Extension
 
+from ci_tools.cargo import get_cargo_version, get_maturin_cargo_manifest
 from ci_tools.variables import str_to_bool
 
 VERSION_PY = "_version.py"
@@ -656,33 +657,32 @@ def parse_pyproject(
         project_config is not None
     ), f"Unable to find [project] section in {pyproject_filename}. Please ensure it is present."
 
-    # to pull a version from pyproject.toml, we need to get a dynamic version out. We can ask
-    # setuptools to give us the metadata for a package, but that will involve _partially building_ the package
-    # to create an egginfo folder. This is a very expensive operation goes against the entire point of
-    # "give me the package metadata for this folder."
-    # We can avoid this expensive operation if we parse the version out of the _version or version file directly.
+    # Read a dynamic version from its declared source without building package metadata.
     parsed_version = project_config.get("version", None)
 
     if not parsed_version:
-        parsed_version_py = get_version_py(pyproject_filename)
-
-        if parsed_version_py:
-            with open(parsed_version_py, "r") as f:
-                parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
-
-                if parsed_version:
-                    parsed_version = parsed_version.group(1)
-                else:
-                    parsed_version = "0.0.0"
+        cargo_manifest = get_maturin_cargo_manifest(pyproject_filename, toml_dict)
+        if cargo_manifest is not None:
+            parsed_version = get_cargo_version(cargo_manifest)
         else:
-            raise ValueError(
-                f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py" or "_version.py."'
-            )
+            parsed_version_py = get_version_py(pyproject_filename)
+            if parsed_version_py:
+                with open(parsed_version_py, "r") as f:
+                    parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
+
+                    if parsed_version:
+                        parsed_version = parsed_version.group(1)
+                    else:
+                        parsed_version = "0.0.0"
+            else:
+                raise ValueError(
+                    f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py" or "_version.py."'
+                )
 
     name = project_config.get("name")
     version = parsed_version
     python_requires = project_config.get("requires-python")
-    requires = project_config.get("dependencies")
+    requires = project_config.get("dependencies", [])
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
 
     # Discover the actual namespace by walking the package directory

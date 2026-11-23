@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 from datetime import datetime
+from ci_tools.cargo import get_maturin_cargo_manifest, set_cargo_version
 from .package_utils import (
     modify_file,
 )
@@ -142,7 +143,7 @@ def main(
         enable_log_error = not bool(package_result)
         log_failed_message(
             f"Changelog content for {package_name} seems invalid and we cannot calculate the next version based on it. "
-            f"But we will still update _version.py and CHANGELOG.md so that you could know where to update manually.",
+            f"But we will still update the version and CHANGELOG.md so that you could know where to update manually.",
             enable_log_error,
         )
 
@@ -152,17 +153,20 @@ def main(
     if package_result:
         package_result["version"] = version
 
-    # edit _version.py
-    version_files = list(package_path.rglob("**/_version.py"))
+    cargo_manifest = get_maturin_cargo_manifest(package_path / "pyproject.toml")
+    if cargo_manifest is not None:
+        set_cargo_version(cargo_manifest, version)
+    else:
+        version_files = list(package_path.rglob("**/_version.py"))
 
-    def edit_version_file(content: list[str]):
-        for i in range(0, len(content)):
-            if content[i].find("VERSION") > -1:
-                content[i] = f'VERSION = "{version}"\n'
-                break
+        def edit_version_file(content: list[str]):
+            for i in range(0, len(content)):
+                if content[i].find("VERSION") > -1:
+                    content[i] = f'VERSION = "{version}"\n'
+                    break
 
-    for file in version_files:
-        modify_file(str(file), edit_version_file)
+        for file in version_files:
+            modify_file(str(file), edit_version_file)
 
     # edit CHANGELOG.md
     changelog_path = package_path / "CHANGELOG.md"

@@ -12,6 +12,7 @@ import argparse
 from os import path
 from packaging.version import parse
 
+from ci_tools.cargo import get_maturin_cargo_manifest
 from ci_tools.versioning.version_shared import (
     get_packages,
     set_version_py,
@@ -109,6 +110,8 @@ def set_dev_version(target_packages: List[ParsedSetup], build_id: str):
         except Exception as e:
             print("Could not set dev version for package: {0}".format(target_package.name))
             logger.error(str(e))
+            if get_maturin_cargo_manifest(target_package.setup_filename) is not None:
+                raise
 
 
 if __name__ == "__main__":

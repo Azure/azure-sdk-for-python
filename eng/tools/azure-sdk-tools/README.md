@@ -122,6 +122,12 @@ preserving the active virtual environment. Other commands are unchanged.
 
 On top of assembling packages, azure-sdk-tools also can be used to complete various tasks with respect to version "maintenance". There are three primary entrypoints, and each fulfills a purpose in the repository.
 
+For maturin packages with a dynamic project version, these tools read and update
+`[package].version` in `Cargo.toml` instead of `_version.py`. They translate
+Python prerelease versions to Cargo SemVer and update the local package entry in
+an adjacent `Cargo.lock`. Cargo workspace version updates and versions that
+cannot be represented safely in Cargo are rejected.
+
 ### `sdk_set_dev_version`
 
 ```text

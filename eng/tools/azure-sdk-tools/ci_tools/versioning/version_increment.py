@@ -28,8 +28,9 @@ def increment_version(old_version):
     release = parsed_version.release
 
     if parsed_version.is_prerelease:
-        prerelease_version = parsed_version.pre[1]
-        return "{0}.{1}.{2}b{3}".format(release[0], release[1], release[2], prerelease_version + 1)
+        # A dev-only version has no existing beta number.
+        prerelease_version = parsed_version.pre[1] + 1 if parsed_version.pre else 1
+        return "{0}.{1}.{2}b{3}".format(release[0], release[1], release[2], prerelease_version)
 
     return "{0}.{1}.{2}".format(release[0], release[1], release[2] + 1)
 

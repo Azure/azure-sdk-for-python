@@ -270,6 +270,76 @@ def test_parse_pyproject_extensions():
     assert str(type(parsed_project.ext_modules[0])) == "<class 'setuptools.extension.Extension'>"
 
 
+@pytest.mark.parametrize(
+    "cargo_version, python_version",
+    [
+        ("0.1.0", "0.1.0"),
+        ("0.2.0-beta.3", "0.2.0b3"),
+        ("0.2.0-alpha.20250813001", "0.2.0a20250813001"),
+    ],
+)
+def test_parse_maturin_dynamic_version(maturin_package, cargo_version, python_version):
+    cargo = maturin_package / "Cargo.toml"
+    cargo.write_text(cargo.read_text().replace("0.1.0", cargo_version), encoding="utf-8")
+    (maturin_package / "azure" / "example" / "transfer" / "_version.py").write_text('VERSION = "9.9.9"\n')
+
+    parsed = ParsedSetup.from_path(str(maturin_package))
+
+    assert parsed.version == python_version
+    assert parsed.name == "azure-test-transfer"
+    assert parsed.namespace == "azure.example.transfer"
+
+
+def test_cargo_version_does_not_override_other_python_version_sources(maturin_package):
+    pyproject = maturin_package / "pyproject.toml"
+    original = pyproject.read_text()
+    pyproject.write_text(original.replace('dynamic = ["version"]', 'version = "3.2.1"'))
+    assert ParsedSetup.from_path(str(maturin_package)).version == "3.2.1"
+
+    pyproject.write_text(original.replace('"maturin"', '"setuptools.build_meta"'))
+    (maturin_package / "azure" / "example" / "transfer" / "_version.py").write_text('VERSION = "4.5.6"\n')
+    assert ParsedSetup.from_path(str(maturin_package)).version == "4.5.6"
+
+
+@pytest.mark.parametrize(
+    "version",
+    ['"0.1.0b1"', '"0.1.0-nightly.1"', '"18446744073709551616.0.0"', "{ workspace = true }"],
+)
+def test_parse_maturin_rejects_unusable_cargo_versions(maturin_package, version):
+    cargo = maturin_package / "Cargo.toml"
+    cargo.write_text(cargo.read_text().replace("'0.1.0'", version))
+    with pytest.raises(ValueError, match="Cargo.toml"):
+        ParsedSetup.from_path(str(maturin_package))
+
+
+def test_parse_maturin_missing_cargo_manifest_is_not_masked(maturin_package):
+    (maturin_package / "Cargo.toml").unlink()
+    (maturin_package / "azure" / "example" / "transfer" / "_version.py").write_text('VERSION = "9.9.9"\n')
+    with pytest.raises(ValueError, match="Cargo.toml"):
+        ParsedSetup.from_path(str(maturin_package))
+
+
+def test_parse_maturin_custom_manifest_path(maturin_package):
+    manifest_dir = maturin_package / "native"
+    manifest_dir.mkdir()
+    (maturin_package / "Cargo.toml").rename(manifest_dir / "Cargo.toml")
+    pyproject = maturin_package / "pyproject.toml"
+    with pyproject.open("a") as stream:
+        stream.write('\n[tool.maturin]\nmanifest-path = "native/Cargo.toml"\n')
+
+    assert ParsedSetup.from_path(str(maturin_package)).version == "0.1.0"
+
+
+def test_parse_maturin_without_python_dependencies(maturin_package):
+    pyproject = maturin_package / "pyproject.toml"
+    pyproject.write_text(pyproject.read_text().replace("dependencies = []\n", ""))
+
+    parsed = ParsedSetup.from_path(str(maturin_package))
+
+    assert parsed.version == "0.1.0"
+    assert parsed.requires == []
+
+
 def test_namespace_discovery_eventhub_checkpointstoreblob():
     """Test that namespace discovery works for azure-eventhub-checkpointstoreblob"""
     eventhub_path = os.path.join(

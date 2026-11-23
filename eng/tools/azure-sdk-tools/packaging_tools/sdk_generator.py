@@ -297,7 +297,7 @@ def main(generate_input, generate_output):
                 timeout=900 if data.get("runMode") in ["spec-pull-request"] else 7200,
             )
 
-            # update version in _version.py and CHANGELOG.md
+            # update the package version and CHANGELOG.md
             sdk_update_version(Path(sdk_code_path).absolute(), package_result=result[package_name])
 
             # update metadata files including "_metadata.json/pyproject.toml/setup.py/dev_requirements.txt"

@@ -55,6 +55,17 @@ def test_preview_to_stable_version_update(temp_package):
     assert first_line.startswith("## 1.0.0 (")
 
 
+def test_update_version_for_maturin_package(maturin_package):
+    changelog = maturin_package / "CHANGELOG.md"
+    changelog.write_text("## 0.1.0 (Unreleased)\n\n### Features\n\n- Something\n")
+
+    update_version_main(maturin_package, version="0.2.0b1", release_date="2026-01-02")
+
+    assert "version = '0.2.0-beta.1' # package version" in (maturin_package / "Cargo.toml").read_text()
+    assert 'version = "0.2.0-beta.1"' in (maturin_package / "Cargo.lock").read_text()
+    assert changelog.read_text().splitlines()[0] == "## 0.2.0b1 (2026-01-02)"
+
+
 def test_initial_version_generated(temp_package):
     pkg = temp_package
     (pkg / "_version.py").write_text('VERSION = "0.0.0"\n')

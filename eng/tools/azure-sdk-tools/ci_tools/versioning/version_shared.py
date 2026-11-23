@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING
 from packaging.version import parse
 
 from datetime import date
+from ci_tools.cargo import get_maturin_cargo_manifest, set_cargo_version
 from ci_tools.functions import discover_targeted_packages
 from ci_tools.parsing import ParsedSetup, get_version_py, VERSION_REGEX
 from ci_tools.variables import discover_repo_root
@@ -79,6 +80,12 @@ def get_packages(
 
 
 def set_version_py(setup_path, new_version):
+    """Set the package version in its Python version file or maturin Cargo manifest."""
+    cargo_manifest = get_maturin_cargo_manifest(setup_path)
+    if cargo_manifest is not None:
+        set_cargo_version(cargo_manifest, new_version)
+        return
+
     version_py_location = get_version_py(setup_path)
 
     if not version_py_location:

@@ -12,6 +12,7 @@ import re
 from os import path
 import sys
 
+from ci_tools.cargo import get_maturin_cargo_manifest
 from ci_tools.versioning.version_shared import get_packages, get_version_py
 from ci_tools.variables import discover_repo_root
 
@@ -52,6 +53,9 @@ def find_invalid_versions_main():
     invalid_packages = []
     for package in packages:
         package_name = package.name
+        if get_maturin_cargo_manifest(package.setup_filename) is not None:
+            # Parsing already validated Cargo's version; __version__ may come from installed metadata.
+            continue
         try:
             try:
                 version_py_path = get_version_py(package.setup_filename)
