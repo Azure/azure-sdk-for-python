@@ -28,4 +28,4 @@ if ($PSCmdlet.ParameterSetName -eq 'Admission') {
     if ($plans.Count -lt 1 -or $plans.Count -gt 4) { throw 'Expected one to four fresh queue plans.' }
     Assert-PythonSamplePartition -Plans $plans
 }
-& (Join-Path $PSScriptRoot 'Invoke-ResourceProvisioning.ps1') @PSBoundParameters
+& (Join-Path $PSScriptRoot 'shared/Invoke-ResourceProvisioning.ps1') @PSBoundParameters

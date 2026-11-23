@@ -15,7 +15,7 @@ from typing import (
 )
 from types import TracebackType
 from typing_extensions import Self
-from azure.storage.filedatalake._shared.session import SessionProvider
+from azure.storage.filedatalake._session import SessionProvider
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential

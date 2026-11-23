@@ -25,6 +25,7 @@ class TestNetworkSecurityMgmtNeuroShieldSummariesOperationsAsync(AzureMgmtRecord
         response = self.client.neuro_shield_summaries.list(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,6 +37,7 @@ class TestNetworkSecurityMgmtNeuroShieldSummariesOperationsAsync(AzureMgmtRecord
         response = await self.client.neuro_shield_summaries.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself

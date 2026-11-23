@@ -28,7 +28,7 @@ from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, 
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
-from azure.storage.blob._shared.session import SessionProvider
+from azure.storage.blob._session import SessionProvider
 from ._blob_client import BlobClient
 from ._blob_service_client import BlobServiceClient
 from ._download import StorageStreamDownloader
@@ -310,6 +310,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: str,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
     ) -> StorageStreamDownloader[str]: ...
     @overload
@@ -331,6 +332,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: None = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> StorageStreamDownloader[bytes]: ...
@@ -353,6 +355,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         max_concurrency: Optional[int] = None,
         encoding: Optional[str] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> Union[StorageStreamDownloader[str], StorageStreamDownloader[bytes]]: ...

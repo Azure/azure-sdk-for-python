@@ -91,6 +91,31 @@ class TestServiceBusQueue(AzureMgmtRecordedTestCase):
     @pytest.mark.live_test_only
     @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
     @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
+    @ServiceBusQueuePreparer(name_prefix="batchdelete")
+    @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
+    @ArgPasser()
+    def test_queue_batch_delete_and_purge_wire_contract(
+        self, uamqp_transport, *, servicebus_namespace=None, servicebus_queue=None, **kwargs
+    ):
+        fully_qualified_namespace = f"{servicebus_namespace.name}{SERVICEBUS_ENDPOINT_SUFFIX}"
+        with ServiceBusClient(
+            fully_qualified_namespace, get_credential(), uamqp_transport=uamqp_transport
+        ) as sb_client:
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages([ServiceBusMessage(str(i)) for i in range(3)], timeout=30)
+            with sb_client.get_queue_receiver(servicebus_queue.name) as receiver:
+                result = receiver.delete_messages(1, timeout=30)
+                assert result.deleted_message_count == 1
+                result = receiver.purge_messages(max_message_count_per_batch=1, timeout=30)
+                assert result.deleted_message_count == 2
+                assert receiver.delete_messages(1, timeout=30).deleted_message_count == 0
+                assert receiver.purge_messages(timeout=30).deleted_message_count == 0
+                assert receiver.peek_messages(max_message_count=1, timeout=30) == []
+
+    @pytest.mark.liveTest
+    @pytest.mark.live_test_only
+    @CachedServiceBusResourceGroupPreparer(name_prefix="servicebustest")
+    @CachedServiceBusNamespacePreparer(name_prefix="servicebustest")
     @ServiceBusQueuePreparer(name_prefix="servicebustest", dead_lettering_on_message_expiration=True)
     @pytest.mark.parametrize("uamqp_transport", uamqp_transport_params, ids=uamqp_transport_ids)
     @ArgPasser()
