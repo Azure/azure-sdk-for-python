@@ -708,6 +708,13 @@ class DataLakeFileClient(PathClient):
                 When set to True, the downloaded data may be inconsistent if the file is
                 overwritten or recreated during the download. If the file becomes smaller
                 during the download, a ResourceModifiedError is raised.
+        :keyword int download_retry_total:
+            The number of times to retry reading the body of a download response after a failure,
+            such as an incomplete or interrupted read. Set to 0 to make a single attempt. This is
+            separate from the client's retry policy, which retries requests that fail before a
+            response is received. Default value is 2.
+        :keyword float download_retry_backoff:
+            The number of seconds to wait before each retry of a failed body read. Default value is 1.
         :keyword bool decompress: If True, any compressed content, identified by the Content-Encoding header, will be
             decompressed automatically before being returned. Default value is True.
         :keyword validate_content:
