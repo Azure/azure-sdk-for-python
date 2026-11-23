@@ -32,5 +32,7 @@ extends:
     # we still exclude cosmos, because of the implicit dependency on the cosmos emulator. Within a pullrequest pipeline we do not
     # currently have the ability to inject steps from a different ci.yml, which is required to start the cosmos emulator.
     # As such, the pullrequest pipeline itself will not invoke the cosmos tests, but the triggered `python - cosmos - ci` public build WILL.
+    # Storage uses `python - storage - ci` for its service-specific MS Rust toolchain setup.
     ExcludePaths:
       - sdk/cosmos/
+      - sdk/storage/
