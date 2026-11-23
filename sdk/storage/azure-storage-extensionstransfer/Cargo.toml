@@ -1,5 +1,6 @@
 [package]
 name = "azure-storage-extensions-transfer"
+# Keep in sync with azure/storage/extensions/transfer/_version.py for Azure SDK tooling.
 version = "0.1.0"
 edition = "2021"
 publish = false
