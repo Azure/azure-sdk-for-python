@@ -213,10 +213,24 @@ resource indexing 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       })
     }]
     scriptContent: format('''set -euo pipefail
-python3 - <<'PY'
+dependencies=$(mktemp -d)
+trap 'rm -rf -- "$dependencies"' EXIT
+cat > "$dependencies/requirements.txt" <<'REQUIREMENTS'
 {0}
+REQUIREMENTS
+# The Azure Linux CLI image ships pip inside the CLI's bundled site-packages.
+cli_site_packages=(/usr/lib64/az/lib/python*/site-packages)
+PIP_CONFIG_FILE=/dev/null PYTHONPATH="$cli_site_packages" python3 -s -m pip --isolated --disable-pip-version-check install \
+  --index-url https://pypi.org/simple --require-hashes --only-binary=:all: --ignore-installed \
+  --no-cache-dir --target "$dependencies/packages" -r "$dependencies/requirements.txt"
+# Keep the wheel directory out of the Azure CLI subprocess's environment.
+python3 -I - "$dependencies/packages" <<'PY'
+import sys
+sys.path.insert(0, sys.argv[1])
+
+{1}
 PY
-''', loadTextContent('./search-indexing.py'))
+''', loadTextContent('./requirements-search-indexing.txt'), loadTextContent('./search-indexing.py'))
   }
 }
 

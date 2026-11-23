@@ -96,6 +96,8 @@ with (
                 },
             },
         },
+        # Custom code evaluators are still in preview, so the service requires this opt-in header.
+        headers={"Foundry-Features": "Evaluations=V1Preview"},
     )
 
     data_source_config = DataSourceConfigCustom(
