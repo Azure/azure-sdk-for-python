@@ -11,7 +11,7 @@
 import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
@@ -22,7 +22,7 @@ class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 
     :ivar name: Name of the access rule.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Properties of the access rule.
     :vartype properties: ~azure.mgmt.search.models.AccessRuleProperties
     """
 
@@ -31,6 +31,7 @@ class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
     properties: Optional["_models.AccessRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Properties of the access rule."""
 
     @overload
     def __init__(
@@ -54,7 +55,7 @@ class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyw
 class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
-    :ivar direction: Known values are: "Inbound" and "Outbound".
+    :ivar direction: Direction of the access rule. Known values are: "Inbound" and "Outbound".
     :vartype direction: str or ~azure.mgmt.search.models.AccessRuleDirection
     :ivar address_prefixes: Address prefixes in the CIDR format for inbound rules.
     :vartype address_prefixes: list[str]
@@ -73,7 +74,7 @@ class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-
     direction: Optional[Union[str, "_models.AccessRuleDirection"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Inbound\" and \"Outbound\"."""
+    """Direction of the access rule. Known values are: \"Inbound\" and \"Outbound\"."""
     address_prefixes: Optional[list[str]] = rest_field(
         name="addressPrefixes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -167,48 +168,6 @@ class AdminKeyResult(_Model):
     """The primary admin API key of the search service."""
     secondary_key: Optional[str] = rest_field(name="secondaryKey", visibility=["read"])
     """The secondary admin API key of the search service."""
-
-
-class AzureActiveDirectoryApplicationCredentials(
-    _Model
-):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
-    """Describes the Azure Active Directory application credentials required to access an Azure Key
-    Vault.
-
-    :ivar application_id: The application (client) ID of an App Registration in the tenant.
-    :vartype application_id: str
-    :ivar application_secret: An AAD client secret that was generated for the App Registration used
-     to authenticate with Azure Key Vault.
-    :vartype application_secret: str
-    """
-
-    application_id: Optional[str] = rest_field(
-        name="applicationId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The application (client) ID of an App Registration in the tenant."""
-    application_secret: Optional[str] = rest_field(
-        name="applicationSecret", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """An AAD client secret that was generated for the App Registration used to authenticate with
-     Azure Key Vault."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        application_id: Optional[str] = None,
-        application_secret: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class CheckNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -360,66 +319,6 @@ class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
-class DataIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Abstract base type for data identities.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DataNoneIdentity, DataUserAssignedIdentity
-
-    :ivar odata_type: A URI fragment specifying the type of identity. Required. Default value is
-     None.
-    :vartype odata_type: str
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    odata_type: str = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])
-    """A URI fragment specifying the type of identity. Required. Default value is None."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        odata_type: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class DataNoneIdentity(DataIdentity, discriminator="#Microsoft.Azure.Search.DataNoneIdentity"):
-    """Clears the identity property.
-
-    :ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.DataNoneIdentity".
-    :vartype odata_type: str
-    """
-
-    odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"#Microsoft.Azure.Search.DataNoneIdentity\"."""
-
-    @overload
-    def __init__(
-        self,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Azure.Search.DataNoneIdentity"  # type: ignore
-
-
 class DataPlaneAadOrApiKeyAuthOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Indicates that either the API key or an access token from a Microsoft Entra ID tenant can be
     used for authentication.
@@ -494,60 +393,6 @@ class DataPlaneAuthOptions(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class DataUserAssignedIdentity(
-    DataIdentity, discriminator="#Microsoft.Azure.Search.DataUserAssignedIdentity"
-):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Specifies the user assigned identity to use.
-
-    :ivar odata_type: Required. Default value is
-     "#Microsoft.Azure.Search.DataUserAssignedIdentity".
-    :vartype odata_type: str
-    :ivar user_assigned_identity: The fully qualified Azure resource Id of a user assigned managed
-     identity typically in the form
-     "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
-     that should have been assigned to the search service. Required.
-    :vartype user_assigned_identity: str
-    :ivar federated_identity_client_id: Optional for Multi-tenant User-Assigned Managed Identity
-     CMK Support: The client id (as a UUID) of the multi-tenant App Registration that has been
-     configured to federate with the userAssignedIdentity.
-    :vartype federated_identity_client_id: str
-    """
-
-    odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"] = rest_discriminator(name="@odata.type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Default value is \"#Microsoft.Azure.Search.DataUserAssignedIdentity\"."""
-    user_assigned_identity: str = rest_field(
-        name="userAssignedIdentity", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The fully qualified Azure resource Id of a user assigned managed identity typically in the form
-     \"/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId\"
-     that should have been assigned to the search service. Required."""
-    federated_identity_client_id: Optional[str] = rest_field(
-        name="federatedIdentityClientId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional for Multi-tenant User-Assigned Managed Identity CMK Support: The client id (as a UUID)
-     of the multi-tenant App Registration that has been configured to federate with the
-     userAssignedIdentity."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        user_assigned_identity: str,
-        federated_identity_client_id: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.odata_type = "#Microsoft.Azure.Search.DataUserAssignedIdentity"  # type: ignore
-
-
 class EncryptionWithCmk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a policy that determines how resources within the search service are to be encrypted
     with customer managed keys.
@@ -562,9 +407,6 @@ class EncryptionWithCmk(_Model):  # pylint: disable=docstring-keyword-should-mat
      and "NonCompliant".
     :vartype encryption_compliance_status: str or
      ~azure.mgmt.search.models.SearchEncryptionComplianceStatus
-    :ivar service_level_encryption_key: Describes the customer-managed key configuration for
-     encrypting the search service.
-    :vartype service_level_encryption_key: ~azure.mgmt.search.models.SearchResourceEncryptionKey
     """
 
     enforcement: Optional[Union[str, "_models.SearchEncryptionWithCmk"]] = rest_field(
@@ -579,45 +421,12 @@ class EncryptionWithCmk(_Model):  # pylint: disable=docstring-keyword-should-mat
     """Returns the status of search service compliance with respect to non-CMK-encrypted objects. If a
      service has more than one unencrypted object, and enforcement is enabled, the service is marked
      as noncompliant. Known values are: \"Compliant\" and \"NonCompliant\"."""
-    service_level_encryption_key: Optional["_models.SearchResourceEncryptionKey"] = rest_field(
-        name="serviceLevelEncryptionKey", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Describes the customer-managed key configuration for encrypting the search service."""
 
     @overload
     def __init__(
         self,
         *,
         enforcement: Optional[Union[str, "_models.SearchEncryptionWithCmk"]] = None,
-        service_level_encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class FeatureOffering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes the availability of a specific feature in a region.
-
-    :ivar name: The name of the feature offered in this region.
-    :vartype name: str
-    """
-
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The name of the feature offered in this region."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -726,7 +535,7 @@ class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-
      be the exclusive access method.
     :vartype ip_rules: list[~azure.mgmt.search.models.IpRule]
     :ivar bypass: Possible origins of inbound traffic that can bypass the rules defined in the
-     'ipRules' section. Known values are: "None", "AzurePortal", and "AzureServices".
+     'ipRules' section. Known values are: "None" and "AzureServices".
     :vartype bypass: str or ~azure.mgmt.search.models.SearchBypass
     """
 
@@ -742,7 +551,7 @@ class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Possible origins of inbound traffic that can bypass the rules defined in the 'ipRules' section.
-     Known values are: \"None\", \"AzurePortal\", and \"AzureServices\"."""
+     Known values are: \"None\" and \"AzureServices\"."""
 
     @overload
     def __init__(
@@ -896,25 +705,27 @@ class NetworkSecurityPerimeterConfigurationProperties(
 ):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
-    :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
-     "Accepted", "Failed", and "Canceled".
+    :ivar provisioning_state: Provisioning state of the network security perimeter configuration.
+     Known values are: "Succeeded", "Creating", "Updating", "Deleting", "Accepted", "Failed", and
+     "Canceled".
     :vartype provisioning_state: str or
      ~azure.mgmt.search.models.NetworkSecurityPerimeterConfigurationProvisioningState
     :ivar provisioning_issues: List of provisioning issues, if any.
     :vartype provisioning_issues: list[~azure.mgmt.search.models.ProvisioningIssue]
-    :ivar network_security_perimeter:
+    :ivar network_security_perimeter: Information about the network security perimeter (NSP).
     :vartype network_security_perimeter: ~azure.mgmt.search.models.NetworkSecurityPerimeter
-    :ivar resource_association:
+    :ivar resource_association: Information about the resource association.
     :vartype resource_association: ~azure.mgmt.search.models.ResourceAssociation
-    :ivar profile:
+    :ivar profile: Network security perimeter configuration profile.
     :vartype profile: ~azure.mgmt.search.models.NetworkSecurityProfile
     """
 
     provisioning_state: Optional[Union[str, "_models.NetworkSecurityPerimeterConfigurationProvisioningState"]] = (
         rest_field(name="provisioningState", visibility=["read"])
     )
-    """Known values are: \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\",
-     \"Failed\", and \"Canceled\"."""
+    """Provisioning state of the network security perimeter configuration. Known values are:
+     \"Succeeded\", \"Creating\", \"Updating\", \"Deleting\", \"Accepted\", \"Failed\", and
+     \"Canceled\"."""
     provisioning_issues: Optional[list["_models.ProvisioningIssue"]] = rest_field(
         name="provisioningIssues", visibility=["read"]
     )
@@ -922,12 +733,15 @@ class NetworkSecurityPerimeterConfigurationProperties(
     network_security_perimeter: Optional["_models.NetworkSecurityPerimeter"] = rest_field(
         name="networkSecurityPerimeter", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the network security perimeter (NSP)."""
     resource_association: Optional["_models.ResourceAssociation"] = rest_field(
         name="resourceAssociation", visibility=["read", "create", "update", "delete", "query"]
     )
+    """Information about the resource association."""
     profile: Optional["_models.NetworkSecurityProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """Network security perimeter configuration profile."""
 
     @overload
     def __init__(
@@ -1003,64 +817,6 @@ class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-shoul
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class OfferingsByRegion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes the Azure AI Search features and SKUs available in a specific Azure region.
-
-    :ivar region_name: The name of the region.
-    :vartype region_name: str
-    :ivar features: The list of features offered in this region.
-    :vartype features: list[~azure.mgmt.search.models.FeatureOffering]
-    :ivar skus: The list of SKUs offered in this region.
-    :vartype skus: list[~azure.mgmt.search.models.SkuOffering]
-    """
-
-    region_name: Optional[str] = rest_field(
-        name="regionName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of the region."""
-    features: Optional[list["_models.FeatureOffering"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of features offered in this region."""
-    skus: Optional[list["_models.SkuOffering"]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of SKUs offered in this region."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        region_name: Optional[str] = None,
-        features: Optional[list["_models.FeatureOffering"]] = None,
-        skus: Optional[list["_models.SkuOffering"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OfferingsResult(_Model):
-    """Response containing the available Azure AI Search offerings, organized by region, along with
-    the recommended default region for creating new services.
-
-    :ivar default_region: The recommended default region for creating new Azure AI Search services.
-    :vartype default_region: str
-    :ivar regions: The list of Azure AI Search offerings by region.
-    :vartype regions: list[~azure.mgmt.search.models.OfferingsByRegion]
-    """
-
-    default_region: Optional[str] = rest_field(name="defaultRegion", visibility=["read"])
-    """The recommended default region for creating new Azure AI Search services."""
-    regions: Optional[list["_models.OfferingsByRegion"]] = rest_field(visibility=["read"])
-    """The list of Azure AI Search offerings by region."""
 
 
 class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1391,13 +1147,14 @@ class ProvisioningIssue(_Model):
 
     :ivar name: Name of the issue.
     :vartype name: str
-    :ivar properties:
+    :ivar properties: Details of the provisioning issue.
     :vartype properties: ~azure.mgmt.search.models.ProvisioningIssueProperties
     """
 
     name: Optional[str] = rest_field(visibility=["read"])
     """Name of the issue."""
     properties: Optional["_models.ProvisioningIssueProperties"] = rest_field(visibility=["read"])
+    """Details of the provisioning issue."""
 
 
 class ProvisioningIssueProperties(_Model):
@@ -1545,7 +1302,8 @@ class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar name: Name of the resource association.
     :vartype name: str
-    :ivar access_mode: Known values are: "Enforced", "Learning", and "Audit".
+    :ivar access_mode: Access mode of the resource association. Known values are: "Enforced",
+     "Learning", and "Audit".
     :vartype access_mode: str or ~azure.mgmt.search.models.ResourceAssociationAccessMode
     """
 
@@ -1554,7 +1312,8 @@ class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-m
     access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = rest_field(
         name="accessMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Known values are: \"Enforced\", \"Learning\", and \"Audit\"."""
+    """Access mode of the resource association. Known values are: \"Enforced\", \"Learning\", and
+     \"Audit\"."""
 
     @overload
     def __init__(
@@ -1562,77 +1321,6 @@ class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-m
         *,
         name: Optional[str] = None,
         access_mode: Optional[Union[str, "_models.ResourceAssociationAccessMode"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
-    used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
-
-    :ivar key_name: The name of your Azure Key Vault key to be used to encrypt your data at rest.
-    :vartype key_name: str
-    :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
-     rest.
-    :vartype key_version: str
-    :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
-     the key to be used to encrypt your data at rest. An example URI might be
-     ``https://my-keyvault-name.vault.azure.net``.
-    :vartype vault_uri: str
-    :ivar identity: An explicit managed identity to use for this encryption key. If not specified
-     and the access credentials property is null, the system-assigned managed identity is used. On
-     update to the resource, if the explicit identity is unspecified, it remains unchanged. If
-     "none" is specified, the value of this property is cleared.
-    :vartype identity: ~azure.mgmt.search.models.DataIdentity
-    :ivar access_credentials: Optional Azure Active Directory credentials used for accessing your
-     Azure Key Vault. Not required if using managed identity instead.
-    :vartype access_credentials:
-     ~azure.mgmt.search.models.AzureActiveDirectoryApplicationCredentials
-    """
-
-    key_name: Optional[str] = rest_field(
-        name="keyVaultKeyName", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The name of your Azure Key Vault key to be used to encrypt your data at rest."""
-    key_version: Optional[str] = rest_field(
-        name="keyVaultKeyVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The version of your Azure Key Vault key to be used to encrypt your data at rest."""
-    vault_uri: Optional[str] = rest_field(
-        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The URI of your Azure Key Vault, also referred to as DNS name, that contains the key to be used
-     to encrypt your data at rest. An example URI might be
-     ``https://my-keyvault-name.vault.azure.net``."""
-    identity: Optional["_models.DataIdentity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """An explicit managed identity to use for this encryption key. If not specified and the access
-     credentials property is null, the system-assigned managed identity is used. On update to the
-     resource, if the explicit identity is unspecified, it remains unchanged. If \"none\" is
-     specified, the value of this property is cleared."""
-    access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = rest_field(
-        name="accessCredentials", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Optional Azure Active Directory credentials used for accessing your Azure Key Vault. Not
-     required if using managed identity instead."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        key_name: Optional[str] = None,
-        key_version: Optional[str] = None,
-        vault_uri: Optional[str] = None,
-        identity: Optional["_models.DataIdentity"] = None,
-        access_credentials: Optional["_models.AzureActiveDirectoryApplicationCredentials"] = None,
     ) -> None: ...
 
     @overload
@@ -1745,7 +1433,6 @@ class SearchService(TrackedResource):  # pylint: disable=docstring-keyword-shoul
         "semantic_search",
         "knowledge_retrieval",
         "private_endpoint_connections",
-        "auto_generated_domain_name_label_scope",
         "shared_private_link_resources",
         "e_tag",
         "upgrade_available",
@@ -1875,12 +1562,6 @@ class SearchServiceProperties(_Model):  # pylint: disable=docstring-keyword-shou
      Search service.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.search.models.PrivateEndpointConnection]
-    :ivar auto_generated_domain_name_label_scope: Defines the level of reuse for the auto-generated
-     domain name label for the search service (e.g. myservice-<uniqueId>.search.windows.net). If not
-     specified, no auto-generated domain name label is created for the search service. Known values
-     are: "TenantReuse", "SubscriptionReuse", and "NoReuse".
-    :vartype auto_generated_domain_name_label_scope: str or
-     ~azure.mgmt.search.models.AutoGeneratedDomainNameLabelScope
     :ivar shared_private_link_resources: The list of shared private link resources managed by the
      Azure AI Search service.
     :vartype shared_private_link_resources:
@@ -1996,13 +1677,6 @@ class SearchServiceProperties(_Model):  # pylint: disable=docstring-keyword-shou
         name="privateEndpointConnections", visibility=["read"]
     )
     """The list of private endpoint connections to the Azure AI Search service."""
-    auto_generated_domain_name_label_scope: Optional[Union[str, "_models.AutoGeneratedDomainNameLabelScope"]] = (
-        rest_field(name="autoGeneratedDomainNameLabelScope", visibility=["read", "create"])
-    )
-    """Defines the level of reuse for the auto-generated domain name label for the search service
-     (e.g. myservice-<uniqueId>.search.windows.net). If not specified, no auto-generated domain name
-     label is created for the search service. Known values are: \"TenantReuse\",
-     \"SubscriptionReuse\", and \"NoReuse\"."""
     shared_private_link_resources: Optional[list["_models.SharedPrivateLinkResource"]] = rest_field(
         name="sharedPrivateLinkResources", visibility=["read"]
     )
@@ -2038,9 +1712,6 @@ class SearchServiceProperties(_Model):  # pylint: disable=docstring-keyword-shou
         auth_options: Optional["_models.DataPlaneAuthOptions"] = None,
         semantic_search: Optional[Union[str, "_models.SearchSemanticSearch"]] = None,
         knowledge_retrieval: Optional[Union[str, "_models.KnowledgeRetrieval"]] = None,
-        auto_generated_domain_name_label_scope: Optional[
-            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
-        ] = None,
         upgrade_available: Optional[Union[str, "_models.UpgradeAvailable"]] = None,
     ) -> None: ...
 
@@ -2120,7 +1791,6 @@ class SearchServiceUpdate(Resource):  # pylint: disable=docstring-keyword-should
         "semantic_search",
         "knowledge_retrieval",
         "private_endpoint_connections",
-        "auto_generated_domain_name_label_scope",
         "shared_private_link_resources",
         "e_tag",
         "upgrade_available",
@@ -2368,105 +2038,6 @@ class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-onl
         self,
         *,
         name: Optional[Union[str, "_models.SkuName"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SkuLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes the limits associated with a SKU offering.
-
-    :ivar indexes: The maximum number of indexes available for this SKU.
-    :vartype indexes: int
-    :ivar indexers: The maximum number of indexers available for this SKU.
-    :vartype indexers: int
-    :ivar partition_storage_in_gigabytes: The maximum storage size in Gigabytes available for this
-     SKU per partition.
-    :vartype partition_storage_in_gigabytes: float
-    :ivar partition_vector_storage_in_gigabytes: The maximum vector storage size in Gigabytes
-     available for this SKU per partition.
-    :vartype partition_vector_storage_in_gigabytes: float
-    :ivar search_units: The maximum number of search units available for this SKU.
-    :vartype search_units: int
-    :ivar replicas: The maximum number of replicas available for this SKU.
-    :vartype replicas: int
-    :ivar partitions: The maximum number of partitions available for this SKU.
-    :vartype partitions: int
-    """
-
-    indexes: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of indexes available for this SKU."""
-    indexers: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of indexers available for this SKU."""
-    partition_storage_in_gigabytes: Optional[float] = rest_field(
-        name="partitionStorageInGigabytes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum storage size in Gigabytes available for this SKU per partition."""
-    partition_vector_storage_in_gigabytes: Optional[float] = rest_field(
-        name="partitionVectorStorageInGigabytes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum vector storage size in Gigabytes available for this SKU per partition."""
-    search_units: Optional[int] = rest_field(
-        name="searchUnits", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum number of search units available for this SKU."""
-    replicas: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of replicas available for this SKU."""
-    partitions: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The maximum number of partitions available for this SKU."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        indexes: Optional[int] = None,
-        indexers: Optional[int] = None,
-        partition_storage_in_gigabytes: Optional[float] = None,
-        partition_vector_storage_in_gigabytes: Optional[float] = None,
-        search_units: Optional[int] = None,
-        replicas: Optional[int] = None,
-        partitions: Optional[int] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SkuOffering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Describes a SKU offering with its limits in a specific region.
-
-    :ivar sku: The SKU definition.
-    :vartype sku: ~azure.mgmt.search.models.Sku
-    :ivar limits: The limits associated with this SKU offered in this region.
-    :vartype limits: ~azure.mgmt.search.models.SkuLimits
-    """
-
-    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The SKU definition."""
-    limits: Optional["_models.SkuLimits"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The limits associated with this SKU offered in this region."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        sku: Optional["_models.Sku"] = None,
-        limits: Optional["_models.SkuLimits"] = None,
     ) -> None: ...
 
     @overload
