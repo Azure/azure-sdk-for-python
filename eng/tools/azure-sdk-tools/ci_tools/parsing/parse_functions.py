@@ -688,8 +688,6 @@ def parse_pyproject(
 
         if not parsed_version:
             parsed_version = parse_cargo_toml(package_directory)
-        if not parsed_version and parsed_version_py:
-            parsed_version = "0.0.0"
         if not parsed_version:
             raise ValueError(
                 f'Unable to find a version value directly set in "{pyproject_filename}", '
@@ -826,7 +824,8 @@ def parse_setup(
         <is_metapackage>,
     )
 
-    If a pyproject.toml (containing [project]) or a setup.py is NOT found, a ValueError will be raised.
+    A ValueError is raised if neither a pyproject.toml (containing [project]) nor a setup.py is found,
+    or if the package version cannot be determined.
     """
 
     targeted_path = setup_filename_or_folder
@@ -841,6 +840,8 @@ def parse_setup(
         result = parse_pyproject(resolved_filename)
     else:
         result = parse_setup_py(resolved_filename)
+        if not result[1]:
+            raise ValueError(f'Unable to find a version value in "{resolved_filename}" or "Cargo.toml".')
 
     return result
 

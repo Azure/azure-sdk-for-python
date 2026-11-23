@@ -268,8 +268,14 @@ def test_parse_pyproject_cargo_version(tmp_path, project_version, python_version
 
 
 @pytest.mark.parametrize("cargo_contents", [None, "[package]\nversion.workspace = true\n"])
-def test_parse_pyproject_without_version(tmp_path, cargo_contents):
-    (tmp_path / "pyproject.toml").write_text('[project]\nname = "azure-native"\n', encoding="utf-8")
+@pytest.mark.parametrize("source", ["pyproject", "pyproject-with-version-file", "setup"])
+def test_parse_package_without_version(tmp_path, cargo_contents, source):
+    if source == "setup":
+        (tmp_path / "setup.py").write_text('setup(name="azure-native")\n', encoding="utf-8")
+    else:
+        (tmp_path / "pyproject.toml").write_text('[project]\nname = "azure-native"\n', encoding="utf-8")
+        if source == "pyproject-with-version-file":
+            (tmp_path / "_version.py").write_text("# No version declared\n", encoding="utf-8")
     if cargo_contents is not None:
         (tmp_path / "Cargo.toml").write_text(cargo_contents, encoding="utf-8")
 
