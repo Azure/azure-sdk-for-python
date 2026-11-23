@@ -737,8 +737,8 @@ class BreakingChangesTracker:
         def _get_property_type(value: Any) -> Any:
             return value.get("attr_type") if isinstance(value, dict) else value
 
-        def _is_annotation(value: dict) -> bool:
-            return value.get("is_annotation") is True
+        def _is_annotation(value: Any) -> bool:
+            return isinstance(value, dict) and value.get("is_annotation") is True
 
         stable_class = self.stable[self._module_name]["class_nodes"][self._class_name]
         if (
