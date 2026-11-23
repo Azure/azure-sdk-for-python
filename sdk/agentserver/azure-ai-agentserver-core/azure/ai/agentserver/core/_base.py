@@ -268,6 +268,12 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         export.  Pass a custom callable to override the setup, or ``None``
         to skip all SDK-managed observability configuration.
     :type configure_observability: Optional[Callable[..., None]]
+    :param lifecycle_authorizer: Async callable that authenticates a lifecycle
+        request and verifies permission to perform the requested operation.
+        Only an explicit ``True`` permits snapshot/restore processing. When
+        *None* (default), all lifecycle POST requests are rejected with HTTP 403.
+        Authorizer failures return HTTP 500 without lifecycle side effects.
+    :type lifecycle_authorizer: Optional[Callable[[Request], Awaitable[bool]]]
     """
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
@@ -281,6 +287,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
         configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
+        lifecycle_authorizer: Optional[Callable[[Request], Awaitable[bool]]] = None,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -288,6 +295,7 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
         self._readiness_fn: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._lifecycle = _LifecycleState()
+        self._lifecycle_authorizer = lifecycle_authorizer
         self._task_manager_requirements: list[Callable[[], bool]] = kwargs.pop(
             "_task_manager_requirements", [_resilient_tasks_enabled]
         )
@@ -820,6 +828,28 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
     # Snapshot lifecycle endpoints
     # ------------------------------------------------------------------
 
+    async def _authorize_lifecycle_request(self, request: Request) -> Optional[Response]:
+        authorized = False
+        try:
+            if self._lifecycle_authorizer is not None:
+                authorized = await self._lifecycle_authorizer(request)
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Authorizer exceptions may contain credentials; do not log their details.
+            logger.error("Lifecycle request authorization failed")
+            return create_error_response(
+                "lifecycle_authorization_failed",
+                "Lifecycle request authorization failed.",
+                status_code=500,
+            )
+        if authorized is not True:
+            logger.warning("Lifecycle request denied")
+            return create_error_response(
+                "lifecycle_forbidden",
+                "Lifecycle requests require authorization.",
+                status_code=403,
+            )
+        return None
+
     @staticmethod
     async def _read_json_object(request: Request) -> dict[str, Any]:
         """Read and validate a lifecycle request body.
@@ -876,6 +906,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         )
 
     async def _before_snapshot_endpoint(self, request: Request) -> Response:
+        authorization_error = await AgentServerHost._authorize_lifecycle_request(self, request)
+        if authorization_error is not None:
+            return authorization_error
         try:
             await AgentServerHost._read_json_object(request)
         except ValueError:
@@ -906,6 +939,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             return JSONResponse({"status": "ok"})
 
     async def _after_restore_endpoint(self, request: Request) -> Response:
+        authorization_error = await AgentServerHost._authorize_lifecycle_request(self, request)
+        if authorization_error is not None:
+            return authorization_error
         try:
             return await AgentServerHost._run_after_restore(self, request)
         except Exception:  # pylint: disable=broad-exception-caught

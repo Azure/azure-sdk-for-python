@@ -18,6 +18,14 @@
   owned workers to stop before incompatible configuration rollback, and stop
   managers created after startup at shutdown.
 
+### Breaking Changes
+
+- Require explicit authorization for all snapshot/restore lifecycle POST routes,
+  including their aliases. Configure the async `lifecycle_authorizer` on the host
+  to authenticate lifecycle callers and check their permissions. Requests are
+  rejected with HTTP 403 by default, before payload processing or state changes.
+  Existing lifecycle callers must integrate authorization before upgrading.
+
 ### Bugs Fixed
 
 - Track task identity throughout inline start/run claims and positional active-

@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import httpx
 import pytest
@@ -102,6 +102,7 @@ def test_responses_snapshot_uses_options_not_invocations_switch(
     host = ResponsesAgentServerHost(
         options=ResponsesServerOptions(resilient_background=resilient, steerable_conversations=steerable),
         configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     observed, executed = [], []
     register_response_probe(host, observed)
@@ -164,7 +165,9 @@ def test_invocations_snapshot_switch_controls_http_and_websocket(monkeypatch, va
     invocations = pytest.importorskip("azure.ai.agentserver.invocations")
     snapshot_mode(monkeypatch, value)
     set_resilient_tasks_enabled(enabled)
-    host = invocations.InvocationAgentServerHost(configure_observability=None)
+    host = invocations.InvocationAgentServerHost(
+        configure_observability=None, lifecycle_authorizer=AsyncMock(return_value=True)
+    )
 
     @host.invoke_handler
     async def invoked(request):
@@ -194,6 +197,7 @@ def test_composed_snapshot_preserves_protocol_access(
     host = combined_type(invocations.InvocationAgentServerHost, responses_first)(
         options=ResponsesServerOptions(resilient_background=resilient, steerable_conversations=steerable),
         configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     observed = []
     register_response_probe(host, observed)
@@ -231,7 +235,9 @@ def test_voice_snapshot_does_not_inherit_responses_opt_in(
     snapshot_mode(monkeypatch, "true")
     set_resilient_tasks_enabled(switch)
     host = combined_type(voice.VoiceAgentServerHost, responses_first)(
-        options=ResponsesServerOptions(resilient_background=responses_enabled), configure_observability=None
+        options=ResponsesServerOptions(resilient_background=responses_enabled),
+        configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     observed = []
 
@@ -265,10 +271,14 @@ async def test_overlapping_snapshot_hosts_keep_own_runtime(monkeypatch, tmp_path
     monkeypatch.setattr(TaskManager, "_create_provider", staticmethod(lambda _: next(providers)))
     set_resilient_tasks_enabled(False)
     first = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(resilient_background=True), configure_observability=None
+        options=ResponsesServerOptions(resilient_background=True),
+        configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     second = ResponsesAgentServerHost(
-        options=ResponsesServerOptions(steerable_conversations=True), configure_observability=None
+        options=ResponsesServerOptions(steerable_conversations=True),
+        configure_observability=None,
+        lifecycle_authorizer=AsyncMock(return_value=True),
     )
     async with first.router.lifespan_context(first):
         async with httpx.AsyncClient(transport=httpx.ASGITransport(app=first), base_url="http://test") as client:

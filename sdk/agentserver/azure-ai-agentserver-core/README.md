@@ -270,8 +270,42 @@ async def on_shutdown():
 The host always registers the private platform routes
 `POST /_agent/before-snapshot` and `POST /_agent/after-restore`, with equivalent
 aliases at `POST /_before_snapshot` and `POST /_after_restore`. All four routes
-are processed by the framework, including restore validation and environment
-and configuration hydration. Registering application handlers is optional;
+require an explicitly configured async `lifecycle_authorizer`. The framework
+rejects requests with HTTP 403 unless this callable returns exactly `True`,
+before lifecycle payload parsing, environment/configuration changes, or hooks.
+Authorizer exceptions return a generic HTTP 500 without running lifecycle
+processing. Hosted mode and snapshot enablement do not bypass authorization.
+
+The authorizer must validate caller identity and permission for the requested
+lifecycle operation, not merely the presence of a header or a session ID.
+If using authentication middleware, validate credentials there and grant
+lifecycle permissions only to trusted lifecycle callers. For example, with
+Starlette authentication middleware that supplies a verified user and the
+`agent.lifecycle` scope:
+
+```python
+from starlette.requests import Request
+
+async def authorize_lifecycle(request: Request) -> bool:
+    user = request.scope.get("user")
+    auth = request.scope.get("auth")
+    return bool(
+        user is not None
+        and user.is_authenticated
+        and auth is not None
+        and "agent.lifecycle" in auth.scopes
+    )
+```
+
+This example denies requests if authentication middleware is absent. It does
+not implement credential validation itself. Existing platform callers must
+integrate authorization before upgrading; an external proxy or port
+authentication alone does not configure this SDK authorizer. Inference and
+readiness routes are not gated by `lifecycle_authorizer`.
+
+Authorized lifecycle requests are processed by the framework, including restore
+validation and environment and configuration hydration. Registering application
+handlers is optional;
 when absent, only the application callbacks are skipped. Use the hooks to
 release connections that must not be copied into a memory snapshot and rebuild
 them for the restored session:
@@ -279,7 +313,7 @@ them for the restored session:
 ```python
 from azure.ai.agentserver.core import AgentServerHost, AgentSessionContext
 
-app = AgentServerHost()
+app = AgentServerHost(lifecycle_authorizer=authorize_lifecycle)
 
 @app.before_snapshot_handler
 async def before_snapshot():

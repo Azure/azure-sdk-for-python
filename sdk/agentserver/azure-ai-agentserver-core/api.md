@@ -109,6 +109,7 @@ namespace azure.ai.agentserver.core
                 applicationinsights_connection_string: Optional[str] = ..., 
                 configure_observability: Optional[Callable[, None]] = _tracing.configure_observability, 
                 graceful_shutdown_timeout: Optional[int] = ..., 
+                lifecycle_authorizer: Optional[Callable[[Request], Awaitable[bool]]] = ...,
                 log_level: Optional[str] = ..., 
                 routes: Optional[list[Route]] = ..., 
                 **kwargs: Any

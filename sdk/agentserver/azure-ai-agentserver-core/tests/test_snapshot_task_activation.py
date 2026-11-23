@@ -13,7 +13,7 @@ from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import httpx
 import pytest
@@ -85,7 +85,11 @@ def payload(restore_id: str = "restore-1", session_id: str = "session-1") -> dic
 
 
 def host() -> AgentServerHost:
-    return AgentServerHost(configure_observability=None, graceful_shutdown_timeout=0)
+    return AgentServerHost(
+        configure_observability=None,
+        graceful_shutdown_timeout=0,
+        lifecycle_authorizer=AsyncMock(return_value=True),
+    )
 
 
 def client(app: AgentServerHost) -> httpx.AsyncClient:
