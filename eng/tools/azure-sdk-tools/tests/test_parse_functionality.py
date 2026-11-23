@@ -243,6 +243,52 @@ def test_parse_pyproject():
     assert parsed_project.namespace == "azure.keyvault.keys"
 
 
+@pytest.mark.parametrize(
+    "project_version, python_version, expected_version",
+    [("", None, "1.2.3"), ('version = "2.0.0"\n', "3.0.0", "2.0.0"), ("", "3.0.0", "3.0.0")],
+)
+def test_parse_pyproject_cargo_version(tmp_path, project_version, python_version, expected_version):
+    pyproject = tmp_path / "pyproject.toml"
+    pyproject.write_text(
+        '[project]\nname = "azure-native"\nrequires-python = ">=3.10"\n'
+        + (project_version or 'dynamic = ["version"]\n'),
+        encoding="utf-8",
+    )
+    (tmp_path / "Cargo.toml").write_text('[package]\nname = "native-crate"\nversion = "1.2.3"\n', encoding="utf-8")
+    if python_version:
+        (tmp_path / "_version.py").write_text(f'VERSION = "{python_version}"\n', encoding="utf-8")
+
+    parsed_project = ParsedSetup.from_path(str(pyproject))
+
+    assert parsed_project.version == expected_version
+    assert parsed_project.name == "azure-native"
+    assert parsed_project.python_requires == ">=3.10"
+    assert parsed_project.requires == []
+    assert parsed_project.is_pyproject
+
+
+@pytest.mark.parametrize("cargo_contents", [None, "[package]\nversion.workspace = true\n"])
+def test_parse_pyproject_without_version(tmp_path, cargo_contents):
+    (tmp_path / "pyproject.toml").write_text('[project]\nname = "azure-native"\n', encoding="utf-8")
+    if cargo_contents is not None:
+        (tmp_path / "Cargo.toml").write_text(cargo_contents, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="Unable to find a version value"):
+        ParsedSetup.from_path(str(tmp_path))
+
+
+@pytest.mark.parametrize("setup_version, expected_version", [("", "1.2.3"), (', version="2.0.0"', "2.0.0")])
+def test_parse_setup_py_cargo_version(tmp_path, setup_version, expected_version):
+    (tmp_path / "setup.py").write_text(f'setup(name="azure-native"{setup_version})\n', encoding="utf-8")
+    (tmp_path / "Cargo.toml").write_text('[package]\nname = "native-crate"\nversion = "1.2.3"\n', encoding="utf-8")
+
+    parsed_setup = ParsedSetup.from_path(str(tmp_path))
+
+    assert parsed_setup.version == expected_version
+    assert parsed_setup.name == "azure-native"
+    assert not parsed_setup.is_pyproject
+
+
 def test_parse_pyproject_extensions():
     # ensure that we can parse from a folder and a specific file
     parsed_project = ParsedSetup.from_path(pyproject_extension_scenario)

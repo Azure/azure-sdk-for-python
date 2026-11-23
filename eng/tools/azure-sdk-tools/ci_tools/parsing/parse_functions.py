@@ -513,6 +513,19 @@ def read_setup_py_content(setup_filename: str) -> str:
         return content
 
 
+def parse_cargo_toml(package_directory: str) -> Optional[str]:
+    """Return the version declared in a sibling Cargo.toml, if available."""
+    try:
+        with open(os.path.join(package_directory, "Cargo.toml"), "rb") as f:
+            manifest = toml.load(f)
+    except FileNotFoundError:
+        return None
+
+    package = manifest.get("package")
+    version = package.get("version") if isinstance(package, dict) else None
+    return version if isinstance(version, str) and version else None
+
+
 def parse_setup_py(
     setup_filename: str,
 ) -> Tuple[
@@ -581,7 +594,7 @@ def parse_setup_py(
     except KeyError as e:
         python_requires = ">=2.7"
 
-    version = kwargs.get("version")
+    version = kwargs.get("version") or parse_cargo_toml(working_dir)
     name = kwargs.get("name")
     name_space = name.replace("-", ".") if name else ""
     packages = kwargs.get("packages", [])
@@ -661,6 +674,7 @@ def parse_pyproject(
     # to create an egginfo folder. This is a very expensive operation goes against the entire point of
     # "give me the package metadata for this folder."
     # We can avoid this expensive operation if we parse the version out of the _version or version file directly.
+    package_directory = os.path.dirname(pyproject_filename)
     parsed_version = project_config.get("version", None)
 
     if not parsed_version:
@@ -668,25 +682,27 @@ def parse_pyproject(
 
         if parsed_version_py:
             with open(parsed_version_py, "r") as f:
-                parsed_version = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
+                match = re.search(VERSION_REGEX, f.read(), re.MULTILINE)
+                if match:
+                    parsed_version = match.group(1)
 
-                if parsed_version:
-                    parsed_version = parsed_version.group(1)
-                else:
-                    parsed_version = "0.0.0"
-        else:
+        if not parsed_version:
+            parsed_version = parse_cargo_toml(package_directory)
+        if not parsed_version and parsed_version_py:
+            parsed_version = "0.0.0"
+        if not parsed_version:
             raise ValueError(
-                f'Unable to find a version value directly set in "{pyproject_filename}", nor is it available in a "version.py" or "_version.py."'
+                f'Unable to find a version value directly set in "{pyproject_filename}", '
+                'or in "version.py", "_version.py", or "Cargo.toml".'
             )
 
     name = project_config.get("name")
     version = parsed_version
     python_requires = project_config.get("requires-python")
-    requires = project_config.get("dependencies")
+    requires = project_config.get("dependencies", [])
     is_new_sdk = name in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x).name in NEW_REQ_PACKAGES), requires))
 
     # Discover the actual namespace by walking the package directory
-    package_directory = os.path.dirname(pyproject_filename)
     discovered_namespace = discover_namespace(package_directory)
     name_space = discovered_namespace if discovered_namespace else name.replace("-", ".")
     package_data = get_value_from_dict(toml_dict, "tool.setuptools.package-data", None)
