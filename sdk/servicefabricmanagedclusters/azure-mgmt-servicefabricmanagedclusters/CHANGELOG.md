@@ -1,5 +1,25 @@
 # Release History
 
+## 3.1.0b3 (2026-11-23)
+
+### Features Added
+
+  - Model `NodeTypeProperties` added property `data_disk_caching`
+  - Model `NodeTypeProperties` added property `data_disk_iops_read_write`
+  - Model `NodeTypeProperties` added property `data_disk_m_bps_read_write`
+  - Model `NodeTypeProperties` added property `data_disk_write_accelerator_enabled`
+  - Model `NodeTypeProperties` added property `sku_profile`
+  - Model `VmssDataDisk` added property `caching`
+  - Model `VmssDataDisk` added property `disk_iops_read_write`
+  - Model `VmssDataDisk` added property `disk_m_bps_read_write`
+  - Model `VmssDataDisk` added property `write_accelerator_enabled`
+  - Added enum `AllocationStrategy`
+  - Added enum `DiskCachingType`
+  - Added model `ReimageAllDisksParameters`
+  - Added model `SkuProfile`
+  - Added model `SkuProfileVmSize`
+  - Model `NodeTypesOperations` added method `begin_reimage_all_disks`
+
 ## 3.1.0b2 (2026-08-31)
 
 ### Other Changes

@@ -88,6 +88,7 @@ from ...operations._operations import (
     build_node_types_list_by_managed_clusters_request,
     build_node_types_list_fault_simulation_request,
     build_node_types_redeploy_request,
+    build_node_types_reimage_all_disks_request,
     build_node_types_reimage_request,
     build_node_types_restart_request,
     build_node_types_start_fault_simulation_request,
@@ -1839,7 +1840,7 @@ class ApplicationsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _fetch_health_initial(
         self,
@@ -2025,7 +2026,7 @@ class ApplicationsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_fetch_health(
         self,
@@ -2113,7 +2114,7 @@ class ApplicationsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _restart_deployed_code_package_initial(
         self,
@@ -2303,7 +2304,7 @@ class ApplicationsOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_restart_deployed_code_package(
         self,
@@ -4731,7 +4732,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _restart_replica_initial(
         self,
@@ -4825,7 +4826,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """A long-running resource action.
+        """Restarts one or more replicas of a Service Fabric managed service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -4859,7 +4860,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """A long-running resource action.
+        """Restarts one or more replicas of a Service Fabric managed service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -4893,7 +4894,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """A long-running resource action.
+        """Restarts one or more replicas of a Service Fabric managed service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -4929,7 +4930,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview"],
+        api_versions_list=["2025-10-01-preview", "2026-02-01", "2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_restart_replica(
         self,
@@ -4940,7 +4941,7 @@ class ServicesOperations:  # pylint: disable=docstring-missing-param
         parameters: Union[_models.RestartReplicaRequest, _types.RestartReplicaRequest, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """A long-running resource action.
+        """Restarts one or more replicas of a Service Fabric managed service.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
@@ -6502,7 +6503,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_fault_simulation(
         self,
@@ -6599,7 +6600,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2026-05-01-preview": ["api_version", "subscription_id", "resource_group_name", "cluster_name", "accept"]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     def list_fault_simulation(
         self, resource_group_name: str, cluster_name: str, **kwargs: Any
@@ -6714,7 +6715,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _start_fault_simulation_initial(
         self,
@@ -6891,7 +6892,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_start_fault_simulation(
         self,
@@ -6986,7 +6987,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _stop_fault_simulation_initial(
         self,
@@ -7163,7 +7164,7 @@ class ManagedClustersOperations:  # pylint: disable=docstring-missing-param
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_stop_fault_simulation(
         self,
@@ -7457,7 +7458,7 @@ class ManagedApplyMaintenanceWindowOperations:  # pylint: disable=docstring-miss
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def post(
         self,
@@ -9459,6 +9460,276 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    async def _reimage_all_disks_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.ReimageAllDisksParameters, _types.ReimageAllDisksParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_node_types_reimage_all_disks_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            node_type_name=node_type_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Azure-AsyncOperation"] = self._deserialize(
+            "str", response.headers.get("Azure-AsyncOperation")
+        )
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def begin_reimage_all_disks(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: _models.ReimageAllDisksParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Reimages a single node on the node type, including its OS disk and all data disks.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: The content of the action request. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ReimageAllDisksParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_reimage_all_disks(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: _types.ReimageAllDisksParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Reimages a single node on the node type, including its OS disk and all data disks.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: The content of the action request. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.types.ReimageAllDisksParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_reimage_all_disks(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Reimages a single node on the node type, including its OS disk and all data disks.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: The content of the action request. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-09-01-preview",
+        params_added_on={
+            "2026-09-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "node_type_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-09-01-preview"],
+    )
+    async def begin_reimage_all_disks(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        node_type_name: str,
+        parameters: Union[_models.ReimageAllDisksParameters, _types.ReimageAllDisksParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        """Reimages a single node on the node type, including its OS disk and all data disks.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster resource. Required.
+        :type cluster_name: str
+        :param node_type_name: The name of the node type. Required.
+        :type node_type_name: str
+        :param parameters: The content of the action request. Is either a ReimageAllDisksParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.servicefabricmanagedclusters.models.ReimageAllDisksParameters or
+         ~azure.mgmt.servicefabricmanagedclusters.types.ReimageAllDisksParameters or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns None
+        :rtype: ~azure.core.polling.AsyncLROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._reimage_all_disks_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                node_type_name=node_type_name,
+                parameters=parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
     async def _restart_initial(
         self,
         resource_group_name: str,
@@ -9963,7 +10234,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _start_fault_simulation_initial(
         self,
@@ -10152,7 +10423,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_start_fault_simulation(
         self,
@@ -10252,7 +10523,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def _stop_fault_simulation_initial(
         self,
@@ -10441,7 +10712,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "content_type",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def begin_stop_fault_simulation(
         self,
@@ -10633,7 +10904,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     async def get_fault_simulation(
         self,
@@ -10741,7 +11012,7 @@ class NodeTypesOperations:  # pylint: disable=docstring-missing-param,too-many-p
                 "accept",
             ]
         },
-        api_versions_list=["2026-05-01-preview"],
+        api_versions_list=["2026-05-01-preview", "2026-09-01-preview"],
     )
     def list_fault_simulation(
         self, resource_group_name: str, cluster_name: str, node_type_name: str, **kwargs: Any

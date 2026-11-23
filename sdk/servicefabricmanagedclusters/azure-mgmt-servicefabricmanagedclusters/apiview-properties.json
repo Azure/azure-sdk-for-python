@@ -76,6 +76,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.OperationResult": "Microsoft.ServiceFabric.OperationResult",
         "azure.mgmt.servicefabricmanagedclusters.models.PartitionInstanceCountScaleMechanism": "Microsoft.ServiceFabric.PartitionInstanceCountScaleMechanism",
         "azure.mgmt.servicefabricmanagedclusters.models.ProxyAgentSettings": "Microsoft.ServiceFabric.ProxyAgentSettings",
+        "azure.mgmt.servicefabricmanagedclusters.models.ReimageAllDisksParameters": "Microsoft.ServiceFabric.ReimageAllDisksParameters",
         "azure.mgmt.servicefabricmanagedclusters.models.ResourceAzStatus": "Microsoft.ServiceFabric.ResourceAzStatus",
         "azure.mgmt.servicefabricmanagedclusters.models.RestartDeployedCodePackageRequest": "Microsoft.ServiceFabric.RestartDeployedCodePackageRequest",
         "azure.mgmt.servicefabricmanagedclusters.models.RestartReplicaRequest": "Microsoft.ServiceFabric.RestartReplicaRequest",
@@ -105,6 +106,8 @@
         "azure.mgmt.servicefabricmanagedclusters.models.SettingsSectionDescription": "Microsoft.ServiceFabric.SettingsSectionDescription",
         "azure.mgmt.servicefabricmanagedclusters.models.SingletonPartitionScheme": "Microsoft.ServiceFabric.SingletonPartitionScheme",
         "azure.mgmt.servicefabricmanagedclusters.models.Sku": "Microsoft.ServiceFabric.Sku",
+        "azure.mgmt.servicefabricmanagedclusters.models.SkuProfile": "Microsoft.ServiceFabric.SkuProfile",
+        "azure.mgmt.servicefabricmanagedclusters.models.SkuProfileVmSize": "Microsoft.ServiceFabric.SkuProfileVmSize",
         "azure.mgmt.servicefabricmanagedclusters.models.StatefulServiceProperties": "Microsoft.ServiceFabric.StatefulServiceProperties",
         "azure.mgmt.servicefabricmanagedclusters.models.StatelessServiceProperties": "Microsoft.ServiceFabric.StatelessServiceProperties",
         "azure.mgmt.servicefabricmanagedclusters.models.Subnet": "Microsoft.ServiceFabric.Subnet",
@@ -163,6 +166,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.DiskType": "Microsoft.ServiceFabric.DiskType",
         "azure.mgmt.servicefabricmanagedclusters.models.VmssExtensionSetupOrder": "Microsoft.ServiceFabric.VmssExtensionSetupOrder",
         "azure.mgmt.servicefabricmanagedclusters.models.IPAddressType": "Microsoft.ServiceFabric.IPAddressType",
+        "azure.mgmt.servicefabricmanagedclusters.models.DiskCachingType": "Microsoft.ServiceFabric.DiskCachingType",
         "azure.mgmt.servicefabricmanagedclusters.models.EvictionPolicyType": "Microsoft.ServiceFabric.EvictionPolicyType",
         "azure.mgmt.servicefabricmanagedclusters.models.VmSetupAction": "Microsoft.ServiceFabric.VmSetupAction",
         "azure.mgmt.servicefabricmanagedclusters.models.SecurityType": "Microsoft.ServiceFabric.SecurityType",
@@ -170,6 +174,7 @@
         "azure.mgmt.servicefabricmanagedclusters.models.PrivateIPAddressVersion": "Microsoft.ServiceFabric.PrivateIPAddressVersion",
         "azure.mgmt.servicefabricmanagedclusters.models.PublicIPAddressVersion": "Microsoft.ServiceFabric.PublicIPAddressVersion",
         "azure.mgmt.servicefabricmanagedclusters.models.ScaleInPolicyMode": "Microsoft.ServiceFabric.ScaleInPolicyMode",
+        "azure.mgmt.servicefabricmanagedclusters.models.AllocationStrategy": "Microsoft.ServiceFabric.AllocationStrategy",
         "azure.mgmt.servicefabricmanagedclusters.models.UpdateType": "Microsoft.ServiceFabric.UpdateType",
         "azure.mgmt.servicefabricmanagedclusters.models.NodeTypeSkuScaleType": "Microsoft.ServiceFabric.NodeTypeSkuScaleType",
         "azure.mgmt.servicefabricmanagedclusters.operations.Operations.list": "Microsoft.ServiceFabric.Operations.list",
@@ -284,6 +289,8 @@
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.NodeTypesOperations.begin_redeploy": "Microsoft.ServiceFabric.NodeTypes.redeploy",
         "azure.mgmt.servicefabricmanagedclusters.operations.NodeTypesOperations.begin_reimage": "Microsoft.ServiceFabric.NodeTypes.reimage",
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.NodeTypesOperations.begin_reimage": "Microsoft.ServiceFabric.NodeTypes.reimage",
+        "azure.mgmt.servicefabricmanagedclusters.operations.NodeTypesOperations.begin_reimage_all_disks": "Microsoft.ServiceFabric.NodeTypes.reimageAllDisks",
+        "azure.mgmt.servicefabricmanagedclusters.aio.operations.NodeTypesOperations.begin_reimage_all_disks": "Microsoft.ServiceFabric.NodeTypes.reimageAllDisks",
         "azure.mgmt.servicefabricmanagedclusters.operations.NodeTypesOperations.begin_restart": "Microsoft.ServiceFabric.NodeTypes.restart",
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.NodeTypesOperations.begin_restart": "Microsoft.ServiceFabric.NodeTypes.restart",
         "azure.mgmt.servicefabricmanagedclusters.operations.NodeTypesOperations.begin_start": "Microsoft.ServiceFabric.NodeTypes.start",
@@ -303,5 +310,5 @@
         "azure.mgmt.servicefabricmanagedclusters.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get",
         "azure.mgmt.servicefabricmanagedclusters.aio.operations.OperationStatusOperations.get": "Microsoft.ServiceFabric.OperationStatus.get"
     },
-    "CrossLanguageVersion": "b8ac014fcadd"
+    "CrossLanguageVersion": "ca31a090e9b9"
 }
