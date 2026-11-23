@@ -17,12 +17,110 @@ from ... import models as _models
 from ..._utils.model_base import _deserialize
 from ..._utils.polling import AsyncAIProjectsLROBasePolling
 from ...models import AsyncEvaluatorGenerationLROPoller
+from ...operations._patch_evaluators import _add_evaluations_preview_header
 
 JSON = MutableMapping[str, Any]
 
 
 class EvaluatorsOperations(EvaluatorsOperationsGenerated):
-    """Custom async operations for evaluator generation jobs."""
+    """Custom async evaluator operations."""
+
+    @overload
+    async def create_version(
+        self,
+        name: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    async def create_version(
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    async def create_version(
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @distributed_trace_async
+    async def create_version(
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier. Custom
+        prompt-based, code-based, and endpoint-based evaluators are in preview. To create them,
+        construct the client with ``allow_preview=True``.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
+         Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _add_evaluations_preview_header(getattr(self._config, "allow_preview", False), kwargs)
+        return await super().create_version(name, evaluator_version, **kwargs)
+
+    @overload
+    async def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    async def update_version(
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    async def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @distributed_trace_async
+    async def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place. Custom prompt-based, code-based, and
+        endpoint-based evaluators are in preview. To update them, construct the client with
+        ``allow_preview=True``.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
+         JSON, IO[bytes] Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _add_evaluations_preview_header(getattr(self._config, "allow_preview", False), kwargs)
+        return await super().update_version(name, version, evaluator_version, **kwargs)
 
     @overload
     async def begin_create_generation_job(

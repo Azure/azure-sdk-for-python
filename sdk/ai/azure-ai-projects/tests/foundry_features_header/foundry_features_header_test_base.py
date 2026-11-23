@@ -97,6 +97,14 @@ _NON_BETA_OPTIONAL_TEST_CASES = [
         "evaluation_rules.create_or_update",
         "Evaluations=V1Preview",
     ),
+    pytest.param(
+        "evaluators.create_version",
+        "Evaluations=V1Preview",
+    ),
+    pytest.param(
+        "evaluators.update_version",
+        "Evaluations=V1Preview",
+    ),
 ]
 
 GA_VOICE_OPERATION_PATHS = (

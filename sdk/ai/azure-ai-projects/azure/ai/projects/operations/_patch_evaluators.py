@@ -17,12 +17,131 @@ from .. import models as _models
 from .._utils.model_base import _deserialize
 from .._utils.polling import AIProjectsLROBasePolling
 from ..models import EvaluatorGenerationLROPoller
+from ..models._enums import _FoundryFeaturesOptInKeys
+from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 
 JSON = MutableMapping[str, Any]
 
 
+def _add_evaluations_preview_header(allow_preview: bool, kwargs: MutableMapping[str, Any]) -> None:
+    """Add the Evaluations preview opt-in header to *kwargs* when *allow_preview* is enabled.
+
+    The service requires ``Foundry-Features: Evaluations=V1Preview`` to create or update custom
+    prompt-based, code-based, and endpoint-based evaluators. A caller-supplied Foundry-Features
+    header is left unchanged.
+
+    :param allow_preview: Whether the client was constructed with ``allow_preview=True``.
+    :type allow_preview: bool
+    :param kwargs: Keyword arguments for the operation. Updated in place.
+    :type kwargs: MutableMapping[str, Any]
+    """
+    if not allow_preview:
+        return
+    headers = case_insensitive_dict(kwargs.get("headers") or {})
+    if _FOUNDRY_FEATURES_HEADER_NAME not in headers:
+        headers[_FOUNDRY_FEATURES_HEADER_NAME] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+    kwargs["headers"] = headers
+
+
 class EvaluatorsOperations(EvaluatorsOperationsGenerated):
-    """Custom operations for evaluator generation jobs."""
+    """Custom evaluator operations."""
+
+    @overload
+    def create_version(
+        self,
+        name: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    def create_version(
+        self, name: str, evaluator_version: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @distributed_trace
+    def create_version(
+        self, name: str, evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]], **kwargs: Any
+    ) -> _models.EvaluatorVersion:
+        """Create an evaluator version.
+
+        Creates a new evaluator version with an auto-incremented version identifier. Custom
+        prompt-based, code-based, and endpoint-based evaluators are in preview. To create them,
+        construct the client with ``allow_preview=True``.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param evaluator_version: Is one of the following types: EvaluatorVersion, JSON, IO[bytes]
+         Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _add_evaluations_preview_header(getattr(self._config, "allow_preview", False), kwargs)
+        return super().create_version(name, evaluator_version, **kwargs)
+
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: _models.EvaluatorVersion,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    def update_version(
+        self, name: str, version: str, evaluator_version: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.EvaluatorVersion: ...
+
+    @overload
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion: ...
+
+    @distributed_trace
+    def update_version(
+        self,
+        name: str,
+        version: str,
+        evaluator_version: Union[_models.EvaluatorVersion, JSON, IO[bytes]],
+        **kwargs: Any,
+    ) -> _models.EvaluatorVersion:
+        """Update an evaluator version.
+
+        Updates the specified evaluator version in place. Custom prompt-based, code-based, and
+        endpoint-based evaluators are in preview. To update them, construct the client with
+        ``allow_preview=True``.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The version of the EvaluatorVersion to update. Required.
+        :type version: str
+        :param evaluator_version: Evaluator resource. Is one of the following types: EvaluatorVersion,
+         JSON, IO[bytes] Required.
+        :type evaluator_version: ~azure.ai.projects.models.EvaluatorVersion or JSON or IO[bytes]
+        :return: EvaluatorVersion. The EvaluatorVersion is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.EvaluatorVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _add_evaluations_preview_header(getattr(self._config, "allow_preview", False), kwargs)
+        return super().update_version(name, version, evaluator_version, **kwargs)
 
     @overload
     def begin_create_generation_job(
