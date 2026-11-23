@@ -26,7 +26,7 @@ class TestNetworkManagementExpressRouteLagAuthorizationsOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             authorization_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
@@ -51,7 +51,7 @@ class TestNetworkManagementExpressRouteLagAuthorizationsOperationsAsync(AzureMgm
                     },
                     "type": "str",
                 },
-                api_version="2026-03-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -66,7 +66,7 @@ class TestNetworkManagementExpressRouteLagAuthorizationsOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 express_route_lag_name="str",
                 authorization_name="str",
-                api_version="2026-03-01",
+                api_version="2026-05-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -79,7 +79,7 @@ class TestNetworkManagementExpressRouteLagAuthorizationsOperationsAsync(AzureMgm
         response = self.client.express_route_lag_authorizations.list(
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestNetworkManagementExpressRouteLagAuthorizationsOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             express_route_lag_name="str",
             authorization_name="str",
-            api_version="2026-03-01",
+            api_version="2026-05-01",
         )
 
         # please add some check logic here by yourself
