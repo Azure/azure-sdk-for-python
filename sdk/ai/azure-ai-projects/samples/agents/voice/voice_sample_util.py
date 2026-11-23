@@ -61,6 +61,8 @@ def hold_sample_conversation(
                 # The stored conversation ID arrives at session creation, not response.done.
                 conversation_id = event.conversation_id or conversation_id
             if isinstance(event, RealtimeServerEventResponseDone):
+                if event.response.status != "completed":
+                    raise RuntimeError(f"Realtime response finished with status {event.response.status!r}.")
                 break
             if isinstance(event, RealtimeServerEventError):
                 raise RuntimeError(f"Session error while holding a sample conversation: {event.error.message}")
@@ -75,7 +77,9 @@ def hold_sample_conversation(
     conversations = project_client.voice_agents.conversations
     for _ in range(_FINALIZE_POLL_ATTEMPTS):
         conversation = conversations.get(agent_name, conversation_id)
-        if conversation.status != VoiceConversationStatus.IN_PROGRESS:
+        if conversation.status == VoiceConversationStatus.FAILED:
+            raise RuntimeError(f"Conversation {conversation_id} failed during persistence finalization.")
+        if conversation.status == VoiceConversationStatus.COMPLETED:
             break
         time.sleep(_FINALIZE_POLL_INTERVAL)
     else:
