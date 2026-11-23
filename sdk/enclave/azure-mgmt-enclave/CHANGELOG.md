@@ -47,7 +47,7 @@
   - Added model `SyncDestinationStatus`
   - Added model `SyncPerformedBy`
   - Added enum `SyncStatus`
-  - Model `CommunityEndpointsOperations` added method `begin_sync`
+  - Operation group `CommunityEndpointsOperations` added method `begin_sync`
 
 ### Breaking Changes
 
@@ -55,8 +55,11 @@
   - Model `VirtualEnclavePatchProperties` deleted or renamed its instance variable `enclave_virtual_network`
   - Model `VirtualEnclaveProperties` deleted or renamed its instance variable `enclave_address_spaces`
   - Model `VirtualEnclaveProperties` deleted or renamed its instance variable `enclave_virtual_network`
-  - Deleted or renamed model `EnclaveAddressSpacesModel`
   - Deleted or renamed model `EnclaveVirtualNetworkModel`
+
+### Other Changes
+
+  - Deleted model `EnclaveAddressSpacesModel` which actually were not used by SDK users
 
 ## 1.0.0 (2026-08-27)
 
