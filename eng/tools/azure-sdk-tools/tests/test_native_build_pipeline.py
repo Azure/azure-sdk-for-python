@@ -17,6 +17,8 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[4]
 TEMPLATES = REPO_ROOT / "eng" / "pipelines" / "templates"
 RUST_GATE = "${{ if parameters.InstallMsRustToolchain }}"
+RUST_BUILD_GATE = "${{ if eq(rustBuild, 'true') }}"
+RUST_BUILD_LOOP = "${{ each rustBuild in split('false,true', ',') }}"
 RUST_PARAMETERS = (
     "InstallMsRustToolchain",
     "MsRustWorkingDirectory",
@@ -27,6 +29,11 @@ RUST_PARAMETERS = (
 
 def load_template(relative_path):
     return yaml.safe_load((TEMPLATES / relative_path).read_text())
+
+
+def package_build_step():
+    steps = load_template("steps/build-package-artifacts.yml")["steps"]
+    return next(step[RUST_BUILD_LOOP][0] for step in steps if RUST_BUILD_LOOP in step)
 
 
 def run_powershell(script, **environment):
@@ -71,7 +78,10 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
 
     job_defaults = {parameter["name"]: parameter.get("default") for parameter in jobs["parameters"]}
     assert job_defaults["BuildTimeoutInMinutes"] == 90
-    timeout_gate = "${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}"
+    timeout_gate = (
+        "${{ if and(or(parameters.InstallMsRustToolchain, eq(parameters.ServiceDirectory, 'auto')), "
+        "lt(parameters.BuildTimeoutInMinutes, 240)) }}"
+    )
     for job in jobs["jobs"]:
         if job.get("job") not in ("Build_Linux", "Build_Windows", "Build_MacOS"):
             continue
@@ -83,19 +93,25 @@ def test_rust_support_is_disabled_by_default_and_forwarded():
 
 def test_rust_credentials_and_target_setup_are_opt_in():
     build = load_template("steps/build-package-artifacts.yml")
-    install = next(step[RUST_GATE][0] for step in build["steps"] if RUST_GATE in step)
+    install = next(step for step in build["steps"] if step.get("template", "").endswith("install-msrust-toolchain.yml"))
     assert install["template"].endswith("install-msrust-toolchain.yml")
     assert install["parameters"]["Condition"] == "and(succeeded(), eq(variables['ENABLE_RUST_BUILD'], 'true'))"
-    assert install["parameters"]["ToolchainFeed"] == "${{ parameters.MsRustToolchainFeed }}"
+    assert install["parameters"]["ToolchainFeed"] == (
+        "${{ coalesce(parameters.MsRustToolchainFeed, '$(RESOLVED_MS_RUST_FEED)') }}"
+    )
+    assert install["parameters"]["WorkingDirectory"] == (
+        "${{ coalesce(parameters.MsRustWorkingDirectory, '$(RESOLVED_MS_RUST_DIRECTORY)') }}"
+    )
     assert install["parameters"]["${{ if eq(parameters.ArtifactSuffix, 'windows') }}"] == {
-        "AdditionalTargets": "${{ parameters.MsRustAdditionalTargets }}"
+        "AdditionalTargets": "${{ coalesce(parameters.MsRustAdditionalTargets, '$(RESOLVED_MS_RUST_TARGETS)') }}"
     }
 
-    generate = next(step for step in build["steps"] if step.get("displayName") == "Generate Packages")
-    assert generate[RUST_GATE]["timeoutInMinutes"] == 210
+    generate = package_build_step()
+    assert "eq(variables['ENABLE_RUST_BUILD'], '${{ rustBuild }}')" in generate["condition"]
+    assert generate[RUST_BUILD_GATE]["timeoutInMinutes"] == 210
     assert generate["${{ else }}"]["timeoutInMinutes"] == 80
     assert generate["env"]["LOGLEVEL"] == "$(SDK_BUILD_LOGLEVEL)"
-    assert generate["env"][RUST_GATE]["MSRUSTUP_ACCESS_TOKEN"] == "$(System.AccessToken)"
+    assert generate["env"][RUST_BUILD_GATE]["MSRUSTUP_ACCESS_TOKEN"] == "$(System.AccessToken)"
     assert "MSRUSTUP_ACCESS_TOKEN" not in generate["env"]
 
     installer = load_template("steps/install-msrust-toolchain.yml")
@@ -106,7 +122,7 @@ def test_rust_credentials_and_target_setup_are_opt_in():
     provision = next(
         step for step in build["steps"] if step.get("displayName") == "Pre-provision CPython for cibuildwheel"
     )
-    assert provision["env"]["INSTALL_MS_RUST_TOOLCHAIN"] == "${{ format('{0}', parameters.InstallMsRustToolchain) }}"
+    assert provision["env"]["INSTALL_MS_RUST_TOOLCHAIN"] == "$(ENABLE_RUST_BUILD)"
     assert "variable=AZURESDK_PYTHON_NUGET_FEED]" in provision["pwsh"]
     assert "variable=AZURESDK_PYTHON_ARM64_LIBS]true" in provision["pwsh"]
     assert "variable=PYTHON_ARM64_LIB_DIR]" not in provision["pwsh"]
@@ -184,9 +200,7 @@ def test_live_test_rust_support_is_opt_in_and_forwarded():
         step for step in steps if isinstance(step, dict) and step.get("template", "").endswith("build-test.yml")
     )
     credentials = test["parameters"]["EnvVars"][RUST_GATE]
-    build = load_template("steps/build-package-artifacts.yml")
-    generate = next(step for step in build["steps"] if step.get("displayName") == "Generate Packages")
-    assert credentials == generate["env"][RUST_GATE]
+    assert credentials == package_build_step()["env"][RUST_BUILD_GATE]
     assert "${{ insert }}" in test["parameters"]["EnvVars"]
     assert steps.index(next(step for step in steps if isinstance(step, dict) and RUST_GATE in step)) < steps.index(test)
 
@@ -212,7 +226,7 @@ def test_live_test_container_forwarding_preserves_non_rust_builds(enabled):
     build_forwarding = next(
         step for step in build_steps if step.get("displayName") == "Forward build environment to cibuildwheel"
     )
-    assert configure["env"] == build_forwarding["env"]
+    assert configure["env"][RUST_GATE] == build_forwarding["env"]
     extra = configure["env"][RUST_GATE]["RUST_ENVIRONMENT_PASS"] if enabled else ""
     result = run_powershell(configure["pwsh"], RUST_ENVIRONMENT_PASS=extra)
     assert result.returncode == 0, result.stderr
@@ -238,8 +252,11 @@ def test_platform_selection_uses_artifact_opt_in(tmp_path, sign_binaries):
 
 
 @pytest.mark.parametrize("relative", [False, True])
-@pytest.mark.parametrize("rust", [False, True])
-def test_platform_selection_enables_rust_only_for_rust_packages(tmp_path, rust, relative):
+@pytest.mark.parametrize(
+    "mode,rust",
+    [("explicit", True), ("auto", True), ("auto", False), ("disabled", True), ("unconfigured", True)],
+)
+def test_platform_selection_enables_rust_only_for_opted_in_rust_packages(tmp_path, mode, rust, relative):
     package_directory = tmp_path / "sdk" / "example" / "example-native-package"
     package_directory.mkdir(parents=True)
     if rust:
@@ -250,25 +267,125 @@ def test_platform_selection_enables_rust_only_for_rust_packages(tmp_path, rust, 
         "Name": "example-native-package",
         "DirectoryPath": "sdk/example/example-native-package" if relative else str(package_directory),
         "ArtifactDetails": {"signBinaries": True},
+        "CIParameters": {
+            "InstallMsRustToolchain": mode != "unconfigured",
+            "MsRustWorkingDirectory": "$(Build.SourcesDirectory)/sdk/example/example-native-package",
+            "MsRustToolchainFeed": "https://example.test/nuget/v3/index.json",
+            "MsRustAdditionalTargets": "aarch64-pc-windows-msvc",
+        },
     }
     (info_folder / "example-native-package.json").write_text(json.dumps(package_info))
     resolver = load_template("steps/resolve-build-platforms.yml")["steps"][0]["pwsh"]
     resolver = resolver.replace("${{ parameters.PackagePropertiesFolder }}", str(info_folder))
+    # Simulate macro expansion before PowerShell runs, but not inside the saved package JSON.
+    resolver = resolver.replace("$(Build.SourcesDirectory)", str(tmp_path))
 
-    result = run_powershell(resolver, BUILD_SOURCESDIRECTORY=str(tmp_path))
+    result = run_powershell(
+        resolver,
+        BUILD_SOURCESDIRECTORY=str(tmp_path),
+        INSTALL_MS_RUST_TOOLCHAIN=str(mode == "explicit"),
+        AUTO_RESOLVE_MS_RUST=str(mode in ("auto", "unconfigured")),
+    )
 
     assert result.returncode == 0, result.stderr
     assert "variable=ENABLE_EXTENSION_BUILD]true" in result.stdout
-    assert ("variable=ENABLE_RUST_BUILD]true" in result.stdout) is rust
+    enabled = rust and mode in ("explicit", "auto")
+    assert f"variable=ENABLE_RUST_BUILD]{str(enabled).lower()}" in result.stdout
     assert "No targeted package declares compiled binaries" not in result.stdout
+    if rust and mode == "auto":
+        assert "variable=RESOLVED_MS_RUST_FEED]https://example.test/nuget/v3/index.json" in result.stdout
+        assert "variable=RESOLVED_MS_RUST_TARGETS]aarch64-pc-windows-msvc" in result.stdout
+        assert f"variable=RESOLVED_MS_RUST_DIRECTORY]{tmp_path}/sdk/example/example-native-package" in result.stdout
 
 
-def test_pull_request_pipeline_enables_rust_for_transfer_package():
+def test_pull_request_pipeline_has_no_service_specific_rust_settings():
     pipeline = yaml.safe_load((REPO_ROOT / "eng" / "pipelines" / "pullrequest.yml").read_text())
-    storage = yaml.safe_load((REPO_ROOT / "sdk" / "storage" / "ci.yml").read_text())
     parameters = pipeline["extends"]["parameters"]
-    assert parameters["InstallMsRustToolchain"] is True
-    assert all(parameters[name] == storage["extends"]["parameters"][name] for name in RUST_PARAMETERS)
+    assert not any(name in parameters for name in RUST_PARAMETERS)
+    build = load_template("steps/build-package-artifacts.yml")
+    resolver = next(step for step in build["steps"] if step.get("template", "").endswith("resolve-build-platforms.yml"))
+    assert resolver["parameters"]["AutoResolveMsRust"] == "${{ eq(parameters.ServiceDirectory, 'auto') }}"
+
+
+@pytest.mark.parametrize("package", ["azure-storage-extensionstransfer", "azure-storage-extensions"])
+def test_service_rust_configuration_flows_through_package_discovery(tmp_path, package):
+    storage = yaml.safe_load((REPO_ROOT / "sdk" / "storage" / "ci.yml").read_text())
+    result = run_powershell(
+        """
+        $ErrorActionPreference = 'Stop'
+        . (Join-Path $env:BUILD_SOURCESDIRECTORY 'eng/common/scripts/common.ps1')
+        function uv {}
+        function python { $env:MOCK_PACKAGE_ROW }
+        function CompatibleConvertFrom-Yaml {
+            param([Parameter(ValueFromPipeline)] [string]$Content)
+            ConvertFrom-Json -InputObject $env:MOCK_SERVICE_CI -AsHashtable
+        }
+        Push-Location $env:BUILD_SOURCESDIRECTORY
+        $package = Get-AllPackageInfoFromRepo 'storage'
+        Write-Output ("PACKAGE_INFO:" + ($package | ConvertTo-Json -Depth 20 -Compress))
+        """,
+        BUILD_SOURCESDIRECTORY=str(REPO_ROOT),
+        SYSTEM_TEAMPROJECTID="test",
+        MOCK_PACKAGE_ROW=f"{package} 0.1.0 True {REPO_ROOT / 'sdk' / 'storage' / package} ",
+        MOCK_SERVICE_CI=json.dumps(storage),
+    )
+    assert result.returncode == 0, result.stderr
+    info = json.loads(
+        next(
+            line.removeprefix("PACKAGE_INFO:")
+            for line in result.stdout.splitlines()
+            if line.startswith("PACKAGE_INFO:")
+        )
+    )
+    rust = package == "azure-storage-extensionstransfer"
+    if rust:
+        assert all(info["CIParameters"][name] == storage["extends"]["parameters"][name] for name in RUST_PARAMETERS)
+    else:
+        assert not any(name in info["CIParameters"] for name in RUST_PARAMETERS)
+    (tmp_path / f"{package}.json").write_text(json.dumps(info))
+    resolver = load_template("steps/resolve-build-platforms.yml")["steps"][0]["pwsh"]
+    result = run_powershell(
+        resolver.replace("${{ parameters.PackagePropertiesFolder }}", str(tmp_path)),
+        BUILD_SOURCESDIRECTORY=str(REPO_ROOT),
+        INSTALL_MS_RUST_TOOLCHAIN="false",
+        AUTO_RESOLVE_MS_RUST="true",
+    )
+    assert result.returncode == 0, result.stderr
+    assert f"variable=ENABLE_RUST_BUILD]{str(rust).lower()}" in result.stdout
+    if rust:
+        assert f"variable=RESOLVED_MS_RUST_FEED]{info['CIParameters']['MsRustToolchainFeed']}" in result.stdout
+        assert f"variable=RESOLVED_MS_RUST_TARGETS]{info['CIParameters']['MsRustAdditionalTargets']}" in result.stdout
+
+
+def test_auto_targeting_rejects_conflicting_rust_configurations(tmp_path):
+    for service in ("one", "two"):
+        directory = tmp_path / service
+        directory.mkdir()
+        (directory / "rust-toolchain.toml").write_text('[toolchain]\nchannel = "ms-prod-1.97"\n')
+        (tmp_path / f"{service}.json").write_text(
+            json.dumps(
+                {
+                    "Name": service,
+                    "DirectoryPath": str(directory),
+                    "ArtifactDetails": {"signBinaries": True},
+                    "CIParameters": {
+                        "InstallMsRustToolchain": True,
+                        "MsRustWorkingDirectory": str(directory),
+                        "MsRustToolchainFeed": f"https://{service}.test/nuget/v3/index.json",
+                    },
+                }
+            )
+        )
+    resolver = load_template("steps/resolve-build-platforms.yml")["steps"][0]["pwsh"]
+    result = run_powershell(
+        resolver.replace("${{ parameters.PackagePropertiesFolder }}", str(tmp_path)),
+        BUILD_SOURCESDIRECTORY=str(tmp_path),
+        INSTALL_MS_RUST_TOOLCHAIN="false",
+        AUTO_RESOLVE_MS_RUST="true",
+    )
+    assert result.returncode != 0
+    assert "different toolchain configurations" in result.stderr
+    assert "variable=ENABLE_RUST_BUILD]true" not in result.stdout
 
 
 @pytest.mark.parametrize("enabled", [False, True])
@@ -277,9 +394,9 @@ def test_container_forwarding_preserves_non_rust_builds(enabled):
     forwarding = next(
         step for step in build["steps"] if step.get("displayName") == "Forward build environment to cibuildwheel"
     )
-    extra = forwarding["env"][RUST_GATE]["RUST_ENVIRONMENT_PASS"] if enabled else ""
+    extra = forwarding["env"]["RUST_ENVIRONMENT_PASS"]
 
-    result = run_powershell(forwarding["pwsh"], RUST_ENVIRONMENT_PASS=extra)
+    result = run_powershell(forwarding["pwsh"], RUST_ENVIRONMENT_PASS=extra, ENABLE_RUST_BUILD=str(enabled))
 
     assert result.returncode == 0, result.stderr
     assert "variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL" in result.stdout
@@ -361,6 +478,8 @@ def test_build_powershell_scripts_parse():
     ):
         template = load_template(template_path)
         steps = template["jobs"][0]["steps"] if "jobs" in template else template["steps"]
+        if template_path == "steps/build-package-artifacts.yml":
+            steps.append(package_build_step())
         for step in steps:
             if not isinstance(step, dict) or "pwsh" not in step:
                 continue

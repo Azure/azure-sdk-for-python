@@ -183,23 +183,31 @@ provides the internal Rust toolchain. No prototype test feed is selected by
 default. The working directory must contain `rust-toolchain.toml`.
 The installer refuses to overwrite an existing Cargo configuration in its
 `CARGO_HOME`; provide a clean build environment.
-Rust installation is disabled by default and applies only to wheel-build jobs
-that target an artifact with `signBinaries: true`, including on Linux.
-Opted-in jobs have a 240-minute timeout and a 210-minute package-build timeout;
-other jobs keep their existing limits.
+Rust installation applies only to wheel-build jobs that target an artifact
+with `signBinaries: true` and a `rust-toolchain.toml`, including on Linux.
+The generic pull-request pipeline discovers these settings from the targeted
+package's service `ci.yml`; do not duplicate service-specific paths or feeds in
+`eng/pipelines/pullrequest.yml`. A build targeting multiple Rust configurations
+must be split into separate service builds.
+Opted-in and auto-targeting jobs have a minimum 240-minute job timeout, since
+auto targeting resolves Rust requirements after the job starts. Rust package
+builds have a 210-minute step timeout; non-Rust package builds retain 80 minutes.
 
 Linux wheels build inside manylinux containers. The package's `before-all` hook
 must install the internal toolchain and configure Cargo source replacement
 inside each container. The pipeline forwards `PIP_INDEX_URL`,
 `MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_FEED_URL`, and the
 `CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` index, token, and credential-provider
-variables. Credentials stay in the build environment, not checked-in files.
+variables only when a Rust package is targeted. Credentials stay in the build
+environment, not checked-in files. Rust builds still expose these credentials
+to package build hooks, so pipeline source-trust and token permissions must
+be enforced separately.
 
 This opt-in does not provision Rust for source-installing test, documentation,
 or analysis jobs. Prepare those jobs separately before enabling a Rust package,
 and keep real source-distribution testing. Packages with a static
 `[project].version` also need version synchronization with `_version.py` for
-nightly builds. No package is activated by adding this shared support.
+nightly builds. Rust setup does not change package discovery or check opt-ins.
 
 ## Windows ARM64 Rust wheels
 

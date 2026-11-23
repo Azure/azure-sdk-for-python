@@ -2,6 +2,12 @@ parameters:
   - name: PackagePropertiesFolder
     type: string
     default: ''
+  - name: InstallMsRustToolchain
+    type: boolean
+    default: false
+  - name: AutoResolveMsRust
+    type: boolean
+    default: false
 
 steps:
     # Packages that ship compiled binaries opt in with `signBinaries: true` on their artifact entry in
@@ -15,8 +21,10 @@ steps:
     # keeps reading the folder rather than the $(TargetingString) those steps also set, because that
     # variable carries only package names and the decision below needs an artifact property.
     - pwsh: |
+        $ErrorActionPreference = 'Stop'
         $binaryPackages = @()
         $rustPackages = @()
+        $rustConfiguration = $null
         $logLevel = "INFO"
 
         foreach ($packageInfoPath in (Get-ChildItem -Recurse -Force "${{ parameters.PackagePropertiesFolder }}/*.json")) {
@@ -31,7 +39,21 @@ steps:
               $packageDirectory = Join-Path "$env:BUILD_SOURCESDIRECTORY" $packageDirectory
             }
             if ($packageDirectory -and (Test-Path (Join-Path $packageDirectory 'rust-toolchain.toml') -PathType Leaf)) {
-              $rustPackages += $packageInfo.Name
+              if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
+                $rustPackages += $packageInfo.Name
+              }
+              elseif ($env:AUTO_RESOLVE_MS_RUST -eq 'true' -and $packageInfo.CIParameters.InstallMsRustToolchain -eq $true) {
+                $configuration = [ordered]@{
+                  WorkingDirectory = ([string]$packageInfo.CIParameters.MsRustWorkingDirectory).Replace(('$' + '(Build.SourcesDirectory)'), $env:BUILD_SOURCESDIRECTORY)
+                  ToolchainFeed = [string]$packageInfo.CIParameters.MsRustToolchainFeed
+                  AdditionalTargets = [string]$packageInfo.CIParameters.MsRustAdditionalTargets
+                }
+                if ($rustConfiguration -and (($rustConfiguration | ConvertTo-Json -Compress) -ne ($configuration | ConvertTo-Json -Compress))) {
+                  throw 'Targeted Rust packages require different toolchain configurations; build their services separately.'
+                }
+                $rustConfiguration = $configuration
+                $rustPackages += $packageInfo.Name
+              }
             }
           }
         }
@@ -47,8 +69,15 @@ steps:
         }
         if ($rustPackages) {
           Write-Host "Targeting Rust package(s) ($($rustPackages -join ', ')), enabling Rust toolchain setup."
-          Write-Host "##vso[task.setvariable variable=ENABLE_RUST_BUILD]true"
         }
+        $rustEnabled = ($rustPackages.Count -gt 0).ToString().ToLowerInvariant()
+        Write-Host "##vso[task.setvariable variable=ENABLE_RUST_BUILD]$rustEnabled"
+        Write-Host "##vso[task.setvariable variable=RESOLVED_MS_RUST_DIRECTORY]$($rustConfiguration.WorkingDirectory)"
+        Write-Host "##vso[task.setvariable variable=RESOLVED_MS_RUST_FEED]$($rustConfiguration.ToolchainFeed)"
+        Write-Host "##vso[task.setvariable variable=RESOLVED_MS_RUST_TARGETS]$($rustConfiguration.AdditionalTargets)"
         # Always define the variable used by the build step's LOGLEVEL mapping.
         Write-Host "##vso[task.setvariable variable=SDK_BUILD_LOGLEVEL]$logLevel"
       displayName: Check extension package presence
+      env:
+        INSTALL_MS_RUST_TOOLCHAIN: ${{ parameters.InstallMsRustToolchain }}
+        AUTO_RESOLVE_MS_RUST: ${{ parameters.AutoResolveMsRust }}

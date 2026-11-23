@@ -43,11 +43,11 @@ def test_discovery_omit_mgmt():
         "azure-storage-blob",
         "azure-storage-blob-changefeed",
         "azure-storage-extensions",
+        "azure-storage-extensionstransfer",
         "azure-storage-file-datalake",
         "azure-storage-file-share",
         "azure-storage-queue",
     ]
-
 
 def test_discovery_omit_build():
     results = discover_targeted_packages("*", core_service_root, filter_type="Build")
@@ -101,6 +101,7 @@ def test_discovery_omit_regression():
         "azure-storage-blob",
         "azure-storage-blob-changefeed",
         "azure-storage-extensions",
+        "azure-storage-extensionstransfer",
         "azure-storage-file-datalake",
         "azure-storage-file-share",
         "azure-storage-queue",

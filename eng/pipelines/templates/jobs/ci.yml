@@ -82,8 +82,8 @@ parameters:
 
 jobs:
   - job: 'Build_Linux'
-    # Native multi-target builds retain a minimum 240-minute budget.
-    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+    # Auto targeting resolves native build requirements after the job starts.
+    ${{ if and(or(parameters.InstallMsRustToolchain, eq(parameters.ServiceDirectory, 'auto')), lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
       timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
@@ -117,7 +117,7 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_Windows'
-    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+    ${{ if and(or(parameters.InstallMsRustToolchain, eq(parameters.ServiceDirectory, 'auto')), lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
       timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}
@@ -144,7 +144,7 @@ jobs:
         MsRustAdditionalTargets: ${{ parameters.MsRustAdditionalTargets }}
 
   - job: 'Build_MacOS'
-    ${{ if and(parameters.InstallMsRustToolchain, lt(parameters.BuildTimeoutInMinutes, 240)) }}:
+    ${{ if and(or(parameters.InstallMsRustToolchain, eq(parameters.ServiceDirectory, 'auto')), lt(parameters.BuildTimeoutInMinutes, 240)) }}:
       timeoutInMinutes: 240
     ${{ else }}:
       timeoutInMinutes: ${{ parameters.BuildTimeoutInMinutes }}

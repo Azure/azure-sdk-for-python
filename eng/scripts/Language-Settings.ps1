@@ -214,6 +214,15 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     $pkgProp.SdkType = $sdkType
     $pkgProp.ArtifactName = $packageName
     $pkgProp.AdditionalValidationPackages = $additionalValidationPackages
+    if ($pkgProp.ArtifactDetails.signBinaries -and (Test-Path (Join-Path $pkgDirectoryPath 'rust-toolchain.toml'))) {
+      $ci = $pkgProp.GetCIYmlForArtifact()
+      $ciParameters = if ($ci) { GetValueSafelyFrom-Yaml $ci.ParsedYml @("extends", "parameters") } else { $null }
+      foreach ($name in @("InstallMsRustToolchain", "MsRustWorkingDirectory", "MsRustToolchainFeed", "MsRustAdditionalTargets")) {
+        if ($ciParameters -and $ciParameters.ContainsKey($name)) {
+          $pkgProp.CIParameters[$name] = $ciParameters[$name]
+        }
+      }
+    }
     $allPackageProps += $pkgProp
   }
   return $allPackageProps

@@ -9,7 +9,7 @@ build-backend = "maturin"
 
 [project]
 name = "azure-storage-extensionstransfer"
-version = "0.1.0"
+dynamic = ["version"]
 authors = [
   { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
