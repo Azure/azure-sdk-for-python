@@ -79,7 +79,10 @@ def assert_creation_outcome(
     hits,
     stored,
     return_properties,
+    existing_properties=None,
 ):
+    if existing_properties is not None:
+        assert stored == existing_properties, "An existing container must not change"
     if inject and fault != "throttle":
         assert isinstance(error, exceptions.CosmosClientTimeoutError)
         assert MIN_TIMEOUT_ELAPSED <= elapsed <= MAX_OPERATION_ELAPSED
@@ -106,7 +109,7 @@ def assert_creation_outcome(
                 assert result[field] == stored[field]
         return
     assert returned is None and not hooks
-    if fault != "timeout-after-service":
+    if fault != "timeout-after-service" and existing_properties is None:
         assert (
             stored is None
         ), "A synthetic pre-send failure must not create a container"

@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count_async
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._query_resume import set_rule
 from fault_injection._point_timeout import (
@@ -44,9 +44,9 @@ async def test_point_read_operation_timeout_async_rust(owned_target, monkeypatch
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)
         await client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
         budgets = capture_read_budget(monkeypatch, asynchronous=True)
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, returned = None, None
         start = time.perf_counter()
         try:
@@ -56,13 +56,13 @@ async def test_point_read_operation_timeout_async_rust(owned_target, monkeypatch
                 ServiceResponseError, TimeoutError) as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
         emit("point_timeout", surface="async", backend="rust", inject=inject, database_id=database_id,
              rule_id=rule_id, elapsed=elapsed, hits=hits, native_budgets=budgets,
              error_type=None if error is None else type(error).__name__,
              error_message=None if error is None else str(error),
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         assert_read_budget(budgets)
         stored = await asyncio.to_thread(observer.read_item, item_id, partition_key=item_id)
@@ -95,12 +95,12 @@ async def test_database_read_operation_timeout_async_rust(
         database = client.get_database_client(database_id)
         expected = await database.read(timeout=30)
         handle = await client._adapter._ensure_driver_handle()
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
         budgets = capture_read_budget(
             monkeypatch, asynchronous=True, operation="read_database"
         )
         hooks = []
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, returned = None, None
         set_rule(handle, rule_id, True)
         start = time.perf_counter()
@@ -120,8 +120,8 @@ async def test_database_read_operation_timeout_async_rust(
         finally:
             set_rule(handle, rule_id, False)
         elapsed = time.perf_counter() - start
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
-        after = (_binding_operation_count(), _rust_fallback_count())
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
+        after = _binding_operation_count()
         emit(
             "database_read_timeout",
             surface="async",
@@ -143,5 +143,5 @@ async def test_database_read_operation_timeout_async_rust(
             assert_read_elapsed(elapsed)
         assert await database.read(timeout=30) == expected
         assert (
-            await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+            await fault_rule_hit_count_async(client._adapter, rule_id) == hits
         )

@@ -37,6 +37,7 @@ pub(crate) use container_metadata::{
 };
 
 // Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ---
+#[cfg(feature = "test-probes")]
 pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // Request-side re-exports ------------------------------------------------

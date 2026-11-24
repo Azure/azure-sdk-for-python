@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Poll a change feed through the selected Python backend.
+"""Poll a change feed through the client's Rust backend.
 
 Each ChangeFeedPageIterator has its own progress. On the Rust path it retains
 a feed cursor; the cf1. continuation token also records the feed settings for
@@ -26,15 +26,10 @@ from typing import Any, Optional
 from azure.core.paging import PageIterator
 from azure.core.utils import CaseInsensitiveDict
 
-from .. import _base, http_constants
-from .._availability_strategy_config import _validate_request_hedging_strategy
+from .._backend.constants import is_rust_backend
 from .._backend.contracts import PreparedPageRequest, BackendPage
 from .._backend.operations import OP_QUERY_ITEMS_CHANGE_FEED
-from .._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
-from .._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
-from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosItemPaged
-from .._operation_deadline import legacy_deadline_options, remaining_timeout
 from .._query_rust_routing import page_to_backend_response
 from .._telemetry import trace_operation
 from ..partition_key import (
@@ -42,10 +37,7 @@ from ..partition_key import (
     NullPartitionKeyValue,
     _Empty,
     _Undefined,
-    _build_partition_key_from_properties,
-    _return_undefined_or_empty_partition_key,
 )
-from ._legacy_partition_key import legacy_partition_key_header
 from ._partition_key import (
     normalize_partition_key,
     query_partition_key_components,
@@ -82,7 +74,7 @@ def _decode_continuation_payload(token: str, *, urlsafe: bool = False) -> dict[s
     return value
 
 
-def _normalize_change_feed_settings(values: dict[str, Any], *, rust: bool) -> dict[str, Any]:
+def _normalize_change_feed_settings(values: dict[str, Any]) -> dict[str, Any]:
     mode = values.get("mode")
     if mode is None:
         mode = "LatestVersion"
@@ -136,17 +128,9 @@ def _normalize_change_feed_settings(values: dict[str, Any], *, rust: bool) -> di
             for value in components
         ):
             raise ValueError("partition_key must contain one to three JSON scalar components.")
-        if rust:
-            result["partition_key"] = (
-                normalize_partition_key(key) if isinstance(key, _Empty) else query_partition_key_components(components)
-            )
-        elif any(isinstance(value, _Undefined) for value in components):
-            result["partition_key"] = json.dumps(
-                [{} if isinstance(value, _Undefined) else value for value in components],
-                separators=(",", ":"),
-            )
-        else:
-            result["partition_key"] = legacy_partition_key_header(key)
+        result["partition_key"] = (
+            normalize_partition_key(key) if isinstance(key, _Empty) else query_partition_key_components(components)
+        )
     if "feed_range" in scopes:
         result["feed_range"] = normalize_feed_range(values["feed_range"])
     return result
@@ -154,6 +138,11 @@ def _normalize_change_feed_settings(values: dict[str, Any], *, rust: bool) -> di
 
 class ChangeFeedConfig(FeedConfig):
     def __init__(self, proxy: Any, kwargs: dict[str, Any]) -> None:
+        context = proxy._client_context
+        if context is None or not is_rust_backend(context.adapter):
+            raise NotImplementedError(
+                "query_items_change_feed requires a client-owned Rust backend; no legacy fallback."
+            )
         self.requested = {key: deepcopy(kwargs.pop(key)) for key in _SETTINGS if key in kwargs}
         for key, replacement in (
             ("partition_key_range_id", "feed_range"),
@@ -165,19 +154,10 @@ class ChangeFeedConfig(FeedConfig):
                     DeprecationWarning,
                     stacklevel=4,
                 )
-        self.connection = proxy.client_connection
-        context = proxy._client_context
-        backend = context.adapter if context is not None else self.connection._backend
         super().__init__(
             proxy, kwargs, operation=OP_QUERY_ITEMS_CHANGE_FEED,
-            backend=backend,
+            backend=context.adapter,
         )
-        self.path = _base.GetPathFromLink(proxy.container_link, http_constants.ResourceType.Document)
-        self.collection_id = _base.GetResourceIdOrFullNameFromLink(proxy.container_link)
-        if not self.rust and self.options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
-            self.options[Constants.Kwargs.AVAILABILITY_STRATEGY] = _validate_request_hedging_strategy(
-                self.options[Constants.Kwargs.AVAILABILITY_STRATEGY]
-            )
         self.resolve(self.options.get("continuation"))
 
     def resolve(self, token: Optional[str]) -> tuple[dict[str, Any], Optional[str]]:
@@ -185,18 +165,16 @@ class ChangeFeedConfig(FeedConfig):
 
         Without a token, normalize the requested settings. A wrapper checkpoint
         restores its saved settings and inner token after backend/container checks.
-        Legacy tokens are accepted only on the legacy path; invalid or incompatible
-        tokens raise ValueError.
+        Legacy, invalid or incompatible tokens raise ValueError.
         """
         if token is None:
-            return _normalize_change_feed_settings(self.requested, rust=self.rust), None
+            return _normalize_change_feed_settings(self.requested), None
         if not isinstance(token, str) or not token:
             raise ValueError("change-feed continuation must be a nonempty string or None.")
         if token.startswith(_PREFIX):
             saved = _decode_continuation_payload(token[len(_PREFIX) :], urlsafe=True)
-            expected = "rust" if self.rust else "core-python"
             if (
-                saved.get("backend") != expected
+                saved.get("backend") != "rust"
                 or saved.get("container") != self.proxy.container_link
             ):
                 raise ValueError("change-feed continuation belongs to an incompatible backend or container.")
@@ -206,8 +184,6 @@ class ChangeFeedConfig(FeedConfig):
             if (
                 settings.get("mode") not in ("LatestVersion", "AllVersionsAndDeletes")
                 or set(settings) - {"mode", "start", "partition_key", "feed_range", "range_id"}
-                or not self.rust
-                and not inner.strip('"').isdigit()
             ):
                 raise ValueError("Invalid change-feed continuation settings.")
             # Validate the Python wrapper's continuation format without decoding
@@ -236,32 +212,15 @@ class ChangeFeedConfig(FeedConfig):
                 values["feed_range"] = {"Range": {"min": interval[0], "max": interval[1]}}
             if "range_id" in settings:
                 values["partition_key_range_id"] = settings["range_id"]
-            normalized = _normalize_change_feed_settings(values, rust=self.rust)
-            if (
-                self.rust and not inner.startswith(("c1.", "c2."))
-                or not self.rust and inner.startswith(("c1.", "c2.", _PREFIX))
-            ):
+            normalized = _normalize_change_feed_settings(values)
+            if not inner.startswith(("c1.", "c2.")):
                 raise ValueError("change-feed continuation belongs to an incompatible backend.")
             return normalized, inner
         if token.startswith(("c1.", "c2.")):
             raise ValueError("change-feed continuation belongs to an incompatible backend or operation.")
-        if self.rust:
-            raise ValueError(
-                "This continuation token is not supported. Use a token returned by the Rust-backed change feed."
-            )
-        if token.strip('"').isdigit():
-            values = dict(self.requested)
-            values.update(mode="LatestVersion", start_time="Now", is_start_from_beginning=False)
-            settings = _normalize_change_feed_settings(values, rust=self.rust)
-            return settings, token
-        saved = _decode_continuation_payload(token)
-        if saved.get("v") != "v2" or saved.get("mode") not in (
-            "LatestVersion",
-            "AllVersionsAndDeletes",
-        ):
-            raise ValueError("Invalid legacy change-feed continuation.")
-        # V2 restores and validates its own mode, start, scope and container RID.
-        return _normalize_change_feed_settings({"mode": saved["mode"]}, rust=False), token
+        raise ValueError(
+            "This continuation token is not supported. Use a token returned by the Rust-backed change feed."
+        )
 
 
 class ChangeFeedPageState(FeedPageState):
@@ -276,9 +235,7 @@ class ChangeFeedPageState(FeedPageState):
         token: Optional[str],
     ) -> None:
         super().__init__(config, headers, token)
-        self.legacy_options: dict[str, Any] = {}
         self.settings, self.inner_token = config.resolve(token)
-        self.fetcher: Any = None
         self.initial_time_poll = self.inner_token is None and self.settings["start"] not in ("Now", "Beginning")
         self.poll_again = False
 
@@ -297,7 +254,7 @@ class ChangeFeedPageState(FeedPageState):
         if isinstance(key, BindingPartitionKey):
             persisted_settings["partition_key"] = serialize_partition_key_for_continuation(key)
         payload = {
-            "backend": "rust" if self.config.rust else "core-python",
+            "backend": "rust",
             "container": self.config.proxy.container_link,
             "settings": persisted_settings,
             "token": inner,
@@ -324,54 +281,6 @@ class ChangeFeedPageState(FeedPageState):
         self.initial_time_poll = False
         return rows
 
-    def legacy_state(self, properties: dict[str, Any]) -> ChangeFeedState:
-        context: dict[str, Any] = {"mode": self.settings["mode"]}
-        if self.inner_token is not None:
-            context[("continuationPkRangeId" if self.inner_token.strip('"').isdigit() else "continuationFeedRange")] = (
-                self.inner_token
-            )
-        start = self.settings["start"]
-        context["startTime"] = start if start in ("Now", "Beginning") else datetime.fromisoformat(start)
-        if self.inner_token is None or self.inner_token.strip('"').isdigit():
-            if "range_id" in self.settings:
-                context["partitionKeyRangeId"] = self.settings["range_id"]
-            if self.settings["feed_range"] is not None:
-                minimum, maximum = self.settings["feed_range"]
-                context["feedRange"] = {
-                    "Range": {
-                        "min": minimum,
-                        "max": maximum,
-                        "isMinInclusive": True,
-                        "isMaxInclusive": False,
-                    }
-                }
-            if self.settings["partition_key"] is not None:
-                components = json.loads(self.settings["partition_key"])
-                key = components[0] if len(components) == 1 else components
-                if key == {}:
-                    key = _return_undefined_or_empty_partition_key(
-                        properties.get("partitionKey", {}).get("systemKey", False)
-                    )
-                context["partitionKey"] = key
-                context["partitionKeyFeedRange"] = _build_partition_key_from_properties(
-                    properties
-                )._get_epk_range_for_partition_key(key)
-        self.legacy_options[Constants.ContainerRID] = properties["_rid"]
-        return ChangeFeedState.from_json(self.config.proxy.container_link, properties["_rid"], context)
-
-    def legacy_result(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-        inner = self.fetcher.continuation_token
-        if not isinstance(inner, str) or not inner:
-            raise ValueError("Legacy change feed returned no durable continuation.")
-        self.inner_token = inner
-        # Keep the legacy V2 continuation token and its saved scope unchanged.
-        self.token = (
-            inner
-            if self.fetcher._change_feed_state.version == ChangeFeedStateVersion.V2
-            else self.encode_continuation_token(inner)
-        )
-        return rows
-
     def finish(
         self, rows: list[dict[str, Any]], deadline: Optional[float], *, notify_hook: bool = True
     ) -> tuple[Optional[str], list[dict[str, Any]]]:
@@ -382,13 +291,7 @@ class ChangeFeedPageState(FeedPageState):
         self.done = not rows
         if self.done:
             self.cursor = None
-            self.fetcher = None
         return result
-
-    def invalidate(self, error: BaseException) -> None:
-        super().invalidate(error)
-        if self.failed:
-            self.fetcher = None
 
 
 @trace_operation(
@@ -443,47 +346,10 @@ class ChangeFeedPageIterator(PageIterator):
         try:
             config, deadline = state.config, state.config.deadline()
             state.begin()
-            if config.rust:
-                while True:
-                    result = _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
-                    if result is not None:
-                        return result
-            else:
-                state.legacy_options.update(legacy_deadline_options(config.options, deadline))
-                state.legacy_options.pop("continuation", None)
-                if state.fetcher is None:
-                    properties = config.proxy._get_properties_with_options(state.legacy_options)
-                    remaining_timeout(deadline)
-                    change_state = state.legacy_state(properties)
-                    state.legacy_options["changeFeedState"] = change_state
-
-                    def fetch(
-                        options: dict[str, Any],
-                    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-                        remaining_timeout(options.get("_item_operation_deadline"))
-                        rows, headers = config.connection.QueryFeed(
-                            config.path,
-                            config.collection_id,
-                            None,
-                            options,
-                            response_hook=state.capture,
-                            **config.kwargs,
-                        )
-                        return rows, {name.lower(): value for name, value in headers.items()}
-
-                    factory = (
-                        ChangeFeedFetcherV1
-                        if change_state.version == ChangeFeedStateVersion.V1
-                        else ChangeFeedFetcherV2
-                    )
-                    state.fetcher = factory(
-                        config.connection,
-                        config.proxy.container_link,
-                        state.legacy_options,
-                        fetch,
-                    )
-                rows = state.legacy_result(state.fetcher.fetch_next_block())
-            return state.finish(rows, deadline)
+            while True:
+                result = _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
+                if result is not None:
+                    return result
         except BaseException as error:
             state.invalidate(error)
             raise

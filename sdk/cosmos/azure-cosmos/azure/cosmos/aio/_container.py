@@ -40,14 +40,14 @@ from ._cosmos_client_connection_async import CosmosClientConnection
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
 from .._base import (_build_properties_cache,
-                     build_options as _build_options, GenerateGuidId, validate_cache_staleness_value)
+                     build_options as _build_options, validate_cache_staleness_value)
 
 from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
 from .._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
 from ._helpers._read_many import read_items as _read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
 from ._helpers._query_items import query_items as _query_items
-from .._helpers._query_items import uses_rust, reject_rust_continuation_token
+from .._helpers._query_items import uses_rust
 from .._helpers._batch_operations import execute_batch_async
 from .._helpers._response_parse import complete_item_response
 from .._operation_deadline import async_deadline_lock, remaining_timeout
@@ -987,81 +987,7 @@ class ContainerProxy:
         prepare_operation_kwargs(self, kwargs)
         original_positional_arg_names = ["query"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
-        if uses_rust(self):
-            return _query_items(self, kwargs)
-        reject_rust_continuation_token(kwargs)
-        feed_options = _build_options(kwargs)
-        max_integrated_cache_staleness_in_ms = feed_options.get("maxIntegratedCacheStaleness")
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-
-        # Update 'feed_options' from 'kwargs'
-        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
-            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
-        if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
-        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
-        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
-        if utils.valid_key_value_exist(kwargs, "populate_query_advice"):
-            feed_options["populateQueryAdvice"] = kwargs.pop("populate_query_advice")
-        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
-        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
-            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
-            scope = kwargs.pop("full_text_score_scope")
-            if scope not in ("Local", "Global"):
-                raise ValueError(f"full_text_score_scope must be 'Local' or 'Global', got '{scope}'")
-            feed_options["fullTextScoreScope"] = scope
-
-        # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
-
-        feed_options["correlatedActivityId"] = GenerateGuidId()
-
-        # Set query with 'query' and 'parameters' from kwargs
-        query_str = kwargs.pop("query", None)
-        parameters = kwargs.pop("parameters", None)
-        if parameters is not None:
-            query = {"query": query_str, "parameters": parameters}
-        else:
-            query = query_str
-
-        # Set method to get/cache container properties
-        kwargs["containerProperties"] = self._get_properties_with_options
-
-        utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        # If 'partition_key' is provided, set 'partitionKey' in 'feed_options'
-        if utils.valid_key_value_exist(kwargs, "partition_key"):
-            feed_options["partitionKey"] = self._set_partition_key(kwargs["partition_key"])
-        # If 'partition_key' or 'feed_range' is not provided, set
-        # 'enableCrossPartitionQuery' to True unless the caller already set it.
-        elif (
-            not utils.valid_key_value_exist(kwargs, "feed_range")
-            and "enableCrossPartitionQuery" not in feed_options
-        ):
-            feed_options["enableCrossPartitionQuery"] = True
-        kwargs.pop("partition_key", None)
-
-        # Set 'response_hook'
-        response_hook = kwargs.pop("response_hook", None)
-        if response_hook and hasattr(response_hook, "clear"):
-            response_hook.clear()
-
-        items = self.client_connection.QueryItems(
-            database_or_container_link=self.container_link,
-            query=query,
-            options=feed_options,
-            partition_key=feed_options.get("partitionKey"),
-            response_hook=response_hook,
-            **kwargs
-        )
-        return items
+        return _query_items(self, kwargs)
 
     @overload
     def query_items_change_feed(

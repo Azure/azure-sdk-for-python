@@ -12,6 +12,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from common.sdk_subprocess import sdk_python_command
+from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 
 from azure.cosmos import PartitionKey
 from azure.cosmos.exceptions import CosmosClientTimeoutError
@@ -195,7 +196,8 @@ def _run_delayed_container_workflow(asynchronous, operation):
     hook = MagicMock()
 
     async def hit_count(rule_id):
-        return await _awaited(client._adapter._debug_fault_injection_rule_hit_count(rule_id))
+        counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+        return await _awaited(counter(client._adapter, rule_id))
 
     async def run():
         try:

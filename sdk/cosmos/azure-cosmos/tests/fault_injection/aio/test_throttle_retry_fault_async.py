@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count_async
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._query_resume import set_rule
 from fault_injection._throttle_retry import (
@@ -49,8 +49,8 @@ async def test_point_read_throttle_retry_limit_async_rust(owned_target, retry_se
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)
         await client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
-        before = (_binding_operation_count(), _rust_fallback_count())
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
+        before = _binding_operation_count()
         error, returned = None, None
         start = time.perf_counter()
         try:
@@ -59,15 +59,15 @@ async def test_point_read_throttle_retry_limit_async_rust(owned_target, retry_se
                 ServiceRequestError, ServiceResponseError, TimeoutError) as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
         emit("throttle_retry", surface="async", backend="rust", inject=inject, database_id=database_id,
              rule_id=rule_id, retry_settings=retry_settings, retry_limit=retry_limit, elapsed=elapsed, hits=hits,
              response_headers=rule.get("response_headers", {}),
              error_type=None if error is None else type(error).__name__,
              status=error.status_code if isinstance(error, exceptions.CosmosHttpResponseError) else None,
              error_message=None if error is None else str(error),
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         stored = await asyncio.to_thread(observer.read_item, item_id, partition_key=item_id)
         assert {field: stored[field] for field in item} == item, "Stored customer fields changed"
@@ -128,9 +128,9 @@ async def _run_database_read_throttle(owned_target, retry_limit, hit_limit, inje
         database = client.get_database_client(database_id)
         expected = await database.read(timeout=OPERATION_TIMEOUT)
         handle = await client._adapter._ensure_driver_handle()
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
         hooks = []
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, returned = None, None
         set_rule(handle, rule_id, True)
         start = time.perf_counter()
@@ -147,8 +147,8 @@ async def _run_database_read_throttle(owned_target, retry_limit, hit_limit, inje
         finally:
             set_rule(handle, rule_id, False)
         elapsed = time.perf_counter() - start
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
-        after = (_binding_operation_count(), _rust_fallback_count())
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
+        after = _binding_operation_count()
         emit(
             "database_read_throttle_retry",
             surface="async",
@@ -179,6 +179,6 @@ async def _run_database_read_throttle(owned_target, retry_limit, hit_limit, inje
             channels["response_hook"] = hooks[0][0]
         assert await database.read(timeout=OPERATION_TIMEOUT) == expected
         assert (
-            await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+            await fault_rule_hit_count_async(client._adapter, rule_id) == hits
         )
         return channels

@@ -12,7 +12,6 @@ import pytest
 from azure.cosmos import CosmosClient, _rust
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
-from config.diagnostics import _rust_fallback_count
 from config.settings import TestSettings
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
@@ -46,7 +45,6 @@ async def test_incorrect_key_preserves_401_during_listing_rust(monkeypatch, reco
     monkeypatch.setattr(_rust, operation, observed_fetch)
     client = (AsyncCosmosClient if asynchronous else CosmosClient)(endpoint, incorrect_key, _backend="rust")
     hooks = []
-    fallback_before = _rust_fallback_count()
     try:
         pager = client.list_databases(timeout=10, response_hook=hooks.append).by_page()
         assert calls == [], "Constructing a listing unexpectedly initialized the driver"
@@ -60,7 +58,6 @@ async def test_incorrect_key_preserves_401_during_listing_rust(monkeypatch, reco
         assert caught.value.headers["x-ms-activity-id"]
         assert hooks == []
         assert pager.continuation_token is None
-        assert _rust_fallback_count() == fallback_before
         assert calls == ["acquire-start"], "Recheck whether authentication now reaches the database-list request"
         with pytest.raises(RuntimeError, match="pager failed"):
             if asynchronous:
@@ -98,7 +95,6 @@ async def test_listing_response_preserves_401_after_initialization_rust(monkeypa
     handle = None
     calls = []
     hooks = []
-    fallback_before = _rust_fallback_count()
 
     async def successful_listing():
         if asynchronous:
@@ -151,14 +147,12 @@ async def test_listing_response_preserves_401_after_initialization_rust(monkeypa
             await next_page(pager)
         assert calls == [operation]
         assert _rust._debug_fault_injection_rule_hit_count(handle, rule_id) == hits
-        assert _rust_fallback_count() == fallback_before
         record_property("listing_fault_hits", hits)
 
         _rust._debug_set_fault_injection_rule_enabled(handle, rule_id, False)
         await successful_listing()
         assert len(calls) >= 2 and all(call == operation for call in calls)
         assert _rust._debug_fault_injection_rule_hit_count(handle, rule_id) == hits
-        assert _rust_fallback_count() == fallback_before
     finally:
         record_property("binding_calls", ",".join(calls))
         if handle is not None:

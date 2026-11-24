@@ -47,7 +47,6 @@ from azure.cosmos._backend.operations import (
     OP_QUERY_DATABASES, OP_QUERY_ITEMS, OP_READ_ALL_ITEMS,
 )
 from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.binding_adapter import build_binding_request_from_page as _sync_binding_request_from_page
 from azure.cosmos.aio._backend.binding_adapter import (
     build_binding_request_from_page as _async_binding_request_from_page,
@@ -444,14 +443,12 @@ async def test_database_feed_hook_errors_propagate_without_replay_rust(listing_c
     error, and a cancellation. Each reaches the caller as the exact object
     raised.
 
-    The page ran once, the legacy transport was not used, and the
-    compatibility fallback counter did not move. Even a capability-shaped
+    The page ran once and the legacy transport was not used. Even a capability-shaped
     exception raised by customer code is propagated, not used to replay a page.
     """
     _, conn, backend, is_async = listing_client
     error = error_type("hook failure")
     hook = MagicMock(side_effect=error)
-    fallback_before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         await _listing_rows(database_feed(response_hook=hook), is_async)
     assert raised.value is error
@@ -459,7 +456,6 @@ async def test_database_feed_hook_errors_propagate_without_replay_rust(listing_c
     assert backend.execute_pages.call_count == 1
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_before
 
 
 @pytest.mark.parametrize("option", ["session_token", "populate_query_metrics", "availability_strategy"])
@@ -523,7 +519,7 @@ async def test_database_feed_capability_errors_never_replay_rust(
     The injected capability error reaches the caller unchanged, on the first
     page or a later one. This test does not establish item-query routing rules.
 
-    The fallback counter does not move and the legacy transport is untouched.
+    The legacy transport is untouched.
     Replaying a partly consumed feed on another backend would re-send pages
     the caller already has, with tokens the other backend cannot read.
     """
@@ -534,7 +530,6 @@ async def test_database_feed_capability_errors_never_replay_rust(
         await _next_listing_page(pager, is_async)
     error = error_type("unsupported database page")
     backend.execute_pages.side_effect = error
-    fallback_before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         await _next_listing_page(pager, is_async)
     assert raised.value is error
@@ -542,7 +537,6 @@ async def test_database_feed_capability_errors_never_replay_rust(
     assert backend.execute_pages.call_count == 1 + int(later_page)
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_before
 
 
 
@@ -718,7 +712,7 @@ async def test_database_feed_retains_existing_operation_scope_checks_rust(
     page was fetched first.
 
     Both backends behave the same and neither crosses to the other's
-    transport. The fallback counter does not move: a timeout is the caller's
+    transport. A timeout is the caller's
     deadline expiring, not a sign the backend was incapable.
     """
     _, conn, backend, is_async = listing_client
@@ -734,7 +728,6 @@ async def test_database_feed_retains_existing_operation_scope_checks_rust(
     if fetch_first:
         await _next_listing_page(pager, is_async)
     clock[0] += 4
-    before = rust_compatibility_fallback_count()
     with pytest.raises(CosmosClientTimeoutError):
         await _next_listing_page(pager, is_async)
     if use_legacy:
@@ -744,7 +737,6 @@ async def test_database_feed_retains_existing_operation_scope_checks_rust(
         assert backend.execute_pages.call_count == int(fetch_first)
         conn._CosmosClientConnection__Get.assert_not_called()
         conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.asyncio
@@ -759,7 +751,7 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget_rust(list
     otherwise keep a timed-out enumeration going indefinitely, invisible to
     the caller because no rows are being produced.
 
-    Exactly one page is fetched, and the fallback counter does not move.
+    Exactly one page is fetched.
     """
     _, conn, backend, is_async = listing_client
     clock = [100.0]
@@ -777,13 +769,11 @@ async def test_database_feed_empty_pages_do_not_restart_expired_budget_rust(list
         return execute(backend, prepared, deadline=deadline)
 
     backend.execute_pages.side_effect = slow_page
-    before = rust_compatibility_fallback_count()
     with pytest.raises(CosmosClientTimeoutError):
         await _listing_rows(database_feed(timeout=3.5), is_async)
     backend.execute_pages.assert_called_once()
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.asyncio
@@ -791,8 +781,7 @@ async def test_database_feed_driver_timeout_propagates_without_replay_rust(listi
     """A timeout raised by the driver reaches the caller and is not retried on legacy.
 
     The driver itself raises ``CosmosClientTimeoutError``. It surfaces as-is,
-    the hook is never called since no page was delivered, the page ran once,
-    and the fallback counter does not move.
+    the hook is never called since no page was delivered, and the page ran once.
 
     A timeout means the deadline passed, not that the backend was incapable.
     Retrying on the legacy path would ignore the deadline the caller set and
@@ -809,14 +798,12 @@ async def test_database_feed_driver_timeout_propagates_without_replay_rust(listi
 
     backend.execute_pages.side_effect = timed_out
     hooks = []
-    before = rust_compatibility_fallback_count()
     with pytest.raises(CosmosClientTimeoutError):
         await _listing_rows(database_feed(timeout=3.5, response_hook=hooks.append), is_async)
     assert hooks == []
     backend.execute_pages.assert_called_once()
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.asyncio
@@ -840,14 +827,13 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
 
     These database feeds reject unsupported transport options and unknown
     keywords with ``TypeError`` naming the input. The hook is never
-    called, neither transport is used, and the fallback counter does not move.
+    called and neither transport is used.
 
     Both listing and query reject an invalid timeout while constructing the
     iterator, before any page can be requested.
     """
     _, conn, backend, is_async = listing_client
     hook = MagicMock()
-    fallback_before = rust_compatibility_fallback_count()
     if "timeout" in kwargs:
         with pytest.raises(ValueError, match="timeout"):
             database_feed(response_hook=hook, **kwargs)
@@ -861,7 +847,6 @@ async def test_database_feed_unsupported_public_options_never_fall_back_rust(
     backend.execute_pages.assert_not_called()
     conn._CosmosClientConnection__Get.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_before
 
 
 @pytest.mark.asyncio
@@ -871,19 +856,16 @@ async def test_query_databases_old_sql_mode_does_not_fall_back_rust(listing_clie
     With the connection switched to the old SQL query compatibility mode, the
     existing format validator rejects the call before anything is dispatched.
 
-    Nothing is sent on either transport and the fallback counter does not
-    move: a rejected format is a programming error, not a sign the Rust
+    Nothing is sent on either transport: a rejected format is a programming error, not a sign the Rust
     backend was incapable of the work.
     """
     client, conn, backend, is_async = listing_client
     conn._query_compatibility_mode = conn._QueryCompatibilityMode.SqlQuery
-    fallback_before = rust_compatibility_fallback_count()
     # The existing format validator rejects this private mode before dispatch.
     with pytest.raises(SystemError, match="Unexpected query compatibility mode"):
         await _listing_rows(client.query_databases("SELECT * FROM root r"), is_async)
     backend.execute_pages.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_before
 
 
 @pytest.mark.parametrize("value", [None, False, True])
@@ -2048,7 +2030,6 @@ def test_async_list_databases_backend_rejects_unrepresentable_options_rust(monke
         monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
         monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
 
-        fallback_count = rust_compatibility_fallback_count()
         with pytest.raises(NotImplementedError, match="list_databases"):
             await _run_async_read_feed(
                 conn,
@@ -2059,7 +2040,6 @@ def test_async_list_databases_backend_rejects_unrepresentable_options_rust(monke
 
         assert backend.prepared is None
         legacy_get.assert_not_called()
-        assert rust_compatibility_fallback_count() == fallback_count
 
     asyncio.run(_run())
 
@@ -2085,7 +2065,6 @@ def test_list_databases_backend_rejects_unrepresentable_options_rust(monkeypatch
     monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
     monkeypatch.setattr(conn, "_UpdateSessionIfRequired", lambda *args, **kwargs: None)
 
-    fallback_count = rust_compatibility_fallback_count()
     with pytest.raises(NotImplementedError, match="list_databases"):
         _run_sync_read_feed(
             conn,
@@ -2096,7 +2075,6 @@ def test_list_databases_backend_rejects_unrepresentable_options_rust(monkeypatch
 
     assert backend.prepared is None
     legacy_get.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_count
 
 
 @pytest.mark.parametrize("is_async", [False, True], ids=["sync", "aio"])
@@ -2163,7 +2141,6 @@ def test_sync_list_databases_capability_error_never_replays_core_python_rust(mon
     databases the caller already has, and the continuation token confirms the
     second attempt really was a continuation rather than a fresh start.
 
-    The fallback counter does not move, since nothing was rerouted.
     """
     class FailingBackend(_SequencedSyncBackend):
 
@@ -2182,7 +2159,6 @@ def test_sync_list_databases_capability_error_never_replays_core_python_rust(mon
     monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
     legacy_get = MagicMock(side_effect=AssertionError("legacy replay"))
     monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
-    fallback_count = rust_compatibility_fallback_count()
     items = iter(client.list_databases(max_item_count=1))
     if fail_on_page == 2:
         assert next(items) == {"id": "db-1"}
@@ -2192,7 +2168,6 @@ def test_sync_list_databases_capability_error_never_replays_core_python_rust(mon
     if fail_on_page == 2:
         assert conn._backend.prepared[-1].continuation == "next-db-page"
     legacy_get.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_count
 
 
 @pytest.mark.parametrize("fail_on_page", [1, 2])
@@ -2226,7 +2201,6 @@ def test_async_list_databases_capability_error_never_replays_core_python_rust(mo
         monkeypatch.setattr(base_helpers, "GetHeaders", lambda *args, **kwargs: {})
         legacy_get = AsyncMock(side_effect=AssertionError("legacy replay"))
         monkeypatch.setattr(conn, "_CosmosClientConnection__Get", legacy_get)
-        fallback_count = rust_compatibility_fallback_count()
         items = client.list_databases(max_item_count=1).__aiter__()
         if fail_on_page == 2:
             assert await items.__anext__() == {"id": "db-1"}
@@ -2236,7 +2210,6 @@ def test_async_list_databases_capability_error_never_replays_core_python_rust(mo
         if fail_on_page == 2:
             assert conn._backend.prepared[-1].continuation == "next-db-page"
         legacy_get.assert_not_called()
-        assert rust_compatibility_fallback_count() == fallback_count
 
     asyncio.run(run())
 
@@ -2406,7 +2379,6 @@ def test_sync_driver_unsupported_query_never_replays_rust():
         query="SELECT VALUE COUNT(1) FROM c",
     )
 
-    fallback_count_before = rust_compatibility_fallback_count()
     legacy = MagicMock(side_effect=AssertionError("legacy replay"))
     with pytest.raises(UnsupportedQueryError, match="unsupported query plan"):
         _UnsupportedBackend().run_page_operation(
@@ -2416,7 +2388,6 @@ def test_sync_driver_unsupported_query_never_replays_rust():
             process_response=lambda _page: "rust",
         )
     legacy.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_count_before
 
 
 def test_async_driver_unsupported_query_never_replays_rust():
@@ -2443,7 +2414,6 @@ def test_async_driver_unsupported_query_never_replays_rust():
 
         legacy = AsyncMock(side_effect=AssertionError("legacy replay"))
 
-        fallback_count_before = rust_compatibility_fallback_count()
         with pytest.raises(
             UnsupportedQueryError, match="unsupported query plan"
         ):
@@ -2454,7 +2424,6 @@ def test_async_driver_unsupported_query_never_replays_rust():
                 process_response=lambda _page: "rust",
             )
         legacy.assert_not_called()
-        assert rust_compatibility_fallback_count() == fallback_count_before
 
     asyncio.run(_run())
 
@@ -2475,7 +2444,6 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed_rust():
         container_link="dbs/db/colls/c",
         query="SELECT * FROM c",
     )
-    fallback_count_before = rust_compatibility_fallback_count()
 
     with pytest.raises(NotImplementedError, match="unexpected parser failure"):
         _BrokenBackend().run_page_operation(
@@ -2485,7 +2453,6 @@ def test_sync_unrelated_not_implemented_error_is_not_replayed_rust():
             process_response=lambda _page: "rust",
         )
 
-    assert rust_compatibility_fallback_count() == fallback_count_before
 
 
 def test_async_unrelated_not_implemented_error_is_not_replayed_rust():
@@ -2511,7 +2478,6 @@ def test_async_unrelated_not_implemented_error_is_not_replayed_rust():
         async def _run_legacy():
             return "legacy"
 
-        fallback_count_before = rust_compatibility_fallback_count()
 
         with pytest.raises(NotImplementedError, match="unexpected async parser failure"):
             await _BrokenBackend().run_page_operation(
@@ -2521,7 +2487,6 @@ def test_async_unrelated_not_implemented_error_is_not_replayed_rust():
                 process_response=lambda _page: "rust",
             )
 
-        assert rust_compatibility_fallback_count() == fallback_count_before
 
     asyncio.run(_run())
 
@@ -2777,7 +2742,6 @@ def test_query_databases_binding_request_carries_the_query_body_rust():
 async def test_query_databases_backend_rejects_unrepresentable_options_rust(listing_client, options, kwargs):
     """Neither client may send an unsupported database query through legacy."""
     _, conn, backend, is_async = listing_client
-    fallback_before = rust_compatibility_fallback_count()
     with pytest.raises(NotImplementedError, match="query_databases.*legacy Python"):
         if is_async:
             await _run_async_database_query_feed(
@@ -2790,7 +2754,6 @@ async def test_query_databases_backend_rejects_unrepresentable_options_rust(list
     assert backend.prepared is None
     backend.execute_pages.assert_not_called()
     conn._CosmosClientConnection__Post.assert_not_called()
-    assert rust_compatibility_fallback_count() == fallback_before
 
 
 def test_sync_query_databases_pages_carry_the_continuation_token_rust(monkeypatch):

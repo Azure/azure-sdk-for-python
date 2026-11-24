@@ -82,7 +82,6 @@ from .._backend.constants import is_rust_backend
 
 from .._base import _build_properties_cache
 from .. import documents
-from .._change_feed.aio.change_feed_iterable import ChangeFeedIterable
 from .._change_feed.change_feed_state import ChangeFeedState
 from .._change_feed.feed_range_internal import FeedRangeInternalEpk
 from .._routing.feed_range_continuation import (
@@ -104,7 +103,7 @@ from ..documents import ConnectionPolicy, DatabaseAccount
 from .._backend.credentials import reject_resource_token_fields
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
-from .._cosmos_responses import CosmosDict, CosmosList, CosmosAsyncItemPaged
+from .._cosmos_responses import CosmosDict, CosmosList
 from .._query_rust_routing import build_list_databases_prepared_page_request, build_query_databases_prepared_page_request, build_list_containers_prepared_page_request, build_query_containers_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, process_query_page
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
@@ -124,7 +123,7 @@ from ..partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
     _Empty,
-    _build_partition_key_from_properties, PartitionKeyType
+    _build_partition_key_from_properties
 )
 from ._auth_policy_async import AsyncCosmosBearerTokenCredentialPolicy
 from .._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
@@ -1673,178 +1672,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         return AsyncItemPaged(
             self, query, options, fetch_function=fetch_fn, page_iterator_class=query_iterable.QueryIterable
-        )
-
-    def QueryItems(
-        self,
-        database_or_container_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> CosmosAsyncItemPaged:
-        """Queries documents in a collection.
-
-        :param str database_or_container_link:
-            The link to the database when using partitioning, otherwise link to the document collection.
-        :param (str or dict) query: the query to be used
-        :param dict options: The request options for the request.
-        :param str partition_key: Partition key for the query(default value None)
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None], None]
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        database_or_container_link = base.TrimBeginningAndEndingSlashes(database_or_container_link)
-
-        if options is None:
-            options = {}
-
-        if base.IsDatabaseLink(database_or_container_link):
-            return CosmosAsyncItemPaged(
-                self,
-                query,
-                options,
-                database_link=database_or_container_link,
-                partition_key=partition_key,
-                page_iterator_class=query_iterable.QueryIterable
-            )
-
-        path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
-        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
-
-        # Shared dict for header capture — overwritten each page fetch
-        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            await kwargs["containerProperties"](options)
-            new_options = dict(options)
-            new_options[Constants.ContainerRID] = self.__container_properties_cache[database_or_container_link]["_rid"]
-            return (
-                await self.__QueryFeed(
-                    path,
-                    http_constants.ResourceType.Document,
-                    collection_id,
-                    lambda r: r["Documents"],
-                    lambda _, b: b,
-                    query,
-                    new_options,
-                    response_hook=response_hook,
-                    response_headers=response_headers,
-                    **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return CosmosAsyncItemPaged(
-            self,
-            query,
-            options,
-            fetch_function=fetch_fn,
-            collection_link=database_or_container_link,
-            page_iterator_class=query_iterable.QueryIterable,
-            response_hook=response_hook,
-            resource_type=http_constants.ResourceType.Document,
-            response_headers=response_headers
-        )
-
-    def QueryItemsChangeFeed(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries documents change feed in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param dict options: The request options for the request.
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[dict[str, str], dict[str, Any]]
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-
-        partition_key_range_id = None
-        if options is not None and "partitionKeyRangeId" in options:
-            partition_key_range_id = options["partitionKeyRangeId"]
-
-        return self._QueryChangeFeed(
-            collection_link, "Documents", options, partition_key_range_id, response_hook=response_hook, **kwargs
-        )
-
-    def _QueryChangeFeed(
-            self,
-            collection_link: str,
-            resource_type: str,
-            options: Optional[Mapping[str, Any]] = None,
-            partition_key_range_id: Optional[str] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-            **kwargs: Any
-    ) -> AsyncItemPaged[dict[str, Any]]:
-        """Queries change feed of a resource in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param str resource_type: The type of the resource.
-        :param dict options: The request options for the request.
-        :param str partition_key_range_id: Specifies partition key range id.
-        :param response_hook: A callable invoked with the response metadata
-        :type response_hook: Callable[[dict[str, str], dict[str, Any]]
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-        else:
-            options = dict(options)
-
-        resource_key_map = {"Documents": http_constants.ResourceType.Document}
-
-        # For now, change feed only supports Documents and Partition Key Range resource type
-        if resource_type not in resource_key_map:
-            raise NotImplementedError(resource_type + " change feed query is not supported.")
-
-        resource_key = resource_key_map[resource_type]
-        path = base.GetPathFromLink(collection_link, resource_key)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        async def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            if collection_link in self.__container_properties_cache:
-                new_options = dict(options)
-                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
-                options = new_options
-            return (
-                await self.__QueryFeed(
-                    path,
-                    resource_key,
-                    collection_id,
-                    lambda r: r[resource_type],
-                    lambda _, b: b,
-                    None,
-                    options,
-                    partition_key_range_id,
-                    response_hook=response_hook,
-                    **kwargs
-                ),
-                self.last_response_headers,
-            )
-
-        return AsyncItemPaged(
-            self,
-            options,
-            fetch_function=fetch_fn,
-            collection_link=collection_link,
-            page_iterator_class=ChangeFeedIterable
         )
 
     def QueryOffers(

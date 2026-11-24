@@ -25,6 +25,7 @@ use super::feed_range::{FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKe
 
 /// Opt-in fault-test envelope. Ordinary responses and telemetry are unchanged.
 /// Response-less errors retain their type and carry evidence privately when available.
+#[cfg(any(test, feature = "test-probes"))]
 pub(super) fn tuple_from_result_with_fault_diagnostics<'py>(
     py: Python<'py>,
     response_result: Result<CosmosResponse, CosmosError>,

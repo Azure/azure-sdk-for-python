@@ -30,7 +30,7 @@ def _rule(**overrides):
 
 @pytest.mark.parametrize("switch", [None, "", "0", "true"])
 def test_rules_need_the_test_only_switch_rust(monkeypatch, switch):
-    """The shipped package contains fault injection, so a customer app must not reach it.
+    """A probe-enabled build still requires an explicit runtime opt-in.
 
     Only the exact test switch "1" turns rules on. Both public clients refuse the
     argument before any request, and passing no rules still works without the switch.

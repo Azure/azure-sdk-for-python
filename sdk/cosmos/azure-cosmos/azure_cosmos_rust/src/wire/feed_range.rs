@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 use super::partition_key_input::BindingPartitionKey;
+#[cfg(any(test, feature = "test-probes"))]
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -17,6 +18,7 @@ use azure_data_cosmos_driver::{
 };
 
 use super::deadline::{with_local_deadline, with_operation_timeout};
+#[cfg(any(test, feature = "test-probes"))]
 use super::diagnostics::BINDING_OP_COUNT;
 use super::driver_runner::{run_driver_operation_async, run_driver_operation_sync};
 use super::errors::{catch_operation_panic, operation_join_error};
@@ -299,6 +301,7 @@ pub(crate) fn run_is_feed_range_subset_operation<'py>(
     timeout: Option<Duration>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    #[cfg(any(test, feature = "test-probes"))]
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let deadline = timeout.map(|duration| Instant::now() + duration);
     let result = catch_operation_panic(|| {
@@ -335,6 +338,7 @@ pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
     timeout: Option<Duration>,
     include_attempts: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
+    #[cfg(any(test, feature = "test-probes"))]
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let deadline = timeout.map(|duration| Instant::now() + duration);
     let runtime_ctx = require_runtime_context(op_name)?;

@@ -9,7 +9,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._container_create import (
     CREATE_FAULT_CASES,
     OPERATION_TIMEOUT,
@@ -45,10 +45,10 @@ def test_container_create_fault_rust(
         database = client.get_database_client(database_id)
         database.read(timeout=30)
         handle = client._adapter._ensure_driver_handle()
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
         hooks = []
         error, returned = None, None
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         set_rule(handle, rule_id, True)
         start = time.perf_counter()
         try:
@@ -71,8 +71,8 @@ def test_container_create_fault_rust(
         finally:
             set_rule(handle, rule_id, False)
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = fault_rule_hit_count(client._adapter, rule_id)
         persisted = (
             not inject
             or fault == "timeout-after-service"
@@ -107,4 +107,4 @@ def test_container_create_fault_rust(
             stored=stored,
             return_properties=return_properties,
         )
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+        assert fault_rule_hit_count(client._adapter, rule_id) == hits

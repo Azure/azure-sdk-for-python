@@ -51,7 +51,6 @@ def test_cutoff_counts_each_independent_rust_commit_check_rust(monkeypatch):
         {"refund_attempts": 0}, {"refund_attempts": 1},
     ]))
     monkeypatch.setattr(writes, "_binding_operation_count", Mock(side_effect=[10, 11, 11, 12]))
-    monkeypatch.setattr(writes, "_rust_fallback_count", Mock(return_value=0))
     with writes.cutoff_after_commit(
         proxy, observer, "order-42", {"refund_attempts": 1}, "sdk-connection", "emulator-connection",
     ) as state:

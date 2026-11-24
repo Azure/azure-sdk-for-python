@@ -133,8 +133,13 @@ def test_other_driver_query_errors_keep_their_wording_rust(query, monkeypatch, m
 
 
 @pytest.mark.parametrize("value,expected", [(None, None), (0, None), (1000, 1000)])
-def test_query_retains_cache_staleness_rust(query, value, expected):
-    query.collect(query.proxy.query_items("SELECT * FROM c", max_integrated_cache_staleness_in_ms=value))
+@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+def test_query_retains_cache_staleness_rust(query, value, expected, source):
+    kwargs = (
+        {"max_integrated_cache_staleness_in_ms": value}
+        if source == "keyword" else {source: {"maxIntegratedCacheStaleness": value}}
+    )
+    query.collect(query.proxy.query_items("SELECT * FROM c", **kwargs))
     assert query.calls
     assert all(prepared.settings.item.max_staleness_ms == expected for prepared, _, _ in query.calls)
 
@@ -654,6 +659,50 @@ def test_partition_scope_normalization_rust(query, key, expected):
 
 
 @pytest.mark.parametrize("limit", [None, 0, 1, 2])
+# NOTE: Legacy query/QueryItems execution was retired; retained for reference.
+# @pytest.mark.parametrize(
+#     "scope,unscoped",
+#     [
+#         pytest.param({}, True, id="omitted-scope"),
+#         pytest.param({"partition_key": None}, True, id="none-key"),
+#         pytest.param({"feed_range": None}, True, id="none-range"),
+#         pytest.param({"partition_key": "customer-501"}, False, id="complete-key"),
+#         pytest.param({"partition_key": False}, False, id="false-key"),
+#         pytest.param({"partition_key": 0}, False, id="zero-key"),
+#         pytest.param({"partition_key": NullPartitionKeyValue}, False, id="null-key"),
+#         pytest.param({"partition_key": NonePartitionKeyValue}, False, id="undefined-key"),
+#         pytest.param(
+#             {"feed_range": {"Range": {"min": "", "max": "FF"}}},
+#             False,
+#             id="feed-range",
+#         ),
+#     ],
+# )
+# @pytest.mark.parametrize(
+#     "query_options",
+#     [
+#         pytest.param({}, id="omitted-flag"),
+#         pytest.param({"enable_cross_partition_query": None}, id="none-flag"),
+#         pytest.param({"enable_cross_partition_query": True}, id="true-flag"),
+#         pytest.param({"enable_cross_partition_query": False}, id="false-flag"),
+#     ],
+# )
+# def test_core_python_query_cross_partition_defaults_rust(legacy_query, scope, unscoped, query_options):
+#     """Both public clients default only unscoped queries and retain explicit flags."""
+#     result = legacy_query.proxy.query_items("SELECT * FROM c", **scope, **query_options)
+#     assert result is legacy_query.connection.QueryItems.return_value
+#     options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+#     if inspect.isawaitable(options.get("partitionKey")):
+#         asyncio.run(options["partitionKey"])
+#     explicit = query_options.get("enable_cross_partition_query")
+#     expected = explicit if explicit is not None else (True if unscoped else None)
+#     if expected is None:
+#         assert "enableCrossPartitionQuery" not in options
+#     else:
+#         assert options["enableCrossPartitionQuery"] is expected
+#     assert not legacy_query.calls
+
+
 @pytest.mark.parametrize(
     "scope",
     [
@@ -1155,104 +1204,105 @@ def test_hook_failure_does_not_advance_public_bookmark_rust(query):
         query.next_page(pages)
 
 
-@pytest.fixture(name="legacy_query")
-def _legacy_query(query):
-    query.proxy._client_context = None
-    query.connection._backend = SimpleNamespace(name="core-python")
-    query.proxy._get_properties_with_options = MagicMock(
-        return_value={
-            "_rid": "rid",
-            "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
-        }
-    )
-    properties = query.proxy._get_properties_with_options.return_value
-    query.proxy._get_properties = (
-        AsyncMock(return_value=properties) if query.async_mode else MagicMock(return_value=properties)
-    )
-    return query
+# NOTE: Legacy query/QueryItems execution was retired; original code is retained for recovery only.
 
+# @pytest.fixture(name="legacy_query")
+# def _legacy_query(query):
+#     query.proxy._client_context = None
+#     query.connection._backend = SimpleNamespace(name="core-python")
+#     query.proxy._get_properties_with_options = MagicMock(
+#         return_value={
+#             "_rid": "rid",
+#             "partitionKey": {"paths": ["/pk"], "kind": "Hash", "version": 2},
+#         }
+#     )
+#     properties = query.proxy._get_properties_with_options.return_value
+#     query.proxy._get_properties = (
+#         AsyncMock(return_value=properties) if query.async_mode else MagicMock(return_value=properties)
+#     )
+#     return query
+
+# NOTE: Legacy query/QueryItems execution was retired; original code is retained for recovery only.
+
+# @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+# def test_core_python_query_rejects_negative_cache_staleness_rust(legacy_query, source):
+#     kwargs = (
+#         {"max_integrated_cache_staleness_in_ms": -1}
+#         if source == "keyword" else {source: {"maxIntegratedCacheStaleness": -1}}
+#     )
+#     with pytest.raises(ValueError, match="max_integrated_cache_staleness_in_ms"):
+#         legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
+#     legacy_query.proxy._get_properties_with_options.assert_not_called()
+#     legacy_query.connection.QueryItems.assert_not_called()
+#     assert not legacy_query.calls
 
 @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
-def test_core_python_query_rejects_negative_cache_staleness_rust(legacy_query, source):
+def test_query_rejects_negative_cache_staleness_rust(query, source):
     kwargs = (
         {"max_integrated_cache_staleness_in_ms": -1}
         if source == "keyword" else {source: {"maxIntegratedCacheStaleness": -1}}
     )
-    with pytest.raises(ValueError, match="max_integrated_cache_staleness_in_ms"):
-        legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
-    legacy_query.proxy._get_properties_with_options.assert_not_called()
-    legacy_query.connection.QueryItems.assert_not_called()
-    assert not legacy_query.calls
+    with pytest.raises(ValueError, match="query_items cache staleness"):
+        query.proxy.query_items("SELECT * FROM c", **kwargs)
+    assert not query.connection.mock_calls
+    assert not query.calls
 
 
-@pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
-@pytest.mark.parametrize("value", [None, 0, 1000])
-def test_core_python_query_preserves_valid_cache_staleness_rust(legacy_query, source, value):
-    kwargs = (
-        {"max_integrated_cache_staleness_in_ms": value}
-        if source == "keyword" else {source: {"maxIntegratedCacheStaleness": value}}
-    )
-    result = legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
-    assert result is legacy_query.connection.QueryItems.return_value
-    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
-    assert options["maxIntegratedCacheStaleness"] == value
-    assert not legacy_query.calls
+# NOTE: Legacy query/QueryItems execution was retired; original code is retained for recovery only.
 
+# @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
+# @pytest.mark.parametrize("value", [None, 0, 1000])
+# def test_core_python_query_preserves_valid_cache_staleness_rust(legacy_query, source, value):
+#     kwargs = (
+#         {"max_integrated_cache_staleness_in_ms": value}
+#         if source == "keyword" else {source: {"maxIntegratedCacheStaleness": value}}
+#     )
+#     result = legacy_query.proxy.query_items("SELECT * FROM c", **kwargs)
+#     assert result is legacy_query.connection.QueryItems.return_value
+#     options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+#     assert options["maxIntegratedCacheStaleness"] == value
+#     assert not legacy_query.calls
+
+# NOTE: Legacy query/QueryItems execution was retired; original code is retained for recovery only.
+
+# @pytest.mark.parametrize("source", ["request_options", "feed_options"])
+# def test_core_python_query_validates_effective_cache_staleness_rust(legacy_query, source):
+#     legacy_query.proxy.query_items(
+#         "SELECT * FROM c",
+#         max_integrated_cache_staleness_in_ms=1000,
+#         **{source: {"maxIntegratedCacheStaleness": -1}},
+#     )
+#     options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
+#     assert options["maxIntegratedCacheStaleness"] == 1000
 
 @pytest.mark.parametrize("source", ["request_options", "feed_options"])
-def test_core_python_query_validates_effective_cache_staleness_rust(legacy_query, source):
-    legacy_query.proxy.query_items(
+def test_query_validates_effective_cache_staleness_rust(query, source):
+    query.collect(query.proxy.query_items(
         "SELECT * FROM c",
         max_integrated_cache_staleness_in_ms=1000,
         **{source: {"maxIntegratedCacheStaleness": -1}},
-    )
-    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
-    assert options["maxIntegratedCacheStaleness"] == 1000
+    ))
+    assert query.calls
+    assert all(prepared.settings.item.max_staleness_ms == 1000 for prepared, _, _ in query.calls)
 
 
 @pytest.mark.parametrize(
-    "scope,unscoped",
+    "scope",
     [
-        pytest.param({}, True, id="omitted-scope"),
-        pytest.param({"partition_key": None}, True, id="none-key"),
-        pytest.param({"feed_range": None}, True, id="none-range"),
-        pytest.param({"partition_key": "customer-501"}, False, id="complete-key"),
-        pytest.param({"partition_key": False}, False, id="false-key"),
-        pytest.param({"partition_key": 0}, False, id="zero-key"),
-        pytest.param({"partition_key": NullPartitionKeyValue}, False, id="null-key"),
-        pytest.param({"partition_key": NonePartitionKeyValue}, False, id="undefined-key"),
+        pytest.param({}, id="omitted-scope"),
+        pytest.param({"partition_key": None}, id="none-key"),
+        pytest.param({"feed_range": None}, id="none-range"),
+        pytest.param({"partition_key": "customer-501"}, id="complete-key"),
+        pytest.param({"partition_key": False}, id="false-key"),
+        pytest.param({"partition_key": 0}, id="zero-key"),
+        pytest.param({"partition_key": NullPartitionKeyValue}, id="null-key"),
+        pytest.param({"partition_key": NonePartitionKeyValue}, id="undefined-key"),
         pytest.param(
             {"feed_range": {"Range": {"min": "", "max": "FF"}}},
-            False,
             id="feed-range",
         ),
     ],
 )
-@pytest.mark.parametrize(
-    "query_options",
-    [
-        pytest.param({}, id="omitted-flag"),
-        pytest.param({"enable_cross_partition_query": None}, id="none-flag"),
-        pytest.param({"enable_cross_partition_query": True}, id="true-flag"),
-        pytest.param({"enable_cross_partition_query": False}, id="false-flag"),
-    ],
-)
-def test_core_python_query_cross_partition_defaults_rust(legacy_query, scope, unscoped, query_options):
-    """Both public clients default only unscoped queries and retain explicit flags."""
-    result = legacy_query.proxy.query_items("SELECT * FROM c", **scope, **query_options)
-    assert result is legacy_query.connection.QueryItems.return_value
-    options = legacy_query.connection.QueryItems.call_args.kwargs["options"]
-    if inspect.isawaitable(options.get("partitionKey")):
-        asyncio.run(options["partitionKey"])
-    explicit = query_options.get("enable_cross_partition_query")
-    expected = explicit if explicit is not None else (True if unscoped else None)
-    if expected is None:
-        assert "enableCrossPartitionQuery" not in options
-    else:
-        assert options["enableCrossPartitionQuery"] is expected
-    assert not legacy_query.calls
-
-
 @pytest.mark.parametrize(
     "query_options,expected",
     [
@@ -1262,32 +1312,65 @@ def test_core_python_query_cross_partition_defaults_rust(legacy_query, scope, un
         pytest.param({"enable_cross_partition_query": False}, False, id="false"),
     ],
 )
-def test_rust_query_cross_partition_defaults_rust(query, query_options, expected):
-    from azure.cosmos._helpers._query_items import QueryConfig
+def test_rust_query_cross_partition_defaults_rust(query, scope, query_options, expected):
+    query.collect(query.proxy.query_items("SELECT * FROM c", **scope, **query_options))
+    assert query.calls
+    assert all(prepared.query_scope.allow_cross_partition is expected for prepared, _, _ in query.calls)
+    assert not query.connection.mock_calls
 
-    config = QueryConfig(query.proxy, {"query": "SELECT * FROM c", **query_options})
-    assert config.scope.allow_cross_partition is expected
 
+@pytest.mark.parametrize("client_context", ["legacy", "missing"])
+def test_query_requires_rust_without_legacy_execution_rust(query, client_context, monkeypatch):
+    backend = SimpleNamespace(name="core-python")
+    query.connection._backend = backend
+    query.proxy._client_context = (
+        CosmosClientContext(backend) if client_context == "legacy" else None
+    )
+    metadata = MagicMock(side_effect=AssertionError("query_items must not load legacy metadata"))
+    monkeypatch.setattr(query.proxy, "_get_properties_with_options", metadata)
+    with pytest.raises(NotImplementedError, match="query_items requires a client-owned Rust backend"):
+        query.proxy.query_items("SELECT * FROM c")
+    metadata.assert_not_called()
+    assert not query.connection.mock_calls
+    assert not query.calls
+    query.binding._ItemFeedCursor.assert_not_called()
+
+
+# NOTE: Legacy query/QueryItems execution was retired; original code is retained for recovery only.
+
+# @pytest.mark.parametrize("token", ["q1.saved", "c1.saved", "c2.saved", "cf1.saved"])
+# def test_core_python_public_query_stays_on_core_python_and_rejects_rust_tokens_rust(legacy_query, token):
+#     """On the core-python backend queries run the legacy path and refuse Rust tokens.
+#
+#     With the legacy backend selected, the query returns the legacy iterable
+#     and the driver is never used.
+#
+#     A ``q1.`` token issued by the Rust path is refused as incompatible -- both
+#     through the public call and through the query iterable directly, since
+#     customers can construct one themselves. The two backends encode position
+#     differently, so reading the wrong kind could restart the query or skip
+#     rows.
+#     """
+#     query = legacy_query
+#     result = query.proxy.query_items("SELECT * FROM c")
+#     assert result is query.connection.QueryItems.return_value
+#     assert not query.calls
+#     with pytest.raises(ValueError, match="incompatible"):
+#         query.proxy.query_items("SELECT * FROM c", continuation=token)
+#     iterable = (
+#         __import__(
+#             "azure.cosmos.aio._query_iterable_async", fromlist=["QueryIterable"]
+#         ).QueryIterable
+#         if query.async_mode
+#         else __import__(
+#             "azure.cosmos._query_iterable", fromlist=["QueryIterable"]
+#         ).QueryIterable
+#     )
+#     with pytest.raises(ValueError, match="incompatible"):
+#         iterable(query.connection, "SELECT * FROM c", {}, continuation_token=token)
 
 @pytest.mark.parametrize("token", ["q1.saved", "c1.saved", "c2.saved", "cf1.saved"])
-def test_core_python_public_query_stays_on_core_python_and_rejects_rust_tokens_rust(legacy_query, token):
-    """On the core-python backend queries run the legacy path and refuse Rust tokens.
-
-    With the legacy backend selected, the query returns the legacy iterable
-    and the driver is never used.
-
-    A ``q1.`` token issued by the Rust path is refused as incompatible -- both
-    through the public call and through the query iterable directly, since
-    customers can construct one themselves. The two backends encode position
-    differently, so reading the wrong kind could restart the query or skip
-    rows.
-    """
-    query = legacy_query
-    result = query.proxy.query_items("SELECT * FROM c")
-    assert result is query.connection.QueryItems.return_value
-    assert not query.calls
-    with pytest.raises(ValueError, match="incompatible"):
-        query.proxy.query_items("SELECT * FROM c", continuation=token)
+def test_shared_legacy_query_iterable_rejects_rust_tokens_rust(query, token):
     iterable = (
         __import__(
             "azure.cosmos.aio._query_iterable_async", fromlist=["QueryIterable"]

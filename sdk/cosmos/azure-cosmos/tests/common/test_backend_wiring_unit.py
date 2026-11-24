@@ -546,6 +546,8 @@ _ALLOWED = {
         Path("_backend") / "binding_adapter.py",
         Path("aio") / "_backend" / "binding_adapter.py",
         Path("_backend") / "_binding_adapter_shared.py",
+        # Reject fault rules when the compiled build omits test probes.
+        Path("_backend") / "client_config.py",
     },
     # The Rust backend class may only be imported by the factory that builds
     # it and the client that holds it.

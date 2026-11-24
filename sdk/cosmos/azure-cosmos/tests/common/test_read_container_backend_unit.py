@@ -20,7 +20,6 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_READ_CONTAINER
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
@@ -252,17 +251,14 @@ def test_metadata_flags_and_none_timeout_preserve_backend_rust(read_case, quota,
     value, and the legacy call does not receive the argument at all.
 
     The read returns the container properties and fills the properties cache
-    exactly once, and the fallback counter does not move -- so a customer's
-    request for quota or partition statistics never quietly changes engines.
+    exactly once using the selected engine.
     """
     case = read_case
-    before = rust_compatibility_fallback_count()
     result = _read(
         case, populate_quota_info=quota, populate_partition_key_range_statistics=statistics,
     )
     assert isinstance(result, CosmosDict)
     assert result == case.properties
-    assert rust_compatibility_fallback_count() == before
     case.connection._set_container_properties_cache.assert_called_once()
     if case.legacy:
         case.backend.execute.assert_not_called()
@@ -306,15 +302,13 @@ def test_conditions_preserved_without_unused_etag_fallback_rust(read_case, kwarg
     That last pair is why the test is named for an unused etag: ignoring the
     value is correct, but doing so silently while also warning, or while
     quietly moving the call to the other engine, would not be. No warning is
-    raised and the fallback counter does not move.
+    raised.
     """
     case = read_case
-    before = rust_compatibility_fallback_count()
     with warnings.catch_warnings(record=True) as notices:
         warnings.simplefilter("always")
         _read(case, **kwargs)
     assert not notices
-    assert rust_compatibility_fallback_count() == before
     if case.legacy:
         call = case.connection.ReadContainer.call_args
         assert "etag" not in call.kwargs
@@ -376,7 +370,7 @@ def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
     driver owns.
 
     On the Rust path each raises ``NotImplementedError`` naming the method, with
-    nothing sent, nothing cached, and the fallback counter unmoved. A bad
+    nothing sent and nothing cached. A bad
     deadline is a wrong value, so it raises ``ValueError`` on both paths. On the
     legacy path the other settings simply succeed, because they are part of
     what that path offers.
@@ -394,11 +388,9 @@ def test_unsupported_rust_settings_never_replay_rust(read_case, kwargs):
         _read(case, **kwargs)
         case.backend.execute.assert_not_called()
         return
-    before = rust_compatibility_fallback_count()
     with pytest.raises(NotImplementedError, match="ContainerProxy.read"):
         _read(case, **kwargs)
     _assert_no_dispatch(case)
-    assert rust_compatibility_fallback_count() == before
 
 
 def test_response_hook_cannot_mutate_results_or_cached_properties_rust(read_case):
@@ -471,21 +463,18 @@ def test_response_hook_error_is_not_retried_or_cached_rust(read_case, error_type
     exists.
 
     The properties cache stays empty, so a call that did not finish cleanly
-    leaves nothing behind for later calls to trust, and the fallback counter
-    does not move.
+    leaves nothing behind for later calls to trust.
     """
     case = read_case
     error = (error_type(status_code=404, message="response hook failed")
              if error_type is exceptions.CosmosResourceNotFoundError else error_type("response hook failed"))
     response_hook = MagicMock(side_effect=error)
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as caught:
         _read(case, response_hook=response_hook)
     assert caught.value is error
     response_hook.assert_called_once()
     case.connection._set_container_properties_cache.assert_not_called()
     (case.connection.ReadContainer if case.legacy else case.backend.execute).assert_called_once()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("status", [403, 404, 412])
@@ -524,8 +513,7 @@ def test_binding_failure_never_replays_rust(read_case):
 
     A capability failure means the request was never satisfied, so a customer
     must be told, not quietly served by a different engine with different
-    retries and diagnostics. Nothing is cached and the fallback counter does not
-    move.
+    retries and diagnostics. Nothing is cached.
 
     Skipped when the customer chose legacy explicitly, since there is no Rust
     binding involved in that case.
@@ -534,12 +522,10 @@ def test_binding_failure_never_replays_rust(read_case):
     if case.legacy:
         pytest.skip("Rust binding failures do not apply to explicit legacy selection")
     case.backend.execute.side_effect = NotImplementedError("binding capability")
-    before = rust_compatibility_fallback_count()
     with pytest.raises(NotImplementedError):
         _read(case)
     case.connection.ReadContainer.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 def test_async_cancellation_is_not_replayed_rust(read_case):

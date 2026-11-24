@@ -1296,7 +1296,7 @@ the setting that tells the running SDK where to find the library.
 For packaging validation, move to the next workflow: build a wheel, then test
 what was installed from that wheel.
 
-### Building for native cancellation tests
+### Building for tests that inspect the Rust execution path
 
 When a customer app cancels an order read, the SDK team needs evidence that
 the native operation future stops, not just that the Python waiter is cancelled.
@@ -1304,6 +1304,9 @@ The cancellation test observes that future through a private, single-use probe.
 It does not prove that sockets close or that the service backend undoes work.
 
 The `test-probes` Cargo feature includes this instrumentation only when requested.
+It also enables the six `_debug_*` exports: operation, attempt, and retry counters;
+fault-rule hit counts and toggling; and cached-account-region inspection.
+Their counters are compiled out of customer builds; normal request diagnostics remain.
 Normal builds omit `_AsyncOperationProbe`, the `_debug_lifecycle` keyword on
 `read_item_async`, and the operation's probe wrapper. Do not enable this feature
 for customer wheels.
@@ -1321,8 +1324,8 @@ the test. Its fixtures create and clean up uniquely named resources. It checks
 native-future destruction after cancellation, a no-injection control, and
 recovery using the same client. A normal build fails with rebuild instructions
 instead of silently skipping this evidence. Its `cosmosRustProbes` marker
-keeps the standard emulator job, which installs a normal wheel, from selecting
-it. CI runs it in its own step (section 17).
+keeps the regular emulator selection from including it. CI runs it in its own
+step using the same isolated probe wheel (section 17).
 
 After testing, restore the normal build and restart Python processes that loaded
 the instrumented extension:
@@ -1332,29 +1335,38 @@ python -m maturin develop --locked
 python -c "from azure.cosmos import _rust; assert not hasattr(_rust, '_AsyncOperationProbe')"
 ```
 
-### Fault injection is in every build, behind a test switch
+### Fault injection requires a test build and a test switch
 
-Unlike `test-probes`, the driver's `fault_injection` feature is requested in
-`azure_cosmos_rust\Cargo.toml` for every build, including customer wheels.
-Many test files pass `_fault_injection_rules` to `CosmosClient` to make a
-request fail on purpose, for example an order read that returns 503. They run
-in the standard emulator job on the normal wheel, so the feature stays in.
+SDK tests pass `_fault_injection_rules` to `CosmosClient` to make a request
+fail on purpose, for example an order read that returns 503. A customer wheel
+must not be able to inject that failure.
 
-Leaving the feature in costs almost nothing when no rules are set. The driver
-then skips fault injection for each request after one check.
+In `azure_cosmos_rust\Cargo.toml`, `test-probes` enables the driver's
+`fault_injection` feature. Normal wheel builds omit it. Native Rust unit tests
+enable it through a development dependency, which does not enable it in wheels.
+Normal request diagnostics and attempt telemetry remain available in both builds.
 
-A customer app must not be able to turn this on. The SDK therefore refuses
-`_fault_injection_rules` with `TypeError` unless the environment variable
-`COSMOS_ENABLE_FAULT_INJECTION` is exactly `1`. The check is in
-`_prepare_fault_injection_rules` (`azure\cosmos\_backend\client_config.py`),
-which both the sync and async clients use. `tests\conftest.py` and
+To inspect an injected failure, tests can pass `include_fault_diagnostics=True`
+to the native `create_item` or `read_item` binding, including their async twins.
+Only probe wheels accept this keyword; customer wheels omit both the parameter
+and its fault-payload conversion code. `include_attempts` remains available.
+
+Both Python clients reject any non-`None` `_fault_injection_rules` argument in
+a customer wheel, even when `COSMOS_ENABLE_FAULT_INJECTION=1`. The binding also
+rejects nonempty rules supplied directly in a prepared configuration, before
+initializing a runtime or acquiring a driver.
+
+A probe wheel still requires `COSMOS_ENABLE_FAULT_INJECTION` to be exactly `1`
+when supplying rules through either Python client. The check is in
+`_prepare_fault_injection_rules` (`azure\cosmos\_backend\client_config.py`).
+`tests\conftest.py` and
 `tests\fault_injection\conftest.py` set the switch; the second is needed
 because the native cancellation test step runs with `--confcutdir=tests\fault_injection`,
 which skips the first.
 
-The binding's `_debug_fault_injection_rule_hit_count` and
-`_debug_set_fault_injection_rule_enabled` act only on configured rules, so
-without the switch they fail with `unknown fault injection rule id`.
+In a `test-probes` build, the binding's `_debug_fault_injection_rule_hit_count` and
+`_debug_set_fault_injection_rule_enabled` act only on configured rules;
+unknown rule IDs fail with `unknown fault injection rule id`.
 `_debug_cached_account_regions` only reads the regions the client already
 cached.
 
@@ -1567,7 +1579,8 @@ name the extension lacks, or if a declaration differs:
 | Function | Name, and each parameter's name, kind (positional or keyword-only), and default |
 | Class | Name, properties, and constructor parameters |
 
-`_AsyncOperationProbe` and the `_debug_lifecycle` keyword of `read_item_async`
+The six `_debug_*` functions, `_AsyncOperationProbe`, the `include_fault_diagnostics`
+keyword on create/read item bindings, and the `_debug_lifecycle` keyword of `read_item_async`
 exist only in `test-probes` builds (section 7), so the test accepts them only
 in those builds.
 
@@ -3088,9 +3101,11 @@ named `templates` is not automatically Central-owned.
 
 | File | Current responsibility | Owner or reviewer |
 |---|---|---|
-| `sdk/cosmos/ci.yml` | Keep normal emulator selection, request native-wheel build settings, and connect the supplemental steps through existing hooks. | Cosmos-specific configuration with Central review |
+| `sdk/cosmos/ci.yml` | Check that customer wheels omit probes, then rerun the existing emulator/dependency checks against a separate probe wheel through existing hooks. | Cosmos-specific configuration with Central review |
+| `sdk/cosmos/templates/prepare-test-probes.yml` | Build and verify the probe wheel under the agent temporary directory, outside publish artifacts; retain packaged native sidecars from the downloaded customer wheel. | Cosmos SDK team |
+| `sdk/cosmos/templates/emulator-probe-tests.yml` | Preserve customer-wheel results, then reuse Central's check runner with the original emulator marker and matrix check settings. | Cosmos SDK team |
 | `sdk/cosmos/templates/rust-tests.yml` | Run Cargo and offline Python checks once in an existing test job; publish offline results and save Cargo output. | Cosmos SDK team |
-| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the built wheel and require their results. | Cosmos SDK team |
+| `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the probe wheel and require their results. | Cosmos SDK team |
 | `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
 
 <a id="only-microsoft-employees-can-build-the-package-today"></a>

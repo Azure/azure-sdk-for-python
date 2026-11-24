@@ -21,6 +21,13 @@ proof = importlib.util.module_from_spec(_SPEC)
 _SPEC.loader.exec_module(proof)
 
 
+@pytest.mark.asyncio
+async def test_failure_sample_requires_test_probes_before_creating_a_client_rust(monkeypatch):
+    monkeypatch.delattr(proof._rust, "_debug_fault_injection_rule_hit_count", raising=False)
+    with pytest.raises(RuntimeError, match="--features test-probes"):
+        await proof.run_case(None, "", "connection", "enabled")
+
+
 @pytest.fixture
 def recorded(request):
     complete = getattr(request, "param", True)

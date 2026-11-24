@@ -288,7 +288,7 @@ def test_change_feed_does_not_turn_the_empty_sentinel_into_null_rust():
     from azure.cosmos._helpers._change_feed import _normalize_change_feed_settings
 
     assert (
-        _normalize_change_feed_settings({"partition_key": _Empty()}, rust=True)["partition_key"].kind
+        _normalize_change_feed_settings({"partition_key": _Empty()})["partition_key"].kind
         == "empty_sentinel"
     )
 

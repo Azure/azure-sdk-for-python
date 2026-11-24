@@ -37,5 +37,4 @@ def assert_control(returned, stored, item, hits):
 
 
 def assert_route(before, after, backend):
-    assert after[0] - before[0] == (1 if backend == "rust" else 0), "Wrong binding operation count"
-    assert after[1] == before[1], "The Rust operation fell back to Python"
+    assert after - before == (1 if backend == "rust" else 0), "Wrong binding operation count"

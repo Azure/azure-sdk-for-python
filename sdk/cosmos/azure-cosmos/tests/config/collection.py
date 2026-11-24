@@ -168,6 +168,7 @@ LEGACY_MODULES = frozenset({
     "test_vector_policy_async.py",
     "common/test_core_python_backend_unit.py",
     "common/test_container_legacy_unit.py",
+    "common/test_delete_container_legacy_unit.py",
     "read_database/test_read_database_legacy_unit.py",
     "patch_item/sync/core_python/test_headers.py",
     "patch_item/aio/core_python/test_headers.py",

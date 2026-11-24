@@ -8,6 +8,7 @@ without inspecting the returned value. Errors are not counted there.
 These Python counts are not proof of successful service operations.
 
 Native counters are process-wide observations at explicit binding sites.
+They are available only in extensions built with ``--features test-probes``.
 They can include unrelated work, and do not cover every native path.
 Their overhead is not measured by this module.
 """

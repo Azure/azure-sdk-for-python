@@ -37,7 +37,6 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import _base as base
 from azure.cosmos import http_constants
 from azure.cosmos._backend.contracts import BackendResponse
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_LIST_CONTAINERS,
@@ -94,6 +93,16 @@ def container_create_case(request):
 @pytest.fixture(params=[False, True], ids=["existing", "missing"])
 def container_get_or_create_case(container_create_case, request):
     return make_container_get_or_create_case(container_create_case, request.param)
+
+
+@pytest.fixture(params=["create", "existing", "missing"])
+def container_create_validation_case(container_create_case, request):
+    case = container_create_case
+    case.method = "create_container"
+    if request.param != "create":
+        case = make_container_get_or_create_case(case, request.param == "missing")
+        case.method = "create_container_if_not_exists"
+    return case
 
 
 _COLLECTION = http_constants.ResourceType.Collection
@@ -190,9 +199,9 @@ def test_container_create_rejects_obsolete_keywords_rust(
 )
 @pytest.mark.parametrize("value", [None, False, "unused"])
 def test_container_create_rejects_nested_obsolete_options_rust(
-    container_create_case, option, key, source, other_source, value
+    container_create_validation_case, option, key, source, other_source, value
 ):
-    case = container_create_case
+    case = container_create_validation_case
     kwargs = {source: {key: value}}
     if other_source is not None:
         kwargs[other_source] = {}
@@ -200,25 +209,34 @@ def test_container_create_rejects_nested_obsolete_options_rust(
     hook = MagicMock()
     with pytest.raises(TypeError, match=option):
         _call_container_create(
-            case, "c1", PartitionKey(path="/pk"), response_hook=hook, **kwargs
+            case,
+            "c1",
+            PartitionKey(path="/pk"),
+            method=case.method,
+            response_hook=hook,
+            **kwargs,
         )
     assert kwargs == original
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
     hook.assert_not_called()
 
 
 @pytest.mark.parametrize("hook", [False, 0, "not callable", {}])
 def test_container_create_rejects_non_callable_hook_before_dispatch_rust(
-    container_create_case, hook
+    container_create_validation_case, hook
 ):
-    case = container_create_case
+    case = container_create_validation_case
     with pytest.raises(
-        TypeError, match="create_container response_hook must be callable or None"
+        TypeError, match=f"{case.method} response_hook must be callable or None"
     ):
-        _call_container_create(case, "c1", PartitionKey(path="/pk"), response_hook=hook)
+        _call_container_create(
+            case, "c1", PartitionKey(path="/pk"), method=case.method, response_hook=hook
+        )
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -233,7 +251,7 @@ def test_container_create_rejects_non_callable_hook_before_dispatch_rust(
     ],
 )
 def test_container_create_rejects_async_hook_before_dispatch_rust(
-    container_create_case, kind
+    container_create_validation_case, kind
 ):
     async def hook(_headers, _properties):
         pytest.fail("An asynchronous response hook must not run")
@@ -255,15 +273,20 @@ def test_container_create_rejects_async_hook_before_dispatch_rust(
         "partial-callable": partial(callable_hook),
         "async-generator": generator_hook,
     }
-    case = container_create_case
+    case = container_create_validation_case
     with pytest.raises(
-        TypeError, match="create_container response_hook must be synchronous"
+        TypeError, match=f"{case.method} response_hook must be synchronous"
     ):
         _call_container_create(
-            case, "c1", PartitionKey(path="/pk"), response_hook=hooks[kind]
+            case,
+            "c1",
+            PartitionKey(path="/pk"),
+            method=case.method,
+            response_hook=hooks[kind],
         )
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
 
 
 @pytest.mark.parametrize(
@@ -389,15 +412,12 @@ def test_container_create_invalid_argument_binding_fails_before_dispatch_rust(
     position. Each error names the method the customer called, so the same
     wording does not appear for both create methods.
 
-    Two further guarantees: the caller's keyword dictionary is unchanged, so
-    argument parsing reads rather than consumes, and the fallback counter does
-    not move, since a mistake in the customer's own call is not the Rust engine
-    being unable to do something.
+    The caller's keyword dictionary is unchanged, so argument parsing reads
+    rather than consumes.
     """
     case = container_create_case
     hook = MagicMock()
     original_kwargs = dict(kwargs)
-    before = rust_compatibility_fallback_count()
     with pytest.raises(TypeError) as raised:
         _call_container_create(case, *args, **kwargs, method=method, response_hook=hook)
     assert "{}()".format(method) in str(raised.value)
@@ -407,7 +427,6 @@ def test_container_create_invalid_argument_binding_fails_before_dispatch_rust(
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("positional_count", [0, 1, 2])
@@ -1013,7 +1032,6 @@ def test_container_create_unsupported_calls_never_fall_back_rust(container_creat
     actually turns away.
     """
     case = container_create_case
-    before = rust_compatibility_fallback_count()
     hook = MagicMock()
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
@@ -1024,7 +1042,6 @@ def test_container_create_unsupported_calls_never_fall_back_rust(container_creat
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
     hook.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("operation", ["create_container", "read_container"])
@@ -1272,22 +1289,19 @@ def test_container_create_errors_never_replay_rust(container_create_case, failur
     where the client cannot tell whether the first attempt was applied.
 
     Cancellation must also pass through unchanged, or it stops unwinding and the
-    caller's request to stop is ignored. The fallback counter does not move,
-    because an error is not the engine declining the work.
+    caller's request to stop is ignored.
     """
     case = container_create_case
     error = error_type("create failed")
     hook = MagicMock(side_effect=error if failure_source == "hook" else None)
     if failure_source == "backend":
         case.backend.execute.side_effect = error
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         _call_container_create(case, "c1", PartitionKey(path="/pk"), response_hook=hook)
     assert raised.value is error
     assert hook.call_count == (1 if failure_source == "hook" else 0)
     case.backend.execute.assert_called_once()
     case.connection.CreateContainer.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("status", [400, 403, 404, 409, 412, 429, 500])
@@ -1424,10 +1438,132 @@ def test_container_get_or_create_preserves_shapes_and_existing_settings_rust(
     ]
     assert deadlines[0] is not None
     assert all(deadline == deadlines[0] for deadline in deadlines)
-    assert "offerThroughput" not in operations[0].headers
+    assert operations[0].settings.resource.offer_throughput is None
     if case.missing:
         assert json.loads(operations[1].body_bytes)["defaultTtl"] == 99
         assert operations[1].settings.resource.offer_throughput == 400
+
+
+@pytest.mark.parametrize("source", ["request_options", "feed_options"])
+@pytest.mark.parametrize("override", ["absent", "none", "empty", "value"])
+def test_container_get_or_create_preserves_nested_headers_rust(
+    container_get_or_create_case, monkeypatch, source, override
+):
+    case = container_get_or_create_case
+    nested = {"x-company-trace": "nested", "x-ms-cosmos-priority-level": "Low"}
+    kwargs = {source: {"initialHeaders": nested}}
+    expected = nested
+    if override != "absent":
+        top_level = {
+            "none": None,
+            "empty": {},
+            "value": {"x-company-trace": "override"},
+        }[override]
+        kwargs["initial_headers"] = top_level
+        if top_level is not None:
+            expected = top_level
+    original = deepcopy(kwargs)
+    preflight = MagicMock(wraps=is_create_container_rust_eligible)
+    monkeypatch.setattr(
+        "azure.cosmos._helpers._request_container.is_create_container_rust_eligible",
+        preflight,
+    )
+    assert _call_get_or_create(case, **kwargs).id == "c1"
+    assert kwargs == original
+    preflight.assert_called_once()
+    assert preflight.call_args.args[0]["initialHeaders"] == expected
+    operations = [call.args[0] for call in case.backend.execute.call_args_list]
+    assert [op.op for op in operations] == (
+        [OP_READ_CONTAINER, OP_CREATE_CONTAINER]
+        if case.missing
+        else [OP_READ_CONTAINER]
+    )
+    for operation in operations:
+        headers = wire_headers(operation)
+        for name in nested:
+            assert headers.get(name) == expected.get(name)
+    case.connection.CreateContainer.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"retry_write": 0},
+        {"retry_write": False},
+        {"retry_write": 2},
+        {"request_options": {"retry_write": 0}},
+        {"feed_options": {"retry_write": False}},
+        {"retry_write": None, "request_options": {"retry_write": 2}},
+        {"request_options": {}, "feed_options": {"retry_write": 0}},
+        {
+            "request_options": {"retry_write": None},
+            "feed_options": {"retry_write": False},
+        },
+        {
+            "retry_write": None,
+            "feed_options": {},
+            "request_options": {"retry_write": 2},
+        },
+    ],
+)
+def test_container_get_or_create_rejects_retry_write_before_read_rust(
+    container_get_or_create_case, kwargs
+):
+    case = container_get_or_create_case
+    original = deepcopy(kwargs)
+    hook = MagicMock()
+    case.database._resolve_gsi_definition = MagicMock(
+        side_effect=AssertionError("unexpected source-container lookup")
+    )
+    with pytest.raises(
+        TypeError, match="create_container_if_not_exists.*retry_write.*Rust driver"
+    ):
+        _call_get_or_create(
+            case,
+            response_hook=hook,
+            global_secondary_index={"sourceContainer": "source"},
+            **kwargs,
+        )
+    assert kwargs == original
+    case.backend.execute.assert_not_called()
+    case.connection.ReadContainer.assert_not_called()
+    case.connection.CreateContainer.assert_not_called()
+    case.connection._set_container_properties_cache.assert_not_called()
+    case.database._resolve_gsi_definition.assert_not_called()
+    hook.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {},
+        {"retry_write": None},
+        {"request_options": {"retry_write": None}},
+        {"feed_options": {"retry_write": None}},
+        {
+            "retry_write": None,
+            "request_options": {"retry_write": None},
+            "feed_options": {"retry_write": None},
+        },
+    ],
+)
+def test_container_get_or_create_allows_default_write_retries_rust(
+    container_get_or_create_case, kwargs
+):
+    case = container_get_or_create_case
+    original = deepcopy(kwargs)
+    assert _call_get_or_create(case, **kwargs).id == "c1"
+    assert kwargs == original
+    operations = [call.args[0] for call in case.backend.execute.call_args_list]
+    assert [op.op for op in operations] == (
+        [OP_READ_CONTAINER, OP_CREATE_CONTAINER]
+        if case.missing
+        else [OP_READ_CONTAINER]
+    )
+    for operation in operations:
+        assert "retry_write" not in settings_options(operation)
+    case.connection.ReadContainer.assert_not_called()
+    case.connection.CreateContainer.assert_not_called()
 
 
 @pytest.mark.parametrize("kwargs", [
@@ -1446,18 +1582,15 @@ def test_container_get_or_create_preflights_both_steps_rust(container_get_or_cre
     call then fails, and the customer has paid for a request that achieved
     nothing.
 
-    Fourteen cases are covered, including two options that only apply to reads.
-    Each raises ``NotImplementedError`` naming the method (bad ``timeout`` values
-    raise ``ValueError`` instead), with no request on
-    either engine, no cache write, no hook, and no movement in the fallback
-    counter.
+    Unsupported options raise ``TypeError`` naming the method; bad ``timeout``
+    values raise ``ValueError`` instead. Neither path sends a request, writes
+    the cache, or invokes the hook.
     """
     case = container_get_or_create_case
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
-        else (NotImplementedError, "create_container_if_not_exists")
+        else (TypeError, "create_container_if_not_exists")
     )
     with pytest.raises(error, match=message):
         _call_get_or_create(case, response_hook=hook, **kwargs)
@@ -1466,7 +1599,6 @@ def test_container_get_or_create_preflights_both_steps_rust(container_get_or_cre
     case.connection.CreateContainer.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
     hook.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize(
@@ -1548,6 +1680,7 @@ def test_container_get_or_create_forwards_conditions_without_ignored_warnings_ru
         CosmosResourceNotFoundError(status_code=404, message="callback failure"),
         CosmosResourceExistsError(status_code=409, message="callback failure"),
         ValueError("callback failure"),
+        NotImplementedError("callback failure"),
     ],
 )
 def test_container_get_or_create_does_not_interpret_hook_errors_as_missing_rust(
@@ -1561,8 +1694,7 @@ def test_container_get_or_create_does_not_interpret_hook_errors_as_missing_rust(
     code, and if it happens to raise the same error type, code that catches too
     broadly would read it as "the container is missing" and create one.
 
-    Both a not-found and an ordinary error are raised from the hook, and in both
-    cases the exact exception reaches the caller, the hook ran once, and no extra
+    Each callback exception reaches the caller unchanged, the hook ran once, and no extra
     request was made beyond what the found-or-missing path already required. The
     cache is not written, since the call did not succeed.
     """
@@ -1863,8 +1995,12 @@ def test_container_get_or_create_binding_errors_never_fall_back_rust(container_g
     assert case.backend.execute.call_count == (2 if case.missing else 1)
 
 
+@pytest.mark.parametrize(
+    "header_source", ["initial_headers", "request_options", "feed_options"]
+)
 def test_container_get_or_create_distinguishes_bodyless_read_and_create_rust(
     container_get_or_create_case,
+    header_source,
 ):
     """Keep 304 reads empty; read back requested properties after a bodyless create.
 
@@ -1894,9 +2030,19 @@ def test_container_get_or_create_distinguishes_bodyless_read_and_create_rust(
         )
     case.backend.execute.side_effect = replies
     hook = MagicMock()
-    kwargs = dict(match_condition=MatchConditions.IfMissing, return_properties=True, response_hook=hook)
+    kwargs = dict(
+        match_condition=MatchConditions.IfMissing,
+        return_properties=True,
+        response_hook=hook,
+    )
+    headers = {"x-company-trace": "setup"}
+    kwargs[header_source] = (
+        headers if header_source == "initial_headers" else {"initialHeaders": headers}
+    )
     proxy, properties = _call_get_or_create(case, **kwargs)
     assert proxy.id == "c1"
+    for call in case.backend.execute.call_args_list:
+        assert wire_headers(call.args[0])["x-company-trace"] == "setup"
     if case.missing:
         assert properties == case.existing_properties
         assert [call.args[0].op for call in case.backend.execute.call_args_list] == [

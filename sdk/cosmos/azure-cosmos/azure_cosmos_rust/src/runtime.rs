@@ -59,10 +59,6 @@ use sha2::{Digest, Sha256};
 
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
-    fault_injection::{
-        CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionErrorType,
-        FaultInjectionResultBuilder, FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
-    },
     models::AccountReference,
     options::{
         AvailabilityStrategy, DriverOptions, EndToEndOperationLatencyPolicy, ExcludedRegions,
@@ -71,6 +67,11 @@ use azure_data_cosmos_driver::{
         ReadConsistencyStrategy, Region, ThrottlingRetryOptionsBuilder, UserAgentSuffix,
         Utf8DecodingMode,
     },
+};
+#[cfg(any(test, feature = "test-probes"))]
+use azure_data_cosmos_driver::fault_injection::{
+    CustomResponseBuilder, FaultInjectionConditionBuilder, FaultInjectionErrorType,
+    FaultInjectionResultBuilder, FaultInjectionRule, FaultInjectionRuleBuilder, FaultOperationType,
 };
 use tokio::runtime::Runtime as TokioRuntime;
 use tokio::sync::Mutex;
@@ -88,7 +89,7 @@ pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: &'static TokioRuntime,
 }
 
-/// One cached CosmosDriver, its fault rules, and its outstanding acquisition count.
+/// One cached CosmosDriver and its outstanding acquisition count.
 ///
 /// The key includes runtime identity, endpoint, credential, and config fingerprints because drivers
 /// retain authentication and settings. Keying only by endpoint would incorrectly
@@ -99,6 +100,7 @@ pub(crate) struct RuntimeContext {
 /// the driver alive independently of the cache.
 pub(crate) struct DriverEntry {
     pub(crate) driver: Arc<CosmosDriver>,
+    #[cfg(any(test, feature = "test-probes"))]
     fault_rules: HashMap<String, Arc<FaultInjectionRule>>,
     acquisition_count: usize,
 }
@@ -109,6 +111,7 @@ pub(crate) struct DriverEntry {
 pub(crate) struct DriverHandle {
     key: String,
     driver: Arc<CosmosDriver>,
+    #[cfg(any(test, feature = "test-probes"))]
     fault_rules: HashMap<String, Arc<FaultInjectionRule>>,
     released: AtomicBool,
 }
@@ -118,6 +121,7 @@ impl DriverHandle {
         Self {
             key,
             driver: Arc::clone(&entry.driver),
+            #[cfg(any(test, feature = "test-probes"))]
             fault_rules: entry.fault_rules.clone(),
             released: AtomicBool::new(false),
         }
@@ -131,6 +135,7 @@ impl DriverHandle {
         &self.key
     }
 
+    #[cfg(any(test, feature = "test-probes"))]
     fn fault_rule(&self, rule_id: &str) -> PyResult<&Arc<FaultInjectionRule>> {
         if self.released.load(Ordering::Acquire) {
             return Err(PyValueError::new_err("closed Rust client handle"));
@@ -222,11 +227,13 @@ struct ClientSettings {
     utf8_decoding_mode: Option<String>,
     aad_scope_override: Option<String>,
     operation_timeout_seconds: Option<f64>,
+    #[cfg(any(test, feature = "test-probes"))]
     fault_injection_rules: Vec<FaultRuleSettings>,
     headers: BTreeMap<String, String>,
 }
 
 #[derive(serde::Serialize)]
+#[cfg(any(test, feature = "test-probes"))]
 struct FaultRuleSettings {
     id: String,
     operation_type: String,
@@ -255,7 +262,9 @@ impl ClientSettings {
             }
             Ok(value.map(|value| if value == 0.0 { 0.0 } else { value }))
         };
+        #[cfg(any(test, feature = "test-probes"))]
         let mut rules = Vec::new();
+        #[cfg(any(test, feature = "test-probes"))]
         if let Some(items) = get_config_opt::<Vec<PyObject>>(config, "fault_injection_rules")? {
             for item in items {
                 let item = item.bind(config.py());
@@ -302,6 +311,7 @@ impl ClientSettings {
                 get_numeric_config_opt(config, "operation_timeout_seconds")?,
                 "operation_timeout_seconds",
             )?,
+            #[cfg(any(test, feature = "test-probes"))]
             fault_injection_rules: rules,
             headers: client_headers_from_config(Some(config))?,
         })
@@ -490,11 +500,19 @@ pub(crate) fn runtime_context() -> &'static RuntimeContext {
     })
 }
 
-/// Reject retired client-level network configuration without initializing a runtime.
+/// Reject unsupported client configuration without initializing a runtime.
 #[pyfunction(name = "_validate_runtime_configuration")]
 #[pyo3(signature = (config=None))]
 pub(crate) fn validate_runtime_configuration(config: Option<&Bound<'_, PyAny>>) -> PyResult<()> {
     if let Some(config) = config {
+        #[cfg(not(any(test, feature = "test-probes")))]
+        if get_config_opt::<Vec<PyObject>>(config, "fault_injection_rules")?
+            .is_some_and(|rules| !rules.is_empty())
+        {
+            return Err(PyValueError::new_err(
+                "fault_injection_rules requires a wheel built with --features test-probes.",
+            ));
+        }
         for name in ["connection_timeout_seconds", "read_timeout_seconds", "proxy_allowed"] {
             match config.getattr(name) {
                 Ok(value) if !value.is_none() => {
@@ -579,6 +597,7 @@ pub(crate) fn acquire_driver_handle(
         let operation_options = operation_options_from_settings(&settings)?;
         let preferred_regions = preferred_regions_from_settings(&settings)?;
         let user_agent_suffix = user_agent_suffix_from_settings(&settings)?;
+        #[cfg(any(test, feature = "test-probes"))]
         let fault_rules = fault_rules_from_settings(&settings)?;
 
         // No matching CosmosDriver was cached. Prepare the account without holding the
@@ -613,6 +632,7 @@ pub(crate) fn acquire_driver_handle(
             if let Some(user_agent_suffix) = user_agent_suffix {
                 builder = builder.with_user_agent_suffix(user_agent_suffix);
             }
+            #[cfg(any(test, feature = "test-probes"))]
             if !fault_rules.is_empty() {
                 builder = builder
                     .with_fault_injection_rules(fault_rules.clone())
@@ -636,6 +656,7 @@ pub(crate) fn acquire_driver_handle(
 
         Ok(DriverEntry {
             driver,
+            #[cfg(any(test, feature = "test-probes"))]
             fault_rules: fault_rules
                 .into_iter()
                 .map(|rule| (rule.id().to_string(), rule))
@@ -695,6 +716,7 @@ fn user_agent_suffix_from_settings(settings: &ClientSettings) -> PyResult<Option
     }
 }
 
+#[cfg(any(test, feature = "test-probes"))]
 fn fault_response_headers_from_config(rule: &Bound<'_, PyAny>) -> PyResult<BTreeMap<String, String>> {
     let mut headers = BTreeMap::new();
     if let Some(value) = get_config_opt::<PyObject>(rule, "response_headers")? {
@@ -718,6 +740,7 @@ fn fault_response_headers_from_config(rule: &Bound<'_, PyAny>) -> PyResult<BTree
     Ok(headers)
 }
 
+#[cfg(any(test, feature = "test-probes"))]
 fn fault_rules_from_settings(settings: &ClientSettings) -> PyResult<Vec<Arc<FaultInjectionRule>>> {
     let mut rules = Vec::new();
     for item in &settings.fault_injection_rules {
@@ -999,6 +1022,7 @@ fn release_driver_key(key: &str) -> PyResult<()> {
     Ok(())
 }
 
+#[cfg(any(test, feature = "test-probes"))]
 #[pyfunction]
 pub(crate) fn _debug_fault_injection_rule_hit_count(driver_handle: &DriverHandle, rule_id: &str) -> PyResult<u32> {
     let rule = driver_handle.fault_rule(rule_id)?;
@@ -1008,6 +1032,7 @@ pub(crate) fn _debug_fault_injection_rule_hit_count(driver_handle: &DriverHandle
 /// Toggle only an explicitly configured rule; callers must use isolated rule IDs.
 // PyO3 generates the identity PyErr conversion in the Python-call wrapper.
 #[allow(clippy::useless_conversion)]
+#[cfg(any(test, feature = "test-probes"))]
 #[pyfunction]
 pub(crate) fn _debug_set_fault_injection_rule_enabled(
     driver_handle: &DriverHandle,
@@ -1024,6 +1049,7 @@ pub(crate) fn _debug_set_fault_injection_rule_enabled(
 }
 
 /// Inspect already-cached regions without causing a metadata request.
+#[cfg(feature = "test-probes")]
 #[pyfunction]
 pub(crate) fn _debug_cached_account_regions(
     py: Python<'_>,

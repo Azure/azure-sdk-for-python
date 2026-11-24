@@ -35,7 +35,6 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import _base as base
 from azure.cosmos._backend.cosmos_backend import CosmosBackend
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import (
@@ -805,7 +804,6 @@ def test_create_rejects_unhonored_options_without_dispatch_rust(
     client = create_database_client
     original = deepcopy(options)
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     with pytest.raises(TypeError, match=rf"{method_name}\(\).*'{name}'"):
         _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
     assert options == original
@@ -813,7 +811,6 @@ def test_create_rejects_unhonored_options_without_dispatch_rust(
     client.client_connection.ReadDatabase.assert_not_called()
     client.client_connection.CreateDatabase.assert_not_called()
     hook.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
@@ -848,7 +845,6 @@ def test_create_keeps_recognized_transport_options_unsupported_rust(
     setting = {name: value}
     options = {mapping_name: setting} if mapping_name is not None else setting
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     with pytest.raises(TypeError, match=rf"{method_name}\(\).*'{name}'") as raised:
         _call_create_database(client, "db1", method_name=method_name, response_hook=hook, **options)
     assert guidance in str(raised.value)
@@ -857,7 +853,6 @@ def test_create_keeps_recognized_transport_options_unsupported_rust(
     client.client_connection.ReadDatabase.assert_not_called()
     client.client_connection.CreateDatabase.assert_not_called()
     hook.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("method_name", ["create_database", "create_database_if_not_exists"])
@@ -3034,13 +3029,11 @@ def test_delete_database_rejects_noncallable_hook_before_dispatch_rust(delete_da
     backend = client._adapter
     if use_legacy:
         _use_legacy_delete(client)
-    before = rust_compatibility_fallback_count()
     # Invalid hooks must fail before deletion, not while reporting its success.
     with pytest.raises(TypeError, match="delete_database response_hook must be callable or None"):
         _call_delete_database(client, "db1", response_hook=hook)
     backend.execute.assert_not_called()
     client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
@@ -3075,13 +3068,11 @@ def test_delete_database_rejects_async_hook_before_dispatch_rust(delete_database
     backend = client._adapter
     if use_legacy:
         _use_legacy_delete(client)
-    before = rust_compatibility_fallback_count()
     # Reject async callbacks rather than deleting and leaving their bodies unexecuted.
     with pytest.raises(TypeError, match="delete_database response_hook must be synchronous"):
         _call_delete_database(client, "db1", response_hook=hooks[kind])
     backend.execute.assert_not_called()
     client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
@@ -3119,8 +3110,6 @@ def test_delete_database_hook_failure_never_replays_rust(delete_database_client,
     replaying would send a second delete that finds nothing and reports a
     confusing not-found for a delete the customer actually completed.
 
-    The compatibility fallback counter does not move either, so this is not
-    recorded as a fallback.
     """
     client = delete_database_client
     backend = client._adapter
@@ -3128,7 +3117,6 @@ def test_delete_database_hook_failure_never_replays_rust(delete_database_client,
         _use_legacy_delete(client)
     error = error_type("callback failed")
     hook = MagicMock(side_effect=error)
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         _call_delete_database(client, "db1", response_hook=hook)
     assert raised.value is error
@@ -3139,7 +3127,6 @@ def test_delete_database_hook_failure_never_replays_rust(delete_database_client,
     else:
         backend.execute.assert_called_once()
         client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("error_type", [ServiceRequestError, NotImplementedError, asyncio.CancelledError])
@@ -3150,21 +3137,18 @@ def test_delete_database_backend_failure_never_replays_rust(delete_database_clie
     A transport error is the dangerous case: the delete may well have reached
     the service before the connection broke, so repeating it could report
     not-found for a delete that succeeded. The exact exception is raised, the
-    engine was called once, the hook never fires, and the fallback counter is
-    unchanged.
+    engine was called once, and the hook never fires.
     """
     client = delete_database_client
     error = error_type("backend failed")
     client._adapter.execute.side_effect = error
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         _call_delete_database(client, "db1", response_hook=hook)
     assert raised.value is error
     hook.assert_not_called()
     client._adapter.execute.assert_called_once()
     client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("status", [403, 404, 412, 429, 500])
@@ -3189,7 +3173,6 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays_rust(
         body=b'{"message":"delete failed"}',
     )]
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     with pytest.raises(CosmosHttpResponseError) as raised:
         _call_delete_database(
             client, "db1", etag="known-etag",
@@ -3201,7 +3184,6 @@ def test_delete_database_service_error_never_fires_success_hook_or_replays_rust(
     hook.assert_not_called()
     client._adapter.execute.assert_called_once()
     client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize(
@@ -3228,14 +3210,12 @@ def test_delete_database_unsupported_options_never_fall_back_rust(delete_databas
     """
     client = delete_database_client
     hook = MagicMock()
-    before = rust_compatibility_fallback_count()
     # Unsupported arguments are validation errors; database deletion itself is implemented.
     with pytest.raises(TypeError, match="delete_database.*legacy Python"):
         _call_delete_database(client, "db1", response_hook=hook, **kwargs)
     hook.assert_not_called()
     client._adapter.execute.assert_not_called()
     client.client_connection.DeleteDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize(

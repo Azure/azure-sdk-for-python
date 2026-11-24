@@ -285,14 +285,12 @@ def test_explicit_core_python_database_read_preserves_owned_data_rust(database_r
 ])
 def test_database_read_rejects_unsupported_inputs_without_core_python_rust(database_read, kwargs):
     from unittest.mock import Mock
-    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     invoke, database, recording, metadata = database_read
     legacy = Mock(side_effect=AssertionError("legacy Python path must not run"))
     database.client_connection.QueryOffers = legacy
     original = deepcopy(kwargs)
     hooks = []
-    before = rust_compatibility_fallback_count()
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
         else (NotImplementedError, "legacy Python path")
@@ -303,7 +301,6 @@ def test_database_read_rejects_unsupported_inputs_without_core_python_rust(datab
     assert not hooks
     assert not metadata
     assert not recording.requests
-    assert rust_compatibility_fallback_count() == before
     legacy.assert_not_called()
 
 
@@ -360,10 +357,8 @@ def throughput_replace(database_read):
     {"timeout": 0.5},
 ])
 def test_replacement_rejects_unsupported_inputs_before_metadata_rust(throughput_replace, kwargs):
-    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     invoke, _, recording, metadata = throughput_replace
-    before = rust_compatibility_fallback_count()
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
         else (NotImplementedError, "legacy Python")
@@ -372,7 +367,6 @@ def test_replacement_rejects_unsupported_inputs_before_metadata_rust(throughput_
         invoke(**kwargs)
     assert not metadata
     assert not recording.requests
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("hook", [False, 0, "", {}, "not-callable"])

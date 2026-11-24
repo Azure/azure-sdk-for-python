@@ -55,14 +55,13 @@ async def test_throttling_listing_uses_configured_authentication_rust(monkeypatc
 
 @pytest.mark.parametrize("timeout", [29, 12])
 def test_throttling_timeout_assertions_accept_retries_at_the_deadline_rust(timeout):
-    assert_throttled_timeout((0, 4, 7), (timeout, 7, 7), timeout)
+    assert_throttled_timeout((0, 4), (timeout, 7), timeout)
 
 
 @pytest.mark.parametrize("timeout", [29, 12])
-@pytest.mark.parametrize("failure", ["no-retry", "early", "late", "legacy-replay"])
+@pytest.mark.parametrize("failure", ["no-retry", "early", "late"])
 def test_throttling_timeout_assertions_reject_incomplete_evidence_rust(timeout, failure):
     elapsed = timeout - 2 if failure == "early" else timeout + 5 if failure == "late" else timeout
     hits = 1 if failure == "no-retry" else 3
-    fallback = 1 if failure == "legacy-replay" else 0
     with pytest.raises(AssertionError):
-        assert_throttled_timeout((0, 4, 7), (elapsed, 4 + hits, 7 + fallback), timeout)
+        assert_throttled_timeout((0, 4), (elapsed, 4 + hits), timeout)

@@ -94,6 +94,20 @@ fn patch_operation(
 /// The Python wrapper normally supplies PreparedRequest.item_id. If that field
 /// is None or empty, read the id from body_bytes. Missing or wrongly typed
 /// attributes raise instead; this does not select the legacy execution path.
+#[cfg(not(feature = "test-probes"))]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn create_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    create_item_impl(py, driver_handle, prepared, timeout_seconds, include_attempts)
+}
+
+#[cfg(feature = "test-probes")]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item<'py>(
@@ -103,6 +117,19 @@ pub(crate) fn create_item<'py>(
     timeout_seconds: Option<f64>,
     include_attempts: bool,
     include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    create_item_impl(
+        py, driver_handle, prepared, timeout_seconds, include_attempts, include_fault_diagnostics,
+    )
+}
+
+fn create_item_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -121,6 +148,7 @@ pub(crate) fn create_item<'py>(
         "create_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         include_fault_diagnostics,
         |item_ref, body| CosmosOperation::create_item(item_ref).with_body(body),
     )
@@ -157,6 +185,7 @@ pub(crate) fn upsert_item<'py>(
         "upsert_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         |item_ref, body| CosmosOperation::upsert_item(item_ref).with_body(body),
     )
@@ -199,6 +228,7 @@ pub(crate) fn replace_item<'py>(
         "replace_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         |item_ref, body| CosmosOperation::replace_item(item_ref).with_body(body),
     )
@@ -237,6 +267,7 @@ pub(crate) fn delete_item<'py>(
         "delete_item",
         false,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         |item_ref, _| CosmosOperation::delete_item(item_ref),
     )
@@ -253,6 +284,20 @@ pub(crate) fn delete_item<'py>(
 /// `x-ms-dedicatedgateway-max-age`, driven by
 /// `max_integrated_cache_staleness_in_ms`, is forwarded through
 /// `custom_headers` like any other per-request header.
+#[cfg(not(feature = "test-probes"))]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn read_item<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    read_item_impl(py, driver_handle, prepared, timeout_seconds, include_attempts)
+}
+
+#[cfg(feature = "test-probes")]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn read_item<'py>(
@@ -262,6 +307,19 @@ pub(crate) fn read_item<'py>(
     timeout_seconds: Option<f64>,
     include_attempts: bool,
     include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyTuple>> {
+    read_item_impl(
+        py, driver_handle, prepared, timeout_seconds, include_attempts, include_fault_diagnostics,
+    )
+}
+
+fn read_item_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyTuple>> {
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
@@ -281,6 +339,7 @@ pub(crate) fn read_item<'py>(
         "read_item",
         false,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         include_fault_diagnostics,
         |item_ref, _| CosmosOperation::read_item(item_ref),
     )
@@ -331,6 +390,7 @@ pub(crate) fn patch_item<'py>(
         "patch_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         move |item_ref, body| patch_operation(item_ref, body, precondition),
     )
@@ -338,6 +398,20 @@ pub(crate) fn patch_item<'py>(
 
 /// Async twin of `create_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
+#[cfg(not(feature = "test-probes"))]
+#[pyfunction]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
+pub(crate) fn create_item_async<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    create_item_async_impl(py, driver_handle, prepared, timeout_seconds, include_attempts)
+}
+
+#[cfg(feature = "test-probes")]
 #[pyfunction]
 #[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
 pub(crate) fn create_item_async<'py>(
@@ -347,6 +421,19 @@ pub(crate) fn create_item_async<'py>(
     timeout_seconds: Option<f64>,
     include_attempts: bool,
     include_fault_diagnostics: bool,
+) -> PyResult<Bound<'py, PyAny>> {
+    create_item_async_impl(
+        py, driver_handle, prepared, timeout_seconds, include_attempts, include_fault_diagnostics,
+    )
+}
+
+fn create_item_async_impl<'py>(
+    py: Python<'py>,
+    driver_handle: &Bound<'_, PyAny>,
+    prepared: &Bound<'py, PyAny>,
+    timeout_seconds: Option<f64>,
+    include_attempts: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     super::validate_prepared_operation(prepared, "create_item")?;
     let (container_link, partition_key, mut modifiers, item_id, body_bytes) =
@@ -365,6 +452,7 @@ pub(crate) fn create_item_async<'py>(
         "create_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         include_fault_diagnostics,
         #[cfg(feature = "test-probes")]
         None,
@@ -400,6 +488,7 @@ pub(crate) fn upsert_item_async<'py>(
         "upsert_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         #[cfg(feature = "test-probes")]
         None,
@@ -436,6 +525,7 @@ pub(crate) fn replace_item_async<'py>(
         "replace_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         #[cfg(feature = "test-probes")]
         None,
@@ -474,6 +564,7 @@ pub(crate) fn delete_item_async<'py>(
         "delete_item",
         false,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         #[cfg(feature = "test-probes")]
         None,
@@ -485,14 +576,13 @@ pub(crate) fn delete_item_async<'py>(
 /// Python awaitable instead of a ready tuple.
 #[cfg(not(feature = "test-probes"))]
 #[pyfunction]
-#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false, include_fault_diagnostics=false))]
+#[pyo3(signature = (driver_handle, prepared, *, timeout_seconds=None, include_attempts=false))]
 pub(crate) fn read_item_async<'py>(
     py: Python<'py>,
     driver_handle: &Bound<'_, PyAny>,
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
-    include_fault_diagnostics: bool,
 ) -> PyResult<Bound<'py, PyAny>> {
     read_item_async_impl(
         py,
@@ -500,7 +590,6 @@ pub(crate) fn read_item_async<'py>(
         prepared,
         timeout_seconds,
         include_attempts,
-        include_fault_diagnostics,
     )
 }
 
@@ -534,7 +623,7 @@ fn read_item_async_impl<'py>(
     prepared: &Bound<'py, PyAny>,
     timeout_seconds: Option<f64>,
     include_attempts: bool,
-    include_fault_diagnostics: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
     #[cfg(feature = "test-probes")] lifecycle_probe: Option<
         PyRef<'py, crate::wire::lifecycle::AsyncOperationProbe>,
     >,
@@ -557,6 +646,7 @@ fn read_item_async_impl<'py>(
         "read_item",
         false,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         include_fault_diagnostics,
         #[cfg(feature = "test-probes")]
         lifecycle_probe.map(|probe| probe.state.clone()),
@@ -601,6 +691,7 @@ pub(crate) fn patch_item_async<'py>(
         "patch_item",
         true,
         include_attempts,
+        #[cfg(feature = "test-probes")]
         false,
         #[cfg(feature = "test-probes")]
         None,
@@ -700,13 +791,22 @@ mod tests {
                             &prepared,
                             None,
                             false,
+                            #[cfg(feature = "test-probes")]
                             false,
                             #[cfg(feature = "test-probes")]
                             None,
                         )
                         .map(|_| ())
                     } else {
-                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                        read_item(
+                            py,
+                            pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                            &prepared,
+                            None,
+                            false,
+                            #[cfg(feature = "test-probes")]
+                            false,
+                        ).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error
@@ -731,13 +831,22 @@ mod tests {
                             &prepared,
                             None,
                             false,
+                            #[cfg(feature = "test-probes")]
                             false,
                             #[cfg(feature = "test-probes")]
                             None,
                         )
                         .map(|_| ())
                     } else {
-                        read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                        read_item(
+                            py,
+                            pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                            &prepared,
+                            None,
+                            false,
+                            #[cfg(feature = "test-probes")]
+                            false,
+                        ).map(|_| ())
                     }
                     .unwrap_err();
                     assert!(error.is_instance_of::<PyValueError>(py));
@@ -754,13 +863,22 @@ mod tests {
                         &prepared,
                         None,
                         false,
+                        #[cfg(feature = "test-probes")]
                         false,
                         #[cfg(feature = "test-probes")]
                         None,
                     )
                     .map(|_| ())
                 } else {
-                    read_item(py, pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(), &prepared, None, false, false).map(|_| ())
+                    read_item(
+                        py,
+                        pyo3::types::PyString::new_bound(py, "invalid-driver-handle").as_any(),
+                        &prepared,
+                        None,
+                        false,
+                        #[cfg(feature = "test-probes")]
+                        false,
+                    ).map(|_| ())
                 }
                 .unwrap_err();
                 assert!(error.is_instance_of::<PyValueError>(py));

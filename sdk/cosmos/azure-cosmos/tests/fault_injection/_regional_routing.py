@@ -16,6 +16,7 @@ import pytest
 from azure.cosmos import exceptions
 
 from fault_injection._delayed_create import emit
+from config.diagnostics import fault_rule_hit_count_async
 
 WRITE_REGION = "East US"
 READ_REGION = "West US"
@@ -216,7 +217,7 @@ async def wait_topology_async(client, rule_id, target_guard):
     deadline = time.monotonic() + TIMEOUT
     while True:
         cached = await asyncio.to_thread(_rust._debug_cached_account_regions, handle)
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id + "-topology")
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id + "-topology")
         if cached == expected_regions(target_guard) and hits > 0:
             emit("regional_topology", writable=cached[0], readable=cached[1], hits=hits)
             return

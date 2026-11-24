@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 # Rust behavior test
 """``delete_container`` on Rust removes the container and reports a missing one as 404."""
+
 import os
 import uuid
 from unittest.mock import patch
@@ -15,9 +16,13 @@ from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust
 
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosLong]
+
 
 def _rust_client():
-    return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+    return CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+    )
 
 
 @pytest.fixture(scope="module")
@@ -43,12 +48,17 @@ def _target(database, name, kind):
 
 def _no_legacy_delete(client):
     return patch.object(
-        client.client_connection, "DeleteContainer", side_effect=AssertionError("Rust deletion used legacy Python")
+        client.client_connection,
+        "DeleteContainer",
+        create=True,
+        side_effect=AssertionError("Rust deletion used legacy Python"),
     )
 
 
 @pytest.mark.parametrize("target_kind", ["name", "mapping", "proxy"])
-def test_delete_container_returns_none_and_repeat_delete_raises_not_found_rust(owned_database, target_kind):
+def test_delete_container_returns_none_and_repeat_delete_raises_not_found_rust(
+    owned_database, target_kind
+):
     """Deleting by name, mapping or proxy returns None, calls the hook once with no body, and a repeat raises 404."""
     name = "container_" + uuid.uuid4().hex
     owned_database.create_container(name, PartitionKey(path="/id"))
@@ -69,12 +79,22 @@ def test_delete_container_returns_none_and_repeat_delete_raises_not_found_rust(o
         database = client.get_database_client(owned_database.id)
         target = _target(database, name, target_kind)
         with _no_legacy_delete(client):
-            assert run_on_rust(
-                client, lambda: database.delete_container(target, response_hook=Hook(), timeout=30)
-            ) is None
-            assert "x-test-mutation" not in client.client_connection.last_response_headers
+            assert (
+                run_on_rust(
+                    client,
+                    lambda: database.delete_container(
+                        target, response_hook=Hook(), timeout=30
+                    ),
+                )
+                is None
+            )
+            assert (
+                "x-test-mutation" not in client.client_connection.last_response_headers
+            )
             with pytest.raises(exceptions.CosmosResourceNotFoundError):
-                run_on_rust(client, lambda: database.delete_container(target, timeout=30))
+                run_on_rust(
+                    client, lambda: database.delete_container(target, timeout=30)
+                )
 
     assert calls == [None]
     with pytest.raises(exceptions.CosmosResourceNotFoundError):
@@ -97,10 +117,17 @@ def test_delete_container_after_metadata_resolution_rust(owned_database, warm):
             database = client.get_database_client(owned_database.id)
             if warm:
                 # An item operation resolves this container in the same Rust driver.
-                item = database.get_container_client(name).create_item({"id": "warm", "value": 42})
+                item = database.get_container_client(name).create_item(
+                    {"id": "warm", "value": 42}
+                )
                 assert item["id"] == "warm" and item["value"] == 42
             with _no_legacy_delete(client):
-                return run_on_rust(client, lambda: database.delete_container(name, response_hook=hook, timeout=30))
+                return run_on_rust(
+                    client,
+                    lambda: database.delete_container(
+                        name, response_hook=hook, timeout=30
+                    ),
+                )
 
     if warm:
         assert delete() is None

@@ -21,6 +21,7 @@ from azure.cosmos._telemetry import CompletionHandler
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
 from config.settings import TestSettings
+from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 from fault_injection._async_cancellation import wait_for_evidence
 from read_items.test_read_items_native import native_database  # pylint: disable=unused-import
 from read_all_items.test_read_all_items_contract_unit import ForbiddenConnection
@@ -159,7 +160,8 @@ async def test_native_read_all_faults_and_fresh_enumeration_rust(native_database
                 await take_page()
         else:
             assert len(await take_page()) == 1
-        hits = client._adapter._debug_fault_injection_rule_hit_count(identifier)
+        counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+        hits = counter(client._adapter, identifier)
         assert (await hits if asynchronous else hits) == 1
         assert len(await collect(container, asynchronous)) == 76
     finally:
@@ -185,7 +187,7 @@ async def test_native_read_all_cancellation_releases_cursor_rust(native_database
         pending = asyncio.create_task(pages.__anext__())
         try:
             async def started():
-                return await client._adapter._debug_fault_injection_rule_hit_count(identifier) == 1
+                return await fault_rule_hit_count_async(client._adapter, identifier) == 1
 
             await wait_for_evidence(started, 5, "The read-all fault was not reached.")
             prepared = pages.state.config.prepared(None, pages.state.cursor, None)

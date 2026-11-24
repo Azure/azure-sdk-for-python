@@ -17,7 +17,7 @@ from azure.cosmos import (
     exceptions,
 )
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     capture_native,
@@ -526,7 +526,7 @@ async def exercise_read(
 
         async def read(phase, must_fail=False, transport_retry=False):
             records.clear()
-            before = (_binding_operation_count(), _rust_fallback_count())
+            before = _binding_operation_count()
             started = time.monotonic()
             returned, error = None, None
             try:
@@ -546,7 +546,7 @@ async def exercise_read(
                 error = caught
             finished = time.monotonic()
             elapsed = finished - started
-            after = (_binding_operation_count(), _rust_fallback_count())
+            after = _binding_operation_count()
             emit(
                 "proxy_read",
                 phase=phase,
@@ -560,8 +560,7 @@ async def exercise_read(
                 attempts=records,
                 endpoint=read_endpoint,
                 error_type=None if error is None else type(error).__name__,
-                binding_delta=after[0] - before[0],
-                fallback_delta=after[1] - before[1],
+                binding_delta=after - before,
             )
             assert_route(before, after, "rust")
             assert_read_outcome(

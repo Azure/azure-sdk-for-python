@@ -204,8 +204,9 @@ def test_driver_source_and_features_are_preserved_rust():
     Both dependency groups inherit the same source. The lock must record that
     same commit, with no second copy of the driver from a local folder.
     The optional features are listed explicitly because they change what the driver can
-    do. Three are on for normal use; a separate one is on only for the driver's own tests,
-    which is what keeps a built-in test service out of what customers receive.
+    do. Query planning and PATCH support are on for normal use; fault injection
+    requires test-probes or native Rust tests. The built-in test service is a
+    development dependency, so it is absent from customer builds.
     """
     workspace = _read_toml(PACKAGE_ROOT / "Cargo.toml")
     binding = _read_toml(PACKAGE_ROOT / "azure_cosmos_rust" / "Cargo.toml")
@@ -219,11 +220,12 @@ def test_driver_source_and_features_are_preserved_rust():
         assert dependency["workspace"] is True
         assert "path" not in dependency
     assert set(binding["dependencies"]["azure_data_cosmos_driver"]["features"]) == {
-        "__internal_native_query_plan", "fault_injection", "unstable_patch"
+        "__internal_native_query_plan", "unstable_patch"
     }
     assert binding["dev-dependencies"]["azure_data_cosmos_driver"]["features"] == [
-        "__internal_in_memory_emulator"
+        "__internal_in_memory_emulator", "fault_injection"
     ]
+    assert binding["features"]["test-probes"] == ["azure_data_cosmos_driver/fault_injection"]
     assert set(binding["dependencies"]["pyo3"]["features"]) == {
         "extension-module", "abi3-py310", "generate-import-lib"
     }

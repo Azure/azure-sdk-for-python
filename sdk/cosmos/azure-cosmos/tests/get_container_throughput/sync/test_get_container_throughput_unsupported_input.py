@@ -8,7 +8,7 @@ import os
 import pytest
 
 from azure.cosmos import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count
 
 pytestmark = [pytest.mark.cosmosEmulator]
 
@@ -31,7 +31,7 @@ def test_get_container_throughput_unsupported_input_raises_not_implemented_rust(
         monkeypatch.setattr(container, "read", forbidden)
         monkeypatch.setattr(client.client_connection, "QueryOffers", forbidden)
 
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         with pytest.raises(NotImplementedError, match="legacy Python path"):
             container.get_throughput(**options)
-        assert (_binding_operation_count(), _rust_fallback_count()) == before
+        assert _binding_operation_count() == before

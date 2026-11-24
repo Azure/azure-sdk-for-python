@@ -5,6 +5,7 @@
 import ast
 import importlib.util
 import json
+import os
 import subprocess
 from pathlib import Path
 from types import SimpleNamespace
@@ -234,7 +235,10 @@ def test_telemetry_dependencies_are_required_before_collection_rust(tmp_path, mo
 
     def import_module(name):
         if name == "azure.cosmos._rust":
-            return SimpleNamespace(__file__=str(tmp_path / "installed" / "_rust.pyd"))
+            return SimpleNamespace(
+                __file__=str(tmp_path / "installed" / "_rust.pyd"),
+                **{probe: Mock() for probe in runner.DEBUG_PROBE_EXPORTS},
+            )
         if name == missing:
             raise ModuleNotFoundError(f"No module named {name}")
         return SimpleNamespace()
@@ -392,7 +396,10 @@ def test_native_runner_requires_actual_unfiltered_tests_rust(tmp_path, monkeypat
 def test_cancellation_lane_rejects_extension_without_probe_rust(tmp_path, monkeypatch):
     import azure.cosmos
 
-    native = SimpleNamespace(__file__=str(tmp_path / "_rust.pyd"))
+    native = SimpleNamespace(
+        __file__=str(tmp_path / "_rust.pyd"),
+        **{probe: Mock() for probe in runner.DEBUG_PROBE_EXPORTS},
+    )
     monkeypatch.setattr(azure.cosmos, "_rust", native)
     monkeypatch.setitem(runner.sys.modules, "azure.cosmos._rust", native)
     monkeypatch.setattr(
@@ -414,7 +421,7 @@ def test_cancellation_lane_requires_both_end_to_end_cases_rust():
     files = runner.discover_tests(PACKAGE, "cancellation")
     assert files == [PACKAGE / "tests" / "fault_injection" / "aio" / "test_async_cancellation_fault.py"]
     assert runner.declared_tests(files[0]) == {"test_cancelled_read_drops_native_future_and_client_recovers_rust"}
-    # The standard emulator job installs a normal wheel and selects -m cosmosEmulator.
+    # Cancellation stays separate from the emulator suite even with a probe wheel.
     tree = ast.parse(files[0].read_text(encoding="utf-8"))
     marks = {
         node.value.attr
@@ -473,7 +480,10 @@ def test_toxiproxy_lane_accepts_current_driver_revision_rust(tmp_path, monkeypat
     import azure.cosmos
     from toxiproxy import _toxiproxy_config
 
-    native = SimpleNamespace(__file__=str(tmp_path / "_rust.pyd"), __rust_driver_commit__="unit-test-revision")
+    native = SimpleNamespace(
+        __file__=str(tmp_path / "_rust.pyd"), __rust_driver_commit__="unit-test-revision",
+        **{probe: Mock() for probe in runner.DEBUG_PROBE_EXPORTS},
+    )
     monkeypatch.setattr(azure.cosmos, "_rust", native)
     monkeypatch.setitem(runner.sys.modules, "azure.cosmos._rust", native)
     monkeypatch.setattr(runner.sys, "path", list(runner.sys.path))
@@ -498,18 +508,37 @@ def test_toxiproxy_lane_accepts_current_driver_revision_rust(tmp_path, monkeypat
     execute.assert_called_once_with(results, native)
 
 
+@pytest.mark.parametrize("pipeline", ["ci.yml", "tests.yml", "templates/emulator-probe-tests.yml"])
+def test_pipeline_preserves_unicode_failure_output_rust(pipeline):
+    repository = PACKAGE.parents[2]
+    config = yaml.safe_load((repository / "sdk" / "cosmos" / pipeline).read_text())
+    if "extends" in config:
+        environment = config["extends"]["parameters"].get("EnvVars", {})
+    else:
+        step = next(step for step in config["steps"] if "dispatch_checks.py" in step.get("pwsh", ""))
+        environment = step["env"]
+    # Model Windows redirected output even when this test runs on another OS.
+    env = {**os.environ, "PYTHONUTF8": "0", "PYTHONIOENCODING": "cp1252"}
+    if "PYTHONIOENCODING" in environment:
+        env["PYTHONIOENCODING"] = environment["PYTHONIOENCODING"]
+    result = subprocess.run(
+        [runner.sys.executable, "-c", r"print('\U0001f4a5 source build failed')"],
+        env=env, capture_output=True, check=True,
+    )
+    assert result.stdout.decode("utf-8").strip() == "\U0001f4a5 source build failed"
+
+
 def test_pipeline_wires_toxiproxy_through_existing_central_hook_rust():
     repository = PACKAGE.parents[2]
     ci = yaml.safe_load((repository / "sdk" / "cosmos" / "ci.yml").read_text())
     assert ci["extends"]["template"] == "/eng/pipelines/templates/stages/archetype-sdk-client.yml"
     parameters = ci["extends"]["parameters"]
-    assert parameters["TestMarkArgument"] == "cosmosEmulator"
-    assert parameters["BeforeTestSteps"][0]["template"].endswith("/cosmos-emulator.yml")
+    assert parameters["TestMarkArgument"] == "cosmosCustomerWheel"
+    assert parameters["BeforeTestSteps"][0]["template"].endswith("/prepare-test-probes.yml")
+    assert parameters["BeforeTestSteps"][1]["template"].endswith("/cosmos-emulator.yml")
     assert parameters["AfterTestSteps"] == [
-        {
-            "template": "/sdk/cosmos/templates/rust-tests.yml",
-            "parameters": {"ToolchainFeed": parameters["MsRustToolchainFeed"]},
-        },
+        {"template": "/sdk/cosmos/templates/emulator-probe-tests.yml"},
+        {"template": "/sdk/cosmos/templates/rust-tests.yml"},
         {"template": "/sdk/cosmos/templates/telemetry-tests.yml"},
         {"template": "/sdk/cosmos/templates/toxiproxy-tests.yml"},
     ]
@@ -534,24 +563,19 @@ def test_supplemental_rust_checks_reuse_one_existing_test_job_rust():
     repository = PACKAGE.parents[2]
     ci = yaml.safe_load((repository / "sdk" / "cosmos" / "ci.yml").read_text())
     parameters = ci["extends"]["parameters"]
-    assert parameters["TestMarkArgument"] == "cosmosEmulator"
+    assert parameters["TestMarkArgument"] == "cosmosCustomerWheel"
     assert parameters["TestTimeoutInMinutes"] == 240
     template = (repository / "sdk/cosmos/templates/rust-tests.yml").read_text()
     parsed = yaml.safe_load(template)
-    assert set(parsed) == {"parameters", "steps"}
-    prepare, install, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
+    assert set(parsed) == {"steps"}
+    prepare, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
     condition = (
         "and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), "
         "eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))"
     )
     for step in (prepare, native, offline, publish, cancellation, publish_cancellation):
         assert step["condition"] == condition
-    assert install["template"] == "/eng/pipelines/templates/steps/install-msrust-toolchain.yml"
-    assert install["parameters"] == {
-        "ToolchainFeed": "${{ parameters.ToolchainFeed }}",
-        "WorkingDirectory": "$(Build.SourcesDirectory)/sdk/cosmos/azure-cosmos",
-        "Condition": condition,
-    }
+    assert "install-msrust-toolchain.yml" not in template
     assert all("checkout" not in step for step in parsed["steps"])
     assert all(step.get("task") != "DownloadPipelineArtifact@2" for step in parsed["steps"])
     assert "use-python-version.yml" not in template
@@ -564,16 +588,13 @@ def test_supplemental_rust_checks_reuse_one_existing_test_job_rust():
 def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     repository = PACKAGE.parents[2]
     parsed = yaml.safe_load((repository / "sdk/cosmos/templates/rust-tests.yml").read_text())
-    prepare, _, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
+    prepare, native, offline, publish, cancellation, publish_cancellation = parsed["steps"]
     results = "$(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-rust"
     assert results in prepare["pwsh"]
     assert "uploadLlmArtifacts" in prepare["pwsh"]
     assert "$PSNativeCommandUseErrorActionPreference = $true" in prepare["pwsh"]
-    assert "python -m pip install -r dev_requirements.txt" in prepare["pwsh"]
-    assert "-Filter 'azure_cosmos-*-win_amd64.whl'" in prepare["pwsh"]
-    assert "$wheels.Count -ne 1" in prepare["pwsh"]
-    assert "install --no-deps --force-reinstall $wheels[0].FullName" in prepare["pwsh"]
-    assert "$env:PYO3_PYTHON = (Get-Command python).Source" in native["pwsh"]
+    assert "$(CosmosProbePython)" in prepare["pwsh"]
+    assert "$env:PYO3_PYTHON = '$(CosmosProbePython)'" in native["pwsh"]
     assert "run_rust_ci.py native" in native["pwsh"]
     assert f"--results '{results}/native'" in native["pwsh"]
     assert "exit $LASTEXITCODE" in native["pwsh"]
@@ -591,9 +612,8 @@ def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     assert publish["inputs"]["failTaskOnFailedTests"] is True
     assert publish["inputs"]["failTaskOnMissingResultsFile"] is True
     script = cancellation["pwsh"]
-    assert "python -m venv $venv" in script
-    assert "maturin build --release --locked --features test-probes --interpreter $python" in script
-    assert "install --no-deps --force-reinstall $wheels[0].FullName" in script
+    assert "$(CosmosProbePython)" in script
+    assert "maturin build" not in script
     assert "run_rust_ci.py cancellation" in script and "--require-installed-wheel" in script
     assert f"$results = '{results}/cancellation'" in script
     assert cancellation["env"]["COSMOS_BACKEND"] == "rust"
@@ -601,6 +621,80 @@ def test_supplemental_rust_checks_require_built_wheel_and_save_results_rust():
     assert publish_cancellation["inputs"]["testResultsFiles"] == f"{results}/cancellation/pytest.xml"
     assert publish_cancellation["inputs"]["failTaskOnFailedTests"] is True
     assert publish_cancellation["inputs"]["failTaskOnMissingResultsFile"] is True
+
+
+def test_probe_wheels_stay_out_of_customer_artifacts_and_keep_emulator_coverage_rust():
+    repository = PACKAGE.parents[2]
+    template = yaml.safe_load(
+        (repository / "sdk/cosmos/templates/prepare-test-probes.yml").read_text()
+    )
+    install, build = template["steps"]
+    assert install["template"].endswith("/install-msrust-toolchain.yml")
+    script = build["pwsh"]
+    assert "$wheelDirectory = '$(Agent.TempDirectory)/cosmos-test-probes-wheels'" in script
+    assert "pip wheel . --no-deps --no-build-isolation" in script
+    assert "maturin.build-args=--features test-probes --locked" in script
+    assert "AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR = $nativeAssets" in script
+    assert "install --no-deps --force-reinstall $wheels[0].FullName" in script
+    assert "task.setvariable variable=CosmosProbePython" in script
+    assert "task.setvariable variable=CosmosProbeWheelDirectory" in script
+    preserve, customer_publish, emulator = yaml.safe_load(
+        (repository / "sdk/cosmos/templates/emulator-probe-tests.yml").read_text()
+    )["steps"]
+    assert "customer-wheel" in preserve["pwsh"]
+    assert customer_publish["inputs"]["failTaskOnMissingResultsFile"] is True
+    assert 'dispatch_checks.py azure-cosmos' in emulator["pwsh"]
+    assert '--wheel_dir="$(CosmosProbeWheelDirectory)"' in emulator["pwsh"]
+    assert '--mark_arg="cosmosEmulator"' in emulator["pwsh"]
+    assert '--checks="$(ChecksOverride)"' in emulator["pwsh"]
+    assert emulator["env"]["COSMOS_REQUIRE_TEST_PROBES"] == "1"
+    assert emulator["env"]["MATURIN_PEP517_ARGS"] == "--features test-probes"
+    assert emulator["condition"] == "succeededOrFailed()"
+    assert "exit $LASTEXITCODE" in emulator["pwsh"]
+    live = yaml.safe_load((repository / "sdk/cosmos/tests.yml").read_text())["extends"]["parameters"]
+    # The existing live-job template actually invokes PreSteps, not BeforeTestSteps.
+    assert live["PreSteps"][-1]["template"].endswith("/prepare-test-probes.yml")
+    assert live["AdditionalTestArgs"] == '--wheel_dir="$(CosmosProbeWheelDirectory)"'
+
+
+@pytest.mark.parametrize("suite", ["offline", "parity", "toxiproxy"])
+@pytest.mark.parametrize("missing", runner.DEBUG_PROBE_EXPORTS)
+def test_probe_lanes_reject_missing_debug_exports_before_running_tests_rust(tmp_path, monkeypatch, suite, missing):
+    native = SimpleNamespace(
+        __file__=str(tmp_path / "_rust.pyd"),
+        **{name: Mock() for name in runner.DEBUG_PROBE_EXPORTS if name != missing},
+    )
+    monkeypatch.setattr(runner.importlib, "import_module", Mock(return_value=native))
+    monkeypatch.setattr(runner.sys, "argv", ["run_rust_ci.py", suite, "--results", str(tmp_path)])
+    execute = Mock()
+    monkeypatch.setattr(runner.pytest, "main", execute)
+    with pytest.raises(RuntimeError, match=f"test-probes.*{missing}"):
+        runner.main()
+    execute.assert_not_called()
+
+
+@pytest.mark.parametrize("required", [False, True])
+@pytest.mark.parametrize("instrumented", [False, True])
+def test_standard_pytest_lane_enforces_probe_build_only_when_requested_rust(monkeypatch, required, instrumented):
+    import azure.cosmos
+
+    spec = importlib.util.spec_from_file_location("_probe_conftest_under_test", PACKAGE / "tests" / "conftest.py")
+    plugin = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(plugin)
+    native = SimpleNamespace()
+    if instrumented:
+        native._AsyncOperationProbe = Mock()
+        native._debug_operation_count = Mock()
+    monkeypatch.setattr(azure.cosmos, "_rust", native)
+    if required:
+        monkeypatch.setenv("COSMOS_REQUIRE_TEST_PROBES", "1")
+    else:
+        monkeypatch.delenv("COSMOS_REQUIRE_TEST_PROBES", raising=False)
+    if required and not instrumented:
+        with pytest.raises(pytest.UsageError, match="--features test-probes"):
+            plugin.pytest_sessionstart(None)
+    else:
+        plugin.pytest_sessionstart(None)
 
 
 def test_pipeline_telemetry_installs_dependencies_and_runs_offline_rust():

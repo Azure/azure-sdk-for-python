@@ -36,7 +36,8 @@
 //!
 //! The binding and linked Rust driver are separate responsibilities inside the
 //! same compiled extension.
-
+
+
 #[cfg(test)]
 #[path = "../build_commit.rs"]
 mod build_commit;
@@ -80,9 +81,12 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, runtime::validate_runtime_configuration);
     add_pyfn!(m, runtime::runtime_configuration);
     add_pyfn!(m, runtime::release_driver_handle);
-    add_pyfn!(m, runtime::_debug_fault_injection_rule_hit_count);
-    add_pyfn!(m, runtime::_debug_set_fault_injection_rule_enabled);
-    add_pyfn!(m, runtime::_debug_cached_account_regions);
+    #[cfg(feature = "test-probes")]
+    {
+        add_pyfn!(m, runtime::_debug_fault_injection_rule_hit_count);
+        add_pyfn!(m, runtime::_debug_set_fault_injection_rule_enabled);
+        add_pyfn!(m, runtime::_debug_cached_account_regions);
+    }
     add_pyfn!(m, ffi::create_item);
     add_pyfn!(m, ffi::upsert_item);
     add_pyfn!(m, ffi::replace_item);
@@ -137,11 +141,14 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, ffi::get_container_metadata_async);
     // Counts instrumented runner entries, not successful operations or network
     // requests. Not every entry point increments it; metadata lookup does not.
+    #[cfg(feature = "test-probes")]
     add_pyfn!(m, wire::operation_count);
     // Sum diagnostics passed to record_diagnostics. Attempt totals include the
     // driver's compaction totals; retry counts inspect retained non-initial
     // records. Neither accessor proves complete coverage of a workload.
+    #[cfg(feature = "test-probes")]
     add_pyfn!(m, wire::attempt_count);
+    #[cfg(feature = "test-probes")]
     add_pyfn!(m, wire::retry_count);
     // Typed transport error the Python backend maps to azure-core's
     // ServiceResponseError (see wire::_DriverTransportError).

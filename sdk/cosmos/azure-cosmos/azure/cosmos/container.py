@@ -34,8 +34,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
-from ._base import (_build_properties_cache, build_options,
-                    GenerateGuidId, validate_cache_staleness_value)
+from ._base import _build_properties_cache, build_options, validate_cache_staleness_value
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
@@ -52,7 +51,7 @@ from ._helpers._batch_operations import execute_batch
 from ._helpers._item_prep import prepare_read_item_kwargs, prepare_create_item_kwargs, prepare_item_target
 from ._helpers._read_many import read_items as _read_items
 from ._helpers._read_all_items import read_all_items as _read_all_items
-from ._helpers._query_items import query_items as _query_items, uses_rust, reject_rust_continuation_token
+from ._helpers._query_items import query_items as _query_items, uses_rust
 from ._helpers._response_parse import complete_item_response
 from ._operation_deadline import deadline_lock, remaining_timeout
 from ._helpers._container_operations import ContainerHelper
@@ -72,7 +71,7 @@ from ._session_token_helpers import get_latest_session_token
 from .exceptions import CosmosHttpResponseError
 from .offer import ThroughputProperties
 from .partition_key import (_build_partition_key_from_properties, PartitionKeyType,
-                            _return_undefined_or_empty_partition_key, _SequentialPartitionKeyType,
+                            _return_undefined_or_empty_partition_key,
                             NonePartitionKeyValue, NullPartitionKeyValue, PartitionKey)
 from ._backend.capabilities import prepare_operation_kwargs
 
@@ -1069,93 +1068,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         original_positional_arg_names = ["query", "parameters", "partition_key", "enable_cross_partition_query",
                                          "max_item_count", "enable_scan_in_query", "populate_query_metrics"]
         utils.add_args_to_kwargs(original_positional_arg_names, args, kwargs)
-        if uses_rust(self):
-            return _query_items(self, kwargs)
-        reject_rust_continuation_token(kwargs)
-        feed_options = build_options(kwargs)
-        max_integrated_cache_staleness_in_ms = feed_options.get("maxIntegratedCacheStaleness")
-        if max_integrated_cache_staleness_in_ms is not None:
-            validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
-
-        # Get container property and init client container caches
-        container_properties = self._get_properties_with_options(feed_options)
-        # The legacy query path works out full and partial partition keys here.
-        kwargs["container_properties"] = container_properties
-
-        # Update 'feed_options' from 'kwargs'
-        if utils.valid_key_value_exist(kwargs, "enable_cross_partition_query"):
-            feed_options["enableCrossPartitionQuery"] = kwargs.pop("enable_cross_partition_query")
-        if utils.valid_key_value_exist(kwargs, "max_item_count"):
-            feed_options["maxItemCount"] = kwargs.pop("max_item_count")
-        if utils.valid_key_value_exist(kwargs, "populate_query_metrics"):
-            feed_options["populateQueryMetrics"] = kwargs.pop("populate_query_metrics")
-        if utils.valid_key_value_exist(kwargs, "populate_index_metrics"):
-            feed_options["populateIndexMetrics"] = kwargs.pop("populate_index_metrics")
-        if utils.valid_key_value_exist(kwargs, "populate_query_advice"):
-            feed_options["populateQueryAdvice"] = kwargs.pop("populate_query_advice")
-        if utils.valid_key_value_exist(kwargs, "enable_scan_in_query"):
-            feed_options["enableScanInQuery"] = kwargs.pop("enable_scan_in_query")
-        if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
-            feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
-        if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
-            scope = kwargs.pop("full_text_score_scope")
-            if scope not in ("Local", "Global"):
-                raise ValueError(f"full_text_score_scope must be 'Local' or 'Global', got '{scope}'")
-            feed_options["fullTextScoreScope"] = scope
-
-        # populate availability_strategy
-        if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
-                and feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] is not None):
-            feed_options[Constants.Kwargs.AVAILABILITY_STRATEGY] =\
-                _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
-
-        feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
-
-        # Set query with 'query' and 'parameters' from kwargs
-        query_str = kwargs.pop("query", None)
-        parameters = kwargs.pop("parameters", None)
-        if parameters is not None:
-            query = {"query": query_str, "parameters": parameters}
-        else:
-            query = query_str
-
-        # Set range filters for a query. Options are either 'feed_range' or 'partition_key'
-        utils.verify_exclusive_arguments(["feed_range", "partition_key"], **kwargs)
-        if utils.valid_key_value_exist(kwargs, "partition_key"):
-            partition_key_value = self._set_partition_key(kwargs["partition_key"])
-            partition_key_obj = _build_partition_key_from_properties(container_properties)
-            if partition_key_obj._is_prefix_partition_key(partition_key_value):
-                kwargs["prefix_partition_key_object"] = partition_key_obj
-                kwargs["prefix_partition_key_value"] = cast(_SequentialPartitionKeyType, partition_key_value)
-            else:
-                # Add to feed_options, only when feed_range not given and partition_key was not prefixed partition_key
-                feed_options["partitionKey"] = partition_key_value
-        elif (
-            not utils.valid_key_value_exist(kwargs, "feed_range")
-            and "enableCrossPartitionQuery" not in feed_options
-        ):
-            feed_options["enableCrossPartitionQuery"] = True
-        kwargs.pop("partition_key", None)
-
-        # Set 'partition_key' for QueryItems method. This can be 'None' if feed range or prefix partition key was set
-        partition_key = feed_options.get("partitionKey")
-
-        # Set 'response_hook'
-        response_hook = kwargs.pop("response_hook", None)
-        if response_hook and hasattr(response_hook, "clear"):
-            response_hook.clear()
-
-        # Choosing core-python explicitly keeps the legacy path.
-        items = self.client_connection.QueryItems(
-            database_or_container_link=self.container_link,
-            query=query,
-            options=feed_options,
-            partition_key=partition_key,
-            response_hook=response_hook,
-            **kwargs
-        )
-        return items
+        return _query_items(self, kwargs)
 
     @distributed_trace
     def semantic_rerank(

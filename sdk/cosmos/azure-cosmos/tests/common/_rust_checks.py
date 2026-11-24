@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from typing import Any, Awaitable, Callable, Mapping, Sequence, TypeVar
 
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count
 
 T = TypeVar("T")
 
@@ -46,28 +46,24 @@ def assert_rust_client(client: Any) -> None:
 
 
 def run_on_rust(client: Any, call: Callable[[], T]) -> T:
-    """Run ``call`` and fail unless it entered the binding without falling back.
+    """Run ``call`` and fail unless it entered the Rust binding.
 
-    Counters are process-wide, so keep the checked call isolated from
+    The counter is process-wide, so keep the checked call isolated from
     unrelated concurrent work.
     """
     assert_rust_client(client)
     before = _binding_operation_count()
-    fallback_before = _rust_fallback_count()
     try:
         return call()
     finally:
         assert _binding_operation_count() > before, "call did not enter the Rust binding"
-        assert _rust_fallback_count() == fallback_before, "call fell back to core-python"
 
 
 async def run_on_rust_async(client: Any, call: Callable[[], Awaitable[T]]) -> T:
     """Async twin of :func:`run_on_rust`."""
     assert_rust_client(client)
     before = _binding_operation_count()
-    fallback_before = _rust_fallback_count()
     try:
         return await call()
     finally:
         assert _binding_operation_count() > before, "call did not enter the Rust binding"
-        assert _rust_fallback_count() == fallback_before, "call fell back to core-python"

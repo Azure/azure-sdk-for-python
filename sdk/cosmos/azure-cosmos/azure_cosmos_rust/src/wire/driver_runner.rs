@@ -9,6 +9,7 @@
 //! returns a Python awaitable. Both convert the result with the GIL held.
 
 use std::future::Future;
+#[cfg(any(test, feature = "test-probes"))]
 use std::sync::atomic::Ordering;
 use std::sync::Arc;
 use std::time::Duration;
@@ -19,6 +20,7 @@ use pyo3::types::PyTuple;
 
 use azure_data_cosmos_driver::driver::CosmosDriver;
 
+#[cfg(any(test, feature = "test-probes"))]
 use super::diagnostics::BINDING_OP_COUNT;
 use super::errors::{catch_operation_panic, operation_join_error};
 use super::AbortOnDrop;
@@ -93,6 +95,7 @@ where
     R: Send,
 {
     catch_operation_panic(|| {
+        #[cfg(any(test, feature = "test-probes"))]
         BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
         let driver = driver_handle.driver();
         let future = prepare(driver)?;
@@ -139,6 +142,7 @@ where
     Fut: Future<Output = R> + Send + 'static,
     R: Send + 'static,
 {
+    #[cfg(any(test, feature = "test-probes"))]
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = driver_handle.driver();
     let future = catch_operation_panic(|| prepare(driver))?;

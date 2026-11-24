@@ -7,9 +7,11 @@ import pytest
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.client_config import _prepare_fault_injection_rules
+from azure.cosmos._backend import binding_adapter as sync_binding
 from azure.cosmos.aio._backend import binding_adapter as async_binding
 from fault_injection._delayed_create import assert_control, assert_failure, assert_route, create_rule
 from config import fault_resources as fixtures
+from config import diagnostics
 
 
 @pytest.mark.parametrize("inject", [True, False])
@@ -70,56 +72,105 @@ def test_control_rejects_applied_fault_and_accepts_service_fields_rust():
     assert_control({**item, "_etag": "a"}, {**item, "_etag": "b"}, item, 0)
 
 
-@pytest.mark.parametrize("backend,binding_delta,fallback_delta", [
-    ("rust", 0, 0), ("rust", 2, 0), ("rust", 1, 1), ("core-python", 1, 0),
+@pytest.mark.parametrize("backend,binding_delta", [
+    ("rust", 0), ("rust", 2), ("core-python", 1),
 ])
-def test_route_rejects_wrong_path_or_fallback_rust(backend, binding_delta, fallback_delta):
+def test_route_rejects_wrong_binding_count_rust(backend, binding_delta):
     with pytest.raises(AssertionError):
-        assert_route((7, 2), (7 + binding_delta, 2 + fallback_delta), backend)
+        assert_route(7, 7 + binding_delta, backend)
+
+
+@pytest.mark.parametrize("backend,binding_delta", [("rust", 1), ("core-python", 0)])
+def test_route_accepts_expected_binding_count_rust(backend, binding_delta):
+    assert_route(7, 7 + binding_delta, backend)
 
 
 @pytest.mark.asyncio
-async def test_async_hit_count_awaits_acquisition_and_forwards_rule_id_rust(monkeypatch):
-    adapter = async_binding.AsyncBindingAdapter("https://fault.example", master_key="key")
-    acquire = AsyncMock(return_value="owned-handle")
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_hit_count_acquires_owned_handle_and_forwards_rule_id_rust(monkeypatch, asynchronous):
+    adapter_type = async_binding.AsyncBindingAdapter if asynchronous else sync_binding.BindingAdapter
+    adapter = adapter_type("https://fault.example", master_key="key")
+    acquire = (AsyncMock if asynchronous else Mock)(return_value="owned-handle")
     counter = Mock(return_value=3)
     monkeypatch.setattr(adapter, "_ensure_driver_handle", acquire)
-    monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(_debug_fault_injection_rule_hit_count=counter))
+    monkeypatch.setattr("azure.cosmos._rust", SimpleNamespace(_debug_fault_injection_rule_hit_count=counter))
     try:
-        assert await adapter._debug_fault_injection_rule_hit_count("named-rule") == 3
-        acquire.assert_awaited_once_with()
+        if asynchronous:
+            assert await diagnostics.fault_rule_hit_count_async(adapter, "named-rule") == 3
+            acquire.assert_awaited_once_with()
+        else:
+            assert diagnostics.fault_rule_hit_count(adapter, "named-rule") == 3
+            acquire.assert_called_once_with()
         counter.assert_called_once_with("owned-handle", "named-rule")
     finally:
-        await adapter.close()
+        if asynchronous:
+            await adapter.close()
+        else:
+            adapter.close()
 
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("failure", ["acquisition", "counter", "missing_binding", "closed"])
-async def test_async_hit_count_does_not_hide_errors_rust(monkeypatch, failure):
-    adapter = async_binding.AsyncBindingAdapter("https://fault.example", master_key="key")
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_hit_count_does_not_hide_errors_rust(monkeypatch, failure, asynchronous):
+    adapter_type = async_binding.AsyncBindingAdapter if asynchronous else sync_binding.BindingAdapter
+    adapter = adapter_type("https://fault.example", master_key="key")
     counter = Mock(return_value=0)
-    monkeypatch.setattr(async_binding, "_rust_module", SimpleNamespace(_debug_fault_injection_rule_hit_count=counter))
+    monkeypatch.setattr("azure.cosmos._rust", SimpleNamespace(_debug_fault_injection_rule_hit_count=counter))
     expected = RuntimeError
     if failure == "missing_binding":
-        monkeypatch.setattr(async_binding, "_rust_module", None)
+        monkeypatch.setattr("azure.cosmos._rust", None)
         expected = NotImplementedError
     elif failure == "closed":
-        await adapter.close()
+        if asynchronous:
+            await adapter.close()
+        else:
+            adapter.close()
     else:
+        acquire = AsyncMock if asynchronous else Mock
         monkeypatch.setattr(
             adapter, "_ensure_driver_handle",
-            AsyncMock(side_effect=RuntimeError("acquisition failed")) if failure == "acquisition"
-            else AsyncMock(return_value="owned-handle"),
+            acquire(side_effect=RuntimeError("acquisition failed")) if failure == "acquisition"
+            else acquire(return_value="owned-handle"),
         )
         if failure == "counter":
             counter.side_effect = RuntimeError("unknown rule")
     try:
         with pytest.raises(expected):
-            await adapter._debug_fault_injection_rule_hit_count("named-rule")
+            if asynchronous:
+                await diagnostics.fault_rule_hit_count_async(adapter, "named-rule")
+            else:
+                diagnostics.fault_rule_hit_count(adapter, "named-rule")
         if failure != "counter":
             counter.assert_not_called()
     finally:
-        await adapter.close()
+        if asynchronous:
+            await adapter.close()
+        else:
+            adapter.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_hit_count_without_test_probes_fails_before_driver_acquisition_rust(monkeypatch, asynchronous):
+    module = async_binding if asynchronous else sync_binding
+    adapter_type = module.AsyncBindingAdapter if asynchronous else module.BindingAdapter
+    adapter = adapter_type("https://fault.example", master_key="key")
+    acquire = AsyncMock() if asynchronous else Mock()
+    monkeypatch.setattr(adapter, "_ensure_driver_handle", acquire)
+    monkeypatch.setattr("azure.cosmos._rust", SimpleNamespace())
+    try:
+        with pytest.raises(NotImplementedError, match="--features test-probes"):
+            if asynchronous:
+                await diagnostics.fault_rule_hit_count_async(adapter, "named-rule")
+            else:
+                diagnostics.fault_rule_hit_count(adapter, "named-rule")
+        acquire.assert_not_called()
+    finally:
+        if asynchronous:
+            await adapter.close()
+        else:
+            adapter.close()
 
 
 @pytest.fixture

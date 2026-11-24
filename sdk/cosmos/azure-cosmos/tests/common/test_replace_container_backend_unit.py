@@ -45,7 +45,6 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_REPLACE_CONTAINER, OP_TO_BINDING_FUNCTION_NAME
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._base import _validate_resource
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_container import build_replace_container_prepared
@@ -287,7 +286,7 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     Each raises ``NotImplementedError`` pointing at the legacy Python client,
     except the bad deadlines, which raise ``ValueError`` because they are wrong
     values rather than something Rust cannot do.
-    Nothing is sent and the fallback counter does not move, so a customer's
+    Nothing is sent, so a customer's
     container is never rewritten by an engine they did not choose.
 
     Skipped when legacy was chosen explicitly, since these are Rust eligibility
@@ -296,7 +295,6 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     case = replace_case
     if case.legacy:
         pytest.skip("Rust-specific eligibility")
-    before = rust_compatibility_fallback_count()
     error, message = (
         (ValueError, "timeout must be") if "timeout" in kwargs
         else (NotImplementedError, "replace_container.*legacy Python")
@@ -304,7 +302,6 @@ def test_unsupported_rust_options_never_fall_back_rust(replace_case, kwargs):
     with pytest.raises(error, match=message):
         _replace(case, "c1", PK, **kwargs)
     _assert_no_dispatch(case)
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("timeout", [None, 1, 1.5, 10])

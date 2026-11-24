@@ -91,7 +91,6 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
     """Invalid customer inputs are not missing Rust capabilities."""
     from azure.cosmos.container import ContainerProxy
     from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
-    from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
     class Sync(CosmosBackend):
         name = "rust"
@@ -115,7 +114,6 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
     connection = SimpleNamespace(_backend=Async() if async_mode else Sync())
     container_type = AsyncContainerProxy if async_mode else ContainerProxy
     container = container_type(connection, "dbs/db", "orders")
-    before = rust_compatibility_fallback_count()
     with pytest.raises(ValueError, match=f"{invalid_side}_feed_range"):
         result = container.is_feed_range_subset(
             parent_feed_range=parent,
@@ -123,7 +121,6 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
         )
         if async_mode:
             asyncio.run(result)
-    assert rust_compatibility_fallback_count() == before
 
 
 # ---------------------------------------------------------------------------

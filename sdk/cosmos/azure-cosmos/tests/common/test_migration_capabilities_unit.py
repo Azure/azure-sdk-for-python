@@ -32,7 +32,6 @@ from azure.cosmos._backend.operations import (
     STATELESS_PAGE_BINDING_FUNCTION_NAMES,
     RETAINED_PAGE_BINDING_FUNCTION_NAMES,
 )
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 
 
 @pytest.fixture(params=[False, True], ids=["sync", "async"])
@@ -135,13 +134,21 @@ def test_unsupported_requests_never_fall_back_for_any_operation_rust(dispatch, o
     """Reject every unsupported operation before request building or dispatch."""
     policy = CAPABILITIES[op]
     wire_op = sorted(policy.operations)[0]
-    before = rust_compatibility_fallback_count()
     # These resource operations reject unsupported inputs as argument errors.
-    error_type = TypeError if op in {"read_database", "delete_database", "create_container"} else NotImplementedError
+    error_type = (
+        TypeError
+        if op in {
+            "read_database",
+            "delete_database",
+            "create_container",
+            "create_container_if_not_exists",
+            "delete_container",
+        }
+        else NotImplementedError
+    )
     with pytest.raises(error_type):
         dispatch.run(wire_op, supported=False, capability=op, paged=paged)
     dispatch.legacy.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
     dispatch.build.assert_not_called()
     assert dispatch.executed == 0
 
@@ -215,12 +222,10 @@ def test_failures_never_replay_and_keep_the_original_error_rust(
         dispatch.error = error
     else:
         dispatch.process.side_effect = error
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as failure:
         dispatch.run("query_items" if paged else "get_throughput", paged=paged)
     assert failure.value is error
     dispatch.legacy.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
     assert dispatch.closed == int(paged and phase != "build")
 
 
@@ -308,12 +313,10 @@ def test_explicit_legacy_comparison_is_not_rust_fallback_rust(dispatch, paged):
     dispatch.backend = (
         ASYNC_LEGACY_BACKEND if isinstance(dispatch.backend, AsyncCosmosBackend) else LEGACY_BACKEND
     )
-    before = rust_compatibility_fallback_count()
     assert dispatch.run(supported=False, paged=paged) == "legacy"
     dispatch.legacy.assert_called_once()
     dispatch.build.assert_not_called()
     dispatch.process.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 def test_query_scope_is_typed_and_preserves_the_original_payload_rust():

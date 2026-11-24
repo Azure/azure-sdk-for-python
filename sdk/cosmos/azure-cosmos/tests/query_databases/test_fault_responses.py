@@ -12,7 +12,6 @@ import pytest
 from azure.cosmos import CosmosClient, _rust
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
-from config.diagnostics import _rust_fallback_count
 from config.settings import TestSettings
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
@@ -53,7 +52,6 @@ async def test_query_fault_after_initialization_rust(monkeypatch, record_propert
     calls = []
     hooks = []
     handle = None
-    fallback_before = _rust_fallback_count()
 
     async def successful_query():
         iterable = client.query_databases(query, parameters=parameters, timeout=10)
@@ -117,7 +115,6 @@ async def test_query_fault_after_initialization_rust(monkeypatch, record_propert
         assert calls == [operation], "The failure must come from querying, not initialization"
         assert hooks == []
         assert pager.continuation_token == bookmark
-        assert _rust_fallback_count() == fallback_before
 
         with pytest.raises(RuntimeError, match="pager failed"):
             await next_page(pager)
@@ -128,10 +125,8 @@ async def test_query_fault_after_initialization_rust(monkeypatch, record_propert
         await successful_query()
         assert calls == [operation, operation]
         assert _rust._debug_fault_injection_rule_hit_count(handle, rule_id) == hits
-        assert _rust_fallback_count() == fallback_before
     finally:
         record_property("binding_calls", ",".join(calls))
-        record_property("fallback_delta", _rust_fallback_count() - fallback_before)
         if handle is not None:
             _rust._debug_set_fault_injection_rule_enabled(handle, rule_id, False)
         if asynchronous:

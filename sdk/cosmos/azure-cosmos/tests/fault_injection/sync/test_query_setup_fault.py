@@ -10,7 +10,7 @@ import pytest
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._query_resume import (
     PAGE_BUDGET,
@@ -60,8 +60,8 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
         container = client.get_database_client(database_id).get_container_client(
             observer.id
         )
-        assert client._adapter._debug_fault_injection_rule_hit_count(metadata_id) == 0
-        assert client._adapter._debug_fault_injection_rule_hit_count(guard_id) == 0
+        assert fault_rule_hit_count(client._adapter, metadata_id) == 0
+        assert fault_rule_hit_count(client._adapter, guard_id) == 0
         calls, hooks = capture_query_calls(monkeypatch), []
         pages = container.query_items(
             QUERY,
@@ -71,7 +71,7 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
             response_hook=lambda headers, body: hooks.append(dict(headers)),
         ).by_page()
         assert not calls and pages.state.cursor is None
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, first = None, None
         start = time.perf_counter()
         try:
@@ -83,11 +83,11 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
             set_rule(handle, metadata_id, False)
             set_rule(handle, guard_id, False)
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        metadata_hits = client._adapter._debug_fault_injection_rule_hit_count(
+        after = _binding_operation_count()
+        metadata_hits = fault_rule_hit_count(client._adapter,
             metadata_id
         )
-        guard_hits = client._adapter._debug_fault_injection_rule_hit_count(guard_id)
+        guard_hits = fault_rule_hit_count(client._adapter, guard_id)
         emit(
             "query_setup",
             surface="sync",
@@ -107,8 +107,7 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
             ),
             continuation_present=pages.continuation_token is not None,
             elapsed=elapsed,
-            binding_delta=after[0] - before[0],
-            fallback_delta=after[1] - before[1],
+            binding_delta=after - before,
         )
         assert_route(before, after, "rust")
         assert len(calls) == 1
@@ -119,7 +118,7 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
                 error, pages, cursor, hooks, metadata_hits, guard_hits, elapsed
             )
             first = list(next(pages))
-            recovered = (_binding_operation_count(), _rust_fallback_count())
+            recovered = _binding_operation_count()
             assert_route(after, recovered, "rust")
             assert len(calls) == 2 and calls[-1][1] is cursor
         else:
@@ -131,13 +130,13 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
         assert_complete(first, remainder, items)
         assert pages.state.cursor is None
         assert all(call[1] is cursor for call in calls)
-        completed = (_binding_operation_count(), _rust_fallback_count())
-        assert completed[0] - before[0] == len(calls) and completed[1] == before[1]
+        completed = _binding_operation_count()
+        assert completed - before == len(calls)
         assert (
-            client._adapter._debug_fault_injection_rule_hit_count(metadata_id)
+            fault_rule_hit_count(client._adapter, metadata_id)
             == metadata_hits
         )
-        assert client._adapter._debug_fault_injection_rule_hit_count(guard_id) == 0
+        assert fault_rule_hit_count(client._adapter, guard_id) == 0
         emit(
             "query_setup_recovered",
             surface="sync",
@@ -146,9 +145,8 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
             same_cursor=True,
             returned_ids=[row["id"] for row in first + remainder],
             expected_ids=[item["id"] for item in items],
-            binding_delta=completed[0] - before[0],
+            binding_delta=completed - before,
             native_calls=len(calls),
-            fallback_delta=completed[1] - before[1],
         )
         # A warmed, separate iterator proves the guard really matches QueryItem.
         set_rule(handle, guard_id, True)
@@ -166,12 +164,12 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
                 guard_error = caught
         finally:
             set_rule(handle, guard_id, False)
-        guard_hits = client._adapter._debug_fault_injection_rule_hit_count(guard_id)
+        guard_hits = fault_rule_hit_count(client._adapter, guard_id)
         assert_guard_failure(guard_error, guard_hits)
-        guard_after = (_binding_operation_count(), _rust_fallback_count())
+        guard_after = _binding_operation_count()
         assert_route(completed, guard_after, "rust")
         assert (
-            client._adapter._debug_fault_injection_rule_hit_count(metadata_id)
+            fault_rule_hit_count(client._adapter, metadata_id)
             == metadata_hits
         )
         assert guard_pages.state.failed and guard_pages.state.cursor is None
@@ -182,8 +180,7 @@ def test_query_setup_error_retries_same_iterator_rust(owned_target, monkeypatch,
             hits=guard_hits,
             status=guard_error.status_code,
             sub_status=guard_error.sub_status,
-            binding_delta=guard_after[0] - completed[0],
-            fallback_delta=guard_after[1] - completed[1],
+            binding_delta=guard_after - completed,
         )
         for item in items:
             stored = observer.read_item(item["id"], partition_key=partition)

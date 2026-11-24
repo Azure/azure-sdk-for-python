@@ -39,9 +39,10 @@ use tokio::sync::Mutex;
 
 #[cfg(test)]
 use super::legacy_partition_key::legacy_partition_key_header;
+#[cfg(any(test, feature = "test-probes"))]
+use super::diagnostics::BINDING_OP_COUNT;
 use super::{
     deadline::{parse_remaining_timeout, with_timeout},
-    diagnostics::BINDING_OP_COUNT,
     driver_runner::block_on_with_signals,
     errors::{catch_operation_panic, operation_join_error},
     request::{
@@ -1039,6 +1040,7 @@ pub(crate) fn fetch_page_with_cursor<'py>(
     let (link, modifiers, token, scope) = inputs(prepared)?;
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let request = feed_inputs(prepared, scope)?;
+    #[cfg(any(test, feature = "test-probes"))]
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let driver = driver_handle.driver();
     let state = cursor.state.clone();
@@ -1076,6 +1078,7 @@ pub(crate) fn fetch_page_with_cursor_async<'py>(
     let (link, modifiers, token, scope) = inputs(prepared)?;
     let timeout = parse_remaining_timeout(timeout_seconds)?;
     let request = feed_inputs(prepared, scope)?;
+    #[cfg(any(test, feature = "test-probes"))]
     BINDING_OP_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
     let driver = driver_handle.driver();
     let state = cursor.state.clone();

@@ -13,7 +13,6 @@ import pytest
 from azure.cosmos import CosmosClient, _rust, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from common.throughput_fixtures import owned_database, owned_database_async
-from config.diagnostics import _rust_fallback_count
 from config.settings import TestSettings, unique_database_id
 
 pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
@@ -70,7 +69,6 @@ async def test_delete_database_native_failure_preserves_database_and_recovers_ru
 
         monkeypatch.setattr(_rust, operation, observed_delete)
         hooks = []
-        fallback_before = _rust_fallback_count()
         timeout = 3
         error_type = exceptions.CosmosHttpResponseError if status == 401 else exceptions.CosmosClientTimeoutError
         _rust._debug_set_fault_injection_rule_enabled(handle, rule_id, True)
@@ -84,7 +82,6 @@ async def test_delete_database_native_failure_preserves_database_and_recovers_ru
             record_property("delete_elapsed_seconds", elapsed)
             assert calls == [operation], "The SDK must not replay deletion after a native failure"
             assert hooks == []
-            assert _rust_fallback_count() == fallback_before
             if status == 401:
                 assert caught.value.status_code == 401
                 assert caught.value.headers["x-ms-activity-id"] == activity_id
@@ -107,4 +104,3 @@ async def test_delete_database_native_failure_preserves_database_and_recovers_ru
             await invoke(database.read)
         assert missing.value.status_code == 404
         assert _rust._debug_fault_injection_rule_hit_count(handle, rule_id) == hits
-        assert _rust_fallback_count() == fallback_before

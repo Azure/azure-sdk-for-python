@@ -179,15 +179,6 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             record_failed_lookup(operation, exc, setup=True)
             raise
 
-    async def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
-        """Return how many Rust request attempts applied the named test rule."""
-        if _rust_module is None:
-            raise NotImplementedError(
-                "Rust fault injection requires the compiled azure.cosmos._rust module."
-            )
-        driver_handle = await self._ensure_driver_handle()
-        return int(_rust_module._debug_fault_injection_rule_hit_count(driver_handle, rule_id))
-
     def _take_driver_handle_for_close(self) -> Optional[_DriverHandle]:
         """Mark the client closed and remove its stored driver handle for release."""
         with self._driver_handle_lock:

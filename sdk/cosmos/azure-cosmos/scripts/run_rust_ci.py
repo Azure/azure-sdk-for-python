@@ -33,6 +33,14 @@ CARGO_TEST_RUNS = (
 )
 # Needs an extension built with the test-probes feature; see rust-tests.yml.
 CANCELLATION_CASE_COUNTS = {"fault_injection/aio/test_async_cancellation_fault.py": 2}
+DEBUG_PROBE_EXPORTS = (
+    "_debug_operation_count",
+    "_debug_attempt_count",
+    "_debug_retry_count",
+    "_debug_fault_injection_rule_hit_count",
+    "_debug_set_fault_injection_rule_enabled",
+    "_debug_cached_account_regions",
+)
 TELEMETRY_MODULES = (
     "telemetry/test_rust_telemetry_unit.py",
     "telemetry/test_tracing_settings_unit.py",
@@ -407,6 +415,12 @@ def main() -> int:
     if args.require_installed_wheel and Path(native.__file__).resolve().is_relative_to(PACKAGE):
         raise RuntimeError("CI must load the installed wheel, not a checkout extension.")
     print(f"Native extension: {native.__file__}")
+    missing_probes = [name for name in DEBUG_PROBE_EXPORTS if not callable(getattr(native, name, None))]
+    if missing_probes:
+        raise RuntimeError(
+            f"The {args.suite} lane requires a wheel built with --features test-probes; "
+            f"missing exports: {', '.join(missing_probes)}"
+        )
     if args.suite in ("offline", "telemetry"):
         importlib.import_module("opentelemetry.sdk.trace")
         importlib.import_module("azure.core.tracing.ext.opentelemetry_span")

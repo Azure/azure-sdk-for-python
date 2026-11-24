@@ -194,6 +194,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     ops.OP_DELETE_CONTAINER: OpCapability(
         frozenset({ops.OP_DELETE_CONTAINER}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "delete_container cannot run on the Rust backend for this call because a per-call "
             "setting, request hook, or header override cannot be honored. Remove the unsupported "
@@ -303,6 +304,7 @@ CAPABILITIES: dict[str, OpCapability] = {
     ),
     GET_OR_CREATE_CONTAINER: OpCapability(
         frozenset({ops.OP_CREATE_CONTAINER, ops.OP_READ_CONTAINER}),
+        unsupported_error_type=TypeError,
         unsupported_message=(
             "create_container_if_not_exists cannot run on the Rust backend because a per-call "
             "setting, request hook, or header override cannot be honored by both the read and create "

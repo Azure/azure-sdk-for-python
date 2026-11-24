@@ -22,7 +22,6 @@ from azure.core.exceptions import ServiceRequestError
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_READ_DATABASE
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_database import (
@@ -505,16 +504,13 @@ def test_database_read_invalid_timeout_never_reaches_a_transport_rust(
     ``NotImplementedError`` ("Rust cannot do this") would mislead the customer.
 
     Neither engine is invoked, so an unusable deadline can never be rounded into
-    a usable one behind the customer's back. The compatibility fallback counter
-    is also unchanged: this is an outright refusal, not a recorded fallback.
+    a usable one behind the customer's back.
     """
     case = database_read_case
-    before = rust_compatibility_fallback_count()
     with pytest.raises(ValueError, match="timeout must be None or a finite number"):
         _call_database_read(case, timeout=timeout)
     case.backend.execute.assert_not_called()
     case.connection.ReadDatabase.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize(
@@ -729,8 +725,7 @@ def test_database_read_exceptions_never_replay_or_replace_cached_properties_rust
     exact exception object reaches the caller, rather than being wrapped or
     turned into a different type.
 
-    The engine is called exactly once, the legacy path is never tried, and the
-    compatibility fallback counter does not move -- a failed read must not be
+    The engine is called exactly once and the legacy path is never tried. A failed read must not be
     replayed on the other engine, which for the hook case would mean running the
     customer's code twice. The proxy also keeps its previous properties, so a
     failed read never leaves a half-updated view behind.
@@ -740,7 +735,6 @@ def test_database_read_exceptions_never_replay_or_replace_cached_properties_rust
     hook = MagicMock(side_effect=error if failure_source == "hook" else None)
     if failure_source == "backend":
         case.backend.execute.side_effect = error
-    before = rust_compatibility_fallback_count()
     with pytest.raises(error_type) as raised:
         _call_database_read(case, response_hook=hook)
     assert raised.value is error
@@ -748,7 +742,6 @@ def test_database_read_exceptions_never_replay_or_replace_cached_properties_rust
     case.backend.execute.assert_called_once()
     case.connection.ReadDatabase.assert_not_called()
     assert hook.call_count == (1 if failure_source == "hook" else 0)
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("status", [403, 404, 408, 412, 429, 500])

@@ -9,7 +9,7 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, exceptions
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._query_resume import set_rule
 from fault_injection._point_timeout import (
@@ -42,9 +42,9 @@ def test_point_read_operation_timeout_rust(owned_target, monkeypatch, inject):
         container.read(timeout=30)
         # Warm the driver's partition-key metadata as well as the Python container cache.
         client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
         budgets = capture_read_budget(monkeypatch)
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, returned = None, None
         start = time.perf_counter()
         try:
@@ -53,13 +53,13 @@ def test_point_read_operation_timeout_rust(owned_target, monkeypatch, inject):
                 ServiceResponseError, TimeoutError) as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = fault_rule_hit_count(client._adapter, rule_id)
         emit("point_timeout", surface="sync", backend="rust", inject=inject, database_id=database_id,
              rule_id=rule_id, elapsed=elapsed, hits=hits, native_budgets=budgets,
              error_type=None if error is None else type(error).__name__,
              error_message=None if error is None else str(error),
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         assert_read_budget(budgets)
         stored = observer.read_item(item_id, partition_key=item_id)
@@ -89,10 +89,10 @@ def test_database_read_operation_timeout_rust(owned_target, monkeypatch, inject)
         database = client.get_database_client(database_id)
         expected = database.read(timeout=30)
         handle = client._adapter._ensure_driver_handle()
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
         budgets = capture_read_budget(monkeypatch, operation="read_database")
         hooks = []
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, returned = None, None
         set_rule(handle, rule_id, True)
         start = time.perf_counter()
@@ -112,8 +112,8 @@ def test_database_read_operation_timeout_rust(owned_target, monkeypatch, inject)
         finally:
             set_rule(handle, rule_id, False)
         elapsed = time.perf_counter() - start
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
-        after = (_binding_operation_count(), _rust_fallback_count())
+        hits = fault_rule_hit_count(client._adapter, rule_id)
+        after = _binding_operation_count()
         emit(
             "database_read_timeout",
             surface="sync",
@@ -134,4 +134,4 @@ def test_database_read_operation_timeout_rust(owned_target, monkeypatch, inject)
             assert returned == expected and hooks == [expected]
             assert_read_elapsed(elapsed)
         assert database.read(timeout=30) == expected
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+        assert fault_rule_hit_count(client._adapter, rule_id) == hits

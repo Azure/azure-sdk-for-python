@@ -6,8 +6,8 @@
 """Poll change-feed pages when the customer app advances the async page iterator.
 
 ChangeFeedConfig and ChangeFeedPageState supply the shared settings and
-continuation rules. This module awaits the selected Python backend or legacy
-fetcher. Constructing the pager does not start a metadata request or fetch a page.
+continuation rules. This module awaits the Rust backend. Constructing the pager
+does not start a metadata request or fetch a page.
 """
 
 from typing import Any, Optional
@@ -15,18 +15,9 @@ from typing import Any, Optional
 from azure.core.async_paging import AsyncPageIterator
 from azure.core.utils import CaseInsensitiveDict
 
-from ..._change_feed.aio.change_feed_fetcher import (
-    ChangeFeedFetcherV1,
-    ChangeFeedFetcherV2,
-)
-from ..._change_feed.change_feed_state import ChangeFeedStateVersion
 from ..._cosmos_responses import CosmosAsyncItemPaged
 from ..._helpers._change_feed import ChangeFeedConfig, ChangeFeedPageState
-from ..._operation_deadline import (
-    legacy_deadline_options,
-    remaining_timeout,
-    run_with_deadline,
-)
+from ..._operation_deadline import run_with_deadline
 from ..._telemetry import trace_operation_async
 
 
@@ -75,8 +66,7 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         """Await a poll and then complete its result using the shared state.
 
         A poll starting at a particular time can require another fetch before
-        returning. Those fetches share one deadline. The legacy fetcher and its
-        metadata request are created only when that path is actually used.
+        returning. Those fetches share one deadline.
         """
         state = self.state
         if state.done:
@@ -88,53 +78,10 @@ class AsyncChangeFeedPageIterator(AsyncPageIterator):
         try:
             config, deadline = state.config, state.config.deadline()
             state.begin()
-            if config.rust:
-                while True:
-                    result = await _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
-                    if result is not None:
-                        return result
-
-            async def fetch_page() -> list[dict[str, Any]]:
-                state.legacy_options.update(legacy_deadline_options(config.options, deadline))
-                state.legacy_options.pop("continuation", None)
-                if state.fetcher is None:
-                    properties = await config.proxy._get_properties_with_options(state.legacy_options)
-                    remaining_timeout(deadline)
-                    change_state = state.legacy_state(properties)
-                    state.legacy_options["changeFeedState"] = change_state
-
-                    async def fetch(
-                        options: dict[str, Any],
-                    ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-                        remaining_timeout(options.get("_item_operation_deadline"))
-                        before = state.responses
-                        rows, _ = await config.connection.QueryFeed(
-                            config.path,
-                            config.collection_id,
-                            None,
-                            options,
-                            response_hook=state.capture,
-                            **config.kwargs
-                        )
-                        if state.responses == before:
-                            raise RuntimeError("Legacy change-feed response headers were not captured.")
-                        return rows, {name.lower(): value for name, value in state.captured.items()}
-
-                    factory = (
-                        ChangeFeedFetcherV1
-                        if change_state.version == ChangeFeedStateVersion.V1
-                        else ChangeFeedFetcherV2
-                    )
-                    state.fetcher = factory(
-                        config.connection,
-                        config.proxy.container_link,
-                        state.legacy_options,
-                        fetch,
-                    )
-                return state.legacy_result(await state.fetcher.fetch_next_block())
-
-            rows = await run_with_deadline(fetch_page, deadline)
-            return state.finish(rows, deadline)
+            while True:
+                result = await _fetch_rust_page(config, state, deadline, **config.recording_options.kwargs)
+                if result is not None:
+                    return result
         except BaseException as error:
             state.invalidate(error)
             raise

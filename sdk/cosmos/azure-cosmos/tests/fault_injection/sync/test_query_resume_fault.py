@@ -10,7 +10,7 @@ import pytest
 
 from azure.core.exceptions import AzureError
 from azure.cosmos import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._query_resume import (
     PAGE_BUDGET,
@@ -71,11 +71,11 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
             response_hook=lambda headers, body: hooks.append(dict(headers)),
         )
         pages = pager.by_page()
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         first = list(next(pages))
         assert len(first) == 1 and first[0]["id"] == items[0]["id"]
         assert_route(
-            before, (_binding_operation_count(), _rust_fallback_count()), "rust"
+            before, _binding_operation_count(), "rust"
         )
         assert len(calls) == len(hooks) == 1
         handle, cursor = calls[0]
@@ -84,10 +84,10 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
         # Save the token unchanged; the checks below prove it resumes correctly,
         # without assuming how the service or driver formats it.
         assert isinstance(bookmark, str) and bookmark
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
         set_rule(handle, rule_id, True)
         error, second = None, None
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         start = time.perf_counter()
         try:
             try:
@@ -97,8 +97,8 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
         finally:
             set_rule(handle, rule_id, False)
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = fault_rule_hit_count(client._adapter, rule_id)
         emit(
             "query_resume_failure",
             surface="sync",
@@ -110,8 +110,7 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
             status=None if error is None else getattr(error, "status_code", None),
             bookmark_preserved=pages.continuation_token == bookmark,
             hook_count=len(hooks),
-            binding_delta=after[0] - before[0],
-            fallback_delta=after[1] - before[1],
+            binding_delta=after - before,
         )
         assert_route(before, after, "rust")
         assert len(calls) == 2 and calls[1][1] is cursor
@@ -123,7 +122,7 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
             with pytest.raises(RuntimeError, match="Query pager failed"):
                 next(pages)
             assert len(calls) == 2
-            assert (_binding_operation_count(), _rust_fallback_count()) == after
+            assert _binding_operation_count() == after
             resume_token = error.continuation_token
         else:
             assert error is None and hits == 0 and len(hooks) == 2
@@ -138,18 +137,17 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
             timeout=PAGE_BUDGET,
         ).by_page(continuation_token=resume_token)
         resume_call_start = len(calls)
-        resume_before = (_binding_operation_count(), _rust_fallback_count())
+        resume_before = _binding_operation_count()
         remainder = [row for page in resumed for row in page]
-        resume_after = (_binding_operation_count(), _rust_fallback_count())
+        resume_after = _binding_operation_count()
         assert_complete(first, remainder, items)
         assert calls[resume_call_start][1] is not cursor
         assert all(
             call[1] is calls[resume_call_start][1] for call in calls[resume_call_start:]
         )
         assert resumed.state.cursor is None
-        assert resume_after[0] - resume_before[0] == len(calls) - resume_call_start
-        assert resume_after[1] == resume_before[1]
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+        assert resume_after - resume_before == len(calls) - resume_call_start
+        assert fault_rule_hit_count(client._adapter, rule_id) == hits
         emit(
             "query_resume_complete",
             surface="sync",
@@ -160,8 +158,7 @@ def test_query_failure_resumes_from_delivered_bookmark_rust(
             expected_ids=[item["id"] for item in items],
             new_cursor=True,
             hits=hits,
-            binding_delta=resume_after[0] - resume_before[0],
-            fallback_delta=resume_after[1] - resume_before[1],
+            binding_delta=resume_after - resume_before,
         )
         for item in items:
             stored = observer.read_item(item["id"], partition_key=partition)

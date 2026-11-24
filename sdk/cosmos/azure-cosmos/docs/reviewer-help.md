@@ -47,7 +47,7 @@ binding contracts, configuration, and credential handling.
 | Credentials: `credentials.py`, `_async_credential_bridge.py` | **Review focus:** credential ownership and callbacks to the customer's async event loop |
 | `factory.py`, `constants.py` | **Review focus:** Rust-adapter construction and required constants. **Temporary—planned removal:** Rust/legacy selection through `_backend` and `COSMOS_BACKEND`, including the legacy default |
 | `capabilities.py` | **Review focus:** registered operation support and early rejection of unsupported Rust requests. No operation permits legacy fallback |
-| `legacy.py`, `_fallback_metrics.py` | **Temporary—planned removal.** Explicit legacy execution remains for migration comparisons. The historical counter remains compatible with existing tests, but Rust dispatch no longer updates it; verify no-fallback behavior with legacy-call spies |
+| `legacy.py` | **Temporary—planned removal.** Explicit legacy execution remains for migration comparisons. Verify no-fallback behavior with legacy-call spies |
 
 
 

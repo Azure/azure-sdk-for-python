@@ -67,6 +67,21 @@ def validate_container_create_kwargs(
             raise TypeError("{}() does not support the '{}' keyword argument".format(method_name, option))
 
 
+def validate_container_retry_write_kwargs(
+    kwargs: Mapping[str, Any], operation: str
+) -> None:
+    """Reject Rust write-retry overrides before reading or deleting a container."""
+    for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options")):
+        if (
+            isinstance(options, Mapping)
+            and options.get(Constants.Kwargs.RETRY_WRITE) is not None
+        ):
+            raise TypeError(
+                f"{operation}() does not support retry_write; "
+                "omit this option or pass None. The Rust driver manages write retries."
+            )
+
+
 def prepare_container_get_or_create_read(
     kwargs: Mapping[str, Any],
     *,
@@ -84,7 +99,7 @@ def prepare_container_get_or_create_read(
                 working_kwargs[name] = dict(working_kwargs[name])
     if initial_headers is not None:
         read_kwargs["initial_headers"] = initial_headers
-    create_kwargs["initial_headers"] = initial_headers
+        create_kwargs["initial_headers"] = initial_headers
     read_extras = {}
     for name, option in (
         ("populate_partition_key_range_statistics", "populatePartitionKeyRangeStatistics"),

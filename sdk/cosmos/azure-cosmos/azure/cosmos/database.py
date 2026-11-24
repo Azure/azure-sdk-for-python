@@ -71,6 +71,7 @@ from ._helpers._request_container import (
     preflight_create_container,
     prepare_container_get_or_create_read,
     validate_container_create_kwargs,
+    validate_container_retry_write_kwargs,
 )
 from ._helpers._request_settings import validate_operation_timeout
 from ._helpers._database_operations import DatabaseHelper
@@ -597,18 +598,31 @@ class DatabaseProxy(object):
         """Create a container if it does not exist already.
 
         Existing container settings and throughput are neither checked nor updated.
+        For example, requesting ``orders`` with ``default_ttl=86400`` leaves an
+        existing default item lifetime of 3600 seconds unchanged.
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``.
-        Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` is shared across
-        reads, creation, and any GSI source-container read.
-        The response hook receives copied headers and a deep copy of the properties from the successful
-        step; its exceptions propagate without triggering creation.
+        ``None``, including their ``sessionToken`` and ``populateQueryMetrics``
+        entries in ``request_options`` or ``feed_options``.
+        On the Rust-backed SDK, non-``None`` ``retry_write`` values, including
+        ``0`` and ``False``, raise ``TypeError`` before the first read, whether
+        top-level or nested in either options dictionary. Omit it or use ``None``.
+        Unsupported options raise ``TypeError`` before the first request rather
+        than falling back to legacy Python.
+        A supported ``timeout`` is shared across reads, creation, and any GSI
+        source-container read. For example, a three-second read with ``timeout=10``
+        leaves at most seven seconds. A timeout does not undo creation already
+        performed by the service backend.
+        The response hook receives copied headers and a deep copy of properties
+        from the successful step; its exceptions propagate without triggering
+        creation or another create attempt.
         If creation conflicts with another caller, read the container once more
         using the remaining timeout. A failed reread propagates without another
         create. Conditional headers are forwarded; the workflow is not atomic.
+        A 304 existence read returns empty properties without fetching them again.
+        For a successful creation response without properties, the hook receives
+        empty properties and creation headers, not any later properties read.
 
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
@@ -619,7 +633,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Callable response_hook: A synchronous callable invoked once with response headers and properties,
+            or None. Non-callable values and declared async hooks raise TypeError before any request.
+        :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
+            Must be finite, non-boolean, at least one, and less than 2**64.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -643,8 +660,14 @@ class DatabaseProxy(object):
             Used to create a GSI container derived from a source container via a SQL projection query.
         :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and the container properties.
-        :returns: A `ContainerProxy` instance representing the new container.
+            or a tuple of a ContainerProxy and the container properties. If creation returns no properties,
+            False needs no extra read; True reads properties with the remaining timeout, without the create condition.
+            Those properties describe the later read, not a guaranteed creation-time snapshot.
+            A failed properties read propagates without another create attempt.
+        :returns: A `ContainerProxy` instance representing the existing or newly created container.
+        :raises TypeError: Required arguments, options, or the response hook are unsupported.
+        :raises ValueError: The timeout value is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: The shared operation timeout expired.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy
         """
@@ -674,22 +697,31 @@ class DatabaseProxy(object):
         """Create a container if it does not exist already.
 
         Existing container settings and throughput are neither checked nor updated.
+        For example, requesting ``orders`` with ``default_ttl=86400`` leaves an
+        existing default item lifetime of 3600 seconds unchanged.
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``.
-        Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` is shared across
-        the read and create steps, including any GSI source-container read and
-        the follow-up read after a create conflict.
-        For example, spending 0.75 seconds reading with ``timeout=1`` leaves
-        0.25 seconds for creation. A timeout does not undo creation already
+        ``None``, including their ``sessionToken`` and ``populateQueryMetrics``
+        entries in ``request_options`` or ``feed_options``.
+        On the Rust-backed SDK, non-``None`` ``retry_write`` values, including
+        ``0`` and ``False``, raise ``TypeError`` before the first read, whether
+        top-level or nested in either options dictionary. Omit it or use ``None``.
+        Unsupported options raise ``TypeError`` before the first request rather
+        than falling back to legacy Python.
+        A supported ``timeout`` is shared across reads, creation, and any GSI
+        source-container read. For example, a three-second read with ``timeout=10``
+        leaves at most seven seconds. A timeout does not undo creation already
         performed by the service backend.
-        The response hook receives copied headers and properties from the successful
-        step; its exceptions propagate without triggering creation.
+        The response hook receives copied headers and a deep copy of properties
+        from the successful step; its exceptions propagate without triggering
+        creation or another create attempt.
         If creation conflicts with another caller, read the container once more
         using the remaining timeout. A failed reread propagates without another
         create. Conditional headers are forwarded; the workflow is not atomic.
+        A 304 existence read returns empty properties without fetching them again.
+        For a successful creation response without properties, the hook receives
+        empty properties and creation headers, not any later properties read.
 
         :param str id: ID (name) of container to create.
         :param ~azure.cosmos.PartitionKey partition_key: The partition key to use for the container.
@@ -700,7 +732,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Callable response_hook: A synchronous callable invoked once with response headers and properties,
+            or None. Non-callable values and declared async hooks raise TypeError before any request.
+        :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
+            Must be finite, non-boolean, at least one, and less than 2**64.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -724,8 +759,14 @@ class DatabaseProxy(object):
             Used to create a GSI container derived from a source container via a SQL projection query.
         :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and the container properties.
-        :returns: A  tuple of the `ContainerProxy`and CosmosDict with the container properties.
+            or a tuple of a ContainerProxy and the container properties. If creation returns no properties,
+            False needs no extra read; True reads properties with the remaining timeout, without the create condition.
+            Those properties describe the later read, not a guaranteed creation-time snapshot.
+            A failed properties read propagates without another create attempt.
+        :returns: A tuple of the `ContainerProxy` and CosmosDict with properties of the existing or newly created container.
+        :raises TypeError: Required arguments, options, or the response hook are unsupported.
+        :raises ValueError: The timeout value is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: The shared operation timeout expired.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
@@ -740,18 +781,31 @@ class DatabaseProxy(object):
         """Create a container if it does not exist already.
 
         Existing container settings and throughput are neither checked nor updated.
+        For example, requesting ``orders`` with ``default_ttl=86400`` leaves an
+        existing default item lifetime of 3600 seconds unchanged.
         Only ``id`` and ``partition_key`` may be positional. Missing or duplicate
         required arguments raise ``TypeError`` before sending a request.
         ``session_token`` and ``populate_query_metrics`` are rejected even when
-        ``None``.
-        Unsupported Rust options fail before the first request rather than
-        falling back to legacy Python. A supported ``timeout`` is shared across
-        reads, creation, and any GSI source-container read.
-        The response hook receives copied headers and properties from the successful
-        step; its exceptions propagate without triggering creation.
+        ``None``, including their ``sessionToken`` and ``populateQueryMetrics``
+        entries in ``request_options`` or ``feed_options``.
+        On the Rust-backed SDK, non-``None`` ``retry_write`` values, including
+        ``0`` and ``False``, raise ``TypeError`` before the first read, whether
+        top-level or nested in either options dictionary. Omit it or use ``None``.
+        Unsupported options raise ``TypeError`` before the first request rather
+        than falling back to legacy Python.
+        A supported ``timeout`` is shared across reads, creation, and any GSI
+        source-container read. For example, a three-second read with ``timeout=10``
+        leaves at most seven seconds. A timeout does not undo creation already
+        performed by the service backend.
+        The response hook receives copied headers and a deep copy of properties
+        from the successful step; its exceptions propagate without triggering
+        creation or another create attempt.
         If creation conflicts with another caller, read the container once more
         using the remaining timeout. A failed reread propagates without another
         create. Conditional headers are forwarded; the workflow is not atomic.
+        A 304 existence read returns empty properties without fetching them again.
+        For a successful creation response without properties, the hook receives
+        empty properties and creation headers, not any later properties read.
 
         :param Any args: args
         :param str id: ID (name) of container to create.
@@ -763,7 +817,10 @@ class DatabaseProxy(object):
         :keyword dict[str, Any] unique_key_policy: The unique key policy to apply to the container.
         :keyword dict[str, Any] conflict_resolution_policy: The conflict resolution policy to apply to the container.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword Callable response_hook: A synchronous callable invoked once with response headers and properties,
+            or None. Non-callable values and declared async hooks raise TypeError before any request.
+        :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
+            Must be finite, non-boolean, at least one, and less than 2**64.
         :keyword int analytical_storage_ttl: Analytical store time to live (TTL) for items in the container.  A value of
             None leaves analytical storage off and a value of -1 turns analytical storage on with no TTL.  Please
             note that analytical storage can only be enabled on Synapse Link enabled accounts.
@@ -787,9 +844,15 @@ class DatabaseProxy(object):
             Used to create a GSI container derived from a source container via a SQL projection query.
         :paramtype global_secondary_index: ~azure.cosmos.GlobalSecondaryIndexDefinition or dict[str, Any]
         :keyword bool return_properties: Specifies whether to return either a ContainerProxy
-            or a Tuple of a ContainerProxy and the container properties.
-        :returns: A `ContainerProxy` instance representing the new container or a tuple of the ContainerProxy
-            and CosmosDict with the container properties.
+            or a tuple of a ContainerProxy and the container properties. If creation returns no properties,
+            False needs no extra read; True reads properties with the remaining timeout, without the create condition.
+            Those properties describe the later read, not a guaranteed creation-time snapshot.
+            A failed properties read propagates without another create attempt.
+        :returns: A `ContainerProxy` for the existing or newly created container, or a tuple of that client
+            and a CosmosDict with the container properties.
+        :raises TypeError: Required arguments, options, or the response hook are unsupported.
+        :raises ValueError: The timeout value is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: The shared operation timeout expired.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
         :rtype: ~azure.cosmos.ContainerProxy or tuple[ ~azure.cosmos.ContainerProxy,  ~azure.cosmos.CosmosDict]
         """
@@ -798,7 +861,9 @@ class DatabaseProxy(object):
         id, partition_key = parse_container_create_args(
             args, kwargs, method_name="create_container_if_not_exists"
         )
-        validate_container_create_kwargs(kwargs, method_name="create_container_if_not_exists")
+        validate_obsolete_resource_options(kwargs, "create_container_if_not_exists")
+        if get_selected_backend(self.client_connection).name == "rust":
+            validate_container_retry_write_kwargs(kwargs, "create_container_if_not_exists")
         indexing_policy = kwargs.pop('indexing_policy', None)
         default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
@@ -814,6 +879,11 @@ class DatabaseProxy(object):
         return_properties = kwargs.pop('return_properties', False)
 
         response_hook = kwargs.pop("response_hook", None)
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("create_container_if_not_exists response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "create_container_if_not_exists")
+        if initial_headers is not None:
+            kwargs["initial_headers"] = initial_headers
         read_options, read_kwargs, rust_eligible, deadline = prepare_container_get_or_create_read(
             kwargs, initial_headers=initial_headers, offer_throughput=offer_throughput
         )
@@ -858,7 +928,6 @@ class DatabaseProxy(object):
                         conflict_resolution_policy=conflict_resolution_policy,
                         analytical_storage_ttl=analytical_storage_ttl,
                         computed_properties=computed_properties,
-                        initial_headers=initial_headers,
                         vector_embedding_policy=vector_embedding_policy,
                         change_feed_policy=change_feed_policy,
                         full_text_policy=full_text_policy,
@@ -895,29 +964,47 @@ class DatabaseProxy(object):
         """Delete a container and its contents, returning ``None`` on success.
 
         A missing container raises ``CosmosResourceNotFoundError``. Only the
-        container may be positional. Session/metrics keywords are rejected.
-        Unsupported Rust settings fail without
-        legacy fallback. The response hook receives copied headers and ``None``.
+        container may be positional. ``session_token`` and ``populate_query_metrics``
+        are rejected, including their ``sessionToken`` and ``populateQueryMetrics``
+        entries in ``request_options`` or ``feed_options``.
+        Unsupported Rust settings raise ``TypeError`` without legacy fallback.
+        On Rust, omit ``retry_write`` or pass ``None``; other values are rejected
+        at the top level and in either options dictionary because this API
+        cannot override the SDK's write-retry behavior.
+
+        Non-callable and declared async response hooks are rejected before a
+        request. A valid hook runs once after success with copied headers and
+        ``None`` as the body. Its exceptions propagate without repeating deletion.
 
         :param container: The ID (name) of the container to delete. You can either
             pass in the ID of the container to delete, a :class:`~azure.cosmos.ContainerProxy` instance or
-            a dict representing the properties of the container.
-        :type container: Union[str, ~azure.cosmos.ContainerProxy, dict[str, Any]]
+            a mapping of container properties containing ``id``.
+        :type container: Union[str, ~azure.cosmos.ContainerProxy, Mapping[str, Any]]
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword str etag: An ETag value, or the wildcard character (*). Used to check if the resource
             has changed, and act according to the condition specified by the `match_condition` parameter.
         :keyword ~azure.core.MatchConditions match_condition: The match condition to use upon the etag.
-        :keyword float timeout: Operation timeout in seconds. On Rust, an explicit timeout covers
-            both the internal container lookup and deletion.
-        :keyword Callable response_hook: A callable invoked with the response metadata.
+        :keyword float timeout: Operation timeout in seconds. On Rust, one budget covers any
+            required container lookup and deletion. Accepts None or finite, non-boolean numeric
+            seconds greater than or equal to one and less than 2**64. Expiry does not undo deletion.
+        :keyword response_hook: A synchronous callable invoked with copied response headers and None.
+        :paramtype response_hook: Callable[[Mapping[str, str], None], None]
+        :raises TypeError: An argument or response hook is unsupported.
+        :raises ValueError: The timeout or ETag condition is invalid.
+        :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: The operation's timeout expires.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: If the container couldn't be deleted.
         :rtype: None
         """
         prepare_operation_kwargs(self, kwargs, headers=initial_headers)
-        validate_container_create_kwargs(kwargs, method_name="delete_container")
+        validate_obsolete_resource_options(kwargs, "delete_container")
+        if get_selected_backend(self.client_connection).name == "rust":
+            validate_container_retry_write_kwargs(kwargs, "delete_container")
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
         response_hook = kwargs.pop("response_hook", None)
+        if response_hook is not None and not callable(response_hook):
+            raise TypeError("delete_container response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(response_hook, "delete_container")
         request_options = build_options(kwargs)
         kwargs.pop("etag", None)
         collection_link = self._get_container_link(container)

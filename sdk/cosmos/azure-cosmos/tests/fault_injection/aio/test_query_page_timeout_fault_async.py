@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count_async
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._query_page_timeout import (
     BETWEEN_PAGES_DELAY, PAGE_TIMEOUT, assert_control_page, assert_page_call,
@@ -42,16 +42,16 @@ async def test_query_page_timeout_async_rust(owned_target, monkeypatch, inject):
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)
         await client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
         calls = capture_page_calls(monkeypatch, asynchronous=True)
         hooks = []
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         pages = container.query_items(
             "SELECT * FROM c", partition_key=partition, max_item_count=1, timeout=PAGE_TIMEOUT,
             response_hook=lambda headers, body: hooks.append(dict(headers)),
         ).by_page()
         assert not calls and pages.state.cursor is None
-        assert (_binding_operation_count(), _rust_fallback_count()) == before
+        assert _binding_operation_count() == before
         error, rows = None, None
         start = time.perf_counter()
         try:
@@ -61,15 +61,15 @@ async def test_query_page_timeout_async_rust(owned_target, monkeypatch, inject):
                 ServiceResponseError, TimeoutError) as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
         emit("query_page_timeout", surface="async", database_id=database_id, inject=inject,
              rule_id=rule_id, elapsed=elapsed, hits=hits, native_calls=list(calls),
              error_type=None if error is None else type(error).__name__,
              error_message=None if error is None else str(error),
              delivered_count=0 if rows is None else len(rows), hook_count=len(hooks),
              cursor_released=pages.state.cursor is None,
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         assert_page_call(calls)
         if inject:
@@ -80,8 +80,8 @@ async def test_query_page_timeout_async_rust(owned_target, monkeypatch, inject):
             with pytest.raises(RuntimeError, match="Query pager failed"):
                 await pages.__anext__()
             assert len(calls) == 1
-            assert (_binding_operation_count(), _rust_fallback_count()) == after
-            assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+            assert _binding_operation_count() == after
+            assert await fault_rule_hit_count_async(client._adapter, rule_id) == hits
             emit("failed_query_reuse", surface="async", database_id=database_id,
                  error_type="RuntimeError", additional_binding_calls=0, cursor_released=True)
         else:
@@ -93,31 +93,29 @@ async def test_query_page_timeout_async_rust(owned_target, monkeypatch, inject):
             assert second_start - (start + elapsed) > PAGE_TIMEOUT
             second = [row async for row in await pages.__anext__()]
             second_elapsed = time.perf_counter() - second_start
-            second_after = (_binding_operation_count(), _rust_fallback_count())
+            second_after = _binding_operation_count()
             assert_route(after, second_after, "rust")
             assert len(calls) == 2
             assert_page_call(calls[1:])
             assert calls[0]["cursor_id"] == calls[1]["cursor_id"]
             assert_control_page(second, items, second_elapsed,
-                                await client._adapter._debug_fault_injection_rule_hit_count(rule_id))
+                                await fault_rule_hit_count_async(client._adapter, rule_id))
             assert {row["id"] for row in rows + second} == {item["id"] for item in items}
             assert len(hooks) == 2
             with pytest.raises(StopAsyncIteration):
                 await pages.__anext__()
             assert pages.state.cursor is None
-            completion_after = (_binding_operation_count(), _rust_fallback_count())
-            assert completion_after[0] - second_after[0] == len(calls) - 2
-            assert completion_after[1] == second_after[1]
+            completion_after = _binding_operation_count()
+            assert completion_after - second_after == len(calls) - 2
             for call in calls[2:]:
                 assert_page_call([call])
                 assert call["cursor_id"] == calls[0]["cursor_id"]
             emit("query_page_budget_reset", surface="async", database_id=database_id,
                  pause_seconds=second_start - (start + elapsed), elapsed=second_elapsed,
                  native_calls=list(calls[:2]), completion_native_calls=list(calls[2:]),
-                 completion_binding_delta=completion_after[0] - second_after[0],
+                 completion_binding_delta=completion_after - second_after,
                  delivered_ids=[row["id"] for row in rows + second],
-                 cursor_released=True, binding_delta=second_after[0] - after[0],
-                 fallback_delta=second_after[1] - after[1])
+                 cursor_released=True, binding_delta=second_after - after)
         for item in items:
             stored = await asyncio.to_thread(observer.read_item, item["id"], partition_key=partition)
             assert {field: stored[field] for field in item} == item

@@ -14,7 +14,7 @@ import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import ConnectionPoolOptions, CosmosClient, CosmosRuntime, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     assert_fields,
@@ -56,13 +56,13 @@ def cutoff_after_commit(proxy, observer, target, expected, identity, source_iden
     def before_forward(connection, direction):
         if connection != source_identity or direction != "downstream" or committed.is_set():
             return
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         try:
             stored = observer.read_item(target, partition_key=target)
         finally:
-            after = (_binding_operation_count(), _rust_fallback_count())
+            after = _binding_operation_count()
             assert_route(before, after, "rust")
-            state["verification_binding_delta"] += after[0] - before[0]
+            state["verification_binding_delta"] += after - before
         if stored["refund_attempts"] == 0:
             return
         assert_fields(stored, expected)
@@ -187,7 +187,7 @@ async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, 
         )
         before = proxy_route.sdk_observer.snapshot()
         records.clear()
-        counters = (_binding_operation_count(), _rust_fallback_count())
+        counters = _binding_operation_count()
         returned, error, state = None, None, None
 
         async def write():
@@ -221,9 +221,9 @@ async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, 
                 error = caught
             finished = time.monotonic()
         after = proxy_route.sdk_observer.snapshot()
-        after_counters = (_binding_operation_count(), _rust_fallback_count())
+        after_counters = _binding_operation_count()
         verification_delta = state["verification_binding_delta"] if inject_fault and operation == "patch" else 0
-        measured_after = (after_counters[0] - verification_delta, after_counters[1])
+        measured_after = after_counters - verification_delta
         emit(
             "proxy_write_result",
             name=proxy_route.name,
@@ -234,10 +234,9 @@ async def test_lost_write_response_rust(proxy_route, proxy_target, monkeypatch, 
             error_type=None if error is None else type(error).__name__,
             error_status=getattr(error, "status_code", None),
             attempts=records if operation == "create" else None,
-            binding_delta=after_counters[0] - counters[0],
+            binding_delta=after_counters - counters,
             verification_binding_delta=verification_delta,
-            measured_binding_delta=measured_after[0] - counters[0],
-            fallback_delta=after_counters[1] - counters[1],
+            measured_binding_delta=measured_after - counters,
             before=before,
             after=after,
             connection=identity,

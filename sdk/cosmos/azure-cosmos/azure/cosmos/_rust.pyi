@@ -131,22 +131,22 @@ def get_container_metadata_async(
     include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]: ...
 
-# Point operations that can also report fault-injection diagnostics.
+# Test-probes builds also accept include_fault_diagnostics for these operations.
 def create_item(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *, timeout_seconds: float | None = None,
-    include_attempts: bool = False, include_fault_diagnostics: bool = False,
+    include_attempts: bool = False,
 ) -> tuple[Any, ...]: ...
 def create_item_async(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *, timeout_seconds: float | None = None,
-    include_attempts: bool = False, include_fault_diagnostics: bool = False,
+    include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]: ...
 def read_item(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *, timeout_seconds: float | None = None,
-    include_attempts: bool = False, include_fault_diagnostics: bool = False,
+    include_attempts: bool = False,
 ) -> tuple[Any, ...]: ...
 def read_item_async(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *, timeout_seconds: float | None = None,
-    include_attempts: bool = False, include_fault_diagnostics: bool = False,
+    include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]:
     """A ``test-probes`` build also accepts ``_debug_lifecycle``; see _AsyncOperationProbe."""
     ...
@@ -323,8 +323,9 @@ class _DriverResponseError(RuntimeError):
 class _UnsupportedQueryFeatureError(RuntimeError):
     """The Cosmos driver cannot execute this query plan."""
 
-# Test diagnostics; they inspect process-wide or handle-local state only.
+# Request settings are available in every build.
 def _request_settings_schema() -> dict[str, list[str]]: ...
+# Test-build-only exports, absent unless built with test-probes.
 def _debug_operation_count() -> int: ...
 def _debug_attempt_count() -> int: ...
 def _debug_retry_count() -> int: ...

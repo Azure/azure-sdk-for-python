@@ -9,11 +9,19 @@ import pytest
 from azure.cosmos._backend.constants import FAULT_INJECTION_ENV_VAR
 from config import clients, collection, resources
 
-# Tests may pass _fault_injection_rules; customer apps can't without this switch.
+# Probe-enabled tests may pass _fault_injection_rules with this additional opt-in.
 os.environ[FAULT_INJECTION_ENV_VAR] = "1"
 
 cosmos_sync_client = None
 _live_resources_initialized = False
+
+
+def pytest_sessionstart(session):
+    if os.environ.get("COSMOS_REQUIRE_TEST_PROBES") == "1":
+        from azure.cosmos import _rust
+
+        if not hasattr(_rust, "_AsyncOperationProbe") or not callable(getattr(_rust, "_debug_operation_count", None)):
+            raise pytest.UsageError("This test lane requires a wheel built with --features test-probes.")
 
 
 def pytest_addoption(parser):

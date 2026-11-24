@@ -5,6 +5,7 @@
 # -------------------------------------------------------------------------
 # Rust behavior test
 """Async ``delete_container`` on Rust removes the container and reports a missing one as 404."""
+
 import os
 import uuid
 from unittest.mock import patch
@@ -16,17 +17,26 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust_async
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = [
+    pytest.mark.asyncio,
+    pytest.mark.cosmosEmulator,
+    pytest.mark.cosmosLong,
+    pytest.mark.cosmosAADLong,
+]
 
 
 def _rust_client():
-    return AsyncCosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
+    return AsyncCosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+    )
 
 
 @pytest.fixture(scope="module")
 def owned_database():
     name = "rust_delete_container_a_" + uuid.uuid4().hex
-    with CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust") as admin:
+    with CosmosClient(
+        os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust"
+    ) as admin:
         try:
             yield admin.create_database(name)
         finally:
@@ -46,7 +56,10 @@ def _target(database, name, kind):
 
 def _no_legacy_delete(client):
     return patch.object(
-        client.client_connection, "DeleteContainer", side_effect=AssertionError("Rust deletion used legacy Python")
+        client.client_connection,
+        "DeleteContainer",
+        create=True,
+        side_effect=AssertionError("Rust deletion used legacy Python"),
     )
 
 
@@ -74,12 +87,22 @@ async def test_delete_container_returns_none_and_repeat_delete_raises_not_found_
         database = client.get_database_client(owned_database.id)
         target = _target(database, name, target_kind)
         with _no_legacy_delete(client):
-            assert await run_on_rust_async(
-                client, lambda: database.delete_container(target, response_hook=Hook(), timeout=30)
-            ) is None
-            assert "x-test-mutation" not in client.client_connection.last_response_headers
+            assert (
+                await run_on_rust_async(
+                    client,
+                    lambda: database.delete_container(
+                        target, response_hook=Hook(), timeout=30
+                    ),
+                )
+                is None
+            )
+            assert (
+                "x-test-mutation" not in client.client_connection.last_response_headers
+            )
             with pytest.raises(exceptions.CosmosResourceNotFoundError):
-                await run_on_rust_async(client, lambda: database.delete_container(target, timeout=30))
+                await run_on_rust_async(
+                    client, lambda: database.delete_container(target, timeout=30)
+                )
 
     assert calls == [None]
     with pytest.raises(exceptions.CosmosResourceNotFoundError):
@@ -87,7 +110,9 @@ async def test_delete_container_returns_none_and_repeat_delete_raises_not_found_
 
 
 @pytest.mark.parametrize("warm", [False, True], ids=["cold", "warm"])
-async def test_delete_container_after_metadata_resolution_async_rust(owned_database, warm):
+async def test_delete_container_after_metadata_resolution_async_rust(
+    owned_database, warm
+):
     """A container already resolved by an item call is deleted with one hook call; a missing one raises 404 hookless."""
     name = "resolution_" + uuid.uuid4().hex
     if warm:
@@ -102,11 +127,16 @@ async def test_delete_container_after_metadata_resolution_async_rust(owned_datab
             database = client.get_database_client(owned_database.id)
             if warm:
                 # An item operation resolves this container in the same Rust driver.
-                item = await database.get_container_client(name).create_item({"id": "warm", "value": 42})
+                item = await database.get_container_client(name).create_item(
+                    {"id": "warm", "value": 42}
+                )
                 assert item["id"] == "warm" and item["value"] == 42
             with _no_legacy_delete(client):
                 return await run_on_rust_async(
-                    client, lambda: database.delete_container(name, response_hook=hook, timeout=30)
+                    client,
+                    lambda: database.delete_container(
+                        name, response_hook=hook, timeout=30
+                    ),
                 )
 
     if warm:

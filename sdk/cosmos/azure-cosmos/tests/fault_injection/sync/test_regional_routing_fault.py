@@ -13,7 +13,7 @@ import pytest
 
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, exceptions
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._regional_routing import (
     READ_REGION, WRITE_REGION, READ_SECONDS, REGIONAL_ROUTING_CASES, TIMEOUT, assert_destination, assert_fields,
@@ -45,17 +45,17 @@ def test_swr_mrr_succeeds_rust(request, regional_target, monkeypatch, case):
         capture_native(monkeypatch, records, driver_handle=client._adapter._ensure_driver_handle())
         container = client.get_database_client(database_id).get_container_client(observer.id)
         wait_topology(client, rule_id, case != "routing")
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
         container.read()
         records.clear()
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         error, created = None, None
         try:
             created = container.create_item(item, timeout=TIMEOUT)
         except (exceptions.CosmosHttpResponseError, ServiceResponseError) as caught:
             error = caught
-        assert_route(before, (_binding_operation_count(), _rust_fallback_count()), "rust")
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        assert_route(before, _binding_operation_count(), "rust")
+        hits = fault_rule_hit_count(client._adapter, rule_id)
         emit("regional_create", surface="sync", backend="rust", case=case, hits=hits, attempts=records,
              error_type=None if error is None else type(error).__name__, error=str(error))
         if case == "guard":
@@ -75,9 +75,9 @@ def test_swr_mrr_succeeds_rust(request, regional_target, monkeypatch, case):
         start = time.perf_counter()
         while time.perf_counter() - start < READ_SECONDS:
             records.clear()
-            before = (_binding_operation_count(), _rust_fallback_count())
+            before = _binding_operation_count()
             read = container.read_item(item_id, partition_key=item_id, timeout=TIMEOUT)
-            assert_route(before, (_binding_operation_count(), _rust_fallback_count()), "rust")
+            assert_route(before, _binding_operation_count(), "rust")
             assert_destination(records, read_endpoint, 200)
             assert_fields(read, item)
             reads += 1

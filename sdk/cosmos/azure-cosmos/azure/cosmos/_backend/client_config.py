@@ -238,7 +238,8 @@ def _prepare_fault_injection_rules(
     The supplied mappings are not modified or retained as mutable rule data.
     Any non-None input, including an empty sequence, raises TypeError unless
     the test-only COSMOS_ENABLE_FAULT_INJECTION switch is "1".
-    With the switch enabled, an empty sequence produces no rules.
+    A test-probes build is also required for any non-None input.
+    With both enabled, an empty sequence produces no rules.
     """
     if rules is None:
         return ()
@@ -248,6 +249,10 @@ def _prepare_fault_injection_rules(
                 FAULT_INJECTION_ENV_VAR
             )
         )
+    from .. import _rust
+
+    if not callable(getattr(_rust, "_debug_fault_injection_rule_hit_count", None)):
+        raise TypeError("_fault_injection_rules requires a wheel built with --features test-probes.")
     if isinstance(rules, (str, bytes, bytearray)) or not isinstance(rules, Sequence):
         raise ValueError("_fault_injection_rules must be a sequence of rule mappings.")
 

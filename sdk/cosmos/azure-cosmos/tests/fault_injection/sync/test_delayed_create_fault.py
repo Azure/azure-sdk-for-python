@@ -13,7 +13,7 @@ import uuid
 import pytest
 
 from azure.cosmos import CosmosClient, exceptions
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import (
     OPERATION_TIMEOUT, assert_control, assert_failure, assert_route, create_rule, emit,
 )
@@ -35,8 +35,8 @@ def test_throws_injected_error_rust(owned_target, inject):
     ) as client:
         container = client.get_database_client(database_id).get_container_client(owned_container.id)
         container.read()
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
-        before = (_binding_operation_count(), _rust_fallback_count())
+        assert fault_rule_hit_count(client._adapter, rule_id) == 0
+        before = _binding_operation_count()
         start = time.perf_counter()
         error = None
         returned = None
@@ -45,12 +45,12 @@ def test_throws_injected_error_rust(owned_target, inject):
         except exceptions.CosmosHttpResponseError as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = fault_rule_hit_count(client._adapter, rule_id)
         emit("operation", surface="sync", backend="rust", inject=inject, rule_id=rule_id,
              database_id=database_id, item=item,
              elapsed=elapsed, hits=hits, status=None if error is None else error.status_code,
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         if inject:
             assert_failure(error, elapsed, hits)
@@ -100,4 +100,4 @@ def test_create_item_502_fault_rule_rust(owned_target):
             )
 
         assert error.value.status_code == 502
-        assert client._adapter._debug_fault_injection_rule_hit_count(rule_id) > 0
+        assert fault_rule_hit_count(client._adapter, rule_id) > 0

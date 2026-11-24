@@ -35,6 +35,7 @@ fn exercise(
     timeout: Option<f64>,
     attempts: bool,
     delayed: bool,
+    fault_diagnostics: bool,
 ) {
     crate::test_support::prepare_python();
     let endpoint = Url::parse("https://adapter-contract.emulator.local").unwrap();
@@ -82,8 +83,10 @@ def config():
 async def await_call(function, handle, request, kwargs):
     return await function(handle, request, **kwargs)
 
-def invoke(function, handle, request, asynchronous, timeout, attempts):
+def invoke(function, handle, request, asynchronous, timeout, attempts, fault_diagnostics):
     kwargs = {"include_attempts": attempts}
+    if fault_diagnostics:
+        kwargs["include_fault_diagnostics"] = True
     if timeout is not None:
         kwargs["timeout_seconds"] = timeout
     if asynchronous:
@@ -131,6 +134,7 @@ def invoke(function, handle, request, asynchronous, timeout, attempts):
             asynchronous,
             timeout,
             attempts,
+            fault_diagnostics,
         ));
         if delayed {
             let error = result.unwrap_err();
@@ -149,8 +153,17 @@ def invoke(function, handle, request, asynchronous, timeout, attempts):
             );
         } else {
             let result = result.unwrap_or_else(|error| panic!("{name}: {error}"));
-            let response = if attempts {
+            let response = if attempts || fault_diagnostics {
                 assert_eq!(result.downcast::<PyTuple>().unwrap().len(), 2);
+                if fault_diagnostics {
+                    let payload = result.get_item(1).unwrap();
+                    assert!(payload.get_item("request_count").unwrap().extract::<u64>().unwrap() > 0);
+                    assert!(payload.get_item("requests").unwrap().len().unwrap() > 0);
+                    assert_eq!(
+                        payload.get_item("result_status").unwrap().extract::<u16>().unwrap(),
+                        result.get_item(0).unwrap().get_item(0).unwrap().extract::<u16>().unwrap(),
+                    );
+                }
                 result.get_item(0).unwrap()
             } else {
                 result
@@ -177,6 +190,16 @@ fn lifecycle_probe_exports_match_build_feature() {
         crate::_rust(py, &exports).unwrap();
         let enabled = cfg!(feature = "test-probes");
         assert_eq!(exports.hasattr("_AsyncOperationProbe").unwrap(), enabled);
+        for name in [
+            "_debug_operation_count",
+            "_debug_attempt_count",
+            "_debug_retry_count",
+            "_debug_fault_injection_rule_hit_count",
+            "_debug_set_fault_injection_rule_enabled",
+            "_debug_cached_account_regions",
+        ] {
+            assert_eq!(exports.hasattr(name).unwrap(), enabled, "{name}");
+        }
         let read = exports.getattr("read_item_async").unwrap();
         let signature: String = read
             .getattr("__text_signature__")
@@ -184,6 +207,21 @@ fn lifecycle_probe_exports_match_build_feature() {
             .extract()
             .unwrap();
         assert_eq!(signature.contains("_debug_lifecycle"), enabled);
+        for name in ["create_item", "create_item_async", "read_item", "read_item_async"] {
+            let function = exports.getattr(name).unwrap();
+            let signature: String = function.getattr("__text_signature__").unwrap().extract().unwrap();
+            assert_eq!(signature.contains("include_fault_diagnostics"), enabled, "{name}");
+            assert!(signature.contains("include_attempts"), "{name}");
+            if !enabled {
+                for value in [false, true] {
+                    let kwargs = PyDict::new_bound(py);
+                    kwargs.set_item("include_fault_diagnostics", value).unwrap();
+                    let error = function.call((py.None(), py.None()), Some(&kwargs)).unwrap_err();
+                    assert!(error.is_instance_of::<PyTypeError>(py));
+                    assert!(error.to_string().contains("unexpected keyword argument 'include_fault_diagnostics'"));
+                }
+            }
+        }
         if enabled {
             let probe = exports
                 .getattr("_AsyncOperationProbe")
@@ -218,7 +256,7 @@ fn mapped_exports_preserve_success_with_deadlines_and_attempt_envelopes() {
         for asynchronous in [false, true] {
             for attempts in [false, true] {
                 for timeout in [None, Some(2.0)] {
-                    exercise(operation, asynchronous, timeout, attempts, false);
+                    exercise(operation, asynchronous, timeout, attempts, false, false);
                 }
             }
         }
@@ -233,8 +271,18 @@ fn mapped_exports_enforce_subsecond_deadline_during_driver_metadata() {
     {
         for asynchronous in [false, true] {
             for attempts in [false, true] {
-                exercise(operation, asynchronous, Some(0.125), attempts, true);
+                exercise(operation, asynchronous, Some(0.125), attempts, true, false);
             }
+        }
+    }
+}
+
+#[cfg(feature = "test-probes")]
+#[test]
+fn item_exports_preserve_fault_diagnostics_in_probe_builds() {
+    for operation in ["create_item", "read_item"] {
+        for asynchronous in [false, true] {
+            exercise(operation, asynchronous, None, false, false, true);
         }
     }
 }

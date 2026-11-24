@@ -867,14 +867,22 @@ def test_type_stub_matches_the_installed_rust_module_rust():
     the same function parameters (name, kind, default), class properties, and declared
     constructors.
 
-    ``_AsyncOperationProbe`` and ``read_item_async``'s ``_debug_lifecycle`` keyword exist
+    Debug exports, ``_AsyncOperationProbe``, ``include_fault_diagnostics``, and
+    ``read_item_async``'s ``_debug_lifecycle`` keyword exist
     only in builds made with the ``test-probes`` feature, so they are allowed only there.
     """
     native = pytest.importorskip("azure.cosmos._rust")
     stub_path = Path(native.__file__).with_name("_rust.pyi")
     stub = ast.parse(stub_path.read_text(encoding="utf-8"))
-    test_build_only = {"_AsyncOperationProbe"}
+    test_build_only = {
+        "_AsyncOperationProbe",
+        "_debug_operation_count", "_debug_attempt_count", "_debug_retry_count",
+        "_debug_fault_injection_rule_hit_count", "_debug_set_fault_injection_rule_enabled",
+        "_debug_cached_account_regions",
+    }
     is_test_build = hasattr(native, "_AsyncOperationProbe")
+    for name in test_build_only:
+        assert hasattr(native, name) == is_test_build, name
     declared_names = {
         node.name for node in stub.body if isinstance(node, (ast.FunctionDef, ast.ClassDef))
     } | {
@@ -891,9 +899,13 @@ def test_type_stub_matches_the_installed_rust_module_rust():
     assert not missing_from_module, f"_rust.pyi declares missing exports: {missing_from_module}"
     checked = 0
     for node in stub.body:
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef)) and node.name in test_build_only and not is_test_build:
+            continue
         if isinstance(node, ast.FunctionDef):
             assert node.name != "__getattr__", "_rust.pyi must not hide undeclared exports"
             expected = _stub_parameters(node)
+            if is_test_build and node.name in ("create_item", "create_item_async", "read_item", "read_item_async"):
+                expected.append(("include_fault_diagnostics", inspect.Parameter.KEYWORD_ONLY, False))
             if is_test_build and node.name == "read_item_async":
                 expected.append(("_debug_lifecycle", inspect.Parameter.KEYWORD_ONLY, None))
             assert _runtime_parameters(getattr(native, node.name)) == expected, node.name

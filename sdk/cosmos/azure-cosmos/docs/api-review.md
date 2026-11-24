@@ -2100,8 +2100,8 @@ read's result.
 
 **Why the customer calls this API**
 
-The customer's setup may run more than once. It needs an `orders` container
-client whether the container already exists or must be created.
+Alpha Bank's customer app may run setup more than once. It needs an `orders`
+container client whether the container already exists or must be created.
 
 ```python
 from azure.cosmos import PartitionKey
@@ -2117,9 +2117,6 @@ If `orders` is missing, the call creates it with the supplied settings. If
 it exists, the call returns its container client without updating its
 settings. For example, an existing default item lifetime of 3,600 seconds
 remains unchanged; this call does not replace it with 86,400 seconds.
-
-The changes below are Python wrapper argument cleanup, not changes required
-by a missing Rust-driver capability.
 
 **Proposed breaking change: use the argument rules from `DatabaseProxy.create_container`**
 
@@ -2192,11 +2189,50 @@ Approve or revise applying `DatabaseProxy.create_container`'s argument rules and
 ignored-argument removals to this API, including when the container already
 exists.
 
+**Approved: validate options before checking existence**
+
+Suppose Alpha Bank supplies `request_options={"sessionToken": None}`.
+The SDK raises `TypeError` before reading `orders`, even if it already exists.
+The retired `sessionToken` and `populateQueryMetrics` entries are checked in
+both `request_options` and `feed_options`, not just as top-level arguments.
+This closes the validation bypass; it does not resolve the approval questions
+above.
+
+On the Rust-backed SDK, a non-`None` `retry_write` also raises `TypeError`
+before the first read, including `0` and `False`. This applies at the top
+level and inside either options dictionary. Omit it or use `None`; write
+retries remain managed by the SDK.
+
+The customer app's `response_hook` must be a synchronous callable or `None`,
+even when the API call uses `await`. Non-callable values and declared async
+hooks raise `TypeError` before reading or creating anything. Exceptions from
+a valid hook propagate unchanged; they do not trigger creation or another
+create attempt.
+
+Unsupported per-call settings and header overrides raise `TypeError` before
+the first request. The SDK does not silently ignore them or switch to legacy
+Python to execute the call.
+
+**Approved: one timeout across the workflow**
+
+With `timeout=10`, if checking `orders` takes three seconds, at most seven
+remain for creation and subsequent reads. A global secondary index (GSI)
+source-container lookup, if needed, uses that same remaining time.
+
+If another caller creates `orders` after the initial missing-container read,
+creation can return a conflict. The SDK then reads `orders` once more within
+the remaining timeout. If that read fails, its error propagates; the SDK
+does not start another create attempt.
+
+The timeout accepts the same values as `DatabaseProxy.create_container`:
+`None`, or finite, non-boolean numeric seconds greater than or equal to one
+and less than `2**64`. Invalid values raise `ValueError`; expiry raises
+`CosmosClientTimeoutError`. A timeout does not undo creation already performed
+by the service backend.
+
 **Asynchronous-client signature for review**
 
-The expanded calling contract matches `DatabaseProxy.create_container`. The implementation
-currently accepts `*args` and `**kwargs` and enforces the positional-argument
-rules.
+The public calling contract is shown below.
 
 ```python
 async def create_container_if_not_exists(
@@ -2229,6 +2265,26 @@ existing or newly created container's properties when
 `return_properties=True`. The synchronous client follows the same argument
 rules and is called without `await`.
 
+**Approved: conditional responses and missing creation properties**
+
+Conditional headers are forwarded, but the read-and-create workflow is not
+one atomic service operation. If the existence read returns 304 (Not Modified),
+the SDK returns the container client without creating anything. With
+`return_properties=True`, that conditional read returns empty properties;
+the SDK does not fetch them again.
+
+If creation succeeds without returning properties, `return_properties=False`
+returns the `orders` container client without an extra read. With
+`return_properties=True`, the SDK reads the properties using the remaining
+timeout and without the create condition. These are the properties at read
+time, not a guaranteed creation-time snapshot. A failed properties read
+propagates even though creation succeeded; it does not repeat creation.
+
+The response hook runs once for the successful existence read, creation, or
+conflict reread, with copied headers and properties. For a creation response
+without properties, the hook receives empty properties and creation headers,
+not the later properties read's result.
+
 <a id="10---deleting-a-container"></a>
 <a id="databaseproxydelete_container"></a>
 
@@ -2236,18 +2292,17 @@ rules and is called without `await`.
 
 **Why the customer calls this API**
 
-The customer wants to remove a test `orders` container and its stored orders
+Alpha Bank wants to remove a test `orders` container and its stored orders
 while keeping the `sales` database and its other containers.
 
 ```python
+database = client.get_database_client("sales")
 await database.delete_container("orders")
 ```
 
-Success returns `None`. Unlike database deletion in `CosmosClient.delete_database`, this operation
-removes only the selected container.
-
-The changes below are Python wrapper argument cleanup, not changes required
-by a missing Rust-driver capability.
+Success returns `None`. Unlike `CosmosClient.delete_database`, this operation
+removes only the selected container. If `orders` does not exist, the SDK raises
+`CosmosResourceNotFoundError`; deleting it again is not a successful no-op.
 
 **Proposed breaking change: reject previously ignored arguments**
 
@@ -2300,9 +2355,75 @@ Approve or revise rejection of `session_token` on both clients and
 positionally or by name.
 
 The asynchronous client never declared `populate_query_metrics`, but
-callers could supply it through `**kwargs`. As in `CosmosClient.delete_database`, the current
-implementation rejects it, while its legacy handling remains unverified.
-That rejection is not yet an approved removal decision.
+callers could supply it through `**kwargs`. As in
+`CosmosClient.delete_database`, the current SDK rejects it, while its legacy
+handling remains unverified. That rejection is not yet an approved removal
+decision.
+
+**Approved: validate options before deletion**
+
+Moving a rejected option into a dictionary must not bypass validation.
+For example:
+
+```python
+await database.delete_container(
+    "orders",
+    request_options={"sessionToken": None},
+)
+```
+
+The SDK raises `TypeError` before sending a request. It checks `sessionToken`
+and `populateQueryMetrics` in both `request_options` and `feed_options`,
+including entries whose value is `None` or `False`. This closes the validation
+bypass; it does not resolve the approval questions above.
+
+On the Rust-backed SDK, `retry_write=0` does not disable write retries.
+Any non-`None` value, including `0` and `False`, raises `TypeError` before
+sending a request. The rule applies at the top level and inside either
+options dictionary. Omit `retry_write` or pass `None`; write retries remain
+managed by the SDK.
+
+Unsupported per-call settings and header overrides also raise `TypeError`.
+For example, `connection_timeout=2` cannot set a separate connection timeout
+for this deletion. The SDK rejects it rather than silently ignoring it or
+switching to legacy Python to execute the call.
+
+**Approved: a synchronous response hook on both clients**
+
+Alpha Bank wants to record the service backend's activity ID after deletion:
+
+```python
+def record_delete(headers, body):
+    print(headers["x-ms-activity-id"])
+
+await database.delete_container("orders", response_hook=record_delete)
+```
+
+Even though deletion uses `await`, `record_delete` is a synchronous function.
+The SDK calls it once after a successful response, with copied headers and
+`None` as the body. Changing those headers does not change the SDK's recorded
+response. A failed service response does not call the hook.
+
+`response_hook` may be `None` or a synchronous callable. Non-callable values,
+such as `False`, and declared async hooks raise `TypeError` before a request.
+A callable object is still invoked if its Boolean value is false.
+
+If `record_delete` raises an exception, that same exception reaches the
+customer app. It does not undo the successful deletion or cause the SDK to
+repeat it.
+
+**Approved: one timeout for lookup and deletion**
+
+With `timeout=10`, any lookup needed to find `orders` and the deletion share
+one ten-second budget. If the lookup takes three seconds, at most seven
+remain for deletion; it does not receive a fresh ten seconds.
+
+The timeout accepts `None`, or finite, non-boolean numeric seconds greater
+than or equal to one and less than `2**64`. For example, `timeout=0.5`,
+`timeout=False`, and `timeout="10"` raise `ValueError` before a request.
+Expiry raises `CosmosClientTimeoutError`. A timeout is not confirmation that
+the container still exists; it does not roll back deletion already performed
+by the service backend.
 
 **Asynchronous-client signature for review**
 

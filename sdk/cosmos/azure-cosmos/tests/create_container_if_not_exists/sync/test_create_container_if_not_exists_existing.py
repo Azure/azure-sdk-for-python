@@ -21,6 +21,9 @@ from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust
 
 
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosLong]
+
+
 def _rust_client():
     return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")
 

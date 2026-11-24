@@ -22,6 +22,7 @@ from azure.cosmos._telemetry import CompletionHandler
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from azure.cosmos.partition_key import NonePartitionKeyValue
 from config.settings import TestSettings
+from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 from fault_injection._async_cancellation import wait_for_evidence
 from ._helpers import ForbiddenConnection
 
@@ -196,7 +197,8 @@ async def test_native_read_many_faults_and_same_client_recovery_rust(native_data
             result = await result if asynchronous else result
             assert [row["id"] for row in result] == ["0", "1"]
             hook.assert_called_once()
-        hits = client._adapter._debug_fault_injection_rule_hit_count(identifier)
+        counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+        hits = counter(client._adapter, identifier)
         assert (await hits if asynchronous else hits) == 1
         recovered = container.read_items(pairs)
         recovered = await recovered if asynchronous else recovered
@@ -234,7 +236,7 @@ async def test_native_read_many_cancellation_releases_cursor_rust(native_databas
         pending = asyncio.create_task(container.read_items([("0", "p"), ("1", "p")], response_hook=hook))
         try:
             async def started():
-                while await adapter._debug_fault_injection_rule_hit_count(identifier) == 0:
+                while await fault_rule_hit_count_async(adapter, identifier) == 0:
                     await asyncio.sleep(0.01)
 
             await asyncio.wait_for(started(), 5)
@@ -261,7 +263,7 @@ async def test_native_read_many_cancellation_releases_cursor_rust(native_databas
             await wait_for_evidence(native_stopped, 1, "The cancelled native fetch did not release its cursor.")
             recovered = await container.read_items([("0", "p"), ("1", "p")])
             assert [row["id"] for row in recovered] == ["0", "1"]
-            assert await adapter._debug_fault_injection_rule_hit_count(identifier) == 1
+            assert await fault_rule_hit_count_async(adapter, identifier) == 1
         finally:
             if not pending.done():
                 pending.cancel()

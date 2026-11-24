@@ -331,7 +331,28 @@ def test_core_python_scripting_operations_are_removed_rust(module):
             assert not hasattr(connection, operation + resource + "s")
     for suffix in ("Sproc", "Trigger", "UDF"):
         assert not hasattr(connection, "_GetContainerIdWithPathFor" + suffix)
-    assert callable(connection.QueryItems)
+
+
+@pytest.mark.parametrize("module", [
+    "azure.cosmos._cosmos_client_connection",
+    "azure.cosmos.aio._cosmos_client_connection_async",
+])
+@pytest.mark.parametrize("method", ["QueryItems", "QueryItemsChangeFeed", "_QueryChangeFeed"])
+def test_core_python_item_feed_entrypoints_are_removed_rust(module, method):
+    connection = importlib.import_module(module).CosmosClientConnection
+    assert not hasattr(connection, method)
+
+
+@pytest.mark.parametrize("module", [
+    "azure.cosmos._change_feed.change_feed_fetcher",
+    "azure.cosmos._change_feed.change_feed_iterable",
+    "azure.cosmos._change_feed.aio.change_feed_fetcher",
+    "azure.cosmos._change_feed.aio.change_feed_iterable",
+])
+def test_legacy_change_feed_execution_modules_are_removed_rust(module):
+    with pytest.raises(ModuleNotFoundError) as error:
+        importlib.import_module(module)
+    assert error.value.name == module
 
 
 @pytest.mark.parametrize("method", [

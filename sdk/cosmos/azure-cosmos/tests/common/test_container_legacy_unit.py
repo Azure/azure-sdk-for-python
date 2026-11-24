@@ -20,7 +20,6 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import http_constants
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.legacy import LEGACY_BACKEND
-from azure.cosmos._backend._fallback_metrics import rust_compatibility_fallback_count
 from azure.cosmos._backend.operations import (
     OP_CREATE_CONTAINER,
     OP_LIST_CONTAINERS,
@@ -146,16 +145,13 @@ def test_container_create_invalid_argument_binding_fails_before_dispatch_legacy(
     position. Each error names the method the customer called, so the same
     wording does not appear for both create methods.
 
-    Two further guarantees: the caller's keyword dictionary is unchanged, so
-    argument parsing reads rather than consumes, and the fallback counter does
-    not move, since a mistake in the customer's own call is not the Rust engine
-    being unable to do something.
+    The caller's keyword dictionary is unchanged, so argument parsing reads
+    rather than consumes.
     """
     case = container_create_case
     case.connection._backend = case.legacy_backend
     hook = MagicMock()
     original_kwargs = dict(kwargs)
-    before = rust_compatibility_fallback_count()
     with pytest.raises(TypeError) as raised:
         _call_container_create(case, *args, **kwargs, method=method, response_hook=hook)
     assert "{}()".format(method) in str(raised.value)
@@ -165,7 +161,6 @@ def test_container_create_invalid_argument_binding_fails_before_dispatch_legacy(
     case.backend.execute.assert_not_called()
     case.connection.CreateContainer.assert_not_called()
     case.connection._set_container_properties_cache.assert_not_called()
-    assert rust_compatibility_fallback_count() == before
 
 
 @pytest.mark.parametrize("return_properties", [False, True])

@@ -20,6 +20,7 @@ import pytest
 import azure.cosmos.cosmos_client as cosmos_client
 import azure.cosmos.exceptions as exceptions
 from azure.cosmos import PartitionKey
+from config.diagnostics import fault_rule_hit_count
 
 
 def _host():
@@ -47,7 +48,7 @@ class _RustConnectionRetryCounter(object):
         self._operations += 1
         hits = 0
         for rule_id in self._rule_ids:
-            hits += self._client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+            hits += fault_rule_hit_count(self._client._adapter, rule_id)
         self.counter = hits - self._operations
 
 

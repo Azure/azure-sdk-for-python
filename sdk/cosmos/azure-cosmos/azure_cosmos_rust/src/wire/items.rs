@@ -26,13 +26,14 @@ use azure_data_cosmos_driver::{
 use super::container_metadata::{metadata_error, metadata_error_with_attempts};
 use super::deadline::with_operation_timeout;
 use super::driver_runner::{
-    run_prepared_driver_operation_async, run_prepared_driver_operation_sync,
+    run_prepared_driver_operation_async, run_prepared_driver_operation_sync, ResponseTupleConverter,
 };
 use super::request::{build_operation_options, parse_container_link, RequestHeadersAndOptions};
 use super::response::{
     tuple_from_resolved_result_with_attempts, tuple_from_result,
-    tuple_from_result_with_fault_diagnostics,
 };
+#[cfg(feature = "test-probes")]
+use super::response::tuple_from_result_with_fault_diagnostics;
 
 /// Preserve whether the prepared target names an item or supplies its resource address.
 pub(crate) enum ItemTarget {
@@ -94,14 +95,26 @@ pub(crate) fn execute_item_operation_sync<'py>(
     op_name: &str,
     honor_content_response: bool,
     include_attempts: bool,
-    include_fault_diagnostics: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
+    #[cfg(feature = "test-probes")]
     if include_attempts && include_fault_diagnostics {
         return Err(PyValueError::new_err(
             "Select either attempt telemetry or fault diagnostics",
         ));
     }
+    let convert_response: ResponseTupleConverter<_> = if include_attempts {
+        |py, result| tuple_from_resolved_result_with_attempts(py, result?)
+    } else {
+        |py, result| tuple_from_result(py, result?)
+    };
+    #[cfg(feature = "test-probes")]
+    let convert_response: ResponseTupleConverter<_> = if include_fault_diagnostics {
+        |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
+    } else {
+        convert_response
+    };
     run_prepared_driver_operation_sync(
         py,
         driver_handle,
@@ -126,13 +139,7 @@ pub(crate) fn execute_item_operation_sync<'py>(
             );
             Ok(async move { future.await? })
         },
-        if include_fault_diagnostics {
-            |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
-        } else if include_attempts {
-            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
-        } else {
-            |py, result| tuple_from_result(py, result?)
-        },
+        convert_response,
     )
 }
 
@@ -155,15 +162,27 @@ pub(crate) fn execute_item_operation_async<'py>(
     op_name: &str,
     honor_content_response: bool,
     include_attempts: bool,
-    include_fault_diagnostics: bool,
+    #[cfg(feature = "test-probes")] include_fault_diagnostics: bool,
     #[cfg(feature = "test-probes")] lifecycle_probe: Option<Arc<std::sync::atomic::AtomicU8>>,
     build_op: impl FnOnce(ItemReference, Vec<u8>) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
+    #[cfg(feature = "test-probes")]
     if include_attempts && include_fault_diagnostics {
         return Err(PyValueError::new_err(
             "Select either attempt telemetry or fault diagnostics",
         ));
     }
+    let convert_response: ResponseTupleConverter<_> = if include_attempts {
+        |py, result| tuple_from_resolved_result_with_attempts(py, result?)
+    } else {
+        |py, result| tuple_from_result(py, result?)
+    };
+    #[cfg(feature = "test-probes")]
+    let convert_response: ResponseTupleConverter<_> = if include_fault_diagnostics {
+        |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
+    } else {
+        convert_response
+    };
     run_prepared_driver_operation_async(
         py,
         driver_handle,
@@ -190,13 +209,7 @@ pub(crate) fn execute_item_operation_async<'py>(
             let future = super::lifecycle::LifecycleFuture::new(future, lifecycle_probe)?.run();
             Ok(async move { future.await? })
         },
-        if include_fault_diagnostics {
-            |py, result| tuple_from_result_with_fault_diagnostics(py, result?)
-        } else if include_attempts {
-            |py, result| tuple_from_resolved_result_with_attempts(py, result?)
-        } else {
-            |py, result| tuple_from_result(py, result?)
-        },
+        convert_response,
     )
 }
 

@@ -19,6 +19,7 @@ import pytest_asyncio
 from azure.core.exceptions import ServiceResponseError
 from azure.cosmos import CosmosClient, PartitionKey, exceptions
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
+from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 from create_item._input_variants import assert_fields, observe_native_create
 from create_item._input_variants import (  # pylint: disable=unused-import
     _make_variant_container_fixture,
@@ -124,7 +125,8 @@ async def test_unsent_transport_failure_and_recovery_rust(
     assert caught.value.__cause__ is not None
     assert caught.value.__cause__.__class__.__name__ == "_DriverTransportError"
     native.assert_called_once()
-    assert await invoke(client._adapter._debug_fault_injection_rule_hit_count, fault["id"]) > 0
+    counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+    assert await invoke(counter, client._adapter, fault["id"]) > 0
     await assert_absent(observer, body)
     await assert_recovery(client, container, observer, body, fault, native)
 
@@ -141,7 +143,8 @@ async def test_operation_deadline_before_service_and_recovery_rust(
     with pytest.raises(exceptions.CosmosClientTimeoutError):
         await invoke(container.create_item, body, timeout=1)
     native.assert_called_once()
-    assert await invoke(client._adapter._debug_fault_injection_rule_hit_count, fault["id"]) == 1
+    counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+    assert await invoke(counter, client._adapter, fault["id"]) == 1
     await assert_absent(observer, body)
     await assert_recovery(client, container, observer, body, fault, native)
 
@@ -160,7 +163,7 @@ async def test_cancel_pending_native_create_and_recovery_rust(
     try:
 
         async def wait_for_native_fault():
-            while not await client._adapter._debug_fault_injection_rule_hit_count(fault["id"]):
+            while not await fault_rule_hit_count_async(client._adapter, fault["id"]):
                 await asyncio.sleep(0.01)
 
         await asyncio.wait_for(wait_for_native_fault(), timeout=5)
@@ -187,8 +190,9 @@ async def test_cold_metadata_failure_blocks_create_and_recovers_rust(
         await invoke(container.create_item, body)
     assert (caught.value.status_code, caught.value.sub_status) == (403, 32002)
     native.assert_called_once()
-    assert await invoke(client._adapter._debug_fault_injection_rule_hit_count, metadata["id"]) == 1
-    assert await invoke(client._adapter._debug_fault_injection_rule_hit_count, guard["id"]) == 0
+    counter = fault_rule_hit_count_async if asynchronous else fault_rule_hit_count
+    assert await invoke(counter, client._adapter, metadata["id"]) == 1
+    assert await invoke(counter, client._adapter, guard["id"]) == 0
     await assert_absent(observer, body)
 
     handle = await invoke(client._adapter._ensure_driver_handle)
@@ -196,7 +200,7 @@ async def test_cold_metadata_failure_blocks_create_and_recovers_rust(
     with pytest.raises(exceptions.CosmosHttpResponseError) as guarded:
         await invoke(container.create_item, body)
     assert (guarded.value.status_code, guarded.value.sub_status) == (400, 32003)
-    assert await invoke(client._adapter._debug_fault_injection_rule_hit_count, guard["id"]) == 1
+    assert await invoke(counter, client._adapter, guard["id"]) == 1
     await assert_absent(observer, body)
     await assert_recovery(client, container, observer, body, guard, native)
 

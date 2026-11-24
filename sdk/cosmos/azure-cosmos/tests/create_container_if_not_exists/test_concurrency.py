@@ -4,6 +4,7 @@
 
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from contextvars import ContextVar
 from threading import Barrier
 from unittest.mock import patch
 
@@ -14,25 +15,15 @@ from azure.cosmos._helpers._container_operations import ContainerHelper
 from azure.cosmos.aio._helpers._container_operations import AsyncContainerHelper
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from config.clients import create_data_client, create_data_client_async
-from config.settings import TestSettings, unique_database_id
+from config.settings import unique_database_id
 
 
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
-@pytest.mark.skipif(
-    TestSettings.is_emulator,
-    reason=(
-        "emulator-gap: concurrent creates race while reserving an internal server; "
-        "ServiceStateManager.SetServiceStateTransactionallyAsync fails with "
-        "'The property check failed' (0x80071BD5) and returns HTTP 500. "
-        "Reproduced without either SDK; re-enable after the emulator allocation race is fixed."
-    ),
-)
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-@pytest.mark.parametrize("use_legacy", [False, True], ids=["rust", "core-python"])
-def test_concurrent_container_creation_returns_same_resource_rust(asynchronous, use_legacy):
+def test_concurrent_container_creation_returns_same_resource_rust(asynchronous):
     database_id = unique_database_id("ContainerRace")
-    backend = "core-python" if use_legacy else "rust"
+    initial_read = ContextVar("initial_read", default=False)
 
     def options(hooks):
         def hook(headers, properties):
@@ -55,20 +46,24 @@ def test_concurrent_container_creation_returns_same_resource_rust(asynchronous, 
 
         async def read_then_wait(helper, *args, **kwargs):
             nonlocal missing_reads
+            is_initial_read = initial_read.get()
+            initial_read.set(False)
             try:
                 return await original_read(helper, *args, **kwargs)
             except CosmosResourceNotFoundError:
-                missing_reads += 1
-                if missing_reads == 8:
-                    gate.set()
-                await asyncio.wait_for(gate.wait(), 15)
+                if is_initial_read:
+                    missing_reads += 1
+                    if missing_reads == 8:
+                        gate.set()
+                    await asyncio.wait_for(gate.wait(), 15)
                 raise
 
-        async with create_data_client_async(_backend=backend) as client:
+        async with create_data_client_async(_backend="rust") as client:
             database = await client.create_database(database_id)
             try:
                 async def create():
                     hooks = []
+                    initial_read.set(True)
                     result = await database.create_container_if_not_exists(
                         "orders", PartitionKey(path="/pk"), **options(hooks)
                     )
@@ -90,17 +85,21 @@ def test_concurrent_container_creation_returns_same_resource_rust(asynchronous, 
     original_read = ContainerHelper.read_container
 
     def read_then_wait(helper, *args, **kwargs):
+        is_initial_read = initial_read.get()
+        initial_read.set(False)
         try:
             return original_read(helper, *args, **kwargs)
         except CosmosResourceNotFoundError:
-            gate.wait(timeout=15)
+            if is_initial_read:
+                gate.wait(timeout=15)
             raise
 
-    with create_data_client(_backend=backend) as client:
+    with create_data_client(_backend="rust") as client:
         database = client.create_database(database_id)
         try:
             def create():
                 hooks = []
+                initial_read.set(True)
                 result = database.create_container_if_not_exists(
                     "orders", PartitionKey(path="/pk"), **options(hooks)
                 )

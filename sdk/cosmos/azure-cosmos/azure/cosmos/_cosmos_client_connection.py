@@ -95,12 +95,11 @@ from ._backend.capabilities import OperationRouting, reject_removed_options
 
 from ._backend.legacy import LEGACY_BACKEND
 from ._base import _build_properties_cache
-from ._change_feed.change_feed_iterable import ChangeFeedIterable
 from ._change_feed.change_feed_state import ChangeFeedState
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants
 from ._cosmos_http_logging_policy import CosmosHttpLoggingPolicy
-from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
+from ._cosmos_responses import CosmosDict, CosmosList
 from ._query_rust_routing import build_list_containers_prepared_page_request, build_list_databases_prepared_page_request, build_query_containers_prepared_page_request, build_query_databases_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_query_page, process_query_page
 from ._range_partition_resolver import RangePartitionResolver
 from ._request_object import RequestObject
@@ -128,7 +127,6 @@ from .partition_key import (
     _Undefined,
     _Empty,
     _PartitionKeyKind,
-    PartitionKeyType,
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
@@ -749,162 +747,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
         self.DeleteResource(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
-
-    def QueryItems(
-        self,
-        database_or_container_link: str,
-        query: Optional[Union[str, dict[str, Any]]],
-        options: Optional[Mapping[str, Any]] = None,
-        partition_key: Optional[PartitionKeyType] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], dict[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> CosmosItemPaged:
-        """Queries documents in a collection.
-
-        :param str database_or_container_link:
-            The link to the database when using partitioning, otherwise link to the document collection.
-        :param (str or dict) query: the query to be used
-        :param dict options: The request options for the request.
-        :param partition_key: Partition key for the query(default value None)
-        :type: partition_key: Union[str, int, float, bool, list[Union[str, int, float, bool]]]
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[Mapping[str, Any], dict[str, Any]], None]
-
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        database_or_container_link = base.TrimBeginningAndEndingSlashes(database_or_container_link)
-
-        if options is None:
-            options = {}
-
-        if base.IsDatabaseLink(database_or_container_link):
-            return CosmosItemPaged(
-                self,
-                query,
-                options,
-                database_link=database_or_container_link,
-                partition_key=partition_key,
-                page_iterator_class=query_iterable.QueryIterable
-            )
-
-        path = base.GetPathFromLink(database_or_container_link, http_constants.ResourceType.Document)
-        collection_id = base.GetResourceIdOrFullNameFromLink(database_or_container_link)
-
-        # Shared dict for header capture — overwritten each page fetch
-        response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
-
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            return self.__QueryFeed(
-                    path,
-                    http_constants.ResourceType.Document,
-                    collection_id,
-                    lambda r: r["Documents"],
-                    lambda _, b: b,
-                    query,
-                    options,
-                    response_hook=response_hook,
-                    response_headers=response_headers,
-                    **kwargs)
-
-        return CosmosItemPaged(
-            self,
-            query,
-            options,
-            fetch_function=fetch_fn,
-            collection_link=database_or_container_link,
-            page_iterator_class=query_iterable.QueryIterable,
-            response_hook=response_hook,
-            resource_type=http_constants.ResourceType.Document,
-            response_headers=response_headers
-        )
-
-    def QueryItemsChangeFeed(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
-        """Queries documents change feed in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param dict options: The request options for the request.
-        :param response_hook: A callable invoked with the response metadata.
-        :type response_hook: Callable[[dict[str, str], dict[str, Any]]
-
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-
-        partition_key_range_id = None
-        if options is not None and "partitionKeyRangeId" in options:
-            partition_key_range_id = options["partitionKeyRangeId"]
-
-        return self._QueryChangeFeed(collection_link, options, partition_key_range_id,response_hook=response_hook,
-                                     **kwargs)
-
-    def _QueryChangeFeed(
-        self,
-        collection_link: str,
-        options: Optional[Mapping[str, Any]] = None,
-        partition_key_range_id: Optional[str] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
-        **kwargs: Any
-    ) -> ItemPaged[dict[str, Any]]:
-        """Queries change feed of a resource in a collection.
-
-        :param str collection_link: The link to the document collection.
-        :param dict options: The request options for the request.
-        :param str partition_key_range_id: Specifies partition key range id.
-        :param response_hook: A callable invoked with the response metadata
-        :type response_hook: Callable[[dict[str, str], dict[str, Any]]
-
-        :return:
-            Query Iterable of Documents.
-        :rtype:
-            query_iterable.QueryIterable
-
-        """
-        if options is None:
-            options = {}
-        else:
-            options = dict(options)
-
-        path = base.GetPathFromLink(collection_link, http_constants.ResourceType.Document)
-        collection_id = base.GetResourceIdOrFullNameFromLink(collection_link)
-
-        def fetch_fn(options: Mapping[str, Any]) -> Tuple[list[dict[str, Any]], CaseInsensitiveDict]:
-            if collection_link in self.__container_properties_cache:
-                # TODO: This will make deep copy. Check if this has any performance impact
-                new_options = dict(options)
-                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
-                options = new_options
-            return self.__QueryFeed(
-                path,
-                http_constants.ResourceType.Document,
-                collection_id,
-                lambda r: r["Documents"],
-                lambda _, b: b,
-                None,
-                options,
-                partition_key_range_id,
-                response_hook=response_hook,
-                **kwargs)
-
-        return ItemPaged(
-            self,
-            options,
-            fetch_function=fetch_fn,
-            collection_link=collection_link,
-            page_iterator_class=ChangeFeedIterable
-        )
 
     def _ReadPartitionKeyRanges(
         self,

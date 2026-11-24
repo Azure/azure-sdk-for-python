@@ -9,7 +9,7 @@ import uuid
 import pytest
 
 from azure.cosmos.aio import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count_async
 from fault_injection._async_cancellation import (
     CANCELLATION_ALLOWANCE, OPERATION_TIMEOUT, assert_cancelled, cancellation_rule,
     capture_read_lifecycle, require_read_lifecycle_probe, wait_for_evidence,
@@ -41,15 +41,15 @@ async def test_cancelled_read_drops_native_future_and_client_recovers_rust(owned
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)
         await client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
         probes = capture_read_lifecycle(monkeypatch)
-        before = (_binding_operation_count(), _rust_fallback_count())
+        before = _binding_operation_count()
         pending = asyncio.create_task(container.read_item(item_id, partition_key=item_id, timeout=OPERATION_TIMEOUT))
         error, returned, started_status = None, None, None
         try:
             if inject:
                 async def fault_started():
-                    return await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 1
+                    return await fault_rule_hit_count_async(client._adapter, rule_id) == 1
 
                 await wait_for_evidence(fault_started, 2.0, "The delayed native read never started")
                 assert len(probes) == 1
@@ -80,28 +80,27 @@ async def test_cancelled_read_drops_native_future_and_client_recovers_rust(owned
                 assert len(probes) == 1 and probes[0].status == "completed"
                 assert {field: returned[field] for field in item} == item
 
-            after = (_binding_operation_count(), _rust_fallback_count())
-            hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+            after = _binding_operation_count()
+            hits = await fault_rule_hit_count_async(client._adapter, rule_id)
             emit("async_cancellation", surface="async", database_id=database_id, inject=inject,
                  hits=hits, elapsed=elapsed, started_status=started_status, native_status=probes[0].status,
                  error_type=None if error is None else type(error).__name__,
-                 binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+                 binding_delta=after - before)
             assert_route(before, after, "rust")
             assert hits == (1 if inject else 0)
 
-            recovery_before = (_binding_operation_count(), _rust_fallback_count())
+            recovery_before = _binding_operation_count()
             recovered = await container.read_item(item_id, partition_key=item_id, timeout=OPERATION_TIMEOUT)
-            recovery_after = (_binding_operation_count(), _rust_fallback_count())
+            recovery_after = _binding_operation_count()
             assert_route(recovery_before, recovery_after, "rust")
             assert len(probes) == 2 and probes[1].status == "completed"
             assert probes[0].status == ("dropped" if inject else "completed")
             assert {field: recovered[field] for field in item} == item
-            assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == hits
+            assert await fault_rule_hit_count_async(client._adapter, rule_id) == hits
             emit("same_client_recovery", database_id=database_id, inject=inject,
                  first_native_status=probes[0].status, recovery_native_status=probes[1].status,
                  fields={field: recovered[field] for field in item},
-                 binding_delta=recovery_after[0] - recovery_before[0],
-                 fallback_delta=recovery_after[1] - recovery_before[1])
+                 binding_delta=recovery_after - recovery_before)
             stored = await asyncio.to_thread(observer.read_item, item_id, partition_key=item_id)
             assert {field: stored[field] for field in item} == item
             emit("stored_state", database_id=database_id, inject=inject, item_id=item_id,

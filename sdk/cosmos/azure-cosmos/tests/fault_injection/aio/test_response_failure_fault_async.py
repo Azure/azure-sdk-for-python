@@ -11,7 +11,7 @@ import pytest
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.cosmos import _rust, exceptions
 from azure.cosmos.aio import CosmosClient
-from config.diagnostics import _binding_operation_count, _rust_fallback_count
+from config.diagnostics import _binding_operation_count, fault_rule_hit_count_async
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._response_failure import OPERATION_TIMEOUT, assert_response_failure, response_failure_rule
 
@@ -35,8 +35,8 @@ async def test_point_read_response_failure_async_rust(owned_target, inject):
         container = client.get_database_client(database_id).get_container_client(observer.id)
         await container.read(timeout=30)
         await client._adapter.get_container_metadata(container.container_link, deadline=time.monotonic() + 30)
-        assert await client._adapter._debug_fault_injection_rule_hit_count(rule_id) == 0
-        before = (_binding_operation_count(), _rust_fallback_count())
+        assert await fault_rule_hit_count_async(client._adapter, rule_id) == 0
+        before = _binding_operation_count()
         error, returned = None, None
         start = time.perf_counter()
         try:
@@ -45,14 +45,14 @@ async def test_point_read_response_failure_async_rust(owned_target, inject):
                 ServiceRequestError, ServiceResponseError, TimeoutError) as caught:
             error = caught
         elapsed = time.perf_counter() - start
-        after = (_binding_operation_count(), _rust_fallback_count())
-        hits = await client._adapter._debug_fault_injection_rule_hit_count(rule_id)
+        after = _binding_operation_count()
+        hits = await fault_rule_hit_count_async(client._adapter, rule_id)
         emit("response_failure", surface="async", backend="rust", inject=inject, database_id=database_id,
              rule_id=rule_id, elapsed=elapsed, hits=hits,
              error_type=None if error is None else type(error).__name__,
              error_message=None if error is None else str(error),
              cause_type=None if error is None else type(error.__cause__).__name__,
-             binding_delta=after[0] - before[0], fallback_delta=after[1] - before[1])
+             binding_delta=after - before)
         assert_route(before, after, "rust")
         stored = await asyncio.to_thread(observer.read_item, item_id, partition_key=item_id)
         assert {field: stored[field] for field in item} == item, "Stored customer fields changed"

@@ -10,7 +10,8 @@ sales.orders already present, partitioned by /customerId. No resources are
 created. Client-scoped Rust transport faults intercept every CreateItem before
 forwarding it; this is not a physical socket outage or a Python binding mock.
 Each unique synthetic order is checked absent before and after the call.
-No spans are uploaded. Run in a fresh process with a rebuilt extension.
+No spans are uploaded. Run in a fresh process with an extension built using
+``--features test-probes``.
 The SDK must use Rust as its default backend.
 
 The timeout case retains the normal public settings and records which timer
@@ -162,6 +163,8 @@ def inspect_spans(exporter, trace_id, mode, failure, payload):
 
 
 async def run_case(exporter, connection, failure, mode):
+    if not callable(getattr(_rust, "_debug_fault_injection_rule_hit_count", None)):
+        raise RuntimeError("The fault-injection sample requires a wheel built with --features test-probes.")
     rule_id = "telemetry-" + uuid.uuid4().hex
     order = {"id": rule_id, "customerId": rule_id, "total": 125.5}
     rule = {

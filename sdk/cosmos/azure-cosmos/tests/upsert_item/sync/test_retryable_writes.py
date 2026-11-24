@@ -23,6 +23,7 @@ from azure.core.rest import HttpRequest
 from azure.cosmos import CosmosClient, ContainerProxy, DatabaseProxy, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
+from config.diagnostics import fault_rule_hit_count
 
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
@@ -165,7 +166,7 @@ class TestRetryableWrites:
 
         @property
         def counter(self):
-            return self._client._adapter._debug_fault_injection_rule_hit_count(self._rule_id)
+            return fault_rule_hit_count(self._client._adapter, self._rule_id)
 
         def close(self):
             self._client.close()

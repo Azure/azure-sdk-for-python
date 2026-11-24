@@ -351,19 +351,6 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         log_response_diagnostics(self, prepared.op, response)
         return response
 
-    def _debug_fault_injection_rule_hit_count(self, rule_id: str) -> int:
-        """Return how many Rust request attempts applied the named test rule."""
-        if _rust_module is None:
-            raise NotImplementedError(
-                "Rust fault injection requires the compiled azure.cosmos._rust module."
-            )
-        return int(
-            _rust_module._debug_fault_injection_rule_hit_count(
-                self._ensure_driver_handle(),
-                rule_id,
-            )
-        )
-
     def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
     ) -> ContainerMetadata:
