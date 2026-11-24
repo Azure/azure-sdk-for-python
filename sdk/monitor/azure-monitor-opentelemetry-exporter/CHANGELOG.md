@@ -18,6 +18,7 @@
 
 - Avoid eager multi-endpoint routed-client creation and limit temporary clients to one per
   exporter, including concurrent exports. Single-endpoint and offline-storage behavior are unchanged.
+  ([#50130](https://github.com/Azure/azure-sdk-for-python/pull/50130))
 - Count retained routed-storage partitions across exporter lifetimes before admitting new ones.
   Reuse existing partitions at capacity and use non-persisting overflow without deleting pending batches.
   Coordination is process-local; single-endpoint storage behavior is unchanged.
