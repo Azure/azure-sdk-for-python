@@ -76,3 +76,41 @@ def test_parse_api_md_accepts_string():
     with open(COMPUTEFLEET_API_MD, encoding="utf-8") as fd:
         report = parse_api_md(fd.read())
     assert report["azure.mgmt.computefleet.operations"]["class_nodes"]["Operations"]["methods"]["list"]
+
+
+def test_parameter_order_is_preserved_and_reported():
+    stable = parse_api_md(
+        """namespace azure.mgmt.security.operations
+        class AlertsOperations:
+            def list_resource_group_level_by_region(
+                self,
+                asc_location: str,
+                resource_group_name: str,
+                **kwargs: Any
+            ) -> None: ...
+        """
+    )
+    current = parse_api_md(
+        """namespace azure.mgmt.security.operations
+        class AlertsOperations:
+            def list_resource_group_level_by_region(
+                self,
+                resource_group_name: str,
+                asc_location: str,
+                **kwargs: Any
+            ) -> None: ...
+        """
+    )
+
+    bc = ChangelogTracker(
+        stable,
+        current,
+        "azure-mgmt-security",
+        ignore=IGNORE_BREAKING_CHANGES,
+    )
+    bc.run_checks()
+    bc.report_changes()
+
+    assert len(bc.breaking_changes) == 1
+    msg, _, *args = bc.breaking_changes[0]
+    assert msg == ChangelogTracker.CHANGED_PARAMETER_ORDERING_MSG

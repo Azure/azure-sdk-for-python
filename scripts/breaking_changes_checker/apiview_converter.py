@@ -107,18 +107,7 @@ def _parse_parameters(param_str: str) -> Dict:
             parsed_default = "str"
         parameters[name] = {"type": annotation, "default": parsed_default, "param_type": kind}
 
-    def _sort_key(item: Tuple[str, Dict]) -> Tuple[int, str]:
-        name, data = item
-        if name == "self":
-            return (0, "")
-        if data["param_type"] == "var_positional":
-            return (2, name)
-        if data["param_type"] == "var_keyword":
-            return (3, name)
-        return (1, name)
-
-    return dict(sorted(parameters.items(), key=_sort_key))
-
+    return parameters
 
 def _parse_signature(block: str) -> Tuple[str, Dict]:
     """Parse a ``def`` block, returning the method name and a function report."""
