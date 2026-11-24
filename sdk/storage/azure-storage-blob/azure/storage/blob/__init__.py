@@ -85,11 +85,6 @@ def upload_blob_to_url(
 
     The data will be uploaded as a block blob.
 
-    .. note::
-
-        The optional, experimental native transfer extension could increase performance.
-        See :meth:`BlobClient.upload_blob` for installation, compatibility caveats, and how to disable it.
-
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.
     :param data:
@@ -158,11 +153,6 @@ def download_blob_from_url(
     **kwargs: Any,
 ) -> None:
     """Download the contents of a blob to a local file or stream.
-
-    .. note::
-
-        The optional, experimental native transfer extension could increase performance.
-        See :meth:`BlobClient.download_blob` for installation, compatibility caveats, and how to disable it.
 
     :param str blob_url:
         The full URI to the blob. This can also include a SAS token.
