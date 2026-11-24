@@ -80,10 +80,19 @@ This repo defaults to using Central Feed Services (CFS) as the package source in
 **Authentication for upstream pull-through:**
 When a package version is not yet cached in the CFS feed, uv/pip pulls it through from PyPI upstream, which requires authentication. See [CONTRIBUTING.md](https://github.com/Azure/azure-sdk-for-python/blob/main/CONTRIBUTING.md#authentication-for-upstream-pull-through) for details.
 
+If `azpysdk next-mypy --isolate .` or `azpysdk mypy --next=True --isolate .` fails with a `401` or `404` from `pkgs.dev.azure.com` while installing a third-party dependency (such as `ast-serialize`), this is usually a CFS authentication or upstream pull-through issue, not a mypy typing error or a problem with your package code. Authenticate as described above, or bypass CFS using `--pypi` as shown below, before investigating other causes.
+
 **Bypassing CFS:**
 If you need to install directly from PyPI (e.g., for a package not yet in the feed and auth isn't set up), use:
 ```bash
 azpysdk --pypi <command>
+```
+
+For example, from the package directory, retry the next mypy check with:
+```bash
+azpysdk --pypi next-mypy --isolate .
+# or
+azpysdk --pypi mypy --next=True --isolate .
 ```
 
 ## Initial setup
