@@ -374,6 +374,42 @@ def test_replace_all_classes():
     assert changes == expected_msg
 
 
+def test_removed_operation_group_class():
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "methods": {},
+                    "properties": {},
+                }
+            }
+        },
+        "azure.contoso.operations": {
+            "class_nodes": {
+                "ContosoOperations": {
+                    "methods": {},
+                    "properties": {},
+                }
+            }
+        },
+    }
+    current = {
+        "azure.contoso.models": {"class_nodes": {}},
+        "azure.contoso.operations": {"class_nodes": {}},
+    }
+
+    bc = BreakingChangesTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    changes = normalize_breaking_changes_report(bc.report_changes())
+    expected_msg = format_breaking_changes([
+        "(RemovedOrRenamedClass): Deleted or renamed model `ContosoModel`",
+        "(RemovedOrRenamedOperationGroup): Deleted or renamed operation group `ContosoOperations`",
+    ])
+    assert len(bc.breaking_changes) == 2
+    assert changes == expected_msg
+
+
 def test_replace_all_modules():
     current = {}
 

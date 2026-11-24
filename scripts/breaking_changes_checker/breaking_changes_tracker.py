@@ -132,6 +132,8 @@ class BreakingChangesTracker:
         "Function `{}` changed from accepting keyword arguments to not accepting them"
     REMOVED_OR_RENAMED_OPERATION_GROUP_MSG = \
         "Deleted or renamed client operation group `{}.{}`"
+    REMOVED_OR_RENAMED_OPERATION_GROUP_CLASS_MSG = \
+        "Deleted or renamed operation group `{}`"
     REQUIRED_PROPERTY_MSG = "`{}.{}` is now required."
     CHANGED_PROPERTY_TYPE_MSG = \
         "Model `{}` changed type of property `{}` from `{}` to `{}`"
@@ -812,6 +814,12 @@ class BreakingChangesTracker:
                     bc = (
                         self.REMOVED_OR_RENAMED_CLIENT_MSG,
                         BreakingChangeType.REMOVED_OR_RENAMED_CLIENT,
+                        self._module_name, name
+                    )
+                elif self.is_operation_group(self._module_name, name):
+                    bc = (
+                        self.REMOVED_OR_RENAMED_OPERATION_GROUP_CLASS_MSG,
+                        BreakingChangeType.REMOVED_OR_RENAMED_OPERATION_GROUP,
                         self._module_name, name
                     )
                 else:
