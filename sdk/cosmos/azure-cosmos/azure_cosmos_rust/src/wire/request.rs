@@ -70,7 +70,7 @@ pub(crate) struct RequestHeadersAndOptions {
     // turns it on with the caller's threshold. ``None`` means the caller did
     // not set it and the driver keeps its default.
     pub(crate) availability_strategy: Option<AvailabilityStrategy>,
-    // Read-item entry points validate once, before retaining the driver or async dispatch.
+    // Shared settings extraction validates read choices before driver access.
     pub(crate) read_consistency_strategy: Option<ReadConsistencyStrategy>,
     pub(crate) patch_strategy: Option<PatchStrategy>,
     pub(crate) throughput_control: Option<ThroughputControlOptions>,
@@ -90,7 +90,7 @@ impl RequestHeadersAndOptions {
             .map(Some)
             .ok_or_else(|| {
                 PyNotImplementedError::new_err(format!(
-                    "The Rust read_item binding cannot represent per-call consistency {:?}; \
+                    "The Rust binding cannot represent per-call consistency {:?}; \
                      supported levels are Eventual, ConsistentPrefix, Session, \
                      BoundedStaleness, and Strong.",
                     value.as_str(),
@@ -189,11 +189,15 @@ pub(super) fn build_operation_options(
     availability_strategy: Option<AvailabilityStrategy>,
     throughput_control: Option<ThroughputControlOptions>,
     utf8_decoding_mode: Option<Utf8DecodingMode>,
+    read_consistency_strategy: Option<ReadConsistencyStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
     // Python consumes text JSON, so disable binary response negotiation.
     let mut builder = OperationOptionsBuilder::new()
         .with_binary_encoding(BinaryEncodingOptions::new().with_enabled(false));
+    if let Some(strategy) = read_consistency_strategy {
+        builder = builder.with_read_consistency_strategy(strategy);
+    }
     if let Some(mode) = utf8_decoding_mode {
         builder = builder.with_utf8_decoding_mode(mode);
     }
@@ -604,7 +608,7 @@ mod tests {
 
     #[test]
     fn operation_options_preserve_the_python_text_json_contract() {
-        let options = super::build_operation_options(None, None, None, None, None, None, Default::default());
+        let options = super::build_operation_options(None, None, None, None, None, None, None, Default::default());
         assert!(!options.binary_encoding.unwrap().enabled);
     }
 

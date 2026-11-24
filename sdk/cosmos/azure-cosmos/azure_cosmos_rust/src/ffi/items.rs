@@ -324,7 +324,6 @@ fn read_item_impl<'py>(
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
         extract_read_item_inputs(prepared)?;
-    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
     modifiers.remaining_binding_timeout =
         crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 
@@ -631,7 +630,6 @@ fn read_item_async_impl<'py>(
     super::validate_prepared_operation(prepared, "read_item")?;
     let (container_link, partition_key, mut modifiers, target) =
         extract_read_item_inputs(prepared)?;
-    modifiers.read_consistency_strategy = modifiers.parse_read_consistency()?;
     modifiers.remaining_binding_timeout =
         crate::wire::deadline::parse_remaining_timeout(timeout_seconds)?;
 

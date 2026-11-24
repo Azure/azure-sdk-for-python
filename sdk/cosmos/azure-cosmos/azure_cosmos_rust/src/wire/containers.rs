@@ -394,6 +394,7 @@ fn prepare_container_operation(
         modifiers.availability_strategy,
         modifiers.throughput_control,
         modifiers.utf8_decoding_mode,
+        modifiers.read_consistency_strategy.filter(|_| op.is_read_only()),
         modifiers.custom_headers,
     );
     (op, options)
@@ -506,6 +507,7 @@ fn container_resolution_options(modifiers: &RequestHeadersAndOptions) -> Operati
         modifiers.availability_strategy.clone(),
         None,
         modifiers.utf8_decoding_mode,
+        None,
         Default::default(),
     )
 }

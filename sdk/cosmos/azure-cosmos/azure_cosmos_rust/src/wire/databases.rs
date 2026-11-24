@@ -369,6 +369,7 @@ fn prepare_database_operation(
         modifiers.availability_strategy,
         modifiers.throughput_control,
         modifiers.utf8_decoding_mode,
+        modifiers.read_consistency_strategy.filter(|_| op.is_read_only()),
         modifiers.custom_headers,
     );
     (op, options)

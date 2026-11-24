@@ -104,6 +104,7 @@ pub(crate) fn get_container_metadata<'py>(
         None,
         None,
         None,
+        None,
         Default::default(),
     );
     let driver = driver_handle.driver();
@@ -135,6 +136,7 @@ pub(crate) fn get_container_metadata_async<'py>(
         None,
         None,
         timeout.map(EndToEndOperationLatencyPolicy::new),
+        None,
         None,
         None,
         None,

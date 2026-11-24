@@ -987,7 +987,8 @@ class DatabaseProxy(object):
         This method does not check whether the container exists. The target is
         always in this database. Properties mappings supply only ``id``, which
         is converted to a string; other properties are not cached.
-        Call this method without ``await``; await the returned client's service operations.
+        Call this method without ``await``. To read the container's properties later,
+        use ``await container.read()`` on the returned client.
 
         :param container: The ID (name), properties mapping containing ``id``, or :class:`ContainerProxy`
             instance of the container to get.

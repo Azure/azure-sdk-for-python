@@ -294,7 +294,7 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
             AvailabilityStrategy::Disabled
         })
     };
-    Ok(RequestHeadersAndOptions {
+    let mut result = RequestHeadersAndOptions {
         activity_header,
         session_header,
         content_response_on_write: if no_response == Some(true) {
@@ -314,7 +314,30 @@ pub(crate) fn extract_settings(prepared: &Bound<'_, PyAny>) -> PyResult<RequestH
             .map(crate::runtime::utf8_decoding_mode_from_str)
             .transpose()?,
         custom_headers,
-    })
+    };
+    let consistency_header = HeaderName::from_static("x-ms-consistency-level");
+    if result.custom_headers.contains_key(&consistency_header) {
+        let operation = prepared.getattr("op")?.extract::<String>()?;
+        if matches!(
+            operation.as_str(),
+            "read_item"
+                | "read_items"
+                | "read_all_items"
+                | "query_items"
+                | "query_items_change_feed"
+                | "read_database"
+                | "list_databases"
+                | "query_databases"
+                | "read_container"
+                | "list_containers"
+                | "query_containers"
+                | "get_throughput"
+        ) {
+            result.read_consistency_strategy = result.parse_read_consistency()?;
+            result.custom_headers.remove(&consistency_header);
+        }
+    }
+    Ok(result)
 }
 
 pub(crate) fn reject_trigger_header(name: &str) -> PyResult<()> {
@@ -359,6 +382,80 @@ pub(crate) fn test_settings(py: Python<'_>) -> Bound<'_, PyAny> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use azure_data_cosmos_driver::options::ReadConsistencyStrategy;
+
+    #[test]
+    fn read_consistency_settings_reach_driver_options_for_all_read_operations() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for operation in [
+                "read_item", "read_items", "read_all_items", "query_items",
+                "query_items_change_feed", "read_database", "list_databases",
+                "query_databases", "read_container", "list_containers",
+                "query_containers", "get_throughput",
+            ] {
+                for (level, expected) in [
+                    ("Eventual", ReadConsistencyStrategy::Eventual),
+                    ("ConsistentPrefix", ReadConsistencyStrategy::Eventual),
+                    ("Session", ReadConsistencyStrategy::Session),
+                    ("BoundedStaleness", ReadConsistencyStrategy::LatestCommitted),
+                    ("Strong", ReadConsistencyStrategy::GlobalStrong),
+                ] {
+                    for typed in [false, true] {
+                        let request = prepared(py);
+                        request.setattr("op", operation).unwrap();
+                        request.getattr("headers").unwrap()
+                            .set_item("X-MS-CONSISTENCY-LEVEL", if typed { "Session" } else { level })
+                            .unwrap();
+                        if typed {
+                            request.getattr("settings").unwrap()
+                                .setattr("consistency_level", level).unwrap();
+                        }
+                        let result = extract_settings(&request).unwrap();
+                        let options = super::super::request::build_operation_options(
+                            None, None, None, None, None, None,
+                            result.read_consistency_strategy, result.custom_headers,
+                        );
+                        assert_eq!(options.read_consistency_strategy, Some(expected), "{operation}");
+                        assert!(options.custom_headers.is_none(), "{operation}");
+                    }
+                }
+                let request = prepared(py);
+                request.setattr("op", operation).unwrap();
+                assert!(extract_settings(&request).unwrap().read_consistency_strategy.is_none());
+                for invalid in ["Default", "unknown", ""] {
+                    request.getattr("settings").unwrap()
+                        .setattr("consistency_level", invalid).unwrap();
+                    assert!(extract_settings(&request).err().unwrap()
+                        .is_instance_of::<pyo3::exceptions::PyNotImplementedError>(py),
+                        "{operation}: {invalid}");
+                }
+            }
+        });
+    }
+
+    #[test]
+    fn write_consistency_headers_are_not_converted_to_read_strategies() {
+        crate::test_support::prepare_python();
+        Python::with_gil(|py| {
+            for operation in [
+                "create_item", "upsert_item", "replace_item", "patch_item", "delete_item",
+                "execute_item_batch", "create_database", "delete_database",
+                "create_container", "replace_container", "delete_container", "replace_throughput",
+            ] {
+                let request = prepared(py);
+                request.setattr("op", operation).unwrap();
+                request.getattr("settings").unwrap()
+                    .setattr("consistency_level", "Session").unwrap();
+                let result = extract_settings(&request).unwrap();
+                assert!(result.read_consistency_strategy.is_none(), "{operation}");
+                assert_eq!(
+                    result.custom_headers[&HeaderName::from_static("x-ms-consistency-level")].as_str(),
+                    "Session", "{operation}",
+                );
+            }
+        });
+    }
 
     #[test]
     fn utf8_decoding_settings_reach_driver_options() {
@@ -385,6 +482,7 @@ mod tests {
                     None,
                     None,
                     result.utf8_decoding_mode,
+                    result.read_consistency_strategy,
                     HashMap::new(),
                 );
                 assert_eq!(options.utf8_decoding_mode, expected);
@@ -407,6 +505,7 @@ mod tests {
     fn prepared(py: Python<'_>) -> Bound<'_, PyAny> {
         let kwargs = PyDict::new_bound(py);
         kwargs.set_item("protocol_version", 3).unwrap();
+        kwargs.set_item("op", "read_item").unwrap();
         kwargs.set_item("settings", test_settings(py)).unwrap();
         kwargs.set_item("headers", PyDict::new_bound(py)).unwrap();
         py.import_bound("types")
@@ -557,6 +656,7 @@ mod tests {
                     result.availability_strategy,
                     result.throughput_control,
                     result.utf8_decoding_mode,
+                    result.read_consistency_strategy,
                     result.custom_headers,
                 );
                 if priority.is_none() && bucket.is_none() {
@@ -686,7 +786,7 @@ mod tests {
             let result = extract_settings(&request).unwrap();
             assert_eq!(
                 result.custom_headers.len(),
-                ITEM_FIELDS.len() + QUERY_FIELDS.len() + RESOURCE_FIELDS.len() + 2
+                ITEM_FIELDS.len() + QUERY_FIELDS.len() + RESOURCE_FIELDS.len() + 1
             );
             let throughput_control = result.throughput_control.as_ref().unwrap();
             assert_eq!(throughput_control.priority_level, Some(PriorityLevel::High));

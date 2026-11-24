@@ -62,9 +62,8 @@ async def examples_async():
             customer_container = database.get_container_client(customer_container_name)
         # [END create_container_with_settings]
 
-        # Retrieve a container by walking down the resource hierarchy
-        # (client->database->container), handling the exception generated
-        # if no container with the specified ID was found in the database.
+        # Create a local container client for later operations.
+        # This does not create the container or check whether it exists.
         # [START get_container]
         database = client.get_database_client(database_name)
         container_client = database.get_container_client(container_name)

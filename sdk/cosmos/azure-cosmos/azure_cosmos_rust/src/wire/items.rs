@@ -243,6 +243,7 @@ fn execute_item_on_driver(
             None,
             None,
             modifiers.utf8_decoding_mode,
+            None,
             Default::default(),
         );
         let container = match &item_target {
@@ -341,9 +342,9 @@ fn execute_item_on_driver(
             modifiers.availability_strategy,
             modifiers.throughput_control,
             modifiers.utf8_decoding_mode,
+            read_consistency,
             modifiers.custom_headers,
         );
-        options.read_consistency_strategy = read_consistency;
         options.patch_strategy = modifiers.patch_strategy;
 
         Ok(driver.execute_singleton_operation(op, options).await)

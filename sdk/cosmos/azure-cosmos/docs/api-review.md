@@ -20,6 +20,7 @@ This document covers customer-visible API decisions.
   - [`DatabaseProxy.create_container` - Creating a container](#databaseproxycreate_container)
   - [`DatabaseProxy.create_container_if_not_exists` - Creating a container if it does not exist](#databaseproxycreate_container_if_not_exists)
   - [`DatabaseProxy.delete_container` - Deleting a container](#databaseproxydelete_container)
+  - [`DatabaseProxy.get_container_client` - Using a string container name from properties](#databaseproxyget_container_client)
   - [`DatabaseProxy.list_containers` - Listing containers](#databaseproxylist_containers)
   - [`DatabaseProxy.query_containers` - Querying containers](#databaseproxyquery_containers)
   - [`DatabaseProxy.replace_container` - Replacing container settings](#databaseproxyreplace_container)
@@ -2442,6 +2443,49 @@ The asynchronous signature is unchanged; the proposed rejection of
 `session_token` changes which arguments are accepted through `**kwargs`.
 The synchronous signature removes its positional-or-named
 `populate_query_metrics` parameter.
+
+<a id="databaseproxyget_container_client"></a>
+
+### `DatabaseProxy.get_container_client`
+
+**Approved: convert a properties ID to a string on both clients**
+
+Alpha Bank's configuration describes a container named `"123"` using
+`{"id": 123}`. The customer app obtains a local client for that container:
+
+```python
+database = client.get_database_client("sales")
+container = database.get_container_client({"id": 123})
+```
+
+This call does not create, rename, or check the container. It prepares a
+client for later operations against `sales/123`.
+
+The original clients handled the supplied properties differently:
+
+| Client | Previous `container.id` | Approved `container.id` |
+|---|---|---|
+| Synchronous | `123`, an integer | `"123"`, a string |
+| Asynchronous | `"123"`, a string | `"123"`, unchanged |
+
+Both clients now apply `str()` to the `id` taken from a properties mapping.
+This keeps a container name represented as text on both clients. It is an
+intentional synchronous compatibility change, not identical legacy behavior.
+
+**Customer impact and migration**
+
+For the example above, a synchronous customer app checking
+`container.id == 123` previously received `True` and now receives `False`.
+Compare with the container's string name instead:
+
+```python
+assert container.id == "123"
+```
+
+String inputs such as `"123"` and properties such as `{"id": "123"}` are
+unchanged. Existing container-proxy inputs are unchanged. A properties
+mapping without `id` still raises `KeyError`; a bare integer such as
+`get_container_client(123)` still raises `TypeError`.
 
 <a id="12---listing-containers"></a>
 <a id="databaseproxylist_containers"></a>

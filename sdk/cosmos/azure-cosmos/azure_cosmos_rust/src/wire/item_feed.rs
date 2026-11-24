@@ -595,6 +595,7 @@ async fn next_plan_page(
         modifiers.availability_strategy,
         modifiers.throughput_control,
         modifiers.utf8_decoding_mode,
+        modifiers.read_consistency_strategy,
         modifiers.custom_headers,
     );
     let container = if let Some(progress) = &progress {
@@ -1292,6 +1293,131 @@ mod tests {
                 HeaderName::from_static("x-ms-max-item-count"),
                 HeaderValue::from_static("2"),
             )]),
+        }
+    }
+
+    #[tokio::test]
+    async fn retained_reads_preserve_consistency_choices_across_pages() {
+        use azure_data_cosmos_driver::{
+            in_memory_emulator::ConsistencyLevel,
+            options::{OperationOptionsBuilder, ReadConsistencyStrategy},
+        };
+        use pyo3::types::PyDict;
+
+        #[derive(Debug, Default)]
+        struct Requests(std::sync::Mutex<Vec<(Option<String>, bool)>>);
+        impl RequestObserver for Requests {
+            fn on_request(&self, request: &Request) {
+                if request.url().path().trim_end_matches('/').ends_with("/docs")
+                    && request.headers().get_optional_str(
+                        &HeaderName::from_static("x-ms-cosmos-is-query-plan-request"),
+                    ).is_none()
+                {
+                    assert!(request.headers().get_optional_str(
+                        &HeaderName::from_static("x-ms-consistency-level"),
+                    ).is_none());
+                    self.0.lock().unwrap().push((
+                        request.headers().get_optional_str(
+                            &HeaderName::from_static("x-ms-cosmos-read-consistency-strategy"),
+                        ).map(str::to_owned),
+                        request.headers().get_optional_str(
+                            &HeaderName::from_static("x-ms-session-token"),
+                        ).is_some(),
+                    ));
+                }
+            }
+        }
+
+        crate::test_support::prepare_python();
+        for client_strategy in [None, Some(ReadConsistencyStrategy::Session)] {
+            let url = Url::parse("https://feed-consistency.emulator.local").unwrap();
+            let observed = Arc::new(Requests::default());
+            let emulator = Arc::new(InMemoryEmulatorHttpClient::new(
+                VirtualAccountConfig::new(vec![VirtualRegion::new("East US", url.clone())])
+                    .unwrap().with_consistency(ConsistencyLevel::Session),
+            ).with_request_observer(observed.clone()));
+            emulator.store().create_database("db");
+            emulator.store().create_container_with_config(
+                "db", "c", PartitionKeyDefinition::from("/pk"),
+                ContainerConfig::new().with_partition_count(1).build().unwrap(),
+            );
+            let runtime = emulator.runtime_builder().build().await.unwrap();
+            let mut defaults = OperationOptionsBuilder::new().build();
+            defaults.read_consistency_strategy = client_strategy;
+            let driver = runtime.create_driver(
+                DriverOptions::builder(AccountReference::with_account_key(url, "ZW11bGF0b3Ita2V5"))
+                    .with_operation_options(defaults).build(),
+            ).await.unwrap();
+            let container = driver.resolve_container("db", "c", Default::default()).await.unwrap();
+            for id in ["0", "1", "2"] {
+                driver.execute_singleton_operation(
+                    CosmosOperation::create_item(ItemReference::from_name(
+                        &container, PartitionKey::from("A"), id,
+                    )).with_body(serde_json::to_vec(&serde_json::json!({"id": id, "pk": "A"})).unwrap()),
+                    Default::default(),
+                ).await.unwrap();
+            }
+            for operation in ["query_items", "read_items", "read_all_items", "query_items_change_feed"] {
+                for level in [None, Some("Eventual"), Some("Session")] {
+                    observed.0.lock().unwrap().clear();
+                    let request = match operation {
+                        "query_items" => query_request("SELECT * FROM c"),
+                        "read_items" => FeedRequest::ReadMany(
+                            ["0", "1", "2"].into_iter()
+                                .map(|id| (PartitionKey::from("A"), id.to_owned())).collect(),
+                        ),
+                        "read_all_items" => FeedRequest::ReadAll,
+                        _ => {
+                            let mut change = change_request("LatestVersion", "Beginning");
+                            change.partition_key = Some(PartitionKey::from("A"));
+                            FeedRequest::ChangeFeed(change)
+                        }
+                    };
+                    let state = Arc::new(Mutex::new(CursorState::default()));
+                    let mut continuation = None;
+                    let mut finished = false;
+                    for _ in 0..10 {
+                        let settings = Python::with_gil(|py| {
+                            let fields = PyDict::new_bound(py);
+                            fields.set_item("protocol_version", 3).unwrap();
+                            fields.set_item("op", operation).unwrap();
+                            fields.set_item("headers", PyDict::new_bound(py)).unwrap();
+                            let settings = super::super::settings::test_settings(py);
+                            settings.setattr("consistency_level", level).unwrap();
+                            settings.getattr("query").unwrap().setattr("max_item_count", 1).unwrap();
+                            fields.set_item("settings", settings).unwrap();
+                            let prepared = py.import_bound("types").unwrap().getattr("SimpleNamespace")
+                                .unwrap().call((), Some(&fields)).unwrap();
+                            super::super::settings::extract_settings(&prepared).unwrap()
+                        });
+                        let result = next_plan_page(
+                            driver.clone(), state.clone(), ("test".into(), "dbs/db/colls/c".into()),
+                            continuation, settings, request.clone(),
+                            PlanOptions::default().with_query_plan_mode(QueryPlanMode::GatewayOnly),
+                        ).await.unwrap();
+                        continuation = result.1;
+                        match result.0.unwrap() {
+                            None => { finished = true; break; }
+                            Some(response) if response.status().status_code()
+                                == azure_core::http::StatusCode::NotModified => {
+                                finished = true;
+                                break;
+                            }
+                            Some(_) => {}
+                        }
+                    }
+                    assert!(finished, "{operation}: {level:?}");
+                    let requests = observed.0.lock().unwrap();
+                    assert!(!requests.is_empty(), "{operation}");
+                    let expected = level.or(client_strategy.map(|strategy| strategy.as_str()));
+                    for (strategy, has_token) in requests.iter() {
+                        assert_eq!(strategy.as_deref(), expected, "{operation}: {level:?}");
+                        if level == Some("Eventual") {
+                            assert!(!has_token, "{operation}: Eventual must not select a cached session token");
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -2947,7 +3073,7 @@ mod tests {
                 .insert(HeaderName::from(name), HeaderValue::from(value));
         }
         let driver_options =
-            build_operation_options(None, None, None, None, None, None, options.custom_headers.clone());
+            build_operation_options(None, None, None, None, None, None, None, options.custom_headers.clone());
         let mut plan = driver
             .plan_operation(
                 request.operation(container.clone()).unwrap(),

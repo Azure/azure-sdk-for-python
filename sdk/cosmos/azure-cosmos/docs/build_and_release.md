@@ -3102,9 +3102,10 @@ named `templates` is not automatically Central-owned.
 | File | Current responsibility | Owner or reviewer |
 |---|---|---|
 | `sdk/cosmos/ci.yml` | Check that customer wheels omit probes, then rerun the existing emulator/dependency checks against a separate probe wheel through existing hooks. | Cosmos-specific configuration with Central review |
+| `sdk/cosmos/tests.yml` | Reuse `prepare-test-probes.yml` to build a separate probe wheel for live-account tests, then pass that wheel to the shared test runner. | Cosmos SDK team |
 | `sdk/cosmos/templates/prepare-test-probes.yml` | Build and verify the probe wheel under the agent temporary directory, outside publish artifacts; retain packaged native sidecars from the downloaded customer wheel. | Cosmos SDK team |
 | `sdk/cosmos/templates/emulator-probe-tests.yml` | Preserve customer-wheel results, then reuse Central's check runner with the original emulator marker and matrix check settings. | Cosmos SDK team |
-| `sdk/cosmos/templates/rust-tests.yml` | Run Cargo and offline Python checks once in an existing test job; publish offline results and save Cargo output. | Cosmos SDK team |
+| `sdk/cosmos/templates/rust-tests.yml` | Run Cargo, offline Python, and native cancellation checks once in an existing test job; publish offline and cancellation results and save Cargo output. | Cosmos SDK team |
 | `sdk/cosmos/templates/telemetry-tests.yml` | Run diagnostic checks against the probe wheel and require their results. | Cosmos SDK team |
 | `sdk/cosmos/templates/toxiproxy-tests.yml` | Install the network-fault tool, run the failure scenarios, and require their results. | Cosmos SDK team |
 
