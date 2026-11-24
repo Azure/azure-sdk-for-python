@@ -1,6 +1,6 @@
 # Release History
 
-## 3.1.0b3 (2026-11-23)
+## 3.1.0b3 (2026-11-24)
 
 ### Features Added
 
@@ -18,7 +18,7 @@
   - Added model `ReimageAllDisksParameters`
   - Added model `SkuProfile`
   - Added model `SkuProfileVmSize`
-  - Operation group `NodeTypesOperations` added method `begin_reimage_all_disks`
+  - Model `NodeTypesOperations` added method `begin_reimage_all_disks`
 
 ## 3.1.0b2 (2026-08-31)
 
