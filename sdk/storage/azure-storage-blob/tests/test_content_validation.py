@@ -16,7 +16,7 @@ from devtools_testutils.storage import (
 )
 from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
-from test_helpers import _deterministic_urandom
+from test_helpers import _deterministic_urandom, CaptureAuthHeader
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
@@ -690,3 +690,34 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         # decompress=False should work fine
         downloader = blob.download_blob(validate_content=a, decompress=False)
         assert downloader.read() == data
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_create_session_download_crc64(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        credential = self.get_credential(BlobServiceClient)
+        capture_auth_header = CaptureAuthHeader()
+
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=credential,
+            use_session=True,
+        )
+        container = service.get_container_client(self.get_resource_name("utcontainer"))
+        self.container = container
+        try:
+            container.create_container()
+        except ResourceExistsError:
+            pass
+
+        blob_name, data = self.get_resource_name("blob"), b"abcd" * 1024
+        container.upload_blob(blob_name, data, overwrite=True)
+
+        result = container.download_blob(
+            blob_name, validate_content="crc64", raw_response_hook=capture_auth_header.hook("download")
+        ).readall()
+
+        assert result == data
+        is_session_auth = capture_auth_header["download"].startswith("Session ")
+        assert is_session_auth

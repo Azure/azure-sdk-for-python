@@ -2,215 +2,173 @@
 # Licensed under the MIT License.
 """Execute the data-plane definitions supplied by the Bicep deployment script."""
 
-from datetime import datetime, timezone
-import email.utils
 import json
+import logging
 import os
-import subprocess
+import re
 import time
-import urllib.error
-import urllib.parse
-import urllib.request
+from urllib.parse import urlsplit
+
+from azure.core.exceptions import AzureError, HttpResponseError
+from azure.core.pipeline.policies import RetryPolicy
+from azure.identity import AzureCliCredential
+from azure.search.documents import SearchClient
+from azure.search.documents.indexes import SearchIndexClient, SearchIndexerClient
+from azure.search.documents.indexes.models import (
+    SearchIndex,
+    SearchIndexer,
+    SearchIndexerDataSourceConnection,
+    SearchIndexerSkillset,
+)
+from azure.storage.blob import BlobServiceClient, ContentSettings
 
 SEARCH_API_VERSION = "2026-04-01"
-SEARCH_AUDIENCE = "https://search.azure.com"
-STORAGE_AUDIENCE = "https://storage.azure.com/"
+WAIT_LIMIT = 600
+POLL_INTERVAL = 10
+CLIENT_OPTIONS = {
+    "permit_redirects": False,
+    "connection_timeout": 10,
+    "read_timeout": 60,
+}
 
 
-class RejectRedirects(urllib.request.HTTPRedirectHandler):
-    def redirect_request(self, req, fp, code, msg, headers, newurl):
-        raise RuntimeError(
-            "Data-plane redirects are not allowed to forward managed identity tokens."
-        )
+class ThrottlingRetryPolicy(RetryPolicy):
+    """Retry only HTTP 429 within the time budget for the request."""
 
-
-class DataPlaneClient:
     def __init__(self):
-        self._tokens = {}
-        self._opener = urllib.request.build_opener(RejectRedirects())
-
-    def _token(self, audience):
-        now = time.monotonic()
-        cached = self._tokens.get(audience)
-        if cached is not None and now - cached[0] < 300:
-            return cached[1]
-        result = subprocess.run(
-            [
-                "az",
-                "account",
-                "get-access-token",
-                "--resource",
-                audience,
-                "--query",
-                "accessToken",
-                "--output",
-                "tsv",
-            ],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=60,
+        retry_limit = WAIT_LIMIT // POLL_INTERVAL
+        super().__init__(
+            retry_total=retry_limit, retry_status=retry_limit, retry_connect=0, retry_read=0, timeout=WAIT_LIMIT
         )
-        if result.returncode or not result.stdout.strip():
-            raise RuntimeError(
-                "Managed identity token acquisition failed; command output suppressed."
-            )
-        token = result.stdout.strip()
-        self._tokens[audience] = (now, token)
-        return token
 
-    def request(self, method, url, audience, body=None, headers=None):
-        parsed = urllib.parse.urlsplit(url)
-        suffix = {
-            SEARCH_AUDIENCE: ".search.windows.net",
-            STORAGE_AUDIENCE: ".blob.core.windows.net",
-        }.get(audience)
-        if (
-            suffix is None
-            or parsed.scheme != "https"
-            or not parsed.hostname
-            or not parsed.hostname.endswith(suffix)
-            or parsed.username is not None
-            or parsed.port not in (None, 443)
-        ):
-            raise ValueError(
-                "Data-plane endpoint does not match its public Azure token audience."
-            )
-        data = json.dumps(body).encode("utf-8") if isinstance(body, dict) else body
-        deadline = time.monotonic() + 600
-        while True:
-            request_headers = {
-                "Authorization": f"Bearer {self._token(audience)}",
-                "Content-Type": "application/json",
-                **(headers or {}),
-            }
-            request = urllib.request.Request(
-                url, data=data, method=method, headers=request_headers
-            )
-            try:
-                with self._opener.open(request, timeout=60) as response:
-                    content = response.read()
-                    return json.loads(content) if content else None
-            except urllib.error.HTTPError as error:
-                status = error.code
-                error.close()
-                retry_running = (
-                    status == 409
-                    and method == "POST"
-                    and parsed.path.endswith(("/reset", "/run"))
-                )
-                if (
-                    status in (401, 403, 429, 500, 502, 503, 504) or retry_running
-                ) and time.monotonic() < deadline:
-                    self._tokens.pop(audience, None)
-                    print(
-                        f"Data-plane {method} returned HTTP {status}; retrying within the readiness deadline."
-                    )
-                    time.sleep(10)
-                    continue
-                raise RuntimeError(
-                    f"Data-plane {method} failed with HTTP {status}; response body suppressed."
-                ) from None
+    def configure_retries(self, options):
+        settings = super().configure_retries(options)
+        settings["deadline"] = time.monotonic() + settings["timeout"]
+        return settings
+
+    def is_retry(self, settings, response):
+        return response.http_response.status_code == 429 and time.monotonic() + POLL_INTERVAL < settings["deadline"]
+
+    def sleep(self, settings, transport, response=None):
+        print("HTTP 429: Azure service throttled the request; retrying.")
+        transport.sleep(POLL_INTERVAL)
 
 
-def search_url(endpoint, path):
-    return f"{endpoint.rstrip('/')}/{path}?api-version={SEARCH_API_VERSION}"
+def validate_endpoint(endpoint, suffix):
+    parsed = urlsplit(endpoint)
+    if (
+        parsed.scheme != "https"
+        or not re.fullmatch(r"[a-z0-9][a-z0-9-]*" + re.escape(suffix), parsed.hostname or "")
+        or parsed.username is not None
+        or parsed.port not in (None, 443)
+        or parsed.path not in ("", "/")
+        or parsed.query
+        or parsed.fragment
+    ):
+        raise ValueError("Data-plane endpoint does not match its public Azure token audience.")
 
 
-def wait_for_indexer(client, endpoint, name):
-    url = search_url(endpoint, f"indexers/{urllib.parse.quote(name, safe='')}/status")
-    deadline = time.monotonic() + 600
-    while time.monotonic() < deadline:
-        status = client.request("GET", url, SEARCH_AUDIENCE)
-        result = status.get("lastResult")
+def wait_for_indexer(client, name):
+    deadline = time.monotonic() + WAIT_LIMIT
+    while (remaining := deadline - time.monotonic()) > 0:
+        status = client.get_indexer_status(name, timeout=remaining)
+        result = status.last_result
         if result is not None:
-            state = result["status"]
+            state = result.status
             if state == "success":
-                if (
-                    result.get("itemsFailed", 0)
-                    or result.get("errors")
-                    or result.get("warnings")
-                ):
-                    raise RuntimeError(
-                        f"Indexer '{name}' completed with document failures or enrichment warnings."
-                    )
-                if result.get("itemsProcessed", 0) < 1:
-                    raise RuntimeError(
-                        f"Indexer '{name}' completed without processing any documents."
-                    )
-                print(
-                    f"Indexer '{name}' succeeded and processed {result['itemsProcessed']} documents."
-                )
+                if result.failed_item_count or result.errors or result.warnings:
+                    raise RuntimeError(f"Indexer '{name}' completed with document failures or enrichment warnings.")
+                if not result.item_count or result.item_count < 1:
+                    raise RuntimeError(f"Indexer '{name}' completed without processing any documents.")
+                print(f"Indexer '{name}' succeeded and processed {result.item_count} documents.")
                 return
             if state not in ("inProgress", "reset"):
-                raise RuntimeError(
-                    f"Indexer '{name}' failed with status '{state}'; result details suppressed."
-                )
-        time.sleep(10)
+                raise RuntimeError(f"Indexer '{name}' failed with status '{state}'; result details suppressed.")
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            break
+        time.sleep(min(POLL_INTERVAL, remaining))
     raise TimeoutError(f"Indexer '{name}' did not finish within ten minutes.")
 
 
-def provision(configuration, client):
-    endpoint = configuration["searchEndpoint"]
-    for blob in configuration["blobs"]:
-        path = "/".join(
-            urllib.parse.quote(part, safe="")
-            for part in (configuration["containerName"], blob["name"])
-        )
-        client.request(
-            "PUT",
-            f"{configuration['storageEndpoint'].rstrip('/')}/{path}",
-            STORAGE_AUDIENCE,
-            blob["content"].encode("utf-8"),
-            {
-                "Content-Type": "text/plain; charset=utf-8",
-                "x-ms-blob-type": "BlockBlob",
-                "x-ms-version": "2023-11-03",
-                "x-ms-date": email.utils.format_datetime(
-                    datetime.now(timezone.utc), usegmt=True
-                ),
-            },
-        )
-        print(f"Uploaded indexing document '{blob['name']}'.")
-    for collection, definition in (
-        ("indexes", configuration["index"]),
-        ("datasources", configuration["datasource"]),
-        ("skillsets", configuration["skillset"]),
+def upload_document(container, name, content):
+    deadline = time.monotonic() + WAIT_LIMIT
+    while True:
+        try:
+            container.upload_blob(
+                name,
+                content,
+                overwrite=True,
+                content_settings=ContentSettings(content_type="text/plain; charset=utf-8"),
+            )
+            return
+        except HttpResponseError as error:
+            if error.status_code != 429 or time.monotonic() + POLL_INTERVAL >= deadline:
+                raise
+            print("HTTP 429: Azure Storage throttled the upload; retrying.")
+            time.sleep(POLL_INTERVAL)
+
+
+def provision(configuration, credential):
+    search_endpoint = configuration["searchEndpoint"]
+    storage_endpoint = configuration["storageEndpoint"]
+    validate_endpoint(search_endpoint, ".search.windows.net")
+    validate_endpoint(storage_endpoint, ".blob.core.windows.net")
+
+    index = SearchIndex(configuration["index"])
+    search_options = {**CLIENT_OPTIONS, "retry_policy": ThrottlingRetryPolicy(), "api_version": SEARCH_API_VERSION}
+    # Blob Storage uses a separate SDK retry pipeline; upload_document handles its 429s.
+    with (
+        BlobServiceClient(storage_endpoint, credential, retry_total=0, **CLIENT_OPTIONS) as storage,
+        SearchIndexClient(search_endpoint, credential, **search_options) as indexes,
+        SearchIndexerClient(search_endpoint, credential, **search_options) as indexers,
+        SearchClient(search_endpoint, index.name, credential, **search_options) as search,
     ):
-        client.request(
-            "PUT",
-            search_url(
-                endpoint,
-                f"{collection}/{urllib.parse.quote(definition['name'], safe='')}",
-            ),
-            SEARCH_AUDIENCE,
-            definition,
+        container = storage.get_container_client(configuration["containerName"])
+        for blob in configuration["blobs"]:
+            upload_document(container, blob["name"], blob["content"].encode("utf-8"))
+            print(f"Uploaded indexing document '{blob['name']}'.")
+        indexes.create_or_update_index(index)
+        indexers.create_or_update_data_source_connection(
+            SearchIndexerDataSourceConnection(configuration["datasource"]),
         )
-        print(f"Provisioned Search {collection}.")
-    for indexer in configuration["indexers"]:
-        name = urllib.parse.quote(indexer["name"], safe="")
-        client.request(
-            "PUT", search_url(endpoint, f"indexers/{name}"), SEARCH_AUDIENCE, indexer
+        indexers.create_or_update_skillset(
+            SearchIndexerSkillset(configuration["skillset"]),
         )
-        # Workers use fresh resources; resetting would race the automatic initial run.
-        wait_for_indexer(client, endpoint, indexer["name"])
-    result = client.request(
-        "POST",
-        search_url(
-            endpoint,
-            f"indexes/{urllib.parse.quote(configuration['index']['name'], safe='')}/docs/search",
-        ),
-        SEARCH_AUDIENCE,
-        {"search": "*", "top": 1, "select": "chunk"},
-    )
-    if not result["value"] or not result["value"][0].get("chunk"):
-        raise RuntimeError(
-            "Search index is empty or has no searchable document content."
-        )
-    print("Azure AI Search index is populated and searchable.")
+        for definition in configuration["indexers"]:
+            indexer = SearchIndexer(definition)
+            indexers.create_or_update_indexer(indexer)
+            # Fresh indexers start automatically; resetting or running them would race that execution.
+            wait_for_indexer(indexers, indexer.name)
+
+        document = next(iter(search.search("*", top=1, select=["chunk"])), None)
+        if not document or not document.get("chunk"):
+            raise RuntimeError("Search index is empty or has no searchable document content.")
+        print("Azure AI Search index is populated and searchable.")
+
+
+def main():
+    # ARM signs Azure CLI in as the deployment script's assigned identity before running this code.
+    identity_loggers = [
+        logging.getLogger("azure.identity._internal.decorators"),
+        logging.getLogger("azure.identity._credentials.azure_cli"),
+    ]
+    previous_states = [logger.disabled for logger in identity_loggers]
+    try:
+        # Identity logs raw CLI diagnostics before raising; report only the sanitized error below.
+        for logger in identity_loggers:
+            logger.disabled = True
+        provision(json.loads(os.environ["SEARCH_INDEXING_CONFIGURATION"]), AzureCliCredential())
+    except AzureError as error:
+        if isinstance(error, HttpResponseError) and error.status_code is not None:
+            raise RuntimeError(
+                f"Search provisioning failed with HTTP {error.status_code}; response body suppressed."
+            ) from None
+        raise RuntimeError(f"Search provisioning failed ({type(error).__name__}); details suppressed.") from None
+    finally:
+        for logger, disabled in zip(identity_loggers, previous_states):
+            logger.disabled = disabled
 
 
 if __name__ == "__main__":
-    provision(
-        json.loads(os.environ["SEARCH_INDEXING_CONFIGURATION"]), DataPlaneClient()
-    )
+    main()

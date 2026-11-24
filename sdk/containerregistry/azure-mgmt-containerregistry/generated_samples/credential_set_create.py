@@ -51,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-15-preview/CredentialSetCreate.json
+# x-ms-original-file: 2026-11-01/CredentialSetCreate.json
 if __name__ == "__main__":
     main()
