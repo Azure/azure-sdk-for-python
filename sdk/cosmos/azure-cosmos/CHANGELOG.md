@@ -13,6 +13,7 @@
 * Fixed hybrid-search reciprocal rank fusion (RRF) results being ranked incorrectly when component scores are tied.
   Each result now receives a unique ordinal rank, with deterministic tie-breaking based on the decoded document ID
   portion of `_rid`. See [PR 49623](https://github.com/Azure/azure-sdk-for-python/pull/49623).
+* Fixed the type hints of `indexing_policy`, `unique_key_policy` and `conflict_resolution_policy` on the async `DatabaseProxy.create_container`, `create_container_if_not_exists` and `replace_container` to be `dict[str, Any]`, matching the sync client. See [Issue 41593](https://github.com/Azure/azure-sdk-for-python/issues/41593).
 
 #### Other Changes
 
