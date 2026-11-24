@@ -1,4 +1,5 @@
 [tool.azure-sdk-build]
+ci_enabled = false
 breaking = false
 mypy = false
 pyright = false

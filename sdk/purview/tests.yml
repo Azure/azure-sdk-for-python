@@ -5,3 +5,4 @@ extends:
     template: /eng/pipelines/templates/stages/python-analyze-weekly-standalone.yml
     parameters:
       ServiceDirectory: purview
+      BuildTargetingString: azure-mgmt-purview,azure-purview-administration,azure-purview-datamap,azure-purview-scanning,azure-purview-sharing,azure-purview-workflow
