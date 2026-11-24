@@ -82,7 +82,10 @@ def _assert_rejected_with_diagnostics(error, diagnostics, caplog):
     assert initial["headers"]["retry-after"] == "1"
     assert initial["headers"]["x-ms-correlation-request-id"] == "<redacted>"
     assert REQUEST_ID in caplog.text
-    for sensitive in ("secret", "private.example", "sensitive-value", "Authorization", "fake-token"):
+    # azure-core's HttpLoggingPolicy always logs the header *name* "Authorization" at INFO level
+    # (never the value), so only assert the header value itself is redacted, not the name.
+    assert "'Authorization': 'REDACTED'" in caplog.text
+    for sensitive in ("secret", "private.example", "sensitive-value", "fake-token"):
         assert sensitive not in caplog.text
 
 
