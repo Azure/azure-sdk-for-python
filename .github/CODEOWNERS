@@ -833,6 +833,7 @@
 /.github/copilot-instructions.md                                     @l0lawrence @praveenkuttappan
 /.github/prompts/                                                    @laiapat @l0lawrence
 /.github/skills/                                                     @laiapat @l0lawrence @Azure/azsdk-cli
+/.github/skills/generated-sdk-review/                                @laiapat @l0lawrence @Azure/azsdk-cli
 /sdk/pullrequest.yml                                                 @JennyPng @l0lawrence @danieljurek 
 
 /.config/1espt/                                                      @JennyPng @l0lawrence @danieljurek

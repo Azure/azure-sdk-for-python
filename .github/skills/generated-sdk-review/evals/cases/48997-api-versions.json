@@ -1,0 +1,29 @@
+{
+  "id": "48997-api-versions",
+  "evidence": "https://github.com/Azure/azure-sdk-for-python/pull/48997",
+  "specPullRequest": "https://github.com/Azure/azure-rest-api-specs/pull/40203",
+  "note": "The published management review reported one blocking finding: ComputeGallery moved from 2025-12-03 to 2026-03-03. The metadata files are the blobs at the two SDK revisions cited in that review.",
+  "expectedTitles": ["API versions changed"],
+  "forbiddenTitles": [
+    "Preview API requires a beta package version",
+    "Changelog placeholder would be published",
+    "First-release client name must end with MgmtClient"
+  ],
+  "descriptionMustContain": ["ComputeGallery", "2025-12-03", "2026-03-03"],
+  "expectedLine": 5,
+  "context": {
+    "specPrNumber": 40203,
+    "specHeadSha": "eac980067e41d5e5f8b0e9a4aa0e3359f2790912",
+    "skillRevision": "eval",
+    "baselineCommitSha": "df767e9732548bc103d7a571b711b36155a1bcab",
+    "packageName": "azure-mgmt-compute",
+    "firstRelease": false,
+    "changedFiles": ["sdk/compute/azure-mgmt-compute/_metadata.json"],
+    "files": {
+      "sdk/compute/azure-mgmt-compute/_metadata.json": {
+        "baseline": "{\n  \"apiVersions\": {\n    \"Compute\": \"2026-04-01\",\n    \"ComputeDisk\": \"2026-03-02\",\n    \"ComputeGallery\": \"2025-12-03\",\n    \"ComputeSku\": \"2021-07-01\"\n  },\n  \"commit\": \"27d5cc281039b6275c2b5a6e7af6dc869739c14d\",\n  \"repository_url\": \"https://github.com/Azure/azure-rest-api-specs\",\n  \"typespec_src\": \"specification/compute/resource-manager/Microsoft.Compute/Compute\",\n  \"emitterVersion\": \"0.63.7\",\n  \"httpClientPythonVersion\": \"^0.37.2\"\n}\n",
+        "head": "{\n  \"apiVersions\": {\n    \"Compute\": \"2026-04-01\",\n    \"ComputeDisk\": \"2026-03-02\",\n    \"ComputeGallery\": \"2026-03-03\",\n    \"ComputeSku\": \"2021-07-01\"\n  },\n  \"commit\": \"eac980067e41d5e5f8b0e9a4aa0e3359f2790912\",\n  \"repository_url\": \"https://github.com/Azure/azure-rest-api-specs\",\n  \"typespec_src\": \"specification/compute/resource-manager/Microsoft.Compute/Compute\",\n  \"emitterVersion\": \"0.63.7\",\n  \"httpClientPythonVersion\": \"^0.37.2\"\n}\n"
+      }
+    }
+  }
+}
