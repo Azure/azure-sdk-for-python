@@ -18,7 +18,7 @@
   - Added model `ReimageAllDisksParameters`
   - Added model `SkuProfile`
   - Added model `SkuProfileVmSize`
-  - Model `NodeTypesOperations` added method `begin_reimage_all_disks`
+  - Operation group `NodeTypesOperations` added method `begin_reimage_all_disks`
 
 ## 3.1.0b2 (2026-08-31)
 
