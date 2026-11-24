@@ -607,6 +607,86 @@ class A2AToolboxTool(ToolboxTool, discriminator="a2a"):  # pylint: disable=docst
         self.type = ToolboxToolType.A2_A  # type: ignore
 
 
+class AgentEndpointAuthorizationScheme(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """AgentEndpointAuthorizationScheme.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AccessBoundaryAuthorizationScheme, BotServiceAuthorizationScheme,
+    BotServiceRbacAuthorizationScheme, BotServiceTenantAuthorizationScheme,
+    EntraAuthorizationScheme
+
+    :ivar type: Required. Known values are: "Entra", "BotService", "BotServiceRbac",
+     "BotServiceTenant", and "AccessBoundary".
+    :vartype type: str or ~azure.ai.projects.models.AgentEndpointAuthorizationSchemeType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """Required. Known values are: \"Entra\", \"BotService\", \"BotServiceRbac\",
+     \"BotServiceTenant\", and \"AccessBoundary\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AccessBoundaryAuthorizationScheme(
+    AgentEndpointAuthorizationScheme, discriminator="AccessBoundary"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Authorizes inbound Activity Protocol messages using the Autopilot's instance read policy.
+    Supported only for M365 digital workers or agents published as Autopilots, with a native
+    Activity Protocol endpoint. Configure this scheme at creation with digital_worker_type set to
+    m365, or after Autopilot publication. It must be the sole authorization scheme, without legacy
+    activity access_boundaries. Channel authentication and the project tenant check still apply.
+    This policy does not restrict outbound messages or chat recipients.
+
+    :ivar type: The authorization scheme type. Always ``AccessBoundary``. Required. Use the
+     Autopilot's instance read policy to authorize inbound Activity Protocol messages.
+    :vartype type: str or ~azure.ai.projects.models.AgentEndpointAuthorizationSchemeType
+    :ivar read: The policy for delivering inbound messages to the Autopilot. No write policy is
+     supported. Required.
+    :vartype read: ~azure.ai.projects.models.ReadAccessPolicy
+    """
+
+    type: Literal[AgentEndpointAuthorizationSchemeType.ACCESS_BOUNDARY] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The authorization scheme type. Always ``AccessBoundary``. Required. Use the Autopilot's
+     instance read policy to authorize inbound Activity Protocol messages."""
+    read: "_models.ReadAccessPolicy" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The policy for delivering inbound messages to the Autopilot. No write policy is supported.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        read: "_models.ReadAccessPolicy",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = AgentEndpointAuthorizationSchemeType.ACCESS_BOUNDARY  # type: ignore
+
+
 class ActivityProtocolConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration specific to the activity protocol.
 
@@ -1122,41 +1202,6 @@ class AgentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         agent_endpoint: Optional["_models.AgentEndpointConfig"] = None,
         digital_worker_type: Optional[Union[str, "_models.DigitalWorkerType"]] = None,
         agent_card: Optional["_models.AgentCard"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AgentEndpointAuthorizationScheme(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """AgentEndpointAuthorizationScheme.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    BotServiceAuthorizationScheme, BotServiceRbacAuthorizationScheme,
-    BotServiceTenantAuthorizationScheme, EntraAuthorizationScheme
-
-    :ivar type: Required. Known values are: "Entra", "BotService", "BotServiceRbac", and
-     "BotServiceTenant".
-    :vartype type: str or ~azure.ai.projects.models.AgentEndpointAuthorizationSchemeType
-    """
-
-    __mapping__: dict[str, _Model] = {}
-    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """Required. Known values are: \"Entra\", \"BotService\", \"BotServiceRbac\", and
-     \"BotServiceTenant\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
     ) -> None: ...
 
     @overload
@@ -2446,8 +2491,8 @@ class AgentOptimizationAgentCandidateOutput(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Candidate output produced by an agent-optimization job.
 
-    :ivar type: Required. Comparative agent optimization that can generate multiple candidates
-     within configured search limits.
+    :ivar type: Identifies candidate output produced by agent optimization. Required. Comparative
+     agent optimization that can generate multiple candidates within configured search limits.
     :vartype type: str or ~azure.ai.projects.models.AgentOptimizationConfigurationType
     :ivar mutations: Typed configuration mutations applied to the baseline. Omitted for the
      baseline candidate. LIST without ``expand=mutations`` returns mutation items with only
@@ -2456,8 +2501,8 @@ class AgentOptimizationAgentCandidateOutput(
     """
 
     type: Literal[AgentOptimizationConfigurationType.AGENT_OPTIMIZATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Comparative agent optimization that can generate multiple candidates within
-     configured search limits."""
+    """Identifies candidate output produced by agent optimization. Required. Comparative agent
+     optimization that can generate multiple candidates within configured search limits."""
     mutations: Optional[list["_models.AgentOptimizationMutation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3782,7 +3827,8 @@ class AgentOptimizationInstructionsMutation(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Instructions mutation.
 
-    :ivar type: Required. Rewrites agent instructions.
+    :ivar type: Identifies a mutation to the agent's instructions. Required. Rewrites agent
+     instructions.
     :vartype type: str or ~azure.ai.projects.models.TargetAttribute
     :ivar value: Optimized agent instructions. Omitted on LIST unless ``expand=mutations`` is
      specified.
@@ -3790,7 +3836,7 @@ class AgentOptimizationInstructionsMutation(
     """
 
     type: Literal[TargetAttribute.INSTRUCTIONS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Rewrites agent instructions."""
+    """Identifies a mutation to the agent's instructions. Required. Rewrites agent instructions."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optimized agent instructions. Omitted on LIST unless ``expand=mutations`` is specified."""
 
@@ -4120,8 +4166,8 @@ class AgentOptimizationModelMutation(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model mutation.
 
-    :ivar type: Required. Model selection from
-     optimization_configuration.agent_optimization_space.model_search_space.
+    :ivar type: Identifies a mutation to the agent's model selection. Required. Model selection
+     from optimization_configuration.agent_optimization_space.model_search_space.
     :vartype type: str or ~azure.ai.projects.models.TargetAttribute
     :ivar value: Selected model name or deployment name. Omitted on LIST unless
      ``expand=mutations`` is specified.
@@ -4129,7 +4175,7 @@ class AgentOptimizationModelMutation(
     """
 
     type: Literal[TargetAttribute.MODEL] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Model selection from
+    """Identifies a mutation to the agent's model selection. Required. Model selection from
      optimization_configuration.agent_optimization_space.model_search_space."""
     value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Selected model name or deployment name. Omitted on LIST unless ``expand=mutations`` is
@@ -4159,7 +4205,8 @@ class AgentOptimizationPromptCandidateOutput(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Candidate output produced by a prompt-optimization job.
 
-    :ivar type: Required. One-shot prompt optimization that generates a single candidate.
+    :ivar type: Identifies candidate output produced by prompt optimization. Required. One-shot
+     prompt optimization that generates a single candidate.
     :vartype type: str or ~azure.ai.projects.models.AgentOptimizationConfigurationType
     :ivar mutations: Typed configuration mutations applied to the baseline. Omitted for the
      baseline candidate. LIST without ``expand=mutations`` returns mutation items with only
@@ -4168,7 +4215,8 @@ class AgentOptimizationPromptCandidateOutput(
     """
 
     type: Literal[AgentOptimizationConfigurationType.PROMPT_OPTIMIZATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. One-shot prompt optimization that generates a single candidate."""
+    """Identifies candidate output produced by prompt optimization. Required. One-shot prompt
+     optimization that generates a single candidate."""
     mutations: Optional[list["_models.AgentOptimizationMutation"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4717,14 +4765,16 @@ class AgentOptimizationSkillsMutation(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Skill mutations.
 
-    :ivar type: Required. Generates or modifies agent skill descriptions and bodies.
+    :ivar type: Identifies a mutation to the agent's skills. Required. Generates or modifies agent
+     skill descriptions and bodies.
     :vartype type: str or ~azure.ai.projects.models.TargetAttribute
     :ivar value: Added or changed skills. Omitted on LIST unless ``expand=mutations`` is specified.
     :vartype value: list[~azure.ai.projects.models.AgentOptimizationSkill]
     """
 
     type: Literal[TargetAttribute.SKILLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Generates or modifies agent skill descriptions and bodies."""
+    """Identifies a mutation to the agent's skills. Required. Generates or modifies agent skill
+     descriptions and bodies."""
     value: Optional[list["_models.AgentOptimizationSkill"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5029,7 +5079,8 @@ class AgentOptimizationToolsMutation(
 ):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tool mutations.
 
-    :ivar type: Required. Optimizes function tool descriptions and parameter descriptions.
+    :ivar type: Identifies a mutation to the agent's function tools. Required. Optimizes function
+     tool descriptions and parameter descriptions.
     :vartype type: str or ~azure.ai.projects.models.TargetAttribute
     :ivar value: Added or changed function tools. Omitted on LIST unless ``expand=mutations`` is
      specified.
@@ -5037,7 +5088,8 @@ class AgentOptimizationToolsMutation(
     """
 
     type: Literal[TargetAttribute.TOOLS] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Optimizes function tool descriptions and parameter descriptions."""
+    """Identifies a mutation to the agent's function tools. Required. Optimizes function tool
+     descriptions and parameter descriptions."""
     value: Optional[list["_models.ChatCompletionTool"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5333,9 +5385,10 @@ class AgentOptimizationUserConversationSimulationInlineDataSource(
 
 
 class AgentReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """AgentReference.
+    """Identifies an agent by name and, optionally, a specific version.
 
-    :ivar type: Required. Default value is "agent_reference".
+    :ivar type: Identifies this object as an agent reference. Required. Default value is
+     "agent_reference".
     :vartype type: str
     :ivar name: The name of the agent. Required.
     :vartype name: str
@@ -5344,7 +5397,7 @@ class AgentReference(_Model):  # pylint: disable=docstring-keyword-should-match-
     """
 
     type: Literal["agent_reference"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required. Default value is \"agent_reference\"."""
+    """Identifies this object as an agent reference. Required. Default value is \"agent_reference\"."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The name of the agent. Required."""
     version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7582,14 +7635,14 @@ class BrowserAutomationToolboxTool(
      default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
      are silently ignored at runtime.
     :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. BROWSER_AUTOMATION.
+    :ivar type: Identifies a browser automation tool in the toolbox. Required. BROWSER_AUTOMATION.
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar browser_automation: The Browser Automation Tool parameters. Required.
     :vartype browser_automation: ~azure.ai.projects.models.BrowserAutomationToolParameters
     """
 
     type: Literal[ToolboxToolType.BROWSER_AUTOMATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. BROWSER_AUTOMATION."""
+    """Identifies a browser automation tool in the toolbox. Required. BROWSER_AUTOMATION."""
     browser_automation: "_models.BrowserAutomationToolParameters" = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7781,7 +7834,7 @@ class ChatCompletionTool(_Model):  # pylint: disable=docstring-keyword-should-ma
     :ivar type: The type of the tool. Currently, only ``function`` is supported. Required. Default
      value is "function".
     :vartype type: str
-    :ivar function: Required.
+    :ivar function: The function definition exposed to the model as a tool. Required.
     :vartype function: ~azure.ai.projects.models.FunctionObject
     """
 
@@ -7789,7 +7842,7 @@ class ChatCompletionTool(_Model):  # pylint: disable=docstring-keyword-should-ma
     """The type of the tool. Currently, only ``function`` is supported. Required. Default value is
      \"function\"."""
     function: "_models.FunctionObject" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Required."""
+    """The function definition exposed to the model as a tool. Required."""
 
     @overload
     def __init__(
@@ -8384,7 +8437,6 @@ class ComparisonFilter(_Model):  # pylint: disable=docstring-keyword-should-matc
      * `in`: in
      * `nin`: not in. Required. Is one of the following types: Literal["eq"], Literal["ne"],
        Literal["gt"], Literal["gte"], Literal["lt"], Literal["lte"], Literal["in"], Literal["nin"]
-
     :vartype type: str or str or str or str or str or str or str or str
     :ivar key: The key to compare against the value. Required.
     :vartype key: str
@@ -14744,7 +14796,7 @@ class FoundryModelWarning(_Model):  # pylint: disable=docstring-keyword-should-m
 
 
 class FunctionObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """FunctionObject.
+    """Defines a function that a model can call, including its name and argument schema.
 
     :ivar description: A description of what the function does, used by the model to choose when
      and how to call the function.
@@ -14752,9 +14804,9 @@ class FunctionObject(_Model):  # pylint: disable=docstring-keyword-should-match-
     :ivar name: The name of the function to be called. Must be a-z, A-Z, 0-9, or contain
      underscores and dashes, with a maximum length of 64. Required.
     :vartype name: str
-    :ivar parameters:
+    :ivar parameters: The function's parameters, described as a JSON Schema object.
     :vartype parameters: ~azure.ai.projects.models.FunctionParameters
-    :ivar strict:
+    :ivar strict: Whether generated arguments must strictly follow the parameter schema.
     :vartype strict: bool
     """
 
@@ -14767,7 +14819,9 @@ class FunctionObject(_Model):  # pylint: disable=docstring-keyword-should-match-
     parameters: Optional["_models.FunctionParameters"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """The function's parameters, described as a JSON Schema object."""
     strict: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether generated arguments must strictly follow the parameter schema."""
 
     @overload
     def __init__(
@@ -23583,7 +23637,6 @@ class MCPTool(Tool, discriminator="mcp"):  # pylint: disable=docstring-keyword-s
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -23806,7 +23859,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):  # pylint: disable=docst
        Literal["connector_googledrive"], Literal["connector_microsoftteams"],
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
-
     :vartype connector_id: str or str or str or str or str or str or str or str
     :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
      ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
@@ -27105,6 +27157,43 @@ class RankingOptions(_Model):  # pylint: disable=docstring-keyword-should-match-
         super().__init__(*args, **kwargs)
 
 
+class ReadAccessPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A conversation-independent policy for delivering inbound messages to an Autopilot.
+
+    :ivar responds_to: The senders allowed to prompt the Autopilot. Currently, only ``allowlisted``
+     is supported in requests: it uses the instance's existing interaction allowlist, which
+     implicitly includes the instance manager. An empty array denies user messages. Trusted
+     lifecycle events are not governed by this policy. Clients must handle unrecognized values in
+     responses. Required.
+    :vartype responds_to: list[str or ~azure.ai.projects.models.ReadAccessResponder]
+    """
+
+    responds_to: list[Union[str, "_models.ReadAccessResponder"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The senders allowed to prompt the Autopilot. Currently, only ``allowlisted`` is supported in
+     requests: it uses the instance's existing interaction allowlist, which implicitly includes the
+     instance manager. An empty array denies user messages. Trusted lifecycle events are not
+     governed by this policy. Clients must handle unrecognized values in responses. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        responds_to: list[Union[str, "_models.ReadAccessResponder"]],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RealtimeAudioFormats(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RealtimeAudioFormats.
 
@@ -29728,12 +29817,14 @@ class RealtimeServerEventConversationItemAdded(
     several cases:
 
     * When the client sends a `conversation.item.create` event.
-    * When the input audio buffer is committed. In this case the item will be a user message containing the audio from
-      the buffer.
-    * When the model is generating a Response. In this case the `conversation.item.added` event will be sent when the
-      model starts generating a specific Item, and thus it will not yet have any content (and `status` will be
-      `in_progress`). The event will include the full content of the Item (except when model is generating a Response)
-      except for audio data, which can be retrieved separately with a `conversation.item.retrieve` event if necessary.
+    * When the input audio buffer is committed. In this case the item will be a user message
+    containing the audio from the buffer.
+    * When the model is generating a Response. In this case the `conversation.item.added` event
+    will be sent when the model starts generating a specific Item, and thus it will not yet have
+    any content (and `status` will be `in_progress`).
+    The event will include the full content of the Item (except when model is generating a
+    Response) except for audio data, which can be retrieved separately with a
+    `conversation.item.retrieve` event if necessary.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -29781,11 +29872,14 @@ class RealtimeServerEventConversationItemCreated(
     """Returned when a conversation item is created. There are several scenarios that produce this
     event:
 
-    * The server is generating a Response, which if successful will produce either one or two Items, which will be of
-      type `message` (role `assistant`) or type `function_call`.
-    * The input audio buffer has been committed, either by the client or the server (in `server_vad` mode). The server
-      will take the content of the input audio buffer and add it to a new user message Item.
-    * The client has sent a `conversation.item.create` event to add a new Item to the Conversation.
+    * The server is generating a Response, which if successful will produce
+    either one or two Items, which will be of type `message`
+    (role `assistant`) or type `function_call`.
+    * The input audio buffer has been committed, either by the client or the
+    server (in `server_vad` mode). The server will take the content of the
+    input audio buffer and add it to a new user message Item.
+    * The client has sent a `conversation.item.create` event to add a new Item
+    to the Conversation.
 
     :ivar event_id: The unique ID of the server event. Required.
     :vartype event_id: str
@@ -33916,10 +34010,12 @@ class SessionLogEvent(_Model):  # pylint: disable=docstring-keyword-should-match
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -40386,12 +40482,14 @@ class VoiceAgentVoiceConfig(_Model):  # pylint: disable=docstring-keyword-should
     Provider-specific fields are selected by ``voice_type``:
 
     * `openai`: `voice` and `speed`.
-    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`, `custom_lexicon_url`,
-      `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
+    * `azure-standard`: `voice`, `voice_locale`, `speed`, `voice_temperature`,
+    `custom_lexicon_url`,
+    `custom_text_normalization_url`, `prefer_locales`, `style`, `pitch`, and `volume`.
     * `azure-custom`: all `azure-standard` fields except `style`, plus `custom_voice_endpoint_id`.
     * `azure-personal`: all `azure-standard` fields except `style`, plus `personal_voice_model`.
-    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus `personal_voice_model`; the
-      voice name is derived from the avatar.
+    * `avatar-voice-sync`: all `azure-standard` fields except `voice` and `style`, plus
+    `personal_voice_model`;
+    the voice name is derived from the avatar.
     * `azure-realtime-native`: `voice` and `speed`.
 
     :ivar voice: The voice name or identifier. Applies to ``openai``, ``azure-standard``,
@@ -40410,8 +40508,9 @@ class VoiceAgentVoiceConfig(_Model):  # pylint: disable=docstring-keyword-should
     :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
      ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
     :vartype voice_temperature: float
-    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
-     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon (PLS). Use an HTTPS URL or
+     a base64 data URL, for example ``data:application/pls+xml;base64,<base64-encoded PLS>``.
+     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
     :vartype custom_lexicon_url: str
     :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
      Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
@@ -40454,8 +40553,9 @@ class VoiceAgentVoiceConfig(_Model):  # pylint: disable=docstring-keyword-should
     """The voice variation temperature. Applies to ``azure-standard``, ``azure-custom``,
      ``azure-personal``, and ``avatar-voice-sync``."""
     custom_lexicon_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of a custom pronunciation lexicon. Applies to ``azure-standard``, ``azure-custom``,
-     ``azure-personal``, and ``avatar-voice-sync``."""
+    """The URL of a custom pronunciation lexicon (PLS). Use an HTTPS URL or a base64 data URL, for
+     example ``data:application/pls+xml;base64,<base64-encoded PLS>``. Applies to
+     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``."""
     custom_text_normalization_url: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -40530,8 +40630,9 @@ class VoiceAgentAudioOutputConfig(VoiceAgentVoiceConfig):  # pylint: disable=doc
     :ivar voice_temperature: The voice variation temperature. Applies to ``azure-standard``,
      ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
     :vartype voice_temperature: float
-    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon. Applies to
-     ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
+    :ivar custom_lexicon_url: The URL of a custom pronunciation lexicon (PLS). Use an HTTPS URL or
+     a base64 data URL, for example ``data:application/pls+xml;base64,<base64-encoded PLS>``.
+     Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.
     :vartype custom_lexicon_url: str
     :ivar custom_text_normalization_url: The URL of a custom text-normalization configuration.
      Applies to ``azure-standard``, ``azure-custom``, ``azure-personal``, and ``avatar-voice-sync``.

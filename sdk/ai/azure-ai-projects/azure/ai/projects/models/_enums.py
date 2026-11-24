@@ -127,6 +127,8 @@ class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveE
     """BOT_SERVICE_RBAC."""
     BOT_SERVICE_TENANT = "BotServiceTenant"
     """BOT_SERVICE_TENANT."""
+    ACCESS_BOUNDARY = "AccessBoundary"
+    """Use the Autopilot's instance read policy to authorize inbound Activity Protocol messages."""
 
 
 class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1375,7 +1377,7 @@ class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CANCELLED = "cancelled"
     """Job was cancelled by the caller."""
     SKIPPED = "skipped"
-    """Job was skipped."""
+    """Job was skipped. This is terminal, but does not indicate that the requested work was performed."""
 
 
 class LiveAudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1916,6 +1918,15 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AUTO."""
     DEFAULT_2024_11_15 = "default-2024-11-15"
     """DEFAULT_2024_11_15."""
+
+
+class ReadAccessResponder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A category of senders allowed to prompt an Autopilot. Additional values may be returned in
+    future responses.
+    """
+
+    ALLOWLISTED = "allowlisted"
+    """Uses the instance's existing interaction allowlist, including implicit manager access."""
 
 
 class RealtimeAudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3504,12 +3515,14 @@ class VoiceAgentLiveDelegationType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
 class VoiceAgentNoiseReductionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The input audio noise reduction mode.
 
-    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local voice activity
-      detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio. Enhances detection audio without
-      changing the audio used for recognition. The mode is not restricted to headset devices.
-    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice activity detection.
-      Starts with headset suppression and personalizes detection after automatic speaker enrollment. Recognition audio
-      is unchanged; headset suppression remains active when personalization is unavailable.
+    * `azure_deep_noise_suppression_headset`: Azure headset-optimized noise suppression for local
+    voice activity detection. Optimized for low-sample-rate audio, including 8 kHz telephony audio.
+    Enhances detection audio without changing the audio used for recognition. The mode is not
+    restricted to headset devices.
+    * `azure_personal_noise_suppression`: Azure personalized noise suppression for local voice
+    activity detection. Starts with headset suppression and personalizes detection after automatic
+    speaker enrollment. Recognition audio is unchanged; headset suppression remains active when
+    personalization is unavailable.
     """
 
     NEAR_FIELD = "near_field"
@@ -3824,10 +3837,13 @@ class VoiceConversationEngineType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class VoiceConversationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The lifecycle status of a persisted voice conversation:
 
-    * `in_progress`: the live session is active, or post-session persistence finalization is pending.
-    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a max-duration `1001` close,
-      or a client or network disconnect that the service can still finalize.
-    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented finalization.
+    * `in_progress`: the live session is active, or post-session persistence finalization is
+    pending.
+    * `completed`: finalization succeeded after normal or client close, `end_conversation`, a
+    max-duration `1001`
+    close, or a client or network disconnect that the service can still finalize.
+    * `failed`: a terminal service, bridge, storage, or unrecoverable transport failure prevented
+    finalization.
     """
 
     IN_PROGRESS = "in_progress"
