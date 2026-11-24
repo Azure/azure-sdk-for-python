@@ -1898,6 +1898,180 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual(len(exporter._route_exporters), 64)
         self.transport.close.assert_not_called()
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_partition_limit_includes_previous_exporter_lifetimes(self, _worker):
+        exporter = self._exporter(disable_offline_storage=False, storage_min_retry_interval=3600)
+        records = [self._record(endpoint=f"https://old-{index}.example/") for index in range(64)]
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+        self.assertEqual(exporter.export(records), LogRecordExportResult.FAILURE)
+        root = Path(self.directory.name) / "host-routes"
+        partitions = set(root.iterdir())
+        pending = {path: path.read_bytes() for path in root.rglob("*.lock")}
+        self.assertEqual(len(partitions), 64)
+        self.assertEqual(len(pending), 64)
+        exporter.shutdown()
+
+        for lifetime in range(2):
+            restarted = self._exporter(disable_offline_storage=False)
+            self.assertEqual(
+                restarted.export([self._record(endpoint=f"https://new-{lifetime}.example/")]),
+                LogRecordExportResult.FAILURE,
+            )
+            self.assertEqual(set(root.iterdir()), partitions)
+            self.assertEqual({path: path.read_bytes() for path in root.rglob("*.lock")}, pending)
+            self.assertEqual(restarted._route_exporters, {})
+            restarted.shutdown()
+
+        reopened = self._exporter(disable_offline_storage=False)
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+        self.assertEqual(
+            reopened.export([self._record(endpoint="HTTPS://OLD-0.EXAMPLE:443")]), LogRecordExportResult.SUCCESS
+        )
+        self.assertEqual(len(reopened._route_exporters), 1)
+        self.assertEqual(set(root.iterdir()), partitions)
+        self.assertEqual({path: path.read_bytes() for path in root.rglob("*.lock")}, pending)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_ROUTE_STORAGE_PARTITIONS", 1)
+    def test_partition_admission_is_shared_by_exporters(self, _worker):
+        exporters = [self._exporter(disable_offline_storage=False) for _ in range(2)]
+        root = Path(self.directory.name) / "host-routes"
+        reserving = threading.Event()
+        release = threading.Event()
+        second_started = threading.Event()
+        second_reservation = threading.Event()
+        first_path = None
+        results = []
+        makedirs = os.makedirs
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+
+        def create(path, *args, **kwargs):
+            nonlocal first_path
+            if Path(path).parent == root:
+                if first_path is None:
+                    first_path = Path(path)
+                    reserving.set()
+                    release.wait(5)
+                elif Path(path) != first_path:
+                    second_reservation.set()
+            return makedirs(path, *args, **kwargs)
+
+        def export(index):
+            if index == 1:
+                second_started.set()
+            results.append(exporters[index].export([self._record(endpoint=f"https://route-{index}.example/")]))
+
+        threads = [threading.Thread(target=export, args=(index,), daemon=True) for index in range(2)]
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base.os.makedirs", side_effect=create):
+            try:
+                threads[0].start()
+                self.assertTrue(reserving.wait(2))
+                threads[1].start()
+                self.assertTrue(second_started.wait(2))
+                self.assertFalse(second_reservation.wait(0.1), "Both exporters attempted to reserve the last slot.")
+            finally:
+                release.set()
+                for thread in threads:
+                    if thread.ident is not None:
+                        thread.join(timeout=2)
+        self.assertTrue(all(not thread.is_alive() for thread in threads))
+        self.assertEqual(results, [LogRecordExportResult.FAILURE] * 2)
+        self.assertEqual(len(list(root.iterdir())), 1)
+        self.assertEqual(sum(len(exporter._route_exporters) for exporter in exporters), 1)
+        self.assertEqual(len(list(root.rglob("*.lock"))), 1)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_over_limit_partition_root_preserves_existing_data(self, _worker):
+        exporter = self._exporter(disable_offline_storage=False, storage_min_retry_interval=3600)
+        records = [self._record(endpoint=f"https://old-{index}.example/") for index in range(3)]
+        self.transport.send.side_effect = lambda request, **kwargs: _Response(request, 429)
+        self.assertEqual(exporter.export(records), LogRecordExportResult.FAILURE)
+        root = Path(self.directory.name) / "host-routes"
+        partitions = set(root.iterdir())
+        pending = {path: path.read_bytes() for path in root.rglob("*.lock")}
+        self.assertEqual(len(partitions), 3)
+        self.assertEqual(len(pending), 3)
+        exporter.shutdown()
+
+        with mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_ROUTE_STORAGE_PARTITIONS", 2):
+            restarted = self._exporter(disable_offline_storage=False)
+            self.assertEqual(
+                restarted.export([self._record(endpoint="https://new.example/")]), LogRecordExportResult.FAILURE
+            )
+            self.assertEqual(restarted._route_exporters, {})
+            self.transport.send.side_effect = lambda request, **kwargs: _Response(request)
+            self.assertEqual(restarted.export([records[0]]), LogRecordExportResult.SUCCESS)
+            self.assertEqual(len(restarted._route_exporters), 1)
+        self.assertEqual(set(root.iterdir()), partitions)
+        self.assertEqual({path: path.read_bytes() for path in root.rglob("*.lock")}, pending)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_ROUTE_STORAGE_PARTITIONS", 1)
+    def test_empty_partitions_count_but_files_do_not(self, _worker):
+        root = Path(self.directory.name) / "host-routes"
+        root.mkdir()
+        marker = root / "marker"
+        marker.write_bytes(b"keep")
+        exporter = self._exporter(disable_offline_storage=False)
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        self.assertEqual(len(exporter._route_exporters), 1)
+        partitions = {path for path in root.iterdir() if path.is_dir()}
+        self.assertEqual(len(partitions), 1)
+        self.assertTrue(all(not list(path.iterdir()) for path in partitions))
+        exporter.shutdown()
+
+        restarted = self._exporter(disable_offline_storage=False)
+        self.assertEqual(
+            restarted.export([self._record(endpoint="https://new.example/")]), LogRecordExportResult.SUCCESS
+        )
+        self.assertEqual(restarted._route_exporters, {})
+        self.assertEqual({path for path in root.iterdir() if path.is_dir()}, partitions)
+        self.assertEqual(marker.read_bytes(), b"keep")
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.PeriodicTask")
+    def test_partition_admission_failure_uses_non_persisting_overflow(self, _worker):
+        for failure in ("scan", "root", "partition"):
+            with self.subTest(failure=failure):
+                directory = Path(self.directory.name) / failure
+                root = Path(str(directory) + "-routes")
+                exporter = self._exporter(disable_offline_storage=False, storage_directory=str(directory))
+                makedirs = os.makedirs
+
+                def create(path, *args, **kwargs):
+                    if (failure == "root" and Path(path) == root) or (
+                        failure == "partition" and Path(path).parent == root
+                    ):
+                        raise PermissionError("private-path")
+                    return makedirs(path, *args, **kwargs)
+
+                if failure == "scan":
+                    patch = mock.patch(
+                        "azure.monitor.opentelemetry.exporter.export._base.os.scandir",
+                        side_effect=PermissionError("private-path"),
+                    )
+                else:
+                    patch = mock.patch(
+                        "azure.monitor.opentelemetry.exporter.export._base.os.makedirs", side_effect=create
+                    )
+                with patch, self.assertLogs("azure.monitor.opentelemetry.exporter.export._base", level="ERROR") as logs:
+                    self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                self.assertNotIn("private-path", "\n".join(logs.output))
+                self.assertEqual(exporter._route_exporters, {})
+                if root.exists():
+                    self.assertEqual(list(root.iterdir()), [])
+                self.transport.close.assert_not_called()
+
+    def test_partition_admission_skipped_for_single_endpoint_and_disabled_storage(self):
+        for routing, disabled in ((False, False), (True, True)):
+            with self.subTest(routing=routing, disabled=disabled):
+                exporter = self._exporter(routing=routing, disable_offline_storage=disabled)
+                with mock.patch.object(
+                    exporter, "_try_reserve_route_partition", side_effect=AssertionError("Unexpected admission")
+                ) as reserve:
+                    self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                reserve.assert_not_called()
+                self.assertFalse((Path(self.directory.name) / "host-routes").exists())
+
     def test_shutdown_waits_for_short_lived_route_using_shared_transport(self):
         exporter = self._exporter()
         records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(64)]
