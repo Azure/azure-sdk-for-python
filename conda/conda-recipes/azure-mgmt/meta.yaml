@@ -185,6 +185,11 @@ test:
     - azure.mgmt.chaos.aio.operations
     - azure.mgmt.chaos.models
     - azure.mgmt.chaos.operations
+    - azure.mgmt.cloudhealth
+    - azure.mgmt.cloudhealth.aio
+    - azure.mgmt.cloudhealth.aio.operations
+    - azure.mgmt.cloudhealth.models
+    - azure.mgmt.cloudhealth.operations
     - azure.mgmt.cognitiveservices
     - azure.mgmt.cognitiveservices.aio
     - azure.mgmt.cognitiveservices.aio.operations
@@ -200,6 +205,11 @@ test:
     - azure.mgmt.communication.aio.operations
     - azure.mgmt.communication.models
     - azure.mgmt.communication.operations
+    - azure.mgmt.commvaultcontentstore
+    - azure.mgmt.commvaultcontentstore.aio
+    - azure.mgmt.commvaultcontentstore.aio.operations
+    - azure.mgmt.commvaultcontentstore.models
+    - azure.mgmt.commvaultcontentstore.operations
     - azure.mgmt.compute
     - azure.mgmt.compute.aio
     - azure.mgmt.compute.v2023_07_01
@@ -397,6 +407,11 @@ test:
     - azure.mgmt.dynatrace.aio.operations
     - azure.mgmt.dynatrace.models
     - azure.mgmt.dynatrace.operations
+    - azure.mgmt.edgeactions
+    - azure.mgmt.edgeactions.aio
+    - azure.mgmt.edgeactions.aio.operations
+    - azure.mgmt.edgeactions.models
+    - azure.mgmt.edgeactions.operations
     - azure.mgmt.edgeorder
     - azure.mgmt.edgeorder.aio
     - azure.mgmt.elastic
@@ -867,11 +882,21 @@ test:
     - azure.mgmt.recoveryservicessiterecovery.operations
     - azure.mgmt.redhatopenshift
     - azure.mgmt.redhatopenshift.aio
+    - azure.mgmt.redhatopenshifthcp
+    - azure.mgmt.redhatopenshifthcp.aio
+    - azure.mgmt.redhatopenshifthcp.aio.operations
+    - azure.mgmt.redhatopenshifthcp.models
+    - azure.mgmt.redhatopenshifthcp.operations
     - azure.mgmt.redis
     - azure.mgmt.redis.aio
     - azure.mgmt.redis.aio.operations
     - azure.mgmt.redis.models
     - azure.mgmt.redis.operations
+    - azure.mgmt.relationships
+    - azure.mgmt.relationships.aio
+    - azure.mgmt.relationships.aio.operations
+    - azure.mgmt.relationships.models
+    - azure.mgmt.relationships.operations
     - azure.mgmt.relay
     - azure.mgmt.relay.aio
     - azure.mgmt.relay.aio.operations
@@ -882,6 +907,11 @@ test:
     - azure.mgmt.reservations.aio.operations
     - azure.mgmt.reservations.models
     - azure.mgmt.reservations.operations
+    - azure.mgmt.resiliencemanagement
+    - azure.mgmt.resiliencemanagement.aio
+    - azure.mgmt.resiliencemanagement.aio.operations
+    - azure.mgmt.resiliencemanagement.models
+    - azure.mgmt.resiliencemanagement.operations
     - azure.mgmt.resource
     - azure.mgmt.resource.databoundaries
     - azure.mgmt.resource.databoundaries.aio
@@ -907,6 +937,9 @@ test:
     - azure.mgmt.resource.deploymentstacks.operations
     - azure.mgmt.resource.features
     - azure.mgmt.resource.features.aio
+    - azure.mgmt.resource.features.aio.operations
+    - azure.mgmt.resource.features.models
+    - azure.mgmt.resource.features.operations
     - azure.mgmt.resource.features.v2021_07_01
     - azure.mgmt.resource.features.v2021_07_01.aio
     - azure.mgmt.resource.features.v2021_07_01.aio.operations
@@ -921,6 +954,9 @@ test:
     - azure.mgmt.resource.links.v2016_09_01.operations
     - azure.mgmt.resource.locks
     - azure.mgmt.resource.locks.aio
+    - azure.mgmt.resource.locks.aio.operations
+    - azure.mgmt.resource.locks.models
+    - azure.mgmt.resource.locks.operations
     - azure.mgmt.resource.locks.v2016_09_01
     - azure.mgmt.resource.locks.v2016_09_01.aio
     - azure.mgmt.resource.locks.v2016_09_01.aio.operations
@@ -931,6 +967,9 @@ test:
     - azure.mgmt.resource.managedapplications.models
     - azure.mgmt.resource.policy
     - azure.mgmt.resource.policy.aio
+    - azure.mgmt.resource.policy.aio.operations
+    - azure.mgmt.resource.policy.models
+    - azure.mgmt.resource.policy.operations
     - azure.mgmt.resource.policy.v2022_06_01
     - azure.mgmt.resource.policy.v2022_06_01.aio
     - azure.mgmt.resource.policy.v2022_06_01.aio.operations
@@ -955,6 +994,9 @@ test:
     - azure.mgmt.resource.subscriptions.v2021_01_01.operations
     - azure.mgmt.resource.templatespecs
     - azure.mgmt.resource.templatespecs.aio
+    - azure.mgmt.resource.templatespecs.aio.operations
+    - azure.mgmt.resource.templatespecs.models
+    - azure.mgmt.resource.templatespecs.operations
     - azure.mgmt.resource.templatespecs.v2022_02_01
     - azure.mgmt.resource.templatespecs.v2022_02_01.aio
     - azure.mgmt.resource.templatespecs.v2022_02_01.aio.operations
