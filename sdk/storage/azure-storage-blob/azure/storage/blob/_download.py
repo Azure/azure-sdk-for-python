@@ -360,6 +360,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
     """The size of the total data in the stream. This will be the byte range if specified,
     otherwise the total size of the blob."""
 
+    # pylint: disable-next=too-many-statements
     def __init__(
         self,
         clients: "AzureBlobStorage" = None,  # type: ignore [assignment]
