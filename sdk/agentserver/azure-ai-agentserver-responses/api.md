@@ -547,6 +547,7 @@ namespace azure.ai.agentserver.responses
         def emit_completed(
                 self, 
                 *, 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
@@ -561,7 +562,8 @@ namespace azure.ai.agentserver.responses
                 *, 
                 code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
-                metadata: Mapping[str, str] | None = ...,
+                metadata: Mapping[str, str] | None = ..., 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
@@ -570,6 +572,7 @@ namespace azure.ai.agentserver.responses
         def emit_incomplete(
                 self, 
                 *, 
+                model: str | None = ..., 
                 reason: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...
@@ -965,6 +968,7 @@ namespace azure.ai.agentserver.responses.aio
         def emit_completed(
                 self, 
                 *, 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
@@ -979,7 +983,8 @@ namespace azure.ai.agentserver.responses.aio
                 *, 
                 code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
-                metadata: Mapping[str, str] | None = ...,
+                metadata: Mapping[str, str] | None = ..., 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
@@ -988,6 +993,7 @@ namespace azure.ai.agentserver.responses.aio
         def emit_incomplete(
                 self, 
                 *, 
+                model: str | None = ..., 
                 reason: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...
@@ -1540,6 +1546,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
         def emit_completed(
                 self, 
                 *, 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
@@ -1554,7 +1561,8 @@ namespace azure.ai.agentserver.responses.aio.streaming
                 *, 
                 code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
-                metadata: Mapping[str, str] | None = ...,
+                metadata: Mapping[str, str] | None = ..., 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
@@ -1563,6 +1571,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
         def emit_incomplete(
                 self, 
                 *, 
+                model: str | None = ..., 
                 reason: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...
@@ -6692,6 +6701,7 @@ namespace azure.ai.agentserver.responses.streaming
         def emit_completed(
                 self, 
                 *, 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseCompletedEvent: ...
 
@@ -6706,7 +6716,8 @@ namespace azure.ai.agentserver.responses.streaming
                 *, 
                 code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
-                metadata: Mapping[str, str] | None = ...,
+                metadata: Mapping[str, str] | None = ..., 
+                model: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
 
@@ -6715,6 +6726,7 @@ namespace azure.ai.agentserver.responses.streaming
         def emit_incomplete(
                 self, 
                 *, 
+                model: str | None = ..., 
                 reason: str | None = ..., 
                 usage: ResponseUsage | None = ...
             ) -> ResponseIncompleteEvent: ...

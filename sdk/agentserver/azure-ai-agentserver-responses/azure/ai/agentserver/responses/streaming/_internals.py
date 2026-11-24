@@ -8,7 +8,7 @@ payloads. They carry no mutable state of their own.
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+from collections.abc import Mapping, MutableMapping
 from copy import deepcopy
 from datetime import datetime
 from types import GeneratorType
@@ -214,6 +214,10 @@ def apply_common_defaults(
             snapshot_dict["agent_reference"] = response_agent_reference(agent_reference)
         if model is not None:
             snapshot_dict.setdefault("model", model)
+        elif not snapshot_dict.get("model"):
+            discovered = resolve_model_from_active_span()
+            if discovered:
+                snapshot_dict.setdefault("model", discovered)
         # S-038: forcibly stamp session ID on every response.* event
         if agent_session_id is not None:
             snapshot_dict["agent_session_id"] = agent_session_id
@@ -298,3 +302,27 @@ def extract_response_fields(
     model = response.get("model")
     model_str = model if isinstance(model, str) and model else None
     return agent_ref, model_str
+
+
+def resolve_model_from_active_span() -> str | None:
+    """Attempt to extract the model name from the active OpenTelemetry span.
+
+    Checks the active recording span for the standard ``gen_ai.response.model``
+    attribute.
+
+    :return: Discovered model name or ``None``.
+    :rtype: str | None
+    """
+    try:
+        from opentelemetry import trace as _trace  # pylint: disable=import-outside-toplevel
+
+        span = _trace.get_current_span()
+        if span is not None and getattr(span, "is_recording", lambda: False)():
+            attrs = getattr(span, "attributes", None)
+            if attrs and isinstance(attrs, Mapping):
+                candidate = attrs.get("gen_ai.response.model")
+                if isinstance(candidate, str) and candidate:
+                    return candidate
+    except Exception:  # pylint: disable=broad-exception-caught
+        pass
+    return None

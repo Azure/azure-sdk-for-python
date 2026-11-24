@@ -659,3 +659,20 @@ def test_to_snapshot_agent_reference_is_json_safe() -> None:
     assert isinstance(snapshot["agent_reference"], dict)
     assert snapshot["agent_reference"].get("name") == "my-agent"
     assert snapshot["agent_reference"].get("version") == "3"
+
+
+def test_to_snapshot_auto_populates_model_from_active_span() -> None:
+    from unittest.mock import MagicMock, patch
+
+    rid = "caresp_span_model000000000000000000"
+    execution = _make_execution(rid, status="completed")
+    execution.response = cast(ResponseObject, {"id": rid, "status": "completed", "output": []})
+
+    mock_span = MagicMock()
+    mock_span.is_recording.return_value = True
+    mock_span.attributes = {"gen_ai.response.model": "gpt-4o-2024-11-20"}
+
+    with patch("opentelemetry.trace.get_current_span", return_value=mock_span):
+        snapshot = _RuntimeState.to_snapshot(execution)
+        assert snapshot["model"] == "gpt-4o-2024-11-20"
+
