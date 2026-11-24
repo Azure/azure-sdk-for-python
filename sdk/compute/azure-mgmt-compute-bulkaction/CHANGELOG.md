@@ -4,8 +4,8 @@
 
 ### Features Added
 
-  - Model `BulkCreateCustomOperations` added method `begin_create`
-  - Model `BulkCreateOperations` added method `begin_create`
+  - Operation group `BulkCreateCustomOperations` added method `begin_create`
+  - Operation group `BulkCreateOperations` added method `begin_create`
 
 ### Breaking Changes
 
