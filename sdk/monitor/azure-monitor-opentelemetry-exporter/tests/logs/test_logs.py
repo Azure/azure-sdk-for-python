@@ -2117,6 +2117,199 @@ class TestMultiEndpointRouting(unittest.TestCase):
         self.assertEqual(len(exporter._route_exporters), 64)
         close.assert_called_once()
 
+    def test_high_cardinality_batch_bounds_live_routed_clients(self):
+        exporter = self._exporter()
+        created = 0
+        closed = 0
+        peak = 0
+        get_route = exporter._get_route_exporter
+        close_route = exporter._close_temporary_route_exporter
+
+        def create(*args):
+            nonlocal created, peak
+            result = get_route(*args)
+            created += 1
+            peak = max(peak, created - closed)
+            return result
+
+        def close(route):
+            nonlocal closed
+            close_route(route)
+            closed += 1
+
+        records = [self._record(endpoint=f"https://route-{index}.example/") for index in range(70)]
+        with mock.patch.object(exporter, "_get_route_exporter", side_effect=create), mock.patch.object(
+            exporter, "_close_temporary_route_exporter", side_effect=close
+        ):
+            self.assertEqual(exporter.export(records), LogRecordExportResult.SUCCESS)
+        self.assertEqual(peak, 65)
+        self.assertEqual(len(exporter._route_exporters), 64)
+        self.assertEqual(closed, 6)
+        self.transport.close.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_CACHED_ROUTE_EXPORTERS", 1)
+    def test_concurrent_overflow_clients_are_created_one_at_a_time(self):
+        exporter = self._exporter()
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        sending = threading.Event()
+        release = threading.Event()
+        second_started = threading.Event()
+        second_created = threading.Event()
+        results = []
+        get_route = exporter._get_route_exporter
+
+        def create(endpoint, is_aad):
+            route = get_route(endpoint, is_aad)
+            if endpoint == "https://second-overflow.example/":
+                second_created.set()
+            return route
+
+        def send(request, **kwargs):
+            if request.url.startswith("https://first-overflow.example/"):
+                sending.set()
+                release.wait(2)
+            return _Response(request)
+
+        def export_second():
+            second_started.set()
+            results.append(exporter.export([self._record(endpoint="https://second-overflow.example/")]))
+
+        first = threading.Thread(
+            target=lambda: results.append(exporter.export([self._record(endpoint="https://first-overflow.example/")])),
+            daemon=True,
+        )
+        second = threading.Thread(target=export_second, daemon=True)
+        self.transport.send.side_effect = send
+        with mock.patch.object(exporter, "_get_route_exporter", side_effect=create):
+            try:
+                first.start()
+                self.assertTrue(sending.wait(2))
+                second.start()
+                self.assertTrue(second_started.wait(2))
+                self.assertFalse(second_created.wait(0.1), "A second temporary client was constructed before cleanup.")
+            finally:
+                release.set()
+                for thread in (first, second):
+                    if thread.ident is not None:
+                        thread.join(timeout=2)
+        self.assertFalse(first.is_alive())
+        self.assertFalse(second.is_alive())
+        self.assertTrue(second_created.is_set())
+        self.assertEqual(results, [LogRecordExportResult.SUCCESS] * 2)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_CACHED_ROUTE_EXPORTERS", 1)
+    def test_shutdown_stops_exports_waiting_for_a_temporary_client(self):
+        exporter = self._exporter()
+        self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        sending = threading.Event()
+        release = threading.Event()
+        second_started = threading.Event()
+        shutdown_done = threading.Event()
+        results = []
+
+        def send(request, **kwargs):
+            sending.set()
+            release.wait(2)
+            return _Response(request)
+
+        def export_second():
+            second_started.set()
+            results.append(exporter.export([self._record(endpoint="https://second-overflow.example/")]))
+
+        def shutdown():
+            exporter.shutdown()
+            shutdown_done.set()
+
+        first = threading.Thread(
+            target=lambda: exporter.export([self._record(endpoint="https://first-overflow.example/")]), daemon=True
+        )
+        second = threading.Thread(target=export_second, daemon=True)
+        shutdown_thread = threading.Thread(target=shutdown, daemon=True)
+        self.transport.send.side_effect = send
+        with mock.patch.object(exporter, "_get_route_exporter", wraps=exporter._get_route_exporter) as create:
+            try:
+                first.start()
+                self.assertTrue(sending.wait(2))
+                second.start()
+                self.assertTrue(second_started.wait(2))
+                shutdown_thread.start()
+                self.assertFalse(shutdown_done.wait(0.1))
+                self.assertTrue(exporter._routing_shutdown)
+                self.transport.close.assert_not_called()
+            finally:
+                release.set()
+                for thread in (first, second, shutdown_thread):
+                    if thread.ident is not None:
+                        thread.join(timeout=2)
+            self.assertEqual(create.call_count, 1)
+        self.assertTrue(shutdown_done.is_set())
+        self.assertTrue(all(not thread.is_alive() for thread in (first, second, shutdown_thread)))
+        self.assertEqual(results, [LogRecordExportResult.FAILURE])
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_CACHED_ROUTE_EXPORTERS", 1)
+    def test_temporary_client_does_not_block_independent_cached_route(self):
+        exporter = self._exporter(transport=None)
+        with mock.patch.object(BaseExporter, "_transmit", return_value=ExportResult.SUCCESS):
+            self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+        sending = threading.Event()
+        release = threading.Event()
+        healthy_done = threading.Event()
+        results = []
+        healthy_route = next(iter(exporter._route_exporters.values()))
+
+        def send(route, envelopes):
+            if route is not healthy_route:
+                sending.set()
+                release.wait(5)
+            return ExportResult.SUCCESS
+
+        def export_healthy():
+            results.append(exporter.export([self._record()]))
+            healthy_done.set()
+
+        thread = threading.Thread(
+            target=lambda: results.append(exporter.export([self._record(endpoint="https://overflow.example/")])),
+            daemon=True,
+        )
+        healthy_thread = threading.Thread(target=export_healthy, daemon=True)
+        with mock.patch.object(BaseExporter, "_transmit", autospec=True, side_effect=send):
+            try:
+                thread.start()
+                self.assertTrue(sending.wait(2))
+                healthy_thread.start()
+                self.assertTrue(healthy_done.wait(2), "A temporary client blocked an independent cached route.")
+            finally:
+                release.set()
+                for worker in (thread, healthy_thread):
+                    if worker.ident is not None:
+                        worker.join(timeout=2)
+        self.assertTrue(all(not worker.is_alive() for worker in (thread, healthy_thread)))
+        self.assertEqual(results, [LogRecordExportResult.SUCCESS] * 2)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base._MAX_CACHED_ROUTE_EXPORTERS", 1)
+    def test_temporary_client_slot_is_released_after_failures(self):
+        for failure in ("creation", "send", "close"):
+            with self.subTest(failure=failure):
+                exporter = self._exporter()
+                self.assertEqual(exporter.export([self._record()]), LogRecordExportResult.SUCCESS)
+                if failure == "creation":
+                    patch = mock.patch.object(exporter, "_get_route_exporter", side_effect=ValueError("test creation"))
+                elif failure == "send":
+                    patch = mock.patch.object(BaseExporter, "_transmit", side_effect=RuntimeError("test send"))
+                else:
+                    patch = mock.patch.object(
+                        exporter, "_close_temporary_route_exporter", side_effect=OSError("test close")
+                    )
+                with patch:
+                    self.assertEqual(
+                        exporter.export([self._record(endpoint="https://overflow.example/")]),
+                        LogRecordExportResult.FAILURE,
+                    )
+                self.assertFalse(exporter._temporary_route_lock.locked())
+                self.assertEqual(
+                    exporter.export([self._record(endpoint="https://next.example/")]), LogRecordExportResult.SUCCESS
+                )
+
     @mock.patch("azure.monitor.opentelemetry.exporter.export._rate_limiter.time.monotonic", return_value=0)
     def test_rate_limit_is_shared_by_routes(self, _monotonic):
         exporter = self._exporter(max_envelopes_per_second=1)

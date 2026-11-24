@@ -170,6 +170,7 @@ class BaseExporter:
             )
         if self._enable_multi_endpoint_routing:
             _validate_routing_policy_options(kwargs)
+            self._temporary_route_lock = threading.Lock()
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -456,29 +457,39 @@ class BaseExporter:
     def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
         # pylint: disable=protected-access
         result = ExportResult.SUCCESS
-        routes = []
-        with self._route_lock:
-            if self._routing_shutdown:
-                logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
-                return ExportResult.FAILED_NOT_RETRYABLE
-            for (endpoint, is_aad), envelopes in groups.items():
+        for (endpoint, is_aad), envelopes in groups.items():
+            temporary = False
+            with ExitStack() as locks:
+                with self._route_lock:
+                    if self._routing_shutdown:
+                        logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
+                        return ExportResult.FAILED_NOT_RETRYABLE
+                    exporter = self._route_exporters.get((endpoint, is_aad))
+                if exporter is None:
+                    locks.enter_context(self._temporary_route_lock)
+                    with self._route_lock:
+                        if self._routing_shutdown:
+                            logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
+                            return ExportResult.FAILED_NOT_RETRYABLE
+                        try:
+                            exporter, temporary = self._get_route_exporter(endpoint, is_aad)
+                        except ValueError:
+                            if is_aad and self._credential is None:
+                                logger.error(
+                                    "Multi-endpoint routing: An AAD route requires an exporter credential. "
+                                    "Configure an exporter credential for microsoft.ingestion_auth=aad."
+                                )
+                            else:
+                                logger.error(
+                                    "Multi-endpoint routing: Cannot initialize a routed exporter. "
+                                    "Check exporter configuration."
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
+                            continue
+                    if not temporary:
+                        # Cached clients only occupy the temporary slot during construction.
+                        locks.close()
                 try:
-                    exporter, temporary = self._get_route_exporter(endpoint, is_aad)
-                    routes.append((exporter, envelopes, temporary))
-                except ValueError:
-                    if is_aad and self._credential is None:
-                        logger.error(
-                            "Multi-endpoint routing: An AAD route requires an exporter credential. "
-                            "Configure an exporter credential for microsoft.ingestion_auth=aad."
-                        )
-                    else:
-                        logger.error(
-                            "Multi-endpoint routing: Cannot initialize a routed exporter. Check exporter configuration."
-                        )
-                    result = ExportResult.FAILED_NOT_RETRYABLE
-        for exporter, envelopes, temporary in routes:
-            try:
-                with ExitStack() as locks:
                     if temporary or self._routes_share_http_state:
                         locks.enter_context(self._transmit_lock)
                     locks.enter_context(exporter._transmit_lock)
@@ -490,9 +501,9 @@ class BaseExporter:
                     exporter._handle_transmit_from_storage(envelopes, route_result)
                     if route_result != ExportResult.SUCCESS:
                         result = ExportResult.FAILED_NOT_RETRYABLE
-            finally:
-                if temporary:
-                    self._close_temporary_route_exporter(exporter)
+                finally:
+                    if temporary:
+                        self._close_temporary_route_exporter(exporter)
         return result
 
     def _shutdown_route_exporters(self) -> None:
