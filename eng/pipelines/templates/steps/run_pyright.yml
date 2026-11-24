@@ -3,6 +3,7 @@ parameters:
   ServiceDirectory: ''
   TestMarkArgument: ''
   AdditionalTestArgs: ''
+  EnvVars: {}
 
 # Please use `$(TargetingString)` to refer to the python packages glob string. This variable is set from resolve-package-targeting.yml.
 steps:
@@ -20,6 +21,7 @@ steps:
         ${{ parameters.AdditionalTestArgs }}
 
     condition: and(succeededOrFailed(), ne(variables['Skip.Pyright'],'true'))
+    env: ${{ parameters.EnvVars }}
 
   - task: PythonScript@0
     displayName: 'Run verifytypes'
@@ -33,3 +35,4 @@ steps:
         ${{ parameters.AdditionalTestArgs }}
 
     condition: and(succeededOrFailed(), ne(variables['Skip.Verifytypes'],'true'))
+    env: ${{ parameters.EnvVars }}
