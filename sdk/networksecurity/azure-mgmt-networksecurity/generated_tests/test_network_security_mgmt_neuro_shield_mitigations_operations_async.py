@@ -27,6 +27,7 @@ class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtReco
             neuro_shield_name="str",
             protected_resource_name="str",
             mitigation_id="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -39,6 +40,7 @@ class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtReco
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
             protected_resource_name="str",
+            api_version="2026-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -50,6 +52,7 @@ class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtReco
         response = self.client.neuro_shield_mitigations.list_by_neuro_shield(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -63,6 +66,7 @@ class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtReco
             neuro_shield_name="str",
             protected_resource_name="str",
             mitigation_id="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -76,6 +80,7 @@ class TestNetworkSecurityMgmtNeuroShieldMitigationsOperationsAsync(AzureMgmtReco
             neuro_shield_name="str",
             protected_resource_name="str",
             mitigation_id="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself

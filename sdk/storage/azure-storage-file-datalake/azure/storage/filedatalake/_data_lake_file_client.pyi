@@ -22,7 +22,7 @@ from typing_extensions import Self
 
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-from azure.storage.filedatalake._shared.session import SessionProvider
+from azure.storage.filedatalake._session import SessionProvider
 from azure.core.tracing.decorator import distributed_trace
 from ._data_lake_lease import DataLakeLeaseClient
 from ._download import StorageStreamDownloader
@@ -211,6 +211,7 @@ class DataLakeFileClient(PathClient):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         max_concurrency: Optional[int] = None,
         progress_hook: Optional[Callable[[int, int], None]] = None,
+        disable_etag_lock: bool = False,
         validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

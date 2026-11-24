@@ -575,18 +575,35 @@ async def test_function_tool_entrypoint_returns_unknown_tool_errors_with_the_ori
     tool_sample.assert_cleanup()
 
 
-@pytest.mark.parametrize("failure", ["service-error", "invalid-arguments"])
+@pytest.mark.parametrize("status", ["cancelled", "failed", "incomplete"])
+async def test_function_tool_entrypoint_rejects_unsuccessful_response(tool_sample, status):
+    get_weather = MagicMock(wraps=tool_sample.sample.get_weather)
+    tool_sample.sample.get_weather = get_weather
+    tool_sample.events.extend([_function_arguments(), _response_done("tool-response", status=status)])
+
+    with pytest.raises(RuntimeError, match=f"status '{status}'"):
+        await tool_sample.run()
+
+    get_weather.assert_not_called()
+    assert tool_sample.connection.conversation.item.create.call_count == 1
+    assert tool_sample.connection.response.create.call_args_list == [call()]
+    tool_sample.assert_cleanup()
+
+
+@pytest.mark.parametrize("failure", ["timeout", "service-error", "invalid-arguments"])
 async def test_function_tool_entrypoint_error_paths_release_its_version_and_context(tool_sample, failure, capsys):
     expected_exception = None
     if failure == "timeout":
-        tool_sample.events.append(TimeoutError())
+        tool_sample.events.append(asyncio.TimeoutError())
     elif failure == "service-error":
         tool_sample.events.append(_error())
     elif failure == "transport-error":
         tool_sample.events.append(ConnectionResetError("offline transport failed"))
         expected_exception = ConnectionResetError
     else:
-        tool_sample.events.append(_function_arguments(arguments="{invalid-json"))
+        tool_sample.events.extend(
+            [_function_arguments(arguments="{invalid-json"), _response_done("tool-response")]
+        )
         expected_exception = json.JSONDecodeError
 
     if expected_exception is None:
@@ -595,12 +612,17 @@ async def test_function_tool_entrypoint_error_paths_release_its_version_and_cont
         with pytest.raises(expected_exception):
             await tool_sample.run()
 
-    assert tool_sample.connection.conversation.item.create.call_count == 1
-    assert tool_sample.connection.response.create.call_args_list == [call()]
     if failure == "timeout":
+        assert tool_sample.connection.conversation.item.create.call_count == 1
+        assert tool_sample.connection.response.create.call_args_list == [call()]
         tool_sample.connection.response.cancel.assert_called_once_with()
         assert "Timed out waiting" in capsys.readouterr().out
+    elif failure == "invalid-arguments":
+        assert tool_sample.connection.conversation.item.create.call_count == 1
+        assert tool_sample.connection.response.create.call_args_list == [call()]
     else:
+        assert tool_sample.connection.conversation.item.create.call_count == 1
+        assert tool_sample.connection.response.create.call_args_list == [call()]
         tool_sample.connection.response.cancel.assert_not_called()
         if failure == "service-error":
             assert "Session error: offline command rejected" in capsys.readouterr().out

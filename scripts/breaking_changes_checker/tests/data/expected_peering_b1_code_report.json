@@ -107,2219 +107,78 @@
         },
         "properties": {
           "client_side_validation": {
-            "attr_type": false
+            "attr_type": false,
+            "is_annotation": false
           },
           "cdn_peering_prefixes": {
-            "attr_type": "CdnPeeringPrefixesOperations"
+            "attr_type": "CdnPeeringPrefixesOperations",
+            "is_annotation": false
           },
           "legacy_peerings": {
-            "attr_type": "LegacyPeeringsOperations"
+            "attr_type": "LegacyPeeringsOperations",
+            "is_annotation": false
           },
           "looking_glass": {
-            "attr_type": "LookingGlassOperations"
+            "attr_type": "LookingGlassOperations",
+            "is_annotation": false
           },
           "operations": {
-            "attr_type": "Operations"
+            "attr_type": "Operations",
+            "is_annotation": false
           },
           "peer_asns": {
-            "attr_type": "PeerAsnsOperations"
+            "attr_type": "PeerAsnsOperations",
+            "is_annotation": false
           },
           "peering_locations": {
-            "attr_type": "PeeringLocationsOperations"
+            "attr_type": "PeeringLocationsOperations",
+            "is_annotation": false
           },
           "registered_asns": {
-            "attr_type": "RegisteredAsnsOperations"
+            "attr_type": "RegisteredAsnsOperations",
+            "is_annotation": false
           },
           "registered_prefixes": {
-            "attr_type": "RegisteredPrefixesOperations"
+            "attr_type": "RegisteredPrefixesOperations",
+            "is_annotation": false
           },
           "peerings": {
-            "attr_type": "PeeringsOperations"
+            "attr_type": "PeeringsOperations",
+            "is_annotation": false
           },
           "received_routes": {
-            "attr_type": "ReceivedRoutesOperations"
+            "attr_type": "ReceivedRoutesOperations",
+            "is_annotation": false
           },
           "connection_monitor_tests": {
-            "attr_type": "ConnectionMonitorTestsOperations"
+            "attr_type": "ConnectionMonitorTestsOperations",
+            "is_annotation": false
           },
           "peering_service_countries": {
-            "attr_type": "PeeringServiceCountriesOperations"
+            "attr_type": "PeeringServiceCountriesOperations",
+            "is_annotation": false
           },
           "peering_service_locations": {
-            "attr_type": "PeeringServiceLocationsOperations"
+            "attr_type": "PeeringServiceLocationsOperations",
+            "is_annotation": false
           },
           "prefixes": {
-            "attr_type": "PrefixesOperations"
+            "attr_type": "PrefixesOperations",
+            "is_annotation": false
           },
           "peering_service_providers": {
-            "attr_type": "PeeringServiceProvidersOperations"
+            "attr_type": "PeeringServiceProvidersOperations",
+            "is_annotation": false
           },
           "peering_services": {
-            "attr_type": "PeeringServicesOperations"
+            "attr_type": "PeeringServicesOperations",
+            "is_annotation": false
           },
           "rp_unbilled_prefixes": {
-            "attr_type": "RpUnbilledPrefixesOperations"
+            "attr_type": "RpUnbilledPrefixesOperations",
+            "is_annotation": false
           }
         }
-      }
-    },
-    "function_nodes": {}
-  },
-  "azure.mgmt.peering.operations": {
-    "class_nodes": {
-      "CdnPeeringPrefixesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_location": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.CdnPeeringPrefix]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "ConnectionMonitorTestsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "connection_monitor_test_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "connection_monitor_test": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ConnectionMonitorTest",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "connection_monitor_test_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "connection_monitor_test": {
-                    "type": "ConnectionMonitorTest",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "ConnectionMonitorTest"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "connection_monitor_test_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "connection_monitor_test": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "ConnectionMonitorTest"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "connection_monitor_test_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "connection_monitor_test_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "ConnectionMonitorTest",
-            "overloads": []
-          },
-          "list_by_peering_service": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.ConnectionMonitorTest]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "LegacyPeeringsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_location": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kind": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "asn": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "direct_peering_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.Peering]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "LookingGlassOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "invoke": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "command": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "source_type": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "source_location": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "destination_ip": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "LookingGlassOutput",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "Operations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.Operation]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeerAsnsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peer_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peer_asn": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeerAsn",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peer_asn_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peer_asn": {
-                    "type": "PeerAsn",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeerAsn"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peer_asn_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peer_asn": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeerAsn"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peer_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peer_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeerAsn",
-            "overloads": []
-          },
-          "list_by_subscription": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeerAsn]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeeringLocationsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kind": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "direct_peering_type": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringLocation]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeeringManagementClientOperationsMixin": {
-        "type": null,
-        "methods": {
-          "check_service_provider_availability": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "check_service_provider_availability_input": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Union[str, Enum0]",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "check_service_provider_availability_input": {
-                    "type": "CheckServiceProviderAvailabilityInput",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Union[str, Enum0]"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "check_service_provider_availability_input": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Union[str, Enum0]"
-              }
-            ]
-          }
-        },
-        "properties": {}
-      },
-      "PeeringServiceCountriesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringServiceCountry]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeeringServiceLocationsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "country": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringServiceLocation]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeeringServiceProvidersOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringServiceProvider]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "PeeringServicesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringService",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service": {
-                    "type": "PeeringService",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringService"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringService"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringService",
-            "overloads": []
-          },
-          "initialize_connection_monitor": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "list_by_resource_group": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringService]",
-            "overloads": []
-          },
-          "list_by_subscription": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringService]",
-            "overloads": []
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "tags": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringService",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "tags": {
-                    "type": "ResourceTags",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringService"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "tags": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringService"
-              }
-            ]
-          }
-        },
-        "properties": {}
-      },
-      "PeeringsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Peering",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering": {
-                    "type": "Peering",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Peering"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Peering"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Peering",
-            "overloads": []
-          },
-          "list_by_resource_group": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.Peering]",
-            "overloads": []
-          },
-          "list_by_subscription": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.Peering]",
-            "overloads": []
-          },
-          "update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "tags": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Peering",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "tags": {
-                    "type": "ResourceTags",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Peering"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "tags": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "Peering"
-              }
-            ]
-          }
-        },
-        "properties": {}
-      },
-      "PrefixesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_prefix": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringServicePrefix",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "prefix_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_prefix": {
-                    "type": "PeeringServicePrefix",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringServicePrefix"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "prefix_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_service_prefix": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringServicePrefix"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "expand": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringServicePrefix",
-            "overloads": []
-          },
-          "list_by_peering_service": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_service_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "expand": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringServicePrefix]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "ReceivedRoutesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list_by_peering": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "prefix": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "as_path": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "origin_as_validation_state": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "rpki_validation_state": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "skip_token": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringReceivedRoute]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "RegisteredAsnsOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_asn": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringRegisteredAsn",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_asn_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_asn": {
-                    "type": "PeeringRegisteredAsn",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringRegisteredAsn"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_asn_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_asn": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringRegisteredAsn"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_asn_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringRegisteredAsn",
-            "overloads": []
-          },
-          "list_by_peering": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringRegisteredAsn]",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "RegisteredPrefixesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "create_or_update": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_prefix": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringRegisteredPrefix",
-            "overloads": [
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_prefix_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_prefix": {
-                    "type": "PeeringRegisteredPrefix",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringRegisteredPrefix"
-              },
-              {
-                "parameters": {
-                  "self": {
-                    "type": null,
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "peering_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_prefix_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "registered_prefix": {
-                    "type": "IO",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  }
-                },
-                "is_async": false,
-                "return_type": "PeeringRegisteredPrefix"
-              }
-            ]
-          },
-          "delete": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "None",
-            "overloads": []
-          },
-          "get": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringRegisteredPrefix",
-            "overloads": []
-          },
-          "list_by_peering": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.PeeringRegisteredPrefix]",
-            "overloads": []
-          },
-          "validate": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "registered_prefix_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "PeeringRegisteredPrefix",
-            "overloads": []
-          }
-        },
-        "properties": {}
-      },
-      "RpUnbilledPrefixesOperations": {
-        "type": null,
-        "methods": {
-          "__init__": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "args": {
-                "default": null,
-                "param_type": "var_positional"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": null,
-            "overloads": []
-          },
-          "list": {
-            "parameters": {
-              "self": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "peering_name": {
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "consolidate": {
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "kwargs": {
-                "default": null,
-                "param_type": "var_keyword"
-              }
-            },
-            "is_async": false,
-            "return_type": "Iterable[_models.RpUnbilledPrefix]",
-            "overloads": []
-          }
-        },
-        "properties": {}
       }
     },
     "function_nodes": {}
@@ -2432,58 +291,76 @@
         },
         "properties": {
           "client_side_validation": {
-            "attr_type": false
+            "attr_type": false,
+            "is_annotation": false
           },
           "cdn_peering_prefixes": {
-            "attr_type": "CdnPeeringPrefixesOperations"
+            "attr_type": "CdnPeeringPrefixesOperations",
+            "is_annotation": false
           },
           "legacy_peerings": {
-            "attr_type": "LegacyPeeringsOperations"
+            "attr_type": "LegacyPeeringsOperations",
+            "is_annotation": false
           },
           "looking_glass": {
-            "attr_type": "LookingGlassOperations"
+            "attr_type": "LookingGlassOperations",
+            "is_annotation": false
           },
           "operations": {
-            "attr_type": "Operations"
+            "attr_type": "Operations",
+            "is_annotation": false
           },
           "peer_asns": {
-            "attr_type": "PeerAsnsOperations"
+            "attr_type": "PeerAsnsOperations",
+            "is_annotation": false
           },
           "peering_locations": {
-            "attr_type": "PeeringLocationsOperations"
+            "attr_type": "PeeringLocationsOperations",
+            "is_annotation": false
           },
           "registered_asns": {
-            "attr_type": "RegisteredAsnsOperations"
+            "attr_type": "RegisteredAsnsOperations",
+            "is_annotation": false
           },
           "registered_prefixes": {
-            "attr_type": "RegisteredPrefixesOperations"
+            "attr_type": "RegisteredPrefixesOperations",
+            "is_annotation": false
           },
           "peerings": {
-            "attr_type": "PeeringsOperations"
+            "attr_type": "PeeringsOperations",
+            "is_annotation": false
           },
           "received_routes": {
-            "attr_type": "ReceivedRoutesOperations"
+            "attr_type": "ReceivedRoutesOperations",
+            "is_annotation": false
           },
           "connection_monitor_tests": {
-            "attr_type": "ConnectionMonitorTestsOperations"
+            "attr_type": "ConnectionMonitorTestsOperations",
+            "is_annotation": false
           },
           "peering_service_countries": {
-            "attr_type": "PeeringServiceCountriesOperations"
+            "attr_type": "PeeringServiceCountriesOperations",
+            "is_annotation": false
           },
           "peering_service_locations": {
-            "attr_type": "PeeringServiceLocationsOperations"
+            "attr_type": "PeeringServiceLocationsOperations",
+            "is_annotation": false
           },
           "prefixes": {
-            "attr_type": "PrefixesOperations"
+            "attr_type": "PrefixesOperations",
+            "is_annotation": false
           },
           "peering_service_providers": {
-            "attr_type": "PeeringServiceProvidersOperations"
+            "attr_type": "PeeringServiceProvidersOperations",
+            "is_annotation": false
           },
           "peering_services": {
-            "attr_type": "PeeringServicesOperations"
+            "attr_type": "PeeringServicesOperations",
+            "is_annotation": false
           },
           "rp_unbilled_prefixes": {
-            "attr_type": "RpUnbilledPrefixesOperations"
+            "attr_type": "RpUnbilledPrefixesOperations",
+            "is_annotation": false
           }
         }
       }
@@ -4796,40 +2673,52 @@
         },
         "properties": {
           "session_prefix_v4": {
-            "attr_type": "session_prefix_v4"
+            "attr_type": "session_prefix_v4",
+            "is_annotation": false
           },
           "session_prefix_v6": {
-            "attr_type": "session_prefix_v6"
+            "attr_type": "session_prefix_v6",
+            "is_annotation": false
           },
           "microsoft_session_i_pv4_address": {
-            "attr_type": "microsoft_session_i_pv4_address"
+            "attr_type": "microsoft_session_i_pv4_address",
+            "is_annotation": false
           },
           "microsoft_session_i_pv6_address": {
-            "attr_type": "microsoft_session_i_pv6_address"
+            "attr_type": "microsoft_session_i_pv6_address",
+            "is_annotation": false
           },
           "peer_session_i_pv4_address": {
-            "attr_type": "peer_session_i_pv4_address"
+            "attr_type": "peer_session_i_pv4_address",
+            "is_annotation": false
           },
           "peer_session_i_pv6_address": {
-            "attr_type": "peer_session_i_pv6_address"
+            "attr_type": "peer_session_i_pv6_address",
+            "is_annotation": false
           },
           "session_state_v4": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "session_state_v6": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "max_prefixes_advertised_v4": {
-            "attr_type": "max_prefixes_advertised_v4"
+            "attr_type": "max_prefixes_advertised_v4",
+            "is_annotation": false
           },
           "max_prefixes_advertised_v6": {
-            "attr_type": "max_prefixes_advertised_v6"
+            "attr_type": "max_prefixes_advertised_v6",
+            "is_annotation": false
           },
           "md5_authentication_key": {
-            "attr_type": "md5_authentication_key"
+            "attr_type": "md5_authentication_key",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -4942,31 +2831,40 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "azure_region": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "azure_service": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "is_primary_region": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "bgp_community": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5087,13 +2985,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5214,13 +3115,16 @@
         },
         "properties": {
           "peering_service_location": {
-            "attr_type": "peering_service_location"
+            "attr_type": "peering_service_location",
+            "is_annotation": false
           },
           "peering_service_provider": {
-            "attr_type": "peering_service_provider"
+            "attr_type": "peering_service_provider",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5405,37 +3309,48 @@
         },
         "properties": {
           "source_agent": {
-            "attr_type": "source_agent"
+            "attr_type": "source_agent",
+            "is_annotation": false
           },
           "destination": {
-            "attr_type": "destination"
+            "attr_type": "destination",
+            "is_annotation": false
           },
           "destination_port": {
-            "attr_type": "destination_port"
+            "attr_type": "destination_port",
+            "is_annotation": false
           },
           "test_frequency_in_sec": {
-            "attr_type": "test_frequency_in_sec"
+            "attr_type": "test_frequency_in_sec",
+            "is_annotation": false
           },
           "is_test_successful": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "path": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5556,13 +3471,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5750,16 +3668,20 @@
         },
         "properties": {
           "role": {
-            "attr_type": "role"
+            "attr_type": "role",
+            "is_annotation": false
           },
           "email": {
-            "attr_type": "email"
+            "attr_type": "email",
+            "is_annotation": false
           },
           "phone": {
-            "attr_type": "phone"
+            "attr_type": "phone",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -5896,37 +3818,48 @@
         },
         "properties": {
           "bandwidth_in_mbps": {
-            "attr_type": "bandwidth_in_mbps"
+            "attr_type": "bandwidth_in_mbps",
+            "is_annotation": false
           },
           "provisioned_bandwidth_in_mbps": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "session_address_provider": {
-            "attr_type": "session_address_provider"
+            "attr_type": "session_address_provider",
+            "is_annotation": false
           },
           "use_for_peering_service": {
-            "attr_type": "use_for_peering_service"
+            "attr_type": "use_for_peering_service",
+            "is_annotation": false
           },
           "microsoft_tracking_id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "peering_db_facility_id": {
-            "attr_type": "peering_db_facility_id"
+            "attr_type": "peering_db_facility_id",
+            "is_annotation": false
           },
           "connection_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "bgp_session": {
-            "attr_type": "bgp_session"
+            "attr_type": "bgp_session",
+            "is_annotation": false
           },
           "connection_identifier": {
-            "attr_type": "connection_identifier"
+            "attr_type": "connection_identifier",
+            "is_annotation": false
           },
           "error_message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -6055,19 +3988,24 @@
         },
         "properties": {
           "address": {
-            "attr_type": "address"
+            "attr_type": "address",
+            "is_annotation": false
           },
           "direct_peering_type": {
-            "attr_type": "direct_peering_type"
+            "attr_type": "direct_peering_type",
+            "is_annotation": false
           },
           "peering_db_facility_id": {
-            "attr_type": "peering_db_facility_id"
+            "attr_type": "peering_db_facility_id",
+            "is_annotation": false
           },
           "peering_db_facility_link": {
-            "attr_type": "peering_db_facility_link"
+            "attr_type": "peering_db_facility_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -6296,13 +4234,16 @@
         },
         "properties": {
           "code": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -6419,10 +4360,12 @@
         },
         "properties": {
           "error": {
-            "attr_type": "error"
+            "attr_type": "error",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -6547,22 +4490,28 @@
         },
         "properties": {
           "peering_db_facility_id": {
-            "attr_type": "peering_db_facility_id"
+            "attr_type": "peering_db_facility_id",
+            "is_annotation": false
           },
           "connection_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "bgp_session": {
-            "attr_type": "bgp_session"
+            "attr_type": "bgp_session",
+            "is_annotation": false
           },
           "connection_identifier": {
-            "attr_type": "connection_identifier"
+            "attr_type": "connection_identifier",
+            "is_annotation": false
           },
           "error_message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -6707,31 +4656,40 @@
         },
         "properties": {
           "exchange_name": {
-            "attr_type": "exchange_name"
+            "attr_type": "exchange_name",
+            "is_annotation": false
           },
           "bandwidth_in_mbps": {
-            "attr_type": "bandwidth_in_mbps"
+            "attr_type": "bandwidth_in_mbps",
+            "is_annotation": false
           },
           "microsoft_i_pv4_address": {
-            "attr_type": "microsoft_i_pv4_address"
+            "attr_type": "microsoft_i_pv4_address",
+            "is_annotation": false
           },
           "microsoft_i_pv6_address": {
-            "attr_type": "microsoft_i_pv6_address"
+            "attr_type": "microsoft_i_pv6_address",
+            "is_annotation": false
           },
           "facility_i_pv4_prefix": {
-            "attr_type": "facility_i_pv4_prefix"
+            "attr_type": "facility_i_pv4_prefix",
+            "is_annotation": false
           },
           "facility_i_pv6_prefix": {
-            "attr_type": "facility_i_pv6_prefix"
+            "attr_type": "facility_i_pv6_prefix",
+            "is_annotation": false
           },
           "peering_db_facility_id": {
-            "attr_type": "peering_db_facility_id"
+            "attr_type": "peering_db_facility_id",
+            "is_annotation": false
           },
           "peering_db_facility_link": {
-            "attr_type": "peering_db_facility_link"
+            "attr_type": "peering_db_facility_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7065,16 +5023,20 @@
         },
         "properties": {
           "workspace_id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "key": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "connected_agents": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7251,13 +5213,16 @@
         },
         "properties": {
           "command": {
-            "attr_type": "command"
+            "attr_type": "command",
+            "is_annotation": false
           },
           "output": {
-            "attr_type": "output"
+            "attr_type": "output",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7425,13 +5390,16 @@
         },
         "properties": {
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "display_name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7544,28 +5512,36 @@
         },
         "properties": {
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "display_name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "display_description": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "unit": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "aggregation_type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "supported_time_grain_types": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "dimensions": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7678,19 +5654,24 @@
         },
         "properties": {
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "display": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "is_data_action": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "service_specification": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7803,19 +5784,24 @@
         },
         "properties": {
           "provider": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "resource": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "operation": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "description": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -7936,13 +5922,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8067,31 +6056,40 @@
         },
         "properties": {
           "peer_asn": {
-            "attr_type": "peer_asn"
+            "attr_type": "peer_asn",
+            "is_annotation": false
           },
           "peer_contact_detail": {
-            "attr_type": "peer_contact_detail"
+            "attr_type": "peer_contact_detail",
+            "is_annotation": false
           },
           "peer_name": {
-            "attr_type": "peer_name"
+            "attr_type": "peer_name",
+            "is_annotation": false
           },
           "validation_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "error_message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8212,13 +6210,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8359,40 +6360,52 @@
         },
         "properties": {
           "sku": {
-            "attr_type": "sku"
+            "attr_type": "sku",
+            "is_annotation": false
           },
           "kind": {
-            "attr_type": "kind"
+            "attr_type": "kind",
+            "is_annotation": false
           },
           "location": {
-            "attr_type": "location"
+            "attr_type": "location",
+            "is_annotation": false
           },
           "tags": {
-            "attr_type": "tags"
+            "attr_type": "tags",
+            "is_annotation": false
           },
           "direct": {
-            "attr_type": "direct"
+            "attr_type": "direct",
+            "is_annotation": false
           },
           "exchange": {
-            "attr_type": "exchange"
+            "attr_type": "exchange",
+            "is_annotation": false
           },
           "peering_location": {
-            "attr_type": "peering_location"
+            "attr_type": "peering_location",
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8513,13 +6526,16 @@
         },
         "properties": {
           "offer_name": {
-            "attr_type": "offer_name"
+            "attr_type": "offer_name",
+            "is_annotation": false
           },
           "value_in_mbps": {
-            "attr_type": "value_in_mbps"
+            "attr_type": "value_in_mbps",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8640,13 +6656,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8783,34 +6802,44 @@
         },
         "properties": {
           "kind": {
-            "attr_type": "kind"
+            "attr_type": "kind",
+            "is_annotation": false
           },
           "direct": {
-            "attr_type": "direct"
+            "attr_type": "direct",
+            "is_annotation": false
           },
           "exchange": {
-            "attr_type": "exchange"
+            "attr_type": "exchange",
+            "is_annotation": false
           },
           "peering_location": {
-            "attr_type": "peering_location"
+            "attr_type": "peering_location",
+            "is_annotation": false
           },
           "country": {
-            "attr_type": "country"
+            "attr_type": "country",
+            "is_annotation": false
           },
           "azure_region": {
-            "attr_type": "azure_region"
+            "attr_type": "azure_region",
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -8931,13 +6960,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9058,13 +7090,16 @@
         },
         "properties": {
           "peering_facilities": {
-            "attr_type": "peering_facilities"
+            "attr_type": "peering_facilities",
+            "is_annotation": false
           },
           "bandwidth_offers": {
-            "attr_type": "bandwidth_offers"
+            "attr_type": "bandwidth_offers",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9181,10 +7216,12 @@
         },
         "properties": {
           "peering_facilities": {
-            "attr_type": "peering_facilities"
+            "attr_type": "peering_facilities",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9425,19 +7462,24 @@
         },
         "properties": {
           "connections": {
-            "attr_type": "connections"
+            "attr_type": "connections",
+            "is_annotation": false
           },
           "use_for_peering_service": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "peer_asn": {
-            "attr_type": "peer_asn"
+            "attr_type": "peer_asn",
+            "is_annotation": false
           },
           "direct_peering_type": {
-            "attr_type": "direct_peering_type"
+            "attr_type": "direct_peering_type",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9558,13 +7600,16 @@
         },
         "properties": {
           "connections": {
-            "attr_type": "connections"
+            "attr_type": "connections",
+            "is_annotation": false
           },
           "peer_asn": {
-            "attr_type": "peer_asn"
+            "attr_type": "peer_asn",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9677,28 +7722,36 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "next_hop": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "as_path": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "origin_as_validation_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "rpki_validation_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "trust_anchor": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "received_timestamp": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9819,13 +7872,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -9942,25 +7998,32 @@
         },
         "properties": {
           "asn": {
-            "attr_type": "asn"
+            "attr_type": "asn",
+            "is_annotation": false
           },
           "peering_service_prefix_key": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10081,13 +8144,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10204,31 +8270,40 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "prefix"
+            "attr_type": "prefix",
+            "is_annotation": false
           },
           "prefix_validation_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "peering_service_prefix_key": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "error_message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10349,13 +8424,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10500,43 +8578,56 @@
         },
         "properties": {
           "sku": {
-            "attr_type": "sku"
+            "attr_type": "sku",
+            "is_annotation": false
           },
           "location": {
-            "attr_type": "location"
+            "attr_type": "location",
+            "is_annotation": false
           },
           "tags": {
-            "attr_type": "tags"
+            "attr_type": "tags",
+            "is_annotation": false
           },
           "peering_service_location": {
-            "attr_type": "peering_service_location"
+            "attr_type": "peering_service_location",
+            "is_annotation": false
           },
           "peering_service_provider": {
-            "attr_type": "peering_service_provider"
+            "attr_type": "peering_service_provider",
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "provider_primary_peering_location": {
-            "attr_type": "provider_primary_peering_location"
+            "attr_type": "provider_primary_peering_location",
+            "is_annotation": false
           },
           "provider_backup_peering_location": {
-            "attr_type": "provider_backup_peering_location"
+            "attr_type": "provider_backup_peering_location",
+            "is_annotation": false
           },
           "log_analytics_workspace_properties": {
-            "attr_type": "log_analytics_workspace_properties"
+            "attr_type": "log_analytics_workspace_properties",
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10649,16 +8740,20 @@
         },
         "properties": {
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10779,13 +8874,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -10906,13 +9004,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11037,25 +9138,32 @@
         },
         "properties": {
           "country": {
-            "attr_type": "country"
+            "attr_type": "country",
+            "is_annotation": false
           },
           "state": {
-            "attr_type": "state"
+            "attr_type": "state",
+            "is_annotation": false
           },
           "azure_region": {
-            "attr_type": "azure_region"
+            "attr_type": "azure_region",
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11176,13 +9284,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11303,37 +9414,48 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "prefix"
+            "attr_type": "prefix",
+            "is_annotation": false
           },
           "prefix_validation_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "learned_type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "error_message": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "events": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "peering_service_prefix_key": {
-            "attr_type": "peering_service_prefix_key"
+            "attr_type": "peering_service_prefix_key",
+            "is_annotation": false
           },
           "provisioning_state": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11446,22 +9568,28 @@
         },
         "properties": {
           "event_timestamp": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "event_type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "event_summary": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "event_level": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "event_description": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11582,13 +9710,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11709,22 +9840,28 @@
         },
         "properties": {
           "service_provider_name": {
-            "attr_type": "service_provider_name"
+            "attr_type": "service_provider_name",
+            "is_annotation": false
           },
           "peering_locations": {
-            "attr_type": "peering_locations"
+            "attr_type": "peering_locations",
+            "is_annotation": false
           },
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11845,13 +9982,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -11968,10 +10108,12 @@
         },
         "properties": {
           "name": {
-            "attr_type": "name"
+            "attr_type": "name",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12088,19 +10230,24 @@
         },
         "properties": {
           "name": {
-            "attr_type": "name"
+            "attr_type": "name",
+            "is_annotation": false
           },
           "tier": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "family": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "size": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12330,16 +10477,20 @@
         },
         "properties": {
           "name": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "id": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "type": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12456,10 +10607,12 @@
         },
         "properties": {
           "tags": {
-            "attr_type": "tags"
+            "attr_type": "tags",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12631,16 +10784,20 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "azure_region": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "peer_asn": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12761,13 +10918,16 @@
         },
         "properties": {
           "value": {
-            "attr_type": "value"
+            "attr_type": "value",
+            "is_annotation": false
           },
           "next_link": {
-            "attr_type": "next_link"
+            "attr_type": "next_link",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -12880,10 +11040,12 @@
         },
         "properties": {
           "metric_specifications": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -13239,10 +11401,12 @@
         },
         "properties": {
           "id": {
-            "attr_type": "id"
+            "attr_type": "id",
+            "is_annotation": false
           },
           "additional_properties": {
-            "attr_type": null
+            "attr_type": null,
+            "is_annotation": false
           }
         }
       },
@@ -13357,6 +11521,2165 @@
           "upper": "upper",
           "zfill": "zfill"
         }
+      }
+    },
+    "function_nodes": {}
+  },
+  "azure.mgmt.peering.operations": {
+    "class_nodes": {
+      "CdnPeeringPrefixesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_location": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.CdnPeeringPrefix]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "ConnectionMonitorTestsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "connection_monitor_test_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "connection_monitor_test": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ConnectionMonitorTest",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test": {
+                    "type": "ConnectionMonitorTest",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "ConnectionMonitorTest"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "ConnectionMonitorTest"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "connection_monitor_test_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "connection_monitor_test_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "ConnectionMonitorTest",
+            "overloads": []
+          },
+          "list_by_peering_service": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.ConnectionMonitorTest]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "LegacyPeeringsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_location": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kind": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "asn": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "direct_peering_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.Peering]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "LookingGlassOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "invoke": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "command": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "source_type": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "source_location": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "destination_ip": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "LookingGlassOutput",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "Operations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.Operation]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeerAsnsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peer_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peer_asn": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeerAsn",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peer_asn_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peer_asn": {
+                    "type": "PeerAsn",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeerAsn"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peer_asn_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peer_asn": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeerAsn"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peer_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peer_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeerAsn",
+            "overloads": []
+          },
+          "list_by_subscription": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeerAsn]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeeringLocationsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kind": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "direct_peering_type": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringLocation]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeeringManagementClientOperationsMixin": {
+        "type": null,
+        "methods": {
+          "check_service_provider_availability": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "check_service_provider_availability_input": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Union[str, Enum0]",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "check_service_provider_availability_input": {
+                    "type": "CheckServiceProviderAvailabilityInput",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Union[str, Enum0]"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "check_service_provider_availability_input": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Union[str, Enum0]"
+              }
+            ]
+          }
+        },
+        "properties": {}
+      },
+      "PeeringServiceCountriesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringServiceCountry]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeeringServiceLocationsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "country": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringServiceLocation]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeeringServiceProvidersOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringServiceProvider]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "PeeringServicesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringService",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service": {
+                    "type": "PeeringService",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringService"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringService"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringService",
+            "overloads": []
+          },
+          "initialize_connection_monitor": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "list_by_resource_group": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringService]",
+            "overloads": []
+          },
+          "list_by_subscription": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringService]",
+            "overloads": []
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "tags": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringService",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "tags": {
+                    "type": "ResourceTags",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringService"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "tags": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringService"
+              }
+            ]
+          }
+        },
+        "properties": {}
+      },
+      "PeeringsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Peering",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering": {
+                    "type": "Peering",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Peering"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Peering"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Peering",
+            "overloads": []
+          },
+          "list_by_resource_group": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.Peering]",
+            "overloads": []
+          },
+          "list_by_subscription": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.Peering]",
+            "overloads": []
+          },
+          "update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "tags": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Peering",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "tags": {
+                    "type": "ResourceTags",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Peering"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "tags": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "Peering"
+              }
+            ]
+          }
+        },
+        "properties": {}
+      },
+      "PrefixesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_prefix": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringServicePrefix",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_prefix": {
+                    "type": "PeeringServicePrefix",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringServicePrefix"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_prefix": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringServicePrefix"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "expand": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringServicePrefix",
+            "overloads": []
+          },
+          "list_by_peering_service": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "expand": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringServicePrefix]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "ReceivedRoutesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list_by_peering": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "as_path": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "origin_as_validation_state": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "rpki_validation_state": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "skip_token": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringReceivedRoute]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "RegisteredAsnsOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringRegisteredAsn",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn": {
+                    "type": "PeeringRegisteredAsn",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringRegisteredAsn"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringRegisteredAsn"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringRegisteredAsn",
+            "overloads": []
+          },
+          "list_by_peering": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringRegisteredAsn]",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "RegisteredPrefixesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "create_or_update": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringRegisteredPrefix",
+            "overloads": [
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix": {
+                    "type": "PeeringRegisteredPrefix",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringRegisteredPrefix"
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix": {
+                    "type": "IO",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": "PeeringRegisteredPrefix"
+              }
+            ]
+          },
+          "delete": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "None",
+            "overloads": []
+          },
+          "get": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringRegisteredPrefix",
+            "overloads": []
+          },
+          "list_by_peering": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.PeeringRegisteredPrefix]",
+            "overloads": []
+          },
+          "validate": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "PeeringRegisteredPrefix",
+            "overloads": []
+          }
+        },
+        "properties": {}
+      },
+      "RpUnbilledPrefixesOperations": {
+        "type": null,
+        "methods": {
+          "__init__": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "args": {
+                "default": null,
+                "param_type": "var_positional"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": null,
+            "overloads": []
+          },
+          "list": {
+            "parameters": {
+              "self": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "resource_group_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "consolidate": {
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "kwargs": {
+                "default": null,
+                "param_type": "var_keyword"
+              }
+            },
+            "is_async": false,
+            "return_type": "Iterable[_models.RpUnbilledPrefix]",
+            "overloads": []
+          }
+        },
+        "properties": {}
       }
     },
     "function_nodes": {}

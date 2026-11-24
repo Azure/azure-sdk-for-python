@@ -10,6 +10,7 @@ import logging
 import time
 from uuid import uuid4
 from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict, cast
+from urllib.parse import urlparse
 
 from msal import TokenCache
 
@@ -119,12 +120,19 @@ class AadClientBase(abc.ABC):  # pylint: disable=too-many-instance-attributes
             self._tenant_id, additionally_allowed_tenants=self._additionally_allowed_tenants, **kwargs
         )
 
-        query: Dict[str, Any] = {"client_id": self._get_cache_client_id(**kwargs), "realm": tenant}
+        query: Dict[str, Any] = {
+            "client_id": self._get_cache_client_id(**kwargs),
+            "realm": tenant,
+            "environment": urlparse(self._authority).netloc,
+        }
         if home_account_id:
             # Constrain the search to the account established by this credential, so a cache shared by multiple
             # accounts (e.g. a persistent cache shared by several `AuthorizationCodeCredential` instances) can't
             # satisfy this request with another account's token.
             query["home_account_id"] = home_account_id
+        elif not self._obo_assertion_hash:
+            # App-only lookups must not match delegated tokens in a shared cache.
+            query["home_account_id"] = None
 
         cache = self._get_cache(**kwargs)
         now = int(time.time())

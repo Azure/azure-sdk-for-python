@@ -24,6 +24,7 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
         response = self.client.neuro_shields.get(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +59,7 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,6 +75,7 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
                 "properties": {"description": "str", "responseMode": "str", "severityThreshold": "str"},
                 "tags": {},
             },
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -84,6 +87,7 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
         response = self.client.neuro_shields.delete(
             resource_group_name=resource_group.name,
             neuro_shield_name="str",
+            api_version="2026-10-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -94,6 +98,7 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
     def test_neuro_shields_list_by_resource_group(self, resource_group):
         response = self.client.neuro_shields.list_by_resource_group(
             resource_group_name=resource_group.name,
+            api_version="2026-10-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -102,7 +107,9 @@ class TestNetworkSecurityMgmtNeuroShieldsOperations(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_neuro_shields_list_by_subscription(self, resource_group):
-        response = self.client.neuro_shields.list_by_subscription()
+        response = self.client.neuro_shields.list_by_subscription(
+            api_version="2026-10-01-preview",
+        )
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

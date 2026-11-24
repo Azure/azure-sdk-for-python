@@ -16,3 +16,4 @@ steps:
         --disable-compatibility-filter
         --disablecov
     condition: and(succeededOrFailed(), ne(variables['Skip.BreakingChanges'],'true'))
+    env: ${{ parameters.EnvVars }}
