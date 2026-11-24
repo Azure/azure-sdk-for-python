@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 - Fixed `MLClient.models.get()` for registry models returning `system_metadata` as `None` even when the model has system metadata.
+- Validated datastore storage account names before creating storage clients.
 
 ## 1.35.1 (2026-09-30)
 
