@@ -462,6 +462,29 @@ class BreakingChangesTracker:
             )
 
     def check_parameter_ordering(self) -> None:
+        def is_positional_reordering(stable_parameters: Dict, current_parameters: Dict) -> bool:
+            if len(stable_parameters) != len(current_parameters):
+                return False
+
+            positional_kinds = {"positional_only", "positional_or_keyword", "var_positional"}
+            stable_positional_params = [
+                name for name, param in stable_parameters.items()
+                if param["param_type"] in positional_kinds
+            ]
+            current_positional_params = [
+                name for name, param in current_parameters.items()
+                if param["param_type"] in positional_kinds
+            ]
+            stable_common_params = [
+                name for name in stable_positional_params
+                if name in current_positional_params
+            ]
+            current_common_params = [
+                name for name in current_positional_params
+                if name in stable_positional_params
+            ]
+            return stable_common_params != current_common_params
+
         modules = self.stable.keys() & self.current.keys()
 
         for module in modules:
@@ -474,41 +497,32 @@ class BreakingChangesTracker:
                     current_method_nodes = current_cls[cls]["methods"]
                     method_keys = stable_method_nodes.keys() & current_method_nodes.keys()
                     for method in method_keys:
-                        stable_params = stable_method_nodes[method]["parameters"].keys()
-                        current_params = current_method_nodes[method]["parameters"].keys()
-                        if len(stable_params) != len(current_params):
-                            # a parameter was deleted and that breaking change was already reported so skip
-                            continue
-                        for key1, key2 in zip(stable_params, current_params):
-                            if key1 != key2:
-                                self.breaking_changes.append(
-                                    (
-                                        self.CHANGED_PARAMETER_ORDERING_MSG,
-                                        BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                        module, cls, method, list(stable_params), list(current_params)
-                                    )
+                        stable_parameters = stable_method_nodes[method]["parameters"]
+                        current_parameters = current_method_nodes[method]["parameters"]
+                        if is_positional_reordering(stable_parameters, current_parameters):
+                            self.breaking_changes.append(
+                                (
+                                    self.CHANGED_PARAMETER_ORDERING_MSG,
+                                    BreakingChangeType.CHANGED_PARAMETER_ORDERING,
+                                    module, cls, method,
+                                    list(stable_parameters), list(current_parameters)
                                 )
-                                break
+                            )
             if "function_nodes" in self.stable[module]:
                 stable_funcs = self.stable[module]["function_nodes"]
                 current_funcs = self.current[module]["function_nodes"]
                 func_nodes = stable_funcs.keys() & current_funcs.keys()
                 for func in func_nodes:
-                    stable_params = stable_funcs[func]["parameters"].keys()
-                    current_params = current_funcs[func]["parameters"].keys()
-                    if len(stable_params) != len(current_params):
-                        # a parameter was deleted and that breaking change was already reported so skip
-                        continue
-                    for key1, key2 in zip(stable_params, current_params):
-                        if key1 != key2:
-                            self.breaking_changes.append(
-                                (
-                                    self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG,
-                                    BreakingChangeType.CHANGED_PARAMETER_ORDERING,
-                                    module, func, list(stable_params), list(current_params)
-                                )
+                    stable_parameters = stable_funcs[func]["parameters"]
+                    current_parameters = current_funcs[func]["parameters"]
+                    if is_positional_reordering(stable_parameters, current_parameters):
+                        self.breaking_changes.append(
+                            (
+                                self.CHANGED_PARAMETER_ORDERING_OF_FUNCTION_MSG,
+                                BreakingChangeType.CHANGED_PARAMETER_ORDERING,
+                                module, func, list(stable_parameters), list(current_parameters)
                             )
-                            break
+                        )
 
     def check_parameter_default_value_removed(
         self, default: Union[str, None],
