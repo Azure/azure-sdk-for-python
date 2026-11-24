@@ -475,15 +475,14 @@ class BreakingChangesTracker:
                 name for name, param in current_parameters.items()
                 if param["param_type"] in positional_kinds
             ]
-            stable_common_params = [
-                name for name in stable_positional_params
-                if name in current_positional_params
-            ]
-            current_common_params = [
-                name for name in current_positional_params
-                if name in stable_positional_params
-            ]
-            return stable_common_params != current_common_params
+            current_positions = {
+                name: index for index, name in enumerate(current_positional_params)
+            }
+            return any(
+                index != current_positions[name]
+                for index, name in enumerate(stable_positional_params)
+                if name in current_positions
+            )
 
         modules = self.stable.keys() & self.current.keys()
 
