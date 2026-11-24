@@ -19,9 +19,13 @@
 - Count retained routed-storage partitions across exporter lifetimes before admitting new ones.
   Reuse existing partitions at capacity and use non-persisting overflow without deleting pending batches.
   Coordination is process-local; single-endpoint storage behavior is unchanged.
+  ([#50140](https://github.com/Azure/azure-sdk-for-python/pull/50140))
 - Fixed Statsbeat routing after accepted ingestion redirects so EU SDK statistics use the EU destination, including Germany North, without resetting metric collection. Preserve OneSettings destination overrides and keep collection and export on the same route.
+  ([#49971](https://github.com/Azure/azure-sdk-for-python/pull/49971))
 - Allow Statsbeat configurations with an unknown region to apply OneSettings defaults and resume collection after being re-enabled.
+  ([#49971](https://github.com/Azure/azure-sdk-for-python/pull/49971))
 - Allowed ingestion redirects across trusted Azure Monitor domain suffixes within the same cloud.
+  ([#49971](https://github.com/Azure/azure-sdk-for-python/pull/49971))
 - Isolate multi-endpoint Microsoft Entra authentication from the host connection
   string's audience. Configure routed audiences with
   `APPLICATIONINSIGHTS_MULTI_ENDPOINT_AAD_AUDIENCE`; the default is the public cloud.
@@ -34,6 +38,7 @@
 
 - Add automated multi-endpoint routing tests for logs, traces, and metrics,
   covering shared feature selection and provider flush through a mocked ingestion transport.
+  ([#50036](https://github.com/Azure/azure-sdk-for-python/pull/50036))
 
 ## 1.0.0b59 (2026-11-05)
 
