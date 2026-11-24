@@ -56,11 +56,22 @@
 
 ### Breaking Changes
 
+  - Model `BgpSession` changed type of property `session_prefix_v4` from `session_prefix_v4` to `Optional[str]`
+  - Model `BgpSession` changed type of property `session_prefix_v6` from `session_prefix_v6` to `Optional[str]`
+  - Model `BgpSession` changed type of property `microsoft_session_i_pv4_address` from `microsoft_session_i_pv4_address` to `Optional[str]`
+  - Model `BgpSession` changed type of property `microsoft_session_i_pv6_address` from `microsoft_session_i_pv6_address` to `Optional[str]`
+  - Model `BgpSession` changed type of property `peer_session_i_pv4_address` from `peer_session_i_pv4_address` to `Optional[str]`
+  - Model `BgpSession` changed type of property `peer_session_i_pv6_address` from `peer_session_i_pv6_address` to `Optional[str]`
+  - Model `BgpSession` changed type of property `max_prefixes_advertised_v4` from `max_prefixes_advertised_v4` to `Optional[int]`
+  - Model `BgpSession` changed type of property `max_prefixes_advertised_v6` from `max_prefixes_advertised_v6` to `Optional[int]`
+  - Model `BgpSession` changed type of property `md5_authentication_key` from `md5_authentication_key` to `Optional[str]`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `prefix`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_region`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `azure_service`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `is_primary_region`
   - Model `CdnPeeringPrefix` deleted or renamed its instance variable `bgp_community`
+  - Model `CheckServiceProviderAvailabilityInput` changed type of property `peering_service_location` from `peering_service_location` to `Optional[str]`
+  - Model `CheckServiceProviderAvailabilityInput` changed type of property `peering_service_provider` from `peering_service_provider` to `Optional[str]`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `source_agent`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `destination_port`
@@ -68,6 +79,33 @@
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `is_test_successful`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `path`
   - Model `ConnectionMonitorTest` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContactDetail` changed type of property `role` from `role` to `Optional[Union[str, '_models.Role']]`
+  - Model `ContactDetail` changed type of property `email` from `email` to `Optional[str]`
+  - Model `ContactDetail` changed type of property `phone` from `phone` to `Optional[str]`
+  - Model `DirectConnection` changed type of property `bandwidth_in_mbps` from `bandwidth_in_mbps` to `Optional[int]`
+  - Model `DirectConnection` changed type of property `session_address_provider` from `session_address_provider` to `Optional[Union[str, '_models.SessionAddressProvider']]`
+  - Model `DirectConnection` changed type of property `use_for_peering_service` from `use_for_peering_service` to `Optional[bool]`
+  - Model `DirectConnection` changed type of property `peering_db_facility_id` from `peering_db_facility_id` to `Optional[int]`
+  - Model `DirectConnection` changed type of property `bgp_session` from `bgp_session` to `Optional['_models.BgpSession']`
+  - Model `DirectConnection` changed type of property `connection_identifier` from `connection_identifier` to `Optional[str]`
+  - Model `DirectPeeringFacility` changed type of property `address` from `address` to `Optional[str]`
+  - Model `DirectPeeringFacility` changed type of property `direct_peering_type` from `direct_peering_type` to `Optional[Union[str, '_models.DirectPeeringType']]`
+  - Model `DirectPeeringFacility` changed type of property `peering_db_facility_id` from `peering_db_facility_id` to `Optional[int]`
+  - Model `DirectPeeringFacility` changed type of property `peering_db_facility_link` from `peering_db_facility_link` to `Optional[str]`
+  - Model `ErrorResponse` changed type of property `error` from `error` to `Optional['_models.ErrorDetail']`
+  - Model `ExchangeConnection` changed type of property `peering_db_facility_id` from `peering_db_facility_id` to `Optional[int]`
+  - Model `ExchangeConnection` changed type of property `bgp_session` from `bgp_session` to `Optional['_models.BgpSession']`
+  - Model `ExchangeConnection` changed type of property `connection_identifier` from `connection_identifier` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `exchange_name` from `exchange_name` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `bandwidth_in_mbps` from `bandwidth_in_mbps` to `Optional[int]`
+  - Model `ExchangePeeringFacility` changed type of property `microsoft_i_pv4_address` from `microsoft_i_pv4_address` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `microsoft_i_pv6_address` from `microsoft_i_pv6_address` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `facility_i_pv4_prefix` from `facility_i_pv4_prefix` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `facility_i_pv6_prefix` from `facility_i_pv6_prefix` to `Optional[str]`
+  - Model `ExchangePeeringFacility` changed type of property `peering_db_facility_id` from `peering_db_facility_id` to `Optional[int]`
+  - Model `ExchangePeeringFacility` changed type of property `peering_db_facility_link` from `peering_db_facility_link` to `Optional[str]`
+  - Model `LookingGlassOutput` changed type of property `command` from `command` to `Optional[Union[str, '_models.Command']]`
+  - Model `LookingGlassOutput` changed type of property `output` from `output` to `Optional[str]`
   - Model `Operation` deleted or renamed its instance variable `service_specification`
   - Model `PeerAsn` deleted or renamed its instance variable `peer_asn`
   - Model `PeerAsn` deleted or renamed its instance variable `peer_contact_detail`
@@ -78,11 +116,26 @@
   - Model `Peering` deleted or renamed its instance variable `exchange`
   - Model `Peering` deleted or renamed its instance variable `peering_location`
   - Model `Peering` deleted or renamed its instance variable `provisioning_state`
+  - Model `Peering` changed type of property `sku` from `sku` to `_models.PeeringSku`
+  - Model `Peering` changed type of property `kind` from `kind` to `Union[str, '_models.Kind']`
+  - Model `Peering` changed type of property `location` from `location` to `str`
+  - Model `Peering` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `PeeringBandwidthOffer` changed type of property `offer_name` from `offer_name` to `Optional[str]`
+  - Model `PeeringBandwidthOffer` changed type of property `value_in_mbps` from `value_in_mbps` to `Optional[int]`
   - Model `PeeringLocation` deleted or renamed its instance variable `direct`
   - Model `PeeringLocation` deleted or renamed its instance variable `exchange`
   - Model `PeeringLocation` deleted or renamed its instance variable `peering_location`
   - Model `PeeringLocation` deleted or renamed its instance variable `country`
   - Model `PeeringLocation` deleted or renamed its instance variable `azure_region`
+  - Model `PeeringLocation` changed type of property `kind` from `kind` to `Optional[Union[str, '_models.Kind']]`
+  - Model `PeeringLocationPropertiesDirect` changed type of property `peering_facilities` from `peering_facilities` to `Optional[list['_models.DirectPeeringFacility']]`
+  - Model `PeeringLocationPropertiesDirect` changed type of property `bandwidth_offers` from `bandwidth_offers` to `Optional[list['_models.PeeringBandwidthOffer']]`
+  - Model `PeeringLocationPropertiesExchange` changed type of property `peering_facilities` from `peering_facilities` to `Optional[list['_models.ExchangePeeringFacility']]`
+  - Model `PeeringPropertiesDirect` changed type of property `connections` from `connections` to `Optional[list['_models.DirectConnection']]`
+  - Model `PeeringPropertiesDirect` changed type of property `peer_asn` from `peer_asn` to `Optional['_models.SubResource']`
+  - Model `PeeringPropertiesDirect` changed type of property `direct_peering_type` from `direct_peering_type` to `Optional[Union[str, '_models.DirectPeeringType']]`
+  - Model `PeeringPropertiesExchange` changed type of property `connections` from `connections` to `Optional[list['_models.ExchangeConnection']]`
+  - Model `PeeringPropertiesExchange` changed type of property `peer_asn` from `peer_asn` to `Optional['_models.SubResource']`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `asn`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `peering_service_prefix_key`
   - Model `PeeringRegisteredAsn` deleted or renamed its instance variable `provisioning_state`
@@ -97,6 +150,9 @@
   - Model `PeeringService` deleted or renamed its instance variable `provider_primary_peering_location`
   - Model `PeeringService` deleted or renamed its instance variable `provider_backup_peering_location`
   - Model `PeeringService` deleted or renamed its instance variable `log_analytics_workspace_properties`
+  - Model `PeeringService` changed type of property `sku` from `sku` to `Optional['_models.PeeringServiceSku']`
+  - Model `PeeringService` changed type of property `location` from `location` to `str`
+  - Model `PeeringService` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
   - Model `PeeringServiceLocation` deleted or renamed its instance variable `country`
   - Model `PeeringServiceLocation` deleted or renamed its instance variable `state`
   - Model `PeeringServiceLocation` deleted or renamed its instance variable `azure_region`
@@ -109,6 +165,10 @@
   - Model `PeeringServicePrefix` deleted or renamed its instance variable `provisioning_state`
   - Model `PeeringServiceProvider` deleted or renamed its instance variable `service_provider_name`
   - Model `PeeringServiceProvider` deleted or renamed its instance variable `peering_locations`
+  - Model `PeeringServiceSku` changed type of property `name` from `name` to `Optional[str]`
+  - Model `PeeringSku` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ResourceTags` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `SubResource` changed type of property `id` from `id` to `Optional[str]`
   - Deleted or renamed model `CdnPeeringPrefixListResult`
   - Deleted or renamed model `ConnectionMonitorTestListResult`
   - Deleted or renamed model `OperationListResult`

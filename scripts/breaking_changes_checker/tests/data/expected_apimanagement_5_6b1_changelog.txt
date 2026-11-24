@@ -686,9 +686,24 @@
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `primary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `secondary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `enabled`
+  - Model `AccessInformationSecretsContract` changed type of property `id` from `id` to `Optional[str]`
+  - Model `AccessInformationSecretsContract` changed type of property `principal_id` from `principal_id` to `Optional[str]`
+  - Model `AccessInformationSecretsContract` changed type of property `primary_key` from `primary_key` to `Optional[str]`
+  - Model `AccessInformationSecretsContract` changed type of property `secondary_key` from `secondary_key` to `Optional[str]`
+  - Model `AccessInformationSecretsContract` changed type of property `enabled` from `enabled` to `Optional[bool]`
   - Model `AccessInformationUpdateParameters` deleted or renamed its instance variable `enabled`
+  - Model `AdditionalLocation` changed type of property `location` from `location` to `str`
+  - Model `AdditionalLocation` changed type of property `sku` from `sku` to `_models.ApiManagementServiceSkuProperties`
+  - Model `AdditionalLocation` changed type of property `zones` from `zones` to `Optional[list[str]]`
+  - Model `AdditionalLocation` changed type of property `public_ip_address_id` from `public_ip_address_id` to `Optional[str]`
+  - Model `AdditionalLocation` changed type of property `virtual_network_configuration` from `virtual_network_configuration` to `Optional['_models.VirtualNetworkConfiguration']`
+  - Model `AdditionalLocation` changed type of property `nat_gateway_state` from `nat_gateway_state` to `Optional[Union[str, '_models.NatGatewayState']]`
+  - Model `AdditionalLocation` changed type of property `disable_gateway` from `disable_gateway` to `Optional[bool]`
   - Model `AllPoliciesContract` deleted or renamed its instance variable `reference_policy_id`
   - Model `AllPoliciesContract` deleted or renamed its instance variable `compliance_state`
+  - Model `ApiContactInformation` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ApiContactInformation` changed type of property `url` from `url` to `Optional[str]`
+  - Model `ApiContactInformation` changed type of property `email` from `email` to `Optional[str]`
   - Model `ApiContract` deleted or renamed its instance variable `description`
   - Model `ApiContract` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiContract` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -711,6 +726,44 @@
   - Model `ApiContract` deleted or renamed its instance variable `protocols`
   - Model `ApiContract` deleted or renamed its instance variable `api_version_set`
   - Model `ApiContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `ApiContractProperties` changed type of property `source_api_id` from `source_api_id` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `service_url` from `service_url` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `path` from `path` to `str`
+  - Model `ApiContractProperties` changed type of property `protocols` from `protocols` to `Optional[list[Union[str, '_models.Protocol']]]`
+  - Model `ApiContractProperties` changed type of property `api_version_set` from `api_version_set` to `Optional['_models.ApiVersionSetContractDetails']`
+  - Model `ApiContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `authentication_settings` from `authentication_settings` to `Optional['_models.AuthenticationSettingsContract']`
+  - Model `ApiContractProperties` changed type of property `subscription_key_parameter_names` from `subscription_key_parameter_names` to `Optional['_models.SubscriptionKeyParameterNamesContract']`
+  - Model `ApiContractProperties` changed type of property `api_type` from `api_type` to `Optional[Union[str, '_models.ApiType']]`
+  - Model `ApiContractProperties` changed type of property `api_revision` from `api_revision` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `api_version` from `api_version` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `is_current` from `is_current` to `Optional[bool]`
+  - Model `ApiContractProperties` changed type of property `api_revision_description` from `api_revision_description` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `api_version_description` from `api_version_description` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `api_version_set_id` from `api_version_set_id` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ApiContractProperties` changed type of property `terms_of_service_url` from `terms_of_service_url` to `Optional[str]`
+  - Model `ApiContractProperties` changed type of property `contact` from `contact` to `Optional['_models.ApiContactInformation']`
+  - Model `ApiContractProperties` changed type of property `license` from `license` to `Optional['_models.ApiLicenseInformation']`
+  - Model `ApiContractUpdateProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `service_url` from `service_url` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `path` from `path` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `protocols` from `protocols` to `Optional[list[Union[str, '_models.Protocol']]]`
+  - Model `ApiContractUpdateProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `authentication_settings` from `authentication_settings` to `Optional['_models.AuthenticationSettingsContract']`
+  - Model `ApiContractUpdateProperties` changed type of property `subscription_key_parameter_names` from `subscription_key_parameter_names` to `Optional['_models.SubscriptionKeyParameterNamesContract']`
+  - Model `ApiContractUpdateProperties` changed type of property `api_type` from `api_type` to `Optional[Union[str, '_models.ApiType']]`
+  - Model `ApiContractUpdateProperties` changed type of property `api_revision` from `api_revision` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `api_version` from `api_version` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `is_current` from `is_current` to `Optional[bool]`
+  - Model `ApiContractUpdateProperties` changed type of property `api_revision_description` from `api_revision_description` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `api_version_description` from `api_version_description` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `api_version_set_id` from `api_version_set_id` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ApiContractUpdateProperties` changed type of property `terms_of_service_url` from `terms_of_service_url` to `Optional[str]`
+  - Model `ApiContractUpdateProperties` changed type of property `contact` from `contact` to `Optional['_models.ApiContactInformation']`
+  - Model `ApiContractUpdateProperties` changed type of property `license` from `license` to `Optional['_models.ApiLicenseInformation']`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `description`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -738,10 +791,65 @@
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `wsdl_selector`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `soap_api_type`
   - Model `ApiCreateOrUpdateParameter` deleted or renamed its instance variable `translate_required_query_parameters_conduct`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `value` from `value` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `format` from `format` to `Optional[Union[str, '_models.ContentFormat']]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `wsdl_selector` from `wsdl_selector` to `Optional['_models.ApiCreateOrUpdatePropertiesWsdlSelector']`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `soap_api_type` from `soap_api_type` to `Optional[Union[str, '_models.SoapApiType']]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `translate_required_query_parameters_conduct` from `translate_required_query_parameters_conduct` to `Optional[Union[str, '_models.TranslateRequiredQueryParametersConduct']]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `source_api_id` from `source_api_id` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `service_url` from `service_url` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `path` from `path` to `str`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `protocols` from `protocols` to `Optional[list[Union[str, '_models.Protocol']]]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_version_set` from `api_version_set` to `Optional['_models.ApiVersionSetContractDetails']`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `authentication_settings` from `authentication_settings` to `Optional['_models.AuthenticationSettingsContract']`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `subscription_key_parameter_names` from `subscription_key_parameter_names` to `Optional['_models.SubscriptionKeyParameterNamesContract']`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_type` from `api_type` to `Optional[Union[str, '_models.ApiType']]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_revision` from `api_revision` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_version` from `api_version` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `is_current` from `is_current` to `Optional[bool]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_revision_description` from `api_revision_description` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_version_description` from `api_version_description` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `api_version_set_id` from `api_version_set_id` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `terms_of_service_url` from `terms_of_service_url` to `Optional[str]`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `contact` from `contact` to `Optional['_models.ApiContactInformation']`
+  - Model `ApiCreateOrUpdateProperties` changed type of property `license` from `license` to `Optional['_models.ApiLicenseInformation']`
+  - Model `ApiCreateOrUpdatePropertiesWsdlSelector` changed type of property `wsdl_service_name` from `wsdl_service_name` to `Optional[str]`
+  - Model `ApiCreateOrUpdatePropertiesWsdlSelector` changed type of property `wsdl_endpoint_name` from `wsdl_endpoint_name` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `authentication_settings` from `authentication_settings` to `Optional['_models.AuthenticationSettingsContract']`
+  - Model `ApiEntityBaseContract` changed type of property `subscription_key_parameter_names` from `subscription_key_parameter_names` to `Optional['_models.SubscriptionKeyParameterNamesContract']`
+  - Model `ApiEntityBaseContract` changed type of property `api_type` from `api_type` to `Optional[Union[str, '_models.ApiType']]`
+  - Model `ApiEntityBaseContract` changed type of property `api_revision` from `api_revision` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `api_version` from `api_version` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `is_current` from `is_current` to `Optional[bool]`
+  - Model `ApiEntityBaseContract` changed type of property `api_revision_description` from `api_revision_description` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `api_version_description` from `api_version_description` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `api_version_set_id` from `api_version_set_id` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ApiEntityBaseContract` changed type of property `terms_of_service_url` from `terms_of_service_url` to `Optional[str]`
+  - Model `ApiEntityBaseContract` changed type of property `contact` from `contact` to `Optional['_models.ApiContactInformation']`
+  - Model `ApiEntityBaseContract` changed type of property `license` from `license` to `Optional['_models.ApiLicenseInformation']`
+  - Model `ApiExportResult` changed type of property `id` from `id` to `Optional[str]`
+  - Model `ApiExportResult` changed type of property `export_result_format` from `export_result_format` to `Optional[Union[str, '_models.ExportResultFormat']]`
+  - Model `ApiExportResult` changed type of property `value` from `value` to `Optional['_models.ApiExportResultValue']`
+  - Model `ApiExportResultValue` changed type of property `link` from `link` to `Optional[str]`
+  - Model `ApiLicenseInformation` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ApiLicenseInformation` changed type of property `url` from `url` to `Optional[str]`
+  - Model `ApiManagementGatewayBaseProperties` changed type of property `frontend` from `frontend` to `Optional['_models.FrontendConfiguration']`
+  - Model `ApiManagementGatewayBaseProperties` changed type of property `backend` from `backend` to `Optional['_models.BackendConfiguration']`
+  - Model `ApiManagementGatewayBaseProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.GatewayConfigurationApi']`
+  - Model `ApiManagementGatewayBaseProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
   - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `provisioning_state`
   - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `source_id`
   - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `default_hostname`
   - Model `ApiManagementGatewayConfigConnectionResource` deleted or renamed its instance variable `hostnames`
+  - Model `ApiManagementGatewayProperties` changed type of property `frontend` from `frontend` to `Optional['_models.FrontendConfiguration']`
+  - Model `ApiManagementGatewayProperties` changed type of property `backend` from `backend` to `Optional['_models.BackendConfiguration']`
+  - Model `ApiManagementGatewayProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.GatewayConfigurationApi']`
+  - Model `ApiManagementGatewayProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `provisioning_state`
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `target_provisioning_state`
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `created_at_utc`
@@ -749,6 +857,13 @@
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `backend`
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `configuration_api`
   - Model `ApiManagementGatewayResource` deleted or renamed its instance variable `virtual_network_type`
+  - Model `ApiManagementGatewayResource` changed type of property `sku` from `sku` to `_models.ApiManagementGatewaySkuProperties`
+  - Model `ApiManagementGatewayResource` changed type of property `location` from `location` to `str`
+  - Model `ApiManagementGatewayResource` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `ApiManagementGatewaySkuProperties` changed type of property `name` from `name` to `Union[str, '_models.ApiGatewaySkuType']`
+  - Model `ApiManagementGatewaySkuProperties` changed type of property `capacity` from `capacity` to `Optional[int]`
+  - Model `ApiManagementGatewaySkuPropertiesForPatch` changed type of property `name` from `name` to `Optional[Union[str, '_models.ApiGatewaySkuType']]`
+  - Model `ApiManagementGatewaySkuPropertiesForPatch` changed type of property `capacity` from `capacity` to `Optional[int]`
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `provisioning_state`
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `target_provisioning_state`
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `created_at_utc`
@@ -756,6 +871,62 @@
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `backend`
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `configuration_api`
   - Model `ApiManagementGatewayUpdateParameters` deleted or renamed its instance variable `virtual_network_type`
+  - Model `ApiManagementGatewayUpdateParameters` changed type of property `sku` from `sku` to `Optional['_models.ApiManagementGatewaySkuPropertiesForPatch']`
+  - Model `ApiManagementGatewayUpdateParameters` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `ApiManagementGatewayUpdateProperties` changed type of property `frontend` from `frontend` to `Optional['_models.FrontendConfiguration']`
+  - Model `ApiManagementGatewayUpdateProperties` changed type of property `backend` from `backend` to `Optional['_models.BackendConfiguration']`
+  - Model `ApiManagementGatewayUpdateProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.GatewayConfigurationApi']`
+  - Model `ApiManagementGatewayUpdateProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
+  - Model `ApiManagementServiceApplyNetworkConfigurationParameters` changed type of property `location` from `location` to `Optional[str]`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `storage_account` from `storage_account` to `str`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `container_name` from `container_name` to `str`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `backup_name` from `backup_name` to `str`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `access_type` from `access_type` to `Optional[Union[str, '_models.AccessType']]`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `access_key` from `access_key` to `Optional[str]`
+  - Model `ApiManagementServiceBackupRestoreParameters` changed type of property `client_id` from `client_id` to `Optional[str]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `notification_sender_email` from `notification_sender_email` to `Optional[str]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `hostname_configurations` from `hostname_configurations` to `Optional[list['_models.HostnameConfiguration']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `public_ip_address_id` from `public_ip_address_id` to `Optional[str]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `public_network_access` from `public_network_access` to `Optional[Union[str, '_models.PublicNetworkAccess']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.ConfigurationApi']`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `virtual_network_configuration` from `virtual_network_configuration` to `Optional['_models.VirtualNetworkConfiguration']`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `additional_locations` from `additional_locations` to `Optional[list['_models.AdditionalLocation']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `custom_properties` from `custom_properties` to `Optional[dict[str, str]]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `certificates` from `certificates` to `Optional[list['_models.CertificateConfiguration']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `enable_client_certificate` from `enable_client_certificate` to `Optional[bool]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `nat_gateway_state` from `nat_gateway_state` to `Optional[Union[str, '_models.NatGatewayState']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `disable_gateway` from `disable_gateway` to `Optional[bool]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `api_version_constraint` from `api_version_constraint` to `Optional['_models.ApiVersionConstraint']`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `restore` from `restore` to `Optional[bool]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `private_endpoint_connections` from `private_endpoint_connections` to `Optional[list['_models.RemotePrivateEndpointConnectionWrapper']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `legacy_portal_status` from `legacy_portal_status` to `Optional[Union[str, '_models.LegacyPortalStatus']]`
+  - Model `ApiManagementServiceBaseProperties` changed type of property `developer_portal_status` from `developer_portal_status` to `Optional[Union[str, '_models.DeveloperPortalStatus']]`
+  - Model `ApiManagementServiceCheckNameAvailabilityParameters` changed type of property `name` from `name` to `str`
+  - Model `ApiManagementServiceGetSsoTokenResult` changed type of property `redirect_uri` from `redirect_uri` to `Optional[str]`
+  - Model `ApiManagementServiceIdentity` changed type of property `type` from `type` to `Union[str, '_models.ApimIdentityType']`
+  - Model `ApiManagementServiceIdentity` changed type of property `user_assigned_identities` from `user_assigned_identities` to `Optional[dict[str, '_models.UserIdentityProperties']]`
+  - Model `ApiManagementServiceNameAvailabilityResult` changed type of property `reason` from `reason` to `Optional[Union[str, '_models.NameAvailabilityReason']]`
+  - Model `ApiManagementServiceProperties` changed type of property `publisher_email` from `publisher_email` to `str`
+  - Model `ApiManagementServiceProperties` changed type of property `publisher_name` from `publisher_name` to `str`
+  - Model `ApiManagementServiceProperties` changed type of property `notification_sender_email` from `notification_sender_email` to `Optional[str]`
+  - Model `ApiManagementServiceProperties` changed type of property `hostname_configurations` from `hostname_configurations` to `Optional[list['_models.HostnameConfiguration']]`
+  - Model `ApiManagementServiceProperties` changed type of property `public_ip_address_id` from `public_ip_address_id` to `Optional[str]`
+  - Model `ApiManagementServiceProperties` changed type of property `public_network_access` from `public_network_access` to `Optional[Union[str, '_models.PublicNetworkAccess']]`
+  - Model `ApiManagementServiceProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.ConfigurationApi']`
+  - Model `ApiManagementServiceProperties` changed type of property `virtual_network_configuration` from `virtual_network_configuration` to `Optional['_models.VirtualNetworkConfiguration']`
+  - Model `ApiManagementServiceProperties` changed type of property `additional_locations` from `additional_locations` to `Optional[list['_models.AdditionalLocation']]`
+  - Model `ApiManagementServiceProperties` changed type of property `custom_properties` from `custom_properties` to `Optional[dict[str, str]]`
+  - Model `ApiManagementServiceProperties` changed type of property `certificates` from `certificates` to `Optional[list['_models.CertificateConfiguration']]`
+  - Model `ApiManagementServiceProperties` changed type of property `enable_client_certificate` from `enable_client_certificate` to `Optional[bool]`
+  - Model `ApiManagementServiceProperties` changed type of property `nat_gateway_state` from `nat_gateway_state` to `Optional[Union[str, '_models.NatGatewayState']]`
+  - Model `ApiManagementServiceProperties` changed type of property `disable_gateway` from `disable_gateway` to `Optional[bool]`
+  - Model `ApiManagementServiceProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
+  - Model `ApiManagementServiceProperties` changed type of property `api_version_constraint` from `api_version_constraint` to `Optional['_models.ApiVersionConstraint']`
+  - Model `ApiManagementServiceProperties` changed type of property `restore` from `restore` to `Optional[bool]`
+  - Model `ApiManagementServiceProperties` changed type of property `private_endpoint_connections` from `private_endpoint_connections` to `Optional[list['_models.RemotePrivateEndpointConnectionWrapper']]`
+  - Model `ApiManagementServiceProperties` changed type of property `legacy_portal_status` from `legacy_portal_status` to `Optional[Union[str, '_models.LegacyPortalStatus']]`
+  - Model `ApiManagementServiceProperties` changed type of property `developer_portal_status` from `developer_portal_status` to `Optional[Union[str, '_models.DeveloperPortalStatus']]`
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `notification_sender_email`
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `provisioning_state`
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `target_provisioning_state`
@@ -789,6 +960,13 @@
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `developer_portal_status`
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `publisher_email`
   - Model `ApiManagementServiceResource` deleted or renamed its instance variable `publisher_name`
+  - Model `ApiManagementServiceResource` changed type of property `sku` from `sku` to `_models.ApiManagementServiceSkuProperties`
+  - Model `ApiManagementServiceResource` changed type of property `identity` from `identity` to `Optional['_models.ApiManagementServiceIdentity']`
+  - Model `ApiManagementServiceResource` changed type of property `location` from `location` to `str`
+  - Model `ApiManagementServiceResource` changed type of property `zones` from `zones` to `Optional[list[str]]`
+  - Model `ApiManagementServiceResource` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `ApiManagementServiceSkuProperties` changed type of property `name` from `name` to `Union[str, '_models.SkuType']`
+  - Model `ApiManagementServiceSkuProperties` changed type of property `capacity` from `capacity` to `int`
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `notification_sender_email`
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `provisioning_state`
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `target_provisioning_state`
@@ -822,13 +1000,58 @@
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `developer_portal_status`
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `publisher_email`
   - Model `ApiManagementServiceUpdateParameters` deleted or renamed its instance variable `publisher_name`
+  - Model `ApiManagementServiceUpdateParameters` changed type of property `sku` from `sku` to `Optional['_models.ApiManagementServiceSkuProperties']`
+  - Model `ApiManagementServiceUpdateParameters` changed type of property `identity` from `identity` to `Optional['_models.ApiManagementServiceIdentity']`
+  - Model `ApiManagementServiceUpdateParameters` changed type of property `zones` from `zones` to `Optional[list[str]]`
+  - Model `ApiManagementServiceUpdateParameters` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `publisher_email` from `publisher_email` to `Optional[str]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `publisher_name` from `publisher_name` to `Optional[str]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `notification_sender_email` from `notification_sender_email` to `Optional[str]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `hostname_configurations` from `hostname_configurations` to `Optional[list['_models.HostnameConfiguration']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `public_ip_address_id` from `public_ip_address_id` to `Optional[str]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `public_network_access` from `public_network_access` to `Optional[Union[str, '_models.PublicNetworkAccess']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `configuration_api` from `configuration_api` to `Optional['_models.ConfigurationApi']`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `virtual_network_configuration` from `virtual_network_configuration` to `Optional['_models.VirtualNetworkConfiguration']`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `additional_locations` from `additional_locations` to `Optional[list['_models.AdditionalLocation']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `custom_properties` from `custom_properties` to `Optional[dict[str, str]]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `certificates` from `certificates` to `Optional[list['_models.CertificateConfiguration']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `enable_client_certificate` from `enable_client_certificate` to `Optional[bool]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `nat_gateway_state` from `nat_gateway_state` to `Optional[Union[str, '_models.NatGatewayState']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `disable_gateway` from `disable_gateway` to `Optional[bool]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `virtual_network_type` from `virtual_network_type` to `Optional[Union[str, '_models.VirtualNetworkType']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `api_version_constraint` from `api_version_constraint` to `Optional['_models.ApiVersionConstraint']`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `restore` from `restore` to `Optional[bool]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `private_endpoint_connections` from `private_endpoint_connections` to `Optional[list['_models.RemotePrivateEndpointConnectionWrapper']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `legacy_portal_status` from `legacy_portal_status` to `Optional[Union[str, '_models.LegacyPortalStatus']]`
+  - Model `ApiManagementServiceUpdateProperties` changed type of property `developer_portal_status` from `developer_portal_status` to `Optional[Union[str, '_models.DeveloperPortalStatus']]`
   - Model `ApiManagementSkuRestrictions` deleted or renamed its instance variable `values`
+  - Model `ApiManagementWorkspaceLinksProperties` changed type of property `workspace_id` from `workspace_id` to `Optional[str]`
+  - Model `ApiManagementWorkspaceLinksProperties` changed type of property `gateways` from `gateways` to `Optional[list['_models.WorkspaceLinksGateway']]`
   - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `workspace_id`
   - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `gateways`
   - Model `ApiReleaseContract` deleted or renamed its instance variable `api_id`
   - Model `ApiReleaseContract` deleted or renamed its instance variable `created_date_time`
   - Model `ApiReleaseContract` deleted or renamed its instance variable `updated_date_time`
   - Model `ApiReleaseContract` deleted or renamed its instance variable `notes`
+  - Model `ApiTagResourceContractProperties` changed type of property `id` from `id` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `service_url` from `service_url` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `path` from `path` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `protocols` from `protocols` to `Optional[list[Union[str, '_models.Protocol']]]`
+  - Model `ApiTagResourceContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `authentication_settings` from `authentication_settings` to `Optional['_models.AuthenticationSettingsContract']`
+  - Model `ApiTagResourceContractProperties` changed type of property `subscription_key_parameter_names` from `subscription_key_parameter_names` to `Optional['_models.SubscriptionKeyParameterNamesContract']`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_type` from `api_type` to `Optional[Union[str, '_models.ApiType']]`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_revision` from `api_revision` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_version` from `api_version` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `is_current` from `is_current` to `Optional[bool]`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_revision_description` from `api_revision_description` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_version_description` from `api_version_description` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `api_version_set_id` from `api_version_set_id` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ApiTagResourceContractProperties` changed type of property `terms_of_service_url` from `terms_of_service_url` to `Optional[str]`
+  - Model `ApiTagResourceContractProperties` changed type of property `contact` from `contact` to `Optional['_models.ApiContactInformation']`
+  - Model `ApiTagResourceContractProperties` changed type of property `license` from `license` to `Optional['_models.ApiLicenseInformation']`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `description`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -848,28 +1071,62 @@
   - Model `ApiUpdateContract` deleted or renamed its instance variable `service_url`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `path`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `protocols`
+  - Model `ApiVersionConstraint` changed type of property `min_api_version` from `min_api_version` to `Optional[str]`
   - Model `ApiVersionSetContract` deleted or renamed its instance variable `description`
   - Model `ApiVersionSetContract` deleted or renamed its instance variable `version_query_name`
   - Model `ApiVersionSetContract` deleted or renamed its instance variable `version_header_name`
   - Model `ApiVersionSetContract` deleted or renamed its instance variable `display_name`
   - Model `ApiVersionSetContract` deleted or renamed its instance variable `versioning_scheme`
+  - Model `ApiVersionSetContractDetails` changed type of property `id` from `id` to `Optional[str]`
+  - Model `ApiVersionSetContractDetails` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ApiVersionSetContractDetails` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiVersionSetContractDetails` changed type of property `versioning_scheme` from `versioning_scheme` to `Optional[Union[str, '_models.VersioningScheme']]`
+  - Model `ApiVersionSetContractDetails` changed type of property `version_query_name` from `version_query_name` to `Optional[str]`
+  - Model `ApiVersionSetContractDetails` changed type of property `version_header_name` from `version_header_name` to `Optional[str]`
+  - Model `ApiVersionSetContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `ApiVersionSetContractProperties` changed type of property `versioning_scheme` from `versioning_scheme` to `Union[str, '_models.VersioningScheme']`
+  - Model `ApiVersionSetContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiVersionSetContractProperties` changed type of property `version_query_name` from `version_query_name` to `Optional[str]`
+  - Model `ApiVersionSetContractProperties` changed type of property `version_header_name` from `version_header_name` to `Optional[str]`
+  - Model `ApiVersionSetEntityBase` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiVersionSetEntityBase` changed type of property `version_query_name` from `version_query_name` to `Optional[str]`
+  - Model `ApiVersionSetEntityBase` changed type of property `version_header_name` from `version_header_name` to `Optional[str]`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `description`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_query_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_header_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `versioning_scheme`
+  - Model `ApiVersionSetUpdateParametersProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `ApiVersionSetUpdateParametersProperties` changed type of property `versioning_scheme` from `versioning_scheme` to `Optional[Union[str, '_models.VersioningScheme']]`
+  - Model `ApiVersionSetUpdateParametersProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ApiVersionSetUpdateParametersProperties` changed type of property `version_query_name` from `version_query_name` to `Optional[str]`
+  - Model `ApiVersionSetUpdateParametersProperties` changed type of property `version_header_name` from `version_header_name` to `Optional[str]`
+  - Model `ApimResource` changed type of property `tags` from `tags` to `Optional[dict[str, str]]`
   - Model `AssociationContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `AuthenticationSettingsContract` changed type of property `o_auth2` from `o_auth2` to `Optional['_models.OAuth2AuthenticationSettingsContract']`
+  - Model `AuthenticationSettingsContract` changed type of property `openid` from `openid` to `Optional['_models.OpenIdAuthenticationSettingsContract']`
+  - Model `AuthenticationSettingsContract` changed type of property `o_auth2_authentication_settings` from `o_auth2_authentication_settings` to `Optional[list['_models.OAuth2AuthenticationSettingsContract']]`
+  - Model `AuthenticationSettingsContract` changed type of property `openid_authentication_settings` from `openid_authentication_settings` to `Optional[list['_models.OpenIdAuthenticationSettingsContract']]`
   - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `app_ids`
   - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `tenant_id`
   - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `object_id`
+  - Model `AuthorizationConfirmConsentCodeRequestContract` changed type of property `consent_code` from `consent_code` to `Optional[str]`
   - Model `AuthorizationContract` deleted or renamed its instance variable `authorization_type`
   - Model `AuthorizationContract` deleted or renamed its instance variable `o_auth2_grant_type`
   - Model `AuthorizationContract` deleted or renamed its instance variable `parameters`
   - Model `AuthorizationContract` deleted or renamed its instance variable `error`
   - Model `AuthorizationContract` deleted or renamed its instance variable `status`
+  - Model `AuthorizationError` changed type of property `code` from `code` to `Optional[str]`
+  - Model `AuthorizationError` changed type of property `message` from `message` to `Optional[str]`
+  - Model `AuthorizationLoginRequestContract` changed type of property `post_login_redirect_url` from `post_login_redirect_url` to `Optional[str]`
+  - Model `AuthorizationLoginResponseContract` changed type of property `login_link` from `login_link` to `Optional[str]`
   - Model `AuthorizationProviderContract` deleted or renamed its instance variable `display_name`
   - Model `AuthorizationProviderContract` deleted or renamed its instance variable `identity_provider`
   - Model `AuthorizationProviderContract` deleted or renamed its instance variable `oauth2`
+  - Model `AuthorizationProviderOAuth2GrantTypes` changed type of property `authorization_code` from `authorization_code` to `Optional[dict[str, str]]`
+  - Model `AuthorizationProviderOAuth2GrantTypes` changed type of property `client_credentials` from `client_credentials` to `Optional[dict[str, str]]`
+  - Model `AuthorizationProviderOAuth2Settings` changed type of property `redirect_url` from `redirect_url` to `Optional[str]`
+  - Model `AuthorizationProviderOAuth2Settings` changed type of property `grant_types` from `grant_types` to `Optional['_models.AuthorizationProviderOAuth2GrantTypes']`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `description`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `authorization_methods`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_authentication_method`
@@ -888,6 +1145,37 @@
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `grant_types`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_id`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_secret`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `authorization_methods` from `authorization_methods` to `Optional[list[Union[str, '_models.AuthorizationMethod']]]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `client_authentication_method` from `client_authentication_method` to `Optional[list[Union[str, '_models.ClientAuthenticationMethod']]]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `token_body_parameters` from `token_body_parameters` to `Optional[list['_models.TokenBodyParameterContract']]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `token_endpoint` from `token_endpoint` to `Optional[str]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `support_state` from `support_state` to `Optional[bool]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `default_scope` from `default_scope` to `Optional[str]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `bearer_token_sending_methods` from `bearer_token_sending_methods` to `Optional[list[Union[str, '_models.BearerTokenSendingMethod']]]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `resource_owner_username` from `resource_owner_username` to `Optional[str]`
+  - Model `AuthorizationServerContractBaseProperties` changed type of property `resource_owner_password` from `resource_owner_password` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `AuthorizationServerContractProperties` changed type of property `use_in_test_console` from `use_in_test_console` to `Optional[bool]`
+  - Model `AuthorizationServerContractProperties` changed type of property `use_in_api_documentation` from `use_in_api_documentation` to `Optional[bool]`
+  - Model `AuthorizationServerContractProperties` changed type of property `client_registration_endpoint` from `client_registration_endpoint` to `str`
+  - Model `AuthorizationServerContractProperties` changed type of property `authorization_endpoint` from `authorization_endpoint` to `str`
+  - Model `AuthorizationServerContractProperties` changed type of property `grant_types` from `grant_types` to `list[Union[str, '_models.GrantType']]`
+  - Model `AuthorizationServerContractProperties` changed type of property `client_id` from `client_id` to `str`
+  - Model `AuthorizationServerContractProperties` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `authorization_methods` from `authorization_methods` to `Optional[list[Union[str, '_models.AuthorizationMethod']]]`
+  - Model `AuthorizationServerContractProperties` changed type of property `client_authentication_method` from `client_authentication_method` to `Optional[list[Union[str, '_models.ClientAuthenticationMethod']]]`
+  - Model `AuthorizationServerContractProperties` changed type of property `token_body_parameters` from `token_body_parameters` to `Optional[list['_models.TokenBodyParameterContract']]`
+  - Model `AuthorizationServerContractProperties` changed type of property `token_endpoint` from `token_endpoint` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `support_state` from `support_state` to `Optional[bool]`
+  - Model `AuthorizationServerContractProperties` changed type of property `default_scope` from `default_scope` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `bearer_token_sending_methods` from `bearer_token_sending_methods` to `Optional[list[Union[str, '_models.BearerTokenSendingMethod']]]`
+  - Model `AuthorizationServerContractProperties` changed type of property `resource_owner_username` from `resource_owner_username` to `Optional[str]`
+  - Model `AuthorizationServerContractProperties` changed type of property `resource_owner_password` from `resource_owner_password` to `Optional[str]`
+  - Model `AuthorizationServerSecretsContract` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `AuthorizationServerSecretsContract` changed type of property `resource_owner_username` from `resource_owner_username` to `Optional[str]`
+  - Model `AuthorizationServerSecretsContract` changed type of property `resource_owner_password` from `resource_owner_password` to `Optional[str]`
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `description`
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `authorization_methods`
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_authentication_method`
@@ -906,6 +1194,39 @@
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `grant_types`
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_id`
   - Model `AuthorizationServerUpdateContract` deleted or renamed its instance variable `client_secret`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `use_in_test_console` from `use_in_test_console` to `Optional[bool]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `use_in_api_documentation` from `use_in_api_documentation` to `Optional[bool]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `client_registration_endpoint` from `client_registration_endpoint` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `authorization_endpoint` from `authorization_endpoint` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `grant_types` from `grant_types` to `Optional[list[Union[str, '_models.GrantType']]]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `client_id` from `client_id` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `authorization_methods` from `authorization_methods` to `Optional[list[Union[str, '_models.AuthorizationMethod']]]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `client_authentication_method` from `client_authentication_method` to `Optional[list[Union[str, '_models.ClientAuthenticationMethod']]]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `token_body_parameters` from `token_body_parameters` to `Optional[list['_models.TokenBodyParameterContract']]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `token_endpoint` from `token_endpoint` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `support_state` from `support_state` to `Optional[bool]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `default_scope` from `default_scope` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `bearer_token_sending_methods` from `bearer_token_sending_methods` to `Optional[list[Union[str, '_models.BearerTokenSendingMethod']]]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `resource_owner_username` from `resource_owner_username` to `Optional[str]`
+  - Model `AuthorizationServerUpdateContractProperties` changed type of property `resource_owner_password` from `resource_owner_password` to `Optional[str]`
+  - Model `BackendAuthorizationHeaderCredentials` changed type of property `scheme` from `scheme` to `str`
+  - Model `BackendAuthorizationHeaderCredentials` changed type of property `parameter` from `parameter` to `str`
+  - Model `BackendBaseParameters` changed type of property `title` from `title` to `Optional[str]`
+  - Model `BackendBaseParameters` changed type of property `description` from `description` to `Optional[str]`
+  - Model `BackendBaseParameters` changed type of property `resource_id` from `resource_id` to `Optional[str]`
+  - Model `BackendBaseParameters` changed type of property `properties` from `properties` to `Optional['_models.BackendProperties']`
+  - Model `BackendBaseParameters` changed type of property `credentials` from `credentials` to `Optional['_models.BackendCredentialsContract']`
+  - Model `BackendBaseParameters` changed type of property `proxy` from `proxy` to `Optional['_models.BackendProxyContract']`
+  - Model `BackendBaseParameters` changed type of property `tls` from `tls` to `Optional['_models.BackendTlsProperties']`
+  - Model `BackendBaseParameters` changed type of property `circuit_breaker` from `circuit_breaker` to `Optional['_models.BackendCircuitBreaker']`
+  - Model `BackendBaseParameters` changed type of property `pool` from `pool` to `Optional['_models.BackendBaseParametersPool']`
+  - Model `BackendBaseParameters` changed type of property `type` from `type` to `Optional[Union[str, '_models.BackendType']]`
+  - Model `BackendBaseParametersPool` changed type of property `services` from `services` to `Optional[list['_models.BackendPoolItem']]`
+  - Model `BackendCircuitBreaker` changed type of property `rules` from `rules` to `Optional[list['_models.CircuitBreakerRule']]`
+  - Model `BackendConfiguration` changed type of property `subnet` from `subnet` to `Optional['_models.BackendSubnetConfiguration']`
   - Model `BackendContract` deleted or renamed its instance variable `title`
   - Model `BackendContract` deleted or renamed its instance variable `description`
   - Model `BackendContract` deleted or renamed its instance variable `resource_id`
@@ -917,7 +1238,54 @@
   - Model `BackendContract` deleted or renamed its instance variable `type_properties_type`
   - Model `BackendContract` deleted or renamed its instance variable `url`
   - Model `BackendContract` deleted or renamed its instance variable `protocol`
+  - Model `BackendContract` changed type of property `properties` from `properties` to `Optional['_models.BackendContractProperties']`
+  - Model `BackendContractProperties` changed type of property `url` from `url` to `Optional[str]`
+  - Model `BackendContractProperties` changed type of property `protocol` from `protocol` to `Optional[Union[str, '_models.BackendProtocol']]`
+  - Model `BackendContractProperties` changed type of property `title` from `title` to `Optional[str]`
+  - Model `BackendContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `BackendContractProperties` changed type of property `resource_id` from `resource_id` to `Optional[str]`
+  - Model `BackendContractProperties` changed type of property `properties` from `properties` to `Optional['_models.BackendProperties']`
+  - Model `BackendContractProperties` changed type of property `credentials` from `credentials` to `Optional['_models.BackendCredentialsContract']`
+  - Model `BackendContractProperties` changed type of property `proxy` from `proxy` to `Optional['_models.BackendProxyContract']`
+  - Model `BackendContractProperties` changed type of property `tls` from `tls` to `Optional['_models.BackendTlsProperties']`
+  - Model `BackendContractProperties` changed type of property `circuit_breaker` from `circuit_breaker` to `Optional['_models.BackendCircuitBreaker']`
+  - Model `BackendContractProperties` changed type of property `pool` from `pool` to `Optional['_models.BackendBaseParametersPool']`
+  - Model `BackendContractProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.BackendType']]`
+  - Model `BackendCredentialsContract` changed type of property `certificate_ids` from `certificate_ids` to `Optional[list[str]]`
+  - Model `BackendCredentialsContract` changed type of property `certificate` from `certificate` to `Optional[list[str]]`
+  - Model `BackendCredentialsContract` changed type of property `query` from `query` to `Optional[dict[str, list[str]]]`
+  - Model `BackendCredentialsContract` changed type of property `header` from `header` to `Optional[dict[str, list[str]]]`
+  - Model `BackendCredentialsContract` changed type of property `authorization` from `authorization` to `Optional['_models.BackendAuthorizationHeaderCredentials']`
+  - Model `BackendPool` changed type of property `services` from `services` to `Optional[list['_models.BackendPoolItem']]`
+  - Model `BackendPoolItem` changed type of property `id` from `id` to `str`
+  - Model `BackendPoolItem` changed type of property `weight` from `weight` to `Optional[int]`
+  - Model `BackendPoolItem` changed type of property `priority` from `priority` to `Optional[int]`
+  - Model `BackendProperties` changed type of property `service_fabric_cluster` from `service_fabric_cluster` to `Optional['_models.BackendServiceFabricClusterProperties']`
+  - Model `BackendProxyContract` changed type of property `url` from `url` to `str`
+  - Model `BackendProxyContract` changed type of property `username` from `username` to `Optional[str]`
+  - Model `BackendProxyContract` changed type of property `password` from `password` to `Optional[str]`
   - Model `BackendReconnectContract` deleted or renamed its instance variable `after`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `client_certificate_id` from `client_certificate_id` to `Optional[str]`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `client_certificatethumbprint` from `client_certificatethumbprint` to `Optional[str]`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `max_partition_resolution_retries` from `max_partition_resolution_retries` to `Optional[int]`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `management_endpoints` from `management_endpoints` to `list[str]`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `server_certificate_thumbprints` from `server_certificate_thumbprints` to `Optional[list[str]]`
+  - Model `BackendServiceFabricClusterProperties` changed type of property `server_x509_names` from `server_x509_names` to `Optional[list['_models.X509CertificateName']]`
+  - Model `BackendSubnetConfiguration` changed type of property `id` from `id` to `Optional[str]`
+  - Model `BackendTlsProperties` changed type of property `validate_certificate_chain` from `validate_certificate_chain` to `Optional[bool]`
+  - Model `BackendTlsProperties` changed type of property `validate_certificate_name` from `validate_certificate_name` to `Optional[bool]`
+  - Model `BackendUpdateParameterProperties` changed type of property `url` from `url` to `Optional[str]`
+  - Model `BackendUpdateParameterProperties` changed type of property `protocol` from `protocol` to `Optional[Union[str, '_models.BackendProtocol']]`
+  - Model `BackendUpdateParameterProperties` changed type of property `title` from `title` to `Optional[str]`
+  - Model `BackendUpdateParameterProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `BackendUpdateParameterProperties` changed type of property `resource_id` from `resource_id` to `Optional[str]`
+  - Model `BackendUpdateParameterProperties` changed type of property `properties` from `properties` to `Optional['_models.BackendProperties']`
+  - Model `BackendUpdateParameterProperties` changed type of property `credentials` from `credentials` to `Optional['_models.BackendCredentialsContract']`
+  - Model `BackendUpdateParameterProperties` changed type of property `proxy` from `proxy` to `Optional['_models.BackendProxyContract']`
+  - Model `BackendUpdateParameterProperties` changed type of property `tls` from `tls` to `Optional['_models.BackendTlsProperties']`
+  - Model `BackendUpdateParameterProperties` changed type of property `circuit_breaker` from `circuit_breaker` to `Optional['_models.BackendCircuitBreaker']`
+  - Model `BackendUpdateParameterProperties` changed type of property `pool` from `pool` to `Optional['_models.BackendBaseParametersPool']`
+  - Model `BackendUpdateParameterProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.BackendType']]`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `title`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `description`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `resource_id`
@@ -929,6 +1297,8 @@
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `type`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `url`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `protocol`
+  - Model `BackendUpdateParameters` changed type of property `properties` from `properties` to `Optional['_models.BackendUpdateParameterProperties']`
+  - Model `BodyDiagnosticSettings` changed type of property `bytes` from `bytes` to `Optional[int]`
   - Model `CacheContract` deleted or renamed its instance variable `description`
   - Model `CacheContract` deleted or renamed its instance variable `connection_string`
   - Model `CacheContract` deleted or renamed its instance variable `use_from_location`
@@ -937,6 +1307,10 @@
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `connection_string`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `use_from_location`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `resource_id`
+  - Model `CertificateConfiguration` changed type of property `encoded_certificate` from `encoded_certificate` to `Optional[str]`
+  - Model `CertificateConfiguration` changed type of property `certificate_password` from `certificate_password` to `Optional[str]`
+  - Model `CertificateConfiguration` changed type of property `store_name` from `store_name` to `Union[str, '_models.CertificateConfigurationStoreName']`
+  - Model `CertificateConfiguration` changed type of property `certificate` from `certificate` to `Optional['_models.CertificateInformation']`
   - Model `CertificateContract` deleted or renamed its instance variable `subject`
   - Model `CertificateContract` deleted or renamed its instance variable `thumbprint`
   - Model `CertificateContract` deleted or renamed its instance variable `expiration_date`
@@ -944,11 +1318,50 @@
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `data`
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `password`
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `key_vault`
+  - Model `CertificateInformation` changed type of property `expiry` from `expiry` to `datetime.datetime`
+  - Model `CertificateInformation` changed type of property `thumbprint` from `thumbprint` to `str`
+  - Model `CertificateInformation` changed type of property `subject` from `subject` to `str`
+  - Model `CircuitBreakerFailureCondition` changed type of property `count` from `count` to `Optional[int]`
+  - Model `CircuitBreakerFailureCondition` changed type of property `percentage` from `percentage` to `Optional[int]`
+  - Model `CircuitBreakerFailureCondition` changed type of property `interval` from `interval` to `Optional[datetime.timedelta]`
+  - Model `CircuitBreakerFailureCondition` changed type of property `status_code_ranges` from `status_code_ranges` to `Optional[list['_models.FailureStatusCodeRange']]`
+  - Model `CircuitBreakerFailureCondition` changed type of property `error_reasons` from `error_reasons` to `Optional[list[str]]`
+  - Model `CircuitBreakerRule` changed type of property `name` from `name` to `Optional[str]`
+  - Model `CircuitBreakerRule` changed type of property `failure_condition` from `failure_condition` to `Optional['_models.CircuitBreakerFailureCondition']`
+  - Model `CircuitBreakerRule` changed type of property `trip_duration` from `trip_duration` to `Optional[datetime.timedelta]`
+  - Model `CircuitBreakerRule` changed type of property `accept_retry_after` from `accept_retry_after` to `Optional[bool]`
+  - Model `ClientSecretContract` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `ConfigurationApi` changed type of property `legacy_api` from `legacy_api` to `Optional[Union[str, '_models.LegacyApiState']]`
+  - Model `ConnectivityCheckRequest` changed type of property `source` from `source` to `_models.ConnectivityCheckRequestSource`
+  - Model `ConnectivityCheckRequest` changed type of property `destination` from `destination` to `_models.ConnectivityCheckRequestDestination`
+  - Model `ConnectivityCheckRequest` changed type of property `preferred_ip_version` from `preferred_ip_version` to `Optional[Union[str, '_models.PreferredIPVersion']]`
+  - Model `ConnectivityCheckRequest` changed type of property `protocol` from `protocol` to `Optional[Union[str, '_models.ConnectivityCheckProtocol']]`
+  - Model `ConnectivityCheckRequest` changed type of property `protocol_configuration` from `protocol_configuration` to `Optional['_models.ConnectivityCheckRequestProtocolConfiguration']`
+  - Model `ConnectivityCheckRequestDestination` changed type of property `address` from `address` to `str`
+  - Model `ConnectivityCheckRequestDestination` changed type of property `port` from `port` to `int`
+  - Model `ConnectivityCheckRequestProtocolConfiguration` changed type of property `http_configuration` from `http_configuration` to `Optional['_models.ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration']`
+  - Model `ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration` changed type of property `method` from `method` to `Optional[Union[str, '_models.Method']]`
+  - Model `ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration` changed type of property `valid_status_codes` from `valid_status_codes` to `Optional[list[int]]`
+  - Model `ConnectivityCheckRequestProtocolConfigurationHTTPConfiguration` changed type of property `headers` from `headers` to `Optional[list['_models.HTTPHeader']]`
+  - Model `ConnectivityCheckRequestSource` changed type of property `region` from `region` to `str`
+  - Model `ConnectivityCheckRequestSource` changed type of property `instance` from `instance` to `Optional[int]`
+  - Model `ConnectivityStatusContract` changed type of property `name` from `name` to `str`
+  - Model `ConnectivityStatusContract` changed type of property `status` from `status` to `Union[str, '_models.ConnectivityStatusType']`
+  - Model `ConnectivityStatusContract` changed type of property `error` from `error` to `Optional[str]`
+  - Model `ConnectivityStatusContract` changed type of property `last_updated` from `last_updated` to `datetime.datetime`
+  - Model `ConnectivityStatusContract` changed type of property `last_status_change` from `last_status_change` to `datetime.datetime`
+  - Model `ConnectivityStatusContract` changed type of property `resource_type` from `resource_type` to `str`
+  - Model `ConnectivityStatusContract` changed type of property `is_optional` from `is_optional` to `bool`
+  - Model `ContentItemContract` changed type of property `properties` from `properties` to `Optional[dict[str, Any]]`
   - Model `ContentTypeContract` deleted or renamed its instance variable `id_properties_id`
   - Model `ContentTypeContract` deleted or renamed its instance variable `name_properties_name`
   - Model `ContentTypeContract` deleted or renamed its instance variable `description`
   - Model `ContentTypeContract` deleted or renamed its instance variable `schema`
   - Model `ContentTypeContract` deleted or renamed its instance variable `version`
+  - Model `DataMasking` changed type of property `query_params` from `query_params` to `Optional[list['_models.DataMaskingEntity']]`
+  - Model `DataMasking` changed type of property `headers` from `headers` to `Optional[list['_models.DataMaskingEntity']]`
+  - Model `DataMaskingEntity` changed type of property `value` from `value` to `Optional[str]`
+  - Model `DataMaskingEntity` changed type of property `mode` from `mode` to `Optional[Union[str, '_models.DataMaskingMode']]`
   - Model `DeletedServiceContract` deleted or renamed its instance variable `service_id`
   - Model `DeletedServiceContract` deleted or renamed its instance variable `scheduled_purge_date`
   - Model `DeletedServiceContract` deleted or renamed its instance variable `deletion_date`
@@ -984,20 +1397,49 @@
   - Model `EmailTemplateContract` deleted or renamed its instance variable `description`
   - Model `EmailTemplateContract` deleted or renamed its instance variable `is_default`
   - Model `EmailTemplateContract` deleted or renamed its instance variable `parameters`
+  - Model `EmailTemplateParametersContractProperties` changed type of property `name` from `name` to `Optional[str]`
+  - Model `EmailTemplateParametersContractProperties` changed type of property `title` from `title` to `Optional[str]`
+  - Model `EmailTemplateParametersContractProperties` changed type of property `description` from `description` to `Optional[str]`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `subject`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `title`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `description`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `body`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `parameters`
+  - Model `EndpointDependency` changed type of property `domain_name` from `domain_name` to `Optional[str]`
+  - Model `EndpointDependency` changed type of property `endpoint_details` from `endpoint_details` to `Optional[list['_models.EndpointDetail']]`
+  - Model `EndpointDetail` changed type of property `port` from `port` to `Optional[int]`
+  - Model `EndpointDetail` changed type of property `region` from `region` to `Optional[str]`
+  - Model `ErrorFieldContract` changed type of property `code` from `code` to `Optional[str]`
+  - Model `ErrorFieldContract` changed type of property `message` from `message` to `Optional[str]`
+  - Model `ErrorFieldContract` changed type of property `target` from `target` to `Optional[str]`
+  - Model `ErrorResponse` changed type of property `error` from `error` to `Optional['_models.ErrorDetail']`
+  - Model `ErrorResponseBody` changed type of property `code` from `code` to `Optional[str]`
+  - Model `ErrorResponseBody` changed type of property `message` from `message` to `Optional[str]`
+  - Model `ErrorResponseBody` changed type of property `details` from `details` to `Optional[list['_models.ErrorFieldContract']]`
+  - Model `FailureStatusCodeRange` changed type of property `min` from `min` to `Optional[int]`
+  - Model `FailureStatusCodeRange` changed type of property `max` from `max` to `Optional[int]`
   - Model `GatewayCertificateAuthorityContract` deleted or renamed its instance variable `is_trusted`
   - Model `GatewayContract` deleted or renamed its instance variable `location_data`
   - Model `GatewayContract` deleted or renamed its instance variable `description`
+  - Model `GatewayDebugCredentialsContract` changed type of property `token` from `token` to `Optional[str]`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `hostname`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `certificate_id`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `negotiate_client_certificate`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `tls10_enabled`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `tls11_enabled`
   - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `http2_enabled`
+  - Model `GatewayKeyRegenerationRequestContract` changed type of property `key_type` from `key_type` to `Union[str, '_models.KeyType']`
+  - Model `GatewayKeysContract` changed type of property `primary` from `primary` to `Optional[str]`
+  - Model `GatewayKeysContract` changed type of property `secondary` from `secondary` to `Optional[str]`
+  - Model `GatewayListDebugCredentialsContract` changed type of property `credentials_expire_after` from `credentials_expire_after` to `Optional[datetime.timedelta]`
+  - Model `GatewayListDebugCredentialsContract` changed type of property `purposes` from `purposes` to `list[Union[str, '_models.GatewayListDebugCredentialsContractPurpose']]`
+  - Model `GatewayListDebugCredentialsContract` changed type of property `api_id` from `api_id` to `str`
+  - Model `GatewayListTraceContract` changed type of property `trace_id` from `trace_id` to `Optional[str]`
+  - Model `GatewaySku` changed type of property `name` from `name` to `Optional[Union[str, '_models.ApiGatewaySkuType']]`
+  - Model `GatewayTokenContract` changed type of property `value` from `value` to `Optional[str]`
+  - Model `GatewayTokenRequestContract` changed type of property `key_type` from `key_type` to `Union[str, '_models.KeyType']`
+  - Model `GatewayTokenRequestContract` changed type of property `expiry` from `expiry` to `datetime.datetime`
+  - Model `GenerateSsoUrlResult` changed type of property `value` from `value` to `Optional[str]`
   - Model `GlobalSchemaContract` deleted or renamed its instance variable `schema_type`
   - Model `GlobalSchemaContract` deleted or renamed its instance variable `description`
   - Model `GlobalSchemaContract` deleted or renamed its instance variable `value`
@@ -1008,6 +1450,10 @@
   - Model `GroupContract` deleted or renamed its instance variable `built_in`
   - Model `GroupContract` deleted or renamed its instance variable `type_properties_type`
   - Model `GroupContract` deleted or renamed its instance variable `external_id`
+  - Model `GroupContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `GroupContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `GroupContractProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.GroupType']]`
+  - Model `GroupContractProperties` changed type of property `external_id` from `external_id` to `Optional[str]`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `display_name`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `description`
   - Model `GroupCreateParameters` deleted or renamed its instance variable `type`
@@ -1016,6 +1462,31 @@
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `description`
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `type`
   - Model `GroupUpdateParameters` deleted or renamed its instance variable `external_id`
+  - Model `HTTPHeader` changed type of property `name` from `name` to `str`
+  - Model `HTTPHeader` changed type of property `value` from `value` to `str`
+  - Model `HostnameConfiguration` changed type of property `type` from `type` to `Union[str, '_models.HostnameType']`
+  - Model `HostnameConfiguration` changed type of property `host_name` from `host_name` to `str`
+  - Model `HostnameConfiguration` changed type of property `key_vault_id` from `key_vault_id` to `Optional[str]`
+  - Model `HostnameConfiguration` changed type of property `identity_client_id` from `identity_client_id` to `Optional[str]`
+  - Model `HostnameConfiguration` changed type of property `encoded_certificate` from `encoded_certificate` to `Optional[str]`
+  - Model `HostnameConfiguration` changed type of property `certificate_password` from `certificate_password` to `Optional[str]`
+  - Model `HostnameConfiguration` changed type of property `default_ssl_binding` from `default_ssl_binding` to `Optional[bool]`
+  - Model `HostnameConfiguration` changed type of property `negotiate_client_certificate` from `negotiate_client_certificate` to `Optional[bool]`
+  - Model `HostnameConfiguration` changed type of property `certificate` from `certificate` to `Optional['_models.CertificateInformation']`
+  - Model `HostnameConfiguration` changed type of property `certificate_source` from `certificate_source` to `Optional[Union[str, '_models.CertificateSource']]`
+  - Model `HostnameConfiguration` changed type of property `certificate_status` from `certificate_status` to `Optional[Union[str, '_models.CertificateStatus']]`
+  - Model `HttpMessageDiagnostic` changed type of property `headers` from `headers` to `Optional[list[str]]`
+  - Model `HttpMessageDiagnostic` changed type of property `body` from `body` to `Optional['_models.BodyDiagnosticSettings']`
+  - Model `HttpMessageDiagnostic` changed type of property `data_masking` from `data_masking` to `Optional['_models.DataMasking']`
+  - Model `IdentityProviderBaseParameters` changed type of property `type` from `type` to `Optional[Union[str, '_models.IdentityProviderType']]`
+  - Model `IdentityProviderBaseParameters` changed type of property `signin_tenant` from `signin_tenant` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `allowed_tenants` from `allowed_tenants` to `Optional[list[str]]`
+  - Model `IdentityProviderBaseParameters` changed type of property `authority` from `authority` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `signup_policy_name` from `signup_policy_name` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `signin_policy_name` from `signin_policy_name` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `profile_editing_policy_name` from `profile_editing_policy_name` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `password_reset_policy_name` from `password_reset_policy_name` to `Optional[str]`
+  - Model `IdentityProviderBaseParameters` changed type of property `client_library` from `client_library` to `Optional[str]`
   - Model `IdentityProviderContract` deleted or renamed its instance variable `type_properties_type`
   - Model `IdentityProviderContract` deleted or renamed its instance variable `signin_tenant`
   - Model `IdentityProviderContract` deleted or renamed its instance variable `allowed_tenants`
@@ -1027,6 +1498,17 @@
   - Model `IdentityProviderContract` deleted or renamed its instance variable `client_library`
   - Model `IdentityProviderContract` deleted or renamed its instance variable `client_id`
   - Model `IdentityProviderContract` deleted or renamed its instance variable `client_secret`
+  - Model `IdentityProviderContractProperties` changed type of property `client_id` from `client_id` to `str`
+  - Model `IdentityProviderContractProperties` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.IdentityProviderType']]`
+  - Model `IdentityProviderContractProperties` changed type of property `signin_tenant` from `signin_tenant` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `allowed_tenants` from `allowed_tenants` to `Optional[list[str]]`
+  - Model `IdentityProviderContractProperties` changed type of property `authority` from `authority` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `signup_policy_name` from `signup_policy_name` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `signin_policy_name` from `signin_policy_name` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `profile_editing_policy_name` from `profile_editing_policy_name` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `password_reset_policy_name` from `password_reset_policy_name` to `Optional[str]`
+  - Model `IdentityProviderContractProperties` changed type of property `client_library` from `client_library` to `Optional[str]`
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `type_properties_type`
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `signin_tenant`
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `allowed_tenants`
@@ -1038,6 +1520,17 @@
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_library`
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_id`
   - Model `IdentityProviderCreateContract` deleted or renamed its instance variable `client_secret`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `client_id` from `client_id` to `str`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `client_secret` from `client_secret` to `str`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.IdentityProviderType']]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `signin_tenant` from `signin_tenant` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `allowed_tenants` from `allowed_tenants` to `Optional[list[str]]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `authority` from `authority` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `signup_policy_name` from `signup_policy_name` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `signin_policy_name` from `signin_policy_name` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `profile_editing_policy_name` from `profile_editing_policy_name` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `password_reset_policy_name` from `password_reset_policy_name` to `Optional[str]`
+  - Model `IdentityProviderCreateContractProperties` changed type of property `client_library` from `client_library` to `Optional[str]`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `type`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `signin_tenant`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `allowed_tenants`
@@ -1049,6 +1542,17 @@
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_library`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_id`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_secret`
+  - Model `IdentityProviderUpdateProperties` changed type of property `client_id` from `client_id` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `client_secret` from `client_secret` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `type` from `type` to `Optional[Union[str, '_models.IdentityProviderType']]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `signin_tenant` from `signin_tenant` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `allowed_tenants` from `allowed_tenants` to `Optional[list[str]]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `authority` from `authority` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `signup_policy_name` from `signup_policy_name` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `signin_policy_name` from `signin_policy_name` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `profile_editing_policy_name` from `profile_editing_policy_name` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `password_reset_policy_name` from `password_reset_policy_name` to `Optional[str]`
+  - Model `IdentityProviderUpdateProperties` changed type of property `client_library` from `client_library` to `Optional[str]`
   - Model `IssueAttachmentContract` deleted or renamed its instance variable `title`
   - Model `IssueAttachmentContract` deleted or renamed its instance variable `content_format`
   - Model `IssueAttachmentContract` deleted or renamed its instance variable `content`
@@ -1061,12 +1565,35 @@
   - Model `IssueContract` deleted or renamed its instance variable `title`
   - Model `IssueContract` deleted or renamed its instance variable `description`
   - Model `IssueContract` deleted or renamed its instance variable `user_id`
+  - Model `IssueContractBaseProperties` changed type of property `created_date` from `created_date` to `Optional[datetime.datetime]`
+  - Model `IssueContractBaseProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.State']]`
+  - Model `IssueContractBaseProperties` changed type of property `api_id` from `api_id` to `Optional[str]`
+  - Model `IssueContractProperties` changed type of property `title` from `title` to `str`
+  - Model `IssueContractProperties` changed type of property `description` from `description` to `str`
+  - Model `IssueContractProperties` changed type of property `user_id` from `user_id` to `str`
+  - Model `IssueContractProperties` changed type of property `created_date` from `created_date` to `Optional[datetime.datetime]`
+  - Model `IssueContractProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.State']]`
+  - Model `IssueContractProperties` changed type of property `api_id` from `api_id` to `Optional[str]`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `created_date`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `state`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `api_id`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `title`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `description`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `user_id`
+  - Model `IssueUpdateContractProperties` changed type of property `title` from `title` to `Optional[str]`
+  - Model `IssueUpdateContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `IssueUpdateContractProperties` changed type of property `user_id` from `user_id` to `Optional[str]`
+  - Model `IssueUpdateContractProperties` changed type of property `created_date` from `created_date` to `Optional[datetime.datetime]`
+  - Model `IssueUpdateContractProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.State']]`
+  - Model `IssueUpdateContractProperties` changed type of property `api_id` from `api_id` to `Optional[str]`
+  - Model `KeyVaultContractCreateProperties` changed type of property `secret_identifier` from `secret_identifier` to `Optional[str]`
+  - Model `KeyVaultContractCreateProperties` changed type of property `identity_client_id` from `identity_client_id` to `Optional[str]`
+  - Model `KeyVaultContractProperties` changed type of property `last_status` from `last_status` to `Optional['_models.KeyVaultLastAccessStatusContractProperties']`
+  - Model `KeyVaultContractProperties` changed type of property `secret_identifier` from `secret_identifier` to `Optional[str]`
+  - Model `KeyVaultContractProperties` changed type of property `identity_client_id` from `identity_client_id` to `Optional[str]`
+  - Model `KeyVaultLastAccessStatusContractProperties` changed type of property `code` from `code` to `Optional[str]`
+  - Model `KeyVaultLastAccessStatusContractProperties` changed type of property `message` from `message` to `Optional[str]`
+  - Model `KeyVaultLastAccessStatusContractProperties` changed type of property `time_stamp_utc` from `time_stamp_utc` to `Optional[datetime.datetime]`
   - Model `LoggerContract` deleted or renamed its instance variable `logger_type`
   - Model `LoggerContract` deleted or renamed its instance variable `description`
   - Model `LoggerContract` deleted or renamed its instance variable `credentials`
@@ -1076,25 +1603,52 @@
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `description`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `credentials`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `is_buffered`
+  - Model `MigrateToStv2Contract` changed type of property `mode` from `mode` to `Optional[Union[str, '_models.MigrateToStv2Mode']]`
   - Model `NamedValueContract` deleted or renamed its instance variable `tags`
   - Model `NamedValueContract` deleted or renamed its instance variable `secret`
   - Model `NamedValueContract` deleted or renamed its instance variable `display_name`
   - Model `NamedValueContract` deleted or renamed its instance variable `value`
   - Model `NamedValueContract` deleted or renamed its instance variable `key_vault`
   - Model `NamedValueContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `NamedValueContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `NamedValueContractProperties` changed type of property `value` from `value` to `Optional[str]`
+  - Model `NamedValueContractProperties` changed type of property `key_vault` from `key_vault` to `Optional['_models.KeyVaultContractProperties']`
+  - Model `NamedValueContractProperties` changed type of property `tags` from `tags` to `Optional[list[str]]`
+  - Model `NamedValueContractProperties` changed type of property `secret` from `secret` to `Optional[bool]`
   - Model `NamedValueCreateContract` deleted or renamed its instance variable `tags`
   - Model `NamedValueCreateContract` deleted or renamed its instance variable `secret`
   - Model `NamedValueCreateContract` deleted or renamed its instance variable `display_name`
   - Model `NamedValueCreateContract` deleted or renamed its instance variable `value`
   - Model `NamedValueCreateContract` deleted or renamed its instance variable `key_vault`
+  - Model `NamedValueCreateContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `NamedValueCreateContractProperties` changed type of property `value` from `value` to `Optional[str]`
+  - Model `NamedValueCreateContractProperties` changed type of property `key_vault` from `key_vault` to `Optional['_models.KeyVaultContractCreateProperties']`
+  - Model `NamedValueCreateContractProperties` changed type of property `tags` from `tags` to `Optional[list[str]]`
+  - Model `NamedValueCreateContractProperties` changed type of property `secret` from `secret` to `Optional[bool]`
+  - Model `NamedValueEntityBaseParameters` changed type of property `tags` from `tags` to `Optional[list[str]]`
+  - Model `NamedValueEntityBaseParameters` changed type of property `secret` from `secret` to `Optional[bool]`
+  - Model `NamedValueSecretContract` changed type of property `value` from `value` to `Optional[str]`
+  - Model `NamedValueUpdateParameterProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `NamedValueUpdateParameterProperties` changed type of property `value` from `value` to `Optional[str]`
+  - Model `NamedValueUpdateParameterProperties` changed type of property `key_vault` from `key_vault` to `Optional['_models.KeyVaultContractCreateProperties']`
+  - Model `NamedValueUpdateParameterProperties` changed type of property `tags` from `tags` to `Optional[list[str]]`
+  - Model `NamedValueUpdateParameterProperties` changed type of property `secret` from `secret` to `Optional[bool]`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `tags`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `secret`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `value`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `key_vault`
+  - Model `NetworkStatusContract` changed type of property `dns_servers` from `dns_servers` to `list[str]`
+  - Model `NetworkStatusContract` changed type of property `connectivity_status` from `connectivity_status` to `list['_models.ConnectivityStatusContract']`
+  - Model `NetworkStatusContractByLocation` changed type of property `location` from `location` to `Optional[str]`
+  - Model `NetworkStatusContractByLocation` changed type of property `network_status` from `network_status` to `Optional['_models.NetworkStatusContract']`
   - Model `NotificationContract` deleted or renamed its instance variable `title`
   - Model `NotificationContract` deleted or renamed its instance variable `description`
   - Model `NotificationContract` deleted or renamed its instance variable `recipients`
+  - Model `OAuth2AuthenticationSettingsContract` changed type of property `authorization_server_id` from `authorization_server_id` to `Optional[str]`
+  - Model `OAuth2AuthenticationSettingsContract` changed type of property `scope` from `scope` to `Optional[str]`
+  - Model `OpenIdAuthenticationSettingsContract` changed type of property `openid_provider_id` from `openid_provider_id` to `Optional[str]`
+  - Model `OpenIdAuthenticationSettingsContract` changed type of property `bearer_token_sending_methods` from `bearer_token_sending_methods` to `Optional[list[Union[str, '_models.BearerTokenSendingMethods']]]`
   - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `display_name`
   - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `description`
   - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `metadata_endpoint`
@@ -1109,6 +1663,10 @@
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `client_secret`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_test_console`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `use_in_api_documentation`
+  - Model `Operation` changed type of property `name` from `name` to `Optional[str]`
+  - Model `Operation` changed type of property `display` from `display` to `Optional['_models.OperationDisplay']`
+  - Model `Operation` changed type of property `origin` from `origin` to `Optional[str]`
+  - Model `Operation` changed type of property `properties` from `properties` to `Optional[Any]`
   - Model `OperationContract` deleted or renamed its instance variable `template_parameters`
   - Model `OperationContract` deleted or renamed its instance variable `description`
   - Model `OperationContract` deleted or renamed its instance variable `request`
@@ -1117,6 +1675,23 @@
   - Model `OperationContract` deleted or renamed its instance variable `display_name`
   - Model `OperationContract` deleted or renamed its instance variable `method`
   - Model `OperationContract` deleted or renamed its instance variable `url_template`
+  - Model `OperationContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `OperationContractProperties` changed type of property `method` from `method` to `str`
+  - Model `OperationContractProperties` changed type of property `url_template` from `url_template` to `str`
+  - Model `OperationContractProperties` changed type of property `template_parameters` from `template_parameters` to `Optional[list['_models.ParameterContract']]`
+  - Model `OperationContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `OperationContractProperties` changed type of property `request` from `request` to `Optional['_models.RequestContract']`
+  - Model `OperationContractProperties` changed type of property `responses` from `responses` to `Optional[list['_models.ResponseContract']]`
+  - Model `OperationContractProperties` changed type of property `policies` from `policies` to `Optional[str]`
+  - Model `OperationDisplay` changed type of property `provider` from `provider` to `Optional[str]`
+  - Model `OperationDisplay` changed type of property `operation` from `operation` to `Optional[str]`
+  - Model `OperationDisplay` changed type of property `resource` from `resource` to `Optional[str]`
+  - Model `OperationDisplay` changed type of property `description` from `description` to `Optional[str]`
+  - Model `OperationEntityBaseContract` changed type of property `template_parameters` from `template_parameters` to `Optional[list['_models.ParameterContract']]`
+  - Model `OperationEntityBaseContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `OperationEntityBaseContract` changed type of property `request` from `request` to `Optional['_models.RequestContract']`
+  - Model `OperationEntityBaseContract` changed type of property `responses` from `responses` to `Optional[list['_models.ResponseContract']]`
+  - Model `OperationEntityBaseContract` changed type of property `policies` from `policies` to `Optional[str]`
   - Model `OperationResultContract` deleted or renamed its instance variable `id_properties_id`
   - Model `OperationResultContract` deleted or renamed its instance variable `status`
   - Model `OperationResultContract` deleted or renamed its instance variable `started`
@@ -1124,7 +1699,19 @@
   - Model `OperationResultContract` deleted or renamed its instance variable `result_info`
   - Model `OperationResultContract` deleted or renamed its instance variable `error`
   - Model `OperationResultContract` deleted or renamed its instance variable `action_log`
+  - Model `OperationResultLogItemContract` changed type of property `object_type` from `object_type` to `Optional[str]`
+  - Model `OperationResultLogItemContract` changed type of property `action` from `action` to `Optional[str]`
+  - Model `OperationResultLogItemContract` changed type of property `object_key` from `object_key` to `Optional[str]`
   - Model `OperationStatusResult` deleted or renamed its instance variable `resource_id`
+  - Model `OperationStatusResult` changed type of property `id` from `id` to `Optional[str]`
+  - Model `OperationStatusResult` changed type of property `name` from `name` to `Optional[str]`
+  - Model `OperationStatusResult` changed type of property `status` from `status` to `str`
+  - Model `OperationStatusResult` changed type of property `percent_complete` from `percent_complete` to `Optional[float]`
+  - Model `OperationStatusResult` changed type of property `start_time` from `start_time` to `Optional[datetime.datetime]`
+  - Model `OperationStatusResult` changed type of property `end_time` from `end_time` to `Optional[datetime.datetime]`
+  - Model `OperationStatusResult` changed type of property `operations` from `operations` to `Optional[list['_models.OperationStatusResult']]`
+  - Model `OperationStatusResult` changed type of property `error` from `error` to `Optional['_models.ErrorDetail']`
+  - Model `OperationTagResourceContractProperties` changed type of property `id` from `id` to `Optional[str]`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `template_parameters`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `description`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `request`
@@ -1133,9 +1720,39 @@
   - Model `OperationUpdateContract` deleted or renamed its instance variable `display_name`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `method`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `url_template`
+  - Model `OperationUpdateContractProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `OperationUpdateContractProperties` changed type of property `method` from `method` to `Optional[str]`
+  - Model `OperationUpdateContractProperties` changed type of property `url_template` from `url_template` to `Optional[str]`
+  - Model `OperationUpdateContractProperties` changed type of property `template_parameters` from `template_parameters` to `Optional[list['_models.ParameterContract']]`
+  - Model `OperationUpdateContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `OperationUpdateContractProperties` changed type of property `request` from `request` to `Optional['_models.RequestContract']`
+  - Model `OperationUpdateContractProperties` changed type of property `responses` from `responses` to `Optional[list['_models.ResponseContract']]`
+  - Model `OperationUpdateContractProperties` changed type of property `policies` from `policies` to `Optional[str]`
+  - Model `OutboundEnvironmentEndpoint` changed type of property `category` from `category` to `Optional[str]`
+  - Model `OutboundEnvironmentEndpoint` changed type of property `endpoints` from `endpoints` to `Optional[list['_models.EndpointDependency']]`
+  - Model `OutboundEnvironmentEndpointList` changed type of property `value` from `value` to `list['_models.OutboundEnvironmentEndpoint']`
   - Model `ParameterContract` deleted or renamed its instance variable `values`
+  - Model `ParameterContract` changed type of property `name` from `name` to `str`
+  - Model `ParameterContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ParameterContract` changed type of property `type` from `type` to `str`
+  - Model `ParameterContract` changed type of property `default_value` from `default_value` to `Optional[str]`
+  - Model `ParameterContract` changed type of property `required` from `required` to `Optional[bool]`
+  - Model `ParameterContract` changed type of property `schema_id` from `schema_id` to `Optional[str]`
+  - Model `ParameterContract` changed type of property `type_name` from `type_name` to `Optional[str]`
+  - Model `ParameterContract` changed type of property `examples` from `examples` to `Optional[dict[str, '_models.ParameterExampleContract']]`
+  - Model `ParameterExampleContract` changed type of property `summary` from `summary` to `Optional[str]`
+  - Model `ParameterExampleContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ParameterExampleContract` changed type of property `value` from `value` to `Optional[Any]`
+  - Model `ParameterExampleContract` changed type of property `external_value` from `external_value` to `Optional[str]`
+  - Model `PipelineDiagnosticSettings` changed type of property `request` from `request` to `Optional['_models.HttpMessageDiagnostic']`
+  - Model `PipelineDiagnosticSettings` changed type of property `response` from `response` to `Optional['_models.HttpMessageDiagnostic']`
+  - Model `PolicyCollection` changed type of property `value` from `value` to `Optional[list['_models.PolicyContract']]`
+  - Model `PolicyCollection` changed type of property `count` from `count` to `Optional[int]`
+  - Model `PolicyCollection` changed type of property `next_link` from `next_link` to `Optional[str]`
   - Model `PolicyContract` deleted or renamed its instance variable `value`
   - Model `PolicyContract` deleted or renamed its instance variable `format`
+  - Model `PolicyDescriptionCollection` changed type of property `value` from `value` to `Optional[list['_models.PolicyDescriptionContract']]`
+  - Model `PolicyDescriptionCollection` changed type of property `count` from `count` to `Optional[int]`
   - Model `PolicyDescriptionContract` deleted or renamed its instance variable `description`
   - Model `PolicyDescriptionContract` deleted or renamed its instance variable `scope`
   - Model `PolicyFragmentContract` deleted or renamed its instance variable `value`
@@ -1152,6 +1769,18 @@
   - Model `PortalConfigContract` deleted or renamed its instance variable `delegation`
   - Model `PortalConfigContract` deleted or renamed its instance variable `cors`
   - Model `PortalConfigContract` deleted or renamed its instance variable `csp`
+  - Model `PortalConfigCorsProperties` changed type of property `allowed_origins` from `allowed_origins` to `Optional[list[str]]`
+  - Model `PortalConfigCspProperties` changed type of property `mode` from `mode` to `Optional[Union[str, '_models.PortalSettingsCspMode']]`
+  - Model `PortalConfigCspProperties` changed type of property `report_uri` from `report_uri` to `Optional[list[str]]`
+  - Model `PortalConfigCspProperties` changed type of property `allowed_sources` from `allowed_sources` to `Optional[list[str]]`
+  - Model `PortalConfigDelegationProperties` changed type of property `delegate_registration` from `delegate_registration` to `Optional[bool]`
+  - Model `PortalConfigDelegationProperties` changed type of property `delegate_subscription` from `delegate_subscription` to `Optional[bool]`
+  - Model `PortalConfigDelegationProperties` changed type of property `delegation_url` from `delegation_url` to `Optional[str]`
+  - Model `PortalConfigDelegationProperties` changed type of property `validation_key` from `validation_key` to `Optional[str]`
+  - Model `PortalConfigPropertiesSignin` changed type of property `require` from `require` to `Optional[bool]`
+  - Model `PortalConfigPropertiesSignup` changed type of property `terms_of_service` from `terms_of_service` to `Optional['_models.PortalConfigTermsOfServiceProperties']`
+  - Model `PortalConfigTermsOfServiceProperties` changed type of property `text` from `text` to `Optional[str]`
+  - Model `PortalConfigTermsOfServiceProperties` changed type of property `require_consent` from `require_consent` to `Optional[bool]`
   - Model `PortalDelegationSettings` deleted or renamed its instance variable `url`
   - Model `PortalDelegationSettings` deleted or renamed its instance variable `validation_key`
   - Model `PortalDelegationSettings` deleted or renamed its instance variable `subscriptions`
@@ -1163,6 +1792,9 @@
   - Model `PortalRevisionContract` deleted or renamed its instance variable `created_date_time`
   - Model `PortalRevisionContract` deleted or renamed its instance variable `updated_date_time`
   - Model `PortalRevisionContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `PortalSettingValidationKeyContract` changed type of property `validation_key` from `validation_key` to `Optional[str]`
+  - Model `PortalSettingsCollection` changed type of property `value` from `value` to `Optional[list['_models.PortalSettingsContract']]`
+  - Model `PortalSettingsCollection` changed type of property `count` from `count` to `Optional[int]`
   - Model `PortalSettingsContract` deleted or renamed its instance variable `url`
   - Model `PortalSettingsContract` deleted or renamed its instance variable `validation_key`
   - Model `PortalSettingsContract` deleted or renamed its instance variable `subscriptions`
@@ -1175,9 +1807,16 @@
   - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
   - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
   - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateEndpointConnectionRequest` changed type of property `id` from `id` to `Optional[str]`
+  - Model `PrivateEndpointConnectionRequest` changed type of property `properties` from `properties` to `Optional['_models.PrivateEndpointConnectionRequestProperties']`
+  - Model `PrivateEndpointConnectionRequestProperties` changed type of property `private_link_service_connection_state` from `private_link_service_connection_state` to `Optional['_models.PrivateLinkServiceConnectionState']`
   - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
   - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
   - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `PrivateLinkResourceListResult` changed type of property `value` from `value` to `list['_models.PrivateLinkResource']`
+  - Model `PrivateLinkServiceConnectionState` changed type of property `status` from `status` to `Optional[Union[str, '_models.PrivateEndpointServiceConnectionStatus']]`
+  - Model `PrivateLinkServiceConnectionState` changed type of property `description` from `description` to `Optional[str]`
+  - Model `PrivateLinkServiceConnectionState` changed type of property `actions_required` from `actions_required` to `Optional[str]`
   - Model `ProductApiLinkContract` deleted or renamed its instance variable `api_id`
   - Model `ProductContract` deleted or renamed its instance variable `description`
   - Model `ProductContract` deleted or renamed its instance variable `terms`
@@ -1186,7 +1825,28 @@
   - Model `ProductContract` deleted or renamed its instance variable `subscriptions_limit`
   - Model `ProductContract` deleted or renamed its instance variable `state`
   - Model `ProductContract` deleted or renamed its instance variable `display_name`
+  - Model `ProductContractProperties` changed type of property `display_name` from `display_name` to `str`
+  - Model `ProductContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ProductContractProperties` changed type of property `terms` from `terms` to `Optional[str]`
+  - Model `ProductContractProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ProductContractProperties` changed type of property `approval_required` from `approval_required` to `Optional[bool]`
+  - Model `ProductContractProperties` changed type of property `subscriptions_limit` from `subscriptions_limit` to `Optional[int]`
+  - Model `ProductContractProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.ProductState']]`
+  - Model `ProductEntityBaseParameters` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ProductEntityBaseParameters` changed type of property `terms` from `terms` to `Optional[str]`
+  - Model `ProductEntityBaseParameters` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ProductEntityBaseParameters` changed type of property `approval_required` from `approval_required` to `Optional[bool]`
+  - Model `ProductEntityBaseParameters` changed type of property `subscriptions_limit` from `subscriptions_limit` to `Optional[int]`
+  - Model `ProductEntityBaseParameters` changed type of property `state` from `state` to `Optional[Union[str, '_models.ProductState']]`
   - Model `ProductGroupLinkContract` deleted or renamed its instance variable `group_id`
+  - Model `ProductTagResourceContractProperties` changed type of property `id` from `id` to `Optional[str]`
+  - Model `ProductTagResourceContractProperties` changed type of property `name` from `name` to `str`
+  - Model `ProductTagResourceContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ProductTagResourceContractProperties` changed type of property `terms` from `terms` to `Optional[str]`
+  - Model `ProductTagResourceContractProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ProductTagResourceContractProperties` changed type of property `approval_required` from `approval_required` to `Optional[bool]`
+  - Model `ProductTagResourceContractProperties` changed type of property `subscriptions_limit` from `subscriptions_limit` to `Optional[int]`
+  - Model `ProductTagResourceContractProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.ProductState']]`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `description`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `terms`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscription_required`
@@ -1194,20 +1854,114 @@
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscriptions_limit`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `state`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `display_name`
+  - Model `ProductUpdateProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `ProductUpdateProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ProductUpdateProperties` changed type of property `terms` from `terms` to `Optional[str]`
+  - Model `ProductUpdateProperties` changed type of property `subscription_required` from `subscription_required` to `Optional[bool]`
+  - Model `ProductUpdateProperties` changed type of property `approval_required` from `approval_required` to `Optional[bool]`
+  - Model `ProductUpdateProperties` changed type of property `subscriptions_limit` from `subscriptions_limit` to `Optional[int]`
+  - Model `ProductUpdateProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.ProductState']]`
+  - Model `QuotaCounterCollection` changed type of property `value` from `value` to `Optional[list['_models.QuotaCounterContract']]`
+  - Model `QuotaCounterCollection` changed type of property `count` from `count` to `Optional[int]`
+  - Model `QuotaCounterCollection` changed type of property `next_link` from `next_link` to `Optional[str]`
+  - Model `QuotaCounterContract` changed type of property `counter_key` from `counter_key` to `str`
+  - Model `QuotaCounterContract` changed type of property `period_key` from `period_key` to `str`
+  - Model `QuotaCounterContract` changed type of property `period_start_time` from `period_start_time` to `datetime.datetime`
+  - Model `QuotaCounterContract` changed type of property `period_end_time` from `period_end_time` to `datetime.datetime`
+  - Model `QuotaCounterContract` changed type of property `value` from `value` to `Optional['_models.QuotaCounterValueContractProperties']`
+  - Model `QuotaCounterValueContractProperties` changed type of property `calls_count` from `calls_count` to `Optional[int]`
+  - Model `QuotaCounterValueContractProperties` changed type of property `kb_transferred` from `kb_transferred` to `Optional[float]`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `calls_count`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `kb_transferred`
+  - Model `RecipientEmailCollection` changed type of property `value` from `value` to `Optional[list['_models.RecipientEmailContract']]`
+  - Model `RecipientEmailCollection` changed type of property `count` from `count` to `Optional[int]`
+  - Model `RecipientEmailCollection` changed type of property `next_link` from `next_link` to `Optional[str]`
   - Model `RecipientEmailContract` deleted or renamed its instance variable `email`
+  - Model `RecipientUserCollection` changed type of property `value` from `value` to `Optional[list['_models.RecipientUserContract']]`
+  - Model `RecipientUserCollection` changed type of property `count` from `count` to `Optional[int]`
+  - Model `RecipientUserCollection` changed type of property `next_link` from `next_link` to `Optional[str]`
   - Model `RecipientUserContract` deleted or renamed its instance variable `user_id`
+  - Model `RecipientsContractProperties` changed type of property `emails` from `emails` to `Optional[list[str]]`
+  - Model `RecipientsContractProperties` changed type of property `users` from `users` to `Optional[list[str]]`
+  - Model `RegionContract` changed type of property `is_master_region` from `is_master_region` to `Optional[bool]`
+  - Model `RegionContract` changed type of property `is_deleted` from `is_deleted` to `Optional[bool]`
+  - Model `RegistrationDelegationSettingsProperties` changed type of property `enabled` from `enabled` to `Optional[bool]`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_endpoint`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_link_service_connection_state`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `provisioning_state`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `group_ids`
+  - Model `RemotePrivateEndpointConnectionWrapper` changed type of property `id` from `id` to `Optional[str]`
+  - Model `RemotePrivateEndpointConnectionWrapper` changed type of property `name` from `name` to `Optional[str]`
+  - Model `RemotePrivateEndpointConnectionWrapper` changed type of property `type` from `type` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `name` from `name` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `timestamp` from `timestamp` to `Optional[datetime.datetime]`
+  - Model `ReportRecordContract` changed type of property `interval` from `interval` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `country` from `country` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `region` from `region` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `zip` from `zip` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `api_id` from `api_id` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `operation_id` from `operation_id` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `api_region` from `api_region` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `subscription_id` from `subscription_id` to `Optional[str]`
+  - Model `ReportRecordContract` changed type of property `call_count_success` from `call_count_success` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `call_count_blocked` from `call_count_blocked` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `call_count_failed` from `call_count_failed` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `call_count_other` from `call_count_other` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `call_count_total` from `call_count_total` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `bandwidth` from `bandwidth` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `cache_hit_count` from `cache_hit_count` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `cache_miss_count` from `cache_miss_count` to `Optional[int]`
+  - Model `ReportRecordContract` changed type of property `api_time_avg` from `api_time_avg` to `Optional[float]`
+  - Model `ReportRecordContract` changed type of property `api_time_min` from `api_time_min` to `Optional[float]`
+  - Model `ReportRecordContract` changed type of property `api_time_max` from `api_time_max` to `Optional[float]`
+  - Model `ReportRecordContract` changed type of property `service_time_avg` from `service_time_avg` to `Optional[float]`
+  - Model `ReportRecordContract` changed type of property `service_time_min` from `service_time_min` to `Optional[float]`
+  - Model `ReportRecordContract` changed type of property `service_time_max` from `service_time_max` to `Optional[float]`
+  - Model `RepresentationContract` changed type of property `content_type` from `content_type` to `str`
+  - Model `RepresentationContract` changed type of property `schema_id` from `schema_id` to `Optional[str]`
+  - Model `RepresentationContract` changed type of property `type_name` from `type_name` to `Optional[str]`
+  - Model `RepresentationContract` changed type of property `form_parameters` from `form_parameters` to `Optional[list['_models.ParameterContract']]`
+  - Model `RepresentationContract` changed type of property `examples` from `examples` to `Optional[dict[str, '_models.ParameterExampleContract']]`
+  - Model `RequestContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `RequestContract` changed type of property `query_parameters` from `query_parameters` to `Optional[list['_models.ParameterContract']]`
+  - Model `RequestContract` changed type of property `headers` from `headers` to `Optional[list['_models.ParameterContract']]`
+  - Model `RequestContract` changed type of property `representations` from `representations` to `Optional[list['_models.RepresentationContract']]`
+  - Model `RequestReportRecordContract` changed type of property `api_id` from `api_id` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `operation_id` from `operation_id` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `method` from `method` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `url` from `url` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `ip_address` from `ip_address` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `backend_response_code` from `backend_response_code` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `response_code` from `response_code` to `Optional[int]`
+  - Model `RequestReportRecordContract` changed type of property `response_size` from `response_size` to `Optional[int]`
+  - Model `RequestReportRecordContract` changed type of property `timestamp` from `timestamp` to `Optional[datetime.datetime]`
+  - Model `RequestReportRecordContract` changed type of property `cache` from `cache` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `api_time` from `api_time` to `Optional[float]`
+  - Model `RequestReportRecordContract` changed type of property `service_time` from `service_time` to `Optional[float]`
+  - Model `RequestReportRecordContract` changed type of property `api_region` from `api_region` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `subscription_id` from `subscription_id` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `request_id` from `request_id` to `Optional[str]`
+  - Model `RequestReportRecordContract` changed type of property `request_size` from `request_size` to `Optional[int]`
   - Model `ResolverContract` deleted or renamed its instance variable `display_name`
   - Model `ResolverContract` deleted or renamed its instance variable `path`
   - Model `ResolverContract` deleted or renamed its instance variable `description`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `display_name`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `path`
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `description`
+  - Model `ResourceCollection` changed type of property `value` from `value` to `Optional[list['_models.ResourceCollectionValueItem']]`
+  - Model `ResourceCollection` changed type of property `count` from `count` to `Optional[int]`
+  - Model `ResourceCollection` changed type of property `next_link` from `next_link` to `Optional[str]`
+  - Model `ResourceLocationDataContract` changed type of property `name` from `name` to `str`
+  - Model `ResourceLocationDataContract` changed type of property `city` from `city` to `Optional[str]`
+  - Model `ResourceLocationDataContract` changed type of property `district` from `district` to `Optional[str]`
+  - Model `ResourceLocationDataContract` changed type of property `country_or_region` from `country_or_region` to `Optional[str]`
+  - Model `ResourceSku` changed type of property `name` from `name` to `Optional[Union[str, '_models.SkuType']]`
+  - Model `ResponseContract` changed type of property `status_code` from `status_code` to `int`
+  - Model `ResponseContract` changed type of property `description` from `description` to `Optional[str]`
+  - Model `ResponseContract` changed type of property `representations` from `representations` to `Optional[list['_models.RepresentationContract']]`
+  - Model `ResponseContract` changed type of property `headers` from `headers` to `Optional[list['_models.ParameterContract']]`
+  - Model `SamplingSettings` changed type of property `sampling_type` from `sampling_type` to `Optional[Union[str, '_models.SamplingType']]`
+  - Model `SamplingSettings` changed type of property `percentage` from `percentage` to `Optional[float]`
   - Model `SaveConfigurationParameter` deleted or renamed its instance variable `branch`
   - Model `SaveConfigurationParameter` deleted or renamed its instance variable `force`
   - Model `SchemaContract` deleted or renamed its instance variable `content_type`
@@ -1235,6 +1989,10 @@
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `secondary_key`
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `state`
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `allow_tracing`
+  - Model `SubscriptionKeyParameterNamesContract` changed type of property `header` from `header` to `Optional[str]`
+  - Model `SubscriptionKeyParameterNamesContract` changed type of property `query` from `query` to `Optional[str]`
+  - Model `SubscriptionKeysContract` changed type of property `primary_key` from `primary_key` to `Optional[str]`
+  - Model `SubscriptionKeysContract` changed type of property `secondary_key` from `secondary_key` to `Optional[str]`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `owner_id`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `scope`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `expiration_date`
@@ -1244,19 +2002,40 @@
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state_comment`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `allow_tracing`
+  - Model `SubscriptionsDelegationSettingsProperties` changed type of property `enabled` from `enabled` to `Optional[bool]`
+  - Model `SystemData` changed type of property `created_by` from `created_by` to `Optional[str]`
+  - Model `SystemData` changed type of property `created_by_type` from `created_by_type` to `Optional[Union[str, '_models.CreatedByType']]`
+  - Model `SystemData` changed type of property `created_at` from `created_at` to `Optional[datetime.datetime]`
+  - Model `SystemData` changed type of property `last_modified_by` from `last_modified_by` to `Optional[str]`
+  - Model `SystemData` changed type of property `last_modified_by_type` from `last_modified_by_type` to `Optional[Union[str, '_models.CreatedByType']]`
+  - Model `SystemData` changed type of property `last_modified_at` from `last_modified_at` to `Optional[datetime.datetime]`
   - Model `TagApiLinkContract` deleted or renamed its instance variable `api_id`
   - Model `TagContract` deleted or renamed its instance variable `display_name`
   - Model `TagCreateUpdateParameters` deleted or renamed its instance variable `display_name`
+  - Model `TagDescriptionBaseProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `TagDescriptionBaseProperties` changed type of property `external_docs_url` from `external_docs_url` to `Optional[str]`
+  - Model `TagDescriptionBaseProperties` changed type of property `external_docs_description` from `external_docs_description` to `Optional[str]`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `description`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `external_docs_url`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `external_docs_description`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `tag_id`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `display_name`
+  - Model `TagDescriptionContractProperties` changed type of property `tag_id` from `tag_id` to `Optional[str]`
+  - Model `TagDescriptionContractProperties` changed type of property `display_name` from `display_name` to `Optional[str]`
+  - Model `TagDescriptionContractProperties` changed type of property `description` from `description` to `Optional[str]`
+  - Model `TagDescriptionContractProperties` changed type of property `external_docs_url` from `external_docs_url` to `Optional[str]`
+  - Model `TagDescriptionContractProperties` changed type of property `external_docs_description` from `external_docs_description` to `Optional[str]`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `description`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_url`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_description`
   - Model `TagOperationLinkContract` deleted or renamed its instance variable `operation_id`
   - Model `TagProductLinkContract` deleted or renamed its instance variable `product_id`
+  - Model `TagResourceContract` changed type of property `tag` from `tag` to `_models.TagResourceContractProperties`
+  - Model `TagResourceContract` changed type of property `api` from `api` to `Optional['_models.ApiTagResourceContractProperties']`
+  - Model `TagResourceContract` changed type of property `operation` from `operation` to `Optional['_models.OperationTagResourceContractProperties']`
+  - Model `TagResourceContract` changed type of property `product` from `product` to `Optional['_models.ProductTagResourceContractProperties']`
+  - Model `TagResourceContractProperties` changed type of property `id` from `id` to `Optional[str]`
+  - Model `TagResourceContractProperties` changed type of property `name` from `name` to `Optional[str]`
   - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `branch`
   - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `commit_id`
   - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `is_export`
@@ -1266,6 +2045,11 @@
   - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `configuration_change_date`
   - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `last_operation_id`
   - Model `TenantSettingsContract` deleted or renamed its instance variable `settings`
+  - Model `TermsOfServiceProperties` changed type of property `text` from `text` to `Optional[str]`
+  - Model `TermsOfServiceProperties` changed type of property `enabled` from `enabled` to `Optional[bool]`
+  - Model `TermsOfServiceProperties` changed type of property `consent_required` from `consent_required` to `Optional[bool]`
+  - Model `TokenBodyParameterContract` changed type of property `name` from `name` to `str`
+  - Model `TokenBodyParameterContract` changed type of property `value` from `value` to `str`
   - Model `UserContract` deleted or renamed its instance variable `state`
   - Model `UserContract` deleted or renamed its instance variable `note`
   - Model `UserContract` deleted or renamed its instance variable `identities`
@@ -1274,6 +2058,22 @@
   - Model `UserContract` deleted or renamed its instance variable `email`
   - Model `UserContract` deleted or renamed its instance variable `registration_date`
   - Model `UserContract` deleted or renamed its instance variable `groups`
+  - Model `UserContractProperties` changed type of property `first_name` from `first_name` to `Optional[str]`
+  - Model `UserContractProperties` changed type of property `last_name` from `last_name` to `Optional[str]`
+  - Model `UserContractProperties` changed type of property `email` from `email` to `Optional[str]`
+  - Model `UserContractProperties` changed type of property `registration_date` from `registration_date` to `Optional[datetime.datetime]`
+  - Model `UserContractProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.UserState']]`
+  - Model `UserContractProperties` changed type of property `note` from `note` to `Optional[str]`
+  - Model `UserContractProperties` changed type of property `identities` from `identities` to `Optional[list['_models.UserIdentityContract']]`
+  - Model `UserCreateParameterProperties` changed type of property `email` from `email` to `str`
+  - Model `UserCreateParameterProperties` changed type of property `first_name` from `first_name` to `str`
+  - Model `UserCreateParameterProperties` changed type of property `last_name` from `last_name` to `str`
+  - Model `UserCreateParameterProperties` changed type of property `password` from `password` to `Optional[str]`
+  - Model `UserCreateParameterProperties` changed type of property `app_type` from `app_type` to `Optional[Union[str, '_models.AppType']]`
+  - Model `UserCreateParameterProperties` changed type of property `confirmation` from `confirmation` to `Optional[Union[str, '_models.Confirmation']]`
+  - Model `UserCreateParameterProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.UserState']]`
+  - Model `UserCreateParameterProperties` changed type of property `note` from `note` to `Optional[str]`
+  - Model `UserCreateParameterProperties` changed type of property `identities` from `identities` to `Optional[list['_models.UserIdentityContract']]`
   - Model `UserCreateParameters` deleted or renamed its instance variable `state`
   - Model `UserCreateParameters` deleted or renamed its instance variable `note`
   - Model `UserCreateParameters` deleted or renamed its instance variable `identities`
@@ -1283,8 +2083,16 @@
   - Model `UserCreateParameters` deleted or renamed its instance variable `password`
   - Model `UserCreateParameters` deleted or renamed its instance variable `app_type`
   - Model `UserCreateParameters` deleted or renamed its instance variable `confirmation`
+  - Model `UserEntityBaseParameters` changed type of property `state` from `state` to `Optional[Union[str, '_models.UserState']]`
+  - Model `UserEntityBaseParameters` changed type of property `note` from `note` to `Optional[str]`
+  - Model `UserEntityBaseParameters` changed type of property `identities` from `identities` to `Optional[list['_models.UserIdentityContract']]`
+  - Model `UserIdentityContract` changed type of property `provider` from `provider` to `Optional[str]`
+  - Model `UserIdentityContract` changed type of property `id` from `id` to `Optional[str]`
+  - Model `UserIdentityProperties` changed type of property `principal_id` from `principal_id` to `Optional[str]`
+  - Model `UserIdentityProperties` changed type of property `client_id` from `client_id` to `Optional[str]`
   - Model `UserTokenParameters` deleted or renamed its instance variable `key_type`
   - Model `UserTokenParameters` deleted or renamed its instance variable `expiry`
+  - Model `UserTokenResult` changed type of property `value` from `value` to `Optional[str]`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `state`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `note`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `identities`
@@ -1292,10 +2100,24 @@
   - Model `UserUpdateParameters` deleted or renamed its instance variable `password`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `first_name`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `last_name`
+  - Model `UserUpdateParametersProperties` changed type of property `email` from `email` to `Optional[str]`
+  - Model `UserUpdateParametersProperties` changed type of property `password` from `password` to `Optional[str]`
+  - Model `UserUpdateParametersProperties` changed type of property `first_name` from `first_name` to `Optional[str]`
+  - Model `UserUpdateParametersProperties` changed type of property `last_name` from `last_name` to `Optional[str]`
+  - Model `UserUpdateParametersProperties` changed type of property `state` from `state` to `Optional[Union[str, '_models.UserState']]`
+  - Model `UserUpdateParametersProperties` changed type of property `note` from `note` to `Optional[str]`
+  - Model `UserUpdateParametersProperties` changed type of property `identities` from `identities` to `Optional[list['_models.UserIdentityContract']]`
+  - Model `VirtualNetworkConfiguration` changed type of property `subnet_resource_id` from `subnet_resource_id` to `Optional[str]`
   - Model `WikiContract` deleted or renamed its instance variable `documents`
+  - Model `WikiDocumentationContract` changed type of property `documentation_id` from `documentation_id` to `Optional[str]`
   - Model `WikiUpdateContract` deleted or renamed its instance variable `documents`
   - Model `WorkspaceContract` deleted or renamed its instance variable `display_name`
   - Model `WorkspaceContract` deleted or renamed its instance variable `description`
+  - Model `WorkspaceLinksBaseProperties` changed type of property `workspace_id` from `workspace_id` to `Optional[str]`
+  - Model `WorkspaceLinksBaseProperties` changed type of property `gateways` from `gateways` to `Optional[list['_models.WorkspaceLinksGateway']]`
+  - Model `WorkspaceLinksGateway` changed type of property `id` from `id` to `Optional[str]`
+  - Model `X509CertificateName` changed type of property `name` from `name` to `Optional[str]`
+  - Model `X509CertificateName` changed type of property `issuer_certificate_thumbprint` from `issuer_certificate_thumbprint` to `Optional[str]`
   - Deleted or renamed model `AccessInformationCollection`
   - Deleted or renamed model `AllPoliciesCollection`
   - Deleted or renamed model `ApiCollection`
