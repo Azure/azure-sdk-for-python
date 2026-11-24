@@ -2090,8 +2090,8 @@ read's result.
 
 **Related limitations**
 
-- [Conditional-creation behavior](V5/api-review/REQUEST_OPTIONS.md#resource-metadata-differs-from-item-contents)
-- [Conditional-create verification and outstanding global secondary index checks](V5/api-review/LIVE_VERIFICATION.md#container-creation-verification)
+- Conditional-creation behavior: resource metadata differs from item contents.
+- Conditional-create verification and outstanding global secondary index checks: container creation verification.
 
 <a id="9---creating-a-container-if-it-does-not-exist"></a>
 <a id="databaseproxycreate_container_if_not_exists"></a>
