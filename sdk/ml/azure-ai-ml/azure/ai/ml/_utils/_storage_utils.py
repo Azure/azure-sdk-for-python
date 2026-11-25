@@ -28,6 +28,8 @@ from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationErrorType
 
 module_logger = logging.getLogger(__name__)
 
+# Azure creates storage account names with lowercase letters and numbers. Host names are case-insensitive, so
+# uppercase letters are accepted to keep existing datastore definitions working.
 _STORAGE_ACCOUNT_NAME_PATTERN = re.compile(r"[a-zA-Z0-9]{3,24}")
 
 
