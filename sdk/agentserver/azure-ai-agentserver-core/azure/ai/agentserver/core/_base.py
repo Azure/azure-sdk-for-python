@@ -18,7 +18,7 @@ from typing import TYPE_CHECKING, Any, MutableMapping, Optional
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.requests import Request
-from starlette.responses import JSONResponse, Response
+from starlette.responses import JSONResponse, PlainTextResponse, Response
 from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
@@ -65,6 +65,21 @@ def _read_memory_snapshot_enabled() -> bool:
     if value not in ("true", "false"):
         raise ValueError(f"{_MEMORY_SNAPSHOT_ENV} must be 'true' or 'false' when set")
     return value == "true"
+
+
+def _platform_lifecycle_trusted(config: _config.AgentConfig) -> bool:
+    """Return whether the platform protects the ``/_agent/`` lifecycle routes.
+
+    Foundry Hosted Agents owns ``FOUNDRY_HOSTING_ENVIRONMENT``, restricts the agent
+    port with sandbox port authentication, and never forwards customer requests
+    under ``/_agent/``.
+
+    :param config: Host configuration resolved at construction.
+    :type config: ~azure.ai.agentserver.core._config.AgentConfig
+    :return: True when running in a Foundry-hosted environment.
+    :rtype: bool
+    """
+    return config.is_hosted
 
 
 def _read_task_manager_shutdown_grace() -> float:
@@ -270,9 +285,15 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
     :type configure_observability: Optional[Callable[..., None]]
     :param lifecycle_authorizer: Async callable that authenticates a lifecycle
         request and verifies permission to perform the requested operation.
-        Only an explicit ``True`` permits snapshot/restore processing. When
-        *None* (default), all lifecycle POST requests are rejected with HTTP 403.
-        Authorizer failures return HTTP 500 without lifecycle side effects.
+        When it runs, only an explicit ``True`` permits snapshot/restore
+        processing, other results return HTTP 403, and authorizer failures
+        return HTTP 500 without lifecycle side effects. In Foundry-hosted
+        environments (``FOUNDRY_HOSTING_ENVIRONMENT`` set), the platform
+        restricts the ``/_agent/`` lifecycle routes, so they are processed
+        without calling the authorizer. Elsewhere, the ``/_agent/`` routes
+        return HTTP 404 unless an authorizer is provided. The
+        ``/_before_snapshot`` and ``/_after_restore`` aliases are registered
+        only with an authorizer, which they always require.
     :type lifecycle_authorizer: Optional[Callable[[Request], Awaitable[bool]]]
     """
 
@@ -320,6 +341,9 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
+        # Captured at construction so restored environment overrides cannot change it.
+        self._lifecycle_platform_trusted = _platform_lifecycle_trusted(self.config)
+        self._lifecycle_routes_enabled = self._lifecycle_platform_trusted or lifecycle_authorizer is not None
 
         # Observability (logging + tracing) --------------------------------
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
@@ -377,6 +401,18 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             )
 
             snapshot_mode = _read_memory_snapshot_enabled()
+            if not self._lifecycle_routes_enabled:
+                if snapshot_mode and self._task_manager_required():
+                    raise RuntimeError(
+                        "FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true defers TaskManager startup until after-restore, "
+                        "but lifecycle routes are disabled outside Foundry-hosted environments without a "
+                        "lifecycle_authorizer. Provide lifecycle_authorizer or unset FOUNDRY_MEMORY_SNAPSHOT_ENABLED."
+                    )
+                if self._lifecycle.before_snapshot_fn is not None or self._lifecycle.after_restore_fn is not None:
+                    logger.warning(
+                        "Snapshot lifecycle handlers are registered, but lifecycle routes are disabled outside "
+                        "Foundry-hosted environments without a lifecycle_authorizer; the handlers will not run."
+                    )
             if self._task_manager_required() and not snapshot_mode:
                 try:
                     await self._activate_task_manager()
@@ -452,13 +488,21 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                     _clear_task_manager(self._task_manager)
 
         async def _before_snapshot_route(request: Request) -> Response:
-            return await AgentServerHost._before_snapshot_endpoint(self, request)
+            return await AgentServerHost._before_snapshot_endpoint(self, request, platform_route=True)
 
         async def _after_restore_route(request: Request) -> Response:
+            return await AgentServerHost._after_restore_endpoint(self, request, platform_route=True)
+
+        async def _before_snapshot_alias_route(request: Request) -> Response:
+            return await AgentServerHost._before_snapshot_endpoint(self, request)
+
+        async def _after_restore_alias_route(request: Request) -> Response:
             return await AgentServerHost._after_restore_endpoint(self, request)
 
         # Bind reserved routes to the framework implementation so subclasses
-        # can extend only through the protected lifecycle hooks.
+        # can extend only through the protected lifecycle hooks. The /_agent/
+        # routes are always registered so application routes cannot answer
+        # platform hooks; when disabled they return 404.
         all_routes: list[Any] = [
             Route(
                 _BEFORE_SNAPSHOT_PATH,
@@ -472,19 +516,25 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
                 methods=["POST"],
                 name="after_restore",
             ),
-            Route(
-                _BEFORE_SNAPSHOT_ALIAS_PATH,
-                _before_snapshot_route,
-                methods=["POST"],
-                name="before_snapshot_alias",
-            ),
-            Route(
-                _AFTER_RESTORE_ALIAS_PATH,
-                _after_restore_route,
-                methods=["POST"],
-                name="after_restore_alias",
-            ),
         ]
+        # The platform never calls the aliases, and its /_agent/ filtering does not cover them.
+        if lifecycle_authorizer is not None:
+            all_routes.extend(
+                [
+                    Route(
+                        _BEFORE_SNAPSHOT_ALIAS_PATH,
+                        _before_snapshot_alias_route,
+                        methods=["POST"],
+                        name="before_snapshot_alias",
+                    ),
+                    Route(
+                        _AFTER_RESTORE_ALIAS_PATH,
+                        _after_restore_alias_route,
+                        methods=["POST"],
+                        name="after_restore_alias",
+                    ),
+                ]
+            )
         all_routes.extend(routes or [])
         all_routes.append(
             Route("/readiness", self._readiness_endpoint, methods=["GET"], name="readiness"),
@@ -828,11 +878,17 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
     # Snapshot lifecycle endpoints
     # ------------------------------------------------------------------
 
-    async def _authorize_lifecycle_request(self, request: Request) -> Optional[Response]:
+    async def _authorize_lifecycle_request(
+        self, request: Request, *, platform_route: bool = False
+    ) -> Optional[Response]:
+        if platform_route and self._lifecycle_platform_trusted:
+            # Platform hook calls carry no credential an authorizer could verify.
+            return None
+        if self._lifecycle_authorizer is None:
+            return PlainTextResponse("Not Found", status_code=404)
         authorized = False
         try:
-            if self._lifecycle_authorizer is not None:
-                authorized = await self._lifecycle_authorizer(request)
+            authorized = await self._lifecycle_authorizer(request)
         except Exception:  # pylint: disable=broad-exception-caught
             # Authorizer exceptions may contain credentials; do not log their details.
             logger.error("Lifecycle request authorization failed")
@@ -905,8 +961,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             session_env_overrides=raw_overrides,
         )
 
-    async def _before_snapshot_endpoint(self, request: Request) -> Response:
-        authorization_error = await AgentServerHost._authorize_lifecycle_request(self, request)
+    async def _before_snapshot_endpoint(self, request: Request, *, platform_route: bool = False) -> Response:
+        authorization_error = await AgentServerHost._authorize_lifecycle_request(
+            self, request, platform_route=platform_route
+        )
         if authorization_error is not None:
             return authorization_error
         try:
@@ -938,8 +996,10 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
             self._lifecycle.before_snapshot_completed = True
             return JSONResponse({"status": "ok"})
 
-    async def _after_restore_endpoint(self, request: Request) -> Response:
-        authorization_error = await AgentServerHost._authorize_lifecycle_request(self, request)
+    async def _after_restore_endpoint(self, request: Request, *, platform_route: bool = False) -> Response:
+        authorization_error = await AgentServerHost._authorize_lifecycle_request(
+            self, request, platform_route=platform_route
+        )
         if authorization_error is not None:
             return authorization_error
         try:

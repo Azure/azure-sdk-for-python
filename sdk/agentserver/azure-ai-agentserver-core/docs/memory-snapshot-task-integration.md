@@ -127,6 +127,25 @@ prototype treated absence as deferred, so removing its cold-boot `false` wiring
 requires this SDK update too. Prior registry-prototype hosted results below do
 not qualify the revised signal contract.
 
+### Lifecycle route access
+
+The lifecycle routes change process state, so the SDK serves them only when a
+caller is trusted:
+
+| Deployment | `/_agent/` routes | `/_before_snapshot`, `/_after_restore` aliases |
+|---|---|---|
+| `FOUNDRY_HOSTING_ENVIRONMENT` set, no authorizer | Processed; platform restricts the port | Not registered (404) |
+| `FOUNDRY_HOSTING_ENVIRONMENT` set, authorizer | Processed without calling the authorizer | Authorizer must return `True` |
+| Not hosted, no authorizer | 404, no side effects | Not registered (404) |
+| Not hosted, authorizer | Authorizer must return `True` | Authorizer must return `True` |
+
+The `/_agent/` routes are always registered ahead of application routes, so an
+application catch-all route cannot answer them when they are disabled. When
+`FOUNDRY_MEMORY_SNAPSHOT_ENABLED=true` defers a requested task runtime but the
+routes cannot be served, startup raises `RuntimeError`; otherwise the runtime
+would never activate. Coverage is in `tests/test_snapshot_authorization.py` and
+`tests/test_snapshot_task_activation.py`.
+
 ## Lifecycle
 
 ### Process preparation and capture

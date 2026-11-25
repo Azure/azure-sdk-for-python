@@ -1152,7 +1152,7 @@ def test_lifecycle_decorators_return_original_functions() -> None:
 
 
 def test_lifecycle_routes_are_registered_before_user_routes() -> None:
-    agent = AgentServerHost()
+    agent = AgentServerHost(lifecycle_authorizer=_allow_lifecycle)
 
     assert [route.path for route in agent.routes[:4]] == [
         "/_agent/before-snapshot",
