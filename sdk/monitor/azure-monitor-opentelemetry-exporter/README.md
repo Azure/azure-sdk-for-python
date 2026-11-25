@@ -275,6 +275,16 @@ keys using the same normalized endpoint and authentication mode share a route.
 Additional destinations still transmit through short-lived clients without
 offline persistence.
 
+With offline storage enabled, the routed storage root admits a new partition only
+while it contains fewer than 64 partition directories. Retained directories,
+including empty directories from previous exporter lifetimes, count toward this
+limit. Existing partitions can reopen at or above the limit, subject to the
+client-cache limit. No partitions or pending batches are evicted to admit another
+destination. New destinations at capacity use the same short-lived,
+non-persisting overflow path; storage admission errors also use this path and log
+an error. Admission is coordinated between exporters in the same process, not
+across processes sharing a directory. Single-endpoint storage behavior is unchanged.
+
 #### Delivery guarantees and limitations
 
 Routing provides best-effort delivery, not a transactional or exactly-once
