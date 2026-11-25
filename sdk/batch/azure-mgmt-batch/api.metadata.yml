@@ -1,5 +1,5 @@
-apiHash: 28b2e26efdad959e27152893499981a1f9507ee41edba409c1b58933d5c3d866
+apiHash: 8290e7e3e8621cbeace52495db31d9930283c6313a7bbaf863803a0382492e5d
 packageRelativePath: sdk/batch/azure-mgmt-batch
-packageVersion: 19.0.0
+packageVersion: 20.0.0
 parserVersion: 0.3.31
 pythonVersion: 3.12.16
