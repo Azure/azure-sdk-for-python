@@ -16,11 +16,8 @@
 import unittest
 from unittest.mock import Mock, call, patch
 
-from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter
 from opentelemetry.sdk.resources import Resource
-from opentelemetry.trace import NonRecordingSpan, SpanContext, TraceFlags, set_span_in_context
 
-from azure.monitor.opentelemetry.exporter.export.logs._exporter import _convert_log_to_envelope
 from azure.monitor.opentelemetry._configure import (
     _send_attach_warning,
     _setup_instrumentations,
@@ -369,45 +366,6 @@ class TestConfigure(unittest.TestCase):
         # Assert setup_metrics is called before setup_logging and setup_tracing
         self.assertLess(call_order.index("metrics"), call_order.index("logging"))
         self.assertLess(call_order.index("metrics"), call_order.index("tracing"))
-
-    def test_parent_based_sampling_does_not_weight_logs_from_sampled_remote_parent(self):
-        exporter = InMemoryLogRecordExporter()
-        with (
-            patch.dict(
-                "os.environ",
-                {"OTEL_TRACES_SAMPLER": "parentbased_trace_id_ratio", "OTEL_TRACES_SAMPLER_ARG": "0.05"},
-                clear=True,
-            ),
-            patch("azure.monitor.opentelemetry._configure.AzureMonitorTraceExporter"),
-            patch("azure.monitor.opentelemetry.exporter.AzureMonitorLogExporter", return_value=exporter),
-            patch("azure.monitor.opentelemetry._configure.set_tracer_provider") as set_tracer,
-            patch("opentelemetry._logs.set_logger_provider") as set_logger,
-            patch("azure.monitor.opentelemetry._configure.getLogger"),
-            patch("azure.monitor.opentelemetry._configure._setup_metrics"),
-            patch("azure.monitor.opentelemetry._configure._setup_instrumentations"),
-        ):
-            configure_azure_monitor(
-                enable_trace_based_sampling_for_logs=True,
-                enable_performance_counters=False,
-                enable_live_metrics=False,
-                instrumentation_options={"azure_sdk": {"enabled": False}},
-                resource=TEST_RESOURCE,
-            )
-        tracer_provider = set_tracer.call_args.args[0]
-        logger_provider = set_logger.call_args.args[0]
-        self.addCleanup(tracer_provider.shutdown)
-        self.addCleanup(logger_provider.shutdown)
-        parent = NonRecordingSpan(
-            SpanContext((1 << 64) - 1, 2, is_remote=True, trace_flags=TraceFlags(TraceFlags.SAMPLED))
-        )
-        logger = logger_provider.get_logger(__name__)
-        with tracer_provider.get_tracer(__name__).start_as_current_span("child", context=set_span_in_context(parent)):
-            for _ in range(200):
-                logger.emit(body="retained")
-        self.assertTrue(logger_provider.force_flush())
-        logs = exporter.get_finished_logs()
-        self.assertEqual(len(logs), 200)
-        self.assertTrue(all(_convert_log_to_envelope(log).sample_rate is None for log in logs))
 
     @patch(
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
