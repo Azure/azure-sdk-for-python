@@ -774,9 +774,9 @@ class BreakingChangesTracker:
                 continue
             if stable_type in {"Optional", "Union"} or current_type in {"Optional", "Union"}:
                 continue
-            if key in {stable_type, current_type} and not (
-                _is_annotation(stable_properties[key]) or _is_annotation(current_properties[key])
-            ):
+            if stable_type == key and not _is_annotation(stable_properties[key]):
+                continue
+            if current_type == key and not _is_annotation(current_properties[key]):
                 continue
 
             stable_members = _normalize_property_type(stable_type)
