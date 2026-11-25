@@ -28,6 +28,10 @@ from azure.ai.ml.exceptions import ErrorTarget, MlException, ValidationErrorType
 
 module_logger = logging.getLogger(__name__)
 
+# Azure creates storage account names with lowercase letters and numbers. Host names are case-insensitive, so
+# uppercase letters are accepted to keep existing datastore definitions working.
+_STORAGE_ACCOUNT_NAME_PATTERN = re.compile(r"[a-zA-Z0-9]{3,24}")
+
 
 class AzureMLDatastorePathUri:
     """Parser for an azureml:// datastore path URI, e.g.: azureml://datastores/mydatastore/paths/images/dogs'.
@@ -125,6 +129,35 @@ class AzureMLDatastorePathUri:
         )
 
 
+def get_storage_account_url(
+    storage_account: Optional[str],
+    storage_type: Union[DatastoreType, str],
+    storage_endpoint: str,
+) -> str:
+    """Return the account URL for a datastore storage account.
+
+    :param storage_account: The storage account name
+    :type storage_account: Optional[str]
+    :param storage_type: The storage type
+    :type storage_type: Union[DatastoreType, str]
+    :param storage_endpoint: The storage endpoint suffix for the configured cloud
+    :type storage_endpoint: str
+    :return: The storage account URL
+    :rtype: str
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the storage account name is invalid.
+    """
+    # The account name becomes the URL host label, so reject characters that could change the host.
+    if not isinstance(storage_account, str) or not _STORAGE_ACCOUNT_NAME_PATTERN.fullmatch(storage_account):
+        msg = "Invalid storage account name. Storage account names must be 3 to 24 letters or numbers."
+        raise ValidationException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.DATASTORE,
+            error_type=ValidationErrorType.INVALID_VALUE,
+        )
+    return STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
+
+
 def get_storage_client(
     credential: str,
     storage_account: str,
@@ -173,7 +206,7 @@ def get_storage_client(
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
     if not account_url and storage_endpoint:
-        account_url = STORAGE_ACCOUNT_URLS[storage_type].format(storage_account, storage_endpoint)
+        account_url = get_storage_account_url(storage_account, storage_type, storage_endpoint)
     return client_builders[storage_type](credential, container_name, account_url)
 
 
