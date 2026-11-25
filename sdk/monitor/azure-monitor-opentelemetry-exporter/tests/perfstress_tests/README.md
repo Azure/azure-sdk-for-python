@@ -52,7 +52,7 @@ The tests currently written for the T2 SDK:
 
 ## Offline feature benchmarks
 
-[Multi-endpoint routing](../perf/test_multi_endpoint_routing.py) benchmarks use
+[Multi-endpoint routing](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/monitor/azure-monitor-opentelemetry-exporter/tests/perf/test_multi_endpoint_routing.py) benchmarks use
 512 prebuilt spans and a fake transport, without Azure resources or credentials.
 After setup, run from the package directory:
 
