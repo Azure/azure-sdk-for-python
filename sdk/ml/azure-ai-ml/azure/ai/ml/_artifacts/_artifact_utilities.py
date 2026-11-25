@@ -34,10 +34,11 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
     get_artifact_path_from_storage_url,
+    get_storage_account_url,
     get_storage_client,
 )
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
-from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.constants._common import SHORT_URI_FORMAT
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._credentials import AadCredentialConfiguration, NoneCredentialConfiguration
@@ -101,9 +102,7 @@ def get_datastore_info(
     storage_endpoint = _get_storage_endpoint_from_metadata()
     datastore_info["storage_type"] = datastore.type
     datastore_info["storage_account"] = datastore.account_name
-    datastore_info["account_url"] = STORAGE_ACCOUNT_URLS[datastore.type].format(
-        datastore.account_name, storage_endpoint
-    )
+    datastore_info["account_url"] = get_storage_account_url(datastore.account_name, datastore.type, storage_endpoint)
 
     try:
         if isinstance(datastore.credentials, (NoneCredentialConfiguration, AadCredentialConfiguration)):
