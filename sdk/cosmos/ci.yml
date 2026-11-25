@@ -33,7 +33,7 @@ extends:
       # Preserve Unicode build errors when the Windows runner prints captured output.
       PYTHONIOENCODING: utf-8
     TestMarkArgument: cosmosCustomerWheel
-    # One existing test job also compiles and runs the Cargo tests.
+    # Each Standard test job also compiles and runs the Cargo tests.
     TestTimeoutInMinutes: 240
     BeforeTestSteps:
     - template: /sdk/cosmos/templates/prepare-test-probes.yml
