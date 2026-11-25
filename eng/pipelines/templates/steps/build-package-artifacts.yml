@@ -143,8 +143,8 @@ steps:
         Condition: and(succeeded(), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
 
   # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
-  # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
-  # cibuildwheel cache so it skips the blocked download.
+  # sdk_build provisions each package's selected interpreters from this feed,
+  # using the installed cibuildwheel's metadata and cache layout.
   - task: NuGetAuthenticate@1
     displayName: 'Authenticate to NuGet feed'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
@@ -152,30 +152,11 @@ steps:
   - pwsh: |
       $ErrorActionPreference = 'Stop'
       $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
-      $version = "3.10.11"
       $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
-      $nugetCpython = Join-Path $cache "nuget-cpython"
-      New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
-      $nuget = (Get-Command nuget).Source
-      & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
-      if ($LASTEXITCODE) { 
-        Write-Error "Failed to download python $version"
-        exit 1
-      }
-      & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
-      if ($LASTEXITCODE) { 
-        Write-Error "Failed to download pythonarm64 $version"
-        exit 1
-      }
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
-
+      Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_NUGET_FEED]$feed"
       if ($env:INSTALL_MS_RUST_TOOLCHAIN -eq 'true') {
-        # Packages use this path as PYO3_CROSS_LIB_DIR when cross-compiling Windows ARM64 wheels.
-        $arm64Libs = Join-Path $nugetCpython "pythonarm64.$version\tools\libs"
-        if (-not (Test-Path $arm64Libs)) {
-          throw "Expected ARM64 Python import libraries at $arm64Libs"
-        }
-        Write-Host "##vso[task.setvariable variable=PYTHON_ARM64_LIB_DIR]$arm64Libs"
+        Write-Host "##vso[task.setvariable variable=AZURESDK_PYTHON_ARM64_LIBS]true"
       }
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
@@ -232,6 +213,14 @@ steps:
 
   - ${{ parameters.BeforePublishSteps }}
 
+  # Preserve the release requirements before non-native macOS builds clean up the source tree.
+  - ${{ if eq(parameters.ArtifactSuffix, 'mac') }}:
+    - pwsh: |
+        New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
+        Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
+      displayName: 'Assemble Static Files for Release Stage'
+      condition: succeeded()
+
   # we need to publish an empty artifact. when publishing an empty artifact, let's ensure that there isn't anything to
   # cause CG or SBOM generation to have to do actual work.
   - pwsh: |
@@ -241,14 +230,7 @@ steps:
     displayName: Clean up repo
     condition: and(succeeded(), ne(variables['ENABLE_EXTENSION_BUILD'], 'true'), ne('${{ parameters.ArtifactSuffix }}', 'linux'))
 
-  # we need to only publish this if running on linux. we only need one for all stages
-  - pwsh: |
-      New-Item -ItemType Directory -Path "$(Build.ArtifactStagingDirectory)/release_artifact"
-      Copy-Item -Path "$(Build.SourcesDirectory)/eng/release_requirements.txt" -Destination "$(Build.ArtifactStagingDirectory)/release_artifact/release_requirements.txt"
-    displayName: 'Assemble Static Files for Release Stage'
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
-
-  - ${{ if eq(parameters.ArtifactSuffix, 'linux') }}:
+  - ${{ if eq(parameters.ArtifactSuffix, 'mac') }}:
     - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
       parameters:
         ArtifactPath: '$(Build.ArtifactStagingDirectory)/release_artifact'

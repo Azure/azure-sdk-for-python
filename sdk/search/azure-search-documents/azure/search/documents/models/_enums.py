@@ -10,6 +10,20 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class AgenticSearchTerminationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Why agentic processing stopped. Non-model failures retain their existing error details and HTTP
+    status.
+    """
+
+    MODEL_STOPPED = "modelStopped"
+    """Processing completed normally after a valid model stop or a service-owned iteration bound. This
+    does not guarantee complete evidence."""
+    MAX_RUNTIME_EXCEEDED = "maxRuntimeExceeded"
+    """The request deadline ended agentic processing before a valid stop."""
+    MODEL_FAILED = "modelFailed"
+    """Agentic model processing failed before a valid model stop."""
+
+
 class AutocompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the mode for Autocomplete. The default is 'oneTerm'. Use 'twoTerms' to get shingles
     and 'oneTermWithContext' to use the current context in producing autocomplete terms.
@@ -26,6 +40,94 @@ class AutocompleteMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Completes the last term in a query with two or more terms, where the last two terms are a
     phrase that exists in the index. For example, if the input is 'washington medic', the suggested
     terms could include 'washington medicaid' and 'washington medical'."""
+
+
+class GraphQueryDiagnosticPhase(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The stage that produced a graph query diagnostic."""
+
+    PARSE = "parse"
+    """Query syntax and parsing."""
+    BIND = "bind"
+    """Variable, parameter, function, and semantic binding."""
+    VALIDATION = "validation"
+    """Request-option validation."""
+    PLANNING = "planning"
+    """Query planning, including unsupported query shapes and query-breadth restrictions."""
+    EXECUTION = "execution"
+    """Runtime evaluation, execution-limit warnings, and execution summaries."""
+
+
+class GraphQueryDiagnosticSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The importance of a graph query diagnostic."""
+
+    ERROR = "error"
+    """The query was rejected or could not be evaluated successfully."""
+    WARNING = "warning"
+    """Execution returned a result with a caveat, such as an execution or provenance limit."""
+    INFO = "info"
+    """Informational diagnostics, such as an optional execution summary."""
+
+
+class GraphQueryEvidenceCountRelation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Completeness of an evidence count."""
+
+    EXACT = "exact"
+    """All supporting evidence was counted."""
+    LOWER_BOUND = "lowerBound"
+    """At least this many supporting entries exist; collection was bounded."""
+
+
+class GraphQueryExecutionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether a graph query is executed or only planned."""
+
+    EXECUTE = "execute"
+    """Build and execute the graph plan."""
+    PLAN_ONLY = "planOnly"
+    """Build the graph plan without executing backend searches."""
+
+
+class GraphQueryExplainStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Diagnostic stages available when inspecting a graph query."""
+
+    SYNTAX = "syntax"
+    """Parsed query syntax."""
+    SEMANTIC_IR = "semanticIr"
+    """Bound semantic intermediate representation."""
+    LOGICAL_PLAN = "logicalPlan"
+    """Logical plan before optimization."""
+    OPTIMIZED_LOGICAL_PLAN = "optimizedLogicalPlan"
+    """Logical plan after optimization."""
+    PHYSICAL_PLAN = "physicalPlan"
+    """Physical execution plan."""
+    REQUEST_ATTRIBUTIONS = "requestAttributions"
+    """Attribution of backend requests to execution-plan nodes."""
+    FULL = "full"
+    """All available diagnostic stages."""
+
+
+class GraphQueryProvenanceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of assertion evidence returned with graph rows."""
+
+    IDS = "ids"
+    """Return evidence identifiers without source documents."""
+    HYDRATE = "hydrate"
+    """Return evidence identifiers and selected documents from the profile-configured provenance
+    index."""
+
+
+class HybridCountAndFacetMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines whether the count and facets should includes all documents that matched the search
+    query, or only the documents that are retrieved within the 'maxTextRecallSize' window. The
+    default value is 'countAllResults'.
+    """
+
+    COUNT_RETRIEVABLE_RESULTS = "countRetrievableResults"
+    """Only include documents that were matched within the 'maxTextRecallSize' retrieval window when
+    computing 'count' and 'facets'."""
+    COUNT_ALL_RESULTS = "countAllResults"
+    """Include all documents that were matched by the search query when computing 'count' and
+    'facets', regardless of whether or not those documents are within the 'maxTextRecallSize'
+    retrieval window."""
 
 
 class IndexActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -45,6 +147,21 @@ class IndexActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Removes the specified document from the index. Any field you specify in a delete operation
     other than the key field will be ignored. If you want to remove an individual field from a
     document, use merge instead and set the field explicitly to null."""
+
+
+class OperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum describing allowed operation states."""
+
+    NOT_STARTED = "NotStarted"
+    """The operation has not started."""
+    RUNNING = "Running"
+    """The operation is in progress."""
+    SUCCEEDED = "Succeeded"
+    """The operation has completed successfully."""
+    FAILED = "Failed"
+    """The operation has failed."""
+    CANCELED = "Canceled"
+    """The operation has been canceled by the user."""
 
 
 class QueryAnswerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,11 +215,187 @@ class QueryDebugMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allows the user to further explore their hybrid and vector query results."""
     QUERY_REWRITES = "queryRewrites"
     """Allows the user to explore the list of query rewrites generated for their search request."""
+    AGENTIC = "agentic"
+    """Returns bounded diagnostics for agentic search under @search.debug.agentic. Combine with other
+    supported modes using ``|``; this selector does not enable agentic retrieval or query rewriting."""
     INNER_HITS = "innerHits"
     """Allows the user to retrieve scoring information regarding vectors matched within a collection
     of complex types."""
     ALL = "all"
     """Turn on all debug options."""
+
+
+class QueryLanguage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The language of the query."""
+
+    NONE = "none"
+    """Query language not specified."""
+    EN_US = "en-us"
+    """Query language value for English (United States)."""
+    EN_GB = "en-gb"
+    """Query language value for English (Great Britain)."""
+    EN_IN = "en-in"
+    """Query language value for English (India)."""
+    EN_CA = "en-ca"
+    """Query language value for English (Canada)."""
+    EN_AU = "en-au"
+    """Query language value for English (Australia)."""
+    FR_FR = "fr-fr"
+    """Query language value for French (France)."""
+    FR_CA = "fr-ca"
+    """Query language value for French (Canada)."""
+    DE_DE = "de-de"
+    """Query language value for German (Germany)."""
+    ES_ES = "es-es"
+    """Query language value for Spanish (Spain)."""
+    ES_MX = "es-mx"
+    """Query language value for Spanish (Mexico)."""
+    ZH_CN = "zh-cn"
+    """Query language value for Chinese (China)."""
+    ZH_TW = "zh-tw"
+    """Query language value for Chinese (Taiwan)."""
+    PT_BR = "pt-br"
+    """Query language value for Portuguese (Brazil)."""
+    PT_PT = "pt-pt"
+    """Query language value for Portuguese (Portugal)."""
+    IT_IT = "it-it"
+    """Query language value for Italian (Italy)."""
+    JA_JP = "ja-jp"
+    """Query language value for Japanese (Japan)."""
+    KO_KR = "ko-kr"
+    """Query language value for Korean (Korea)."""
+    RU_RU = "ru-ru"
+    """Query language value for Russian (Russia)."""
+    CS_CZ = "cs-cz"
+    """Query language value for Czech (Czech Republic)."""
+    NL_BE = "nl-be"
+    """Query language value for Dutch (Belgium)."""
+    NL_NL = "nl-nl"
+    """Query language value for Dutch (Netherlands)."""
+    HU_HU = "hu-hu"
+    """Query language value for Hungarian (Hungary)."""
+    PL_PL = "pl-pl"
+    """Query language value for Polish (Poland)."""
+    SV_SE = "sv-se"
+    """Query language value for Swedish (Sweden)."""
+    TR_TR = "tr-tr"
+    """Query language value for Turkish (Turkey)."""
+    HI_IN = "hi-in"
+    """Query language value for Hindi (India)."""
+    AR_SA = "ar-sa"
+    """Query language value for Arabic (Saudi Arabia)."""
+    AR_EG = "ar-eg"
+    """Query language value for Arabic (Egypt)."""
+    AR_MA = "ar-ma"
+    """Query language value for Arabic (Morocco)."""
+    AR_KW = "ar-kw"
+    """Query language value for Arabic (Kuwait)."""
+    AR_JO = "ar-jo"
+    """Query language value for Arabic (Jordan)."""
+    DA_DK = "da-dk"
+    """Query language value for Danish (Denmark)."""
+    NO_NO = "no-no"
+    """Query language value for Norwegian (Norway)."""
+    BG_BG = "bg-bg"
+    """Query language value for Bulgarian (Bulgaria)."""
+    HR_HR = "hr-hr"
+    """Query language value for Croatian (Croatia)."""
+    HR_BA = "hr-ba"
+    """Query language value for Croatian (Bosnia and Herzegovina)."""
+    MS_MY = "ms-my"
+    """Query language value for Malay (Malaysia)."""
+    MS_BN = "ms-bn"
+    """Query language value for Malay (Brunei Darussalam)."""
+    SL_SL = "sl-sl"
+    """Query language value for Slovenian (Slovenia)."""
+    TA_IN = "ta-in"
+    """Query language value for Tamil (India)."""
+    VI_VN = "vi-vn"
+    """Query language value for Vietnamese (Viet Nam)."""
+    EL_GR = "el-gr"
+    """Query language value for Greek (Greece)."""
+    RO_RO = "ro-ro"
+    """Query language value for Romanian (Romania)."""
+    IS_IS = "is-is"
+    """Query language value for Icelandic (Iceland)."""
+    ID_ID = "id-id"
+    """Query language value for Indonesian (Indonesia)."""
+    TH_TH = "th-th"
+    """Query language value for Thai (Thailand)."""
+    LT_LT = "lt-lt"
+    """Query language value for Lithuanian (Lithuania)."""
+    UK_UA = "uk-ua"
+    """Query language value for Ukrainian (Ukraine)."""
+    LV_LV = "lv-lv"
+    """Query language value for Latvian (Latvia)."""
+    ET_EE = "et-ee"
+    """Query language value for Estonian (Estonia)."""
+    CA_ES = "ca-es"
+    """Query language value for Catalan."""
+    FI_FI = "fi-fi"
+    """Query language value for Finnish (Finland)."""
+    SR_BA = "sr-ba"
+    """Query language value for Serbian (Bosnia and Herzegovina)."""
+    SR_ME = "sr-me"
+    """Query language value for Serbian (Montenegro)."""
+    SR_RS = "sr-rs"
+    """Query language value for Serbian (Serbia)."""
+    SK_SK = "sk-sk"
+    """Query language value for Slovak (Slovakia)."""
+    NB_NO = "nb-no"
+    """Query language value for Norwegian (Norway)."""
+    HY_AM = "hy-am"
+    """Query language value for Armenian (Armenia)."""
+    BN_IN = "bn-in"
+    """Query language value for Bengali (India)."""
+    EU_ES = "eu-es"
+    """Query language value for Basque."""
+    GL_ES = "gl-es"
+    """Query language value for Galician."""
+    GU_IN = "gu-in"
+    """Query language value for Gujarati (India)."""
+    HE_IL = "he-il"
+    """Query language value for Hebrew (Israel)."""
+    GA_IE = "ga-ie"
+    """Query language value for Irish (Ireland)."""
+    KN_IN = "kn-in"
+    """Query language value for Kannada (India)."""
+    ML_IN = "ml-in"
+    """Query language value for Malayalam (India)."""
+    MR_IN = "mr-in"
+    """Query language value for Marathi (India)."""
+    FA_AE = "fa-ae"
+    """Query language value for Persian (U.A.E.)."""
+    PA_IN = "pa-in"
+    """Query language value for Punjabi (India)."""
+    TE_IN = "te-in"
+    """Query language value for Telugu (India)."""
+    UR_PK = "ur-pk"
+    """Query language value for Urdu (Pakistan)."""
+
+
+class QueryRewritesType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This parameter is only valid if the query type is ``semantic``. When QueryRewrites is set to
+    ``generative``, the query terms are sent to a generate model which will produce 10 (default)
+    rewrites to help increase the recall of the request. The requested count can be configured by
+    appending the pipe character ``|`` followed by the ``count-<number of rewrites>`` option, such
+    as ``generative|count-3``. Defaults to ``None``.
+    """
+
+    NONE = "none"
+    """Do not generate additional query rewrites for this query."""
+    GENERATIVE = "generative"
+    """Generate alternative query terms to increase the recall of a search request."""
+
+
+class QuerySpellerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Improve search recall by spell-correcting individual search query terms."""
+
+    NONE = "none"
+    """Speller not enabled."""
+    LEXICON = "lexicon"
+    """Speller corrects individual query terms using a static lexicon for the language specified by
+    the queryLanguage parameter."""
 
 
 class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -122,6 +415,9 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Best suited for queries expressed in natural language as opposed to keywords. Improves
     precision of search results by re-ranking the top search results using a ranking model trained
     on the Web corpus."""
+    AGENTIC = "agentic"
+    """Uses an agentic model to generate queries and rerank search results within one index. Requires
+    nonempty natural-language search text."""
 
 
 class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -173,6 +469,25 @@ class SemanticErrorReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """At least one step of the semantic process failed."""
 
 
+class SemanticFieldState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The way the field was used for the semantic enrichment process."""
+
+    USED = "used"
+    """The field was fully used for semantic enrichment."""
+    UNUSED = "unused"
+    """The field was not used for semantic enrichment."""
+    PARTIAL = "partial"
+    """The field was partially used for semantic enrichment."""
+
+
+class SemanticQueryRewritesResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of query rewrite that was used for this request."""
+
+    ORIGINAL_QUERY_ONLY = "originalQueryOnly"
+    """Query rewrites were not successfully generated for this request. Only the original query was
+    used to retrieve the results."""
+
+
 class SemanticSearchResultsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of partial response that was returned for a semantic ranking request."""
 
@@ -191,6 +506,9 @@ class VectorFilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     the filter selectivity, this can result in fewer results than requested by the parameter 'k'."""
     PRE_FILTER = "preFilter"
     """The filter will be applied before the search query."""
+    STRICT_POST_FILTER = "strictPostFilter"
+    """The filter will be applied after the global top-k candidate set of vector results is returned.
+    This will result in fewer results than requested by the parameter 'k'."""
 
 
 class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -200,3 +518,35 @@ class VectorQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Vector query where a raw vector value is provided."""
     TEXT = "text"
     """Vector query where a text value that needs to be vectorized is provided."""
+    IMAGE_URL = "imageUrl"
+    """Vector query where an url that represents an image value that needs to be vectorized is
+    provided."""
+    IMAGE_BINARY = "imageBinary"
+    """Vector query where a base 64 encoded binary of an image that needs to be vectorized is
+    provided."""
+
+
+class VectorSearchTopicGraphKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of topic graph vector search to use."""
+
+    NONE = "none"
+    """Use normal vector search when topic graph diverse retrieval is off."""
+    DIVERSE = "diverse"
+    """Use topic graph diverse retrieval."""
+    BALANCED = "balanced"
+    """Blends pure vector similarity with diversity-aware retrieval. Recommended default to balance
+    diversity with relevance."""
+
+
+class VectorThresholdKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of threshold used to filter vector queries."""
+
+    VECTOR_SIMILARITY = "vectorSimilarity"
+    """The results of the vector query will be filtered based on the vector similarity metric. Note
+    this is the canonical definition of similarity metric, not the 'distance' version. The
+    threshold direction (larger or smaller) will be chosen automatically according to the metric
+    used by the field."""
+    SEARCH_SCORE = "searchScore"
+    """The results of the vector query will filter based on the '@search.score' value. Note this is
+    the @search.score returned as part of the search response. The threshold direction will be
+    chosen for higher @search.score."""

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import asyncio
 from typing import Callable
 from unittest.mock import MagicMock, Mock, patch
 
@@ -11,6 +12,7 @@ from azure.identity import TokenCachePersistenceOptions
 from azure.identity.aio import ClientAssertionCredential
 
 from helpers import build_aad_response, mock_response, GET_TOKEN_METHODS
+from helpers_async import AsyncMockTransport
 
 
 def test_init_with_kwargs():
@@ -42,6 +44,54 @@ async def test_context_manager():
         assert not transport.__aexit__.called
 
     assert transport.__aexit__.called
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("get_token_method", GET_TOKEN_METHODS)
+@pytest.mark.parametrize("callback_type", ["sync", "async", "future"])
+@pytest.mark.parametrize("use_context_manager", [False, True])
+async def test_assertion_callback(get_token_method, callback_type, use_context_manager):
+    assertion = "ASSERTION_TOKEN"
+    access_token = "access-token"
+
+    async def async_callback():
+        return assertion
+
+    def callback():
+        if callback_type == "async":
+            return async_callback()
+        if callback_type == "future":
+            future = asyncio.get_running_loop().create_future()
+            future.set_result(assertion)
+            return future
+        return assertion
+
+    func = Mock(side_effect=callback)
+
+    async def send(request, **kwargs):
+        assert request.data["client_assertion"] == assertion
+        assert request.data["client_assertion_type"] == JWT_BEARER_ASSERTION
+        return mock_response(json_payload=build_aad_response(access_token=access_token))
+
+    credential = ClientAssertionCredential(
+        tenant_id="tenant-id", client_id="client-id", func=func, transport=AsyncMockTransport(send=send)
+    )
+
+    async def check_token():
+        token = await getattr(credential, get_token_method)("scope")
+        assert token.token == access_token
+        cached_token = await getattr(credential, get_token_method)("scope")
+        assert cached_token.token == access_token
+        func.assert_called_once_with()
+
+    if use_context_manager:
+        async with credential:
+            await check_token()
+    else:
+        try:
+            await check_token()
+        finally:
+            await credential.close()
 
 
 @pytest.mark.asyncio

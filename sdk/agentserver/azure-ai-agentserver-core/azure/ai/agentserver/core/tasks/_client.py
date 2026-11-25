@@ -449,6 +449,8 @@ class HostedTaskProvider:
     ) -> None:
         self._base_url = f"{project_endpoint.rstrip('/')}/tasks"
         self._credential = credential
+        # Set only when the manager created the credential for this provider.
+        self._owned_credential: AsyncTokenCredential | None = None
         config: Configuration = Configuration()
         config.user_agent_policy = UserAgentPolicy(base_user_agent=_USER_AGENT)
         self._policies: list[Any] = _build_default_policies(credential)
@@ -794,5 +796,13 @@ class HostedTaskProvider:
         return all_tasks
 
     async def close(self) -> None:
-        """Close the underlying pipeline client."""
-        await self._client.close()
+        """Close the underlying pipeline client and any credential created for this provider.
+
+        The owned credential is kept until its close succeeds, so a failed close can be retried.
+        """
+        try:
+            await self._client.close()
+        finally:
+            if self._owned_credential is not None:
+                await self._owned_credential.close()
+                self._owned_credential = None

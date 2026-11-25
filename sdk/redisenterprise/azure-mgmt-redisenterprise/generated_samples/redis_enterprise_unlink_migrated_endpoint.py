@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-09-01/RedisEnterpriseUnlinkMigratedEndpoint.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseUnlinkMigratedEndpoint.json
 if __name__ == "__main__":
     main()

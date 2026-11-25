@@ -38,6 +38,7 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
+    build_private_dns_resource_reference_get_by_target_resources_request,
     build_private_zones_create_or_update_request,
     build_private_zones_delete_request,
     build_private_zones_get_request,
@@ -63,7 +64,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class RecordSetsOperations:
+class RecordSetsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -980,7 +981,7 @@ class RecordSetsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateZonesOperations:
+class PrivateZonesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1996,7 +1997,7 @@ class PrivateZonesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class VirtualNetworkLinksOperations:
+class VirtualNetworkLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2950,3 +2951,166 @@ class VirtualNetworkLinksOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class PrivateDnsResourceReferenceOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.privatedns.aio.PrivateDnsManagementClient`'s
+        :attr:`private_dns_resource_reference` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: PrivateDnsManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def get_by_target_resources(
+        self,
+        parameters: _models.PrivateDnsResourceReferenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PrivateDnsResourceReferenceResult:
+        """Returns the private DNS zone records specified by the referencing targetResourceIds.
+
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateDnsResourceReferenceResult. The PrivateDnsResourceReferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_by_target_resources(
+        self,
+        parameters: _types.PrivateDnsResourceReferenceRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PrivateDnsResourceReferenceResult:
+        """Returns the private DNS zone records specified by the referencing targetResourceIds.
+
+        :param parameters: The request body. Required.
+        :type parameters: ~azure.mgmt.privatedns.types.PrivateDnsResourceReferenceRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateDnsResourceReferenceResult. The PrivateDnsResourceReferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_by_target_resources(
+        self, parameters: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.PrivateDnsResourceReferenceResult:
+        """Returns the private DNS zone records specified by the referencing targetResourceIds.
+
+        :param parameters: The request body. Required.
+        :type parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PrivateDnsResourceReferenceResult. The PrivateDnsResourceReferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def get_by_target_resources(
+        self,
+        parameters: Union[
+            _models.PrivateDnsResourceReferenceRequest, _types.PrivateDnsResourceReferenceRequest, IO[bytes]
+        ],
+        **kwargs: Any
+    ) -> _models.PrivateDnsResourceReferenceResult:
+        """Returns the private DNS zone records specified by the referencing targetResourceIds.
+
+        :param parameters: The request body. Is either a PrivateDnsResourceReferenceRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceRequest or
+         ~azure.mgmt.privatedns.types.PrivateDnsResourceReferenceRequest or IO[bytes]
+        :return: PrivateDnsResourceReferenceResult. The PrivateDnsResourceReferenceResult is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.privatedns.models.PrivateDnsResourceReferenceResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PrivateDnsResourceReferenceResult] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(parameters, (IOBase, bytes)):
+            _content = parameters
+        else:
+            _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_private_dns_resource_reference_get_by_target_resources_request(
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PrivateDnsResourceReferenceResult, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore

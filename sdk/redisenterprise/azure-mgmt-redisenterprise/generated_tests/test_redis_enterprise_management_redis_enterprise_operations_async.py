@@ -60,6 +60,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
                                 "keyEncryptionKeyUrl": "str",
                             }
                         },
+                        "firewallRules": [{"name": "str", "sourceAddressPrefix": "str"}],
                         "highAvailability": "str",
                         "hostName": "str",
                         "maintenanceConfiguration": {
@@ -141,6 +142,7 @@ class TestRedisEnterpriseManagementRedisEnterpriseOperationsAsync(AzureMgmtRecor
                                 "keyEncryptionKeyUrl": "str",
                             }
                         },
+                        "firewallRules": [{"name": "str", "sourceAddressPrefix": "str"}],
                         "highAvailability": "str",
                         "hostName": "str",
                         "maintenanceConfiguration": {

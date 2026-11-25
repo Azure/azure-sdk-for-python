@@ -159,7 +159,7 @@ namespace azure.mgmt.redisenterprise.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01'])
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
         async def begin_unlink_migrated_endpoint(
                 self, 
                 resource_group_name: str, 
@@ -584,7 +584,7 @@ namespace azure.mgmt.redisenterprise.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01'])
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
         async def begin_unlink_migrated_endpoint(
                 self, 
                 resource_group_name: str, 
@@ -912,7 +912,9 @@ namespace azure.mgmt.redisenterprise.models
 
 
     class azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProperties(_Model):
-        access_policy_name: str
+        access_policy_name: Optional[str]
+        access_string: Optional[str]
+        provisioning_error: Optional[AccessPolicyAssignmentProvisioningError]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         user: AccessPolicyAssignmentPropertiesUser
 
@@ -920,7 +922,8 @@ namespace azure.mgmt.redisenterprise.models
         def __init__(
                 self, 
                 *, 
-                access_policy_name: str, 
+                access_policy_name: Optional[str] = ..., 
+                access_string: Optional[str] = ..., 
                 user: AccessPolicyAssignmentPropertiesUser
             ) -> None: ...
 
@@ -936,6 +939,24 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 object_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.redisenterprise.models.AccessPolicyAssignmentProvisioningError(_Model):
+        code: str
+        message: str
+        target: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: str, 
+                message: str, 
+                target: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -1017,6 +1038,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterCreateProperties(ClusterProperties):
         encryption: ClusterPropertiesEncryption
+        firewall_rules: list[FirewallRule]
         high_availability: Union[str, HighAvailability]
         host_name: str
         maintenance_configuration: MaintenanceConfiguration
@@ -1034,6 +1056,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ..., 
@@ -1046,6 +1069,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterProperties(_Model):
         encryption: Optional[ClusterPropertiesEncryption]
+        firewall_rules: Optional[list[FirewallRule]]
         high_availability: Optional[Union[str, HighAvailability]]
         host_name: Optional[str]
         maintenance_configuration: Optional[MaintenanceConfiguration]
@@ -1062,6 +1086,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ...
@@ -1147,6 +1172,7 @@ namespace azure.mgmt.redisenterprise.models
 
     class azure.mgmt.redisenterprise.models.ClusterUpdateProperties(ClusterProperties):
         encryption: ClusterPropertiesEncryption
+        firewall_rules: list[FirewallRule]
         high_availability: Union[str, HighAvailability]
         host_name: str
         maintenance_configuration: MaintenanceConfiguration
@@ -1164,6 +1190,7 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 encryption: Optional[ClusterPropertiesEncryption] = ..., 
+                firewall_rules: Optional[list[FirewallRule]] = ..., 
                 high_availability: Optional[Union[str, HighAvailability]] = ..., 
                 maintenance_configuration: Optional[MaintenanceConfiguration] = ..., 
                 minimum_tls_version: Optional[Union[str, TlsVersion]] = ..., 
@@ -1412,6 +1439,22 @@ namespace azure.mgmt.redisenterprise.models
                 self, 
                 *, 
                 sas_uri: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.redisenterprise.models.FirewallRule(_Model):
+        name: str
+        source_address_prefix: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                source_address_prefix: str
             ) -> None: ...
 
         @overload
@@ -2287,7 +2330,7 @@ namespace azure.mgmt.redisenterprise.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01'])
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
         def begin_unlink_migrated_endpoint(
                 self, 
                 resource_group_name: str, 
@@ -2712,7 +2755,7 @@ namespace azure.mgmt.redisenterprise.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01'])
+        @api_version_validation(method_added_on='2026-09-01', params_added_on={'2026-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name']}, api_versions_list=['2026-09-01', '2026-10-01-preview'])
         def begin_unlink_migrated_endpoint(
                 self, 
                 resource_group_name: str, 
@@ -3012,10 +3055,14 @@ namespace azure.mgmt.redisenterprise.types
 
 
     class azure.mgmt.redisenterprise.types.AccessPolicyAssignmentProperties(TypedDict, total=False):
-        key "accessPolicyName": Required[str]
+        key "accessPolicyName": str
+        key "accessString": str
+        key "provisioningError": ForwardRef('AccessPolicyAssignmentProvisioningError', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "user": Required[AccessPolicyAssignmentPropertiesUser]
         accessPolicyName: str
+        accessString: str
+        provisioningError: AccessPolicyAssignmentProvisioningError
         provisioningState: Union[str, ProvisioningState]
         user: AccessPolicyAssignmentPropertiesUser
 
@@ -3023,6 +3070,15 @@ namespace azure.mgmt.redisenterprise.types
     class azure.mgmt.redisenterprise.types.AccessPolicyAssignmentPropertiesUser(TypedDict, total=False):
         key "objectId": str
         objectId: str
+
+
+    class azure.mgmt.redisenterprise.types.AccessPolicyAssignmentProvisioningError(TypedDict, total=False):
+        key "code": Required[str]
+        key "message": Required[str]
+        key "target": str
+        code: str
+        message: str
+        target: str
 
 
     class azure.mgmt.redisenterprise.types.AzureCacheForRedisMigrationProperties(TypedDict, total=False):
@@ -3086,6 +3142,7 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
+        firewallRules: list[FirewallRule]
         highAvailability: Union[str, HighAvailability]
         hostName: str
         maintenanceConfiguration: MaintenanceConfiguration
@@ -3111,6 +3168,7 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
+        firewallRules: list[FirewallRule]
         highAvailability: Union[str, HighAvailability]
         hostName: str
         maintenanceConfiguration: MaintenanceConfiguration
@@ -3165,6 +3223,7 @@ namespace azure.mgmt.redisenterprise.types
         key "redundancyMode": Union[str, RedundancyMode]
         key "resourceState": Union[str, ResourceState]
         encryption: ClusterPropertiesEncryption
+        firewallRules: list[FirewallRule]
         highAvailability: Union[str, HighAvailability]
         hostName: str
         maintenanceConfiguration: MaintenanceConfiguration
@@ -3289,6 +3348,13 @@ namespace azure.mgmt.redisenterprise.types
     class azure.mgmt.redisenterprise.types.ExportClusterParameters(TypedDict, total=False):
         key "sasUri": Required[str]
         sasUri: str
+
+
+    class azure.mgmt.redisenterprise.types.FirewallRule(TypedDict, total=False):
+        key "name": Required[str]
+        key "sourceAddressPrefix": Required[str]
+        name: str
+        sourceAddressPrefix: str
 
 
     class azure.mgmt.redisenterprise.types.FlushParameters(TypedDict, total=False):

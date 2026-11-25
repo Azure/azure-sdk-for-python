@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01/RedisEnterpriseListSkusForScaling.json
+# x-ms-original-file: 2026-10-01-preview/RedisEnterpriseListSkusForScaling.json
 if __name__ == "__main__":
     main()

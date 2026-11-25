@@ -183,10 +183,13 @@ provides the internal Rust toolchain. No prototype test feed is selected by
 default. The working directory must contain `rust-toolchain.toml`.
 The installer refuses to overwrite an existing Cargo configuration in its
 `CARGO_HOME`; provide a clean build environment.
-Rust installation is disabled by default and applies only to wheel-build jobs
-that target an artifact with `signBinaries: true`, including on Linux.
-Opted-in jobs have a 240-minute timeout and a 210-minute package-build timeout;
-other jobs keep their existing limits.
+Rust installation is disabled by default. When enabled, it applies to wheel-build
+jobs that target an artifact with `signBinaries: true`, including on Linux, and
+to the documentation job when `BuildDocs` is enabled. Documentation continues
+to install the source distribution, using the host Rust toolchain and
+authenticated Cargo feed.
+Opted-in wheel-build jobs have a 240-minute timeout and a 210-minute package-build
+timeout; other jobs keep their existing limits.
 
 Linux wheels build inside manylinux containers. The package's `before-all` hook
 must install the internal toolchain and configure Cargo source replacement
@@ -194,14 +197,33 @@ inside each container. The pipeline forwards `PIP_INDEX_URL`,
 `MSRUSTUP_ACCESS_TOKEN`, `MSRUSTUP_FEED_URL`, and the
 `CARGO_REGISTRIES_AZURE_SDK_FOR_RUST_PUBLIC_*` index, token, and credential-provider
 variables. Credentials stay in the build environment, not checked-in files.
-On Windows, `PYTHON_ARM64_LIB_DIR` points to the pre-provisioned ARM64 Python
-import libraries; a package can use it as `PYO3_CROSS_LIB_DIR` for cross-compilation.
 
-This opt-in does not provision Rust for source-installing test, documentation,
-or analysis jobs. Prepare those jobs separately before enabling a Rust package,
+This opt-in also provisions Rust for analysis jobs, but not for source-installing
+test jobs. Prepare test jobs separately before enabling a Rust package,
 and keep real source-distribution testing. Packages with a static
 `[project].version` also need version synchronization with `_version.py` for
 nightly builds. No package is activated by adding this shared support.
+
+## Windows ARM64 Rust wheels
+
+Our Windows CI builds ARM64 wheels on AMD64 agents. The `sdk_build` helper
+supplies matching ARM64 Python import libraries and a temporary PyO3 configuration
+so Maturin does not mistake the AMD64 build interpreter for the ARM64 target.
+
+Version-specific packages need no extra setting. If your package enables PyO3's
+stable ABI, add the matching minimum to `pyproject.toml`. For Cargo's `abi3-py310`:
+
+```toml
+[tool.azure-sdk-build]
+pyo3-abi3-minimum = "3.10"
+```
+
+The helper does not read Cargo features: keep these settings aligned and retain
+your strict ABI audit. The minimum cannot exceed the target Python version or be
+combined with a free-threaded ARM64 target.
+
+A package-owned `PYO3_CONFIG_FILE` is preserved and controls its own ABI settings.
+ARM64 runtime/import tests require an ARM64 runner.
 
 # I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
 

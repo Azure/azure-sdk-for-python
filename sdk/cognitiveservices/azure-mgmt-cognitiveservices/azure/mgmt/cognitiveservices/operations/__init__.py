@@ -16,6 +16,7 @@ if TYPE_CHECKING:
 from ._operations import Operations  # type: ignore
 from ._operations import AccountsOperations  # type: ignore
 from ._operations import DeletedAccountsOperations  # type: ignore
+from ._operations import AttachedAksClustersOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._operations import DeploymentsOperations  # type: ignore
 from ._operations import CommitmentPlansOperations  # type: ignore
@@ -44,7 +45,8 @@ from ._operations import ManagedComputeUsagesOperationGroupOperations  # type: i
 from ._operations import ComputesOperations  # type: ignore
 from ._operations import WorkbenchesOperations  # type: ignore
 from ._operations import ManagedComputeCapacitiesOperations  # type: ignore
-from ._operations import CostControlsOperations  # type: ignore
+from ._operations import AccountCostControlsOperations  # type: ignore
+from ._operations import ProjectCostControlsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import TestRaiExternalSafetyProviderOperations  # type: ignore
 from ._operations import RaiExternalSafetyProviderOperations  # type: ignore
@@ -72,6 +74,7 @@ __all__ = [
     "Operations",
     "AccountsOperations",
     "DeletedAccountsOperations",
+    "AttachedAksClustersOperations",
     "PrivateEndpointConnectionsOperations",
     "DeploymentsOperations",
     "CommitmentPlansOperations",
@@ -100,7 +103,8 @@ __all__ = [
     "ComputesOperations",
     "WorkbenchesOperations",
     "ManagedComputeCapacitiesOperations",
-    "CostControlsOperations",
+    "AccountCostControlsOperations",
+    "ProjectCostControlsOperations",
     "PrivateLinkResourcesOperations",
     "TestRaiExternalSafetyProviderOperations",
     "RaiExternalSafetyProviderOperations",

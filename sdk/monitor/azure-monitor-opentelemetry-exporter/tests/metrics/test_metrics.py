@@ -1279,7 +1279,9 @@ class TestMultiEndpointRouting(unittest.TestCase):
                 )
             ]
         )
-        self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+        with self.assertLogs("azure.monitor.opentelemetry.exporter._routing", level="DEBUG") as logs:
+            self.assertEqual(exporter.export(data), MetricExportResult.SUCCESS)
+        self.assertEqual(logs.records[0].levelname, "DEBUG")
         self.transport.send.assert_not_called()
 
     def test_authentication_groups_and_client_reuse(self):
@@ -1372,7 +1374,9 @@ class TestMultiEndpointRouting(unittest.TestCase):
             ) as logs:
                 result = exporter.export(self._data(self._metric([self._point()])))
         self.assertEqual(result, MetricExportResult.FAILURE)
-        self.assertIn("test failure", logs.output[0])
+        self.assertEqual(logs.records[0].levelname, "ERROR")
+        self.assertNotIn("test failure", logs.output[0])
+        self.assertIsNone(logs.records[0].exc_info)
 
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.time.monotonic", return_value=100)
     def test_background_retry_sends_metric_without_new_exports(self, clock):

@@ -164,6 +164,81 @@ class ArcDeploymentSkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Arc SKU."""
 
 
+class AttachedAksClusterCapability(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """A capability supported by an AKS attachment."""
+
+    FOUNDRY_NATIVE = "foundryNative"
+    """Foundry-native training workloads."""
+    KUBERAY = "kuberay"
+    """KubeRay workloads."""
+    AI_MANAGER = "aiManager"
+    """AI Manager inference workloads."""
+
+
+class AttachedAksClusterExtensionInstallationMode(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """How the training extension is installed."""
+
+    MANAGED = "Managed"
+    """The service manages installation of the extension."""
+    MANUAL = "Manual"
+    """The extension is installed manually, when enabled by the service."""
+
+
+class AttachedAksClusterHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Health state of an attachment or one of its components."""
+
+    UNKNOWN = "Unknown"
+    """Health has not yet been established."""
+    HEALTHY = "Healthy"
+    """The attachment or component is healthy."""
+    DEGRADED = "Degraded"
+    """The attachment or component is degraded."""
+    UNHEALTHY = "Unhealthy"
+    """The attachment or component is unhealthy."""
+
+
+class AttachedAksClusterProjectBindingStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning stage of a project binding."""
+
+    RECONCILING = "Reconciling"
+    """The binding is being reconciled."""
+    READY = "Ready"
+    """The binding is ready."""
+    DEGRADED = "Degraded"
+    """The binding is degraded."""
+    BLOCKED = "Blocked"
+    """The binding is blocked."""
+
+
+class AttachedAksClusterProvisioningStage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning stage reported by an attachment."""
+
+    ACCEPTED = "Accepted"
+    """The attachment request was accepted."""
+    VALIDATING = "Validating"
+    """The attachment is being validated."""
+    PROVISIONING_CLUSTER = "ProvisioningCluster"
+    """Cluster provisioning is in progress."""
+    PROVISIONING_IDENTITY = "ProvisioningIdentity"
+    """Identity provisioning is in progress."""
+    PENDING_BOOTSTRAP = "PendingBootstrap"
+    """Cluster bootstrap is pending."""
+    CLUSTER_READY = "ClusterReady"
+    """The cluster is ready."""
+    READY = "Ready"
+    """The attachment is ready."""
+    DEGRADED = "Degraded"
+    """The attachment is degraded."""
+    FAILED = "Failed"
+    """Attachment provisioning failed."""
+    DELETING = "Deleting"
+    """The attachment is being deleted."""
+    BLOCKED = "Blocked"
+    """The attachment is blocked."""
+
+
 class BuiltInAuthorizationScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authorization scheme type."""
 
@@ -598,67 +673,61 @@ class ContentLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
 
 
-class CostControlDimensionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Cost control counter dimensions, including Custom retained for legacy read compatibility."""
+class CostControlCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The measurement used for the budget amount and absolute thresholds."""
 
-    AGENT = "Agent"
-    """Consumption is partitioned by the stable Foundry agent ID."""
-    IDENTITY = "Identity"
-    """Consumption is partitioned by the authenticated principal object ID."""
-    SESSION = "Session"
-    """Consumption is partitioned by the Foundry session ID."""
-    PROJECT = "Project"
-    """Consumption is partitioned by the Foundry project resource ID."""
-    ACCOUNT = "Account"
-    """Consumption is partitioned by the owning Cognitive Services account."""
-    CUSTOM = "Custom"
-    """Legacy read-only dimension using ``CostControlDimension.Attribute``. New Custom counter
-    authoring is reserved for future support."""
+    COST = "Cost"
+    """Estimated consumption cost in United States dollars."""
+    TOKENS = "Tokens"
+    """The number of consumed tokens, optionally selected by a tokenType filter."""
 
 
-class CostControlPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Calendar-aligned UTC renewal periods, including legacy values retained for read compatibility."""
+class CostControlFilterName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-in request attributes supported for traffic filtering."""
 
-    MINUTE = "Minute"
-    """Legacy read-only period renewing at the start of the next UTC minute."""
-    HOUR = "Hour"
-    """Legacy read-only period renewing at the start of the next UTC hour."""
-    DAY = "Day"
-    """Renews daily at 00:00 UTC."""
-    WEEK = "Week"
-    """Renews Monday at 00:00 UTC."""
-    MONTH = "Month"
-    """Renews on the first day of each month at 00:00 UTC."""
-    YEAR = "Year"
-    """Legacy read-only period renewing January 1 at 00:00 UTC."""
+    AGENT = "agent"
+    """The Foundry agent name within the single explicitly selected Foundry project."""
+    SESSION_ID = "sessionId"
+    """The Foundry session ID."""
+    PROJECT = "project"
+    """The Foundry project name within the owning account."""
+    DEPLOYMENT = "deployment"
+    """The deployment name within the owning account."""
+    TOKEN_TYPE = "tokenType"
+    """The input or output token category."""
 
 
-class CostControlThresholdAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported actions when a threshold is reached."""
+class CostControlGroupingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Built-in attributes supported for additional budget partitioning."""
 
-    AUDIT = "Audit"
-    """Legacy read-only action retained to deserialize existing definitions without changing their
-    semantics."""
-    ALERT = "Alert"
-    """Emits a customer-facing alert without blocking requests."""
-    BLOCK = "Block"
-    """Blocks the request without emitting a customer-facing alert."""
+    PROJECT = "project"
+    """Creates an independent counter for each Foundry project in the owning account."""
+    AGENT = "agent"
+    """Creates an independent counter for each Foundry agent, qualified by its Foundry project so
+    identical agent names in different projects do not share counters."""
+    SESSION_ID = "sessionId"
+    """Creates an independent counter for each Foundry session ID."""
 
 
 class CostControlThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported threshold value interpretations."""
+    """The interpretation of a notification or blocking-action threshold."""
 
     PERCENTAGE = "Percentage"
-    """The value is a percentage of the configured rule amount."""
+    """The threshold is a percentage of the configured budget amount."""
     ABSOLUTE = "Absolute"
-    """The value is expressed in the rule's unit."""
+    """The threshold is expressed in United States dollars or tokens, according to the budget
+    category."""
 
 
-class CostControlUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported unit for cost control amounts and thresholds."""
+class CostControlTimeGrain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Calendar-aligned UTC renewal intervals."""
 
-    USD = "Usd"
-    """Estimated cost in United States dollars."""
+    DAILY = "Daily"
+    """Renews each day at 00:00 UTC."""
+    WEEKLY = "Weekly"
+    """Renews each Monday at 00:00 UTC."""
+    MONTHLY = "Monthly"
+    """Renews on the first day of each month at 00:00 UTC."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1087,6 +1156,17 @@ class QuotaUsageStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UNKNOWN."""
 
 
+class RaiAcsAnnotatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Extensible kinds of Agent Control Specification annotator dispatchers."""
+
+    CLASSIFIER = "classifier"
+    """Obtains annotations from a classifier dispatcher."""
+    LLM = "llm"
+    """Obtains annotations from a language-model dispatcher."""
+    ENDPOINT = "endpoint"
+    """Obtains annotations from an external endpoint dispatcher."""
+
+
 class RaiAcsHarmCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Harm categories supported by the Unified Moderate text profile."""
 
@@ -1127,27 +1207,43 @@ class RaiAcsPolicyTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     profile.
     """
 
+    AGENT_INITIALIZATION = "$snap.agent_init"
+    """Selects the agent initialization payload."""
     INPUT = "$snap.input"
     """Selects the incoming user input."""
+    MODEL_MESSAGES = "$snap.messages"
+    """Selects the model messages proposed for dispatch."""
+    MODEL_RESPONSE = "$snap.response"
+    """Selects the completed model response."""
     OUTPUT = "$snap.output"
     """Selects the assistant output."""
     TOOL_ARGUMENTS = "$snap.tool_call.args"
     """Selects tool-call arguments."""
     TOOL_RESULT = "$snap.tool_result.value"
     """Selects a tool result."""
+    AGENT_SUMMARY = "$snap.summary"
+    """Selects the final agent execution summary."""
 
 
 class RaiAcsPolicyTargetKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Canonical target kinds supported by the Azure AI Content Safety Unified Moderate host profile."""
 
+    AGENT_INITIALIZATION = "agent_init"
+    """The target contains agent initialization state."""
     USER_INPUT = "user_input"
     """The target contains user input."""
+    MODEL_MESSAGES = "messages"
+    """The target contains model messages."""
+    MODEL_RESPONSE = "model_response"
+    """The target contains a completed model response."""
     ASSISTANT_OUTPUT = "assistant_output"
     """The target contains assistant output."""
     TOOL_ARGUMENTS = "tool_args"
     """The target contains tool-call arguments."""
     TOOL_RESULT = "tool_result"
     """The target contains a tool result."""
+    AGENT_SUMMARY = "agent_summary"
+    """The target contains the final agent execution summary."""
 
 
 class RaiAcsToolNameSelector(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1253,6 +1349,14 @@ class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PRE_RUN."""
     POST_RUN = "PostRun"
     """POST_RUN."""
+    AGENT_STARTUP = "AgentStartup"
+    """Content evaluated when an agent execution session starts."""
+    PRE_MODEL_CALL = "PreModelCall"
+    """Content evaluated before a model call is made."""
+    POST_MODEL_CALL = "PostModelCall"
+    """Content evaluated after a model call returns."""
+    AGENT_SHUTDOWN = "AgentShutdown"
+    """Content evaluated when an agent execution session shuts down."""
 
 
 class RaiPolicyFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1451,6 +1555,78 @@ class TierUpgradePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """NO_AUTO_UPGRADE."""
 
 
+class ToolControlsDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the default action for a tool that is not listed explicitly."""
+
+    DENY = "Deny"
+    """Tools that are not listed explicitly are denied."""
+
+
+class ToolControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The canonical tool type supported by Foundry agents. Additional tool types may be specified as
+    strings.
+    """
+
+    A2_A = "a2a"
+    """Agent-to-agent tool."""
+    AZURE_AI_SEARCH = "azure_ai_search"
+    """Azure AI Search tool."""
+    AZURE_FUNCTION = "azure_function"
+    """Azure Function tool."""
+    BING_GROUNDING = "bing_grounding"
+    """Grounding with Bing Search tool."""
+    BROWSER_AUTOMATION = "browser_automation"
+    """Browser automation tool."""
+    CAPTURE_STRUCTURED_OUTPUTS = "capture_structured_outputs"
+    """Capture structured outputs tool."""
+    OPENAPI = "openapi"
+    """OpenAPI tool."""
+    FUNCTION = "function"
+    """Function tool."""
+    FILE_SEARCH = "file_search"
+    """File search tool."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """Computer use tool."""
+    WEB_SEARCH = "web_search"
+    """Web search tool."""
+    MCP = "mcp"
+    """Model Context Protocol (MCP) tool."""
+    CODE_INTERPRETER = "code_interpreter"
+    """Code interpreter tool."""
+    IMAGE_GENERATION = "image_generation"
+    """Image generation tool."""
+    LOCAL_SHELL = "local_shell"
+    """Local shell tool."""
+    SHELL = "shell"
+    """Shell tool."""
+    CUSTOM = "custom"
+    """Custom tool."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """Web search preview tool."""
+    APPLY_PATCH = "apply_patch"
+    """Apply patch tool."""
+    A2_A_PREVIEW = "a2a_preview"
+    """Agent-to-agent preview tool."""
+    BING_CUSTOM_SEARCH_PREVIEW = "bing_custom_search_preview"
+    """Grounding with Bing Custom Search preview tool."""
+    BROWSER_AUTOMATION_PREVIEW = "browser_automation_preview"
+    """Browser automation preview tool."""
+    FABRIC_DATAAGENT_PREVIEW = "fabric_dataagent_preview"
+    """Fabric data agent preview tool."""
+    SHAREPOINT_GROUNDING_PREVIEW = "sharepoint_grounding_preview"
+    """SharePoint grounding preview tool."""
+    MEMORY_SEARCH_PREVIEW = "memory_search_preview"
+    """Memory search preview tool."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """Work IQ preview tool."""
+    FABRIC_IQ_PREVIEW = "fabric_iq_preview"
+    """Fabric IQ preview tool."""
+    TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
+    """Toolbox search preview tool."""
+    WEB_IQ_PREVIEW = "web_iq_preview"
+    """Web IQ preview tool."""
+
+
 class TrafficRoutingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Traffic routing protocol, used to distribute an application's inbound traffic to its
     deployments.
@@ -1458,6 +1634,13 @@ class TrafficRoutingProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     FIXED_RATIO = "FixedRatio"
     """Percentage based routing."""
+
+
+class TrustedCertificateSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of Azure resource containing trusted CA certificate bundles."""
+
+    AZURE_KEY_VAULT = "AzureKeyVault"
+    """Azure Key Vault secrets containing CA certificates or certificate bundles."""
 
 
 class UnitType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

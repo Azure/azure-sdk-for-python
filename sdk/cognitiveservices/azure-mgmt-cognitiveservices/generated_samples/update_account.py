@@ -38,8 +38,7 @@ def main():
             "location": "global",
             "properties": {
                 "costControlConnections": {
-                    "appInsightsConnectionId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/bvttest/providers/Microsoft.CognitiveServices/accounts/bingSearch/connections/myAppInsightsConnection",
-                    "eventGridConnectionId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/bvttest/providers/Microsoft.CognitiveServices/accounts/bingSearch/connections/myEventGridConnection",
+                    "appInsightsConnectionId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/bvttest/providers/Microsoft.CognitiveServices/accounts/bingSearch/connections/myAppInsightsConnection"
                 }
             },
             "sku": {"name": "S2"},
@@ -48,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-15-preview/UpdateAccount.json
+# x-ms-original-file: 2026-11-15-preview/UpdateAccount.json
 if __name__ == "__main__":
     main()

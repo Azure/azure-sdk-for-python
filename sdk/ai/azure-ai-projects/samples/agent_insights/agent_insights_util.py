@@ -23,12 +23,11 @@ from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentInsightMonitorUpdate,
     AgentVersionDetails,
     ExternalAgentDefinition,
     JobStatus,
 )
-from azure.ai.projects.operations import BetaAgentInsightMonitorsOperations
+from azure.ai.projects.operations import AgentInsightMonitorsOperations
 
 
 def create_agent(project_client: AIProjectClient, name_prefix: str) -> AgentVersionDetails:
@@ -54,7 +53,7 @@ def cleanup(
 ) -> None:
     # Keep the agent if its monitor cannot be stopped and deleted.
     if monitor_id is not None:
-        delete_monitor(project_client.beta.agent_insight_monitors, monitor_id, scheduled=scheduled)
+        delete_monitor(project_client.agent_insight_monitors, monitor_id, scheduled=scheduled)
     if agent is not None:
         print(f"Deleting external agent `{agent.name}`; if cleanup fails, remove it manually.")
         project_client.agents.delete(agent.name, force=True)
@@ -62,14 +61,14 @@ def cleanup(
 
 
 def delete_monitor(
-    operations: BetaAgentInsightMonitorsOperations,
+    operations: AgentInsightMonitorsOperations,
     monitor_id: str,
     *,
     scheduled: bool = False,
 ) -> None:
     print(f"Cleaning up monitor `{monitor_id}`; if cleanup fails, remove it before deleting its agent.")
     # Disabling stops future scheduling, but a run may already have started.
-    operations.update(monitor_id, AgentInsightMonitorUpdate(enabled=False))
+    operations.update(monitor_id, enabled=False)
 
     active_statuses = {JobStatus.QUEUED, JobStatus.IN_PROGRESS}
     for attempt in range(12):

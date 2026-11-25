@@ -1,6 +1,14 @@
 # Release History
 
-## 12.32.0b1 (2026-11-04)
+## 12.33.0b1 (Unreleased)
+
+### Features Added
+- Added `disable_etag_lock` keyword to `download_blob` to allow downloading a blob that is being modified during the download, such as an append blob that is actively being written to. Set `disable_etag_lock=True` to enable this behavior (defaults to `False`).
+
+### Bugs Fixed
+- Fixed an issue where `BlobClient.commit_block_list` sent every block in the `Latest` list of the request, ignoring `BlobBlock.state`. Blocks with `BlockState.COMMITTED` or `BlockState.UNCOMMITTED` are now sent as `Committed` or `Uncommitted`.
+
+## 12.32.0b1 (2026-11-05)
 
 ### Breaking Changes
 - Custom transports that use legacy `azure-core` Request/Response types will no longer be supported and may now cause errors if used. Please ensure custom transports are utilizing types from `azure.core.rest`.

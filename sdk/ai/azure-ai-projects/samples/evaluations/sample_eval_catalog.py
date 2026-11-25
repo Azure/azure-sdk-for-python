@@ -98,6 +98,8 @@ with (
     prompt_evaluator = project_client.evaluators.create_version(
         name="my_custom_evaluator_code_prompt_based",
         evaluator_version=evaluator_version,
+        # Custom prompt evaluators are still in preview, so the service requires this opt-in header.
+        headers={"Foundry-Features": "Evaluations=V1Preview"},
     )
     pprint(prompt_evaluator)
 
@@ -135,6 +137,8 @@ with (
     code_evaluator = project_client.evaluators.create_version(
         name="my_custom_evaluator_code_based",
         evaluator_version=evaluator_version,
+        # Custom code evaluators are still in preview, so the service requires this opt-in header.
+        headers={"Foundry-Features": "Evaluations=V1Preview"},
     )
     pprint(code_evaluator)
 

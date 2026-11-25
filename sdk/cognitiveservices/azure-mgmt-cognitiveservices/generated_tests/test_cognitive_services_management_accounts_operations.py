@@ -84,8 +84,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     "capabilities": [{"name": "str", "value": "str"}],
                     "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
-                    "costControlConnections": {"appInsightsConnectionId": "str", "eventGridConnectionId": "str"},
-                    "costControlIds": ["str"],
+                    "costControlConnections": {"appInsightsConnectionId": "str"},
                     "customSubDomainName": "str",
                     "dateCreated": "str",
                     "defaultProject": "str",
@@ -180,6 +179,13 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         "lastChangeDate": "str",
                     },
                     "storedCompletionsDisabled": bool,
+                    "trustedCertificateSources": [
+                        {
+                            "certificateBundleReferences": [{"secretName": "str", "secretVersion": "str"}],
+                            "resourceId": "str",
+                            "type": "str",
+                        }
+                    ],
                     "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                 },
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
@@ -254,8 +260,7 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                     "capabilities": [{"name": "str", "value": "str"}],
                     "capabilitySettings": {"blobStore": "str", "documentStore": "str", "vectorStore": "str"},
                     "commitmentPlanAssociations": [{"commitmentPlanId": "str", "commitmentPlanLocation": "str"}],
-                    "costControlConnections": {"appInsightsConnectionId": "str", "eventGridConnectionId": "str"},
-                    "costControlIds": ["str"],
+                    "costControlConnections": {"appInsightsConnectionId": "str"},
                     "customSubDomainName": "str",
                     "dateCreated": "str",
                     "defaultProject": "str",
@@ -350,6 +355,13 @@ class TestCognitiveServicesManagementAccountsOperations(AzureMgmtRecordedTestCas
                         "lastChangeDate": "str",
                     },
                     "storedCompletionsDisabled": bool,
+                    "trustedCertificateSources": [
+                        {
+                            "certificateBundleReferences": [{"secretName": "str", "secretVersion": "str"}],
+                            "resourceId": "str",
+                            "type": "str",
+                        }
+                    ],
                     "userOwnedStorage": [{"identityClientId": "str", "resourceId": "str"}],
                 },
                 "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},

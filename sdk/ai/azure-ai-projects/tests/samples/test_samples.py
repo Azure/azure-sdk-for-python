@@ -93,7 +93,6 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "agents",
             samples_to_skip=[
-                "sample_external_agents_crud.py",  # Skipped until recordings are available.
                 "sample_workflow_multi_agent.py",  # No issue to run.  Just postpone recording.
                 "sample_workflow_multi_agent_with_mcp_approval.py",  # No issue to run.  Just postpone recording.
             ],
@@ -244,6 +243,7 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_dataset_generation_job_traces_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_traces_for_evaluation.py",  # PR #47067: recording not yet available
+                "sample_dataset_generation_job_traces_for_evaluation_with_test_case_rubric.py",  # Need test recordings
                 "sample_dataset_generation_job_simpleqna_with_agent_source.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_with_file_source.py",  # PR #47067: recording not yet available
                 "sample_dataset_generation_job_simpleqna_for_finetuning_with_app_polling.py",  # Need test recordings
@@ -289,14 +289,6 @@ class TestSamples(AzureRecordedTestCase):
                 env_vars={
                     "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "true",
                     "ZIP_FILE_PATH": "tests/samples/assets/basic-agent.zip",
-                },
-            ),
-            AdditionalSampleTestDetail(
-                test_id="sample_create_hosted_agent_from_code",
-                sample_filename="sample_create_hosted_agent_from_code.py",
-                env_vars={
-                    "FOUNDRY_HOSTED_AGENT_REMOTE_BUILD": "false",
-                    "ZIP_FILE_PATH": "tests/samples/assets/basic-agent-prebuilt.zip",
                 },
             ),
             AdditionalSampleTestDetail(

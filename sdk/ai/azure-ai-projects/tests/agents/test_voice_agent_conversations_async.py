@@ -7,7 +7,7 @@
 
 """
 Recorded tests covering the read-only voice-agent conversation REST API surface exposed through
-``project_client.beta.voice_agents.conversations`` (async client).
+``project_client.voice_agents.conversations`` (async client).
 
 Async counterpart of ``test_voice_agent_conversations.py``. See that module's docstring for the
 overall rationale (live-only setup to obtain a real conversation id, sanitized to a fixed
@@ -82,7 +82,7 @@ async def _create_live_conversation(project_client, model: str) -> str:
     )
 
     conversation_id: Optional[str] = None
-    async with project_client.beta.voice_agents.realtime.connect(agent_name=_AGENT_NAME) as conn:
+    async with project_client.voice_agents.realtime.connect(agent_name=_AGENT_NAME) as conn:
         session_created = await asyncio.wait_for(conn.recv(), timeout=30)
         assert isinstance(session_created, RealtimeServerEventSessionCreated)
         conversation_id = session_created.conversation_id
@@ -111,10 +111,10 @@ async def _create_live_conversation(project_client, model: str) -> str:
 class TestVoiceAgentConversationsAsync(TestBase):
     """
     Recorded tests covering the read-only voice-agent conversation REST API surface exposed
-    through ``project_client.beta.voice_agents.conversations`` (conversation envelope,
+    through ``project_client.voice_agents.conversations`` (conversation envelope,
     responses, items, and audio), using the async client.
 
-    NOTE: The ``beta.voice_agents.conversations.get_generated_audio_item*``
+    NOTE: The ``voice_agents.conversations.get_generated_audio_item*``
     methods are intentionally NOT covered here: they return the played-back-interrupted
     subordinate "generated" audio, which requires deliberately barging in mid-reply during a
     live session to produce -- not exercised by the simple single-turn conversation created
@@ -136,7 +136,7 @@ class TestVoiceAgentConversationsAsync(TestBase):
         """
         print("\n")
         project_client = self.create_async_client(operation_group="agents", allow_preview=True, **kwargs)
-        conversations = project_client.beta.voice_agents.conversations
+        conversations = project_client.voice_agents.conversations
 
         async with project_client:
             if is_live():
