@@ -3800,6 +3800,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                     documents._QueryFeature.Top + "," +
                                     documents._QueryFeature.NonStreamingOrderBy + "," +
                                     documents._QueryFeature.HybridSearch + "," +
+                                    documents._QueryFeature.HybridSearchSkipOrderByRewrite + "," +
                                     documents._QueryFeature.CountIf + "," +
                                     documents._QueryFeature.WeightedRankFusion)
 
