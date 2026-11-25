@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2026-11-24)
+## 1.0.0 (2026-11-25)
 
 ### Features Added
 
@@ -24,8 +24,6 @@
   - `ExecuteStartContent.resources` is now required.
   - Model `LocationBasedBulkCreate` deleted or renamed its instance variable `tags`
   - Model `LocationBasedBulkCreateCustom` deleted or renamed its instance variable `tags`
-  - Deleted or renamed enum value `NetworkApiVersion.ENUM2020_11_01`
-  - Deleted or renamed enum value `NetworkApiVersion.ENUM2022_11_01`
   - Deleted or renamed model `AcknowledgeBulkOperationErrorsRequest`
   - Deleted or renamed model `AcknowledgeBulkOperationErrorsResponse`
   - Deleted or renamed model `CancelOccurrenceRequest`
@@ -86,11 +84,11 @@
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_acknowledge_operation_errors`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_list_operation_errors`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_reimage_operation`
-  - Deleted or renamed operation group `OccurrenceExtensionOperations`
-  - Deleted or renamed operation group `OccurrencesOperations`
-  - Deleted or renamed operation group `ScheduledActionExtensionOperations`
-  - Deleted or renamed operation group `ScheduledActionOperationStatusOperations`
-  - Deleted or renamed operation group `ScheduledActionsOperations`
+  - Deleted or renamed model `OccurrenceExtensionOperations`
+  - Deleted or renamed model `OccurrencesOperations`
+  - Deleted or renamed model `ScheduledActionExtensionOperations`
+  - Deleted or renamed model `ScheduledActionOperationStatusOperations`
+  - Deleted or renamed model `ScheduledActionsOperations`
 
 ## 1.0.0b6 (2026-10-13)
 

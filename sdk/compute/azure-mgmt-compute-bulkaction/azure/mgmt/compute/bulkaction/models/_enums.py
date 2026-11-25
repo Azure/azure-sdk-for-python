@@ -323,9 +323,9 @@ class NetworkApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Network Interface Configurations.
     """
 
-    ENUM_2020_11_01 = "2020-11-01"
+    ENUM2020_11_01 = "2020-11-01"
     """2020-11-01 version."""
-    ENUM_2022_11_01 = "2022-11-01"
+    ENUM2022_11_01 = "2022-11-01"
     """2022-11-01 version."""
 
 

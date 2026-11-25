@@ -203,5 +203,5 @@
         "azure.mgmt.compute.bulkaction.operations.BulkCreateOperations.list_by_subscription": "Microsoft.Compute.BulkCreate.listBySubscription",
         "azure.mgmt.compute.bulkaction.aio.operations.BulkCreateOperations.list_by_subscription": "Microsoft.Compute.BulkCreate.listBySubscription"
     },
-    "CrossLanguageVersion": "c43be8164c6d"
+    "CrossLanguageVersion": "71ebc59083cb"
 }
