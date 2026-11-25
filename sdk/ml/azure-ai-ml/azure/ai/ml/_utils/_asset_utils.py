@@ -40,6 +40,9 @@ from azure.ai.ml._artifacts._constants import (
     WORKSPACE_MANAGED_DATASTORE,
     WORKSPACE_MANAGED_DATASTORE_WITH_SLASH,
 )
+from azure.ai.ml._restclient.arm_ml_service.models import DataVersionBase as DataVersionBaseData
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ModelVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import PendingUploadRequestDto
 from azure.ai.ml._restclient.arm_ml_service.operations import (
     ComponentContainersOperations,
     ComponentVersionsOperations,
@@ -50,11 +53,6 @@ from azure.ai.ml._restclient.arm_ml_service.operations import (
     ModelContainersOperations,
     ModelVersionsOperations,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    DataVersionBase as DataVersionBaseData,
-    ModelVersion as ModelVersionData,
-)
-from azure.ai.ml._restclient.arm_ml_service.models import PendingUploadRequestDto
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix, retry, snake_to_camel
 from azure.ai.ml.constants._common import MAX_AUTOINCREMENT_ATTEMPTS, DefaultOpenEncoding, OrderString
@@ -382,7 +380,9 @@ def get_upload_files_from_folder(
     prefix: str = "",
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> List[str]:
-    path = Path(path)
+    # Resolve only the top folder. Folders below it keep their in-tree paths, so ignore rules also apply to files
+    # reached through symlinked folders.
+    path = Path(path).resolve()
     upload_paths = []
     for root, _, files in os.walk(path, followlinks=True):
         upload_paths += list(
@@ -450,19 +450,22 @@ def traverse_directory(  # pylint: disable=unused-argument
     # Normalize Windows paths. Note that path should be resolved first as long part will be converted to a shortcut in
     # Windows. For example, C:\Users\too-long-user-name\test will be converted to C:\Users\too-lo~1\test by default.
     # Refer to https://en.wikipedia.org/wiki/8.3_filename for more details.
-    root = Path(root).resolve().absolute()
+    resolved_root = Path(root).resolve().absolute()
+    # Resolving also follows a symlinked folder to its target, so check ignore rules against the in-tree path too.
+    in_tree_root = Path(root).absolute()
 
     # filter out files excluded by the ignore file
     # TODO: inner ignore file won't take effect. A merged IgnoreFile need to be generated in code resolution.
     origin_file_paths = [
-        root.joinpath(filename)
+        resolved_root.joinpath(filename)
         for filename in files
-        if not ignore_file.is_file_excluded(root.joinpath(filename).as_posix())
+        if not ignore_file.is_file_excluded(in_tree_root.joinpath(filename).as_posix())
+        and not ignore_file.is_file_excluded(resolved_root.joinpath(filename).as_posix())
     ]
 
     result = []
     for origin_file_path in origin_file_paths:
-        relative_path = origin_file_path.relative_to(root)
+        relative_path = origin_file_path.relative_to(resolved_root)
         result.append(
             (
                 _resolve_path(origin_file_path).as_posix(),

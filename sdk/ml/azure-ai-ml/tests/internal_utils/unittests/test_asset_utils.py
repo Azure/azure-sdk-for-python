@@ -298,6 +298,26 @@ class TestAssetUtils:
                 sorted([prefix + p for p in test_case.expected_remote_paths_without_prefix])
             )
 
+    @pytest.mark.parametrize("through_linked_parent", [False, True], ids=["direct", "linked_parent"])
+    def test_ignore_file_applies_inside_symlinked_folder(self, tmp_path: Path, through_linked_parent: bool) -> None:
+        project_dir = tmp_path / "project"
+        outside_dir = tmp_path / "outside"
+        (project_dir / "code").mkdir(parents=True)
+        outside_dir.mkdir()
+        (project_dir / "code" / "main.py").write_text("print('hello')")
+        (project_dir / "code" / ".amlignore").write_text("/secrets/\n")
+        (outside_dir / "token.txt").write_text("secret")
+        (project_dir / "code" / "secrets").symlink_to(outside_dir, target_is_directory=True)
+        code_dir = project_dir / "code"
+        if through_linked_parent:
+            linked_project_dir = tmp_path / "linked_project"
+            linked_project_dir.symlink_to(project_dir, target_is_directory=True)
+            code_dir = linked_project_dir / "code"
+
+        upload_paths = get_upload_files_from_folder(code_dir, ignore_file=get_ignore_file(code_dir))
+
+        assert sorted(remote_path for _, remote_path in upload_paths) == [".amlignore", "main.py"]
+
     def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
         base_size = get_directory_size(storage_test_directory)
         with_ignore_size = get_directory_size(storage_test_directory, ignore_file=amlignore_file)
