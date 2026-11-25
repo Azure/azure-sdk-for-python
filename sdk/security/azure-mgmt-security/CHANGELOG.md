@@ -60,7 +60,7 @@
   - Added model `PricingPropertiesReference`
   - Added model `StartMalwareScanRequest`
   - Added model `StartMalwareScanRequestProperties`
-  - Model `DefenderForStorageOperations` added parameter `content_type` in method `start_malware_scan`
+  - Operation group `DefenderForStorageOperations` added parameter `content_type` in method `start_malware_scan`
   - Added operation group `BatchPricingsOperations`
 
 ### Breaking Changes
