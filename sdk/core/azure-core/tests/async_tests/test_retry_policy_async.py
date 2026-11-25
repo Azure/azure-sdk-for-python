@@ -133,6 +133,69 @@ async def test_retry_on_429(http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+@pytest.mark.parametrize("retry_after", [None, "30"])
+async def test_cancellation_during_retry_wait(http_request, retry_after):
+    class MockTransport(AsyncHttpTransport):
+        def __init__(self):
+            self.send_count = 0
+            self.sleep_duration = None
+            self.sleep_started = asyncio.Event()
+            self.release_sleep = asyncio.Event()
+            self.sleep_finished = asyncio.Event()
+            self.closed = False
+
+        async def __aenter__(self):
+            await self.open()
+            return self
+
+        async def __aexit__(self, exc_type, exc_val, exc_tb):
+            await self.close()
+
+        async def open(self):
+            pass
+
+        async def close(self):
+            self.closed = True
+
+        async def send(self, request, **kwargs):
+            self.send_count += 1
+            response = HttpResponse(request, None)
+            response.status_code = 429
+            if retry_after is not None:
+                response.headers["Retry-After"] = retry_after
+            return response
+
+        async def sleep(self, duration):
+            self.sleep_duration = duration
+            self.sleep_started.set()
+            try:
+                await self.release_sleep.wait()
+            finally:
+                self.sleep_finished.set()
+
+    transport = MockTransport()
+    policy = AsyncRetryPolicy(retry_total=2, retry_mode=RetryMode.Fixed, retry_backoff_factor=2)
+    async with AsyncPipeline(transport, [policy]) as pipeline:
+        task = asyncio.create_task(pipeline.run(http_request("GET", "http://localhost/")))
+        try:
+            await asyncio.wait_for(transport.sleep_started.wait(), timeout=5)
+            assert transport.sleep_duration == (2 if retry_after is None else 30)
+            task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await asyncio.wait_for(asyncio.shield(task), timeout=5)
+        finally:
+            transport.release_sleep.set()
+            await asyncio.wait_for(asyncio.gather(task, return_exceptions=True), timeout=5)
+
+        assert task.cancelled()
+        assert transport.sleep_finished.is_set()
+        assert transport.send_count == (2 if retry_after is None else 1)
+
+    assert transport.closed
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_no_retry_on_201(http_request):
     class MockTransport(AsyncHttpTransport):
         def __init__(self):
