@@ -1,0 +1,7 @@
+{
+  "repositories": {
+    "Azure/azure-sdk-for-python": {
+      "rotators": []
+    }
+  }
+}

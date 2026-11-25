@@ -1,29 +1,37 @@
 #!/usr/bin/env python3
-"""Read-only management SDK PR queues for release rotators (Python 3.10+)."""
+"""Management SDK PR queues and optional guarded review triggers (Python 3.10+)."""
 
 from __future__ import annotations
 
 import argparse
 import base64
+import calendar
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import json
+from pathlib import Path
 import re
 import subprocess
 import sys
 from threading import RLock
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote, urlsplit
 
 WORKFLOW = "mgmt-sdk-pr-review.lock.yml"
 ACTIVE_STATUSES = ("queued", "in_progress", "waiting", "pending", "requested")
 PACKAGE = re.compile(r"^\[AutoPR (azure-mgmt-[^\]\s]+)\]")
 SECTIONS = (
-    "Automated review needs triggering",
-    "Automated review active",
-    "Human review needed",
-    "Changes after approval",
-    "Author follow-up after approval",
+    (3, "First review needed"),
+    (4, "Changes after approval and need review again"),
+    (5, "Author follow-up after approval"),
+    (1, "Automated review needs triggering"),
+    (2, "Automated review active"),
+    (6, "HoldOn PRs"),
+    (7, "Invalid PRs without release-plan link"),
+    (8, "Approved but unmerged for over two months"),
 )
+CONFIG = Path(__file__).resolve().parents[1] / "rotators.json"
+HOLD_LABELS = {"holdon", "blocking-release"}
+REVIEW_LABEL = "mgmt-review-needed"
 
 
 class CollectionError(RuntimeError):
@@ -39,6 +47,10 @@ def gh(*args):
         raise CollectionError(f"GitHub CLI unavailable or timed out: {error}") from error
     if result.returncode:
         raise CollectionError(f"gh {' '.join(args)}: {result.stderr.strip()}")
+    if not result.stdout.strip():
+        if "--method" in args and args[args.index("--method") + 1] == "DELETE":
+            return None
+        raise CollectionError("GitHub CLI returned an empty response.")
     try:
         return json.loads(result.stdout)
     except ValueError as error:
@@ -46,13 +58,23 @@ def gh(*args):
 
 
 class GitHub:
-    def __init__(self, repo):
+    def __init__(self, repo, rotators=()):
         self.repo = repo
+        self.rotators = set(rotators)
         self.cache = {}
         self.lock = RLock()
 
     def get(self, endpoint):
         return gh("api", endpoint)
+
+    def summary(self, number):
+        return gh("pr", "view", str(number), "--repo", self.repo, "--json", "number,updatedAt,reviewDecision")
+
+    def change_label(self, number, remove=False):
+        endpoint = f"repos/{self.repo}/issues/{number}/labels"
+        if remove:
+            return gh("api", "--method", "DELETE", f"{endpoint}/{REVIEW_LABEL}")
+        return gh("api", "--method", "POST", endpoint, "-f", f"labels[]={REVIEW_LABEL}")
 
     def cached(self, endpoint):
         with self.lock:
@@ -167,6 +189,60 @@ def timestamp(value):
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
 
 
+def load_rotators(path, repo):
+    try:
+        data = json.loads(Path(path).read_text(encoding="utf-8"))
+        repositories = data["repositories"]
+        if not isinstance(repositories, dict):
+            raise ValueError("repositories must be an object")
+        entries = [value for key, value in repositories.items() if key.casefold() == repo.casefold()]
+        logins = entries[0]["rotators"] if entries else []
+        if not isinstance(logins, list) or any(
+            not isinstance(login, str) or not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})", login)
+            for login in logins
+        ):
+            raise ValueError("rotators must be a list of GitHub user logins")
+        return {login.casefold() for login in logins}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        raise CollectionError(f"Invalid rotator configuration {path}: {error}") from error
+
+
+def release_plan_links(body):
+    links = []
+    for url in re.findall(r"https://[^\s<>\"']+", body or ""):
+        url = url.rstrip(").,|]")
+        try:
+            parsed = urlsplit(url)
+            hostname = parsed.hostname or ""
+        except ValueError:
+            continue
+        if re.fullmatch(r"azsdk-releaseplan-dashboard[A-Za-z0-9.-]*\.azurewebsites\.net", hostname) and any(
+            value.isdigit() for value in parse_qs(parsed.query).get("releaseplan", [])
+        ):
+            links.append(url)
+    return list(dict.fromkeys(links))
+
+
+def held(pr):
+    return any(label["name"].casefold() in HOLD_LABELS for label in pr["labels"])
+
+
+def current_approval(row):
+    if row["review_decision"] in {"REVIEW_REQUIRED", "CHANGES_REQUESTED"}:
+        return False
+    approval = row["approval"]
+    if approval:
+        return approval.get("commit_id") == row["pr"]["head"]["sha"]
+    return row["review_decision"] == "APPROVED" and not row["ownership_known"]
+
+
+def two_months_before(now):
+    month_index = now.year * 12 + now.month - 1 - 2
+    year, month = divmod(month_index, 12)
+    month += 1
+    return now.replace(year=year, month=month, day=min(now.day, calendar.monthrange(year, month)[1]))
+
+
 def effective_approval(reviews, maintainers):
     latest = {}
     for review in sorted(
@@ -268,7 +344,10 @@ def collect_pr(client, summary):
     except CollectionError as error:
         maintainers, owners, skipped_team = None, [], False
         issues.append(f"Approval verification incomplete: {error}")
-    approval = effective_approval(reviews, maintainers) if maintainers is not None else None
+    rotators = getattr(client, "rotators", set())
+    reviewers = (maintainers or set()) | rotators
+    owners = sorted(set(owners) | {f"@{login}" for login in rotators}, key=str.casefold)
+    approval = effective_approval(reviews, reviewers) if maintainers is not None or rotators else None
     if (
         skipped_team
         and approval is None
@@ -315,16 +394,29 @@ def collect_pr(client, summary):
         "review_decision": summary.get("reviewDecision"),
         "bot_review": bot_review(comments),
         "followups": followups,
+        "release_plans": release_plan_links(pr.get("body")),
         "issues": issues,
         "queues": {},
     }
 
 
-def classify(row, client, workflow_id, runs, activity_issues):
+def classify(row, client, workflow_id, runs, activity_issues, now=None):
     pr = row["pr"]
     queues = row["queues"]
+    if held(pr):
+        labels = ", ".join(label["name"] for label in pr["labels"] if label["name"].casefold() in HOLD_LABELS)
+        approval = row["approval"]
+        evidence = f" Approval: [@{approval['user']['login']}]({approval['html_url']})." if approval else ""
+        plans = ", ".join(f"[release plan]({url})" for url in row.get("release_plans", [])) or "missing"
+        queues[6] = f"Held by `{labels}`.{evidence} Release plan: {plans}. Hold owner must clear the hold; no trigger."
+        return
+    if not row.get("release_plans"):
+        queues[7] = ""
+    approved = current_approval(row)
     active = [run for run in runs if run_pr(run, pr["number"])]
-    if active:
+    if approved:
+        pass
+    elif active:
         links = []
         for run in active:
             head = run_pr(run, pr["number"]).get("head", {}).get("sha")
@@ -340,11 +432,11 @@ def classify(row, client, workflow_id, runs, activity_issues):
             row["issues"].append(str(error))
         else:
             if freshness in {"missing", "outdated"}:
-                labeled = any(label["name"].casefold() == "mgmt-review-needed" for label in pr["labels"])
+                labeled = any(label["name"].casefold() == REVIEW_LABEL for label in pr["labels"])
                 action = "Remove and reapply" if labeled else "Add"
                 queues[1] = (
                     f"Bot review {freshness}; no active review detected. "
-                    f"{action} `mgmt-review-needed` after confirming activity at the run link."
+                    f"{action} `{REVIEW_LABEL}` automatically in --apply-labels mode."
                 )
     approval = row["approval"]
     if row["ownership_known"] and approval is None:
@@ -364,9 +456,79 @@ def classify(row, client, workflow_id, runs, activity_issues):
             queues[5] = (
                 f"Author follow-up after approval: {links}. Read and respond or route; do not duplicate approval."
             )
+        if approved and timestamp(approval["submitted_at"]) < two_months_before(now or datetime.now(timezone.utc)):
+            queues[8] = (
+                f"Current approval: [@{approval['user']['login']}]({approval['html_url']}) "
+                f"on {approval['submitted_at']}; over two calendar months ago. "
+                "Ask the service team about merge/release intent; do not duplicate approval."
+            )
 
 
-def render_report(repo, rows, issues):
+def automation_author(pr):
+    user = pr.get("user") or {}
+    source = pr.get("head", {}).get("repo") or {}
+    return (
+        user.get("login", "").casefold() == "azure-sdk-automation[bot]"
+        and user.get("type") == "Bot"
+        and source.get("full_name", "").casefold().startswith("azure/")
+        and (source.get("owner") or {}).get("type") == "Organization"
+    )
+
+
+def refresh_trigger(client, row, workflow_id, after_removal=False):
+    fresh = collect_pr(client, client.summary(row["pr"]["number"]))
+    if fresh is None:
+        raise CollectionError("PR is now closed or draft.")
+    before, current = row["pr"], fresh["pr"]
+    if any(before[key]["sha"] != current[key]["sha"] for key in ("head", "base")):
+        raise CollectionError("PR head/base changed before label update.")
+    if not after_removal and before["updated_at"] != current["updated_at"]:
+        raise CollectionError("PR changed before label update.")
+    expected = {label["name"].casefold() for label in before["labels"]}
+    if after_removal:
+        expected.discard(REVIEW_LABEL)
+    if expected != {label["name"].casefold() for label in current["labels"]}:
+        raise CollectionError("PR labels changed before label update.")
+    runs, issues = active_reviews(client)
+    classify(fresh, client, workflow_id, runs, issues)
+    if issues or fresh["issues"] or 1 not in fresh["queues"] or not automation_author(current):
+        raise CollectionError("Trigger no longer verified as needed and safe; label update skipped.")
+    return fresh
+
+
+def apply_labels(client, rows, workflow_id):
+    for row in rows:
+        if 1 not in row["queues"]:
+            continue
+        row["label_status"] = "skipped"
+        if not automation_author(row["pr"]):
+            row["queues"][1] += " Skipped: not an Azure-owned-source azure-sdk-automation PR."
+            continue
+        attempted = False
+        try:
+            if workflow_id is None:
+                raise CollectionError("Management review workflow identity unknown.")
+            fresh = refresh_trigger(client, row, workflow_id)
+            labeled = any(label["name"].casefold() == REVIEW_LABEL for label in fresh["pr"]["labels"])
+            if labeled:
+                attempted = True
+                client.change_label(fresh["pr"]["number"], remove=True)
+                refresh_trigger(client, fresh, workflow_id, after_removal=True)
+            attempted = True
+            client.change_label(fresh["pr"]["number"])
+            verified = client.get(f"repos/{client.repo}/pulls/{fresh['pr']['number']}")
+            if not any(label["name"].casefold() == REVIEW_LABEL for label in verified["labels"]):
+                raise CollectionError("Label presence could not be verified after writing.")
+            row["label_status"] = "succeeded"
+            action = "Removed and reapplied" if labeled else "Added"
+            row["queues"][1] = f"{action} `{REVIEW_LABEL}` automatically; label presence verified."
+        except CollectionError as error:
+            row["label_status"] = "failed/unknown" if attempted else "skipped"
+            row["issues"].append(f"Automatic label action {row['label_status']}: {error}. No automatic retry.")
+            row["queues"][1] = f"Automatic action {row['label_status']}; see verification warnings."
+
+
+def render_report(repo, rows, issues, apply=False):
     rows = sorted(rows, key=lambda row: timestamp(row["pr"]["updated_at"]), reverse=True)
     warnings = list(issues)
     for row in rows:
@@ -374,18 +536,30 @@ def render_report(repo, rows, issues):
     runs_url = f"https://github.com/{repo}/actions/workflows/{WORKFLOW}"
     output = [
         f"Scanned {len(rows)} open, non-draft management AutoPRs" + ("; verification incomplete." if warnings else "."),
+        f"Mode: {'apply-labels' if apply else 'read-only'}.",
         "",
         f"[Management review runs]({runs_url}). Point-in-time report; confirm activity before changing labels.",
     ]
-    for index, title in enumerate(SECTIONS, 1):
-        entries = [row for row in rows if index in row["queues"]]
+    if apply:
+        counts = {
+            status: sum(row.get("label_status") == status for row in rows)
+            for status in ("succeeded", "skipped", "failed/unknown")
+        }
+        output.append(
+            "Automatic label actions: " + ", ".join(f"{count} {status}" for status, count in counts.items()) + "."
+        )
+    for index, (queue, title) in enumerate(SECTIONS, 1):
+        entries = [row for row in rows if queue in row["queues"]]
         if entries:
             output.extend(["", f"## {index}. {title}", ""])
             for row in entries:
                 pr = row["pr"]
+                if queue == 7:
+                    output.append(f"- [{repo}#{pr['number']}]({pr['html_url']})")
+                    continue
                 output.append(
                     f"- [{repo}#{pr['number']}]({pr['html_url']}) - `{row['name']}` `{row['version']}`"
-                    f" - {row['queues'][index]}"
+                    f" - {row['queues'][queue]}"
                 )
     if warnings:
         output.extend(["", "## Verification warnings", ""])
@@ -401,6 +575,10 @@ def main(argv=None):
     parser.add_argument("--package", help="Exact package name")
     parser.add_argument("--version", help="Exact SDK version (first releases included by default)")
     parser.add_argument("--limit", type=int, default=500, help="Maximum initial PR listing size")
+    parser.add_argument("--config", type=Path, default=CONFIG, help="Repository-scoped rotator configuration")
+    parser.add_argument(
+        "--apply-labels", action="store_true", help="Automatically trigger verified automation PR reviews"
+    )
     args = parser.parse_args(argv)
     if args.limit < 1:
         parser.error("--limit must be positive")
@@ -408,9 +586,9 @@ def main(argv=None):
         parser.error("--repo must be owner/name")
     if args.package and not re.fullmatch(r"azure-mgmt-[A-Za-z0-9-]+", args.package):
         parser.error("--package must be an azure-mgmt-* package name")
-    client = GitHub(args.repo)
     issues = []
     try:
+        client = GitHub(args.repo, load_rotators(args.config, args.repo))
         prs = gh(
             "pr",
             "list",
@@ -459,7 +637,9 @@ def main(argv=None):
             issues.append(f"Automated review workflow identity unknown: {error}")
         for row in rows:
             classify(row, client, workflow_id, runs, activity_issues)
-        report, incomplete = render_report(args.repo, rows, issues)
+        if args.apply_labels:
+            apply_labels(client, rows, workflow_id)
+        report, incomplete = render_report(args.repo, rows, issues, apply=args.apply_labels)
         print(f"Observed at {datetime.now(timezone.utc).isoformat()}.")
         print(report)
         return 2 if incomplete else 0

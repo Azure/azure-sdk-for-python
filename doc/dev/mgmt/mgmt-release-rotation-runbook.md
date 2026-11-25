@@ -27,12 +27,14 @@ Rotation assignment does not grant repository, CODEOWNER, or release permissions
 ## Step 1. Find PRs needing attention
 
 For a quick grouped list, ask Copilot: **"Use azsdk-python-mgmt-pr-triage to show
-management SDK PRs needing attention."** The read-only
+management SDK PRs needing attention."** The
 [PR triage skill](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/skills/azsdk-python-mgmt-pr-triage/SKILL.md)
-lists automated reviews to trigger, active reviews, missing human approvals,
-changes after approval, and author follow-ups. Its instructions also include a
-standalone command for clients without skill support. Check any verification
-warnings; the report does not establish release readiness.
+lists first reviews, changes after approval, author follow-ups, automated reviews,
+holds, missing release-plan links, and older approvals. It recognizes configured
+rotators and automatically adds or reapplies `mgmt-review-needed` for verified
+automation PRs needing review. Its instructions include a read-only standalone
+mode and the rotation configuration. Check any verification warnings;
+the report does not establish release readiness.
 
 Start from one [management AutoPR queue](https://github.com/Azure/azure-sdk-for-python/pulls?q=is%3Apr+is%3Aopen+draft%3Afalse+%22%5BAutoPR+azure-mgmt-%22+in%3Atitle+sort%3Aupdated-desc).
 It lists open, non-draft PRs, most recently updated first. Open each PR and check
@@ -60,7 +62,8 @@ package, SDK version, and API version. The service team owns the
 For routine review, focus on the bot comment and current CI:
 
 1. Read the latest **Management SDK PR review** bot comment. If it is missing or
-   outdated, add `mgmt-review-needed`. This label triggers
+   outdated, use the triage skill's automatic trigger mode. If checking manually,
+   add `mgmt-review-needed`. This label triggers
    the [review workflow](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/workflows/mgmt-sdk-pr-review.md).
    If the label is already present, remove and reapply it only when no management
    SDK review workflow run is active. Wait for the updated comment; ask the Python
