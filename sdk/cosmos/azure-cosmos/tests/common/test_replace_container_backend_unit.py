@@ -45,6 +45,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_REPLACE_CONTAINER, OP_TO_BINDING_FUNCTION_NAME
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._base import _validate_resource
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_container import build_replace_container_prepared
@@ -98,6 +100,7 @@ def replace_case(delete_case, request):
         headers=case.headers.copy(), diagnostics="replacement trace",
     )
     if case.legacy:
+        case.legacy_backend = ASYNC_LEGACY_BACKEND if case.is_async else LEGACY_BACKEND
         case.connection._backend = case.legacy_backend
 
     def legacy_replace(link, collection, options, **kwargs):

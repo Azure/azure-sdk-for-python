@@ -20,6 +20,8 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
 from azure.cosmos._backend.operations import OP_READ_CONTAINER
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
@@ -56,6 +58,7 @@ def read_case(delete_case, request):
         body=json.dumps(case.properties).encode(), diagnostics="read trace",
     )
     if case.legacy:
+        case.legacy_backend = ASYNC_LEGACY_BACKEND if case.is_async else LEGACY_BACKEND
         case.connection._backend = case.legacy_backend
 
     def legacy_read(link, options, **kwargs):

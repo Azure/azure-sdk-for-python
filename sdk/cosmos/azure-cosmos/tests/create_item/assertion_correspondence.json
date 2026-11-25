@@ -12697,8 +12697,8 @@
         "path": "tests\\config\\collection.py",
         "symbol": "exclude_module",
         "kind": "function",
-        "line": 212,
-        "end_line": 216,
+        "line": 213,
+        "end_line": 217,
         "column": 0,
         "ast_sha256": "9a9be31d519b585887da790eac6e5bb46a338a3d27d01cb17f69ab89ddce7b78",
         "snippet": "exclude_module"
