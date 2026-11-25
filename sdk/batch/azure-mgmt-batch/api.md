@@ -99,7 +99,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 application_name: str, 
-                parameters: Optional[Application] = None, 
+                parameters: Optional[JSON] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -163,7 +163,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 application_name: str, 
-                parameters: Application, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -210,7 +210,7 @@ namespace azure.mgmt.batch.aio.operations
                 account_name: str, 
                 application_name: str, 
                 version_name: str, 
-                parameters: ActivateApplicationPackageParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -249,7 +249,7 @@ namespace azure.mgmt.batch.aio.operations
                 account_name: str, 
                 application_name: str, 
                 version_name: str, 
-                parameters: Optional[ApplicationPackage] = None, 
+                parameters: Optional[JSON] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -324,7 +324,7 @@ namespace azure.mgmt.batch.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountCreateParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -416,7 +416,7 @@ namespace azure.mgmt.batch.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountRegenerateKeyParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -457,7 +457,7 @@ namespace azure.mgmt.batch.aio.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountUpdateParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -497,7 +497,7 @@ namespace azure.mgmt.batch.aio.operations
         async def check_name_availability(
                 self, 
                 location_name: str, 
-                parameters: CheckNameAvailabilityParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -615,7 +615,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: Pool, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -682,7 +682,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: PoolPatch, 
+                parameters: Pool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -696,7 +696,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: PoolPatch, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -756,7 +756,7 @@ namespace azure.mgmt.batch.aio.operations
                 resource_group_name: str, 
                 account_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: PrivateEndpointConnection, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1017,6 +1017,7 @@ namespace azure.mgmt.batch.models
     class azure.mgmt.batch.models.AuthenticationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AAD = "AAD"
         SHARED_KEY = "SharedKey"
+        TASK_AUTHENTICATION_TOKEN = "TaskAuthenticationToken"
 
 
     class azure.mgmt.batch.models.AutoScaleRun(_Model):
@@ -1203,7 +1204,27 @@ namespace azure.mgmt.batch.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.batch.models.BatchAccount(TrackedResource):
+    class azure.mgmt.batch.models.AzureResource(Resource):
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: Optional[dict[str, str]]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.batch.models.BatchAccount(AzureResource):
         id: str
         identity: Optional[BatchAccountIdentity]
         location: str
@@ -1650,20 +1671,6 @@ namespace azure.mgmt.batch.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.batch.models.DeploymentConfigurationPatch(_Model):
-        virtual_machine_configuration: Optional[VirtualMachineConfigurationPatch]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                virtual_machine_configuration: Optional[VirtualMachineConfigurationPatch] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.batch.models.DetectorResponse(ProxyResource):
         etag: Optional[str]
         id: str
@@ -1879,7 +1886,7 @@ namespace azure.mgmt.batch.models
 
 
     class azure.mgmt.batch.models.FixedScaleSettings(_Model):
-        node_deallocation_option: Optional[Union[str, RequestedComputeNodeDeallocationOption]]
+        node_deallocation_option: Optional[Union[str, ComputeNodeDeallocationOption]]
         resize_timeout: Optional[timedelta]
         target_dedicated_nodes: Optional[int]
         target_low_priority_nodes: Optional[int]
@@ -1888,24 +1895,10 @@ namespace azure.mgmt.batch.models
         def __init__(
                 self, 
                 *, 
-                node_deallocation_option: Optional[Union[str, RequestedComputeNodeDeallocationOption]] = ..., 
+                node_deallocation_option: Optional[Union[str, ComputeNodeDeallocationOption]] = ..., 
                 resize_timeout: Optional[timedelta] = ..., 
                 target_dedicated_nodes: Optional[int] = ..., 
                 target_low_priority_nodes: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.HardwareProfile(_Model):
-        vm_size_properties: Optional[VmSizeProperties]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                vm_size_properties: Optional[VmSizeProperties] = ...
             ) -> None: ...
 
         @overload
@@ -2122,38 +2115,6 @@ namespace azure.mgmt.batch.models
                 disk_encryption_set: Optional[DiskEncryptionSetParameters] = ..., 
                 security_profile: Optional[VMDiskSecurityProfile] = ..., 
                 storage_account_type: Optional[Union[str, StorageAccountType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.MaxInstancePercentPerZonePolicy(_Model):
-        enabled: Optional[bool]
-        value: int
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                value: int
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.MaxInstancePercentPerZonePolicyPatch(_Model):
-        enabled: Optional[bool]
-        value: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                value: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -2463,34 +2424,6 @@ namespace azure.mgmt.batch.models
         PENDING = "Pending"
 
 
-    class azure.mgmt.batch.models.Placement(_Model):
-        zone_placement_policy: Union[str, ZonePlacementPolicyType]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                zone_placement_policy: Union[str, ZonePlacementPolicyType]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.PlacementPatch(_Model):
-        zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                zone_placement_policy: Optional[Union[str, ZonePlacementPolicyType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.batch.models.Pool(ProxyResource):
         etag: Optional[str]
         id: str
@@ -2546,79 +2479,6 @@ namespace azure.mgmt.batch.models
         USER_ASSIGNED = "UserAssigned"
 
 
-    class azure.mgmt.batch.models.PoolPatch(_Model):
-        etag: Optional[str]
-        id: Optional[str]
-        identity: Optional[BatchPoolIdentity]
-        properties: Optional[PoolPatchProperties]
-        system_data: Optional[SystemData]
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                identity: Optional[BatchPoolIdentity] = ..., 
-                properties: Optional[PoolPatchProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.PoolPatchProperties(_Model):
-        allocation_state: Optional[Union[str, AllocationState]]
-        allocation_state_transition_time: Optional[datetime]
-        application_packages: Optional[list[ApplicationPackageReference]]
-        auto_scale_run: Optional[AutoScaleRun]
-        creation_time: Optional[datetime]
-        current_dedicated_nodes: Optional[int]
-        current_low_priority_nodes: Optional[int]
-        deployment_configuration: Optional[DeploymentConfigurationPatch]
-        display_name: Optional[str]
-        inter_node_communication: Optional[Union[str, InterNodeCommunicationState]]
-        last_modified: Optional[datetime]
-        metadata: Optional[list[MetadataItem]]
-        mount_configuration: Optional[list[MountConfiguration]]
-        network_configuration: Optional[NetworkConfiguration]
-        provisioning_state: Optional[Union[str, PoolProvisioningState]]
-        provisioning_state_transition_time: Optional[datetime]
-        resize_operation_status: Optional[ResizeOperationStatus]
-        scale_settings: Optional[ScaleSettings]
-        start_task: Optional[StartTask]
-        task_scheduling_policy: Optional[TaskSchedulingPolicy]
-        task_slots_per_node: Optional[int]
-        upgrade_policy: Optional[UpgradePolicy]
-        user_accounts: Optional[list[UserAccount]]
-        vm_size: Optional[str]
-        vm_sku_profile: Optional[VirtualMachineSkuProfile]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                application_packages: Optional[list[ApplicationPackageReference]] = ..., 
-                deployment_configuration: Optional[DeploymentConfigurationPatch] = ..., 
-                display_name: Optional[str] = ..., 
-                inter_node_communication: Optional[Union[str, InterNodeCommunicationState]] = ..., 
-                metadata: Optional[list[MetadataItem]] = ..., 
-                mount_configuration: Optional[list[MountConfiguration]] = ..., 
-                network_configuration: Optional[NetworkConfiguration] = ..., 
-                scale_settings: Optional[ScaleSettings] = ..., 
-                start_task: Optional[StartTask] = ..., 
-                task_scheduling_policy: Optional[TaskSchedulingPolicy] = ..., 
-                task_slots_per_node: Optional[int] = ..., 
-                upgrade_policy: Optional[UpgradePolicy] = ..., 
-                user_accounts: Optional[list[UserAccount]] = ..., 
-                vm_size: Optional[str] = ..., 
-                vm_sku_profile: Optional[VirtualMachineSkuProfile] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.batch.models.PoolProperties(_Model):
         allocation_state: Optional[Union[str, AllocationState]]
         allocation_state_transition_time: Optional[datetime]
@@ -2644,7 +2504,6 @@ namespace azure.mgmt.batch.models
         upgrade_policy: Optional[UpgradePolicy]
         user_accounts: Optional[list[UserAccount]]
         vm_size: Optional[str]
-        vm_sku_profile: Optional[VirtualMachineSkuProfile]
 
         @overload
         def __init__(
@@ -2663,8 +2522,7 @@ namespace azure.mgmt.batch.models
                 task_slots_per_node: Optional[int] = ..., 
                 upgrade_policy: Optional[UpgradePolicy] = ..., 
                 user_accounts: Optional[list[UserAccount]] = ..., 
-                vm_size: Optional[str] = ..., 
-                vm_sku_profile: Optional[VirtualMachineSkuProfile] = ...
+                vm_size: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -2865,40 +2723,6 @@ namespace azure.mgmt.batch.models
         DISABLED = "Disabled"
         ENABLED = "Enabled"
         SECURED_BY_PERIMETER = "SecuredByPerimeter"
-
-
-    class azure.mgmt.batch.models.RequestedComputeNodeDeallocationOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        REQUEUE = "Requeue"
-        TASK_COMPLETION = "TaskCompletion"
-        TERMINATE = "Terminate"
-
-
-    class azure.mgmt.batch.models.ResiliencyPolicy(_Model):
-        zone_allocation_policy: ZoneAllocationPolicy
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                zone_allocation_policy: ZoneAllocationPolicy
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.ResiliencyPolicyPatch(_Model):
-        zone_allocation_policy: Optional[ZoneAllocationPolicyPatch]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                zone_allocation_policy: Optional[ZoneAllocationPolicyPatch] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.batch.models.ResizeError(_Model):
@@ -3206,26 +3030,6 @@ namespace azure.mgmt.batch.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.batch.models.TrackedResource(Resource):
-        id: str
-        location: str
-        name: str
-        system_data: SystemData
-        tags: Optional[dict[str, str]]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.batch.models.UefiSettings(_Model):
         secure_boot_enabled: Optional[bool]
         v_tpm_enabled: Optional[bool]
@@ -3360,14 +3164,11 @@ namespace azure.mgmt.batch.models
         data_disks: Optional[list[DataDisk]]
         disk_encryption_configuration: Optional[DiskEncryptionConfiguration]
         extensions: Optional[list[VMExtension]]
-        hardware_profile: Optional[HardwareProfile]
         image_reference: ImageReference
         license_type: Optional[str]
         node_agent_sku_id: str
         node_placement_configuration: Optional[NodePlacementConfiguration]
         os_disk: Optional[OSDisk]
-        placement: Optional[Placement]
-        resiliency_policy: Optional[ResiliencyPolicy]
         security_profile: Optional[SecurityProfile]
         service_artifact_reference: Optional[ServiceArtifactReference]
         windows_configuration: Optional[WindowsConfiguration]
@@ -3380,56 +3181,11 @@ namespace azure.mgmt.batch.models
                 data_disks: Optional[list[DataDisk]] = ..., 
                 disk_encryption_configuration: Optional[DiskEncryptionConfiguration] = ..., 
                 extensions: Optional[list[VMExtension]] = ..., 
-                hardware_profile: Optional[HardwareProfile] = ..., 
                 image_reference: ImageReference, 
                 license_type: Optional[str] = ..., 
                 node_agent_sku_id: str, 
                 node_placement_configuration: Optional[NodePlacementConfiguration] = ..., 
                 os_disk: Optional[OSDisk] = ..., 
-                placement: Optional[Placement] = ..., 
-                resiliency_policy: Optional[ResiliencyPolicy] = ..., 
-                security_profile: Optional[SecurityProfile] = ..., 
-                service_artifact_reference: Optional[ServiceArtifactReference] = ..., 
-                windows_configuration: Optional[WindowsConfiguration] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.VirtualMachineConfigurationPatch(_Model):
-        container_configuration: Optional[ContainerConfiguration]
-        data_disks: Optional[list[DataDisk]]
-        disk_encryption_configuration: Optional[DiskEncryptionConfiguration]
-        extensions: Optional[list[VMExtension]]
-        hardware_profile: Optional[HardwareProfile]
-        image_reference: ImageReference
-        license_type: Optional[str]
-        node_agent_sku_id: str
-        node_placement_configuration: Optional[NodePlacementConfiguration]
-        os_disk: Optional[OSDisk]
-        placement: Optional[PlacementPatch]
-        resiliency_policy: Optional[ResiliencyPolicyPatch]
-        security_profile: Optional[SecurityProfile]
-        service_artifact_reference: Optional[ServiceArtifactReference]
-        windows_configuration: Optional[WindowsConfiguration]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                container_configuration: Optional[ContainerConfiguration] = ..., 
-                data_disks: Optional[list[DataDisk]] = ..., 
-                disk_encryption_configuration: Optional[DiskEncryptionConfiguration] = ..., 
-                extensions: Optional[list[VMExtension]] = ..., 
-                hardware_profile: Optional[HardwareProfile] = ..., 
-                image_reference: ImageReference, 
-                license_type: Optional[str] = ..., 
-                node_agent_sku_id: str, 
-                node_placement_configuration: Optional[NodePlacementConfiguration] = ..., 
-                os_disk: Optional[OSDisk] = ..., 
-                placement: Optional[PlacementPatch] = ..., 
-                resiliency_policy: Optional[ResiliencyPolicyPatch] = ..., 
                 security_profile: Optional[SecurityProfile] = ..., 
                 service_artifact_reference: Optional[ServiceArtifactReference] = ..., 
                 windows_configuration: Optional[WindowsConfiguration] = ...
@@ -3442,60 +3198,6 @@ namespace azure.mgmt.batch.models
     class azure.mgmt.batch.models.VirtualMachineFamilyCoreQuota(_Model):
         core_quota: Optional[int]
         name: Optional[str]
-
-
-    class azure.mgmt.batch.models.VirtualMachineSkuAllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CAPACITY_OPTIMIZED = "CapacityOptimized"
-        LOWEST_PRICE = "LowestPrice"
-        PRIORITIZED = "Prioritized"
-
-
-    class azure.mgmt.batch.models.VirtualMachineSkuProfile(_Model):
-        allocation_strategy: Optional[Union[str, VirtualMachineSkuAllocationStrategy]]
-        vm_sizes: Optional[list[VirtualMachineSkuProfileVmSize]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allocation_strategy: Optional[Union[str, VirtualMachineSkuAllocationStrategy]] = ..., 
-                vm_sizes: Optional[list[VirtualMachineSkuProfileVmSize]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.VirtualMachineSkuProfileVmSize(_Model):
-        name: str
-        rank: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                name: str, 
-                rank: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.VmSizeProperties(_Model):
-        v_cpus_available: Optional[int]
-        v_cpus_per_core: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                v_cpus_available: Optional[int] = ..., 
-                v_cpus_per_core: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.batch.models.WindowsConfiguration(_Model):
@@ -3526,42 +3228,6 @@ namespace azure.mgmt.batch.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.batch.models.ZoneAllocationPolicy(_Model):
-        max_instance_percent_per_zone_policy: Optional[MaxInstancePercentPerZonePolicy]
-        max_zone_count: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_instance_percent_per_zone_policy: Optional[MaxInstancePercentPerZonePolicy] = ..., 
-                max_zone_count: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.ZoneAllocationPolicyPatch(_Model):
-        max_instance_percent_per_zone_policy: Optional[MaxInstancePercentPerZonePolicyPatch]
-        max_zone_count: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                max_instance_percent_per_zone_policy: Optional[MaxInstancePercentPerZonePolicyPatch] = ..., 
-                max_zone_count: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.batch.models.ZonePlacementPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AUTO = "Auto"
-
-
 namespace azure.mgmt.batch.operations
 
     class azure.mgmt.batch.operations.ApplicationOperations:
@@ -3590,7 +3256,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 application_name: str, 
-                parameters: Optional[Application] = None, 
+                parameters: Optional[JSON] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3654,7 +3320,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 application_name: str, 
-                parameters: Application, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3701,7 +3367,7 @@ namespace azure.mgmt.batch.operations
                 account_name: str, 
                 application_name: str, 
                 version_name: str, 
-                parameters: ActivateApplicationPackageParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3740,7 +3406,7 @@ namespace azure.mgmt.batch.operations
                 account_name: str, 
                 application_name: str, 
                 version_name: str, 
-                parameters: Optional[ApplicationPackage] = None, 
+                parameters: Optional[JSON] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3815,7 +3481,7 @@ namespace azure.mgmt.batch.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountCreateParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3907,7 +3573,7 @@ namespace azure.mgmt.batch.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountRegenerateKeyParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3948,7 +3614,7 @@ namespace azure.mgmt.batch.operations
                 self, 
                 resource_group_name: str, 
                 account_name: str, 
-                parameters: BatchAccountUpdateParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3988,7 +3654,7 @@ namespace azure.mgmt.batch.operations
         def check_name_availability(
                 self, 
                 location_name: str, 
-                parameters: CheckNameAvailabilityParameters, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4106,7 +3772,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: Pool, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4173,7 +3839,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: PoolPatch, 
+                parameters: Pool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4187,7 +3853,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 pool_name: str, 
-                parameters: PoolPatch, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4247,7 +3913,7 @@ namespace azure.mgmt.batch.operations
                 resource_group_name: str, 
                 account_name: str, 
                 private_endpoint_connection_name: str, 
-                parameters: PrivateEndpointConnection, 
+                parameters: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4315,1065 +3981,6 @@ namespace azure.mgmt.batch.operations
                 maxresults: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[PrivateLinkResource]: ...
-
-
-namespace azure.mgmt.batch.types
-
-    class azure.mgmt.batch.types.ActivateApplicationPackageParameters(TypedDict, total=False):
-        key "format": Required[str]
-        format: str
-
-
-    class azure.mgmt.batch.types.Application(ProxyResource):
-        key "etag": str
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ApplicationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        etag: str
-        id: str
-        name: str
-        properties: ApplicationProperties
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.batch.types.ApplicationPackage(ProxyResource):
-        key "etag": str
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ApplicationPackageProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        etag: str
-        id: str
-        name: str
-        properties: ApplicationPackageProperties
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.batch.types.ApplicationPackageProperties(TypedDict, total=False):
-        key "format": str
-        key "lastActivationTime": str
-        key "state": Union[str, PackageState]
-        key "storageUrl": str
-        key "storageUrlExpiry": str
-        format: str
-        lastActivationTime: str
-        state: Union[str, PackageState]
-        storageUrl: str
-        storageUrlExpiry: str
-
-
-    class azure.mgmt.batch.types.ApplicationPackageReference(TypedDict, total=False):
-        key "id": Required[str]
-        key "version": str
-        id: str
-        version: str
-
-
-    class azure.mgmt.batch.types.ApplicationProperties(TypedDict, total=False):
-        key "allowUpdates": bool
-        key "defaultVersion": str
-        key "displayName": str
-        allowUpdates: bool
-        defaultVersion: str
-        displayName: str
-
-
-    class azure.mgmt.batch.types.AutoScaleRun(TypedDict, total=False):
-        key "error": ForwardRef('AutoScaleRunError', module='types')
-        key "evaluationTime": Required[str]
-        key "results": str
-        error: AutoScaleRunError
-        evaluationTime: str
-        results: str
-
-
-    class azure.mgmt.batch.types.AutoScaleRunError(TypedDict, total=False):
-        key "code": Required[str]
-        key "message": Required[str]
-        code: str
-        details: list[AutoScaleRunError]
-        message: str
-
-
-    class azure.mgmt.batch.types.AutoScaleSettings(TypedDict, total=False):
-        key "evaluationInterval": str
-        key "formula": Required[str]
-        evaluationInterval: str
-        formula: str
-
-
-    class azure.mgmt.batch.types.AutoStorageBaseProperties(TypedDict, total=False):
-        key "authenticationMode": Union[str, AutoStorageAuthenticationMode]
-        key "nodeIdentityReference": ForwardRef('ComputeNodeIdentityReference', module='types')
-        key "storageAccountId": Required[str]
-        authenticationMode: Union[str, AutoStorageAuthenticationMode]
-        nodeIdentityReference: ComputeNodeIdentityReference
-        storageAccountId: str
-
-
-    class azure.mgmt.batch.types.AutoUserSpecification(TypedDict, total=False):
-        key "elevationLevel": Union[str, ElevationLevel]
-        key "scope": Union[str, AutoUserScope]
-        elevationLevel: Union[str, ElevationLevel]
-        scope: Union[str, AutoUserScope]
-
-
-    class azure.mgmt.batch.types.AutomaticOSUpgradePolicy(TypedDict, total=False):
-        key "disableAutomaticRollback": bool
-        key "enableAutomaticOSUpgrade": bool
-        key "osRollingUpgradeDeferral": bool
-        key "useRollingUpgradePolicy": bool
-        disableAutomaticRollback: bool
-        enableAutomaticOSUpgrade: bool
-        osRollingUpgradeDeferral: bool
-        useRollingUpgradePolicy: bool
-
-
-    class azure.mgmt.batch.types.AzureBlobFileSystemConfiguration(TypedDict, total=False):
-        key "accountKey": str
-        key "accountName": Required[str]
-        key "blobfuseOptions": str
-        key "containerName": Required[str]
-        key "identityReference": ForwardRef('ComputeNodeIdentityReference', module='types')
-        key "relativeMountPath": Required[str]
-        key "sasKey": str
-        accountKey: str
-        accountName: str
-        blobfuseOptions: str
-        containerName: str
-        identityReference: ComputeNodeIdentityReference
-        relativeMountPath: str
-        sasKey: str
-
-
-    class azure.mgmt.batch.types.AzureFileShareConfiguration(TypedDict, total=False):
-        key "accountKey": Required[str]
-        key "accountName": Required[str]
-        key "azureFileUrl": Required[str]
-        key "mountOptions": str
-        key "relativeMountPath": Required[str]
-        accountKey: str
-        accountName: str
-        azureFileUrl: str
-        mountOptions: str
-        relativeMountPath: str
-
-
-    class azure.mgmt.batch.types.BatchAccountCreateParameters(TypedDict, total=False):
-        key "identity": ForwardRef('BatchAccountIdentity', module='types')
-        key "location": Required[str]
-        key "properties": ForwardRef('BatchAccountCreateProperties', module='types')
-        identity: BatchAccountIdentity
-        location: str
-        properties: BatchAccountCreateProperties
-        tags: dict[str, str]
-
-
-    class azure.mgmt.batch.types.BatchAccountCreateProperties(TypedDict, total=False):
-        key "allowedAuthenticationModes": Optional[list[Union[str, AuthenticationMode]]]
-        key "autoStorage": ForwardRef('AutoStorageBaseProperties', module='types')
-        key "encryption": ForwardRef('EncryptionProperties', module='types')
-        key "keyVaultReference": ForwardRef('KeyVaultReference', module='types')
-        key "networkProfile": ForwardRef('NetworkProfile', module='types')
-        key "poolAllocationMode": Union[str, PoolAllocationMode]
-        key "publicNetworkAccess": Union[str, PublicNetworkAccessType]
-        allowedAuthenticationModes: list[Union[str, AuthenticationMode]]
-        autoStorage: AutoStorageBaseProperties
-        encryption: EncryptionProperties
-        keyVaultReference: KeyVaultReference
-        networkProfile: NetworkProfile
-        poolAllocationMode: Union[str, PoolAllocationMode]
-        publicNetworkAccess: Union[str, PublicNetworkAccessType]
-
-
-    class azure.mgmt.batch.types.BatchAccountIdentity(TypedDict, total=False):
-        key "principalId": str
-        key "tenantId": str
-        key "type": Required[Union[str, ResourceIdentityType]]
-        principalId: str
-        tenantId: str
-        type: Union[str, ResourceIdentityType]
-        userAssignedIdentities: dict[str, UserAssignedIdentities]
-
-
-    class azure.mgmt.batch.types.BatchAccountRegenerateKeyParameters(TypedDict, total=False):
-        key "keyName": Required[Union[str, AccountKeyType]]
-        keyName: Union[str, AccountKeyType]
-
-
-    class azure.mgmt.batch.types.BatchAccountUpdateParameters(TypedDict, total=False):
-        key "identity": ForwardRef('BatchAccountIdentity', module='types')
-        key "properties": ForwardRef('BatchAccountUpdateProperties', module='types')
-        identity: BatchAccountIdentity
-        properties: BatchAccountUpdateProperties
-        tags: dict[str, str]
-
-
-    class azure.mgmt.batch.types.BatchAccountUpdateProperties(TypedDict, total=False):
-        key "allowedAuthenticationModes": Optional[list[Union[str, AuthenticationMode]]]
-        key "autoStorage": ForwardRef('AutoStorageBaseProperties', module='types')
-        key "encryption": ForwardRef('EncryptionProperties', module='types')
-        key "networkProfile": ForwardRef('NetworkProfile', module='types')
-        key "publicNetworkAccess": Union[str, PublicNetworkAccessType]
-        allowedAuthenticationModes: list[Union[str, AuthenticationMode]]
-        autoStorage: AutoStorageBaseProperties
-        encryption: EncryptionProperties
-        networkProfile: NetworkProfile
-        publicNetworkAccess: Union[str, PublicNetworkAccessType]
-
-
-    class azure.mgmt.batch.types.BatchPoolIdentity(TypedDict, total=False):
-        key "type": Required[Union[str, PoolIdentityType]]
-        type: Union[str, PoolIdentityType]
-        userAssignedIdentities: dict[str, UserAssignedIdentities]
-
-
-    class azure.mgmt.batch.types.CIFSMountConfiguration(TypedDict, total=False):
-        key "mountOptions": str
-        key "password": Required[str]
-        key "relativeMountPath": Required[str]
-        key "source": Required[str]
-        key "userName": Required[str]
-        mountOptions: str
-        password: str
-        relativeMountPath: str
-        source: str
-        userName: str
-
-
-    class azure.mgmt.batch.types.CheckNameAvailabilityParameters(TypedDict, total=False):
-        key "name": Required[str]
-        key "type": Required[Union[str, ResourceType]]
-        name: str
-        type: Union[str, ResourceType]
-
-
-    class azure.mgmt.batch.types.ComputeNodeIdentityReference(TypedDict, total=False):
-        key "resourceId": str
-        resourceId: str
-
-
-    class azure.mgmt.batch.types.ContainerConfiguration(TypedDict, total=False):
-        key "type": Required[Union[str, ContainerType]]
-        containerImageNames: list[str]
-        containerRegistries: list[ContainerRegistry]
-        type: Union[str, ContainerType]
-
-
-    class azure.mgmt.batch.types.ContainerHostBatchBindMountEntry(TypedDict, total=False):
-        key "isReadOnly": bool
-        key "source": Union[str, ContainerHostDataPath]
-        isReadOnly: bool
-        source: Union[str, ContainerHostDataPath]
-
-
-    class azure.mgmt.batch.types.ContainerRegistry(TypedDict, total=False):
-        key "identityReference": ForwardRef('ComputeNodeIdentityReference', module='types')
-        key "password": str
-        key "registryServer": str
-        key "username": str
-        identityReference: ComputeNodeIdentityReference
-        password: str
-        registryServer: str
-        username: str
-
-
-    class azure.mgmt.batch.types.DataDisk(TypedDict, total=False):
-        key "caching": Union[str, CachingType]
-        key "diskSizeGB": Required[int]
-        key "lun": Required[int]
-        key "managedDisk": ForwardRef('ManagedDisk', module='types')
-        caching: Union[str, CachingType]
-        diskSizeGB: int
-        lun: int
-        managedDisk: ManagedDisk
-
-
-    class azure.mgmt.batch.types.DeploymentConfiguration(TypedDict, total=False):
-        key "virtualMachineConfiguration": ForwardRef('VirtualMachineConfiguration', module='types')
-        virtualMachineConfiguration: VirtualMachineConfiguration
-
-
-    class azure.mgmt.batch.types.DeploymentConfigurationPatch(TypedDict, total=False):
-        key "virtualMachineConfiguration": ForwardRef('VirtualMachineConfigurationPatch', module='types')
-        virtualMachineConfiguration: VirtualMachineConfigurationPatch
-
-
-    class azure.mgmt.batch.types.DiffDiskSettings(TypedDict, total=False):
-        key "placement": Union[str, DiffDiskPlacement]
-        placement: Union[str, DiffDiskPlacement]
-
-
-    class azure.mgmt.batch.types.DiskCustomerManagedKey(TypedDict, total=False):
-        key "identityReference": ForwardRef('ComputeNodeIdentityReference', module='types')
-        key "keyUrl": str
-        key "rotationToLatestKeyVersionEnabled": bool
-        identityReference: ComputeNodeIdentityReference
-        keyUrl: str
-        rotationToLatestKeyVersionEnabled: bool
-
-
-    class azure.mgmt.batch.types.DiskEncryptionConfiguration(TypedDict, total=False):
-        key "customerManagedKey": ForwardRef('DiskCustomerManagedKey', module='types')
-        customerManagedKey: DiskCustomerManagedKey
-        targets: list[Union[str, DiskEncryptionTarget]]
-
-
-    class azure.mgmt.batch.types.DiskEncryptionSetParameters(TypedDict, total=False):
-        key "id": Required[str]
-        id: str
-
-
-    class azure.mgmt.batch.types.EncryptionProperties(TypedDict, total=False):
-        key "keySource": Union[str, KeySource]
-        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
-        keySource: Union[str, KeySource]
-        keyVaultProperties: KeyVaultProperties
-
-
-    class azure.mgmt.batch.types.EndpointAccessProfile(TypedDict, total=False):
-        key "defaultAction": Required[Union[str, EndpointAccessDefaultAction]]
-        defaultAction: Union[str, EndpointAccessDefaultAction]
-        ipRules: list[IPRule]
-
-
-    class azure.mgmt.batch.types.EnvironmentSetting(TypedDict, total=False):
-        key "name": Required[str]
-        key "value": str
-        name: str
-        value: str
-
-
-    class azure.mgmt.batch.types.FixedScaleSettings(TypedDict, total=False):
-        key "nodeDeallocationOption": Union[str, RequestedComputeNodeDeallocationOption]
-        key "resizeTimeout": str
-        key "targetDedicatedNodes": int
-        key "targetLowPriorityNodes": int
-        nodeDeallocationOption: Union[str, RequestedComputeNodeDeallocationOption]
-        resizeTimeout: str
-        targetDedicatedNodes: int
-        targetLowPriorityNodes: int
-
-
-    class azure.mgmt.batch.types.HardwareProfile(TypedDict, total=False):
-        key "vmSizeProperties": ForwardRef('VmSizeProperties', module='types')
-        vmSizeProperties: VmSizeProperties
-
-
-    class azure.mgmt.batch.types.HostEndpointSettings(TypedDict, total=False):
-        key "inVMAccessControlProfileReferenceId": str
-        key "mode": Union[str, HostEndpointSettingsModeTypes]
-        inVMAccessControlProfileReferenceId: str
-        mode: Union[str, HostEndpointSettingsModeTypes]
-
-
-    class azure.mgmt.batch.types.IPRule(TypedDict, total=False):
-        key "action": Required[Union[str, IPRuleAction]]
-        key "value": Required[str]
-        action: Union[str, IPRuleAction]
-        value: str
-
-
-    class azure.mgmt.batch.types.IPTag(TypedDict, total=False):
-        key "ipTagType": str
-        key "tag": str
-        ipTagType: str
-        tag: str
-
-
-    class azure.mgmt.batch.types.ImageReference(TypedDict, total=False):
-        key "communityGalleryImageId": str
-        key "id": str
-        key "offer": str
-        key "publisher": str
-        key "sharedGalleryImageId": str
-        key "sku": str
-        key "version": str
-        communityGalleryImageId: str
-        id: str
-        offer: str
-        publisher: str
-        sharedGalleryImageId: str
-        sku: str
-        version: str
-
-
-    class azure.mgmt.batch.types.InboundNatPool(TypedDict, total=False):
-        key "backendPort": Required[int]
-        key "frontendPortRangeEnd": Required[int]
-        key "frontendPortRangeStart": Required[int]
-        key "name": Required[str]
-        key "protocol": Required[Union[str, InboundEndpointProtocol]]
-        backendPort: int
-        frontendPortRangeEnd: int
-        frontendPortRangeStart: int
-        name: str
-        networkSecurityGroupRules: list[NetworkSecurityGroupRule]
-        protocol: Union[str, InboundEndpointProtocol]
-
-
-    class azure.mgmt.batch.types.KeyVaultProperties(TypedDict, total=False):
-        key "keyIdentifier": str
-        keyIdentifier: str
-
-
-    class azure.mgmt.batch.types.KeyVaultReference(TypedDict, total=False):
-        key "id": Required[str]
-        key "url": Required[str]
-        id: str
-        url: str
-
-
-    class azure.mgmt.batch.types.LinuxUserConfiguration(TypedDict, total=False):
-        key "gid": int
-        key "sshPrivateKey": str
-        key "uid": int
-        gid: int
-        sshPrivateKey: str
-        uid: int
-
-
-    class azure.mgmt.batch.types.ManagedDisk(TypedDict, total=False):
-        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
-        key "securityProfile": ForwardRef('VMDiskSecurityProfile', module='types')
-        key "storageAccountType": Union[str, StorageAccountType]
-        diskEncryptionSet: DiskEncryptionSetParameters
-        securityProfile: VMDiskSecurityProfile
-        storageAccountType: Union[str, StorageAccountType]
-
-
-    class azure.mgmt.batch.types.MaxInstancePercentPerZonePolicy(TypedDict, total=False):
-        key "enabled": bool
-        key "value": Required[int]
-        enabled: bool
-        value: int
-
-
-    class azure.mgmt.batch.types.MaxInstancePercentPerZonePolicyPatch(TypedDict, total=False):
-        key "enabled": bool
-        key "value": int
-        enabled: bool
-        value: int
-
-
-    class azure.mgmt.batch.types.MetadataItem(TypedDict, total=False):
-        key "name": Required[str]
-        key "value": Required[str]
-        name: str
-        value: str
-
-
-    class azure.mgmt.batch.types.MountConfiguration(TypedDict, total=False):
-        key "azureBlobFileSystemConfiguration": ForwardRef('AzureBlobFileSystemConfiguration', module='types')
-        key "azureFileShareConfiguration": ForwardRef('AzureFileShareConfiguration', module='types')
-        key "cifsMountConfiguration": ForwardRef('CIFSMountConfiguration', module='types')
-        key "nfsMountConfiguration": ForwardRef('NFSMountConfiguration', module='types')
-        azureBlobFileSystemConfiguration: AzureBlobFileSystemConfiguration
-        azureFileShareConfiguration: AzureFileShareConfiguration
-        cifsMountConfiguration: CIFSMountConfiguration
-        nfsMountConfiguration: NFSMountConfiguration
-
-
-    class azure.mgmt.batch.types.NFSMountConfiguration(TypedDict, total=False):
-        key "mountOptions": str
-        key "relativeMountPath": Required[str]
-        key "source": Required[str]
-        mountOptions: str
-        relativeMountPath: str
-        source: str
-
-
-    class azure.mgmt.batch.types.NetworkConfiguration(TypedDict, total=False):
-        key "dynamicVnetAssignmentScope": Union[str, DynamicVNetAssignmentScope]
-        key "enableAcceleratedNetworking": bool
-        key "endpointConfiguration": ForwardRef('PoolEndpointConfiguration', module='types')
-        key "publicIPAddressConfiguration": ForwardRef('PublicIPAddressConfiguration', module='types')
-        key "subnetId": str
-        dynamicVnetAssignmentScope: Union[str, DynamicVNetAssignmentScope]
-        enableAcceleratedNetworking: bool
-        endpointConfiguration: PoolEndpointConfiguration
-        publicIPAddressConfiguration: PublicIPAddressConfiguration
-        subnetId: str
-
-
-    class azure.mgmt.batch.types.NetworkProfile(TypedDict, total=False):
-        key "accountAccess": ForwardRef('EndpointAccessProfile', module='types')
-        key "nodeManagementAccess": ForwardRef('EndpointAccessProfile', module='types')
-        accountAccess: EndpointAccessProfile
-        nodeManagementAccess: EndpointAccessProfile
-
-
-    class azure.mgmt.batch.types.NetworkSecurityGroupRule(TypedDict, total=False):
-        key "access": Required[Union[str, NetworkSecurityGroupRuleAccess]]
-        key "priority": Required[int]
-        key "sourceAddressPrefix": Required[str]
-        access: Union[str, NetworkSecurityGroupRuleAccess]
-        priority: int
-        sourceAddressPrefix: str
-        sourcePortRanges: list[str]
-
-
-    class azure.mgmt.batch.types.NodePlacementConfiguration(TypedDict, total=False):
-        key "policy": Union[str, NodePlacementPolicyType]
-        policy: Union[str, NodePlacementPolicyType]
-
-
-    class azure.mgmt.batch.types.OSDisk(TypedDict, total=False):
-        key "caching": Union[str, CachingType]
-        key "diskSizeGB": int
-        key "ephemeralOSDiskSettings": ForwardRef('DiffDiskSettings', module='types')
-        key "managedDisk": ForwardRef('ManagedDisk', module='types')
-        key "writeAcceleratorEnabled": bool
-        caching: Union[str, CachingType]
-        diskSizeGB: int
-        ephemeralOSDiskSettings: DiffDiskSettings
-        managedDisk: ManagedDisk
-        writeAcceleratorEnabled: bool
-
-
-    class azure.mgmt.batch.types.Placement(TypedDict, total=False):
-        key "zonePlacementPolicy": Required[Union[str, ZonePlacementPolicyType]]
-        zonePlacementPolicy: Union[str, ZonePlacementPolicyType]
-
-
-    class azure.mgmt.batch.types.PlacementPatch(TypedDict, total=False):
-        key "zonePlacementPolicy": Union[str, ZonePlacementPolicyType]
-        zonePlacementPolicy: Union[str, ZonePlacementPolicyType]
-
-
-    class azure.mgmt.batch.types.Pool(ProxyResource):
-        key "etag": str
-        key "id": str
-        key "identity": ForwardRef('BatchPoolIdentity', module='types')
-        key "name": str
-        key "properties": ForwardRef('PoolProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        etag: str
-        id: str
-        identity: BatchPoolIdentity
-        name: str
-        properties: PoolProperties
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.batch.types.PoolEndpointConfiguration(TypedDict, total=False):
-        key "inboundNatPools": Required[list[InboundNatPool]]
-        inboundNatPools: list[InboundNatPool]
-
-
-    class azure.mgmt.batch.types.PoolPatch(TypedDict, total=False):
-        key "etag": str
-        key "id": str
-        key "identity": ForwardRef('BatchPoolIdentity', module='types')
-        key "properties": ForwardRef('PoolPatchProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        etag: str
-        id: str
-        identity: BatchPoolIdentity
-        properties: PoolPatchProperties
-        systemData: SystemData
-        tags: dict[str, str]
-
-
-    class azure.mgmt.batch.types.PoolPatchProperties(TypedDict, total=False):
-        key "allocationState": Union[str, AllocationState]
-        key "allocationStateTransitionTime": str
-        key "autoScaleRun": ForwardRef('AutoScaleRun', module='types')
-        key "creationTime": str
-        key "currentDedicatedNodes": int
-        key "currentLowPriorityNodes": int
-        key "deploymentConfiguration": ForwardRef('DeploymentConfigurationPatch', module='types')
-        key "displayName": str
-        key "interNodeCommunication": Union[str, InterNodeCommunicationState]
-        key "lastModified": str
-        key "networkConfiguration": ForwardRef('NetworkConfiguration', module='types')
-        key "provisioningState": Union[str, PoolProvisioningState]
-        key "provisioningStateTransitionTime": str
-        key "resizeOperationStatus": ForwardRef('ResizeOperationStatus', module='types')
-        key "scaleSettings": ForwardRef('ScaleSettings', module='types')
-        key "startTask": ForwardRef('StartTask', module='types')
-        key "taskSchedulingPolicy": ForwardRef('TaskSchedulingPolicy', module='types')
-        key "taskSlotsPerNode": int
-        key "upgradePolicy": ForwardRef('UpgradePolicy', module='types')
-        key "vmSize": str
-        key "vmSkuProfile": ForwardRef('VirtualMachineSkuProfile', module='types')
-        allocationState: Union[str, AllocationState]
-        allocationStateTransitionTime: str
-        applicationPackages: list[ApplicationPackageReference]
-        autoScaleRun: AutoScaleRun
-        creationTime: str
-        currentDedicatedNodes: int
-        currentLowPriorityNodes: int
-        deploymentConfiguration: DeploymentConfigurationPatch
-        displayName: str
-        interNodeCommunication: Union[str, InterNodeCommunicationState]
-        lastModified: str
-        metadata: list[MetadataItem]
-        mountConfiguration: list[MountConfiguration]
-        networkConfiguration: NetworkConfiguration
-        provisioningState: Union[str, PoolProvisioningState]
-        provisioningStateTransitionTime: str
-        resizeOperationStatus: ResizeOperationStatus
-        scaleSettings: ScaleSettings
-        startTask: StartTask
-        taskSchedulingPolicy: TaskSchedulingPolicy
-        taskSlotsPerNode: int
-        upgradePolicy: UpgradePolicy
-        userAccounts: list[UserAccount]
-        vmSize: str
-        vmSkuProfile: VirtualMachineSkuProfile
-
-
-    class azure.mgmt.batch.types.PoolProperties(TypedDict, total=False):
-        key "allocationState": Union[str, AllocationState]
-        key "allocationStateTransitionTime": str
-        key "autoScaleRun": ForwardRef('AutoScaleRun', module='types')
-        key "creationTime": str
-        key "currentDedicatedNodes": int
-        key "currentLowPriorityNodes": int
-        key "deploymentConfiguration": ForwardRef('DeploymentConfiguration', module='types')
-        key "displayName": str
-        key "interNodeCommunication": Union[str, InterNodeCommunicationState]
-        key "lastModified": str
-        key "networkConfiguration": ForwardRef('NetworkConfiguration', module='types')
-        key "provisioningState": Union[str, PoolProvisioningState]
-        key "provisioningStateTransitionTime": str
-        key "resizeOperationStatus": ForwardRef('ResizeOperationStatus', module='types')
-        key "scaleSettings": ForwardRef('ScaleSettings', module='types')
-        key "startTask": ForwardRef('StartTask', module='types')
-        key "taskSchedulingPolicy": ForwardRef('TaskSchedulingPolicy', module='types')
-        key "taskSlotsPerNode": int
-        key "upgradePolicy": ForwardRef('UpgradePolicy', module='types')
-        key "vmSize": str
-        key "vmSkuProfile": ForwardRef('VirtualMachineSkuProfile', module='types')
-        allocationState: Union[str, AllocationState]
-        allocationStateTransitionTime: str
-        applicationPackages: list[ApplicationPackageReference]
-        autoScaleRun: AutoScaleRun
-        creationTime: str
-        currentDedicatedNodes: int
-        currentLowPriorityNodes: int
-        deploymentConfiguration: DeploymentConfiguration
-        displayName: str
-        interNodeCommunication: Union[str, InterNodeCommunicationState]
-        lastModified: str
-        metadata: list[MetadataItem]
-        mountConfiguration: list[MountConfiguration]
-        networkConfiguration: NetworkConfiguration
-        provisioningState: Union[str, PoolProvisioningState]
-        provisioningStateTransitionTime: str
-        resizeOperationStatus: ResizeOperationStatus
-        scaleSettings: ScaleSettings
-        startTask: StartTask
-        taskSchedulingPolicy: TaskSchedulingPolicy
-        taskSlotsPerNode: int
-        upgradePolicy: UpgradePolicy
-        userAccounts: list[UserAccount]
-        vmSize: str
-        vmSkuProfile: VirtualMachineSkuProfile
-
-
-    class azure.mgmt.batch.types.PrivateEndpoint(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.batch.types.PrivateEndpointConnection(ProxyResource):
-        key "etag": str
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        etag: str
-        id: str
-        name: str
-        properties: PrivateEndpointConnectionProperties
-        systemData: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.batch.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
-        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
-        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
-        key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
-        groupIds: list[str]
-        privateEndpoint: PrivateEndpoint
-        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
-        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
-
-
-    class azure.mgmt.batch.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
-        key "actionsRequired": str
-        key "description": str
-        key "status": Required[Union[str, PrivateLinkServiceConnectionStatus]]
-        actionsRequired: str
-        description: str
-        status: Union[str, PrivateLinkServiceConnectionStatus]
-
-
-    class azure.mgmt.batch.types.ProxyAgentSettings(TypedDict, total=False):
-        key "enabled": bool
-        key "imds": ForwardRef('HostEndpointSettings', module='types')
-        key "wireServer": ForwardRef('HostEndpointSettings', module='types')
-        enabled: bool
-        imds: HostEndpointSettings
-        wireServer: HostEndpointSettings
-
-
-    class azure.mgmt.batch.types.ProxyResource(Resource):
-        key "id": str
-        key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        systemData: SystemData
-        type: str
-
-
-    class azure.mgmt.batch.types.PublicIPAddressConfiguration(TypedDict, total=False):
-        key "provision": Union[str, IPAddressProvisioningType]
-        ipAddressIds: list[str]
-        ipFamilies: list[Union[str, IPFamily]]
-        ipTags: list[IPTag]
-        provision: Union[str, IPAddressProvisioningType]
-
-
-    class azure.mgmt.batch.types.ResiliencyPolicy(TypedDict, total=False):
-        key "zoneAllocationPolicy": Required[ZoneAllocationPolicy]
-        zoneAllocationPolicy: ZoneAllocationPolicy
-
-
-    class azure.mgmt.batch.types.ResiliencyPolicyPatch(TypedDict, total=False):
-        key "zoneAllocationPolicy": ForwardRef('ZoneAllocationPolicyPatch', module='types')
-        zoneAllocationPolicy: ZoneAllocationPolicyPatch
-
-
-    class azure.mgmt.batch.types.ResizeError(TypedDict, total=False):
-        key "code": Required[str]
-        key "message": Required[str]
-        code: str
-        details: list[ResizeError]
-        message: str
-
-
-    class azure.mgmt.batch.types.ResizeOperationStatus(TypedDict, total=False):
-        key "nodeDeallocationOption": Union[str, ComputeNodeDeallocationOption]
-        key "resizeTimeout": str
-        key "startTime": str
-        key "targetDedicatedNodes": int
-        key "targetLowPriorityNodes": int
-        errors: list[ResizeError]
-        nodeDeallocationOption: Union[str, ComputeNodeDeallocationOption]
-        resizeTimeout: str
-        startTime: str
-        targetDedicatedNodes: int
-        targetLowPriorityNodes: int
-
-
-    class azure.mgmt.batch.types.Resource(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        systemData: SystemData
-        type: str
-
-
-    class azure.mgmt.batch.types.ResourceFile(TypedDict, total=False):
-        key "autoStorageContainerName": str
-        key "blobPrefix": str
-        key "fileMode": str
-        key "filePath": str
-        key "httpUrl": str
-        key "identityReference": ForwardRef('ComputeNodeIdentityReference', module='types')
-        key "storageContainerUrl": str
-        autoStorageContainerName: str
-        blobPrefix: str
-        fileMode: str
-        filePath: str
-        httpUrl: str
-        identityReference: ComputeNodeIdentityReference
-        storageContainerUrl: str
-
-
-    class azure.mgmt.batch.types.RollingUpgradePolicy(TypedDict, total=False):
-        key "enableCrossZoneUpgrade": bool
-        key "maxBatchInstancePercent": int
-        key "maxUnhealthyInstancePercent": int
-        key "maxUnhealthyUpgradedInstancePercent": int
-        key "pauseTimeBetweenBatches": str
-        key "prioritizeUnhealthyInstances": bool
-        key "rollbackFailedInstancesOnPolicyBreach": bool
-        enableCrossZoneUpgrade: bool
-        maxBatchInstancePercent: int
-        maxUnhealthyInstancePercent: int
-        maxUnhealthyUpgradedInstancePercent: int
-        pauseTimeBetweenBatches: str
-        prioritizeUnhealthyInstances: bool
-        rollbackFailedInstancesOnPolicyBreach: bool
-
-
-    class azure.mgmt.batch.types.ScaleSettings(TypedDict, total=False):
-        key "autoScale": ForwardRef('AutoScaleSettings', module='types')
-        key "fixedScale": ForwardRef('FixedScaleSettings', module='types')
-        autoScale: AutoScaleSettings
-        fixedScale: FixedScaleSettings
-
-
-    class azure.mgmt.batch.types.SecurityProfile(TypedDict, total=False):
-        key "encryptionAtHost": bool
-        key "proxyAgentSettings": ForwardRef('ProxyAgentSettings', module='types')
-        key "securityType": Union[str, SecurityTypes]
-        key "uefiSettings": ForwardRef('UefiSettings', module='types')
-        encryptionAtHost: bool
-        proxyAgentSettings: ProxyAgentSettings
-        securityType: Union[str, SecurityTypes]
-        uefiSettings: UefiSettings
-
-
-    class azure.mgmt.batch.types.ServiceArtifactReference(TypedDict, total=False):
-        key "id": Required[str]
-        id: str
-
-
-    class azure.mgmt.batch.types.StartTask(TypedDict, total=False):
-        key "commandLine": str
-        key "containerSettings": ForwardRef('TaskContainerSettings', module='types')
-        key "maxTaskRetryCount": int
-        key "userIdentity": ForwardRef('UserIdentity', module='types')
-        key "waitForSuccess": bool
-        commandLine: str
-        containerSettings: TaskContainerSettings
-        environmentSettings: list[EnvironmentSetting]
-        maxTaskRetryCount: int
-        resourceFiles: list[ResourceFile]
-        userIdentity: UserIdentity
-        waitForSuccess: bool
-
-
-    class azure.mgmt.batch.types.SystemData(TypedDict, total=False):
-        key "createdAt": str
-        key "createdBy": str
-        key "createdByType": Union[str, CreatedByType]
-        key "lastModifiedAt": str
-        key "lastModifiedBy": str
-        key "lastModifiedByType": Union[str, CreatedByType]
-        createdAt: str
-        createdBy: str
-        createdByType: Union[str, CreatedByType]
-        lastModifiedAt: str
-        lastModifiedBy: str
-        lastModifiedByType: Union[str, CreatedByType]
-
-
-    class azure.mgmt.batch.types.TaskContainerSettings(TypedDict, total=False):
-        key "containerRunOptions": str
-        key "imageName": Required[str]
-        key "registry": ForwardRef('ContainerRegistry', module='types')
-        key "workingDirectory": Union[str, ContainerWorkingDirectory]
-        containerHostBatchBindMounts: list[ContainerHostBatchBindMountEntry]
-        containerRunOptions: str
-        imageName: str
-        registry: ContainerRegistry
-        workingDirectory: Union[str, ContainerWorkingDirectory]
-
-
-    class azure.mgmt.batch.types.TaskSchedulingPolicy(TypedDict, total=False):
-        key "jobDefaultOrder": Union[str, JobDefaultOrder]
-        key "nodeFillType": Required[Union[str, ComputeNodeFillType]]
-        jobDefaultOrder: Union[str, JobDefaultOrder]
-        nodeFillType: Union[str, ComputeNodeFillType]
-
-
-    class azure.mgmt.batch.types.UefiSettings(TypedDict, total=False):
-        key "secureBootEnabled": bool
-        key "vTpmEnabled": bool
-        secureBootEnabled: bool
-        vTpmEnabled: bool
-
-
-    class azure.mgmt.batch.types.UpgradePolicy(TypedDict, total=False):
-        key "automaticOSUpgradePolicy": ForwardRef('AutomaticOSUpgradePolicy', module='types')
-        key "mode": Required[Union[str, UpgradeMode]]
-        key "rollingUpgradePolicy": ForwardRef('RollingUpgradePolicy', module='types')
-        automaticOSUpgradePolicy: AutomaticOSUpgradePolicy
-        mode: Union[str, UpgradeMode]
-        rollingUpgradePolicy: RollingUpgradePolicy
-
-
-    class azure.mgmt.batch.types.UserAccount(TypedDict, total=False):
-        key "elevationLevel": Union[str, ElevationLevel]
-        key "linuxUserConfiguration": ForwardRef('LinuxUserConfiguration', module='types')
-        key "name": Required[str]
-        key "password": Required[str]
-        key "windowsUserConfiguration": ForwardRef('WindowsUserConfiguration', module='types')
-        elevationLevel: Union[str, ElevationLevel]
-        linuxUserConfiguration: LinuxUserConfiguration
-        name: str
-        password: str
-        windowsUserConfiguration: WindowsUserConfiguration
-
-
-    class azure.mgmt.batch.types.UserAssignedIdentities(TypedDict, total=False):
-        key "clientId": str
-        key "principalId": str
-        clientId: str
-        principalId: str
-
-
-    class azure.mgmt.batch.types.UserIdentity(TypedDict, total=False):
-        key "autoUser": ForwardRef('AutoUserSpecification', module='types')
-        key "userName": str
-        autoUser: AutoUserSpecification
-        userName: str
-
-
-    class azure.mgmt.batch.types.VMDiskSecurityProfile(TypedDict, total=False):
-        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
-        key "securityEncryptionType": Union[str, SecurityEncryptionTypes]
-        diskEncryptionSet: DiskEncryptionSetParameters
-        securityEncryptionType: Union[str, SecurityEncryptionTypes]
-
-
-    class azure.mgmt.batch.types.VMExtension(TypedDict, total=False):
-        key "autoUpgradeMinorVersion": bool
-        key "enableAutomaticUpgrade": bool
-        key "name": Required[str]
-        key "protectedSettings": Any
-        key "publisher": Required[str]
-        key "settings": Any
-        key "type": Required[str]
-        key "typeHandlerVersion": str
-        autoUpgradeMinorVersion: bool
-        enableAutomaticUpgrade: bool
-        name: str
-        protectedSettings: Any
-        provisionAfterExtensions: list[str]
-        publisher: str
-        settings: Any
-        type: str
-        typeHandlerVersion: str
-
-
-    class azure.mgmt.batch.types.VirtualMachineConfiguration(TypedDict, total=False):
-        key "containerConfiguration": ForwardRef('ContainerConfiguration', module='types')
-        key "diskEncryptionConfiguration": ForwardRef('DiskEncryptionConfiguration', module='types')
-        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
-        key "imageReference": Required[ImageReference]
-        key "licenseType": str
-        key "nodeAgentSkuId": Required[str]
-        key "nodePlacementConfiguration": ForwardRef('NodePlacementConfiguration', module='types')
-        key "osDisk": ForwardRef('OSDisk', module='types')
-        key "placement": ForwardRef('Placement', module='types')
-        key "resiliencyPolicy": ForwardRef('ResiliencyPolicy', module='types')
-        key "securityProfile": ForwardRef('SecurityProfile', module='types')
-        key "serviceArtifactReference": ForwardRef('ServiceArtifactReference', module='types')
-        key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
-        containerConfiguration: ContainerConfiguration
-        dataDisks: list[DataDisk]
-        diskEncryptionConfiguration: DiskEncryptionConfiguration
-        extensions: list[VMExtension]
-        hardwareProfile: HardwareProfile
-        imageReference: ImageReference
-        licenseType: str
-        nodeAgentSkuId: str
-        nodePlacementConfiguration: NodePlacementConfiguration
-        osDisk: OSDisk
-        placement: Placement
-        resiliencyPolicy: ResiliencyPolicy
-        securityProfile: SecurityProfile
-        serviceArtifactReference: ServiceArtifactReference
-        windowsConfiguration: WindowsConfiguration
-
-
-    class azure.mgmt.batch.types.VirtualMachineConfigurationPatch(TypedDict, total=False):
-        key "containerConfiguration": ForwardRef('ContainerConfiguration', module='types')
-        key "diskEncryptionConfiguration": ForwardRef('DiskEncryptionConfiguration', module='types')
-        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
-        key "imageReference": Required[ImageReference]
-        key "licenseType": str
-        key "nodeAgentSkuId": Required[str]
-        key "nodePlacementConfiguration": ForwardRef('NodePlacementConfiguration', module='types')
-        key "osDisk": ForwardRef('OSDisk', module='types')
-        key "placement": ForwardRef('PlacementPatch', module='types')
-        key "resiliencyPolicy": ForwardRef('ResiliencyPolicyPatch', module='types')
-        key "securityProfile": ForwardRef('SecurityProfile', module='types')
-        key "serviceArtifactReference": ForwardRef('ServiceArtifactReference', module='types')
-        key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
-        containerConfiguration: ContainerConfiguration
-        dataDisks: list[DataDisk]
-        diskEncryptionConfiguration: DiskEncryptionConfiguration
-        extensions: list[VMExtension]
-        hardwareProfile: HardwareProfile
-        imageReference: ImageReference
-        licenseType: str
-        nodeAgentSkuId: str
-        nodePlacementConfiguration: NodePlacementConfiguration
-        osDisk: OSDisk
-        placement: PlacementPatch
-        resiliencyPolicy: ResiliencyPolicyPatch
-        securityProfile: SecurityProfile
-        serviceArtifactReference: ServiceArtifactReference
-        windowsConfiguration: WindowsConfiguration
-
-
-    class azure.mgmt.batch.types.VirtualMachineSkuProfile(TypedDict, total=False):
-        key "allocationStrategy": Union[str, VirtualMachineSkuAllocationStrategy]
-        allocationStrategy: Union[str, VirtualMachineSkuAllocationStrategy]
-        vmSizes: list[VirtualMachineSkuProfileVmSize]
-
-
-    class azure.mgmt.batch.types.VirtualMachineSkuProfileVmSize(TypedDict, total=False):
-        key "name": Required[str]
-        key "rank": int
-        name: str
-        rank: int
-
-
-    class azure.mgmt.batch.types.VmSizeProperties(TypedDict, total=False):
-        key "vCPUsAvailable": int
-        key "vCPUsPerCore": int
-        vCPUsAvailable: int
-        vCPUsPerCore: int
-
-
-    class azure.mgmt.batch.types.WindowsConfiguration(TypedDict, total=False):
-        key "enableAutomaticUpdates": bool
-        enableAutomaticUpdates: bool
-
-
-    class azure.mgmt.batch.types.WindowsUserConfiguration(TypedDict, total=False):
-        key "loginMode": Union[str, LoginMode]
-        loginMode: Union[str, LoginMode]
-
-
-    class azure.mgmt.batch.types.ZoneAllocationPolicy(TypedDict, total=False):
-        key "maxInstancePercentPerZonePolicy": ForwardRef('MaxInstancePercentPerZonePolicy', module='types')
-        key "maxZoneCount": int
-        maxInstancePercentPerZonePolicy: MaxInstancePercentPerZonePolicy
-        maxZoneCount: int
-
-
-    class azure.mgmt.batch.types.ZoneAllocationPolicyPatch(TypedDict, total=False):
-        key "maxInstancePercentPerZonePolicy": ForwardRef('MaxInstancePercentPerZonePolicyPatch', module='types')
-        key "maxZoneCount": int
-        maxInstancePercentPerZonePolicy: MaxInstancePercentPerZonePolicyPatch
-        maxZoneCount: int
 
 
 ```
