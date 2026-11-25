@@ -1,7 +1,13 @@
 {
   "repositories": {
     "Azure/azure-sdk-for-python": {
-      "rotators": []
+      "rotators": [
+        "msyyc",
+        "tadelesh",
+        "JiaqiZhang-Dev",
+        "JialinHuang803",
+        "MaryGao"
+      ]
     }
   }
 }

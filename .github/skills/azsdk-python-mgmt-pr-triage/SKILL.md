@@ -51,7 +51,7 @@ Package and version filters are exact matches. Unknown versions are shown as
 
 Maintain authorized rotator GitHub user logins in
 [`rotators.json`](rotators.json), under `repositories` and the exact repository's
-`rotators` list. The initial list is empty because no rotation roster is assumed.
+`rotators` list. Keep this list current when rotation assignments change.
 Use `--config <path>` to select another configuration file. Missing or invalid
 configuration stops the scan; configuration for another repository does not
 apply. User logins are case-insensitive and do not include `@`.
