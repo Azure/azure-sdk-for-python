@@ -3,13 +3,68 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------
-from typing import Any, Awaitable, Optional, Union
 from datetime import datetime, timedelta, timezone
+import re
+from typing import Any, Awaitable, Optional, Union
+from urllib.parse import urlsplit
 
 import jwt
 from azure.core.pipeline import PipelineRequest
 from azure.core.pipeline.policies import SansIOHTTPPolicy, ProxyPolicy
 from azure.core.credentials import AzureKeyCredential
+
+
+_DOT_PATH_SEGMENT = re.compile(r"/(?:\.|%(?:25)*2e){1,2}(?:/|$)", re.IGNORECASE)
+_DOT_SEGMENT_VALUE = re.compile(r"(?:\.|%(?:25)*2e){1,2}", re.IGNORECASE)
+
+
+def validate_path_segment_value(name: str, value: Any) -> None:
+    for segment in str(value).split("/"):
+        if _DOT_SEGMENT_VALUE.fullmatch(segment):
+            raise ValueError(f"URL path parameter '{name}' must not be '.' or '..'.")
+
+
+def validate_path_segments(url: str) -> None:
+    path = urlsplit(url).path
+    if path and _DOT_PATH_SEGMENT.search(path):
+        raise ValueError("URL path segments must not be '.' or '..'.")
+
+
+def wrap_serializer_url(serializer: Any) -> None:
+    if getattr(serializer, "_validates_dot_path_segments", False):
+        return
+    original_url = serializer.url
+
+    def _validating_url(name: str, data: Any, data_type: str, **kwargs: Any) -> str:
+        output = original_url(name, data, data_type, **kwargs)
+        if kwargs.get("skip_quote") is not True and data is not None:
+            validate_path_segment_value(name, data)
+        return output
+
+    serializer.url = _validating_url
+    serializer._validates_dot_path_segments = True  # pylint: disable=protected-access
+
+
+def add_path_validation_policy(kwargs: Any) -> None:
+    existing = kwargs.get("per_call_policies")
+    policy = PathSegmentValidationPolicy()
+    if existing is None:
+        kwargs["per_call_policies"] = [policy]
+    elif isinstance(existing, (list, tuple, set)):
+        kwargs["per_call_policies"] = [policy, *existing]
+    else:
+        kwargs["per_call_policies"] = [policy, existing]
+
+
+
+
+class PathSegmentValidationPolicy(SansIOHTTPPolicy):
+    """Pipeline policy that rejects '.' and '..' URL path segments before sending a request."""
+
+    def on_request(self, request: PipelineRequest) -> Union[None, Awaitable[None]]:
+        validate_path_segments(request.http_request.url)
+        return super(PathSegmentValidationPolicy, self).on_request(request)
+
 
 
 def _parse_connection_string(connection_string: str, **kwargs: Any) -> Any:

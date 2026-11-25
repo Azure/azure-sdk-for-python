@@ -17,8 +17,14 @@ from ._shared import (
     ApiManagementProxy,
     JwtCredentialPolicy,
     _parse_connection_string,
+    add_path_validation_policy,
     get_token_by_key,
+    validate_path_segment_value,
+    wrap_serializer_url,
 )
+from ._operations._operations import _SERIALIZER
+
+
 
 from ._client import WebPubSubChatServiceClient as WebPubSubChatServiceClientGenerated
 from ._constants import BuiltInChatRoles
@@ -56,8 +62,10 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             raise ValueError("Parameter 'endpoint' must not be empty.")
         if not hub:
             raise ValueError("Parameter 'hub' must not be empty.")
+        validate_path_segment_value("hub", hub)
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+
         endpoint = endpoint.rstrip("/")
         port = kwargs.pop("port", None)
         if port:
@@ -73,6 +81,7 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             )
         if "proxy_policy" not in kwargs:
             kwargs["proxy_policy"] = ApiManagementProxy(**kwargs)
+        add_path_validation_policy(kwargs)
         if api_version is not None:
             kwargs["api_version"] = api_version
         super().__init__(
@@ -81,6 +90,9 @@ class WebPubSubChatServiceClient(WebPubSubChatServiceClientGenerated):
             credential=cast("TokenCredential", credential),
             **kwargs,
         )
+        wrap_serializer_url(self._serialize)
+        wrap_serializer_url(_SERIALIZER)
+
 
     @classmethod
     def from_connection_string(cls, conn_str: str, hub: str, **kwargs: Any) -> "WebPubSubChatServiceClient":
@@ -161,3 +173,4 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    wrap_serializer_url(_SERIALIZER)

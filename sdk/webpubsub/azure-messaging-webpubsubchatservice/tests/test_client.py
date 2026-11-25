@@ -13,12 +13,26 @@ from urllib.parse import parse_qs, urlparse
 import jwt
 import pytest
 from azure.core.credentials import AccessToken, AzureKeyCredential
+from azure.core.pipeline.policies import SansIOHTTPPolicy
+from azure.core.rest import HttpRequest
 
 from azure.messaging.webpubsubchatservice import (
     BuiltInChatRoles,
     WebPubSubChatServiceClient,
 )
-from azure.messaging.webpubsubchatservice.models import ChatPermission
+from azure.messaging.webpubsubchatservice.models import (
+    ChatMessageUpdate,
+    ChatPermission,
+    ChatRoleCreateOrReplace,
+    ChatRoomCreateOrReplace,
+    ChatRoomMemberCreateOrReplace,
+    ChatTopicCreateOrReplace,
+    ChatTopicUpdate,
+    HumanChatUserCreateOrReplace,
+    MessageContent,
+)
+
+
 
 ACCESS_KEY = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789ABCDEFGH"
 ENDPOINT = "https://example.webpubsub.azure.com"
@@ -122,8 +136,9 @@ def test_key_credential_request_uses_full_uri_audience_and_sixty_second_token():
         claims = jwt.decode(token, ACCESS_KEY, algorithms=["HS256"], audience=request.url)
 
         assert claims["aud"] == request.url
-        assert "api-version=2026-08-01-preview" in request.url
+        assert "api-version=2026-11-01" in request.url
         assert 0 < claims["exp"] - int(time.time()) <= 60
+
     finally:
         client.close()
 
@@ -309,3 +324,101 @@ def test_builtin_roles_and_generated_permissions():
     assert ChatPermission.ROOM_REMOVE_USER == "room.remove_user"
     assert ChatPermission.ROOM_HISTORY == "room.history"
     assert ChatPermission.ROOM_PUBLISH_MESSAGE == "room.publish_message"
+
+
+@pytest.mark.parametrize("dot_segment", [".", "..", "%2e", "%2E", "%2e%2e", ".%2e", "%2e.", "%252e", "%252e%252e"])
+def test_hub_rejects_dot_path_segments(dot_segment):
+    with pytest.raises(ValueError, match="must not be '\\.' or '\\.\\.'"):
+        WebPubSubChatServiceClient(ENDPOINT, dot_segment, AzureKeyCredential(ACCESS_KEY))
+
+
+@pytest.mark.parametrize("dot_segment", [".", "..", "%2e", "%2E", "%2e%2e", ".%2e", "%2e.", "%252e", "%252e%252e"])
+@pytest.mark.parametrize(
+    "invoke",
+    [
+        lambda client, seg: client.create_or_replace_role(seg, ChatRoleCreateOrReplace(permissions=[])),
+        lambda client, seg: client.get_role(seg),
+        lambda client, seg: client.delete_role(seg),
+        lambda client, seg: client.create_or_replace_room(seg, ChatRoomCreateOrReplace(title="Room")),
+        lambda client, seg: client.get_room(seg),
+        lambda client, seg: client.delete_room(seg),
+        lambda client, seg: list(client.list_room_members(seg)),
+        lambda client, seg: client.create_or_replace_room_member(
+            seg, "alice", ChatRoomMemberCreateOrReplace(role_name="room.member")
+        ),
+        lambda client, seg: client.create_or_replace_room_member(
+            "general", seg, ChatRoomMemberCreateOrReplace(role_name="room.member")
+        ),
+        lambda client, seg: client.delete_room_member(seg, "alice"),
+        lambda client, seg: client.delete_room_member("general", seg),
+        lambda client, seg: list(client.list_topics(seg)),
+        lambda client, seg: client.create_or_replace_topic(seg, "topic", ChatTopicCreateOrReplace(title="Topic")),
+        lambda client, seg: client.create_or_replace_topic("general", seg, ChatTopicCreateOrReplace(title="Topic")),
+        lambda client, seg: client.get_topic(seg, "topic"),
+        lambda client, seg: client.get_topic("general", seg),
+        lambda client, seg: client.update_topic(seg, "topic", ChatTopicUpdate(title="Topic")),
+        lambda client, seg: client.update_topic("general", seg, ChatTopicUpdate(title="Topic")),
+        lambda client, seg: client.delete_topic(seg, "topic"),
+        lambda client, seg: client.delete_topic("general", seg),
+        lambda client, seg: client.get_conversation(seg),
+        lambda client, seg: list(client.list_messages(seg)),
+        lambda client, seg: client.update_message(
+            seg, "m1", ChatMessageUpdate(content=MessageContent(text="Updated"))
+        ),
+        lambda client, seg: client.update_message(
+            "c.general.default", seg, ChatMessageUpdate(content=MessageContent(text="Updated"))
+        ),
+
+        lambda client, seg: client.delete_message(seg, "m1"),
+        lambda client, seg: client.delete_message("c.general.default", seg),
+        lambda client, seg: client.create_or_replace_user(
+            seg, HumanChatUserCreateOrReplace(nickname="Alice", role_name="user.normal")
+        ),
+        lambda client, seg: client.get_user(seg),
+        lambda client, seg: client.delete_user(seg),
+        lambda client, seg: list(client.list_rooms_for_user(seg)),
+    ],
+)
+def test_operations_reject_dot_path_segments_before_sending(dot_segment, invoke):
+    with WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY)) as client:
+        with patch.object(client._client._pipeline._transport, "send") as send:
+            with pytest.raises(ValueError, match="must not be '\\.' or '\\.\\.'"):
+                invoke(client, dot_segment)
+            send.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "valid_segment",
+    ["...", "alice.smith", "c.room.default", "room.reader", ".leading", "trailing.", "part%2ename", "%2e%2e%2e"],
+)
+def test_operations_allow_valid_segments_containing_dots(valid_segment):
+    def capture(_pipeline_request):
+        raise RequestCaptured()
+
+    with WebPubSubChatServiceClient(ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY)) as client:
+        with pytest.raises(RequestCaptured):
+            client.get_user(valid_segment, raw_request_hook=capture)
+
+
+def test_custom_per_call_policies_and_send_request_path_validation():
+    called = []
+
+    class CustomPolicy(SansIOHTTPPolicy):
+        def on_request(self, request):
+            called.append(request.http_request.url)
+
+    with WebPubSubChatServiceClient(
+        ENDPOINT, HUB, AzureKeyCredential(ACCESS_KEY), per_call_policies=[CustomPolicy()]
+    ) as client:
+        with patch.object(client._client._pipeline._transport, "send") as send:
+            with pytest.raises(ValueError, match="must not be '\\.' or '\\.\\.'"):
+                client.send_request(HttpRequest("GET", "/chat/api/hubs/chat/users/%2e%2e"))
+            send.assert_not_called()
+
+        def capture(_pipeline_request):
+            raise RequestCaptured()
+
+        with pytest.raises(RequestCaptured):
+            client.get_user("alice", raw_request_hook=capture)
+        assert len(called) == 1
+

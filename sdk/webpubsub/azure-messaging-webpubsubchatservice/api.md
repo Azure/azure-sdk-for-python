@@ -258,7 +258,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def delete_topic(
                 self,
                 room_id: str,
@@ -310,7 +310,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> ChatRoom: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def get_topic(
                 self,
                 room_id: str,
@@ -354,7 +354,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> ItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_rooms(
                 self,
                 *,
@@ -363,7 +363,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> ItemPaged[ChatRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_rooms_for_user(
                 self,
                 user_id: str,
@@ -373,7 +373,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> ItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_topics(
                 self,
                 room_id: str,
@@ -383,7 +383,7 @@ namespace azure.messaging.webpubsubchatservice
             ) -> ItemPaged[ChatTopic]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_users(
                 self,
                 *,
@@ -731,7 +731,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'etag', 'match_condition']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         async def delete_topic(
                 self,
                 room_id: str,
@@ -783,7 +783,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> ChatRoom: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'topic_id', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         async def get_topic(
                 self,
                 room_id: str,
@@ -827,7 +827,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> AsyncItemPaged[ChatRoomMember]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_rooms(
                 self,
                 *,
@@ -836,7 +836,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> AsyncItemPaged[ChatRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'user_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_rooms_for_user(
                 self,
                 user_id: str,
@@ -846,7 +846,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> AsyncItemPaged[ChatUserRoom]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'room_id', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_topics(
                 self,
                 room_id: str,
@@ -856,7 +856,7 @@ namespace azure.messaging.webpubsubchatservice.aio
             ) -> AsyncItemPaged[ChatTopic]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview'])
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'hub', 'max_page_size', 'accept']}, api_versions_list=['2026-08-01-preview', '2026-11-01'])
         def list_users(
                 self,
                 *,

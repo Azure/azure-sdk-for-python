@@ -970,7 +970,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_rooms(self, *, max_page_size: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.ChatRoom"]:
         """List rooms with pagination.
@@ -1403,7 +1403,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_topics(
         self, room_id: str, *, max_page_size: Optional[int] = None, **kwargs: Any
@@ -1624,7 +1624,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     async def create_or_replace_topic(
         self,
@@ -1735,7 +1735,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     async def get_topic(self, room_id: str, topic_id: str, **kwargs: Any) -> _models.ChatTopic:
         """Get topic information.
@@ -1923,7 +1923,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
                 "match_condition",
             ]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     async def update_topic(
         self,
@@ -2036,7 +2036,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
         params_added_on={
             "2026-08-01-preview": ["api_version", "hub", "room_id", "topic_id", "etag", "match_condition"]
         },
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     async def delete_topic(
         self,
@@ -2502,7 +2502,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_users(self, *, max_page_size: Optional[int] = None, **kwargs: Any) -> AsyncItemPaged["_models.ChatUser"]:
         """List all users with pagination.
@@ -2940,7 +2940,7 @@ class _WebPubSubChatServiceClientOperationsMixin(  # pylint: disable=too-many-pu
     @api_version_validation(
         method_added_on="2026-08-01-preview",
         params_added_on={"2026-08-01-preview": ["api_version", "hub", "user_id", "max_page_size", "accept"]},
-        api_versions_list=["2026-08-01-preview"],
+        api_versions_list=["2026-08-01-preview", "2026-11-01"],
     )
     def list_rooms_for_user(
         self, user_id: str, *, max_page_size: Optional[int] = None, **kwargs: Any
