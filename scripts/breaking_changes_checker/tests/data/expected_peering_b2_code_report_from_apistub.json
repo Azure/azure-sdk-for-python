@@ -11,21 +11,6 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "api_version": {
-                "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "base_url": {
-                "type": "str",
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "cloud_setting": {
-                "type": "AzureClouds",
-                "default": "none",
-                "param_type": "keyword_only"
-              },
               "credential": {
                 "type": "TokenCredential",
                 "default": null,
@@ -35,6 +20,21 @@
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "base_url": {
+                "type": "str",
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "api_version": {
+                "type": "str",
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "cloud_setting": {
+                "type": "AzureClouds",
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -261,21 +261,6 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "api_version": {
-                "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
-              },
-              "base_url": {
-                "type": "str",
-                "default": "none",
-                "param_type": "positional_or_keyword"
-              },
-              "cloud_setting": {
-                "type": "AzureClouds",
-                "default": "none",
-                "param_type": "keyword_only"
-              },
               "credential": {
                 "type": "AsyncTokenCredential",
                 "default": null,
@@ -285,6 +270,21 @@
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "base_url": {
+                "type": "str",
+                "default": "none",
+                "param_type": "positional_or_keyword"
+              },
+              "api_version": {
+                "type": "str",
+                "default": "none",
+                "param_type": "keyword_only"
+              },
+              "cloud_setting": {
+                "type": "AzureClouds",
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -583,8 +583,13 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test": {
-                "type": "ConnectionMonitorTest",
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -593,20 +598,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "connection_monitor_test": {
+                "type": "ConnectionMonitorTest",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "content_type": {
                 "type": "str",
                 "default": "application/json",
                 "param_type": "keyword_only"
-              },
-              "peering_service_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
               },
               "kwargs": {
                 "type": null,
@@ -624,8 +624,13 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test": {
-                    "type": "ConnectionMonitorTest",
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -634,20 +639,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "connection_monitor_test": {
+                    "type": "ConnectionMonitorTest",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -662,6 +662,21 @@
                 "parameters": {
                   "self": {
                     "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -670,25 +685,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -706,8 +706,13 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test": {
-                    "type": "IO[bytes]",
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -716,20 +721,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "connection_monitor_test": {
+                    "type": "IO[bytes]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -749,7 +749,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -759,7 +759,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "connection_monitor_test_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -781,7 +781,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -791,7 +791,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "connection_monitor_test_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -813,12 +813,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -1043,20 +1043,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "peer_asn_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peer_asn": {
                 "type": "PeerAsn",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peer_asn_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -1074,20 +1074,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "PeerAsn",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1105,20 +1105,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1136,20 +1136,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1453,13 +1453,8 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_service": {
-                "type": "PeeringService",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -1468,10 +1463,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
+              "peering_service": {
+                "type": "PeeringService",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -1489,25 +1489,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service": {
                     "type": "PeeringService",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_service_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1525,25 +1525,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_service_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1561,13 +1561,8 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service": {
-                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -1576,10 +1571,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
-                    "type": "str",
+                  "peering_service": {
+                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1599,12 +1599,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -1626,12 +1626,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -1709,17 +1709,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
-                "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -1728,6 +1723,11 @@
                 "type": "ResourceTags",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -1745,17 +1745,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -1765,6 +1760,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -1781,17 +1781,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -1801,6 +1796,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -1817,17 +1817,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -1836,6 +1831,11 @@
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1883,13 +1883,8 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering": {
-                "type": "Peering",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -1898,10 +1893,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
+              "peering": {
+                "type": "Peering",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -1919,25 +1919,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering": {
                     "type": "Peering",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1955,25 +1955,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -1991,13 +1991,8 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering": {
-                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -2006,10 +2001,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
-                    "type": "str",
+                  "peering": {
+                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2029,12 +2029,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2056,12 +2056,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2122,17 +2122,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
-                "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2141,6 +2136,11 @@
                 "type": "ResourceTags",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2158,17 +2158,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2178,6 +2173,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -2194,17 +2194,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2214,6 +2209,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -2230,17 +2230,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2249,6 +2244,11 @@
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2296,12 +2296,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2311,15 +2316,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "prefix_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2337,12 +2337,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2352,15 +2357,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2378,12 +2378,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2393,15 +2398,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2419,12 +2419,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2434,15 +2439,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2462,17 +2462,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2494,10 +2494,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "expand": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
                 "type": "str",
@@ -2509,10 +2509,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "expand": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2531,20 +2531,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "expand": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "expand": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2591,6 +2591,16 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "as_path": {
                 "type": "str",
                 "default": "none",
@@ -2601,20 +2611,10 @@
                 "default": "none",
                 "param_type": "keyword_only"
               },
-              "peering_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
               "prefix": {
                 "type": "str",
                 "default": "none",
                 "param_type": "keyword_only"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
               },
               "rpki_validation_state": {
                 "type": "str",
@@ -2671,12 +2671,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2686,15 +2691,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "registered_asn_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2712,12 +2712,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2727,15 +2732,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2753,12 +2753,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2768,15 +2773,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2794,12 +2794,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -2809,15 +2814,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -2837,17 +2837,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_asn_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2869,17 +2869,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_asn_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2901,12 +2901,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2956,12 +2956,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -2971,15 +2976,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "registered_prefix_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -2997,12 +2997,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -3012,15 +3017,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -3038,12 +3038,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -3053,15 +3058,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -3079,12 +3079,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -3094,15 +3099,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -3122,17 +3122,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -3154,17 +3154,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -3186,12 +3186,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -3213,17 +3213,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -3273,20 +3273,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "consolidate": {
-                "type": "bool",
-                "default": "none",
-                "param_type": "keyword_only"
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+              "consolidate": {
+                "type": "bool",
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -4743,8 +4743,13 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test": {
-                "type": "ConnectionMonitorTest",
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_service_name": {
+                "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -4753,20 +4758,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "connection_monitor_test": {
+                "type": "ConnectionMonitorTest",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "content_type": {
                 "type": "str",
                 "default": "application/json",
                 "param_type": "keyword_only"
-              },
-              "peering_service_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
               },
               "kwargs": {
                 "type": null,
@@ -4784,8 +4784,13 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test": {
-                    "type": "ConnectionMonitorTest",
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -4794,20 +4799,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "connection_monitor_test": {
+                    "type": "ConnectionMonitorTest",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -4822,6 +4822,21 @@
                 "parameters": {
                   "self": {
                     "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "connection_monitor_test_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -4830,25 +4845,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -4866,8 +4866,13 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "connection_monitor_test": {
-                    "type": "IO[bytes]",
+                  "resource_group_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -4876,20 +4881,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "connection_monitor_test": {
+                    "type": "IO[bytes]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
                   "content_type": {
                     "type": "str",
                     "default": "application/json",
                     "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
                   },
                   "kwargs": {
                     "type": null,
@@ -4909,7 +4909,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -4919,7 +4919,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "connection_monitor_test_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -4941,7 +4941,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "connection_monitor_test_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -4951,7 +4951,7 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "connection_monitor_test_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -4973,12 +4973,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -5203,20 +5203,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "peer_asn_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peer_asn": {
                 "type": "PeerAsn",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peer_asn_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -5234,20 +5234,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "PeerAsn",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5265,20 +5265,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5296,20 +5296,20 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "peer_asn_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peer_asn": {
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peer_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5613,13 +5613,8 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_service": {
-                "type": "PeeringService",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -5628,10 +5623,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
+              "peering_service": {
+                "type": "PeeringService",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -5649,25 +5649,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service": {
                     "type": "PeeringService",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_service_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5685,25 +5685,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_service_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5721,13 +5721,8 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service": {
-                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -5736,10 +5731,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
-                    "type": "str",
+                  "peering_service": {
+                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -5759,12 +5759,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -5786,12 +5786,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -5869,17 +5869,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
-                "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_service_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -5888,6 +5883,11 @@
                 "type": "ResourceTags",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -5905,17 +5905,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -5925,6 +5920,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -5941,17 +5941,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -5961,6 +5956,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -5977,17 +5977,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_service_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_service_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -5996,6 +5991,11 @@
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6043,13 +6043,8 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering": {
-                "type": "Peering",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
@@ -6058,10 +6053,15 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
+              "peering": {
+                "type": "Peering",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6079,25 +6079,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering": {
                     "type": "Peering",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6115,25 +6115,25 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering": {
                     "type": "JSON",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "peering_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6151,13 +6151,8 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering": {
-                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
@@ -6166,10 +6161,15 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
-                    "type": "str",
+                  "peering": {
+                    "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6189,12 +6189,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6216,12 +6216,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6282,17 +6282,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
-                "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
-              },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6301,6 +6296,11 @@
                 "type": "ResourceTags",
                 "default": null,
                 "param_type": "positional_or_keyword"
+              },
+              "content_type": {
+                "type": "str",
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6318,17 +6318,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6338,6 +6333,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -6354,17 +6354,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6374,6 +6369,11 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
+                  },
                   "kwargs": {
                     "type": null,
                     "default": null,
@@ -6390,17 +6390,12 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
-                    "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
-                  },
-                  "peering_name": {
+                  "resource_group_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "resource_group_name": {
+                  "peering_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6409,6 +6404,11 @@
                     "type": "IO[bytes]",
                     "default": null,
                     "param_type": "positional_or_keyword"
+                  },
+                  "content_type": {
+                    "type": "str",
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6456,12 +6456,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "prefix_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6471,15 +6476,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "prefix_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6497,12 +6497,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6512,15 +6517,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6538,12 +6538,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6553,15 +6558,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6579,12 +6579,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_service_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6594,15 +6599,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6622,17 +6622,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6654,10 +6654,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "expand": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
                 "type": "str",
@@ -6669,10 +6669,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "expand": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6691,20 +6691,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "expand": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "none",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_service_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "expand": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6751,6 +6751,16 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "as_path": {
                 "type": "str",
                 "default": "none",
@@ -6761,20 +6771,10 @@
                 "default": "none",
                 "param_type": "keyword_only"
               },
-              "peering_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
               "prefix": {
                 "type": "str",
                 "default": "none",
                 "param_type": "keyword_only"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
               },
               "rpki_validation_state": {
                 "type": "str",
@@ -6831,12 +6831,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_asn_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -6846,15 +6851,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "registered_asn_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -6872,12 +6872,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6887,15 +6892,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6913,12 +6913,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6928,15 +6933,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6954,12 +6954,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_asn_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -6969,15 +6974,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_asn_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -6997,17 +6997,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_asn_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7029,17 +7029,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_asn_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7061,12 +7061,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7116,12 +7116,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "content_type": {
+              "resource_group_name": {
                 "type": "str",
-                "default": "application/json",
-                "param_type": "keyword_only"
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
+              "registered_prefix_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7131,15 +7136,10 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "registered_prefix_name": {
+              "content_type": {
                 "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+                "default": "application/json",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
@@ -7157,12 +7157,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -7172,15 +7177,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -7198,12 +7198,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -7213,15 +7218,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -7239,12 +7239,17 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "content_type": {
+                  "resource_group_name": {
                     "type": "str",
-                    "default": "application/json",
-                    "param_type": "keyword_only"
+                    "default": null,
+                    "param_type": "positional_or_keyword"
                   },
                   "peering_name": {
+                    "type": "str",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "registered_prefix_name": {
                     "type": "str",
                     "default": null,
                     "param_type": "positional_or_keyword"
@@ -7254,15 +7259,10 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
-                  "registered_prefix_name": {
+                  "content_type": {
                     "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
-                  },
-                  "resource_group_name": {
-                    "type": "str",
-                    "default": null,
-                    "param_type": "positional_or_keyword"
+                    "default": "application/json",
+                    "param_type": "keyword_only"
                   },
                   "kwargs": {
                     "type": null,
@@ -7282,17 +7282,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7314,17 +7314,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7346,12 +7346,12 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "peering_name": {
+              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
+              "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7373,17 +7373,17 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
+              },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
               "registered_prefix_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
-              },
-              "resource_group_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
@@ -7433,20 +7433,20 @@
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "consolidate": {
-                "type": "bool",
-                "default": "none",
-                "param_type": "keyword_only"
+              "resource_group_name": {
+                "type": "str",
+                "default": null,
+                "param_type": "positional_or_keyword"
               },
               "peering_name": {
                 "type": "str",
                 "default": null,
                 "param_type": "positional_or_keyword"
               },
-              "resource_group_name": {
-                "type": "str",
-                "default": null,
-                "param_type": "positional_or_keyword"
+              "consolidate": {
+                "type": "bool",
+                "default": "none",
+                "param_type": "keyword_only"
               },
               "kwargs": {
                 "type": null,
