@@ -66,6 +66,10 @@
 ### Breaking Changes
 
   - Model `DefenderCspmAwsOfferingCiem` deleted or renamed its instance variable `ciem_discovery`
+  - Model `MalwareScanProperties` changed type of property `scan_end_time` from `Optional[str]` to `Optional[datetime]`
+  - Model `MalwareScanProperties` changed type of property `scan_start_time` from `Optional[str]` to `Optional[datetime]`
+  - Model `MalwareScanProperties` changed type of property `scan_status` from `Optional[str]` to `Optional[Union[str, MalwareScanStatus]]`
+  - Model `OnUploadFilters` changed type of property `exclude_blobs_larger_than` from `Optional[Any]` to `Optional[int]`
   - Model `ServerVulnerabilityAssessmentsSetting` deleted or renamed its instance variable `properties`
   - Model `Setting` deleted or renamed its instance variable `properties`
   - Deleted or renamed model `DefenderCspmAwsOfferingCiemDiscovery`
