@@ -315,7 +315,7 @@ class ItemHelper:
         what the limit is measured against.
 
         :keyword float or None deadline: Monotonic creation deadline established by the public method.
-        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and creation options to normalize.
+        :keyword kwargs: Container link, document body, and creation options to normalize.
         :return: Created item properties with response headers.
         :rtype: ~azure.cosmos.CosmosDict
         """
@@ -324,7 +324,7 @@ class ItemHelper:
     def read_item(self, **kwargs: Any) -> Any:
         """Read one item by its id and partition key.
 
-        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and read options.
+        :keyword kwargs: Container link, item target, partition key, and read options.
         :return: Item properties with response headers.
         :rtype: ~azure.cosmos.CosmosDict
         """
@@ -333,7 +333,7 @@ class ItemHelper:
     def delete_item(self, **kwargs: Any) -> Any:
         """Delete an item. Returns nothing; the reply is read for its headers.
 
-        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and deletion options.
+        :keyword kwargs: Container link, item target, partition key, and deletion options.
         :return: None.
         :rtype: None
         """
@@ -342,7 +342,7 @@ class ItemHelper:
     def upsert_item(self, **kwargs: Any) -> Any:
         """Create an item, or replace it if one with that id is already there.
 
-        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and upsert options.
+        :keyword kwargs: Container link, document body, and upsert options.
         :return: Upserted item properties with response headers.
         :rtype: ~azure.cosmos.CosmosDict
         """
@@ -351,7 +351,7 @@ class ItemHelper:
     def replace_item(self, **kwargs: Any) -> Any:
         """Replace the item with this id, failing if it is not there.
 
-        :keyword dict[str, Any] ``**kwargs``: Container link, item target, replacement body, and request options.
+        :keyword kwargs: Container link, item target, replacement body, and request options.
         :return: Replaced item properties with response headers.
         :rtype: ~azure.cosmos.CosmosDict
         """
@@ -360,7 +360,7 @@ class ItemHelper:
     def patch_item(self, **kwargs: Any) -> Any:
         """Apply changes to one item and complete its response, including the hook.
 
-        :keyword dict[str, Any] ``**kwargs``: Container link, item target, patch operations, and request options.
+        :keyword kwargs: Container link, item target, patch operations, and request options.
         :return: Patched item properties with response headers.
         :rtype: ~azure.cosmos.CosmosDict
         """

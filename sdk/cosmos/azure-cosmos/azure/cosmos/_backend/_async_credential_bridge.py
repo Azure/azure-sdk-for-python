@@ -109,7 +109,7 @@ class AsyncTokenCredentialBridge:
 
         :param scopes: Token scopes forwarded unchanged to the credential.
         :type scopes: typing.Any
-        :keyword dict[str, typing.Any] ``**kwargs``: Token request options forwarded unchanged to the credential.
+        :keyword kwargs: Token request options forwarded unchanged to the credential.
         :return: Thread-safe future containing the token result or credential failure.
         :rtype: concurrent.futures.Future
         """
