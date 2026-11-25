@@ -39,6 +39,8 @@
 
 ### Other Changes
 
+- Add offline multi-endpoint routing benchmarks for 1, 3, and 25 endpoints,
+  including disabled-feature baselines, cold-start timing, and peak traced memory.
 - Add automated multi-endpoint routing tests for logs, traces, and metrics,
   covering shared feature selection and provider flush through a mocked ingestion transport.
   ([#50036](https://github.com/Azure/azure-sdk-for-python/pull/50036))
