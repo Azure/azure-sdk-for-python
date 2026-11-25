@@ -283,7 +283,7 @@ namespace azure.mgmt.network
             ) -> LROPoller[VpnProfileResponse]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -325,7 +325,7 @@ namespace azure.mgmt.network
             ) -> LROPoller[ItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -370,7 +370,7 @@ namespace azure.mgmt.network
             ) -> ItemPaged[BastionSessionState]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -563,7 +563,7 @@ namespace azure.mgmt.network
             ) -> HttpResponse: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -856,7 +856,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[VpnProfileResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'bastion_host_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_active_sessions(
                 self, 
                 resource_group_name: str, 
@@ -898,7 +898,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncLROPoller[AsyncItemPaged[BastionShareableLink]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'location', 'domain_name_label', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def check_dns_name_availability(
                 self, 
                 location: str, 
@@ -943,7 +943,7 @@ namespace azure.mgmt.network.aio
             ) -> AsyncItemPaged[BastionSessionState]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'providerport', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def express_route_provider_port(
                 self, 
                 providerport: str, 
@@ -1136,7 +1136,7 @@ namespace azure.mgmt.network.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-05-01', params_added_on={'2025-05-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_wan_name', 'accept']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def supported_security_providers(
                 self, 
                 resource_group_name: str, 
@@ -2870,7 +2870,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> DdosCustomPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -2878,7 +2878,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[DdosCustomPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def list_all(self, **kwargs: Any) -> AsyncItemPaged[DdosCustomPolicy]: ...
 
         @overload
@@ -3181,7 +3181,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[ExpressRouteCircuitAuthorization]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01', '2026-05-01'])
         async def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -3389,7 +3389,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_circuit_link_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -3401,7 +3401,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteLinkFailoverAllTestsDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_circuit_link_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -3444,7 +3444,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ExpressRouteCircuitsRoutesTableSummaryListResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_start_circuit_link_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -4141,7 +4141,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -4153,7 +4153,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteFailoverTestDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -4165,7 +4165,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[List[ExpressRouteFailoverSingleTestDetails]]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_resiliency_information(
                 self, 
                 resource_group_name: str, 
@@ -4176,7 +4176,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[GatewayResiliencyInformation]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_routes_information(
                 self, 
                 resource_group_name: str, 
@@ -4187,7 +4187,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[GatewayRouteSetsInformation]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_start_site_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -4629,7 +4629,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncItemPaged[ExpressRoutePortAuthorization]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01', '2026-05-01'])
         async def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -6637,7 +6637,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -8617,7 +8617,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> None: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_abort_migration(
                 self, 
                 resource_group_name: str, 
@@ -8996,7 +8996,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[ConnectionAnalyzer]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_connection_analyzers_delete(
                 self, 
                 resource_group_name: str, 
@@ -9006,7 +9006,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_connection_analyzers_query(
                 self, 
                 resource_group_name: str, 
@@ -9354,7 +9354,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[VerificationIPFlowResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def connection_analyzers_get(
                 self, 
                 resource_group_name: str, 
@@ -9364,7 +9364,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> ConnectionAnalyzer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def connection_analyzers_list(
                 self, 
                 resource_group_name: str, 
@@ -14186,7 +14186,7 @@ namespace azure.mgmt.network.aio.operations
             ) -> AsyncLROPoller[BgpPeerStatusListResult]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         async def begin_get_effective_routes(
                 self, 
                 resource_group_name: str, 
@@ -17182,6 +17182,13 @@ namespace azure.mgmt.network.models
         HTTP_STATUS504 = "HttpStatus504"
 
 
+    class azure.mgmt.network.models.ApplicationGatewayDeploymentTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCELERATED = "Accelerated"
+        ELASTIC = "Elastic"
+        NETWORK_ISOLATED = "NetworkIsolated"
+        STANDARD = "Standard"
+
+
     class azure.mgmt.network.models.ApplicationGatewayEntraJWTValidationConfig(SubResource):
         etag: Optional[str]
         id: str
@@ -18179,6 +18186,8 @@ namespace azure.mgmt.network.models
         backend_settings_collection: Optional[list[ApplicationGatewayBackendSettings]]
         custom_error_configurations: Optional[list[ApplicationGatewayCustomError]]
         default_predefined_ssl_policy: Optional[Union[str, ApplicationGatewaySslPolicyName]]
+        deployment_tier: Optional[Union[str, ApplicationGatewayDeploymentTier]]
+        enable_confidential_compute: Optional[bool]
         enable_fips: Optional[bool]
         enable_http2: Optional[bool]
         entra_jwt_validation_configs: Optional[list[ApplicationGatewayEntraJWTValidationConfig]]
@@ -18223,6 +18232,8 @@ namespace azure.mgmt.network.models
                 backend_http_settings_collection: Optional[list[ApplicationGatewayBackendHttpSettings]] = ..., 
                 backend_settings_collection: Optional[list[ApplicationGatewayBackendSettings]] = ..., 
                 custom_error_configurations: Optional[list[ApplicationGatewayCustomError]] = ..., 
+                deployment_tier: Optional[Union[str, ApplicationGatewayDeploymentTier]] = ..., 
+                enable_confidential_compute: Optional[bool] = ..., 
                 enable_fips: Optional[bool] = ..., 
                 enable_http2: Optional[bool] = ..., 
                 entra_jwt_validation_configs: Optional[list[ApplicationGatewayEntraJWTValidationConfig]] = ..., 
@@ -20012,6 +20023,7 @@ namespace azure.mgmt.network.models
         network_rule_collections: Optional[list[AzureFirewallNetworkRuleCollection]]
         provisioning_state: Optional[Union[str, ProvisioningState]]
         sku: Optional[AzureFirewallSku]
+        tcp_idle_timeout_in_minutes: Optional[int]
         threat_intel_mode: Optional[Union[str, AzureFirewallThreatIntelMode]]
         virtual_hub: Optional[SubResource]
 
@@ -20030,6 +20042,7 @@ namespace azure.mgmt.network.models
                 nat_rule_collections: Optional[list[AzureFirewallNatRuleCollection]] = ..., 
                 network_rule_collections: Optional[list[AzureFirewallNetworkRuleCollection]] = ..., 
                 sku: Optional[AzureFirewallSku] = ..., 
+                tcp_idle_timeout_in_minutes: Optional[int] = ..., 
                 threat_intel_mode: Optional[Union[str, AzureFirewallThreatIntelMode]] = ..., 
                 virtual_hub: Optional[SubResource] = ...
             ) -> None: ...
@@ -27286,6 +27299,7 @@ namespace azure.mgmt.network.models
         applies_on: Optional[list[str]]
         destination_port_range: Optional[int]
         destination_port_ranges: Optional[list[str]]
+        load_balancer_configuration: Optional[NetworkVirtualApplianceLoadBalancerConfiguration]
         name: Optional[str]
         protocol: Optional[Union[str, InboundSecurityRulesProtocol]]
         source_address_prefix: Optional[str]
@@ -27297,6 +27311,7 @@ namespace azure.mgmt.network.models
                 applies_on: Optional[list[str]] = ..., 
                 destination_port_range: Optional[int] = ..., 
                 destination_port_ranges: Optional[list[str]] = ..., 
+                load_balancer_configuration: Optional[NetworkVirtualApplianceLoadBalancerConfiguration] = ..., 
                 name: Optional[str] = ..., 
                 protocol: Optional[Union[str, InboundSecurityRulesProtocol]] = ..., 
                 source_address_prefix: Optional[str] = ...
@@ -29118,6 +29133,7 @@ namespace azure.mgmt.network.models
         ip_configurations: Optional[list[NetworkInterfaceIPConfiguration]]
         mac_address: Optional[str]
         migration_phase: Optional[Union[str, NetworkInterfaceMigrationPhase]]
+        network_adapter_index: Optional[int]
         network_security_group: Optional[NetworkSecurityGroup]
         nic_type: Optional[Union[str, NetworkInterfaceNicType]]
         primary: Optional[bool]
@@ -29142,6 +29158,7 @@ namespace azure.mgmt.network.models
                 enable_ip_forwarding: Optional[bool] = ..., 
                 ip_configurations: Optional[list[NetworkInterfaceIPConfiguration]] = ..., 
                 migration_phase: Optional[Union[str, NetworkInterfaceMigrationPhase]] = ..., 
+                network_adapter_index: Optional[int] = ..., 
                 network_security_group: Optional[NetworkSecurityGroup] = ..., 
                 nic_type: Optional[Union[str, NetworkInterfaceNicType]] = ..., 
                 private_link_service: Optional[PrivateLinkService] = ..., 
@@ -29895,6 +29912,28 @@ namespace azure.mgmt.network.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.network.models.NetworkVirtualApplianceLoadBalancerConfiguration(_Model):
+        idle_timeout_in_minutes: Optional[int]
+        load_distribution: Optional[Union[str, NetworkVirtualApplianceLoadDistribution]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                idle_timeout_in_minutes: Optional[int] = ..., 
+                load_distribution: Optional[Union[str, NetworkVirtualApplianceLoadDistribution]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.network.models.NetworkVirtualApplianceLoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        SOURCE_IP = "SourceIP"
+        SOURCE_IP_PROTOCOL = "SourceIPProtocol"
+
+
     class azure.mgmt.network.models.NetworkVirtualApplianceMigrationStatus(_Model):
         migration_phase: Optional[str]
         migration_phase_status: Optional[str]
@@ -29955,6 +29994,7 @@ namespace azure.mgmt.network.models
         deployment_type: Optional[str]
         inbound_security_rules: Optional[list[SubResource]]
         internet_ingress_public_ips: Optional[list[InternetIngressPublicIpsProperties]]
+        load_balancer_configuration: Optional[NetworkVirtualApplianceLoadBalancerConfiguration]
         migration_status: Optional[NetworkVirtualApplianceMigrationStatus]
         network_profile: Optional[NetworkVirtualAppliancePropertiesFormatNetworkProfile]
         nva_interface_configurations: Optional[list[NvaInterfaceConfigurationsProperties]]
@@ -29981,6 +30021,7 @@ namespace azure.mgmt.network.models
                 cloud_init_configuration_blobs: Optional[list[str]] = ..., 
                 delegation: Optional[DelegationProperties] = ..., 
                 internet_ingress_public_ips: Optional[list[InternetIngressPublicIpsProperties]] = ..., 
+                load_balancer_configuration: Optional[NetworkVirtualApplianceLoadBalancerConfiguration] = ..., 
                 network_profile: Optional[NetworkVirtualAppliancePropertiesFormatNetworkProfile] = ..., 
                 nva_interface_configurations: Optional[list[NvaInterfaceConfigurationsProperties]] = ..., 
                 nva_sku: Optional[VirtualApplianceSkuProperties] = ..., 
@@ -40589,7 +40630,7 @@ namespace azure.mgmt.network.operations
             ) -> DdosCustomPolicy: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def list(
                 self, 
                 resource_group_name: str, 
@@ -40597,7 +40638,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[DdosCustomPolicy]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def list_all(self, **kwargs: Any) -> ItemPaged[DdosCustomPolicy]: ...
 
         @overload
@@ -40900,7 +40941,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[ExpressRouteCircuitAuthorization]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01', '2026-05-01'])
         def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -41108,7 +41149,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'failover_test_type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_circuit_link_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -41120,7 +41161,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteLinkFailoverAllTestsDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_circuit_link_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -41163,7 +41204,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ExpressRouteCircuitsRoutesTableSummaryListResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'circuit_name', 'link_type', 'circuit_test_category', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_start_circuit_link_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -41860,7 +41901,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'type', 'fetch_latest', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_failover_all_tests_details(
                 self, 
                 resource_group_name: str, 
@@ -41872,7 +41913,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteFailoverTestDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'failover_test_id', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_failover_single_test_details(
                 self, 
                 resource_group_name: str, 
@@ -41884,7 +41925,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[List[ExpressRouteFailoverSingleTestDetails]]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_resiliency_information(
                 self, 
                 resource_group_name: str, 
@@ -41895,7 +41936,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[GatewayResiliencyInformation]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'attempt_refresh', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_routes_information(
                 self, 
                 resource_group_name: str, 
@@ -41906,7 +41947,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[GatewayRouteSetsInformation]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-07-01', params_added_on={'2025-07-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_gateway_name', 'peering_location', 'accept']}, api_versions_list=['2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_start_site_failover_test(
                 self, 
                 resource_group_name: str, 
@@ -42348,7 +42389,7 @@ namespace azure.mgmt.network.operations
             ) -> ItemPaged[ExpressRoutePortAuthorization]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2026-01-01', params_added_on={'2026-01-01': ['api_version', 'subscription_id', 'resource_group_name', 'express_route_port_name', 'authorization_name', 'accept']}, api_versions_list=['2026-01-01', '2026-03-01', '2026-05-01'])
         def list_keys(
                 self, 
                 resource_group_name: str, 
@@ -44356,7 +44397,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(params_added_on={'2025-07-01': ['detail_level']}, api_versions_list=['2025-05-01', '2025-07-01', '2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -46336,7 +46377,7 @@ namespace azure.mgmt.network.operations
             ) -> None: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_virtual_appliance_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_abort_migration(
                 self, 
                 resource_group_name: str, 
@@ -46715,7 +46756,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[ConnectionAnalyzer]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_connection_analyzers_delete(
                 self, 
                 resource_group_name: str, 
@@ -46725,7 +46766,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_connection_analyzers_query(
                 self, 
                 resource_group_name: str, 
@@ -47073,7 +47114,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[VerificationIPFlowResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'connection_analyzer_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def connection_analyzers_get(
                 self, 
                 resource_group_name: str, 
@@ -47083,7 +47124,7 @@ namespace azure.mgmt.network.operations
             ) -> ConnectionAnalyzer: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'network_watcher_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def connection_analyzers_list(
                 self, 
                 resource_group_name: str, 
@@ -51905,7 +51946,7 @@ namespace azure.mgmt.network.operations
             ) -> LROPoller[BgpPeerStatusListResult]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01'])
+        @api_version_validation(method_added_on='2025-09-01', params_added_on={'2025-09-01': ['api_version', 'subscription_id', 'resource_group_name', 'virtual_network_gateway_name', 'accept']}, api_versions_list=['2025-09-01', '2026-01-01', '2026-03-01', '2026-05-01'])
         def begin_get_effective_routes(
                 self, 
                 resource_group_name: str, 
@@ -54561,6 +54602,8 @@ namespace azure.mgmt.network.types
     class azure.mgmt.network.types.ApplicationGatewayPropertiesFormat(TypedDict, total=False):
         key "autoscaleConfiguration": ForwardRef('ApplicationGatewayAutoscaleConfiguration', module='types')
         key "defaultPredefinedSslPolicy": Union[str, ApplicationGatewaySslPolicyName]
+        key "deploymentTier": Union[str, ApplicationGatewayDeploymentTier]
+        key "enableConfidentialCompute": bool
         key "enableFips": bool
         key "enableHttp2": bool
         key "firewallPolicy": ForwardRef('SubResource', module='types')
@@ -54582,6 +54625,8 @@ namespace azure.mgmt.network.types
         backendSettingsCollection: list[ApplicationGatewayBackendSettings]
         customErrorConfigurations: list[ApplicationGatewayCustomError]
         defaultPredefinedSslPolicy: Union[str, ApplicationGatewaySslPolicyName]
+        deploymentTier: Union[str, ApplicationGatewayDeploymentTier]
+        enableConfidentialCompute: bool
         enableFips: bool
         enableHttp2: bool
         entraJWTValidationConfigs: list[ApplicationGatewayEntraJWTValidationConfig]
@@ -55282,6 +55327,7 @@ namespace azure.mgmt.network.types
         key "managementIpConfiguration": ForwardRef('AzureFirewallIPConfiguration', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "sku": ForwardRef('AzureFirewallSku', module='types')
+        key "tcpIdleTimeoutInMinutes": int
         key "threatIntelMode": Union[str, AzureFirewallThreatIntelMode]
         key "virtualHub": ForwardRef('SubResource', module='types')
         additionalProperties: dict[str, str]
@@ -55298,6 +55344,7 @@ namespace azure.mgmt.network.types
         networkRuleCollections: list[AzureFirewallNetworkRuleCollection]
         provisioningState: Union[str, ProvisioningState]
         sku: AzureFirewallSku
+        tcpIdleTimeoutInMinutes: int
         threatIntelMode: Union[str, AzureFirewallThreatIntelMode]
         virtualHub: SubResource
 
@@ -57959,12 +58006,14 @@ namespace azure.mgmt.network.types
 
     class azure.mgmt.network.types.InboundSecurityRules(TypedDict, total=False):
         key "destinationPortRange": int
+        key "loadBalancerConfiguration": ForwardRef('NetworkVirtualApplianceLoadBalancerConfiguration', module='types')
         key "name": str
         key "protocol": Union[str, InboundSecurityRulesProtocol]
         key "sourceAddressPrefix": str
         appliesOn: list[str]
         destinationPortRange: int
         destinationPortRanges: list[str]
+        loadBalancerConfiguration: NetworkVirtualApplianceLoadBalancerConfiguration
         name: str
         protocol: Union[str, InboundSecurityRulesProtocol]
         sourceAddressPrefix: str
@@ -58714,6 +58763,7 @@ namespace azure.mgmt.network.types
         key "enableIPForwarding": bool
         key "macAddress": str
         key "migrationPhase": Union[str, NetworkInterfaceMigrationPhase]
+        key "networkAdapterIndex": int
         key "networkSecurityGroup": ForwardRef('NetworkSecurityGroup', module='types')
         key "nicType": Union[str, NetworkInterfaceNicType]
         key "primary": bool
@@ -58736,6 +58786,7 @@ namespace azure.mgmt.network.types
         ipConfigurations: list[NetworkInterfaceIPConfiguration]
         macAddress: str
         migrationPhase: Union[str, NetworkInterfaceMigrationPhase]
+        networkAdapterIndex: int
         networkSecurityGroup: NetworkSecurityGroup
         nicType: Union[str, NetworkInterfaceNicType]
         primary: bool
@@ -59055,6 +59106,13 @@ namespace azure.mgmt.network.types
         instanceIds: list[str]
 
 
+    class azure.mgmt.network.types.NetworkVirtualApplianceLoadBalancerConfiguration(TypedDict, total=False):
+        key "idleTimeoutInMinutes": int
+        key "loadDistribution": Union[str, NetworkVirtualApplianceLoadDistribution]
+        idleTimeoutInMinutes: int
+        loadDistribution: Union[str, NetworkVirtualApplianceLoadDistribution]
+
+
     class azure.mgmt.network.types.NetworkVirtualApplianceMigrationStatus(TypedDict, total=False):
         key "migrationPhase": str
         key "migrationPhaseStatus": str
@@ -59082,6 +59140,7 @@ namespace azure.mgmt.network.types
         key "cloudInitConfiguration": str
         key "delegation": ForwardRef('DelegationProperties', module='types')
         key "deploymentType": str
+        key "loadBalancerConfiguration": ForwardRef('NetworkVirtualApplianceLoadBalancerConfiguration', module='types')
         key "migrationStatus": ForwardRef('NetworkVirtualApplianceMigrationStatus', module='types')
         key "networkProfile": ForwardRef('NetworkVirtualAppliancePropertiesFormatNetworkProfile', module='types')
         key "nvaSku": ForwardRef('VirtualApplianceSkuProperties', module='types')
@@ -59103,6 +59162,7 @@ namespace azure.mgmt.network.types
         deploymentType: str
         inboundSecurityRules: list[SubResource]
         internetIngressPublicIps: list[InternetIngressPublicIpsProperties]
+        loadBalancerConfiguration: NetworkVirtualApplianceLoadBalancerConfiguration
         migrationStatus: NetworkVirtualApplianceMigrationStatus
         networkProfile: NetworkVirtualAppliancePropertiesFormatNetworkProfile
         nvaInterfaceConfigurations: list[NvaInterfaceConfigurationsProperties]

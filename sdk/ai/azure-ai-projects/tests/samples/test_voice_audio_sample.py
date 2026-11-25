@@ -6,6 +6,7 @@
 
 import asyncio
 from concurrent.futures import Future
+import importlib.util
 from pathlib import Path
 import runpy
 import sys
@@ -23,6 +24,9 @@ from test_realtime_samples import realtime_output_event
 def sample(monkeypatch):
     pyaudio = ModuleType("pyaudio")
     setattr(pyaudio, "PyAudio", MagicMock())
+    setattr(pyaudio, "paInt16", 8)
+    setattr(pyaudio, "paContinue", 0)
+    setattr(pyaudio, "get_sample_size", MagicMock(return_value=2))
     monkeypatch.setitem(sys.modules, "pyaudio", pyaudio)
     monkeypatch.setattr("dotenv.load_dotenv", lambda: False)
     path = Path(__file__).parents[2] / "samples" / "agents" / "voice"
@@ -85,6 +89,36 @@ async def test_capture_shutdown_surfaces_failed_send(sample) -> None:
 
     with pytest.raises(ConnectionResetError, match="Last audio send failed"):
         await processor.stop_capture()
+    assert processor._pending_send is None
+
+
+@pytest.mark.asyncio
+async def test_capture_does_not_replace_an_earlier_failed_send(sample) -> None:
+    connection = MagicMock()
+    connection.input_audio_buffer.append = AsyncMock(
+        side_effect=[ConnectionResetError("First audio send failed."), None]
+    )
+    processor = sample["_AudioProcessor"](connection)
+    stream = MagicMock()
+    processor._audio.open.return_value = stream
+    processor.start_capture()
+    callback = processor._audio.open.call_args.kwargs["stream_callback"]
+
+    callback(b"\x01\x00", 1, None, None)
+    first_send = processor._pending_send
+    while not first_send.done():
+        await asyncio.sleep(0)
+    callback(b"\x02\x00", 1, None, None)
+    original_traceback = processor._send_error.__traceback__
+    for _ in range(10):
+        callback(b"\x03\x00", 1, None, None)
+    assert processor._send_error.__traceback__ is original_traceback
+
+    with pytest.raises(ConnectionResetError, match="First audio send failed"):
+        await processor.stop_capture()
+
+    connection.input_audio_buffer.append.assert_awaited_once_with(audio=b"\x01\x00")
+    assert processor._pending_send is None
 
 
 def test_output_audio_counts_received_payload_not_playback_estimate(sample) -> None:
@@ -178,6 +212,74 @@ async def test_audio_conversation_handles_output_events_and_barge_in_without_har
     output = capsys.readouterr().out
     assert output.count("Agent: Spoken reply.\n") == 1
     assert output.count("Agent: Text-only reply.\n") == 1
+
+
+@pytest.mark.asyncio
+async def test_audio_startup_failure_closes_started_devices(sample) -> None:
+    client = MagicMock()
+    connection = MagicMock()
+    manager = client.voice_agents.realtime.connect.return_value
+    manager.__aenter__.return_value = connection
+    manager.__aexit__.return_value = False
+    audio = sample["pyaudio"].PyAudio.return_value
+    speaker = MagicMock()
+    audio.open.side_effect = [speaker, OSError("Microphone unavailable.")]
+
+    with pytest.raises(OSError, match="Microphone unavailable"):
+        await sample["_run_audio_conversation"](client, "agent-offline")
+
+    speaker.stop_stream.assert_called_once_with()
+    speaker.close.assert_called_once_with()
+    audio.terminate.assert_called_once_with()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("status", ["cancelled", "failed", "incomplete"])
+async def test_hold_sample_conversation_rejects_unsuccessful_response(status) -> None:
+    path = Path(__file__).parents[2] / "samples" / "agents" / "voice" / "voice_sample_util.py"
+    spec = importlib.util.spec_from_file_location("offline_voice_sample_util", path)
+    assert spec is not None and spec.loader is not None
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    client = MagicMock()
+    connection = client.voice_agents.realtime.connect.return_value.__enter__.return_value
+    connection.recv.side_effect = [
+        models.RealtimeServerEventSessionCreated(
+            {"event_id": "session-created", "session": {"id": "session"}, "conversation_id": "conversation"}
+        ),
+        models.RealtimeServerEventResponseDone(
+            {"event_id": "response-done", "response": {"id": "response", "status": status, "output": []}}
+        ),
+    ]
+
+    with pytest.raises(RuntimeError, match=f"status '{status}'"):
+        helper.hold_sample_conversation(client, "agent")
+
+    client.voice_agents.conversations.get.assert_not_called()
+
+
+def test_hold_sample_conversation_rejects_failed_finalization(monkeypatch) -> None:
+    path = Path(__file__).parents[2] / "samples" / "agents" / "voice" / "voice_sample_util.py"
+    spec = importlib.util.spec_from_file_location("offline_voice_sample_util_failed_storage", path)
+    assert spec is not None and spec.loader is not None
+    helper = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(helper)
+    client = MagicMock()
+    connection = client.voice_agents.realtime.connect.return_value.__enter__.return_value
+    connection.recv.side_effect = [
+        models.RealtimeServerEventSessionCreated(
+            {"event_id": "session-created", "session": {"id": "session"}, "conversation_id": "conversation"}
+        ),
+        models.RealtimeServerEventResponseDone(
+            {"event_id": "response-done", "response": {"id": "response", "status": "completed", "output": []}}
+        ),
+    ]
+    client.voice_agents.conversations.get.return_value.status = models.VoiceConversationStatus.FAILED
+
+    with pytest.raises(RuntimeError, match="failed during persistence finalization"):
+        helper.hold_sample_conversation(client, "agent")
+
+    client.voice_agents.conversations.get.assert_called_once_with("agent", "conversation")
 
 
 def test_conversation_delete_snippet_accepts_no_content_result(capsys) -> None:

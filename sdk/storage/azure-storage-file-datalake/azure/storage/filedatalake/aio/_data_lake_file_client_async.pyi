@@ -34,7 +34,7 @@ from .._models import (
 from ._data_lake_lease_async import DataLakeLeaseClient
 from ._download_async import StorageStreamDownloader
 from ._path_client_async import PathClient
-from azure.storage.filedatalake._shared.session_async import SessionProvider
+from azure.storage.filedatalake.aio._session_async import SessionProvider
 
 class DataLakeFileClient(PathClient):
     url: str
@@ -210,6 +210,7 @@ class DataLakeFileClient(PathClient):
         cpk: Optional[CustomerProvidedEncryptionKey] = None,
         max_concurrency: Optional[int] = None,
         progress_hook: Optional[Callable[[int, Optional[int]], Awaitable[None]]] = None,
+        disable_etag_lock: bool = False,
         validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]] = None,
         timeout: Optional[int] = None,
         **kwargs: Any

@@ -231,6 +231,19 @@ class ApplicationGatewayCustomErrorStatusCode(str, Enum, metaclass=CaseInsensiti
     """HttpStatus504."""
 
 
+class ApplicationGatewayDeploymentTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Deployment tier of the Application Gateway."""
+
+    STANDARD = "Standard"
+    """Default deployment type."""
+    NETWORK_ISOLATED = "NetworkIsolated"
+    """Management NIC deployment type."""
+    ACCELERATED = "Accelerated"
+    """Accelerated deployment type."""
+    ELASTIC = "Elastic"
+    """Accelerated deployment type with reserved capacity and vertical scaling."""
+
+
 class ApplicationGatewayFirewallMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Web application firewall mode."""
 
@@ -2260,6 +2273,18 @@ class NetworkProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """UDP."""
     ICMP = "ICMP"
     """ICMP."""
+
+
+class NetworkVirtualApplianceLoadDistribution(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The load distribution policy for a managed Network Virtual Appliance load-balancing rule."""
+
+    DEFAULT = "Default"
+    """Distributes traffic using a five-tuple hash of source IP, destination IP, source port,
+    destination port, and protocol."""
+    SOURCE_IP = "SourceIP"
+    """Distributes traffic using a two-tuple hash of source IP and destination IP."""
+    SOURCE_IP_PROTOCOL = "SourceIPProtocol"
+    """Distributes traffic using a three-tuple hash of source IP, destination IP, and protocol."""
 
 
 class NextHopType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -1,5 +1,11 @@
 # Release History
 
+## 7.16.0b1 (Unreleased)
+
+### Features Added
+
+- Added sync and async `ServiceBusReceiver.delete_messages()` and `purge_messages()` methods. Basic and Standard support up to 500 messages per request, Premium supports up to 4,000, and purge handles smaller batches caused by large messages.
+
 ## 7.15.1 (Unreleased)
 
 ### Features Added

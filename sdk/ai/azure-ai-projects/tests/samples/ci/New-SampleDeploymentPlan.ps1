@@ -19,7 +19,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot 'SampleCiHelpers.ps1')
+. (Join-Path $PSScriptRoot 'shared/SampleCiHelpers.ps1')
 . (Join-Path $PSScriptRoot 'PythonSampleCiHelpers.ps1')
 $manifest = Read-SampleManifest -Path $SelectionManifest -PackageRoot $PackageRoot
 $scanner = Join-Path $PackageRoot '.github/skills/azure-ai-projects-record-sample/scripts/GetSampleRequiredEnvironmentVariables.ps1'
@@ -56,7 +56,7 @@ if ($runnable.Count -eq 0) {
 }
 
 # The Python adapter adds test metadata; the shared planner has no knowledge of pytest or sample paths.
-& (Join-Path $PSScriptRoot 'New-ResourceDeploymentPlan.ps1') -OutputDirectory $OutputDirectory -QueueName $QueueName `
+& (Join-Path $PSScriptRoot 'shared/New-ResourceDeploymentPlan.ps1') -OutputDirectory $OutputDirectory -QueueName $QueueName `
     -IdentityResourceGroup $IdentityResourceGroup -ModelName $ModelName -ModelVersion $ModelVersion `
     -ModelSku $ModelSku -ModelCapacity $ModelCapacity -DefinitionId $DefinitionId -BuildId $BuildId -JobAttempt $JobAttempt
 $plan = Get-Content -LiteralPath (Join-Path $OutputDirectory 'deployment-plan.json') -Raw | ConvertFrom-Json -AsHashtable

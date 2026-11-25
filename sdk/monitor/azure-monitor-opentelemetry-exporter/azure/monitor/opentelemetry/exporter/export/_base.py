@@ -61,7 +61,7 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
 from azure.monitor.opentelemetry.exporter._routing import _is_trusted_routed_redirect, _RoutedRedirectPolicy
-from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage, StorageExportResult
+from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage, StorageExportResult, _get_capacity_lock
 from azure.monitor.opentelemetry.exporter._configuration._state import (
     get_configuration_manager,
 )
@@ -170,6 +170,7 @@ class BaseExporter:
             )
         if self._enable_multi_endpoint_routing:
             _validate_routing_policy_options(kwargs)
+            self._temporary_route_lock = threading.Lock()
         self._route = route
         self._route_exporters: Dict[tuple[str, bool], BaseExporter] = {}
         self._route_lock = threading.RLock()
@@ -339,6 +340,32 @@ class BaseExporter:
         # Return whether the named experimental feature was explicitly enabled at startup.
         return feature_name.strip().lower() in _get_experimental_features()
 
+    @staticmethod
+    def _try_reserve_route_partition(path: str) -> bool:
+        root = os.path.dirname(path)
+        try:
+            with _get_capacity_lock(os.path.normcase(os.path.realpath(root))):
+                if os.path.isdir(path):
+                    return True
+                os.makedirs(root, exist_ok=True)
+                with os.scandir(root) as entries:
+                    count = sum(entry.is_dir() for entry in entries)
+                if count >= _MAX_ROUTE_STORAGE_PARTITIONS:
+                    logger.warning(
+                        "Multi-endpoint routing: The %s offline storage partition limit has been reached. "
+                        "Using a short-lived client without offline storage; existing partitions are retained.",
+                        _MAX_ROUTE_STORAGE_PARTITIONS,
+                    )
+                    return False
+                os.makedirs(path, exist_ok=True)
+                return True
+        except OSError:
+            logger.error(
+                "Multi-endpoint routing: Could not admit a storage partition. "
+                "Using a short-lived client without offline storage; check storage access."
+            )
+            return False
+
     def _get_route_exporter(self, endpoint: str, is_aad: bool) -> tuple["BaseExporter", bool]:
         # pylint: disable=protected-access
         key = endpoint, is_aad
@@ -347,6 +374,22 @@ class BaseExporter:
         if is_aad and self._credential is None:
             raise ValueError("An AAD route requires an exporter credential.")
         temporary = len(self._route_exporters) >= _MAX_CACHED_ROUTE_EXPORTERS
+        storage_directory: Optional[str] = None
+        if not self._disable_offline_storage:
+            if temporary:
+                logger.warning(
+                    "Multi-endpoint routing: The %s cached route and offline storage partition limit has been reached. "
+                    "Using a short-lived client without offline storage; reduce destination cardinality.",
+                    _MAX_CACHED_ROUTE_EXPORTERS,
+                )
+            else:
+                if self._storage_directory is None:
+                    self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+                storage_directory = os.path.join(
+                    os.path.abspath(self._storage_directory) + "-routes",
+                    _get_sha256_hash(f"{endpoint}|{is_aad}"),
+                )
+                temporary = not self._try_reserve_route_partition(storage_directory)
         options = {
             **self._route_options,
             "connection_string": self._connection_string,
@@ -357,19 +400,8 @@ class BaseExporter:
         }
         if temporary:
             options["disable_offline_storage"] = True
-            if not self._disable_offline_storage:
-                logger.warning(
-                    "Multi-endpoint routing: The %s cached route and offline storage partition limit has been reached. "
-                    "Using a short-lived client without offline storage; reduce destination cardinality.",
-                    _MAX_CACHED_ROUTE_EXPORTERS,
-                )
-        elif not self._disable_offline_storage:
-            if self._storage_directory is None:
-                self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
-            options["storage_directory"] = os.path.join(
-                os.path.abspath(self._storage_directory) + "-routes",
-                _get_sha256_hash(f"{endpoint}|{is_aad}"),
-            )
+        elif storage_directory is not None:
+            options["storage_directory"] = storage_directory
         exporter = BaseExporter(_route=key, _connection_string_parser=self._connection_string_parser, **options)
         exporter._rate_limiter = self._rate_limiter
         if self._local_storage_enabled is False:
@@ -425,29 +457,39 @@ class BaseExporter:
     def _transmit_routed(self, groups: Dict[tuple[str, bool], List[TelemetryItem]]) -> ExportResult:
         # pylint: disable=protected-access
         result = ExportResult.SUCCESS
-        routes = []
-        with self._route_lock:
-            if self._routing_shutdown:
-                logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
-                return ExportResult.FAILED_NOT_RETRYABLE
-            for (endpoint, is_aad), envelopes in groups.items():
+        for (endpoint, is_aad), envelopes in groups.items():
+            temporary = False
+            with ExitStack() as locks:
+                with self._route_lock:
+                    if self._routing_shutdown:
+                        logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
+                        return ExportResult.FAILED_NOT_RETRYABLE
+                    exporter = self._route_exporters.get((endpoint, is_aad))
+                if exporter is None:
+                    locks.enter_context(self._temporary_route_lock)
+                    with self._route_lock:
+                        if self._routing_shutdown:
+                            logger.error("Multi-endpoint routing: Cannot export routed telemetry after shutdown.")
+                            return ExportResult.FAILED_NOT_RETRYABLE
+                        try:
+                            exporter, temporary = self._get_route_exporter(endpoint, is_aad)
+                        except ValueError:
+                            if is_aad and self._credential is None:
+                                logger.error(
+                                    "Multi-endpoint routing: An AAD route requires an exporter credential. "
+                                    "Configure an exporter credential for microsoft.ingestion_auth=aad."
+                                )
+                            else:
+                                logger.error(
+                                    "Multi-endpoint routing: Cannot initialize a routed exporter. "
+                                    "Check exporter configuration."
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
+                            continue
+                    if not temporary:
+                        # Cached clients only occupy the temporary slot during construction.
+                        locks.close()
                 try:
-                    exporter, temporary = self._get_route_exporter(endpoint, is_aad)
-                    routes.append((exporter, envelopes, temporary))
-                except ValueError:
-                    if is_aad and self._credential is None:
-                        logger.error(
-                            "Multi-endpoint routing: An AAD route requires an exporter credential. "
-                            "Configure an exporter credential for microsoft.ingestion_auth=aad."
-                        )
-                    else:
-                        logger.error(
-                            "Multi-endpoint routing: Cannot initialize a routed exporter. Check exporter configuration."
-                        )
-                    result = ExportResult.FAILED_NOT_RETRYABLE
-        for exporter, envelopes, temporary in routes:
-            try:
-                with ExitStack() as locks:
                     if temporary or self._routes_share_http_state:
                         locks.enter_context(self._transmit_lock)
                     locks.enter_context(exporter._transmit_lock)
@@ -459,9 +501,9 @@ class BaseExporter:
                     exporter._handle_transmit_from_storage(envelopes, route_result)
                     if route_result != ExportResult.SUCCESS:
                         result = ExportResult.FAILED_NOT_RETRYABLE
-            finally:
-                if temporary:
-                    self._close_temporary_route_exporter(exporter)
+                finally:
+                    if temporary:
+                        self._close_temporary_route_exporter(exporter)
         return result
 
     def _shutdown_route_exporters(self) -> None:

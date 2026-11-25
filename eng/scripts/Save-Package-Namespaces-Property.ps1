@@ -92,7 +92,7 @@ foreach($packageInfoFile in $artifacts) {
     }
 
 
-    # From the $packageInfo piece together the path to the javadoc jar file
+    # Namespace extraction only reads the archive, so any platform wheel can be used.
     $WhlDir = Join-Path $ArtifactStagingDirectory $packageInfo.Name
     $WhlName = $packageInfo.Name.Replace("-","_")
     $WhlFiles = @(Get-ChildItem -Path $WhlDir -File -Filter "$whlName-$version*.whl")
