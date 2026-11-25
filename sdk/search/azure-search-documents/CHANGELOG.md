@@ -1,5 +1,13 @@
 # Release History
 
+## 12.2.0b2 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `SearchIndexingBufferedSender` (sync and async) putting every action of an oversized batch
+  back in the queue after a 413 response while also sending it in split halves. `flush()` then
+  resent the same documents until its timeout. The sender now only lowers its batch size.
+
 ## 12.2.0b1 (2026-11-14)
 
 ### Features Added
