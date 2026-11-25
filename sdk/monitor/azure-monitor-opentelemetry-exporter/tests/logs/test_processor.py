@@ -200,6 +200,23 @@ class TestAzureBatchLogRecordProcessor(unittest.TestCase):
             processor.on_emit(log_record)
             parent_on_emit_mock.assert_called_once()
 
+    def test_filtering_uses_context_span_not_record_flags(self):
+        exporter = InMemoryLogRecordExporter()
+        processor = _AzureBatchLogRecordProcessor(exporter, options={"enable_trace_based_sampling_for_logs": True})
+        self.addCleanup(processor.shutdown)
+
+        processor.on_emit(_logs.ReadWriteLogRecord(LogRecord(trace_id=1, span_id=2, body="kept")))
+        unsampled = NonRecordingSpan(SpanContext(1, 2, is_remote=True, trace_flags=TraceFlags(0)))
+        record = LogRecord(
+            context=set_span_in_context(unsampled), trace_flags=TraceFlags(TraceFlags.SAMPLED), body="dropped"
+        )
+        processor.on_emit(_logs.ReadWriteLogRecord(record))
+
+        self.assertTrue(processor.force_flush())
+        (kept,) = exporter.get_finished_logs()
+        self.assertEqual(kept.log_record.body, "kept")
+        self.assertIsNone(self._exporter._log_to_envelope(kept).sample_rate)
+
     def test_batch_preserves_sample_rate_and_user_attribute(self):
         exporter = InMemoryLogRecordExporter()
         processor = _AzureBatchLogRecordProcessor(exporter, options={"enable_trace_based_sampling_for_logs": True})
