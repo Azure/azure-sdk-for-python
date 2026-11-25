@@ -8,7 +8,10 @@
 
 ### Bugs Fixed
 
-- Fixed `ItemCount` for logs retained by `enable_trace_based_sampling_for_logs`. When the matching span reports a 5% sampling rate, each retained log counts as 20 items. Logs without a known rate still count as one.
+- With `enable_trace_based_sampling_for_logs=True`, retained logs now carry the matching span's sampling rate so
+  Application Insights reports the correct `ItemCount`. A 5% span rate counts as 20 items per retained log.
+  Without a usable rate from a matching span, each log still counts as one, regardless of the configured trace
+  sampling ratio. This fix does not change which logs are exported.
   ([#50089](https://github.com/Azure/azure-sdk-for-python/pull/50089))
 
 ### Other Changes
