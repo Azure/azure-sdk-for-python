@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.digitalassets import DigitalAssetsClient
+from azure.mgmt.digitalassets import DigitalAssetsMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.digitalassets import DigitalAssetsClient
 
 
 def main():
-    client = DigitalAssetsClient(
+    client = DigitalAssetsMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

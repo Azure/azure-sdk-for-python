@@ -50,5 +50,5 @@
         "azure.mgmt.digitalassets.operations.PartitionsOperations.list_by_parent": "Microsoft.DigitalAssets.Partitions.listByParent",
         "azure.mgmt.digitalassets.aio.operations.PartitionsOperations.list_by_parent": "Microsoft.DigitalAssets.Partitions.listByParent"
     },
-    "CrossLanguageVersion": "0844375f6b65"
+    "CrossLanguageVersion": "272374064a97"
 }

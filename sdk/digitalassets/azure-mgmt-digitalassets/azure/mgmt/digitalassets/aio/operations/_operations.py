@@ -27,7 +27,7 @@ from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import build_operations_list_request, build_partitions_create_or_update_request, build_partitions_delete_request, build_partitions_get_request, build_partitions_list_by_parent_request, build_partitions_update_request, build_zkp_rollups_create_or_update_request, build_zkp_rollups_delete_request, build_zkp_rollups_get_request, build_zkp_rollups_list_by_resource_group_request, build_zkp_rollups_list_by_subscription_request, build_zkp_rollups_update_request
-from .._configuration import DigitalAssetsClientConfiguration
+from .._configuration import DigitalAssetsMgmtClientConfiguration
 T = TypeVar('T')
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -38,14 +38,14 @@ class Operations:   # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsClient`'s
+        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DigitalAssetsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DigitalAssetsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -143,14 +143,14 @@ class ZkpRollupsOperations:   # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsClient`'s
+        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsMgmtClient`'s
         :attr:`zkp_rollups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DigitalAssetsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DigitalAssetsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1079,14 +1079,14 @@ class PartitionsOperations:   # pylint: disable=docstring-missing-param
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsClient`'s
+        :class:`~azure.mgmt.digitalassets.aio.DigitalAssetsMgmtClient`'s
         :attr:`partitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DigitalAssetsClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: DigitalAssetsMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

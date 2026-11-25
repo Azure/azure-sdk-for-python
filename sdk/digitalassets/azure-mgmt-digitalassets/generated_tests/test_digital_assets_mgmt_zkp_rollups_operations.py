@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.digitalassets import DigitalAssetsClient
+from azure.mgmt.digitalassets import DigitalAssetsMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,17 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDigitalAssetsPartitionsOperations(AzureMgmtRecordedTestCase):
+class TestDigitalAssetsMgmtZkpRollupsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DigitalAssetsClient)
+        self.client = self.create_mgmt_client(DigitalAssetsMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_partitions_get(self, resource_group):
-        response = self.client.partitions.get(
+    def test_zkp_rollups_get(self, resource_group):
+        response = self.client.zkp_rollups.get(
             resource_group_name=resource_group.name,
             zkp_rollup_name="str",
-            partition_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,22 +31,41 @@ class TestDigitalAssetsPartitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_partitions_begin_create_or_update(self, resource_group):
-        response = self.client.partitions.begin_create_or_update(
+    def test_zkp_rollups_begin_create_or_update(self, resource_group):
+        response = self.client.zkp_rollups.begin_create_or_update(
             resource_group_name=resource_group.name,
             zkp_rollup_name="str",
-            partition_name="str",
             resource={
                 "location": "str",
                 "id": "str",
+                "identity": {
+                    "type": "str",
+                    "principalId": "str",
+                    "tenantId": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
                 "name": "str",
                 "properties": {
+                    "bootNodeId": "str",
+                    "bootNodeIp": "str",
+                    "bootNodeP2pPort": 0,
+                    "bootNodeRpcPort": 0,
+                    "keyVaultId": "str",
+                    "keyVaultUserAssignedIdentityResourceId": "str",
+                    "serviceBusEndpoint": "str",
+                    "serviceBusQueueName": "str",
+                    "tokenOwnerAccounts": ["str"],
+                    "blocksPerProof": 0,
+                    "customerOnPremAddressPrefixes": ["str"],
+                    "customerVpnPublicIp": "str",
                     "operationalStatus": {
                         "evaluatedAt": "2020-02-20 00:00:00",
                         "status": "str",
                         "validUntil": "2020-02-20 00:00:00",
                     },
                     "provisioningState": "str",
+                    "serviceVpnAddressSpace": "str",
+                    "serviceVpnPublicIp": "str",
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -67,24 +85,24 @@ class TestDigitalAssetsPartitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_partitions_update(self, resource_group):
-        response = self.client.partitions.update(
+    def test_zkp_rollups_begin_update(self, resource_group):
+        response = self.client.zkp_rollups.begin_update(
             resource_group_name=resource_group.name,
             zkp_rollup_name="str",
-            partition_name="str",
-            properties={"tags": {"str": "str"}},
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_partitions_begin_delete(self, resource_group):
-        response = self.client.partitions.begin_delete(
-            resource_group_name=resource_group.name,
-            zkp_rollup_name="str",
-            partition_name="str",
+            properties={
+                "identity": {
+                    "type": "str",
+                    "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                },
+                "properties": {
+                    "bootNodeId": "str",
+                    "bootNodeIp": "str",
+                    "bootNodeP2pPort": 0,
+                    "bootNodeRpcPort": 0,
+                    "tokenOwnerAccounts": ["str"],
+                },
+                "tags": {"str": "str"},
+            },
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -92,11 +110,29 @@ class TestDigitalAssetsPartitionsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_partitions_list_by_parent(self, resource_group):
-        response = self.client.partitions.list_by_parent(
+    def test_zkp_rollups_begin_delete(self, resource_group):
+        response = self.client.zkp_rollups.begin_delete(
             resource_group_name=resource_group.name,
             zkp_rollup_name="str",
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_zkp_rollups_list_by_resource_group(self, resource_group):
+        response = self.client.zkp_rollups.list_by_resource_group(
+            resource_group_name=resource_group.name,
         )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_zkp_rollups_list_by_subscription(self, resource_group):
+        response = self.client.zkp_rollups.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...

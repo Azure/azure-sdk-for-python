@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DigitalAssetsClientConfiguration:    # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
-    """Configuration for DigitalAssetsClient.
+class DigitalAssetsMgmtClientConfiguration:    # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
+    """Configuration for DigitalAssetsMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

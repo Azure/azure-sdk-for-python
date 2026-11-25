@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.digitalassets
 
-    class azure.mgmt.digitalassets.DigitalAssetsClient: implements ContextManager 
+    class azure.mgmt.digitalassets.DigitalAssetsMgmtClient: implements ContextManager 
         operations: Operations
         partitions: PartitionsOperations
         zkp_rollups: ZkpRollupsOperations
@@ -31,7 +31,7 @@ namespace azure.mgmt.digitalassets
 
 namespace azure.mgmt.digitalassets.aio
 
-    class azure.mgmt.digitalassets.aio.DigitalAssetsClient: implements AsyncContextManager 
+    class azure.mgmt.digitalassets.aio.DigitalAssetsMgmtClient: implements AsyncContextManager 
         operations: Operations
         partitions: PartitionsOperations
         zkp_rollups: ZkpRollupsOperations
