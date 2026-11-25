@@ -467,6 +467,27 @@ class TestSearchIndexClientFileIngestion:
         assert poll.call_args.args[0].url == location
 
 
+class TestGetSearchClient:
+    def test_get_search_client_inherits_api_version_and_audience(self):
+        credential = mock.Mock(spec=["get_token"])
+        client = SearchIndexClient(ENDPOINT, credential, api_version="2024-07-01", audience="https://search.azure.us")
+
+        search_client = client.get_search_client("hotels")
+
+        assert search_client._config.index_name == "hotels"
+        assert search_client._config.api_version == "2024-07-01"
+        assert search_client._config.credential_scopes == ["https://search.azure.us/.default"]
+
+    def test_get_search_client_keyword_arguments_take_precedence(self):
+        credential = mock.Mock(spec=["get_token"])
+        client = SearchIndexClient(ENDPOINT, credential, api_version="2024-07-01", audience="https://search.azure.us")
+
+        search_client = client.get_search_client("hotels", api_version="2025-09-01", audience="https://search.azure.cn")
+
+        assert search_client._config.api_version == "2025-09-01"
+        assert search_client._config.credential_scopes == ["https://search.azure.cn/.default"]
+
+
 class TestSearchIndexClientKnowledgeSource:
     @pytest.mark.parametrize("scenario", ["facet_hint", "graph_cache"])
     def test_create_or_update_knowledge_source_preserves_preview_configuration(self, scenario):
