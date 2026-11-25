@@ -3275,7 +3275,7 @@ class DefaultResourceProperties(BaseResourceProperties, discriminator="DefaultRe
 
     :ivar object_type: Type of the specific object - used for deserializing. Required.
      DEFAULT_RESOURCE_PROPERTIES.
-    :vartype object_type: str or ~azure.mgmt.dataprotection.models.DEFAULT_RESOURCE_PROPERTIES
+    :vartype object_type: str or ~azure.mgmt.dataprotection.models.ResourcePropertiesObjectType
     """
 
     object_type: Literal[ResourcePropertiesObjectType.DEFAULT_RESOURCE_PROPERTIES] = rest_discriminator(name="objectType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
