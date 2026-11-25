@@ -52,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _DEFAULT_LOG_MESSAGE,
     _APPLICATION_ID_RESOURCE_KEY,
     _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
+    _SAMPLE_RATE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import ContextTagKeys
 from azure.monitor.opentelemetry.exporter._storage import StorageExportResult
@@ -79,6 +80,12 @@ class NotSerializeableClass:
 # pylint: disable=too-many-lines, line-too-long
 class TestAzureLogExporter(unittest.TestCase):
     _exporter_class = AzureMonitorLogExporter
+
+    def test_log_attribute_alone_does_not_set_envelope_sample_rate(self):
+        log = _logs.ReadWriteLogRecord(LogRecord(attributes={_SAMPLE_RATE_KEY: 5}))
+        envelope = self._exporter._log_to_envelope(log)
+        self.assertIsNone(envelope.sample_rate)
+        self.assertEqual(envelope.data.base_data.properties[_SAMPLE_RATE_KEY], "5")
 
     @classmethod
     def setUpClass(cls):

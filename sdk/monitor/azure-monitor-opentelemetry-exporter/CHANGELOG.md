@@ -16,6 +16,8 @@
 
 ### Bugs Fixed
 
+- Fixed undercounting of trace-sampled logs by exporting their sampling percentage without consuming a log attribute slot.
+  ([#50089](https://github.com/Azure/azure-sdk-for-python/pull/50089))
 - Avoid eager multi-endpoint routed-client creation and limit temporary clients to one per
   exporter, including concurrent exports. Single-endpoint and offline-storage behavior are unchanged.
   ([#50130](https://github.com/Azure/azure-sdk-for-python/pull/50130))
