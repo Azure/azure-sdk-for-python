@@ -190,7 +190,11 @@ class AdversarialTemplateHandler:
         plist = self.categorized_ch_parameters
         ch_templates = []
 
-        for key, value in plist.items():
+        # Sort keys to ensure consistent ordering across different calls
+        # This ensures that templates are processed in the same order regardless of
+        # how they were retrieved from the service or stored in the dictionary
+        for key in sorted(plist.keys()):
+            value = plist[key]
             # Skip enterprise templates for ADVERSARIAL_QA
             if collection_key == AdversarialScenario.ADVERSARIAL_QA.value and "enterprise" in key:
                 continue
