@@ -84,11 +84,11 @@
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_acknowledge_operation_errors`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_list_operation_errors`
   - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_reimage_operation`
-  - Deleted or renamed model `OccurrenceExtensionOperations`
-  - Deleted or renamed model `OccurrencesOperations`
-  - Deleted or renamed model `ScheduledActionExtensionOperations`
-  - Deleted or renamed model `ScheduledActionOperationStatusOperations`
-  - Deleted or renamed model `ScheduledActionsOperations`
+  - Deleted or renamed operation group `OccurrenceExtensionOperations`
+  - Deleted or renamed operation group `OccurrencesOperations`
+  - Deleted or renamed operation group `ScheduledActionExtensionOperations`
+  - Deleted or renamed operation group `ScheduledActionOperationStatusOperations`
+  - Deleted or renamed operation group `ScheduledActionsOperations`
 
 ## 1.0.0b6 (2026-10-13)
 
