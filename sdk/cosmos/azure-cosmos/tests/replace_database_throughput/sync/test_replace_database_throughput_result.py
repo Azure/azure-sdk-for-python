@@ -16,6 +16,8 @@ from azure.cosmos import CosmosClient
 from common._rust_checks import run_on_rust
 from common.throughput_fixtures import owned_database
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 def _rust_client():
     return CosmosClient(os.environ["ACCOUNT_HOST"], os.environ["ACCOUNT_KEY"], _backend="rust")

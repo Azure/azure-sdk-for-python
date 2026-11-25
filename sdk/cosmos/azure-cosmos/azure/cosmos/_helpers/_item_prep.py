@@ -15,7 +15,14 @@ from ._wire_encoding import serialize_body_to_bytes
 def prepare_item_deadline(
     kwargs: dict[str, Any], method: str, started: float
 ) -> Optional[float]:
-    """Copy request options and return this call's deadline, or None if unset."""
+    """Copy request options and return this call's deadline, or None if unset.
+
+    :param dict[str, Any] kwargs: Working keywords updated with copied options and normalized timeout.
+    :param str method: Operation name used in timeout errors.
+    :param float started: Monotonic operation start time in seconds.
+    :return: The monotonic deadline, or None when no timeout is configured.
+    :rtype: float or None
+    """
     options = dict(kwargs.get("request_options") or {})
     kwargs["request_options"] = options
     timeout = kwargs.get("timeout", options.get("timeout"))
@@ -32,7 +39,13 @@ def prepare_item_deadline(
 def prepare_create_item_kwargs(
     kwargs: dict[str, Any], *, response_hook: Any = None
 ) -> Optional[float]:
-    """Reject retired arguments by presence and establish the create budget."""
+    """Reject retired arguments by presence and establish the create budget.
+
+    :param dict[str, Any] kwargs: Working creation keywords updated with isolated request options.
+    :keyword callable or None response_hook: Callback to validate as synchronous before dispatch.
+    :return: The monotonic creation deadline, or None without a timeout.
+    :rtype: float or None
+    """
     for name in ("populate_query_metrics", "etag", "match_condition"):
         if name in kwargs:
             raise TypeError(f"create_item() does not accept '{name}'.")
@@ -45,7 +58,12 @@ def prepare_create_item_kwargs(
 
 
 def prepare_replace_item_kwargs(kwargs: dict[str, Any]) -> None:
-    """Carry one replacement budget through preparation, metadata, and the write."""
+    """Carry one replacement budget through preparation, metadata, and the write.
+
+    :param dict[str, Any] kwargs: Working replacement keywords receiving a deadline unless already present.
+    :return: None.
+    :rtype: None
+    """
     if "_item_operation_deadline" not in kwargs:
         if "request_options" not in kwargs:
             kwargs["request_options"] = kwargs.get("feed_options")
@@ -55,7 +73,13 @@ def prepare_replace_item_kwargs(kwargs: dict[str, Any]) -> None:
 
 
 def prepare_item_target(kwargs: dict[str, Any], item: Any) -> None:
-    """Retain mapping validation without building a legacy document address."""
+    """Retain mapping validation without building a legacy document address.
+
+    :param dict[str, Any] kwargs: Working keywords receiving the target's resource address when applicable.
+    :param str or Mapping[str, Any] item: Item ID or properties containing its ``_self`` address.
+    :return: None.
+    :rtype: None
+    """
     if "document_link" in kwargs or "_item_self_link" in kwargs:
         raise TypeError("Item addressing must be supplied through the item argument.")
     if not isinstance(item, str):
@@ -65,7 +89,14 @@ def prepare_item_target(kwargs: dict[str, Any], item: Any) -> None:
 def prepare_read_item_kwargs(
     kwargs: dict[str, Any], partition_key: Any, *, response_hook: Any = None
 ) -> Optional[float]:
-    """Validate before metadata I/O and isolate the caller's option mapping."""
+    """Validate before metadata I/O and isolate the caller's option mapping.
+
+    :param dict[str, Any] kwargs: Working read keywords updated with conditions, options, and deadline.
+    :param Any partition_key: Public partition key stored in the read options.
+    :keyword callable or None response_hook: Callback checked for callability.
+    :return: The monotonic read deadline, or None without a timeout.
+    :rtype: float or None
+    """
     if "populate_query_metrics" in kwargs:
         raise TypeError("read_item() does not accept 'populate_query_metrics'.")
     if response_hook is not None and not callable(response_hook):
@@ -91,7 +122,13 @@ def prepare_read_item_kwargs(
 def build_patch_operations_payload(
     patch_operations: Any, *, filter_predicate: Optional[str] = None
 ) -> dict[str, Any]:
-    """Build the patch body dictionary, converting increment to the service's incr."""
+    """Build the patch body dictionary, converting increment to the service's incr.
+
+    :param list[dict] patch_operations: Nonempty sequence of patch operation dictionaries.
+    :keyword str or None filter_predicate: SQL condition guarding the patch.
+    :return: Body containing translated operations and an optional condition.
+    :rtype: dict[str, Any]
+    """
     if not isinstance(patch_operations, list):
         raise TypeError("patch_operations must be a list of operation dictionaries.")
     if not patch_operations:
@@ -115,7 +152,14 @@ def serialize_patch_body(
     patch_operations: Any, *, compact_utf8: bool = False,
     filter_predicate: Optional[str] = None,
 ) -> bytes:
-    """Create body bytes before execution can give control back to the customer app."""
+    """Create body bytes before execution can give control back to the customer app.
+
+    :param list[dict] patch_operations: Nonempty sequence of patch operation dictionaries.
+    :keyword bool compact_utf8: Whether to encode non-ASCII characters directly as UTF-8.
+    :keyword str or None filter_predicate: SQL condition guarding the patch.
+    :return: UTF-8 JSON patch payload with non-finite numbers rejected.
+    :rtype: bytes
+    """
     return serialize_body_to_bytes(
         build_patch_operations_payload(patch_operations, filter_predicate=filter_predicate),
         ensure_ascii=not compact_utf8,
@@ -124,7 +168,12 @@ def serialize_patch_body(
 
 
 def prepare_patch_item_kwargs(kwargs: dict[str, Any]) -> None:
-    """Normalize caller guards and establish one operation budget."""
+    """Normalize caller guards and establish one operation budget.
+
+    :param dict[str, Any] kwargs: Working patch keywords updated with If-Match and an operation deadline.
+    :return: None.
+    :rtype: None
+    """
     hook = kwargs.get("response_hook")
     if hook is not None and not callable(hook):
         raise TypeError("patch_item response_hook must be callable.")
@@ -145,7 +194,12 @@ def prepare_patch_item_kwargs(kwargs: dict[str, Any]) -> None:
 
 
 def apply_patch_item_options(options: dict[str, Any]) -> None:
-    """Reject unsupported guards and ambiguous header overrides before I/O."""
+    """Reject unsupported guards and ambiguous header overrides before I/O.
+
+    :param dict[str, Any] options: Working options updated with a single validated If-Match condition.
+    :return: None.
+    :rtype: None
+    """
     matches = []
     condition = options.get("accessCondition")
     if condition is not None:

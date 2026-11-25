@@ -17,6 +17,8 @@ from azure.cosmos.aio._backend import binding_adapter
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from common._rust_checks import run_on_rust_async
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest.fixture
 def container_ids():

@@ -135,7 +135,8 @@ class PreparedRequest:
 
 
 @dataclass(frozen=True)
-class PreparedFaultInjectionRule(_ValidatedSettings):
+# The native fault-injection protocol consumes this flat record.
+class PreparedFaultInjectionRule(_ValidatedSettings):  # pylint: disable=too-many-instance-attributes
     """Test settings for making selected requests fail or wait.
 
     The builder checks allowed operations and value ranges. This object checks
@@ -175,7 +176,8 @@ class PreparedFaultInjectionRule(_ValidatedSettings):
 
 
 @dataclass(frozen=True)
-class PreparedClientConfig(_ValidatedSettings):
+# Field names and layout form the native driver-acquisition contract.
+class PreparedClientConfig(_ValidatedSettings):  # pylint: disable=too-many-instance-attributes
     """Client settings passed to the binding when acquiring a driver handle.
 
     build_client_config checks the supplied options and prepares this read-only
@@ -255,6 +257,8 @@ class PreparedClientConfig(_ValidatedSettings):
         if any(not isinstance(rule, PreparedFaultInjectionRule) for rule in self.fault_injection_rules):
             self._invalid_type("fault_injection_rules")
         if not isinstance(self.headers, Mapping) or any(
+            # Header subclasses are not accepted by the immutable native protocol.
+            # pylint: disable-next=unidiomatic-typecheck
             type(key) is not str or type(value) is not str for key, value in self.headers.items()
         ):
             self._invalid_type("headers")
@@ -322,7 +326,8 @@ class QueryScope:
 
 
 @dataclass(frozen=True)
-class PreparedPageRequest:
+# This record retains the complete native page protocol, including cursor state.
+class PreparedPageRequest:  # pylint: disable=too-many-instance-attributes
     """Inputs for fetching one page of query, listing, or change-feed results.
 
     The driver may still validate the request, decide how to run the query,
@@ -389,6 +394,8 @@ class PreparedPageRequest:
             value = getattr(self, name)
             if value is not None and not isinstance(value, str):
                 raise TypeError(f"PreparedPageRequest.{name} must be a string or None")
+        # Reject bool and integer subclasses for the native page-size field.
+        # pylint: disable-next=unidiomatic-typecheck
         if self.max_item_count is not None and type(self.max_item_count) is not int:
             raise TypeError("PreparedPageRequest.max_item_count must be an integer or None")
         if not isinstance(self.parameters, (tuple, list)):

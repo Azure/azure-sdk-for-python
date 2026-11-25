@@ -12697,8 +12697,8 @@
         "path": "tests\\config\\collection.py",
         "symbol": "exclude_module",
         "kind": "function",
-        "line": 212,
-        "end_line": 216,
+        "line": 213,
+        "end_line": 217,
         "column": 0,
         "ast_sha256": "9a9be31d519b585887da790eac6e5bb46a338a3d27d01cb17f69ab89ddce7b78",
         "snippet": "exclude_module"
@@ -12707,8 +12707,8 @@
         "path": "tests\\config\\collection.py",
         "symbol": "exclude_parameters",
         "kind": "function",
-        "line": 227,
-        "end_line": 230,
+        "line": 228,
+        "end_line": 231,
         "column": 0,
         "ast_sha256": "8d96ee288cbed7f0bad097545ebe7f2abe8cce675d5a145f61c2db9331293df8",
         "snippet": "exclude_parameters"
@@ -12859,8 +12859,8 @@
         "path": "tests\\config\\collection.py",
         "symbol": "ADAPTER_PARAMETER_MODULES",
         "kind": "annotation-value",
-        "line": 196,
-        "end_line": 202,
+        "line": 197,
+        "end_line": 203,
         "column": 0,
         "ast_sha256": "4024ca8cb259baf742cf5b69fa620b6cef4955cda3d36b290942bbb613a22b15",
         "snippet": "ADAPTER_PARAMETER_MODULES = frozenset({\n    \"common/test_write_session_token_emulator.py\",\n    \"create_item/aio/test_contracts.py\",\n    \"create_item/aio/test_input_variants.py\",\n    \"create_item/sync/test_contracts.py\",\n    \"create_item/sync/test_input_variants.py\",\n})"
@@ -17365,8 +17365,8 @@
             "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
             "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
             "kind": "function",
-            "line": 92,
-            "end_line": 129,
+            "line": 66,
+            "end_line": 103,
             "column": 4,
             "ast_sha256": "7cd747f52aaff589dcd08da628c644741ac3c0f1b0e571c507f8a55cc8403f5c",
             "snippet": "test_response_hook_parity_point_ops_async_rust"
@@ -19217,8 +19217,8 @@
           "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
           "symbol": "test_create_forwards_service_issued_session_token_unchanged_async_rust",
           "kind": "function",
-          "line": 36,
-          "end_line": 73,
+          "line": 38,
+          "end_line": 75,
           "column": 0,
           "ast_sha256": "65103e99b42547b4928844f3d9bb1dc6126491a9fa6b51563109d6e072080dbd",
           "snippet": "test_create_forwards_service_issued_session_token_unchanged_async_rust"
@@ -20154,8 +20154,8 @@
           "path": "tests\\create_item\\sync\\test_create_item_partitionless.py",
           "symbol": "test_partitionless_container_rejected_by_rust_binding_rust",
           "kind": "function",
-          "line": 24,
-          "end_line": 64,
+          "line": 26,
+          "end_line": 66,
           "column": 0,
           "ast_sha256": "81d46658b0b91fa604e7f2ac8e7fca8403bf16190a9ea16f72b2039f03476a50",
           "snippet": "test_partitionless_container_rejected_by_rust_binding_rust"
@@ -20168,8 +20168,8 @@
           "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
           "symbol": "test_create_forwards_service_issued_session_token_unchanged_rust",
           "kind": "function",
-          "line": 35,
-          "end_line": 70,
+          "line": 37,
+          "end_line": 72,
           "column": 0,
           "ast_sha256": "6c4c65a3c6170944aaf2d757fda3b18ef2f492d2e92b569b52960fb3dadfded6",
           "snippet": "test_create_forwards_service_issued_session_token_unchanged_rust"
@@ -29926,8 +29926,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "function",
-          "line": 92,
-          "end_line": 129,
+          "line": 66,
+          "end_line": 103,
           "column": 4,
           "ast_sha256": "7cd747f52aaff589dcd08da628c644741ac3c0f1b0e571c507f8a55cc8403f5c",
           "snippet": "test_response_hook_parity_point_ops_async_rust"
@@ -31615,30 +31615,52 @@
       {
         "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
         "symbol": "test_create_forwards_service_issued_session_token_unchanged_async_rust",
-        "module_marks": [],
+        "module_marks": [
+          {
+            "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
+            "symbol": "<module>",
+            "kind": "module-pytestmark",
+            "line": 20,
+            "end_line": 20,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        ],
         "classes": [],
         "function_decorators": [
           {
             "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
             "symbol": "test_create_forwards_service_issued_session_token_unchanged_async_rust",
             "kind": "function-decorator",
-            "line": 35,
-            "end_line": 35,
+            "line": 37,
+            "end_line": 37,
             "column": 1,
             "ast_sha256": "d373355371838e886b65c79ed4307c424d6cc321cffa2957943243b7279cf104",
             "snippet": "pytest.mark.asyncio"
           }
         ],
         "arguments": "container_ids, monkeypatch",
-        "annotation_dependencies": {},
+        "annotation_dependencies": {
+          "pytestmark": {
+            "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
+            "symbol": "pytestmark",
+            "kind": "annotation-value",
+            "line": 20,
+            "end_line": 20,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        },
         "local_fixtures": [
           {
             "source": {
               "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
               "symbol": "container_ids",
               "kind": "function",
-              "line": 22,
-              "end_line": 32,
+              "line": 24,
+              "end_line": 34,
               "column": 0,
               "ast_sha256": "a6bb8e772440ffa01c69db116a4297247910d1504e251ec74c6936e3b58fe8ff",
               "snippet": "container_ids"
@@ -31648,8 +31670,8 @@
                 "path": "tests\\create_item\\aio\\test_create_item_session_token_async.py",
                 "symbol": "container_ids",
                 "kind": "fixture-decorator",
-                "line": 21,
-                "end_line": 21,
+                "line": 23,
+                "end_line": 23,
                 "column": 1,
                 "ast_sha256": "68acff027083f6fb96e927607ece5a3c1de25d820075236617b805935a45ad03",
                 "snippet": "pytest.fixture"
@@ -34703,11 +34725,33 @@
       {
         "path": "tests\\create_item\\sync\\test_create_item_partitionless.py",
         "symbol": "test_partitionless_container_rejected_by_rust_binding_rust",
-        "module_marks": [],
+        "module_marks": [
+          {
+            "path": "tests\\create_item\\sync\\test_create_item_partitionless.py",
+            "symbol": "<module>",
+            "kind": "module-pytestmark",
+            "line": 23,
+            "end_line": 23,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        ],
         "classes": [],
         "function_decorators": [],
         "arguments": "",
-        "annotation_dependencies": {},
+        "annotation_dependencies": {
+          "pytestmark": {
+            "path": "tests\\create_item\\sync\\test_create_item_partitionless.py",
+            "symbol": "pytestmark",
+            "kind": "annotation-value",
+            "line": 23,
+            "end_line": 23,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        },
         "local_fixtures": [],
         "conftests": [
           {
@@ -34719,19 +34763,41 @@
       {
         "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
         "symbol": "test_create_forwards_service_issued_session_token_unchanged_rust",
-        "module_marks": [],
+        "module_marks": [
+          {
+            "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
+            "symbol": "<module>",
+            "kind": "module-pytestmark",
+            "line": 20,
+            "end_line": 20,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        ],
         "classes": [],
         "function_decorators": [],
         "arguments": "container_ids, monkeypatch",
-        "annotation_dependencies": {},
+        "annotation_dependencies": {
+          "pytestmark": {
+            "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
+            "symbol": "pytestmark",
+            "kind": "annotation-value",
+            "line": 20,
+            "end_line": 20,
+            "column": 0,
+            "ast_sha256": "7881cf602d0f1db6c7ead57e67ba5015b21f28cfb0e96c19e447d1b3bd37c052",
+            "snippet": "pytestmark = pytest.mark.cosmosEmulator"
+          }
+        },
         "local_fixtures": [
           {
             "source": {
               "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
               "symbol": "container_ids",
               "kind": "function",
-              "line": 22,
-              "end_line": 32,
+              "line": 24,
+              "end_line": 34,
               "column": 0,
               "ast_sha256": "da58fad0cfe80ea09faa361ea66f9a5847670f647903887a86dcea37cd157d47",
               "snippet": "container_ids"
@@ -34741,8 +34807,8 @@
                 "path": "tests\\create_item\\sync\\test_create_item_session_token.py",
                 "symbol": "container_ids",
                 "kind": "fixture-decorator",
-                "line": 21,
-                "end_line": 21,
+                "line": 23,
+                "end_line": 23,
                 "column": 1,
                 "ast_sha256": "68acff027083f6fb96e927607ece5a3c1de25d820075236617b805935a45ad03",
                 "snippet": "pytest.fixture"
@@ -66462,8 +66528,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 106,
-          "end_line": 106,
+          "line": 80,
+          "end_line": 80,
           "column": 12,
           "ast_sha256": "0c9101362de4b7e547bc5f5fe82a8fe6089aa6c13b765905dab7832aa3c234ad",
           "snippet": "assert len(captured) == 1"
@@ -66472,8 +66538,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 107,
-          "end_line": 107,
+          "line": 81,
+          "end_line": 81,
           "column": 12,
           "ast_sha256": "696e3776416dd070c90b2f338372953bbb41ec2943d1e0008e1d0947e0898d99",
           "snippet": "assert created.get_response_headers()[\"x-ms-request-charge\"] == captured[0][\"x-ms-request-charge\"]"
@@ -66485,8 +66551,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "function",
-          "line": 92,
-          "end_line": 129,
+          "line": 66,
+          "end_line": 103,
           "column": 4,
           "ast_sha256": "7cd747f52aaff589dcd08da628c644741ac3c0f1b0e571c507f8a55cc8403f5c",
           "snippet": "test_response_hook_parity_point_ops_async_rust"
@@ -66518,8 +66584,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 106,
-          "end_line": 106,
+          "line": 80,
+          "end_line": 80,
           "column": 12,
           "ast_sha256": "0c9101362de4b7e547bc5f5fe82a8fe6089aa6c13b765905dab7832aa3c234ad",
           "snippet": "assert len(captured) == 1"
@@ -66528,8 +66594,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 107,
-          "end_line": 107,
+          "line": 81,
+          "end_line": 81,
           "column": 12,
           "ast_sha256": "696e3776416dd070c90b2f338372953bbb41ec2943d1e0008e1d0947e0898d99",
           "snippet": "assert created.get_response_headers()[\"x-ms-request-charge\"] == captured[0][\"x-ms-request-charge\"]"
@@ -66541,8 +66607,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "function",
-          "line": 92,
-          "end_line": 129,
+          "line": 66,
+          "end_line": 103,
           "column": 4,
           "ast_sha256": "7cd747f52aaff589dcd08da628c644741ac3c0f1b0e571c507f8a55cc8403f5c",
           "snippet": "test_response_hook_parity_point_ops_async_rust"
@@ -66574,8 +66640,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 106,
-          "end_line": 106,
+          "line": 80,
+          "end_line": 80,
           "column": 12,
           "ast_sha256": "0c9101362de4b7e547bc5f5fe82a8fe6089aa6c13b765905dab7832aa3c234ad",
           "snippet": "assert len(captured) == 1"
@@ -66584,8 +66650,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "assertion",
-          "line": 107,
-          "end_line": 107,
+          "line": 81,
+          "end_line": 81,
           "column": 12,
           "ast_sha256": "696e3776416dd070c90b2f338372953bbb41ec2943d1e0008e1d0947e0898d99",
           "snippet": "assert created.get_response_headers()[\"x-ms-request-charge\"] == captured[0][\"x-ms-request-charge\"]"
@@ -66597,8 +66663,8 @@
           "path": "tests\\response_hook\\aio\\test_query_response_headers_async.py",
           "symbol": "TestQueryResponseHeadersAsync.test_response_hook_parity_point_ops_async_rust",
           "kind": "function",
-          "line": 92,
-          "end_line": 129,
+          "line": 66,
+          "end_line": 103,
           "column": 4,
           "ast_sha256": "7cd747f52aaff589dcd08da628c644741ac3c0f1b0e571c507f8a55cc8403f5c",
           "snippet": "test_response_hook_parity_point_ops_async_rust"

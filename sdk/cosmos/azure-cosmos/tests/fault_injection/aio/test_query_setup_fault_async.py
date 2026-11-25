@@ -26,7 +26,7 @@ from fault_injection._query_setup import (
     setup_rules,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.asyncio

@@ -60,11 +60,11 @@ from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponse
 from azure.cosmos._helpers._client_context import ClientLastResponseHeaders, CosmosClientContext
 from azure.cosmos.partition_key import _Empty
 from azure.cosmos._query_rust_routing import (
-    build_list_databases_prepared_page_request,
-    can_use_rust_backend_for_list_databases_page,
-    can_use_rust_backend_for_query_databases_page,
-    can_use_rust_backend_for_list_containers_page,
-    can_use_rust_backend_for_query_containers_page,
+    build_list_databases_page,
+    can_use_rust_list_databases,
+    can_use_rust_query_databases,
+    can_use_rust_list_containers,
+    can_use_rust_query_containers,
     can_use_rust_backend_for_query_page,
 )
 
@@ -576,11 +576,11 @@ def test_database_feed_gate_only_accepts_representable_timeouts_rust(is_query, t
         "resource_type": http_constants.ResourceType.Database,
     }
     if is_query:
-        result = can_use_rust_backend_for_query_databases_page(
+        result = can_use_rust_query_databases(
             query_payload={"query": "SELECT * FROM root r"}, **arguments
         )
     else:
-        result = can_use_rust_backend_for_list_databases_page(**arguments)
+        result = can_use_rust_list_databases(**arguments)
     assert result is supported
 
 
@@ -606,7 +606,7 @@ def test_database_feed_timeout_must_match_the_forwarded_option_rust(options, kwa
     so the honest response is to decline rather than send a request under a
     deadline nobody verified.
     """
-    assert can_use_rust_backend_for_list_databases_page(
+    assert can_use_rust_list_databases(
         options=options, kwargs=kwargs, is_query_plan=False,
         resource_type=http_constants.ResourceType.Database,
     ) is supported
@@ -629,11 +629,11 @@ def test_container_feeds_support_page_timeouts_rust(is_query):
         "resource_type": http_constants.ResourceType.Collection,
     }
     if is_query:
-        supported = can_use_rust_backend_for_query_containers_page(
+        supported = can_use_rust_query_containers(
             query_payload={"query": "SELECT * FROM root r"}, **arguments
         )
     else:
-        supported = can_use_rust_backend_for_list_containers_page(**arguments)
+        supported = can_use_rust_list_containers(**arguments)
     assert supported is True
 
 
@@ -1226,7 +1226,7 @@ def test_rust_page_adapter_preserves_zero_max_item_count_rust(adapter):
 
 def test_rust_feed_prep_has_one_paging_authority_rust():
     """Typed options win; raw-header-only paging is promoted rather than lost."""
-    prepared = build_list_databases_prepared_page_request(
+    prepared = build_list_databases_page(
         options={
             "continuation": "typed-continuation",
             "maxItemCount": 0,
@@ -1251,7 +1251,7 @@ def test_rust_feed_prep_has_one_paging_authority_rust():
     }
     assert prepared.continuation == "typed-continuation"
     assert prepared.max_item_count == 0
-    prepared = build_list_databases_prepared_page_request(
+    prepared = build_list_databases_page(
         options={},
         req_headers={
             "x-ms-continuation": "customer-continuation",
@@ -1274,7 +1274,7 @@ def test_rust_feed_rejects_invalid_raw_page_size_rust(count):
     somewhere deep in the driver with no hint of which header caused it.
     """
     with pytest.raises(ValueError, match="x-ms-max-item-count must be an integer"):
-        build_list_databases_prepared_page_request(
+        build_list_databases_page(
             options={"initialHeaders": {"X-MS-MAX-ITEM-COUNT": count}}, req_headers={},
         )
 
@@ -1316,7 +1316,7 @@ def test_rust_feed_header_and_paging_precedence_is_case_insensitive_rust(typed):
         "x-ms-continuation": "default-token", "x-ms-max-item-count": "3",
         "x-app": "default", "x-ms-consistency-level": "Session",
     }
-    prepared = build_list_databases_prepared_page_request(options=options, req_headers=defaults)
+    prepared = build_list_databases_page(options=options, req_headers=defaults)
     assert prepared.max_item_count == (0 if typed else 7)
     assert prepared.continuation == ("typed-token" if typed else "caller-token")
     assert wire_headers(prepared) == {
@@ -1391,7 +1391,7 @@ def test_list_databases_gate_rejects_non_read_feed_shapes_rust(options, is_query
     A query-plan request and a change-feed read both reach this code but are not
     plain "list the databases" calls, so Rust dispatch rejects them.
     """
-    assert not can_use_rust_backend_for_list_databases_page(
+    assert not can_use_rust_list_databases(
         options=options,
         kwargs={},
         is_query_plan=is_query_plan,
@@ -2640,7 +2640,7 @@ def test_query_databases_gate_rejects_shapes_rust_cannot_serve_rust(
     query_payload, options, is_query_plan, resource_type
 ):
     """Unsupported database-query shapes use Python."""
-    assert not can_use_rust_backend_for_query_databases_page(
+    assert not can_use_rust_query_databases(
         query_payload=query_payload,
         options=options,
         kwargs={},
@@ -2651,7 +2651,7 @@ def test_query_databases_gate_rejects_shapes_rust_cannot_serve_rust(
 
 def test_query_databases_gate_accepts_a_plain_account_query_rust():
     """A supported parameterized database query uses Rust."""
-    assert can_use_rust_backend_for_query_databases_page(
+    assert can_use_rust_query_databases(
         query_payload={
             "query": "SELECT * FROM root r WHERE r.id = @id",
             "parameters": [{"name": "@id", "value": "db-1"}],

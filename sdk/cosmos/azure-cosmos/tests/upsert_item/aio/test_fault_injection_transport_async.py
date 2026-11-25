@@ -31,6 +31,9 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.aio._container import ContainerProxy
 from azure.cosmos.aio._database import DatabaseProxy
 
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
 MGMT_TIMEOUT = 5.0
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)

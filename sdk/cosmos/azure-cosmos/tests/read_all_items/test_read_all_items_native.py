@@ -26,7 +26,7 @@ from fault_injection._async_cancellation import wait_for_evidence
 from read_items.test_read_items_native import native_database  # pylint: disable=unused-import
 from read_all_items.test_read_all_items_contract_unit import ForbiddenConnection
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 async def collect(container, asynchronous, **kwargs):

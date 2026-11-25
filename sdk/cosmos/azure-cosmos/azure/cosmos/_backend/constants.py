@@ -34,5 +34,11 @@ FAULT_INJECTION_ENV_VAR = "COSMOS_ENABLE_FAULT_INJECTION"
 
 
 def is_rust_backend(backend: Any) -> bool:
-    """Identify a Python backend for the Rust path while the legacy path remains."""
+    """Identify a Python backend for the Rust path while the legacy path remains.
+
+    :param backend: Backend candidate whose name is inspected.
+    :type backend: typing.Any
+    :return: Whether the backend advertises the Rust execution path.
+    :rtype: bool
+    """
     return getattr(backend, "name", None) == BACKEND_NAME_RUST

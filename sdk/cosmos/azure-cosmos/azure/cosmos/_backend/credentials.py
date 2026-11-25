@@ -17,7 +17,8 @@ the service backend to check whether the supplied credential grants access.
 
 from __future__ import annotations
 
-import asyncio
+# Recognize asyncio-marked credential methods, not transport sleeps.
+import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
 from collections.abc import Mapping
 from collections.abc import Sequence as _AbcSequence
@@ -31,13 +32,25 @@ _RESOURCE_TOKEN_ERROR = (
 
 
 def reject_resource_token_fields(credential: Mapping[str, Any]) -> None:
-    """Reject removed authentication fields even alongside a supported credential."""
+    """Reject removed authentication fields even alongside a supported credential.
+
+    :param credential: Credential mapping to check for removed resource-token fields.
+    :type credential: typing.Mapping[str, typing.Any]
+    """
     if "resourceTokens" in credential or "permissionFeed" in credential:
         raise ValueError(_RESOURCE_TOKEN_ERROR)
 
 
 def _is_coroutine_method(credential: Any, name: str) -> bool:
-    """Recognize async methods, including decorated and asyncio-marked wrappers."""
+    """Recognize async methods, including decorated and asyncio-marked wrappers.
+
+    :param credential: Object whose token method is inspected without invoking it.
+    :type credential: typing.Any
+    :param name: Method name to inspect.
+    :type name: str
+    :return: Whether the method or its unwrapped implementation is a coroutine function.
+    :rtype: bool
+    """
     method = getattr(credential, name, None)
     if method is None:
         return False
@@ -55,6 +68,11 @@ def _is_async_credential(credential: Any) -> bool:
     async context entry as a hint for opaque wrappers returning awaitables.
     That hint does not prove the token result is awaitable; the bridge checks
     the result on first use rather than invoking customer code during validation.
+
+    :param credential: Credential candidate to inspect without obtaining tokens.
+    :type credential: typing.Any
+    :return: Whether the credential requires asynchronous handling.
+    :rtype: bool
     """
     for attr in ("get_token", "get_token_info"):
         if _is_coroutine_method(credential, attr):
@@ -73,6 +91,11 @@ def _is_resource_token_credential(credential: Any) -> bool:
     These include dictionaries without masterKey and sequences such as lists
     of permission entries. The resolver checks master keys and token methods
     first, then uses this check to report why the remaining input is rejected.
+
+    :param credential: Credential candidate remaining after supported forms are considered.
+    :type credential: typing.Any
+    :return: Whether the value has an unsupported resource-token credential shape.
+    :rtype: bool
     """
     if isinstance(credential, str):
         return False
@@ -87,7 +110,11 @@ def _is_resource_token_credential(credential: Any) -> bool:
 
 
 def validate_credential(credential: Any) -> None:
-    """Validate supported credentials without acquiring a bridge or contacting the service."""
+    """Validate supported credentials without acquiring a bridge or contacting the service.
+
+    :param credential: Account key, master-key mapping, or token credential to validate.
+    :type credential: typing.Any
+    """
     if isinstance(credential, Mapping):
         reject_resource_token_fields(credential)
     if isinstance(credential, str):
@@ -121,7 +148,15 @@ def resolve_credential(
     *,
     allow_async: bool = False,
 ) -> Tuple[Optional[str], Optional[Any]]:
-    """Retain a supported credential; async adapters bind its loop on first use."""
+    """Retain a supported credential; async adapters bind its loop on first use.
+
+    :param credential: Account key, master-key mapping, or token credential.
+    :type credential: typing.Any
+    :keyword allow_async: Whether asynchronous token credentials are accepted.
+    :paramtype allow_async: bool
+    :return: Account key and token credential pair, with exactly one non-None entry.
+    :rtype: tuple[typing.Optional[str], typing.Any]
+    """
     validate_credential(credential)
     if isinstance(credential, str):
         return credential, None

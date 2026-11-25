@@ -25,7 +25,11 @@ GET_CONTAINER_THROUGHPUT = "get_container_throughput"
 
 
 def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
-    """Reject removed settings on both execution paths, including nested options."""
+    """Reject removed settings on both execution paths, including nested options.
+
+    :param kwargs: Operation options, including any nested legacy option mappings.
+    :type kwargs: typing.Mapping[str, typing.Any]
+    """
     for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options"), kwargs.get("options")):
         if not isinstance(options, Mapping):
             continue
@@ -43,7 +47,9 @@ def reject_removed_options(kwargs: Mapping[str, Any]) -> None:
                 )
         for name in ("proxy_config", "proxies", "ssl_config", "connection_verify", "connection_cert", "transport"):
             if name in options:
-                raise TypeError(f"{name} has been removed; custom proxy, TLS, and transport settings are not supported.")
+                raise TypeError(
+                    f"{name} has been removed; custom proxy, TLS, and transport settings are not supported."
+                )
     policy = kwargs.get("connection_policy")
     if policy is not None:
         for name in (
@@ -58,7 +64,19 @@ def prepare_operation_kwargs(
     proxy: Any, kwargs: dict[str, Any], *, strategy: Any = None, headers: Any = None,
     inherit_timeout: bool = True,
 ) -> None:
-    """Validate inputs and apply defaults before metadata, paging, or coordinators."""
+    """Validate inputs and apply defaults before metadata, paging, or coordinators.
+
+    :param proxy: Client proxy providing backend selection and client defaults.
+    :type proxy: typing.Any
+    :param kwargs: Operation keyword arguments validated and updated in place.
+    :type kwargs: dict[str, typing.Any]
+    :keyword strategy: Availability strategy to validate for Rust operations.
+    :paramtype strategy: typing.Any
+    :keyword headers: Initial header overrides to validate.
+    :paramtype headers: typing.Any
+    :keyword inherit_timeout: Whether to apply the client timeout default to the options.
+    :paramtype inherit_timeout: bool
+    """
     reject_removed_options(kwargs)
     context = getattr(proxy, "_client_context", None)
     backend = context.adapter if context is not None else getattr(
@@ -79,7 +97,15 @@ def prepare_operation_kwargs(
 def reject_rust_arguments(
     kwargs: Mapping[str, Any], *, strategy: Any = None, headers: Any = None,
 ) -> None:
-    """Validate Rust inputs without requiring a constructed client or proxy."""
+    """Validate Rust inputs without requiring a constructed client or proxy.
+
+    :param kwargs: Operation options, including nested request and feed options.
+    :type kwargs: typing.Mapping[str, typing.Any]
+    :keyword strategy: Availability strategy to check for unsupported threshold steps.
+    :paramtype strategy: typing.Any
+    :keyword headers: Initial header overrides to check for unsupported trigger headers.
+    :paramtype headers: typing.Any
+    """
     from .._availability_strategy_config import reject_rust_threshold_steps
     from .request_settings import reject_trigger_header
 

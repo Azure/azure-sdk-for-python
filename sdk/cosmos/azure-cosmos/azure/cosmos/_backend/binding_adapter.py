@@ -41,7 +41,9 @@ from .operations import (
     get_page_binding_function_name,
 )
 from .errors import BindingProtocolError, PagePreflightError
-from .contracts import BackendResponse, ContainerMetadata, PreparedClientConfig, PreparedPageRequest, PreparedRequest, BackendPage
+from .contracts import (
+    BackendResponse, ContainerMetadata, PreparedClientConfig, PreparedPageRequest, PreparedRequest, BackendPage,
+)
 from ._binding_conversions import (
     build_backend_response, build_binding_request_from_page,
     build_container_metadata, response_exception_from_binding,
@@ -103,7 +105,9 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
     driver, checks no arguments, and promises nothing about service support.
 
     :param op: The Python wrapper's operation name, from the prepared request.
+    :type op: str
     :returns: The matching binding function, or ``None``.
+    :rtype: typing.Callable or None
     """
     binding_function_name = OP_TO_BINDING_FUNCTION_NAME.get(op)
     if binding_function_name is None or _rust_module is None:
@@ -131,7 +135,9 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
     the operation and cursor mode; that ``None`` is passed straight through.
 
     :param binding_function_name: A binding function name, or ``None`` if none applies.
+    :type binding_function_name: str or None
     :returns: The matching binding function, or ``None``.
+    :rtype: typing.Callable or None
     """
     if binding_function_name is None or _rust_module is None:
         return None
@@ -185,6 +191,11 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         Timing out or Ctrl+C stops only that wait, not the acquisition thread.
         A late handle remains available to an open client. If close wins, the
         worker releases the acquisition instead of publishing it.
+
+        :keyword deadline: Absolute monotonic deadline for this caller's wait, or None.
+        :paramtype deadline: float or None
+        :return: Shared owning driver handle.
+        :rtype: ~azure.cosmos._rust._DriverHandle
         """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
@@ -251,7 +262,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             # Never raise from object finalization.
             pass
 
-    def execute(  # pylint: disable=too-many-branches
+    def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
         """Send one prepared operation and return a BackendResponse.
@@ -268,6 +279,13 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         item. If the deadline has 1.5 seconds left, pass timeout_seconds=1.5,
         not a fresh operation budget. Convert binding errors without retrying
         the operation through the legacy Python implementation.
+
+        :param prepared: Operation inputs to send through the binding.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :keyword deadline: Absolute monotonic deadline, or None to derive a budget from settings.
+        :paramtype deadline: float or None
+        :return: Normalized backend response with unparsed body bytes.
+        :rtype: ~azure.cosmos._backend.contracts.BackendResponse
         """
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
@@ -309,6 +327,38 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             prepared.op,
             OP_TO_BINDING_FUNCTION_NAME.get(prepared.op),
         )
+        raw_response = self._call_operation(binding_function, driver_handle, prepared, deadline, contribution)
+        if raw_response is None:
+            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
+        if contribution is not None:
+            raw_response = contribution.response(raw_response)
+        response = build_backend_response(*raw_response)
+        log_response_diagnostics(self, prepared.op, response)
+        return response
+
+    def _call_operation(
+        self,
+        binding_function: Any,
+        driver_handle: _DriverHandle,
+        prepared: PreparedRequest,
+        deadline: Optional[float],
+        contribution: Any,
+    ) -> Any:
+        """Call the selected binding export and translate operation failures.
+
+        :param binding_function: Callable export selected and validated before driver acquisition.
+        :type binding_function: typing.Callable
+        :param driver_handle: Acquired owning handle for this operation.
+        :type driver_handle: ~azure.cosmos._rust._DriverHandle
+        :param prepared: Operation inputs, including merged client headers.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :param deadline: Absolute monotonic deadline, or None.
+        :type deadline: float or None
+        :param contribution: Operation diagnostics recorder, or None when tracing is inactive.
+        :type contribution: typing.Any
+        :return: Raw binding response tuple, before response normalization.
+        :rtype: typing.Any
+        """
         # A transport error does not prove the service backend did no work.
         try:
             binding_kwargs: dict[str, Any] = {}
@@ -343,13 +393,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
                 contribution.error(exc)
             raise
-        if raw_response is None:
-            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
-        if contribution is not None:
-            raw_response = contribution.response(raw_response)
-        response = build_backend_response(*raw_response)
-        log_response_diagnostics(self, prepared.op, response)
-        return response
+        return raw_response
 
     def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
@@ -369,6 +413,15 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         ``op`` names the operation that needs the lookup, such as
         ``"read_items"``. When that call is traced, a failed lookup's
         diagnostics are recorded as that call's binding result.
+
+        :param container_link: Container resource address.
+        :type container_link: str
+        :keyword deadline: Absolute monotonic deadline, or None to use the client timeout.
+        :paramtype deadline: float or None
+        :keyword op: Operation requiring metadata, or None when no operation owns the lookup.
+        :paramtype op: str or None
+        :return: Validated container identity and partition-key definition.
+        :rtype: ~azure.cosmos._backend.contracts.ContainerMetadata
         """
         deadline = self._request_deadline(deadline)
         if _rust_module is None:
@@ -392,6 +445,8 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         if operation is not None:
             binding_kwargs["include_attempts"] = True
         try:
+            # The non-None export is a native callable; pylint cannot inspect the extension.
+            # pylint: disable-next=not-callable
             raw_response = binding_function(driver_handle, container_link, **binding_kwargs)
         except TimeoutError as exc:
             record_failed_lookup(operation, exc)
@@ -432,6 +487,13 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         Without a feed cursor, select the stateless page binding function.
         Calling this method creates a generator; iteration performs the fetch.
         The caller owns subsequent page fetches, not a loop inside this method.
+
+        :param prepared: Inputs and optional retained cursor for one page fetch.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+        :keyword deadline: Absolute monotonic deadline, or None to derive a budget from settings.
+        :paramtype deadline: float or None
+        :return: Iterator yielding one backend page.
+        :rtype: typing.Iterator[azure.cosmos._backend.contracts.BackendPage]
         """
         self.validate_page_request(prepared)
         deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
@@ -471,11 +533,7 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
                 kwargs["include_attempts"] = True
             try:
                 result = binding_function(*args, **kwargs)
-            except TimeoutError as exc:
-                if contribution is not None:
-                    contribution.error(exc)
-                raise
-            except ClientAuthenticationError as exc:
+            except (TimeoutError, ClientAuthenticationError) as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise
@@ -505,6 +563,9 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         Orders query with feed cursor -> require fetch_page_with_cursor.
         Orders query without feed cursor -> require query_items.
         Missing support raises here instead of after driver acquisition.
+
+        :param prepared: Page request whose operation and cursor mode require validation.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
         """
         validate_page_request(prepared, _rust_module, _binding_function_by_name, "BindingAdapter")
 
@@ -514,6 +575,9 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
         Create feed cursor C -> first page uses C -> later pages reuse C.
         This calls the binding's cursor constructor synchronously, but does not
         acquire a driver handle or fetch a page. One page iterator retains C.
+
+        :return: New empty native item-feed cursor.
+        :rtype: ~azure.cosmos._rust._ItemFeedCursor
         """
         if _rust_module is None:
             raise PagePreflightError(
@@ -523,4 +587,5 @@ class BindingAdapter(BindingAdapterShared, CosmosBackend):
             raise RuntimeError(
                 "The compiled binding lacks _ItemFeedCursor; rebuild it from the current source."
             )
-        return _rust_module._ItemFeedCursor()
+        # This private export is the native cursor constructor used by the adapter.
+        return _rust_module._ItemFeedCursor()  # pylint: disable=protected-access

@@ -108,12 +108,13 @@ def test_async_rust_backend_dispatches_patch_to_binding_rust(monkeypatch):
 
 def test_sync_rust_backend_patch_raises_when_binding_not_built_rust(monkeypatch):
     """Before ``maturin develop`` builds ``_rust.pyd``, a patch on the Rust
-    backend raises the same clear ``NotImplementedError`` every other op
+    backend raises the same clear ``ImportError`` every other op
     raises -- never a silent wrong-op dispatch."""
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", None)
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-    with pytest.raises(NotImplementedError, match="not present"):
+    with pytest.raises(ImportError, match="not present") as raised:
         backend.execute(_patch_prepared())
+    assert raised.value.name == "azure.cosmos._rust"
 
 
 def test_async_rust_backend_patch_raises_when_binding_not_built_rust(monkeypatch):
@@ -122,8 +123,9 @@ def test_async_rust_backend_patch_raises_when_binding_not_built_rust(monkeypatch
 
     async def _run():
         backend = AsyncBindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-        with pytest.raises(NotImplementedError, match="not present"):
+        with pytest.raises(ImportError, match="not present") as raised:
             await backend.execute(_patch_prepared())
+        assert raised.value.name == "azure.cosmos._rust"
 
     asyncio.run(_run())
 

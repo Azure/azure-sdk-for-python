@@ -33,16 +33,17 @@ This module is Python wrapper code, not the binding or the Rust driver.
 """
 
 import warnings
-from ._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
 import logging
 from copy import copy, deepcopy
 from typing import Any, Mapping, Optional, Union, Callable, overload, Literal, TYPE_CHECKING
 
+import azure
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 
+from ._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
 from ._backend.cosmos_backend import CosmosBackend
 from ._backend.constants import is_rust_backend
 from ._backend.credentials import validate_credential
@@ -433,7 +434,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         except BaseException:
             try:
                 self.close()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Cleanup must not replace the original context-entry failure.
                 logging.getLogger(__name__).warning("Failed cleanup after client entry", exc_info=True)
             raise
         return self
@@ -515,7 +517,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
-    ) -> DatabaseProxy:
+    ) -> "azure.cosmos.DatabaseProxy":
         """Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
@@ -555,7 +557,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
-    ) -> tuple[DatabaseProxy, CosmosDict]:
+    ) -> tuple["azure.cosmos.DatabaseProxy", CosmosDict]:
         """Create a new database with the given ID (name).
 
         :param str id: ID (name) of the database to create.
@@ -593,9 +595,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool,
         **kwargs: Any,
-    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+    ) -> Union["azure.cosmos.DatabaseProxy", tuple["azure.cosmos.DatabaseProxy", CosmosDict]]: ...
 
     @trace_operation(binding_operation="create_database")
+    # trace_operation already wraps Azure Core's distributed_trace.
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         id: str,
@@ -682,7 +686,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
-    ) -> DatabaseProxy:
+    ) -> "azure.cosmos.DatabaseProxy":
         """
         Create the database if it does not exist already.
         If the database already exists, the existing settings are returned.
@@ -717,7 +721,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
-    ) -> tuple[DatabaseProxy, CosmosDict]:
+    ) -> tuple["azure.cosmos.DatabaseProxy", CosmosDict]:
         """
         Create the database if it does not exist already.
         If the database already exists, the existing settings are returned.
@@ -752,9 +756,11 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         throughput_bucket: Optional[int] = None,
         return_properties: bool,
         **kwargs: Any,
-    ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
+    ) -> Union["azure.cosmos.DatabaseProxy", tuple["azure.cosmos.DatabaseProxy", CosmosDict]]: ...
 
     @trace_operation(binding_operation=("read_database", "create_database", "read_database"))
+    # trace_operation already wraps Azure Core's distributed_trace.
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         id: str,
@@ -993,6 +999,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return _query_databases(self, query, parameters, kwargs)
 
     @trace_operation(binding_operation="delete_database")
+    # trace_operation already wraps Azure Core's distributed_trace.
+    # pylint: disable-next=client-method-missing-tracing-decorator
     def delete_database(  # pylint:disable=docstring-missing-param
         self,
         database: Union[str, DatabaseProxy, Mapping[str, Any]],

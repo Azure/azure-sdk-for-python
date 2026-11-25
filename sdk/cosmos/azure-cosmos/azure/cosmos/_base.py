@@ -27,14 +27,12 @@ import time
 from email.utils import formatdate
 import json
 import uuid
-import re
 import binascii
 from typing import Any, Dict, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import unquote as urllib_unquote
 from urllib.parse import urlsplit
-from azure.core import MatchConditions
 
 from . import documents
 from . import http_constants
@@ -70,7 +68,13 @@ if TYPE_CHECKING:
 
 
 def _get_match_headers(kwargs: dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
-    """Compatibility entrypoint for the shared public conditional-request utility."""
+    """Compatibility entrypoint for the shared public conditional-request utility.
+
+    :param kwargs: Request options containing an etag and match condition.
+    :type kwargs: dict[str, Any]
+    :return: If-Match and If-None-Match header values, respectively.
+    :rtype: tuple[str or None, str or None]
+    """
     return get_match_headers(kwargs)
 
 
@@ -444,6 +448,13 @@ def resolve_initial_headers(
     override order right and the other does not, with nothing failing to say so.
     A customer's routing or audit header then arrives on some calls and not
     others.
+
+    :param default_headers: Client headers used when constructing an override map.
+    :type default_headers: Mapping[str, Any]
+    :param options: Request options that may contain initialHeaders.
+    :type options: Mapping[str, Any] or None
+    :return: Merged header mapping, or None when no nonempty override was supplied.
+    :rtype: dict[str, Any] or None
     """
     initial_headers = (options or {}).get("initialHeaders")
     if not initial_headers:
@@ -838,7 +849,13 @@ def TrimBeginningAndEndingSlashes(path: str) -> str:
 
 # Parses the paths into a list of token each representing a property
 def ParsePaths(paths: list[str]) -> list[str]:
-    """Compatibility entrypoint for the transport-independent property-path parser."""
+    """Compatibility entrypoint for the transport-independent property-path parser.
+
+    :param paths: Property paths to tokenize.
+    :type paths: list[str]
+    :return: Parsed property-path tokens.
+    :rtype: list[str]
+    """
     return parse_paths(paths)
 
 

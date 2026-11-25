@@ -63,6 +63,12 @@ class AsyncItemHelper:
         Replace and upsert invoke the hook through process_backend_response here.
         Delete uses process_delete_response to record headers, invoke the hook
         with a None body, and return None.
+
+        :param str op: Single-item operation identifier.
+        :param dict[str, Any] arguments: Target, body, and caller request options to normalize.
+        :keyword float or None deadline: Monotonic deadline passed through preparation and execution.
+        :return: Parsed item properties, or None for deletion.
+        :rtype: ~azure.cosmos.CosmosDict or None
         """
         args, options = normalize_item_arguments(
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
@@ -96,23 +102,48 @@ class AsyncItemHelper:
 
         The time limit arrives as its own argument because the public method
         started the clock before calling in.
+
+        :keyword float or None deadline: Monotonic creation deadline established by the public method.
+        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and creation options to normalize.
+        :return: Created item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         return await self._run("create_item", kwargs, deadline=deadline)
 
     async def read_item(self, **kwargs: Any) -> Any:
-        """Read one item by its id and partition key."""
+        """Read one item by its id and partition key.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and read options.
+        :return: Item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return await self._run("read_item", kwargs)
 
     async def delete_item(self, **kwargs: Any) -> Any:
-        """Delete an item; parse its backend response for headers and return None."""
+        """Delete an item; parse its backend response for headers and return None.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and deletion options.
+        :return: None.
+        :rtype: None
+        """
         return await self._run("delete_item", kwargs)
 
     async def upsert_item(self, **kwargs: Any) -> Any:
-        """Create an item, or replace the item with the same id and partition key."""
+        """Create an item, or replace the item with the same id and partition key.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and upsert options.
+        :return: Upserted item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return await self._run("upsert_item", kwargs)
 
     async def replace_item(self, **kwargs: Any) -> Any:
-        """Replace the item with this id and partition key, failing if it is absent."""
+        """Replace the item with this id and partition key, failing if it is absent.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, replacement body, and request options.
+        :return: Replaced item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return await self._run("replace_item", kwargs)
 
     async def patch_item(self, **kwargs: Any) -> Any:
@@ -120,5 +151,9 @@ class AsyncItemHelper:
 
         This helper also completes the patch result. A supplied deadline uses
         the cancellation handling described by _run.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, patch operations, and request options.
+        :return: Patched item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         return await self._run("patch_item", kwargs)

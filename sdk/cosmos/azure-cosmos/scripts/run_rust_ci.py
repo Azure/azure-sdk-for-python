@@ -64,6 +64,12 @@ _COLLECTION_SPEC.loader.exec_module(test_collection)
 # surface/backend. These exact existing reasons are not environment exemptions.
 OFFLINE_SKIPS = {
     "common/test_container_metadata_unit.py": {"Async cancellation contract"},
+    "common/test_metadata_feed_paging_unit.py": {
+        "Synchronous nested operation inside a synchronous response hook",
+        "The explicitly selected legacy backend retains its HTTP retry policy",
+        "Scalar rows are a query projection, not a resource listing",
+        "Async Rust cancellation",
+    },
     "common/test_list_containers_backend_unit.py": {
         "Rust-specific option rejection",
         "Rust-specific binding failure",
@@ -328,28 +334,40 @@ class RequiredCoverage:
                     reporter.write_line(error, red=True)
 
 
-def run_native(results: Path) -> int:
-    """Run clippy, then the actual test harness with and without ``test-probes``.
+def run_native(results: Path, variant: str = "all") -> int:
+    """Run selected Cargo tests; the default variant also runs clippy.
 
     Clippy fails the run only on errors, such as the ``large_futures`` lint the
     workspace denies. Clippy warnings are printed but do not fail the run.
 
     :param results: Directory for the Cargo transcripts.
     :type results: pathlib.Path
+    :param variant: All variants, default features plus clippy, or test-probes only.
+    :type variant: str
     :return: Cargo's exit code, after checking successful runs for missing execution.
     :rtype: int
     """
     results.mkdir(parents=True, exist_ok=True)
-    clippy = ["cargo", "clippy", "--workspace", "--all-targets", "--all-features", "--locked"]
-    with (results / "cargo-clippy.log").open("w", encoding="utf-8") as log:
-        completed = subprocess.run(clippy, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
-    print((results / "cargo-clippy.log").read_text(encoding="utf-8"))
-    if completed.returncode:
-        return completed.returncode
-    for log_name, features in CARGO_TEST_RUNS:
+    environment = os.environ.copy()
+    # Cargo embeds Python without activating this interpreter's virtual environment.
+    # Include resolved .pth entries too, and resolve paths before changing cwd.
+    environment["PYTHONPATH"] = os.pathsep.join(str(Path(path).resolve()) for path in sys.path if path)
+    runs = {"all": CARGO_TEST_RUNS, "default": CARGO_TEST_RUNS[:1], "probes": CARGO_TEST_RUNS[1:]}[variant]
+    if variant != "probes":
+        clippy = ["cargo", "clippy", "--workspace", "--all-targets", "--all-features", "--locked"]
+        with (results / "cargo-clippy.log").open("w", encoding="utf-8") as log:
+            completed = subprocess.run(
+                clippy, cwd=PACKAGE, env=environment, stdout=log, stderr=subprocess.STDOUT, check=False
+            )
+        print((results / "cargo-clippy.log").read_text(encoding="utf-8"))
+        if completed.returncode:
+            return completed.returncode
+    for log_name, features in runs:
         command = ["cargo", "test", "--workspace", "--locked", *features, "--", "--test-threads=1"]
         with (results / log_name).open("w", encoding="utf-8") as log:
-            completed = subprocess.run(command, cwd=PACKAGE, stdout=log, stderr=subprocess.STDOUT, check=False)
+            completed = subprocess.run(
+                command, cwd=PACKAGE, env=environment, stdout=log, stderr=subprocess.STDOUT, check=False
+            )
         output = (results / log_name).read_text(encoding="utf-8")
         print(output)
         if completed.returncode:
@@ -403,13 +421,19 @@ def main() -> int:
     parser.add_argument("--results", type=Path, required=True)
     parser.add_argument("--collect-only", action="store_true")
     parser.add_argument("--require-installed-wheel", action="store_true")
+    parser.add_argument(
+        "--native-variant",
+        choices=("all", "default", "probes"),
+        default="all",
+        help="Feature set for the native suite (default: both).",
+    )
     parser.add_argument("--toxiproxy-worker", action="store_true", help=argparse.SUPPRESS)
     args = parser.parse_args()
     results = args.results.resolve()
     if args.suite == "native":
         if args.collect_only:
             parser.error("native coverage requires execution")
-        return run_native(results)
+        return run_native(results, args.native_variant)
     # Import before exposing the checkout for packaging-helper unit tests.
     native = importlib.import_module("azure.cosmos._rust")
     if args.require_installed_wheel and Path(native.__file__).resolve().is_relative_to(PACKAGE):

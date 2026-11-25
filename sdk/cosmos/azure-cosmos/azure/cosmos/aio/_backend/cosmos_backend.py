@@ -80,6 +80,13 @@ class AsyncCosmosBackend(abc.ABC):
         deadline is an absolute reading of time.monotonic(), not a new duration.
         For example, a deadline of 105 with the clock now at 102 leaves three
         seconds for the binding call. AsyncLegacyBackend rejects this method.
+
+        :param prepared: Operation inputs to send through the binding.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :keyword deadline: Absolute monotonic deadline, or None.
+        :paramtype deadline: float or None
+        :return: Binding response before public result processing.
+        :rtype: ~azure.cosmos._backend.contracts.BackendResponse
         """
         ...
 
@@ -89,6 +96,15 @@ class AsyncCosmosBackend(abc.ABC):
         """Get the container id and partition-key definition, or raise if unsupported.
 
         ``op`` names the operation that needs the lookup, such as ``"read_items"``.
+
+        :param container_link: Container resource address.
+        :type container_link: str
+        :keyword deadline: Absolute monotonic deadline, or None.
+        :paramtype deadline: float or None
+        :keyword op: Operation requiring metadata, or None when not associated with an operation.
+        :paramtype op: str or None
+        :return: Container identity and partition-key definition; the base implementation raises.
+        :rtype: ~azure.cosmos._backend.contracts.ContainerMetadata
         """
         raise NotImplementedError("This backend does not provide container metadata")
 
@@ -98,10 +114,24 @@ class AsyncCosmosBackend(abc.ABC):
         routing: OperationRouting,
         build_request: Callable[[], PreparedRequest],
         process_response: Callable[[BackendResponse], Any],
-        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,  # pylint: disable=unused-argument
         deadline: Optional[float] = None,
     ) -> Any:
-        """Validate support, await Rust execution, and process its response."""
+        """Validate support, await Rust execution, and process its response.
+
+        :keyword routing: Operation capability to validate before building the request.
+        :paramtype routing: ~azure.cosmos._backend.capabilities.OperationRouting
+        :keyword build_request: Synchronous factory for the prepared operation.
+        :paramtype build_request: typing.Callable[[], azure.cosmos._backend.contracts.PreparedRequest]
+        :keyword process_response: Synchronous callback converting the binding response.
+        :paramtype process_response: typing.Callable
+        :keyword legacy_call: Legacy override hook retained for interface compatibility; unused on Rust.
+        :paramtype legacy_call: typing.Callable or None
+        :keyword deadline: Absolute monotonic deadline, or None.
+        :paramtype deadline: float or None
+        :return: Result of the response-processing callback.
+        :rtype: typing.Any
+        """
         routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
@@ -117,10 +147,24 @@ class AsyncCosmosBackend(abc.ABC):
         routing: OperationRouting,
         build_request: Callable[[], PreparedPageRequest],
         process_response: Callable[[BackendPage], Any],
-        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
+        legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,  # pylint: disable=unused-argument
         deadline: Optional[float] = None,
     ) -> Any:
-        """Validate support and fetch one Rust page without legacy fallback."""
+        """Validate support and fetch one Rust page without legacy fallback.
+
+        :keyword routing: Operation capability to validate before preparing the page.
+        :paramtype routing: ~azure.cosmos._backend.capabilities.OperationRouting
+        :keyword build_request: Synchronous factory for the prepared page request.
+        :paramtype build_request: typing.Callable[[], azure.cosmos._backend.contracts.PreparedPageRequest]
+        :keyword process_response: Synchronous callback converting the fetched page.
+        :paramtype process_response: typing.Callable
+        :keyword legacy_call: Legacy override hook retained for interface compatibility; unused on Rust.
+        :paramtype legacy_call: typing.Callable or None
+        :keyword deadline: Absolute monotonic deadline, or None.
+        :paramtype deadline: float or None
+        :return: Result of processing the first backend page.
+        :rtype: typing.Any
+        """
         routing.require_rust_support()
         prepared = build_request()
         if prepared.op != routing.op:
@@ -153,6 +197,13 @@ class AsyncCosmosBackend(abc.ABC):
 
         This base implementation raises. AsyncLegacyBackend uses its supplied
         legacy-path page function instead.
+
+        :param prepared: Inputs for one page fetch.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+        :keyword deadline: Absolute monotonic deadline, or None.
+        :paramtype deadline: float or None
+        :return: Asynchronous iterator of backend pages; the base implementation raises.
+        :rtype: typing.AsyncIterator[azure.cosmos._backend.contracts.BackendPage]
         """
         raise NotImplementedError("execute_pages is not implemented by this backend.")
 
@@ -161,10 +212,17 @@ class AsyncCosmosBackend(abc.ABC):
 
         This base method performs no check. AsyncBindingAdapter checks that the
         operation and cursor mode have the required async binding function.
+
+        :param prepared: Page request to validate.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
         """
 
     def create_item_feed_cursor(self) -> _ItemFeedCursor:
-        """Create a feed cursor synchronously, without driver acquisition or page fetching."""
+        """Create a feed cursor synchronously, without driver acquisition or page fetching.
+
+        :return: Empty native feed cursor; the base implementation raises.
+        :rtype: ~azure.cosmos._rust._ItemFeedCursor
+        """
         raise NotImplementedError(
             "This backend does not provide native item-feed cursors"
         )

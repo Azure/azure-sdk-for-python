@@ -29,6 +29,9 @@ def _merge_explicit_item_kwargs(kwargs: Dict[str, Any], **values: Any) -> None:
 
     :param kwargs: Working options updated in place.
     :type kwargs: Dict[str, Any]
+    :keyword dict[str, Any] ``**values``: Explicit options; None values are skipped and hedging is validated.
+    :return: None.
+    :rtype: None
     """
     for name, value in values.items():
         if value is None:
@@ -61,6 +64,20 @@ def merge_create_item_explicit_kwargs(
     forwarded into request execution.
     ``availability_strategy`` is passed through the hedging-strategy
     validator.
+
+    :param dict[str, Any] kwargs: Working call keywords updated in place.
+    :keyword Any pre_trigger_include: Pre-trigger option copied when not None.
+    :keyword Any post_trigger_include: Post-trigger option copied when not None.
+    :keyword Any session_token: Session token copied when not None.
+    :keyword Any initial_headers: Caller header overrides copied when not None.
+    :keyword Any priority: Request priority copied when not None.
+    :keyword Any no_response: Write-response suppression option copied when not None.
+    :keyword Any retry_write: Write retry override copied under its internal option name.
+    :keyword Any throughput_bucket: Throughput bucket copied when not None.
+    :keyword Any availability_strategy: Hedging strategy validated before copying.
+    :keyword Any response_hook: Response callback retained for the public creation method.
+    :return: None.
+    :rtype: None
     """
     _merge_explicit_item_kwargs(
         kwargs,
@@ -89,7 +106,9 @@ def get_selected_backend(client_connection: Any) -> Any:
 
     :param client_connection: The connection that owns the ``_backend``
         attribute containing the selected Python backend.
+    :type client_connection: Any
     :returns: The stored Python backend object.
+    :rtype: Any
     :raises RuntimeError: If ``_backend`` is missing or ``None``.
     """
     connection_dict = getattr(client_connection, "__dict__", None)
@@ -118,13 +137,13 @@ def build_create_item_request_options(
     :param kwargs: Per-call kwargs forwarded to ``build_options``;
         not mutated by this function.
     :type kwargs: Dict[str, Any]
-    :param enable_automatic_id_generation: Negated into
+    :keyword enable_automatic_id_generation: Negated into
         ``options["disableAutomaticIdGeneration"]``.
     :type enable_automatic_id_generation: bool
-    :param indexing_directive: Written to ``options["indexingDirective"]``
+    :keyword indexing_directive: Written to ``options["indexingDirective"]``
         when supplied.
     :type indexing_directive: Optional[int]
-    :param populate_query_metrics: When truthy, emits the deprecation
+    :keyword populate_query_metrics: When truthy, emits the deprecation
         warning and writes ``options["populateQueryMetrics"]``.
     :type populate_query_metrics: Optional[bool]
     :returns: The request-options dict.
@@ -166,6 +185,21 @@ def merge_delete_item_explicit_kwargs(
     and ``match_condition`` (meaningful on delete) and omits
     ``no_response`` (delete has no body). ``availability_strategy`` is
     passed through the hedging-strategy validator.
+
+    :param dict[str, Any] kwargs: Working call keywords updated in place.
+    :keyword Any pre_trigger_include: Pre-trigger option copied when not None.
+    :keyword Any post_trigger_include: Post-trigger option copied when not None.
+    :keyword Any session_token: Session token copied when not None.
+    :keyword Any initial_headers: Caller header overrides copied when not None.
+    :keyword Any etag: ETag copied for conditional request preparation.
+    :keyword Any match_condition: Match condition copied for conditional request preparation.
+    :keyword Any priority: Request priority copied when not None.
+    :keyword Any retry_write: Write retry override copied under its internal option name.
+    :keyword Any throughput_bucket: Throughput bucket copied when not None.
+    :keyword Any availability_strategy: Hedging strategy validated before copying.
+    :keyword Any response_hook: Response callback copied when not None.
+    :return: None.
+    :rtype: None
     """
     _merge_explicit_item_kwargs(
         kwargs,
@@ -191,6 +225,10 @@ def build_delete_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     just a thin wrapper around ``build_options``. The container method
     already drops ``populate_query_metrics`` (with a deprecation
     warning) before kwargs reach here.
+
+    :param dict[str, Any] kwargs: Working keywords consumed by the legacy options builder.
+    :return: Internal deletion request options.
+    :rtype: dict[str, Any]
     """
     from .._base import build_options
     return build_options(kwargs)
@@ -224,6 +262,20 @@ def merge_read_item_explicit_kwargs(
     (negative / non-int) so the ``ValueError`` traceback points at the
     customer's call line, not this helper. ``availability_strategy``
     is passed through the hedging-strategy validator.
+
+    :param dict[str, Any] kwargs: Working call keywords updated in place.
+    :keyword Any post_trigger_include: Post-trigger option copied when not None.
+    :keyword Any session_token: Session token copied when not None.
+    :keyword Any initial_headers: Caller header overrides copied when not None.
+    :keyword Any etag: ETag copied for conditional request preparation.
+    :keyword Any match_condition: Match condition copied for conditional request preparation.
+    :keyword Any max_integrated_cache_staleness_in_ms: Cache-staleness bound copied when not None.
+    :keyword Any priority: Request priority copied when not None.
+    :keyword Any throughput_bucket: Throughput bucket copied when not None.
+    :keyword Any availability_strategy: Hedging strategy validated before copying.
+    :keyword Any response_hook: Response callback copied when not None.
+    :return: None.
+    :rtype: None
     """
     _merge_explicit_item_kwargs(
         kwargs,
@@ -247,12 +299,16 @@ def build_read_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     ``disableAutomaticIdGeneration`` / ``indexingDirective`` knobs.
     Both public clients reject ``populate_query_metrics`` by presence
     before reaching this helper.
+
+    :param dict[str, Any] kwargs: Working keywords consumed by the legacy options builder.
+    :return: Internal read request options.
+    :rtype: dict[str, Any]
     """
     from .._base import build_options
     return build_options(kwargs)
 
 
-def merge_upsert_replace_item_explicit_kwargs(
+def merge_upsert_replace_item_kwargs(
     kwargs: Dict[str, Any],
     *,
     pre_trigger_include: Any = None,
@@ -274,6 +330,22 @@ def merge_upsert_replace_item_explicit_kwargs(
     This helper does not accept ``indexing_directive`` or
     ``enable_automatic_id_generation``. ``availability_strategy`` is validated
     before it is stored.
+
+    :param dict[str, Any] kwargs: Working call keywords updated in place.
+    :keyword Any pre_trigger_include: Pre-trigger option copied when not None.
+    :keyword Any post_trigger_include: Post-trigger option copied when not None.
+    :keyword Any session_token: Session token copied when not None.
+    :keyword Any initial_headers: Caller header overrides copied when not None.
+    :keyword Any etag: ETag copied for conditional request preparation.
+    :keyword Any match_condition: Match condition copied for conditional request preparation.
+    :keyword Any priority: Request priority copied when not None.
+    :keyword Any no_response: Write-response suppression option copied when not None.
+    :keyword Any retry_write: Write retry override copied under its internal option name.
+    :keyword Any throughput_bucket: Throughput bucket copied when not None.
+    :keyword Any availability_strategy: Hedging strategy validated before copying.
+    :keyword Any response_hook: Response callback copied when not None.
+    :return: None.
+    :rtype: None
     """
     _merge_explicit_item_kwargs(
         kwargs,
@@ -318,6 +390,11 @@ def build_upsert_item_request_options(
     ``is not None`` gate (rather than a truthy check) preserves the exact
     legacy ``upsert_item`` behaviour, which warned for any explicit value
     including ``False``.
+
+    :param dict[str, Any] kwargs: Working keywords consumed by the legacy options builder.
+    :keyword bool or None populate_query_metrics: Deprecated metrics flag retained for compatibility callers.
+    :return: Internal upsert options with automatic ID generation disabled.
+    :rtype: dict[str, Any]
     """
     from .._base import build_options
     request_options = build_options(kwargs)
@@ -352,6 +429,21 @@ def merge_patch_item_explicit_kwargs(
     ``filter_predicate`` and ``patch_operations`` are passed to the helper
     separately, not merged here. ``availability_strategy`` is validated
     before it is stored.
+
+    :param dict[str, Any] kwargs: Working call keywords updated in place.
+    :keyword Any pre_trigger_include: Pre-trigger option copied when not None.
+    :keyword Any post_trigger_include: Post-trigger option copied when not None.
+    :keyword Any session_token: Session token copied when not None.
+    :keyword Any etag: ETag copied for conditional request preparation.
+    :keyword Any match_condition: Match condition copied for conditional request preparation.
+    :keyword Any priority: Request priority copied when not None.
+    :keyword Any no_response: Write-response suppression option copied when not None.
+    :keyword Any retry_write: Write retry override copied under its internal option name.
+    :keyword Any throughput_bucket: Throughput bucket copied when not None.
+    :keyword Any availability_strategy: Hedging strategy validated before copying.
+    :keyword Any response_hook: Response callback copied when not None.
+    :return: None.
+    :rtype: None
     """
     _merge_explicit_item_kwargs(
         kwargs,
@@ -375,6 +467,10 @@ def build_patch_item_request_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     Always disables automatic id generation. ``etag`` / ``match_condition``
     are folded into ``accessCondition`` by ``build_options``. The helper
     sets ``filterPredicate`` itself; it is not a ``build_options`` key.
+
+    :param dict[str, Any] kwargs: Working keywords consumed by the legacy options builder.
+    :return: Internal patch options with automatic ID generation disabled.
+    :rtype: dict[str, Any]
     """
     from .._base import build_options
     request_options = build_options(kwargs)

@@ -23,6 +23,9 @@ from azure.cosmos.partition_key import PartitionKey
 from config.diagnostics import fault_rule_hit_count_async
 
 
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
+
 def _host():
     return os.environ["ACCOUNT_HOST"]
 

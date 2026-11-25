@@ -53,6 +53,9 @@ class FrozenMapping(Mapping[Any, Any]):
         Remove this mapping's identity even when copying fails. The final
         attribute assignment installs the snapshot during construction of
         the frozen dataclass; it does not modify the supplied mapping.
+
+        :param _parents: Ancestor identities used to detect circular references, or None.
+        :type _parents: set[int] or None
         """
         parents = set() if _parents is None else _parents
         identity = id(self._values)
@@ -85,6 +88,11 @@ class FrozenMapping(Mapping[Any, Any]):
         """Reuse this object because its stored contents are already read-only.
 
         No children need copying, so the deepcopy memo is not used.
+
+        :param memo: Deep-copy memo accepted for compatibility with the copying protocol.
+        :type memo: dict[int, typing.Any]
+        :return: This immutable mapping.
+        :rtype: ~azure.cosmos._backend._immutable.FrozenMapping
         """
         return self
 
@@ -105,6 +113,13 @@ def freeze_json(value: Any, parents: Optional[set[int]] = None) -> Any:
 
     This prepares Python values, not a complete JSON-validity check.
     Encoding happens later; ``json_mapping`` handles frozen mappings then.
+
+    :param value: Supported scalar, mapping, or sequence to snapshot.
+    :type value: typing.Any
+    :param parents: Ancestor identities for cycle detection, or None for a new traversal.
+    :type parents: set[int] or None
+    :return: Immutable snapshot, reusing already immutable supported values.
+    :rtype: typing.Any
     """
     if value is None or type(value) in (str, int, float, bool, FrozenMapping):
         return value
@@ -120,7 +135,8 @@ def freeze_json(value: Any, parents: Optional[set[int]] = None) -> Any:
             result = tuple(freeze_json(item, parents) for item in value)
         finally:
             parents.remove(identity)
-        if type(value) is tuple and all(a is b for a, b in zip(value, result)):
+        # Subclasses may retain mutable state; only exact tuples can be reused.
+        if type(value) is tuple and all(a is b for a, b in zip(value, result)):  # pylint: disable=unidiomatic-typecheck
             return value
         return result
     raise TypeError(f"Unsupported prepared JSON value: {type(value).__name__}")
@@ -138,14 +154,22 @@ def freeze_headers(headers: Mapping[str, str]) -> Mapping[str, str]:
 
     Reuse an exact FrozenMapping after checking its entries. Empty mappings
     share one read-only instance because they contain no values to copy.
+
+    :param headers: Mapping of exact built-in string names to string values.
+    :type headers: typing.Mapping[str, str]
+    :return: Independently owned immutable header mapping.
+    :rtype: typing.Mapping[str, str]
     """
     if not isinstance(headers, Mapping) or any(
-        type(key) is not str or type(value) is not str
+        # Exact strings exclude subclasses with custom behavior.
+        type(key) is not str or type(value) is not str  # pylint: disable=unidiomatic-typecheck
         for key, value in headers.items()
     ):
         raise TypeError("Prepared headers must be a mapping of strings to strings")
     if not headers:
         return _EMPTY_HEADERS
+    # Only the concrete immutable implementation can safely be reused.
+    # pylint: disable-next=unidiomatic-typecheck
     return headers if type(headers) is FrozenMapping else FrozenMapping(headers)
 
 
@@ -159,7 +183,13 @@ def json_mapping(value: Any) -> dict[Any, Any]:
 
     Only exact FrozenMapping instances are accepted. Other values raise
     TypeError: this is an encoder callback, not a general conversion helper.
+
+    :param value: Frozen mapping encountered by the JSON encoder.
+    :type value: typing.Any
+    :return: Dictionary exposing the frozen mapping's entries to the encoder.
+    :rtype: dict[typing.Any, typing.Any]
     """
-    if type(value) is FrozenMapping:
+    # Subclasses are not part of the prepared JSON protocol.
+    if type(value) is FrozenMapping:  # pylint: disable=unidiomatic-typecheck
         return dict(value.items())
     raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")

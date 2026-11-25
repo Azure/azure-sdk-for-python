@@ -99,81 +99,13 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
                     "(known gap 6); all response-side assertions ran. Unverified request checks: "
                     + "; ".join(self._unverified_request_checks))
 
-    async def test_session_token_swr_for_ops_async_rust(self):
-        # Source: tests/test_session_async.py::TestSessionAsync.test_session_token_swr_for_ops_async
-        # Session token should not be sent for control plane operations
-        # control-plane container create/read/delete via key_db
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. Each capture below cannot see the outgoing request headers on the Rust path.
-        with self._capture_requests("create_container: no session token") as requests:
-            test_container = await self.key_db.create_container(str(uuid.uuid4()), PartitionKey(path="/id"))
-        for request in requests:
-            assert_no_session_token(request)
-        with self._capture_requests("container read: no session token") as requests:
-            await self.key_db.get_container_client(container=self.created_container).read()
-        for request in requests:
-            assert_no_session_token(request)
-        with self._capture_requests("delete_container: no session token") as requests:
-            await self.key_db.delete_container(test_container)
-        for request in requests:
-            assert_no_session_token(request)
-
-        # Session token should be sent for document read/batch requests only - verify it is not sent for write requests
-        with self._capture_requests("upsert_item: no session token") as requests:
-            up_item = await self.created_container.upsert_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        for request in requests:
-            assert_no_session_token(request)
-        with self._capture_requests("replace_item: no session token") as requests:
-            replaced_item = await self.created_container.replace_item(item=up_item['id'], body={'id': up_item['id'], 'song': 'song', 'pk': 'mypk'})
-        for request in requests:
-            assert_no_session_token(request)
-        with self._capture_requests("create_item: no session token") as requests:
-            created_document = await self.created_container.create_item(body={'id': '1' + str(uuid.uuid4()), 'pk': 'mypk'})
-        for request in requests:
-            assert_no_session_token(request)
-        response_session_token = created_document.get_response_headers().get(HttpHeaders.SessionToken)
-        with self._capture_requests("read_item: session token sent") as requests:
-            read_item = await self.created_container.read_item(item=created_document['id'], partition_key='mypk')
-        for request in requests:
-            assert_session_token(request)
-        with self._capture_requests("second read_item: session token sent") as requests:
-            read_item2 = await self.created_container.read_item(item=created_document['id'], partition_key='mypk')
-        for request in requests:
-            assert_session_token(request)
-
-        # Since the session hasn't been updated (no write requests have happened) verify session is still the same
-        assert (read_item.get_response_headers().get(HttpHeaders.SessionToken) ==
-                read_item2.get_response_headers().get(HttpHeaders.SessionToken) ==
-                response_session_token)
-        # Verify session tokens are sent for batch requests too
-        batch_operations = [
-            ("create", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
-            ("replace", (read_item2['id'], {"id": str(uuid.uuid4()), "pk": 'mypk'})),
-            ("read", (replaced_item['id'],)),
-            ("upsert", ({"id": str(uuid.uuid4()), "pk": 'mypk'},)),
-        ]
-        with self._capture_requests("execute_item_batch: session token sent") as requests:
-            batch_result = await self.created_container.execute_item_batch(batch_operations, 'mypk')
-        for request in requests:
-            assert_session_token(request)
-        batch_response_token = batch_result.get_response_headers().get(HttpHeaders.SessionToken)
-        assert batch_response_token != response_session_token
-
-        # Verify no session tokens are sent for delete requests either - but verify session token is updated
-        with self._capture_requests("delete_item: no session token") as requests:
-            await self.created_container.delete_item(replaced_item['id'], replaced_item['pk'])
-        for request in requests:
-            assert_no_session_token(request)
-        assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) is not None
-        assert self.created_db.client_connection.last_response_headers.get(HttpHeaders.SessionToken) != batch_response_token
-
-        self._skip_unverified_request_checks()
-
     # This test injects emulator-style multi-write topology with a localhost endpoint.
     # In AAD live lanes that injected secondary endpoint is unreachable, so skip there.
     @pytest.mark.skipif(
         os.getenv("COSMOS_TEST_DATA_AUTH_MODE", "key").strip().lower() == 'aad',
         reason="environment-gap: MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only."
     )
+    @pytest.mark.cosmosSdkFaultInjection
     async def test_session_token_mwr_for_ops_async_rust(self):
         # Source: tests/test_session_async.py::TestSessionAsync.test_session_token_mwr_for_ops_async
         # For multiple write regions, all document requests should send out session tokens

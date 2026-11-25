@@ -22,9 +22,9 @@ Python preparation, locks, token acquisition, and calling-thread cleanup can
 still block.
 """
 from __future__ import annotations
-from ..._backend.request_settings import binding_settings_contract_error
 
-import asyncio
+# Coordinate application-loop futures and cancellation; no transport sleeps are used.
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import threading
 from concurrent.futures import Future
@@ -66,6 +66,7 @@ from azure.cosmos._backend._async_credential_bridge import AsyncTokenCredentialB
 from azure.cosmos._backend.credentials import _is_async_credential
 
 from azure.core.exceptions import ClientAuthenticationError, ServiceResponseError
+from ..._backend.request_settings import binding_settings_contract_error
 from ..._operation_deadline import remaining_timeout, run_with_deadline
 
 from .cosmos_backend import AsyncCosmosBackend
@@ -105,7 +106,9 @@ def _binding_function_for_op(op: str) -> Optional[Any]:
     async function is missing. A missing export does not establish why it is absent.
 
     :param op: The Python wrapper's operation name, from the prepared request.
+    :type op: str
     :returns: The matching async binding function, or ``None``.
+    :rtype: typing.Callable or None
     """
     binding_function_name = OP_TO_BINDING_FUNCTION_NAME.get(op)
     if binding_function_name is None or _rust_module is None:
@@ -122,7 +125,9 @@ def _binding_function_by_name(binding_function_name: Optional[str]) -> Optional[
     no paging implementation in every cursor mode.
 
     :param binding_function_name: A binding function name, or ``None`` if none applies.
+    :type binding_function_name: str or None
     :returns: The matching async binding function, or ``None``.
+    :rtype: typing.Callable or None
     """
     if binding_function_name is None or _rust_module is None:
         return None
@@ -180,7 +185,11 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             raise
 
     def _take_driver_handle_for_close(self) -> Optional[_DriverHandle]:
-        """Mark the client closed and remove its stored driver handle for release."""
+        """Mark the client closed and remove its stored driver handle for release.
+
+        :return: Detached owning driver handle, or None when no handle remains.
+        :rtype: ~azure.cosmos._rust._DriverHandle or None
+        """
         with self._driver_handle_lock:
             self._closing = True
             driver_handle = self._driver_handle
@@ -195,6 +204,9 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         Async credentials still require their original customer event loop.
         Shielding makes cancellation stop only this caller's wait, not the
         shared worker. A failed attempt can be retried; close releases late handles.
+
+        :return: Shared owning driver handle.
+        :rtype: ~azure.cosmos._rust._DriverHandle
         """
         if _REQUEST_CONTRACT_ERROR is not None:
             raise RuntimeError(_REQUEST_CONTRACT_ERROR)
@@ -221,7 +233,11 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
 
     @staticmethod
     def _driver_acquisition_finished(future: "asyncio.Future[_DriverHandle]") -> None:
-        """Observe this loop's result even if its caller stopped waiting."""
+        """Observe this loop's result even if its caller stopped waiting.
+
+        :param future: Event-loop future carrying the shared acquisition result.
+        :type future: asyncio.Future[azure.cosmos._rust._DriverHandle]
+        """
         if not future.cancelled():
             future.exception()
 
@@ -261,7 +277,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                         finally:
                             if driver_handle is not None:
                                 release_driver_handle_quietly(driver_handle, _rust_module)
-                    except BaseException as error:
+                    # Every worker failure must settle the future shared by close callers.
+                    except BaseException as error:  # pylint: disable=broad-exception-caught
                         pending_close_future.set_exception(error)
                     else:
                         pending_close_future.set_result(None)
@@ -319,7 +336,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             # Never raise from object finalization.
             pass
 
-    async def execute(  # pylint: disable=too-many-branches
+    async def execute(
         self, prepared: PreparedRequest, *, deadline: Optional[float] = None
     ) -> BackendResponse:
         """Execute one prepared request and return a backend response.
@@ -328,6 +345,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         ``BindingAdapter.execute``, with one difference: the ``_async`` binding
         function is called on the calling thread and its returned awaitable is
         awaited rather than waiting synchronously for its result.
+
+        :param prepared: Operation inputs to send through the binding.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :keyword deadline: Absolute monotonic deadline, or None to derive a budget from settings.
+        :paramtype deadline: float or None
+        :return: Normalized backend response with unparsed body bytes.
+        :rtype: ~azure.cosmos._backend.contracts.BackendResponse
         """
         if not isinstance(prepared, PreparedRequest):
             raise TypeError("execute requires a PreparedRequest")
@@ -371,6 +395,38 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             prepared.op,
             OP_TO_BINDING_FUNCTION_NAME.get(prepared.op),
         )
+        result = await self._call_operation(binding_function, driver_handle, prepared, deadline, contribution)
+        if result is None:
+            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
+        if contribution is not None:
+            result = contribution.response(result)
+        response = build_backend_response(*result)
+        log_response_diagnostics(self, prepared.op, response)
+        return response
+
+    async def _call_operation(
+        self,
+        binding_function: Any,
+        driver_handle: _DriverHandle,
+        prepared: PreparedRequest,
+        deadline: Optional[float],
+        contribution: Any,
+    ) -> Any:
+        """Await the selected binding export and translate operation failures.
+
+        :param binding_function: Callable async export validated before driver acquisition.
+        :type binding_function: typing.Callable
+        :param driver_handle: Acquired owning handle for this operation.
+        :type driver_handle: ~azure.cosmos._rust._DriverHandle
+        :param prepared: Operation inputs, including merged client headers.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :param deadline: Absolute monotonic deadline, or None.
+        :type deadline: float or None
+        :param contribution: Operation diagnostics recorder, or None when tracing is inactive.
+        :type contribution: typing.Any
+        :return: Raw binding response tuple, before response normalization.
+        :rtype: typing.Any
+        """
         # Call the binding function and await its result, without a Python executor
         # job for service I/O. Translate response-less errors to ServiceResponseError,
         # without assuming no request was sent or invoking legacy retry policies.
@@ -407,13 +463,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             if contribution is not None and (isinstance(exc, ValueError) or is_credential_error(exc)):
                 contribution.error(exc)
             raise
-        if result is None:
-            raise BindingProtocolError(f"The binding returned no response for {prepared.op!r}")
-        if contribution is not None:
-            result = contribution.response(result)
-        response = build_backend_response(*result)
-        log_response_diagnostics(self, prepared.op, response)
-        return response
+        return result
 
     async def get_container_metadata(
         self, container_link: str, *, deadline: Optional[float] = None, op: Optional[str] = None
@@ -423,6 +473,15 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         Same result and ``op`` handling as the synchronous
         ``BindingAdapter.get_container_metadata``, with one difference: the
         ``_async`` binding function is awaited.
+
+        :param container_link: Container resource address.
+        :type container_link: str
+        :keyword deadline: Absolute monotonic deadline, or None to use the client timeout.
+        :paramtype deadline: float or None
+        :keyword op: Operation requiring metadata, or None when no operation owns the lookup.
+        :paramtype op: str or None
+        :return: Validated container identity and partition-key definition.
+        :rtype: ~azure.cosmos._backend.contracts.ContainerMetadata
         """
         deadline = self._request_deadline(deadline)
         if _rust_module is None:
@@ -446,6 +505,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         if operation is not None:
             binding_kwargs["include_attempts"] = True
         try:
+            # The non-None export is a native callable; pylint cannot inspect the extension.
+            # pylint: disable-next=not-callable
             result = await binding_function(driver_handle, container_link, **binding_kwargs)
         except TimeoutError as exc:
             record_failed_lookup(operation, exc)
@@ -471,7 +532,8 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             raise
         return build_container_metadata(result)
 
-    async def execute_pages(
+    # An async generator implements the base method's synchronous AsyncIterator-returning contract.
+    async def execute_pages(  # pylint: disable=invalid-overridden-method
         self, prepared: PreparedPageRequest, *, deadline: Optional[float] = None
     ) -> AsyncIterator[BackendPage]:
         """Yield one backend page when the caller advances this async generator.
@@ -480,6 +542,13 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         optional feed cursor -> response tuple -> BackendResponse -> BackendPage.
         The caller uses async for or awaits __anext__(); this method does not
         fetch all subsequent pages itself.
+
+        :param prepared: Inputs and optional retained cursor for one page fetch.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+        :keyword deadline: Absolute monotonic deadline, or None to derive a budget from settings.
+        :paramtype deadline: float or None
+        :return: Asynchronous iterator yielding one backend page.
+        :rtype: typing.AsyncIterator[azure.cosmos._backend.contracts.BackendPage]
         """
         self.validate_page_request(prepared)
         deadline = self._request_deadline(deadline, prepared.settings.timeout_seconds)
@@ -519,11 +588,7 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
                 kwargs["include_attempts"] = True
             try:
                 result = await binding_function(*args, **kwargs)
-            except TimeoutError as exc:
-                if contribution is not None:
-                    contribution.error(exc)
-                raise
-            except ClientAuthenticationError as exc:
+            except (TimeoutError, ClientAuthenticationError) as exc:
                 if contribution is not None:
                     contribution.error(exc)
                 raise
@@ -553,6 +618,9 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         Same checks as the synchronous ``BindingAdapter.validate_page_request``,
         with one difference: it requires the ``_async`` form of each binding
         function.
+
+        :param prepared: Page request whose operation and cursor mode require validation.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
         """
         validate_page_request(prepared, _rust_module, _binding_function_by_name, "AsyncBindingAdapter", "_async")
 
@@ -562,6 +630,9 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
         Same as the synchronous ``BindingAdapter.create_item_feed_cursor``:
         call the binding's cursor constructor synchronously, without acquiring
         a driver handle or fetching a page.
+
+        :return: New empty native item-feed cursor.
+        :rtype: ~azure.cosmos._rust._ItemFeedCursor
         """
         if _rust_module is None:
             raise PagePreflightError(
@@ -571,4 +642,5 @@ class AsyncBindingAdapter(BindingAdapterShared, AsyncCosmosBackend):
             raise RuntimeError(
                 "The compiled binding lacks _ItemFeedCursor; rebuild it from the current source."
             )
-        return _rust_module._ItemFeedCursor()
+        # This private export is the native cursor constructor used by the adapter.
+        return _rust_module._ItemFeedCursor()  # pylint: disable=protected-access

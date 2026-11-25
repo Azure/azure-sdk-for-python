@@ -44,12 +44,12 @@ from .._backend.contracts import BackendResponse, PreparedRequest
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosAsyncItemPaged, CosmosItemPaged
 from .._feed_ranges_rust_routing import (
-    build_feed_range_from_partition_key_prepared_request,
-    build_is_feed_range_subset_prepared_request,
+    build_partition_key_range_request,
+    build_feed_range_subset_request,
     build_read_feed_ranges_prepared_request,
-    can_use_rust_backend_for_feed_range_from_partition_key,
-    can_use_rust_backend_for_read_feed_ranges,
-    parse_feed_range_from_partition_key_payload,
+    can_use_rust_partition_key_range,
+    can_use_rust_read_feed_ranges,
+    parse_partition_key_range_payload,
     parse_is_feed_range_subset_payload,
     parse_read_feed_ranges_payload,
     validate_read_feed_ranges_force_refresh,
@@ -98,13 +98,20 @@ def _container_rid(
     container_link: str,
     properties: Mapping[str, Any],
 ) -> str:
-    """Return the container resource id from properties or the connection cache."""
+    """Return the container resource id from properties or the connection cache.
+
+    :param Any client_connection: Connection providing a legacy metadata-cache fallback.
+    :param str container_link: Container link indexing that cache.
+    :param Mapping[str, Any] properties: Resolved container properties that may contain a string RID.
+    :return: The container RID from the properties or cached entry.
+    :rtype: str
+    """
     rid = properties.get("_rid")
     if isinstance(rid, str):
         return rid
     # Preserve the existing cache contract for test doubles and legacy connection
     # implementations whose property-population callback returns no value.
-    return client_connection._container_properties_cache[container_link]["_rid"]
+    return client_connection._container_properties_cache[container_link]["_rid"]  # pylint: disable=protected-access
 
 
 def read_feed_ranges(
@@ -116,11 +123,22 @@ def read_feed_ranges(
     kwargs: Mapping[str, Any],
     telemetry_owner: Any = None,
 ) -> CosmosItemPaged:
-    """Fetch one complete range set lazily; return copies on subsequent iteration."""
+    """Fetch one complete range set lazily; return copies on subsequent iteration.
+
+    :keyword Any client_connection: Connection owning the selected backend and diagnostic headers.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Metadata reader used only by the explicitly selected legacy path.
+    :keyword bool force_refresh: Whether discovery must refresh cached range information.
+    :keyword Mapping[str, Any] kwargs: Request and telemetry controls captured for lazy execution.
+    :keyword Any telemetry_owner: Proxy providing tracing context for the lazy fetch.
+    :return: Lazy range pager whose subsequent iterations receive independent result copies.
+    :rtype: ~azure.core.paging.ItemPaged
+    """
     validate_read_feed_ranges_force_refresh(force_refresh)
     kwargs = dict(kwargs)
-    backend = client_connection._backend
-    rust_eligible = can_use_rust_backend_for_read_feed_ranges(
+    # This internal coordinator uses the connection's already-selected backend.
+    backend = client_connection._backend  # pylint: disable=protected-access
+    rust_eligible = can_use_rust_read_feed_ranges(
         backend=backend, kwargs=kwargs
     )
     result = _FeedRangesResult(client_connection)
@@ -138,7 +156,8 @@ def read_feed_ranges(
                 )
             }
             partition_key_ranges = (
-                client_connection._routing_map_provider.get_overlapping_ranges(
+                # Legacy discovery intentionally uses the connection's internal routing cache.
+                client_connection._routing_map_provider.get_overlapping_ranges(  # pylint: disable=protected-access
                     container_link,
                     [Range("", "FF", True, False)],
                     feed_options,
@@ -197,23 +216,32 @@ def feed_range_from_partition_key(
     partition_key_value: Any,
     get_legacy_epk_range: Callable[[Any], Range],
 ) -> dict[str, Any]:
-    """Calculate one partition key's feed range through the selected Python backend."""
-    backend = client_connection._backend
+    """Calculate one partition key's feed range through the selected Python backend.
+
+    :keyword Any client_connection: Connection owning the selected backend and diagnostic headers.
+    :keyword str container_link: Name-based container resource link.
+    :keyword Any partition_key_value: Public partition key whose effective range is requested.
+    :keyword callable get_legacy_epk_range: Legacy-only callback mapping the key to an effective range.
+    :return: Feed-range dictionary describing the supplied partition key.
+    :rtype: dict[str, Any]
+    """
+    # Internal routing reads selection once; execution failures never trigger fallback.
+    backend = client_connection._backend  # pylint: disable=protected-access
     return backend.run_operation(
-        build_request=lambda: build_feed_range_from_partition_key_prepared_request(
+        build_request=lambda: build_partition_key_range_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
         ),
         routing=OperationRouting(
             "feed_range_from_partition_key",
-            can_use_rust_backend_for_feed_range_from_partition_key(
+            can_use_rust_partition_key_range(
                 backend=backend
             ),
         ),
         legacy_call=lambda: FeedRangeInternalEpk(
             get_legacy_epk_range(partition_key_value)
         ).to_dict(),
-        process_response=lambda response: parse_feed_range_from_partition_key_payload(
+        process_response=lambda response: parse_partition_key_range_payload(
             process_backend_response(
                 response,
                 client_connection=client_connection,
@@ -229,8 +257,16 @@ def is_feed_range_subset(
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
 ) -> bool:
-    """Compare feed ranges through the selected Python backend."""
-    backend = client_connection._backend
+    """Compare feed ranges through the selected Python backend.
+
+    :keyword Any client_connection: Connection owning the already-selected execution backend.
+    :keyword dict[str, Any] parent_feed_range: Candidate containing effective partition-key range.
+    :keyword dict[str, Any] child_feed_range: Candidate range to test for containment.
+    :return: Whether the child range is a subset of the parent range.
+    :rtype: bool
+    """
+    # This internal coordinator uses the connection's already-selected backend.
+    backend = client_connection._backend  # pylint: disable=protected-access
 
     def run_legacy() -> bool:
         parent = FeedRangeInternalEpk.from_json(parent_feed_range)
@@ -238,7 +274,7 @@ def is_feed_range_subset(
         return child.get_normalized_range().is_subset(parent.get_normalized_range())
 
     return backend.run_operation(
-        build_request=lambda: build_is_feed_range_subset_prepared_request(
+        build_request=lambda: build_feed_range_subset_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
         ),
@@ -263,11 +299,22 @@ def read_feed_ranges_async(
     kwargs: Mapping[str, Any],
     telemetry_owner: Any = None,
 ) -> CosmosAsyncItemPaged:
-    """Async twin of :func:`read_feed_ranges`."""
+    """Async twin of :func:`read_feed_ranges`.
+
+    :keyword Any client_connection: Connection owning the selected async backend and diagnostic headers.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Async metadata reader used only by the explicitly selected legacy path.
+    :keyword bool force_refresh: Whether discovery must refresh cached range information.
+    :keyword Mapping[str, Any] kwargs: Request and telemetry controls captured for lazy execution.
+    :keyword Any telemetry_owner: Proxy providing tracing context for the lazy fetch.
+    :return: Lazy async range pager whose subsequent iterations receive independent result copies.
+    :rtype: ~azure.core.async_paging.AsyncItemPaged
+    """
     validate_read_feed_ranges_force_refresh(force_refresh)
     kwargs = dict(kwargs)
-    backend = client_connection._backend
-    rust_eligible = can_use_rust_backend_for_read_feed_ranges(
+    # This internal coordinator uses the connection's already-selected backend.
+    backend = client_connection._backend  # pylint: disable=protected-access
+    rust_eligible = can_use_rust_read_feed_ranges(
         backend=backend, kwargs=kwargs
     )
     result = _FeedRangesResult(client_connection)
@@ -291,7 +338,8 @@ def read_feed_ranges_async(
                 )
             }
             partition_key_ranges = (
-                await client_connection._routing_map_provider.get_overlapping_ranges(
+                # Legacy discovery intentionally uses the connection's internal routing cache.
+                await client_connection._routing_map_provider.get_overlapping_ranges(  # pylint: disable=protected-access
                     container_link,
                     [Range("", "FF", True, False)],
                     feed_options,
@@ -350,11 +398,20 @@ async def feed_range_from_partition_key_async(
     partition_key_value: Any,
     get_legacy_epk_range: Callable[[Any], Awaitable[Range]],
 ) -> dict[str, Any]:
-    """Async twin of :func:`feed_range_from_partition_key`."""
-    backend = client_connection._backend
+    """Async twin of :func:`feed_range_from_partition_key`.
+
+    :keyword Any client_connection: Connection owning the selected async backend and diagnostic headers.
+    :keyword str container_link: Name-based container resource link.
+    :keyword Any partition_key_value: Public partition key whose effective range is requested.
+    :keyword callable get_legacy_epk_range: Async legacy-only callback mapping the key to an effective range.
+    :return: Feed-range dictionary describing the supplied partition key.
+    :rtype: dict[str, Any]
+    """
+    # Internal routing reads selection once; execution failures never trigger fallback.
+    backend = client_connection._backend  # pylint: disable=protected-access
 
     def build_request() -> PreparedRequest:
-        return build_feed_range_from_partition_key_prepared_request(
+        return build_partition_key_range_request(
             container_link=container_link,
             partition_key_value=partition_key_value,
         )
@@ -368,12 +425,12 @@ async def feed_range_from_partition_key_async(
         build_request=build_request,
         routing=OperationRouting(
             "feed_range_from_partition_key",
-            can_use_rust_backend_for_feed_range_from_partition_key(
+            can_use_rust_partition_key_range(
                 backend=backend
             ),
         ),
         legacy_call=run_legacy,
-        process_response=lambda response: parse_feed_range_from_partition_key_payload(
+        process_response=lambda response: parse_partition_key_range_payload(
             process_backend_response(
                 response,
                 client_connection=client_connection,
@@ -389,11 +446,19 @@ async def is_feed_range_subset_async(
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
 ) -> bool:
-    """Async twin of :func:`is_feed_range_subset`."""
-    backend = client_connection._backend
+    """Async twin of :func:`is_feed_range_subset`.
+
+    :keyword Any client_connection: Connection owning the already-selected async execution backend.
+    :keyword dict[str, Any] parent_feed_range: Candidate containing effective partition-key range.
+    :keyword dict[str, Any] child_feed_range: Candidate range to test for containment.
+    :return: Whether the child range is a subset of the parent range.
+    :rtype: bool
+    """
+    # This internal coordinator uses the connection's already-selected backend.
+    backend = client_connection._backend  # pylint: disable=protected-access
 
     def build_request() -> PreparedRequest:
-        return build_is_feed_range_subset_prepared_request(
+        return build_feed_range_subset_request(
             parent_feed_range=parent_feed_range,
             child_feed_range=child_feed_range,
         )

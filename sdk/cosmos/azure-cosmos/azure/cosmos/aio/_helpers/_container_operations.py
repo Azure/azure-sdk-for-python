@@ -67,7 +67,18 @@ class AsyncContainerHelper:
         deadline: Optional[float] = None,
         prepared: Optional[PreparedRequest] = None,
     ) -> CosmosDict:
-        """Create a container and return its properties."""
+        """Create a container and return its properties.
+
+        :param Any database_link: Parent database resource link.
+        :param Mapping[str, Any] container_definition: Container properties to create.
+        :param Mapping[str, Any] request_options: Internal creation options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword float or None deadline: Monotonic deadline shared by preparation and execution.
+        :keyword PreparedRequest or None prepared: Preflighted request whose body is refreshed before execution.
+        :return: Created container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 
@@ -125,7 +136,17 @@ class AsyncContainerHelper:
         routing: Optional[OperationRouting] = None,
         deadline: Optional[float] = None,
     ) -> CosmosDict:
-        """Read a container and return its properties."""
+        """Read a container and return its properties.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] request_options: Internal read options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword OperationRouting or None routing: Optional routing policy combined with read eligibility.
+        :keyword float or None deadline: Monotonic deadline shared by preparation and execution.
+        :return: Container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
 
@@ -176,7 +197,15 @@ class AsyncContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        """Delete the container and give the response hook headers with a None body."""
+        """Delete the container and give the response hook headers with a None body.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] request_options: Internal deletion options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and a None body.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :return: None.
+        :rtype: None
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         on_response = with_response_header_snapshot(response_hook)
@@ -221,6 +250,14 @@ class AsyncContainerHelper:
 
         For example, if the hook edits the returned indexing policy, that edit
         does not change the properties returned to the customer app.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] container_definition: Replacement container properties.
+        :param Mapping[str, Any] request_options: Internal replacement options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :return: Replaced container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)

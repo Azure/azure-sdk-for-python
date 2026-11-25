@@ -41,7 +41,12 @@ if TYPE_CHECKING:
 
 
 def normalize_feed_range(feed: Any) -> list[str]:
-    """Validate a feed scope and normalize SDK-produced inclusive point ranges."""
+    """Validate a feed scope and normalize SDK-produced inclusive point ranges.
+
+    :param Any feed: Feed-range dictionary containing a Range interval.
+    :return: Inclusive minimum and exclusive maximum effective partition-key bounds.
+    :rtype: list[str]
+    """
     interval = feed.get("Range") if isinstance(feed, dict) else None
     if not isinstance(interval, dict) or (
         not isinstance(interval.get("min"), str)
@@ -65,6 +70,8 @@ def _validate_change_feed_options(options: Mapping[str, Any], kwargs: Mapping[st
     :type options: Mapping[str, Any]
     :param kwargs: Remaining operation keyword arguments.
     :type kwargs: Mapping[str, Any]
+    :return: None.
+    :rtype: None
     """
     if "disableRUPerMinuteUsage" in options:
         raise TypeError(
@@ -142,7 +149,25 @@ def _validate_change_feed_options(options: Mapping[str, Any], kwargs: Mapping[st
         )
 
 
-class FeedConfig:
+class _FeedContext:
+    """Retain the execution context and telemetry inputs shared by feed configurations.
+
+    :param Any proxy: Container proxy supplying its client context.
+    :param dict[str, Any] kwargs: Working keywords from which Rust telemetry options are consumed.
+    :param Any backend: Already-selected execution backend.
+    :param bool rust: Whether telemetry controls should be consumed for Rust execution.
+    """
+
+    def __init__(self, proxy: Any, kwargs: dict[str, Any], backend: Any, rust: bool) -> None:
+        self.proxy = proxy
+        context = proxy._client_context
+        self._client_context = context
+        self.response_state = context.response_state if context is not None else None
+        self.backend = backend
+        self.recording_options = RecordingOptions.take(kwargs) if rust else RecordingOptions.snapshot({})
+
+
+class FeedConfig(_FeedContext):
     """Copy the options and keep the adapter used to fetch pages."""
 
     def __init__(
@@ -176,72 +201,55 @@ class FeedConfig:
             raise ValueError(f"{operation} cache staleness must be a nonnegative integer or None.")
         if operation != "query_items" and "populateQueryMetrics" in self.options:
             raise TypeError(f"{operation}() does not accept query metrics.")
-        self.proxy = proxy
-        context = proxy._client_context
-        self._client_context = context
-        self.response_state = context.response_state if context is not None else None
-        self.backend = backend
-        self.recording_options = RecordingOptions.take(kwargs) if self.rust else RecordingOptions.snapshot({})
+        super().__init__(proxy, kwargs, backend, self.rust)
         if self.rust:
-            if operation == "query_items_change_feed":
-                _validate_change_feed_options(self.options, kwargs)
-            if operation in ("read_all_items", "query_items_change_feed") and "availabilityStrategy" in self.options:
-                raise TypeError(
-                    f"{operation}() does not accept availability_strategy (availabilityStrategy) "
-                    "on Rust-backed clients; omit this option."
-                )
-            allowed = {
-                "maxItemCount",
-                "sessionToken",
-                "initialHeaders",
-                "priorityLevel",
-                "throughputBucket",
-                "excludedLocations",
-                "timeout",
-                "continuation",
-                "consistencyLevel",
-                "utf8DecodingMode",
-            }
-            if supports_cache_staleness:
-                allowed.add("maxIntegratedCacheStaleness")
-            if operation == "query_items":
-                allowed |= {
-                    "populateQueryMetrics",
-                    "populateIndexMetrics",
-                    "populateQueryAdvice",
-                    "enableScanInQuery",
-                    "availabilityStrategy",
-                    "correlatedActivityId",
-                    "responseContinuationTokenLimitInKb",
-                }
-            initial = self.options.get("initialHeaders")
-            if initial is not None and not isinstance(initial, dict):
-                raise TypeError(f"{operation} initial_headers must be a dict or None.")
-            if any(not isinstance(name, str) for name in (initial or {})):
-                raise TypeError(f"{operation} initial_headers names must be strings.")
-            reserved = HEADERS_THE_DRIVER_REGENERATES | {
-                "x-ms-continuation",
-                "x-ms-documentdb-partitionkey",
-                "x-ms-documentdb-partitionkeyrangeid",
-                "x-ms-documentdb-query-enablecrosspartition",
-                "x-ms-documentdb-isquery",
-                "x-ms-cosmos-is-query-plan-request",
-            }
-            reject_unknown_feed_kwargs(operation, kwargs)
-            unsupported = [repr(name) for name in kwargs]
-            unsupported.extend(f"request_options[{name!r}]" for name in self.options.keys() - allowed)
-            if operation != "query_items_change_feed":
-                unsupported.extend(
-                    f"initial_headers[{name!r}]" for name in (initial or {}) if name.lower() in reserved
-                )
-            if unsupported:
-                raise NotImplementedError(
-                    f"{operation} cannot honor these options on Rust: {', '.join(sorted(unsupported))}; "
-                    "no legacy fallback will be used."
-                )
-        if self.rust and context is not None:
-            context.defaults.apply_to_options(self.options)
+            self._validate_rust_options(kwargs, supports_cache_staleness)
+        if self.rust and self._client_context is not None:
+            self._client_context.defaults.apply_to_options(self.options)
         self.kwargs = kwargs
+
+    def _validate_rust_options(self, kwargs: dict[str, Any], supports_cache_staleness: bool) -> None:
+        operation = self.operation
+        if operation == "query_items_change_feed":
+            _validate_change_feed_options(self.options, kwargs)
+        if operation in ("read_all_items", "query_items_change_feed") and "availabilityStrategy" in self.options:
+            raise TypeError(
+                f"{operation}() does not accept availability_strategy (availabilityStrategy) "
+                "on Rust-backed clients; omit this option."
+            )
+        allowed = {
+            "maxItemCount", "sessionToken", "initialHeaders", "priorityLevel", "throughputBucket",
+            "excludedLocations", "timeout", "continuation", "consistencyLevel", "utf8DecodingMode",
+        }
+        if supports_cache_staleness:
+            allowed.add("maxIntegratedCacheStaleness")
+        if operation == "query_items":
+            allowed |= {
+                "populateQueryMetrics", "populateIndexMetrics", "populateQueryAdvice", "enableScanInQuery",
+                "availabilityStrategy", "correlatedActivityId", "responseContinuationTokenLimitInKb",
+            }
+        initial = self.options.get("initialHeaders")
+        if initial is not None and not isinstance(initial, dict):
+            raise TypeError(f"{operation} initial_headers must be a dict or None.")
+        if any(not isinstance(name, str) for name in (initial or {})):
+            raise TypeError(f"{operation} initial_headers names must be strings.")
+        reserved = HEADERS_THE_DRIVER_REGENERATES | {
+            "x-ms-continuation", "x-ms-documentdb-partitionkey", "x-ms-documentdb-partitionkeyrangeid",
+            "x-ms-documentdb-query-enablecrosspartition", "x-ms-documentdb-isquery",
+            "x-ms-cosmos-is-query-plan-request",
+        }
+        reject_unknown_feed_kwargs(operation, kwargs)
+        unsupported = [repr(name) for name in kwargs]
+        unsupported.extend(f"request_options[{name!r}]" for name in self.options.keys() - allowed)
+        if operation != "query_items_change_feed":
+            unsupported.extend(
+                f"initial_headers[{name!r}]" for name in (initial or {}) if name.lower() in reserved
+            )
+        if unsupported:
+            raise NotImplementedError(
+                f"{operation} cannot honor these options on Rust: {', '.join(sorted(unsupported))}; "
+                "no legacy fallback will be used."
+            )
 
     def deadline(self) -> Optional[float]:
         return None if self.timeout is None else time.monotonic() + self.timeout
@@ -255,6 +263,12 @@ class FeedConfig:
         """Build a page request with its existing cursor.
 
         The adapter passes the cursor separately to the binding, not in the request body.
+
+        :param str or None token: Continuation token for the next page.
+        :param _ItemFeedCursor or None cursor: Iterator-owned binding cursor, required for retained paging.
+        :param float or None deadline: Monotonic deadline whose remaining time governs the page request.
+        :return: Prepared page request with typed settings and the retained cursor.
+        :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
         """
         if cursor is None:
             raise RuntimeError("Retained paging requires a pager-owned cursor.")
@@ -291,7 +305,27 @@ class RustFeedConfig(FeedConfig):
         super().__init__(proxy, kwargs, operation=operation, backend=context.adapter)
 
 
-class FeedPageState:
+class _FeedResponseState:
+    """Accumulate response headers and retain the latest envelope for a feed fetch."""
+
+    def __init__(self) -> None:
+        self.captured = CaseInsensitiveDict()
+        self.envelope: dict[str, Any] = {}
+        self.accumulated = ResponseHeaderAccumulator()
+        self.responses = 0
+        self.has_charge = False
+
+    def capture(self, headers: Any, body: Any) -> None:
+        self.responses += 1
+        self.has_charge = self.has_charge or "x-ms-request-charge" in CaseInsensitiveDict(headers)
+        self.accumulated(headers, None)
+        self.captured.clear()
+        self.captured.update(headers)
+        if isinstance(body, Mapping):
+            self.envelope = dict(body)
+
+
+class FeedPageState(_FeedResponseState):
     """Keep one page iterator's progress and per-fetch response information."""
 
     def __init__(self, config: FeedConfig, headers: CaseInsensitiveDict, token: Optional[str]) -> None:
@@ -301,15 +335,15 @@ class FeedPageState:
         self.cursor: Optional[_ItemFeedCursor] = None
         self.failed = False
         self.done = False
-        self.captured = CaseInsensitiveDict()
-        self.envelope: dict[str, Any] = {}
-        self.accumulated = ResponseHeaderAccumulator()
-        self.responses = 0
-        self.has_charge = False
+        super().__init__()
         self.lock = threading.Lock()
 
     def begin(self) -> None:
-        """Create a feed cursor if needed and reset the next fetch's response totals."""
+        """Create a feed cursor if needed and reset the next fetch's response totals.
+
+        :return: None.
+        :rtype: None
+        """
         if self.config.rust and self.cursor is None:
             cursor = self.config.backend.create_item_feed_cursor()
             if not hasattr(cursor, "can_retry_setup"):
@@ -335,15 +369,6 @@ class FeedPageState:
             return
         self.failed = True
         self.cursor = None
-
-    def capture(self, headers: Any, body: Any) -> None:
-        self.responses += 1
-        self.has_charge = self.has_charge or "x-ms-request-charge" in CaseInsensitiveDict(headers)
-        self.accumulated(headers, None)
-        self.captured.clear()
-        self.captured.update(headers)
-        if isinstance(body, Mapping):
-            self.envelope = dict(body)
 
     def parse(self, page: BackendPage) -> list[dict[str, Any]]:
         result = process_backend_response(
@@ -405,4 +430,3 @@ class FeedPageState:
 
     def is_done(self) -> bool:
         return self.token is None
-

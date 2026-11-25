@@ -22,7 +22,7 @@ from fault_injection._point_timeout import (
     database_read_operation_timeout_rule,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.timeout(90)

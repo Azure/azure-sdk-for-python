@@ -29,7 +29,8 @@ from azure.cosmos import _constants
 class HealthCheckRetryPolicy(object):
     """Implements retry logic for health checks in Azure Cosmos DB."""
 
-    def __init__(self, connection_policy, *args):
+    # Keep the shared retry-policy constructor signature; this policy uses environment settings.
+    def __init__(self, connection_policy, *args):  # pylint: disable=unused-argument
         self.retry_count = 0
         self.retry_after_in_milliseconds = int(os.getenv(
             _constants._Constants.AZURE_COSMOS_HEALTH_CHECK_RETRY_AFTER_MS,

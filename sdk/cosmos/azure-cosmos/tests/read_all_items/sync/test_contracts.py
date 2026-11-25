@@ -8,8 +8,7 @@ import uuid
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos import PartitionKey, exceptions
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos import PartitionKey
 from config.clients import create_data_client, create_setup_client
 
 
@@ -145,53 +144,3 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(_OwnedReadAllTests):
             next(page_iter)
 
         self.key_databaseForTest.delete_container(collection.id)
-
-
-@pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
-class TestTransactionalBatch(_OwnedReadAllTests):
-
-    def test_batch_delete_rust(self):
-        # Source: tests/test_transactional_batch.py::TestTransactionalBatch.test_batch_delete
-        container = self._create_container_for_test(
-            "batch_delete" + str(uuid.uuid4()),
-            partition_key=PartitionKey(path="/company"),
-        )
-        create_batch = []
-        delete_batch = []
-        for i in range(10):
-            item_id = str(uuid.uuid4())
-            create_batch.append(("create", ({"id": item_id, "company": "Microsoft"},)))
-            delete_batch.append(("delete", (item_id,)))
-
-        batch_response = container.execute_item_batch(
-            batch_operations=create_batch, partition_key="Microsoft"
-        )
-        assert len(batch_response) == 10
-        assert len(list(container.read_all_items())) == 10
-
-        batch_response = container.execute_item_batch(
-            batch_operations=delete_batch, partition_key="Microsoft"
-        )
-        assert len(batch_response) == 10
-        assert len(list(container.read_all_items())) == 0
-
-        # delete non-existent item
-        batch = [("delete", ("new-item",)), ("delete", ("new-item",))]
-
-        try:
-            container.execute_item_batch(
-                batch_operations=batch, partition_key="Microsoft"
-            )
-            self.fail("Request should have failed.")
-        except exceptions.CosmosBatchOperationError as e:
-            assert e.status_code == StatusCodes.NOT_FOUND
-            assert e.error_index == 0
-            operation_results = e.operation_responses
-            assert len(operation_results) == 2
-            assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
-            assert (
-                operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            )
-
-        self._delete_container_for_test(container.id)

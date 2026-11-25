@@ -47,7 +47,7 @@ from ..offer import ThroughputProperties
 from .._operation_deadline import remaining_timeout, run_with_deadline
 from ._throughput_rust_routing import (
     can_use_rust_backend_for_get_throughput,
-    can_use_rust_backend_for_replace_throughput,
+    can_use_rust_replace_throughput,
     process_get_throughput_response,
     process_replace_throughput_response,
     build_get_throughput_from_connection,
@@ -75,7 +75,13 @@ def _read_routing(
 
 
 def _require_offers(offers: list[dict[str, Any]], not_found_message: str) -> None:
-    """Raise the public not-found error when a resource has no throughput offer."""
+    """Raise the public not-found error when a resource has no throughput offer.
+
+    :param list[dict] offers: Offer-query results to check for emptiness.
+    :param str not_found_message: Message included in the public not-found exception.
+    :return: None.
+    :rtype: None
+    """
     if not offers:
         raise CosmosResourceNotFoundError(
             status_code=_StatusCodes.NOT_FOUND,
@@ -94,7 +100,19 @@ def _read_database_offers(
     legacy_kwargs: Callable[[], dict[str, Any]],
     deadline: Optional[float],
 ) -> list[dict[str, Any]]:
-    """Resolve database metadata and query its offers within the caller's budget."""
+    """Resolve database metadata and query its offers within the caller's budget.
+
+    :keyword Any client_connection: Connection supplying default headers and legacy execution.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Metadata reader accepting an optional deadline.
+    :keyword Any backend: Already-selected execution backend.
+    :keyword Mapping[str, Any] rust_options: Internal offer-query options.
+    :keyword OperationRouting routing: Validated routing for the offer query.
+    :keyword callable legacy_kwargs: Factory supplying legacy options with remaining time.
+    :keyword float or None deadline: Shared monotonic workflow deadline.
+    :return: Offer records, possibly empty, with the query's response headers.
+    :rtype: list[dict[str, Any]]
+    """
     remaining_timeout(deadline)
     properties = get_properties() if deadline is None else get_properties(deadline=deadline)
     remaining_timeout(deadline)
@@ -133,7 +151,19 @@ async def _read_database_offers_async(
     legacy_kwargs: Callable[[], dict[str, Any]],
     deadline: Optional[float],
 ) -> list[dict[str, Any]]:
-    """Await database metadata and offer lookup within the caller's budget."""
+    """Await database metadata and offer lookup within the caller's budget.
+
+    :keyword Any client_connection: Connection supplying default headers and legacy execution.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Async metadata reader accepting an optional deadline.
+    :keyword Any backend: Already-selected async execution backend.
+    :keyword Mapping[str, Any] rust_options: Internal offer-query options.
+    :keyword OperationRouting routing: Validated routing for the offer query.
+    :keyword callable legacy_kwargs: Factory supplying legacy options with remaining time.
+    :keyword float or None deadline: Shared monotonic workflow deadline.
+    :return: Offer records, possibly empty, with the query's response headers on the Rust path.
+    :rtype: list[dict[str, Any]]
+    """
     remaining_timeout(deadline)
     properties = await run_with_deadline(
         lambda: get_properties() if deadline is None else get_properties(deadline=deadline), deadline,
@@ -146,6 +176,9 @@ async def _read_database_offers_async(
 
         On the legacy path, await iteration of QueryOffers to produce the same
         list result shape expected from the Rust path.
+
+        :return: All offer records produced by the legacy query.
+        :rtype: list[dict[str, Any]]
         """
         return [
             offer async for offer in client_connection.QueryOffers(
@@ -184,7 +217,17 @@ def get_database_throughput(
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Return the provisioned throughput shared by a database's containers."""
+    """Return the provisioned throughput shared by a database's containers.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Metadata reader accepting an optional deadline.
+    :keyword str not_found_message: Error message when the database has no throughput offer.
+    :keyword callable or None response_hook: Synchronous callback receiving headers and copied offer records.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the deadline and prepare requests.
+    :return: The database's shared throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
@@ -216,7 +259,17 @@ async def get_database_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Return a database's provisioned throughput asynchronously."""
+    """Return a database's provisioned throughput asynchronously.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Async metadata reader accepting an optional deadline.
+    :keyword str not_found_message: Error message when the database has no throughput offer.
+    :keyword callable or None response_hook: Synchronous callback receiving headers and copied offer records.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the deadline and prepare requests.
+    :return: The database's shared throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
@@ -249,14 +302,25 @@ def replace_database_throughput(
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Set a database's shared throughput and return the updated settings."""
+    """Set a database's shared throughput and return the updated settings.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Metadata reader accepting an optional deadline.
+    :keyword int or azure.cosmos.ThroughputProperties throughput: Replacement manual or autoscale settings.
+    :keyword str not_found_message: Error message when the database has no throughput offer.
+    :keyword callable or None response_hook: Synchronous callback receiving copied headers and replaced offer.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the shared workflow deadline.
+    :return: The replaced database throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     validate_replacement_throughput(throughput)
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
-    rust_eligible = can_use_rust_backend_for_replace_throughput(
+    rust_eligible = can_use_rust_replace_throughput(
         backend=backend,
         options=rust_options,
         kwargs=rust_kwargs,
@@ -313,14 +377,25 @@ async def replace_database_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Set a database's shared throughput asynchronously."""
+    """Set a database's shared throughput asynchronously.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str database_link: Name-based database resource link.
+    :keyword callable get_properties: Async metadata reader accepting an optional deadline.
+    :keyword int or azure.cosmos.ThroughputProperties throughput: Replacement manual or autoscale settings.
+    :keyword str not_found_message: Error message when the database has no throughput offer.
+    :keyword callable or None response_hook: Synchronous callback receiving copied headers and replaced offer.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the shared workflow deadline.
+    :return: The replaced database throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     validate_replacement_throughput(throughput)
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
-    rust_eligible = can_use_rust_backend_for_replace_throughput(
+    rust_eligible = can_use_rust_replace_throughput(
         backend=backend,
         options=rust_options,
         kwargs=rust_kwargs,
@@ -345,7 +420,11 @@ async def replace_database_throughput_async(
     _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
 
     async def run_legacy_replace() -> Any:
-        """Replace the offer through the legacy client connection."""
+        """Replace the offer through the legacy client connection.
+
+        :return: The replaced offer properties.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return await client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,

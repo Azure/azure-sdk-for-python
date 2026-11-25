@@ -136,7 +136,9 @@ def index_query_results(results: Sequence, indices: dict[tuple, list[int]], defi
         ]
         identity = (item.get("id"), partition_key_identity(components))
         if identity not in indices:
-            raise CosmosHttpResponseError(message="read_items received an item outside the requested ID/partition keys.")
+            raise CosmosHttpResponseError(
+                message="read_items received an item outside the requested ID/partition keys."
+            )
         if identity not in seen:
             seen.add(identity)
             indexed.extend((index, deepcopy(item)) for index in indices[identity])

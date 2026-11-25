@@ -15,7 +15,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from common.throughput_fixtures import owned_database, owned_database_async
 from config.settings import TestSettings, unique_database_id
 
-pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
+pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 
 # Source: (new) Persist the verified native deletion 401 and repeated-429 failure scenarios.

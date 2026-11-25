@@ -22,20 +22,18 @@
 """Create, read, update and delete items in the Azure Cosmos DB SQL API service.
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
-from .._backend.capabilities import prepare_operation_kwargs
 import warnings
 from datetime import datetime
-from typing import (TYPE_CHECKING, Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, AsyncIterable,
-                    Callable, Dict)
+from typing import TYPE_CHECKING, Any, Mapping, Optional, Sequence, Union, Tuple, cast, overload, Callable
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
 from azure.core.async_paging import AsyncItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async  # type: ignore
-from .._telemetry import BindingAlternatives, RepeatedBinding, delegate_operation, trace_operation_async
-from azure.core.utils import CaseInsensitiveDict
 
+from .._backend.capabilities import prepare_operation_kwargs
+from .._telemetry import BindingAlternatives, RepeatedBinding, delegate_operation, trace_operation_async
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .. import _utils as utils
 from .._availability_strategy_config import _validate_request_hedging_strategy
@@ -56,7 +54,7 @@ from .._helpers._item_arguments import (
     merge_delete_item_explicit_kwargs,
     merge_patch_item_explicit_kwargs,
     merge_read_item_explicit_kwargs,
-    merge_upsert_replace_item_explicit_kwargs,
+    merge_upsert_replace_item_kwargs,
     get_selected_backend,
 )
 from ._helpers._item_operations import AsyncItemHelper
@@ -139,7 +137,12 @@ class ContainerProxy:
         return "<ContainerProxy [{}]>".format(self.container_link)[:1024]
 
     def _get_item_helper(self) -> "Union[AsyncItemHelper, AsyncLegacyItemHelper]":
-        """Reuse Rust helpers; keep container-bound legacy adapters short-lived."""
+        """Reuse Rust helpers; keep container-bound legacy adapters short-lived.
+
+        :return: Asynchronous item-operation helper for the selected backend.
+        :rtype: ~azure.cosmos.aio._helpers._item_operations.AsyncItemHelper or
+            ~azure.cosmos.aio._helpers._legacy_item_operations.AsyncLegacyItemHelper
+        """
         context = self._client_context
         cached = self._item_helper_cache
         if cached is not None:
@@ -157,7 +160,13 @@ class ContainerProxy:
         return helper
 
     async def _set_item_partition_key(self, partition_key: PartitionKeyType) -> PartitionKeyType:
-        """Rust resolves sentinel values using its backend metadata."""
+        """Rust resolves sentinel values using its backend metadata.
+
+        :param partition_key: Customer partition-key value or sentinel.
+        :type partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :return: Original value for Rust, or the legacy-normalized partition key.
+        :rtype: ~azure.cosmos.partition_key.PartitionKeyType
+        """
         if self._client_context is not None and self._client_context.adapter.name != "core-python":
             return partition_key
         if self._client_context is None:
@@ -1304,7 +1313,7 @@ class ContainerProxy:
         # of that body during the send. It also accepts etag and
         # match_condition, which narrow it to insert-only or to a replace
         # guarded by version.
-        merge_upsert_replace_item_explicit_kwargs(
+        merge_upsert_replace_item_kwargs(
             kwargs,
             session_token=session_token,
             initial_headers=initial_headers,
@@ -1433,7 +1442,7 @@ class ContainerProxy:
         # string id, or the ``id`` of a dict -- and not from the body. This
         # matches read_item and delete_item. That id goes in the URL.
         item_id = item if isinstance(item, str) else item["id"]
-        merge_upsert_replace_item_explicit_kwargs(
+        merge_upsert_replace_item_kwargs(
             kwargs,
             session_token=session_token,
             initial_headers=initial_headers,
@@ -1611,6 +1620,7 @@ class ContainerProxy:
             If not provided, uses the client's configured strategy.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The item wasn't deleted successfully.
         :raises ~azure.cosmos.exceptions.CosmosResourceNotFoundError: The item does not exist in the container.
+        :return: None after the item is deleted.
         :rtype: None
         """
         prepare_operation_kwargs(self, kwargs, strategy=availability_strategy, headers=initial_headers)

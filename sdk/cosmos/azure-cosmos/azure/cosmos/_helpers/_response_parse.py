@@ -34,7 +34,12 @@ _DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
 
 
 def page_to_backend_response(page: BackendPage) -> BackendResponse:
-    """Expose a page's response fields to the shared body and error parser."""
+    """Expose a page's response fields to the shared body and error parser.
+
+    :param BackendPage page: Backend page carrying status, headers, body, and diagnostics.
+    :return: A response containing the page's response fields.
+    :rtype: ~azure.cosmos._backend.contracts.BackendResponse
+    """
     return BackendResponse(
         status_code=page.status_code,
         sub_status=page.sub_status,
@@ -69,7 +74,13 @@ def with_response_header_snapshot(
     *,
     copy_body: bool = False,
 ) -> Optional[Callable[[Mapping[str, Any], Any], None]]:
-    """Give the response hook copied headers and, when requested, a copied body."""
+    """Give the response hook copied headers and, when requested, a copied body.
+
+    :param callable or None response_hook: Callback accepting response headers and a parsed body.
+    :keyword bool copy_body: Whether to deep-copy the body before invoking the callback.
+    :return: A snapshotting callback, or None when no callback was supplied.
+    :rtype: callable or None
+    """
     if response_hook is None:
         return None
 
@@ -86,7 +97,13 @@ def process_create_response(
     *,
     client_connection: Any,
 ) -> CosmosDict:
-    """A not-modified read response is not a successful creation."""
+    """A not-modified read response is not a successful creation.
+
+    :param BackendResponse response: Creation response to validate and parse.
+    :keyword Any client_connection: Connection whose last response headers are updated.
+    :return: Parsed creation properties with response headers.
+    :rtype: ~azure.cosmos.CosmosDict
+    """
     if response.status_code == 304:
         raise map_backend_response_to_exception(response, message="Container creation returned HTTP 304, not success.")
     return process_backend_response(response, client_connection=client_connection)
@@ -98,7 +115,14 @@ def process_database_read_response(
     client_connection: Any,
     response_hook: Optional[Callable[[Mapping[str, Any], Any], None]] = None,
 ) -> CosmosDict:
-    """Preserve the legacy database-read hook's None body on a 304 response."""
+    """Preserve the legacy database-read hook's None body on a 304 response.
+
+    :param BackendResponse response: Database read response to parse.
+    :keyword Any client_connection: Connection whose last response headers are updated.
+    :keyword callable or None response_hook: Callback receiving copied headers and the body, or None for HTTP 304.
+    :return: Parsed database properties with response headers.
+    :rtype: ~azure.cosmos.CosmosDict
+    """
 
     def on_response(headers: Mapping[str, Any], body: Any) -> None:
         if response_hook is not None:
@@ -118,7 +142,15 @@ def process_delete_response(
     response_state: Optional[ClientLastResponseHeaders] = None,
     response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
 ) -> None:
-    """Parse errors and headers while preserving the no-body deletion contract."""
+    """Parse errors and headers while preserving the no-body deletion contract.
+
+    :param BackendResponse response: Deletion response to validate and parse.
+    :keyword Any client_connection: Optional connection whose last response headers are updated.
+    :keyword ClientLastResponseHeaders or None response_state: Optional client-owned header state to update.
+    :keyword callable or None response_hook: Callback receiving response headers and a None body.
+    :return: None.
+    :rtype: None
+    """
     result = process_backend_response(response, client_connection=client_connection, response_state=response_state)
     if response_hook is not None:
         response_hook(result.get_response_headers(), None)
@@ -137,15 +169,15 @@ def process_backend_response(
         contain JSON (or be empty). Invalid JSON/encoding errors propagate
         from ``json.loads``.
     :type response: BackendResponse
-    :param client_connection: When supplied, its
+    :keyword client_connection: When supplied, its
         ``last_response_headers`` attribute is updated with the parsed
         headers. ``None`` skips updating a connection; production callers can
         supply ``response_state`` instead or leave client header state unchanged.
     :type client_connection: Optional[Any]
-    :param response_state: Narrow client-owned header state for connection-free
+    :keyword response_state: Narrow client-owned header state for connection-free
         callers. The connection argument remains for unmigrated families.
     :type response_state: Optional[ClientLastResponseHeaders]
-    :param response_hook: Optional callable invoked once after parsing and
+    :keyword response_hook: Optional callable invoked once after parsing and
         result construction with ``(headers, parsed_body)``. Its exceptions
         propagate. Headers are copied independently for the hook and client
         diagnostic state; body isolation is the caller's responsibility.
@@ -174,7 +206,12 @@ def process_backend_response(
 
 
 def build_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
-    """Build normalized headers without mutating the response's header mapping."""
+    """Build normalized headers without mutating the response's header mapping.
+
+    :param BackendResponse response: Response supplying headers and diagnostics.
+    :return: Case-insensitive headers with formatted charge and diagnostics values.
+    :rtype: ~azure.core.utils.CaseInsensitiveDict
+    """
     headers = CaseInsensitiveDict(response.headers or {})
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)
@@ -182,13 +219,23 @@ def build_response_headers(response: BackendResponse) -> CaseInsensitiveDict:
 
 
 def parse_backend_response(response: BackendResponse) -> CosmosDict:
-    """Decode a response without updating client state or invoking callbacks."""
+    """Decode a response without updating client state or invoking callbacks.
+
+    :param BackendResponse response: Backend response to validate and decode.
+    :return: Parsed body carrying normalized response headers.
+    :rtype: ~azure.cosmos.CosmosDict
+    """
     headers = build_response_headers(response)
     return CosmosDict(parse_response_body(replace(response, headers=headers)), response_headers=headers)
 
 
 def parse_response_body(response: BackendResponse) -> Any:
-    """Decode the success body or raise its mapped service/JSON error."""
+    """Decode the success body or raise its mapped service/JSON error.
+
+    :param BackendResponse response: Response supplying status and UTF-8 JSON bytes.
+    :return: Decoded JSON, or an empty dictionary for an accepted empty response.
+    :rtype: Any
+    """
     # Accept conditional-read 304 separately from 2xx. An empty body becomes
     # {}; a nonempty body still goes through JSON decoding below.
     is_not_modified = response.status_code == 304
@@ -209,10 +256,16 @@ def parse_response_body(response: BackendResponse) -> Any:
 
 
 def _copy_response_headers(headers: Mapping[str, Any]) -> CaseInsensitiveDict:
-    """Reuse string header values while copying mutable backend-response values."""
+    """Reuse string header values while copying mutable backend-response values.
+
+    :param Mapping[str, Any] headers: Headers to snapshot.
+    :return: Case-insensitive headers isolated from mutable source values.
+    :rtype: ~azure.core.utils.CaseInsensitiveDict
+    """
     snapshot = CaseInsensitiveDict()
     for key, value in headers.items():
-        snapshot[key] = value if type(value) is str else deepcopy(value)
+        # A str subclass can carry mutable attributes and must still be copied.
+        snapshot[key] = value if type(value) is str else deepcopy(value)  # pylint: disable=unidiomatic-typecheck
     return snapshot
 
 
@@ -221,6 +274,10 @@ def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:
 
     No-op when the header is absent or already a string. The Rust path
     may surface the charge as a numeric type; for example, 1 becomes "1.0".
+
+    :param CaseInsensitiveDict headers: Header mapping updated in place.
+    :return: None.
+    :rtype: None
     """
     raw = headers.get(_REQUEST_CHARGE_HEADER)
     if raw is None or isinstance(raw, str):
@@ -229,7 +286,13 @@ def apply_request_charge_format(headers: CaseInsensitiveDict) -> None:
 
 
 def apply_response_diagnostics(headers: CaseInsensitiveDict, diagnostics: Any) -> None:
-    """Add a supplied diagnostic value to this header mapping; skip None."""
+    """Add a supplied diagnostic value to this header mapping; skip None.
+
+    :param CaseInsensitiveDict headers: Header mapping updated in place.
+    :param Any diagnostics: Diagnostic value to stringify, or None to leave headers unchanged.
+    :return: None.
+    :rtype: None
+    """
     if diagnostics is None:
         return
     if isinstance(diagnostics, str):
@@ -243,7 +306,14 @@ def complete_item_response(
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
     deadline: Optional[float],
 ) -> CosmosDict:
-    """Invoke a success hook outside retries with independent nested snapshots."""
+    """Invoke a success hook outside retries with independent nested snapshots.
+
+    :param CosmosDict result: Parsed item result returned unchanged.
+    :param callable or None response_hook: Callback receiving isolated header and body snapshots.
+    :param float or None deadline: Monotonic deadline checked before invoking the callback.
+    :return: The original item result.
+    :rtype: ~azure.cosmos.CosmosDict
+    """
     remaining_timeout(deadline)
     if response_hook is not None:
         headers = result.get_response_headers()

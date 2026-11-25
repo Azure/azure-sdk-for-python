@@ -33,7 +33,7 @@ from azure.cosmos.aio._backend.cosmos_backend import AsyncCosmosBackend
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._routing.routing_range import Range
 from azure.cosmos._feed_ranges_rust_routing import (
-    build_is_feed_range_subset_prepared_request,
+    build_feed_range_subset_request,
     parse_is_feed_range_subset_payload,
 )
 
@@ -54,7 +54,7 @@ def test_legacy_comparison_keeps_its_original_validation(async_mode, monkeypatch
     from azure.cosmos._helpers import _feed_range_operations as operations
 
     monkeypatch.setattr(
-        operations, "build_is_feed_range_subset_prepared_request",
+        operations, "build_feed_range_subset_request",
         Mock(side_effect=AssertionError("Legacy must not build a Rust request")),
     )
     connection = SimpleNamespace(_backend=ASYNC_LEGACY_BACKEND if async_mode else LEGACY_BACKEND)
@@ -136,7 +136,7 @@ def test_unsupported_ranges_are_rejected_without_fallback_rust(parent, async_mod
 ])
 def test_builds_prepared_request_with_both_feed_ranges_in_body_rust(parent, child):
     """The Rust request contains the correct parent and child feed ranges."""
-    prepared = build_is_feed_range_subset_prepared_request(
+    prepared = build_feed_range_subset_request(
         parent_feed_range=parent, child_feed_range=child
     )
     assert prepared.op == OP_IS_FEED_RANGE_SUBSET
@@ -182,7 +182,7 @@ def test_parser_rejects_non_boolean_is_subset_rust():
 ])
 def test_native_subset_preserves_endpoint_meaning_rust(parent, child, expected):
     binding = pytest.importorskip("azure.cosmos._rust")
-    prepared = build_is_feed_range_subset_prepared_request(
+    prepared = build_feed_range_subset_request(
         parent_feed_range=parent, child_feed_range=child,
     )
     status, _, _, body, _ = binding.is_feed_range_subset(None, prepared)

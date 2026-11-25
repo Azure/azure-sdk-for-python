@@ -45,6 +45,7 @@ from toxiproxy._tcp_observer import (
 )
 
 pytestmark = [
+    pytest.mark.cosmosToxiproxy,
     pytest.mark.cosmosEmulator,
     pytest.mark.skipif(
         not os.environ.get("TOXIPROXY_SERVER"),

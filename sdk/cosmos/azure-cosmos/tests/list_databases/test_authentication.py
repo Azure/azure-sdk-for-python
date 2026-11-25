@@ -14,7 +14,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from config.settings import TestSettings
 
-pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
+pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 
 # Source: (new) Incorrect-key authentication during lazy listing initialization.

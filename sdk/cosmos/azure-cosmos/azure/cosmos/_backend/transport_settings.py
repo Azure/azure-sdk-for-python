@@ -21,7 +21,11 @@ from ..runtime import CosmosRuntime
 
 
 def validate_client_runtime_settings(kwargs: Mapping[str, Any]) -> None:
-    """Keep network settings on explicit runtimes; never reconfigure the default."""
+    """Keep network settings on explicit runtimes; never reconfigure the default.
+
+    :param kwargs: Client options containing runtime selection, network settings, and operation timeout.
+    :type kwargs: typing.Mapping[str, typing.Any]
+    """
     runtime = kwargs.get("runtime")
     if runtime is not None and not isinstance(runtime, CosmosRuntime):
         raise TypeError("runtime must be a CosmosRuntime created with create() or create_async().")
@@ -52,7 +56,9 @@ def validate_client_runtime_settings(kwargs: Mapping[str, Any]) -> None:
             )
     timeout = kwargs.get("timeout")
     if timeout is not None:
-        from .._helpers._request_settings import is_supported_operation_timeout  # pylint: disable=import-outside-toplevel
+        from .._helpers._request_settings import (
+            is_supported_operation_timeout,  # pylint: disable=import-outside-toplevel
+        )
 
         if not is_supported_operation_timeout(timeout):
             raise ValueError("timeout must be finite, non-boolean seconds >= 1 and < 2**64.")

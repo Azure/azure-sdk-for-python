@@ -16,6 +16,8 @@ from azure.cosmos import CosmosClient as SyncCosmosClient, PartitionKey
 from azure.cosmos.aio import CosmosClient
 from common._rust_checks import run_on_rust_async
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest.fixture(scope="module")
 def saved_order():

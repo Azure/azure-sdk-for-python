@@ -40,8 +40,6 @@ validation when legacy execution is retired.
 """
 from __future__ import annotations
 
-from ._backend.partition_key_input import BindingPartitionKey
-
 from dataclasses import dataclass, replace
 from copy import deepcopy
 import time
@@ -59,7 +57,8 @@ from ._backend.operations import (
     OP_QUERY_DATABASES,
     OP_QUERY_ITEMS,
 )
-from ._backend.contracts import BackendResponse, PreparedPageRequest, BackendPage
+from ._backend.contracts import PreparedPageRequest, BackendPage
+from ._backend.partition_key_input import BindingPartitionKey
 from ._constants import _Constants as Constants
 from ._cosmos_responses import CosmosDict
 from .exceptions import CosmosClientTimeoutError
@@ -117,23 +116,34 @@ def can_use_rust_backend_for_query_page(
     does not prove that the Rust driver can execute the query. The caller's
     run_page_operation rejects ineligible Rust requests before execution.
     Preflight and execution errors never switch a Rust query to legacy Python.
+
+    :keyword query_payload: SQL text or query dictionary, or None for a read feed.
+    :paramtype query_payload: str or dict[str, Any] or None
+    :keyword options: Internal request options to check for supported query settings.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional internal arguments checked for unsupported range routing.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword container_properties: Container metadata used to detect prefix partition keys.
+    :paramtype container_properties: Mapping[str, Any] or None
+    :keyword bool is_query_plan: Whether this request fetches a query plan rather than results.
+    :keyword str resource_type: Resource type of the requested feed.
+    :return: Whether the compatibility path can forward the supplied request.
+    :rtype: bool
     """
-    if query_payload is None or is_query_plan:
-        return False
-    if resource_type != http_constants.ResourceType.Document:
-        return False
-    if "feed_range" in kwargs:
-        return False
-    if "prefix_partition_key_object" in kwargs or "prefix_partition_key_value" in kwargs:
+    if (
+        query_payload is None
+        or is_query_plan
+        or resource_type != http_constants.ResourceType.Document
+        or any(key in kwargs for key in ("feed_range", "prefix_partition_key_object", "prefix_partition_key_value"))
+    ):
         return False
     # These options are not supported by this compatibility page path.
-    if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
-        return False
-    if overrides_driver_owned_header(options):
-        return False
-    if "fullTextScoreScope" in options:
-        return False
-    if options.get("populateQueryAdvice"):
+    if (
+        Constants.Kwargs.AVAILABILITY_STRATEGY in options
+        or overrides_driver_owned_header(options)
+        or "fullTextScoreScope" in options
+        or options.get("populateQueryAdvice")
+    ):
         return False
 
     has_partition_key = "partitionKey" in options
@@ -148,16 +158,13 @@ def can_use_rust_backend_for_query_page(
     if partition_key_wire.kind in ("cross_partition", "empty_sentinel"):
         # Do not use this cross-partition path when the customer app explicitly
         # disabled it. This checks an option, not the SQL text.
-        if options.get("enableCrossPartitionQuery") is False:
-            return False
-        return True
+        return options.get("enableCrossPartitionQuery") is not False
 
     if container_properties is None:
         return False
     partition_key_obj = _build_partition_key_from_properties(container_properties)
-    if partition_key_obj._is_prefix_partition_key(partition_key_value):
-        return False
-    return True
+    # Prefix detection is shared with the SDK's partition-key implementation.
+    return not partition_key_obj._is_prefix_partition_key(partition_key_value)  # pylint: disable=protected-access
 
 
 def _master_feed_page_is_rust_eligible(
@@ -177,12 +184,19 @@ def _master_feed_page_is_rust_eligible(
 
     Other checks prevent unsupported options and overrides of headers owned by
     the Rust driver from being silently dropped.
+
+    :keyword options: Internal request options to validate.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional request arguments to validate.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Actual resource type.
+    :keyword str expected_resource_type: Resource type supported by the caller.
+    :keyword bool allow_timeout: Whether supported, consistent timeout values are permitted.
+    :return: Whether the request passes the metadata-feed compatibility checks.
+    :rtype: bool
     """
-    if is_query_plan:
-        return False
-    if resource_type != expected_resource_type:
-        return False
-    if options.get("changeFeedState") is not None:
+    if is_query_plan or resource_type != expected_resource_type or options.get("changeFeedState") is not None:
         return False
     allowed_kwargs = _MASTER_FEED_ALLOWED_INTERNAL_KWARGS
     if allow_timeout:
@@ -199,13 +213,11 @@ def _master_feed_page_is_rust_eligible(
         or kwargs.get(Constants.Kwargs.TIMEOUT) is not None
     ):
         return False
-    if Constants.Kwargs.AVAILABILITY_STRATEGY in options:
-        return False
-    if set(kwargs).difference(allowed_kwargs):
-        return False
-    if overrides_driver_owned_header(options):
-        return False
-    return True
+    return not (
+        Constants.Kwargs.AVAILABILITY_STRATEGY in options
+        or set(kwargs).difference(allowed_kwargs)
+        or overrides_driver_owned_header(options)
+    )
 
 
 def _container_feed_page_is_rust_eligible(
@@ -215,7 +227,17 @@ def _container_feed_page_is_rust_eligible(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Apply the shared checks to a container page, allowing an operation timeout."""
+    """Apply the shared checks to a container page, allowing an operation timeout.
+
+    :keyword options: Internal request options.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional request arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Requested resource type.
+    :return: Whether a container page can use the Rust path.
+    :rtype: bool
+    """
     return _master_feed_page_is_rust_eligible(
         options=options,
         kwargs=kwargs,
@@ -226,7 +248,7 @@ def _container_feed_page_is_rust_eligible(
     )
 
 
-def can_use_rust_backend_for_list_containers_page(
+def can_use_rust_list_containers(
     *,
     path: str,
     options: Mapping[str, Any],
@@ -234,7 +256,18 @@ def can_use_rust_backend_for_list_containers_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Check the database path and options for a list_containers page."""
+    """Check the database path and options for a list_containers page.
+
+    :keyword str path: Container-feed path under a database.
+    :keyword options: Internal listing options.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional listing arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Requested resource type.
+    :return: Whether the path and options are supported by the Rust listing path.
+    :rtype: bool
+    """
     if not _database_link_from_colls_path(path):
         return False
     return _master_feed_page_is_rust_eligible(
@@ -247,7 +280,7 @@ def can_use_rust_backend_for_list_containers_page(
     )
 
 
-def can_use_rust_backend_for_query_containers_page(
+def can_use_rust_query_containers(
     *,
     path: str,
     query_payload: Optional[Union[str, dict[str, Any]]],
@@ -256,7 +289,20 @@ def can_use_rust_backend_for_query_containers_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Check the query dictionary, database path, and container-page options."""
+    """Check the query dictionary, database path, and container-page options.
+
+    :keyword str path: Container-feed path under a database.
+    :keyword query_payload: Query dictionary, legacy SQL text, or None.
+    :paramtype query_payload: str or dict[str, Any] or None
+    :keyword options: Internal query options.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional query arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Requested resource type.
+    :return: Whether the Rust path supports the query shape, path, and options.
+    :rtype: bool
+    """
     if query_payload is None:
         return False
     # Legacy SqlQuery mode uses a plain-text body. This Rust path expects the
@@ -273,14 +319,24 @@ def can_use_rust_backend_for_query_containers_page(
     )
 
 
-def can_use_rust_backend_for_list_databases_page(
+def can_use_rust_list_databases(
     *,
     options: Mapping[str, Any],
     kwargs: Mapping[str, Any],
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Apply the shared checks to a list_databases page."""
+    """Apply the shared checks to a list_databases page.
+
+    :keyword options: Internal listing options.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional listing arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Requested resource type.
+    :return: Whether the Rust path supports the database-listing options.
+    :rtype: bool
+    """
     return _master_feed_page_is_rust_eligible(
         options=options,
         kwargs=kwargs,
@@ -291,7 +347,7 @@ def can_use_rust_backend_for_list_databases_page(
     )
 
 
-def can_use_rust_backend_for_query_databases_page(
+def can_use_rust_query_databases(
     *,
     query_payload: Optional[Union[str, dict[str, Any]]],
     options: Mapping[str, Any],
@@ -299,7 +355,19 @@ def can_use_rust_backend_for_query_databases_page(
     is_query_plan: bool,
     resource_type: str,
 ) -> bool:
-    """Check the query dictionary and options for a query_databases page."""
+    """Check the query dictionary and options for a query_databases page.
+
+    :keyword query_payload: Query dictionary, legacy SQL text, or None.
+    :paramtype query_payload: str or dict[str, Any] or None
+    :keyword options: Internal query options.
+    :paramtype options: Mapping[str, Any]
+    :keyword kwargs: Additional query arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :keyword bool is_query_plan: Whether this is a query-plan request.
+    :keyword str resource_type: Requested resource type.
+    :return: Whether the Rust path supports the database query shape and options.
+    :rtype: bool
+    """
     if query_payload is None or is_query_plan:
         return False
     # A string here belongs to legacy SqlQuery mode's plain-text body, not the
@@ -331,6 +399,18 @@ def _build_prepared_page_request(
     page-size header. Continuation and partition-key values likewise move to
     their dedicated fields. The Python backend converts this record to a
     prepared request before calling the binding.
+
+    :keyword str op: Backend operation identifier.
+    :keyword str container_link: Resource link, or an empty string for account-level feeds.
+    :keyword str resource_type: Resource type used when preparing headers and settings.
+    :keyword options: Internal request options, including paging and partition-key values.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Request headers used as the initial header mapping.
+    :paramtype req_headers: Mapping[str, Any]
+    :keyword query_payload: SQL text or query dictionary; None for a read feed.
+    :paramtype query_payload: str or Mapping[str, Any] or None
+    :return: Prepared page request with dedicated paging, query, and partition-key fields.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
     """
     if resource_type in ("dbs", "colls"):
         timeout = options.get(Constants.Kwargs.TIMEOUT)
@@ -377,7 +457,12 @@ def _build_prepared_page_request(
 
 
 def _extract_container_link_from_docs_path(path: str) -> str:
-    """Turn a path such as "dbs/checkout/colls/orders/docs" into its container link."""
+    """Turn a path such as "dbs/checkout/colls/orders/docs" into its container link.
+
+    :param str path: Resource path with optional boundary slashes and trailing /docs.
+    :return: Normalized path with any trailing /docs removed.
+    :rtype: str
+    """
     normalized_path = base.TrimBeginningAndEndingSlashes(path)
     return normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
 
@@ -389,7 +474,18 @@ def build_query_items_prepared_page_request(
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build a prepared page request carrying the item query and its parameters."""
+    """Build a prepared page request carrying the item query and its parameters.
+
+    :keyword str path: Item-feed path under the container.
+    :keyword query_payload: SQL text or a query dictionary containing SQL and parameters.
+    :paramtype query_payload: str or dict[str, Any]
+    :keyword options: Internal query and paging options.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Initial request headers.
+    :paramtype req_headers: Mapping[str, Any]
+    :return: Prepared item-query page request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    """
     return _build_prepared_page_request(
         op=OP_QUERY_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
@@ -400,12 +496,20 @@ def build_query_items_prepared_page_request(
     )
 
 
-def build_list_databases_prepared_page_request(
+def build_list_databases_page(
     *,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build a prepared page request for listing databases, with no SQL query."""
+    """Build a prepared page request for listing databases, with no SQL query.
+
+    :keyword options: Internal listing options, including an optional content type.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Initial request headers.
+    :paramtype req_headers: Mapping[str, Any]
+    :return: Prepared database-listing page request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    """
     prepared = _build_prepared_page_request(
         op=OP_LIST_DATABASES,
         container_link="",
@@ -424,13 +528,23 @@ def build_list_databases_prepared_page_request(
     return prepared
 
 
-def build_query_databases_prepared_page_request(
+def build_query_databases_page(
     *,
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build a prepared page request carrying the database query."""
+    """Build a prepared page request carrying the database query.
+
+    :keyword query_payload: SQL text or query dictionary.
+    :paramtype query_payload: str or Mapping[str, Any]
+    :keyword options: Internal query and paging options.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Initial request headers.
+    :paramtype req_headers: Mapping[str, Any]
+    :return: Prepared database-query page request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    """
     return _build_prepared_page_request(
         op=OP_QUERY_DATABASES,
         container_link="",
@@ -442,7 +556,12 @@ def build_query_databases_prepared_page_request(
 
 
 def _database_link_from_colls_path(path: str) -> str:
-    """Turn "dbs/checkout/colls" into "dbs/checkout", or return "" for an invalid path."""
+    """Turn "dbs/checkout/colls" into "dbs/checkout", or return "" for an invalid path.
+
+    :param str path: Container-feed path, optionally surrounded by slashes.
+    :return: Database resource link, or an empty string if the path does not match.
+    :rtype: str
+    """
     normalized_path = base.TrimBeginningAndEndingSlashes(path)
     if not normalized_path.endswith("/colls"):
         return ""
@@ -453,13 +572,22 @@ def _database_link_from_colls_path(path: str) -> str:
     return database_link
 
 
-def build_list_containers_prepared_page_request(
+def build_list_containers_page(
     *,
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build a prepared page request for listing containers in the named database."""
+    """Build a prepared page request for listing containers in the named database.
+
+    :keyword str path: Container-feed path under the database.
+    :keyword options: Internal listing and paging options.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Initial request headers.
+    :paramtype req_headers: Mapping[str, Any]
+    :return: Prepared container-listing page request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    """
     return _build_prepared_page_request(
         op=OP_LIST_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
@@ -469,14 +597,25 @@ def build_list_containers_prepared_page_request(
     )
 
 
-def build_query_containers_prepared_page_request(
+def build_query_containers_page(
     *,
     path: str,
     query_payload: Union[str, Mapping[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
 ) -> PreparedPageRequest:
-    """Build a prepared page request carrying the container query and database link."""
+    """Build a prepared page request carrying the container query and database link.
+
+    :keyword str path: Container-feed path under the database.
+    :keyword query_payload: SQL text or query dictionary.
+    :paramtype query_payload: str or Mapping[str, Any]
+    :keyword options: Internal query and paging options.
+    :paramtype options: Mapping[str, Any]
+    :keyword req_headers: Initial request headers.
+    :paramtype req_headers: Mapping[str, Any]
+    :return: Prepared container-query page request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    """
     return _build_prepared_page_request(
         op=OP_QUERY_CONTAINERS,
         container_link=_database_link_from_colls_path(path),
@@ -515,11 +654,31 @@ def finalize_rust_page_response(
 
     The response hook receives its own header copy but the same parsed body.
     A hook error is raised to the caller, not used to select legacy fallback.
+
+    :keyword client_connection: Connection whose session and last-response state are updated.
+    :paramtype client_connection: Any
+    :keyword req_headers: Request headers used when updating session state.
+    :paramtype req_headers: Mapping[str, Any]
+    :keyword parsed: Decoded response body passed to session handling and the response hook.
+    :paramtype parsed: dict[str, Any]
+    :keyword last_response_headers: Response headers to process in place.
+    :paramtype last_response_headers: ~azure.core.utils.CaseInsensitiveDict
+    :keyword internal_headers_capture: Optional destination for headers before conversion.
+    :paramtype internal_headers_capture: dict[str, Any] or None
+    :keyword response_headers: Optional destination for a copy of the processed headers.
+    :paramtype response_headers: ~azure.core.utils.CaseInsensitiveDict or None
+    :keyword response_hook: Optional callback receiving copied headers and the decoded body.
+    :paramtype response_hook: Callable or None
+    :return: Processed response headers.
+    :rtype: ~azure.core.utils.CaseInsensitiveDict
     """
     if internal_headers_capture is not None:
         internal_headers_capture.clear()
         internal_headers_capture.update(last_response_headers)
-    client_connection._UpdateSessionIfRequired(req_headers, parsed, last_response_headers)
+    # The internal connection owns session updates for both execution backends.
+    client_connection._UpdateSessionIfRequired(  # pylint: disable=protected-access
+        req_headers, parsed, last_response_headers
+    )
     if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
         index_metrics_raw = last_response_headers[http_constants.HttpHeaders.IndexUtilization]
         last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
@@ -552,6 +711,21 @@ def process_query_page(  # pylint: disable=too-many-arguments
 
     Return the parsed body and processed headers together. The result is Python
     data, not a Rust driver page or a feed cursor.
+
+    :keyword page: Backend page containing response bytes and headers.
+    :paramtype page: ~azure.cosmos._backend.contracts.BackendPage
+    :keyword client_connection: Connection whose response and session state are updated.
+    :paramtype client_connection: Any
+    :keyword req_headers: Original request headers used for session processing.
+    :paramtype req_headers: Mapping[str, Any]
+    :keyword internal_headers_capture: Optional destination for unprocessed response headers.
+    :paramtype internal_headers_capture: dict[str, Any] or None
+    :keyword response_headers: Optional destination for processed response headers.
+    :paramtype response_headers: ~azure.core.utils.CaseInsensitiveDict or None
+    :keyword response_hook: Optional callback receiving headers and the decoded body.
+    :paramtype response_hook: Callable or None
+    :return: Decoded body and processed headers.
+    :rtype: ~azure.cosmos._query_rust_routing.ParsedRustPage
     """
     parsed_response = cast(
         CosmosDict,

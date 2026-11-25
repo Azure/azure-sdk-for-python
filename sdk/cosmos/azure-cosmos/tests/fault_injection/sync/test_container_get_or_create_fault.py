@@ -23,7 +23,7 @@ from fault_injection._container_get_or_create import (
     prepare_target,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.timeout(90)

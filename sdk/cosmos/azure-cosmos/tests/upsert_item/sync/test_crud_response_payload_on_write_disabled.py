@@ -8,6 +8,9 @@ client uses ``_backend="rust"`` with ``no_response_on_write=True`` like the
 original clients. Each test owns a uniquely named database. The multi-partition
 container mirrors the shared ``TEST_MULTI_PARTITION_CONTAINER_ID`` container
 (``/pk``, 30000 RU/s).
+
+The shared ``test_partitioned_collection_document_crud_and_query_rust`` scenario
+is retained in ``tests/query_items/sync/test_crud_response_payload_on_write_disabled.py``.
 """
 
 import unittest
@@ -65,113 +68,6 @@ class TestCRUDOperationsResponsePayloadOnWriteDisabled(unittest.TestCase):
             self.key_client.delete_database(self._db_id)
         except exceptions.CosmosResourceNotFoundError:
             pass
-
-    def test_partitioned_collection_document_crud_and_query_rust(self):
-        # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_partitioned_collection_document_crud_and_query
-        created_db = self.key_databaseForTest
-
-        created_collection = created_db.create_container("crud-query-container", partition_key=PartitionKey("/pk"))
-
-        document_definition = {'id': 'document',
-                               'key': 'value',
-                               'pk': 'pk'}
-
-        headerEnvelope=CosmosResponseHeaderEnvelope()
-        no_response = created_collection.create_item(
-            body=document_definition,
-            response_hook=headerEnvelope.capture_response_headers
-        )
-
-        self.assertDictEqual(no_response, {})
-
-        # read document
-        read_document = created_collection.read_item(
-            item=document_definition.get('id'),
-            partition_key=document_definition.get('pk')
-        )
-
-        self.assertEqual(headerEnvelope.headers['etag'], read_document['_etag'])
-        self.assertEqual(read_document.get('id'), document_definition.get('id'))
-        self.assertEqual(read_document.get('key'), document_definition.get('key'))
-
-        # Read document feed doesn't require partitionKey as it's always a cross partition query
-        documentlist = list(created_collection.read_all_items())
-        self.assertEqual(1, len(documentlist))
-
-        # replace document
-        document_definition['key'] = 'new value'
-
-        no_Response = created_collection.replace_item(
-            item=read_document,
-            body=document_definition,
-            response_hook=headerEnvelope.capture_response_headers
-        )
-        self.assertDictEqual(no_response, {})
-
-        # read document
-        replaced_document = created_collection.read_item(
-            item=document_definition.get('id'),
-            partition_key=document_definition.get('pk')
-        )
-
-        self.assertEqual(headerEnvelope.headers['etag'], replaced_document.get('_etag'))
-        self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
-
-        # upsert document(create scenario)
-        document_definition['id'] = 'document2'
-        document_definition['key'] = 'value2'
-
-        no_Response = created_collection.upsert_item(body=document_definition, response_hook=headerEnvelope.capture_response_headers)
-        self.assertDictEqual(no_response, {})
-
-        upserted_document = created_collection.read_item(
-            item=document_definition.get('id'),
-            partition_key=document_definition.get('pk')
-        )
-
-        self.assertEqual(headerEnvelope.headers['etag'], upserted_document.get('_etag'))
-        self.assertEqual(upserted_document.get('id'), document_definition.get('id'))
-        self.assertEqual(upserted_document.get('key'), document_definition.get('key'))
-
-        documentlist = list(created_collection.read_all_items())
-        self.assertEqual(2, len(documentlist))
-
-        # delete document
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('pk'))
-
-        # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
-        documentlist = list(created_collection.query_items(
-            {
-                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
-            }, enable_cross_partition_query=True))
-        self.assertEqual(1, len(documentlist))
-
-        # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
-        try:
-            list(created_collection.query_items(
-                {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''  # nosec
-                }))
-        except Exception:
-            pass
-
-        # cross partition query
-        documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            enable_cross_partition_query=True
-        ))
-
-        self.assertEqual(1, len(documentlist))
-
-        # query document by providing the partitionKey value
-        documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            partition_key=replaced_document.get('pk')
-        ))
-
-        self.assertEqual(1, len(documentlist))
-        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
-        created_db.delete_container(created_collection.id)
 
     def test_document_upsert_rust(self):
         # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_document_upsert

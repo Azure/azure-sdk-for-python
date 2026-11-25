@@ -28,6 +28,7 @@ from create_item._input_variants import (  # pylint: disable=unused-import
 from fault_injection._query_resume import set_rule
 
 pytestmark = [
+    pytest.mark.cosmosSdkFaultInjection,
     pytest.mark.cosmosEmulator,
     pytest.mark.asyncio,
 ]

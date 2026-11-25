@@ -17,7 +17,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from common._rust_checks import run_on_rust_async
 from common.throughput_fixtures import owned_database
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 
 @pytest.fixture

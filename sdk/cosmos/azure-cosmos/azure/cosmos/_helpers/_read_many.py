@@ -42,7 +42,61 @@ if TYPE_CHECKING:
 _BackendT = TypeVar("_BackendT", "CosmosBackend", "AsyncCosmosBackend")
 
 
-class ReadManyRequest(Generic[_BackendT]):
+class _ReadManyResults(Generic[_BackendT]):
+    """Hold result-indexing metadata and accumulated pages independently of request inputs."""
+
+    items: Any
+    deadline: Optional[float]
+    backend: _BackendT
+    _client_context: CosmosClientContext[_BackendT]
+
+    def __init__(self) -> None:
+        self.cursor: Optional[_ItemFeedCursor] = None
+        self.selection: tuple[ReadManyItem, ...] = ()
+        self.definition: dict[str, Any] = {}
+        self.indices: dict[tuple, list[int]] = {}
+        self.rows: list[dict[str, Any]] = []
+        self.accumulated = ResponseHeaderAccumulator()
+        self.has_charge = False
+
+    def initialize(self, metadata: ContainerMetadata) -> None:
+        self.definition = {
+            "paths": metadata.partition_key_paths,
+            "kind": metadata.partition_key_kind,
+            "systemKey": metadata.system_key,
+        }
+        items = normalize_read_items(self.items, self.definition)
+        self.indices = index_requested_items([(index, item_id, key) for index, (item_id, key) in enumerate(items)])
+        self.selection = tuple(
+            ReadManyItem(
+                item_id,
+                BindingPartitionKey("components", tuple(
+                    Ellipsis if isinstance(value, _Undefined) else value for value in partition_key_components(key)
+                )),
+            )
+            for item_id, key in items
+        )
+        remaining_timeout(self.deadline)
+        self.cursor = self.backend.create_item_feed_cursor()
+
+    def consume(self, page: BackendPage) -> bool:
+        envelope = process_backend_response(
+            page_to_backend_response(page), response_state=self._client_context.response_state
+        )
+        rows = envelope.get("Documents")
+        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+            raise ValueError("read_items received an invalid Documents response.")
+        headers = envelope.get_response_headers()
+        self.has_charge = self.has_charge or "x-ms-request-charge" in headers
+        self.accumulated(headers, None)
+        self.rows.extend(rows)
+        if not isinstance(page.has_more, bool):
+            raise RuntimeError("read_items requires a binding that reports retained-cursor progress.")
+        remaining_timeout(self.deadline)
+        return page.has_more
+
+
+class ReadManyRequest(_ReadManyResults[_BackendT]):
     """Keep the requested items, paging state and timeout without a legacy connection."""
 
     def __init__(
@@ -74,7 +128,9 @@ class ReadManyRequest(Generic[_BackendT]):
             names = sorted(set(kwargs) | (set(options) - allowed))
             raise TypeError(f"read_items does not support these options: {', '.join(names)}")
         count = options.get("maxItemCount")
-        if count is not None and (type(count) is not int or count == 0 or count < -1):
+        # Preserve the existing exact-int contract, including rejection of bool and int subclasses.
+        builtin_int = type(count) is int  # pylint: disable=unidiomatic-typecheck
+        if count is not None and (not builtin_int or count == 0 or count < -1):
             raise ValueError("read_items max_item_count must be a positive integer, -1, or None.")
         cache = options.get("maxIntegratedCacheStaleness")
         if cache is not None and (isinstance(cache, bool) or not isinstance(cache, int) or cache < 0):
@@ -89,33 +145,7 @@ class ReadManyRequest(Generic[_BackendT]):
             raise TypeError("read_items initial_headers cannot override driver-owned routing or continuation.")
         context.defaults.apply_to_options(options)
         self.headers, self.settings = build_request_headers_and_settings(options)
-        self.cursor: Optional[_ItemFeedCursor] = None
-        self.selection: tuple[ReadManyItem, ...] = ()
-        self.definition: dict[str, Any] = {}
-        self.indices: dict[tuple, list[int]] = {}
-        self.rows: list[dict[str, Any]] = []
-        self.accumulated = ResponseHeaderAccumulator()
-        self.has_charge = False
-
-    def initialize(self, metadata: ContainerMetadata) -> None:
-        self.definition = {
-            "paths": metadata.partition_key_paths,
-            "kind": metadata.partition_key_kind,
-            "systemKey": metadata.system_key,
-        }
-        items = normalize_read_items(self.items, self.definition)
-        self.indices = index_requested_items([(index, item_id, key) for index, (item_id, key) in enumerate(items)])
-        self.selection = tuple(
-            ReadManyItem(
-                item_id,
-                BindingPartitionKey("components", tuple(
-                    Ellipsis if isinstance(value, _Undefined) else value for value in partition_key_components(key)
-                )),
-            )
-            for item_id, key in items
-        )
-        remaining_timeout(self.deadline)
-        self.cursor = self.backend.create_item_feed_cursor()
+        super().__init__()
 
     def prepared(self) -> PreparedPageRequest:
         remaining = remaining_timeout(self.deadline)
@@ -128,22 +158,6 @@ class ReadManyRequest(Generic[_BackendT]):
             settings=settings,
             cursor=self.cursor,
         )
-
-    def consume(self, page: BackendPage) -> bool:
-        envelope = process_backend_response(
-            page_to_backend_response(page), response_state=self._client_context.response_state
-        )
-        rows = envelope.get("Documents")
-        if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
-            raise ValueError("read_items received an invalid Documents response.")
-        headers = envelope.get_response_headers()
-        self.has_charge = self.has_charge or "x-ms-request-charge" in headers
-        self.accumulated(headers, None)
-        self.rows.extend(rows)
-        if not isinstance(page.has_more, bool):
-            raise RuntimeError("read_items requires a binding that reports retained-cursor progress.")
-        remaining_timeout(self.deadline)
-        return page.has_more
 
     def finish(self) -> CosmosList:
         indexed = index_query_results(self.rows, self.indices, self.definition) if self.items else []

@@ -13,6 +13,7 @@ from common.sdk_subprocess import sdk_python_command
 from copy import deepcopy
 from contextlib import contextmanager
 import json
+import os
 import subprocess
 import threading
 import time
@@ -27,7 +28,7 @@ from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_REPLACE_THROUGHPUT, OP_TO_BINDING_FUNCTION_NAME
 from azure.cosmos._helpers._request_throughput import build_replace_throughput_request
 from azure.cosmos._helpers._throughput_rust_routing import (
-    can_use_rust_backend_for_replace_throughput,
+    can_use_rust_replace_throughput,
     build_replace_throughput_from_connection,
 )
 
@@ -50,7 +51,7 @@ def test_replace_gate_rust(backend, options, kwargs, expected):
     Unsupported Rust inputs are rejected by the workflow policy, not routed
     to legacy. Explicit legacy selection is reserved for comparison runs.
     """
-    assert can_use_rust_backend_for_replace_throughput(backend=backend, options=options, kwargs=kwargs) is expected
+    assert can_use_rust_replace_throughput(backend=backend, options=options, kwargs=kwargs) is expected
 
 
 @pytest.mark.parametrize("resource_link", ["dbs/db", "dbs/db/colls/coll"])
@@ -198,6 +199,8 @@ def test_native_replacement_accepts_deadline_and_attempt_controls_rust(asynchron
 
 
 def _check_native_replacement_controls(asynchronous):
+    # This subprocess's loopback server supports HTTP/1.x, not HTTP/2.
+    os.environ["AZURE_COSMOS_CONNECTION_POOL_IS_HTTP2_ALLOWED"] = "false"
     from azure.cosmos import _rust
 
     prepared = build_replace_throughput_request(

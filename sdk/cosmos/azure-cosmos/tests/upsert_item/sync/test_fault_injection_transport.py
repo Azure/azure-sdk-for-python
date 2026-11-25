@@ -28,6 +28,9 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.database import DatabaseProxy
 
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
 logger = logging.getLogger('azure.cosmos')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(logging.StreamHandler(sys.stdout))

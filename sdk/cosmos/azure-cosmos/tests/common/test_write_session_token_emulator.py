@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 """Compare explicit write tokens on the single-write-region localhost emulator.
 
-Set COSMOS_WRITE_TOKEN_EMULATOR=1 and COSMOS_EMULATOR_KEY, then run:
+Set ACCOUNT_KEY (or COSMOS_EMULATOR_KEY), then run:
 python -m pytest --confcutdir=tests/common tests/common/test_write_session_token_emulator.py -q -s
 
 Only uniquely named test resources are created and deleted. This does not test
@@ -19,10 +19,6 @@ from azure.cosmos import ConsistencyLevel, CosmosClient, PartitionKey, exception
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 
 
-pytestmark = pytest.mark.skipif(
-    os.getenv("COSMOS_WRITE_TOKEN_EMULATOR") != "1",
-    reason="Set COSMOS_WRITE_TOKEN_EMULATOR=1 and COSMOS_EMULATOR_KEY for localhost tests.",
-)
 HOST = "https://localhost:8081"
 CUSTOMER = "customer-17"
 SESSION_HEADER = "x-ms-session-token"
@@ -35,7 +31,7 @@ def _client_options(backend):
 
 @pytest.fixture(scope="module")
 def orders():
-    key = os.environ["COSMOS_EMULATOR_KEY"]
+    key = os.environ.get("COSMOS_EMULATOR_KEY") or os.environ["ACCOUNT_KEY"]
     with CosmosClient(HOST, key, **_client_options("core-python")) as setup:
         account = setup.client_connection.GetDatabaseAccount()
         assert not account._EnableMultipleWritableLocations
@@ -166,13 +162,17 @@ def test_explicit_write_session_token_rust(orders, asynchronous, operation, toke
     print(f"{'async' if asynchronous else 'sync'} {operation} {token_kind}: {outcomes}")
 
 
+@pytest.mark.cosmosEmulator
 @pytest.mark.parametrize("backend", ["core-python", "rust"])
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
 def test_future_token_is_enforced_on_a_read_rust(orders, backend, asynchronous):
     key, database_id, setup, _ = orders
     read = setup.read_item("first-order", partition_key=CUSTOMER)
     token = _future_token(read.get_response_headers()[SESSION_HEADER])
-    with pytest.raises(exceptions.CosmosResourceNotFoundError) as failure:
+    # Rust reports terminal session-recovery failure, not the last wire 404/1002.
+    error_type = exceptions.CosmosHttpResponseError if backend == "rust" else exceptions.CosmosResourceNotFoundError
+    expected_status = (503, 20310) if backend == "rust" else (404, 1002)
+    with pytest.raises(error_type) as failure:
         if asynchronous:
             async def run():
                 async with AsyncCosmosClient(HOST, key, **_client_options(backend)) as client:
@@ -188,5 +188,4 @@ def test_future_token_is_enforced_on_a_read_rust(orders, backend, asynchronous):
                     _deny_legacy_item_requests(client.client_connection)
                 container = client.get_database_client(database_id).get_container_client("orders")
                 container.read_item("first-order", partition_key=CUSTOMER, session_token=token)
-    assert failure.value.status_code == 404
-    assert failure.value.sub_status == 1002
+    assert (failure.value.status_code, failure.value.sub_status) == expected_status

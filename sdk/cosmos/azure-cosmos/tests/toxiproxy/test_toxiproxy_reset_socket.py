@@ -21,10 +21,10 @@ from toxiproxy._tcp_observer import (
 from toxiproxy._toxiproxy import CUTOFF_BYTES, OwnedProxy
 from toxiproxy._connect_tunnel import ConnectTunnel
 
-pytestmark = pytest.mark.skipif(
+pytestmark = [pytest.mark.skipif(
     not os.environ.get("TOXIPROXY_SERVER"),
     reason="Opt-in pinned Toxiproxy socket verification",
-)
+), pytest.mark.cosmosToxiproxy]
 
 
 def receive_exact(connection, size):

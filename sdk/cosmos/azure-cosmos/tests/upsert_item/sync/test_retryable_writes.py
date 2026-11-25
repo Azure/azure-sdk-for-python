@@ -13,24 +13,21 @@ injection rules and count attempts from the ``requests=N`` value in the
 import os
 import re
 import uuid
-from typing import Callable
 
 import pytest
 from azure.core.exceptions import ServiceResponseError
-from azure.core.pipeline.transport._requests_basic import RequestsTransport
-from azure.core.rest import HttpRequest
 
-from azure.cosmos import CosmosClient, ContainerProxy, DatabaseProxy, exceptions
+from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
-from _fault_injection_transport import FaultInjectionTransport
 from config.diagnostics import fault_rule_hit_count
+
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
 
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
 _WRITE_OPERATION_TYPES = ("CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem")
 _DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
-# Mirrors TestSettings.local_host; the mrw originals target the emulator endpoint.
-_LOCAL_HOST = "https://localhost:8081/"
 
 
 def _host():
@@ -78,23 +75,6 @@ class _RecordingContainer(object):
 @pytest.mark.usefixtures("setup")
 class TestRetryableWrites:
     """Rust-path copies of tests/test_retryable_writes.py::TestRetryableWrites."""
-    TEST_DATABASE_ID = "upsert_item_retryable_writes_mrw_" + uuid.uuid4().hex
-    TEST_CONTAINER_SINGLE_PARTITION_ID = SINGLE_PARTITION_CONTAINER
-
-    @staticmethod
-    def setup_method_with_custom_transport(
-            custom_transport: RequestsTransport,
-            default_endpoint: str = None,
-            key: str = None,
-            database_id: str = TEST_DATABASE_ID,
-            container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
-            **kwargs):
-        client = CosmosClient(default_endpoint or _host(), key or _key(), consistency_level="Session",
-                              transport=custom_transport, _backend="rust", **kwargs)
-        db: DatabaseProxy = client.create_database_if_not_exists(database_id)
-        container: ContainerProxy = db.create_container_if_not_exists(container_id, PartitionKey(path="/pk"))
-        return {"client": client, "db": db, "col": container}
-
     class MockExecuteFunction(object):
         """Rust stand-in for the original MockExecuteFunction.
 
@@ -664,144 +644,3 @@ class TestRetryableWrites:
             for mock in mocks:
                 mock.close()
             client_with_retry.close()
-
-    @pytest.mark.parametrize("injected_error", [FaultInjectionTransport.error_request_timeout(),
-                             FaultInjectionTransport.error_internal_server_error(),
-                             FaultInjectionTransport.error_service_response()])
-    def test_retryable_writes_mrw_request_level_rust(self, injected_error):
-        # Source: tests/test_retryable_writes.py::TestRetryableWrites.test_retryable_writes_mrw_request_level
-        # Verify cross regional retries when using retryable writes at request level with multiple write locations.
-        # Need to test for 408s, 500s, and ServiceResponseError.
-        first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")
-        second_region_uri: str = _LOCAL_HOST
-        custom_transport = FaultInjectionTransport()
-
-        # Inject topology transformation that would make Emulator look like a multiple write region account
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
-            lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
-                first_region_name="First Region",
-                second_region_name="Second Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
-
-        # Inject rule to simulate regional outage in "First Region" to test retry happens in next region
-        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
-                r: FaultInjectionTransport.predicate_targets_region(r, first_region_uri) and \
-                   FaultInjectionTransport.predicate_is_document_operation(r)
-
-        custom_transport.add_fault(
-            is_request_to_first_region,
-            lambda r: injected_error)
-
-        id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
-        # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend.
-        pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
-                    "is not accepted by the Rust client (known gap 10); the request URL is not observable "
-                    "(known gap 6); per-call retry_write is not supported (known gap 13).")
-        initialized_objects = self.setup_method_with_custom_transport(
-            custom_transport,
-            preferred_locations=["First Region", "Second Region"],
-            multiple_write_locations=True
-        )
-        container: ContainerProxy = initialized_objects["col"]
-
-        create_document = container.create_item(body=document_definition, retry_write=2)
-        request = create_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        upsert_document = container.upsert_item(body=document_definition, retry_write=2)
-        request = upsert_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        replace_document = container.replace_item(item=document_definition['id'], body=document_definition, retry_write=2)
-        request = replace_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        operations = [{"op": "add", "path": "/favorite_color", "value": "red"},]
-        patch_document = container.patch_item(item=document_definition['id'], partition_key=document_definition['pk'],
-                                                patch_operations=operations, retry_write=2)
-        request = patch_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-    @pytest.mark.parametrize("injected_error", [FaultInjectionTransport.error_request_timeout(),
-                             FaultInjectionTransport.error_internal_server_error(),
-                             FaultInjectionTransport.error_service_response()])
-    def test_retryable_writes_mrw_client_level_rust(self, injected_error):
-        # Source: tests/test_retryable_writes.py::TestRetryableWrites.test_retryable_writes_mrw_client_level
-        # Verify cross regional retries when using retryable writes at client level with multiple write locations.
-        # Need to test for 408s, 500s, and ServiceResponseError.
-        first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")
-        second_region_uri: str = _LOCAL_HOST
-        custom_transport = FaultInjectionTransport()
-
-        # Inject topology transformation that would make Emulator look like a multiple write region account
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransport.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
-            lambda r, inner: FaultInjectionTransport.transform_topology_mwr(
-                first_region_name="First Region",
-                second_region_name="Second Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
-
-        # Inject rule to simulate regional outage in "First Region" to test retry happens in next region
-        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
-                r: FaultInjectionTransport.predicate_targets_region(r, first_region_uri) and \
-                   FaultInjectionTransport.predicate_is_document_operation(r)
-
-        custom_transport.add_fault(
-            is_request_to_first_region,
-            lambda r: injected_error)
-
-        id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
-        pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
-                    "is not accepted by the Rust client (known gap 10); the request URL is not observable "
-                    "(known gap 6).")
-        initialized_objects = self.setup_method_with_custom_transport(
-            custom_transport,
-            preferred_locations=["First Region", "Second Region"],
-            multiple_write_locations=True,
-            retry_write=2
-        )
-        container: ContainerProxy = initialized_objects["col"]
-
-        create_document = container.create_item(body=document_definition)
-        request = create_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        upsert_document = container.upsert_item(body=document_definition)
-        request = upsert_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        replace_document = container.replace_item(item=document_definition['id'], body=document_definition)
-        request = replace_document.get_response_headers()["_request"]
-        assert request.url.startswith(second_region_uri)
-
-        # Patch operation should not retry
-        operations = [{"op": "add", "path": "/favorite_color", "value": "red"},]
-        try:
-            container.patch_item(item=document_definition['id'], partition_key=document_definition['pk'],
-                                    patch_operations=operations)
-        except (ServiceResponseError, exceptions.CosmosHttpResponseError) as e:
-            if isinstance(e, exceptions.CosmosHttpResponseError):
-                assert e.status_code in [408, 500], "Expected a retryable error for patch_item"

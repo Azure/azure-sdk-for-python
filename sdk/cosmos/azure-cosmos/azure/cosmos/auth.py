@@ -39,7 +39,8 @@ def GetAuthorizationHeader(
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers)
 
 
-def _get_authorization_header(
+# Retain the deprecated forwarding entrypoint's signature; signing uses the resource ID, not path.
+def _get_authorization_header(  # pylint: disable=unused-argument
         cosmos_client_connection, verb, path, resource_id_or_fullname, is_name_based, resource_type, headers
 ):
     """Gets the authorization header.

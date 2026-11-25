@@ -9,10 +9,11 @@ from dataclasses import dataclass
 from threading import Lock
 from typing import Callable, Generic, Optional, TypeVar, Union
 
+from urllib3.util.retry import Retry
+
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy
-from urllib3.util.retry import Retry
 
 from .exceptions import CosmosHttpResponseError
 from .http_constants import StatusCodes
@@ -32,10 +33,11 @@ class InferenceClientSettings(Generic[_CredentialT]):
     enable_diagnostics_logging: bool
 
 
-class InferenceClient(Generic[_CredentialT, _ServiceT]):
+# This is an internal lazy service holder, not a public service client.
+class InferenceClient(Generic[_CredentialT, _ServiceT]):  # pylint: disable=client-accepts-api-version-keyword
     """Share one lazily created inference service across a client's proxies."""
 
-    def __init__(
+    def __init__(  # pylint: disable=missing-client-constructor-parameter-credential,missing-client-constructor-parameter-kwargs
         self,
         settings: InferenceClientSettings[_CredentialT],
         service_factory: Callable[[InferenceClientSettings[_CredentialT]], _ServiceT],

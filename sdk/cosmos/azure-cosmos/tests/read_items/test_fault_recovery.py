@@ -17,6 +17,9 @@ from config.clients import create_data_client, create_setup_client
 from config.settings import TestSettings
 
 
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
+
 @pytest.fixture(scope="module")
 def legacy_fault_database():
     """Key client database: creates and deletes the database and containers."""

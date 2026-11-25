@@ -21,6 +21,9 @@ from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
 _WRITE_OPERATION_TYPES = ("CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem")
@@ -548,104 +551,3 @@ class TestRetryableWritesAsync:
         finally:
             for mock in mocks:
                 await mock.close()
-
-    @pytest.mark.skip(
-        reason="accepted-vnext-change: Gap 13 - This copied legacy test expects patch_item "
-        "to fail without retrying, even when retry_write is set on the client. "
-        "Rust decides which write failures to retry automatically, so it does not "
-        "preserve this legacy no-retry guarantee."
-    )
-    async def test_retryable_writes_hpk_client_level_async_rust(self, setup):
-        # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_hpk_client_level_async
-        """Test retryable writes for a container with hierarchical partition keys and retry_write
-        set at the client level."""
-        # Create a client with retry_write enabled
-        client_with_retry = CosmosClient(_host(), credential=_key(), retry_write=2, _backend="rust")
-        await client_with_retry.__aenter__()
-        database_id = setup['database'].id
-        mocks = []
-        try:
-            container = client_with_retry.get_database_client(database_id).get_container_client(
-                setup['container_hpk'].id)
-
-            # Mock retry_utility.execute to track retries
-            me = self.MockExecuteFunction(database_id, container.id, retry_write=2)
-            mocks.append(me)
-
-            # Test upsert_item
-            test_item = {"id": "6", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
-            try:
-                await me.container.upsert_item(test_item)
-            except exceptions.CosmosHttpResponseError as e:
-                assert me.counter > 1, "Expected multiple retries due to simulated errors"
-
-            # Test create_item
-            me.counter = 0  # Reset counter
-            test_item_create = {"id": "7", "state": "NY", "city": "New York", "data": "retryable create test"}
-            try:
-                await me.container.create_item(test_item_create)
-            except exceptions.CosmosHttpResponseError as e:
-                assert me.counter > 1, "Expected multiple retries due to simulated errors"
-
-            # Test patch_item
-            me.counter = 0  # Reset counter
-            test_patch_operations_hpk = [
-                {"op": "add", "path": "/data", "value": "patched retryable write test"}
-            ]
-            # Known gap 13: Closed: Rust owns automatic write retries. Rust retries the injected 408 on the replace leg of its client-side patch, so patch may succeed instead of raising.
-            try:
-                await me.container.patch_item(item=test_item['id'],
-                                              partition_key=[test_item['state'], test_item['city']],
-                                              patch_operations=test_patch_operations_hpk)
-                pytest.fail("Expected an exception without retries")
-            except exceptions.CosmosHttpResponseError:
-                assert me.counter == 1, "Expected no retries for patch_item with client_retry_write"
-
-            test_item = {"id": "6", "state": "CA", "city": "San Francisco", "data": "retryable write test"}
-            await container.upsert_item(test_item)
-
-            # Mock retry_utility.execute to track retries
-            me = self.MockExecuteFunction(database_id, container.id, retry_write=2)
-            mocks.append(me)
-
-            # Verify delete_item does not retry
-            me.counter = 0  # Reset counter
-            try:
-                await me.container.delete_item(item=test_item['id'],
-                                               partition_key=[test_item['state'], test_item['city']])
-            except exceptions.CosmosHttpResponseError:
-                assert me.counter > 1, "Expected multiple retries due to simulated errors"
-
-            # Verify the item was deleted
-            try:
-                await container.read_item(item=test_item['id'], partition_key=[test_item['state'], test_item['city']])
-                pytest.fail("Expected an exception for item that should have been deleted")
-            except exceptions.CosmosHttpResponseError as e:
-                assert e.status_code == 404, "Expected item to be deleted but it was not"
-
-            # Now we try a replace request with retry write enabled - which should retry once
-
-            # Create an item to replace
-            test_item_replace = {"id": str(uuid.uuid4()), "state": "TX", "city": "Austin", "data": "original data"}
-            await container.create_item(test_item_replace)
-            # Mock execute function
-            me = self.MockExecuteFunction(database_id, container.id, retry_write=2)
-            mocks.append(me)
-            me.counter = 0  # Reset counter
-            try:
-                await me.container.replace_item(item=test_item_replace['id'], body={"id": test_item_replace['id'],
-                                                                                     "state": "TX",
-                                                                                     "city": "Austin",
-                                                                                     "data": "replaced data"})
-            except exceptions.CosmosHttpResponseError:
-                assert me.counter > 1, "Expected multiple retries for replace_item with retry_write enabled"
-            # Verify the item was replaced
-            read_item_replace = await container.read_item(item=test_item_replace['id'],
-                                                          partition_key=[test_item_replace['state'],
-                                                                         test_item_replace['city']])
-            assert read_item_replace['data'] == "replaced data", "Item was not replaced successfully after retries"
-
-        finally:
-            for mock in mocks:
-                await mock.close()
-            await client_with_retry.close()

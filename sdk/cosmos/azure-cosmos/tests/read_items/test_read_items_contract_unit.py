@@ -97,11 +97,25 @@ def test_empty_input_no_metadata_or_cursor_and_one_hook_rust(mode):
     assert not backend.calls
 
 
+def test_empty_partition_key_rejected_before_backend_work_rust(mode):
+    proxy, backend = mode.make()
+    hook = MagicMock()
+    with pytest.raises(
+        ValueError,
+        match=r"^read_items requires a full partition key, not an empty component list\.$",
+    ):
+        mode.run(proxy.read_items([("a", [])], response_hook=hook))
+    backend.get_container_metadata.assert_not_called()
+    backend.create_item_feed_cursor.assert_not_called()
+    assert not backend.calls
+    hook.assert_not_called()
+
+
 @pytest.mark.parametrize("items,kwargs,error", [
     (None, {}, TypeError), ("ab", {}, TypeError), ([("a",)], {}, TypeError),
     ([("a", "p", "extra")], {}, TypeError), ([(3, "p")], {}, TypeError),
     ([("", "p")], {}, ValueError), ([("a/b", "p")], {}, ValueError),
-    ([("a", [])], {}, ValueError), ([("a", {"bad": 1})], {}, TypeError),
+    ([("a", {"bad": 1})], {}, TypeError),
     ([("a", float("nan"))], {}, ValueError), ([("a", float("inf"))], {}, ValueError),
     ([("a", [object()])], {}, TypeError),
     ([], {"max_concurrency": 0}, TypeError), ([], {"max_concurrency": 1}, TypeError),

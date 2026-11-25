@@ -23,6 +23,9 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.http_constants import HttpHeaders, StatusCodes
 
 
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
+
 def _host():
     return os.environ["ACCOUNT_HOST"]
 

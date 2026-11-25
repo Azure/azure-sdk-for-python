@@ -115,6 +115,11 @@ def copy_connection_policy(policy: Optional[ConnectionPolicy]) -> ConnectionPoli
     original PreferredLocations list. Values nested inside the copied fields
     remain shared.
     None creates a new ConnectionPolicy with default settings.
+
+    :param policy: Customer-supplied policy, or None to use default settings.
+    :type policy: ~azure.cosmos.documents.ConnectionPolicy or None
+    :return: Policy with independent copies of the fields changed by client construction.
+    :rtype: ~azure.cosmos.documents.ConnectionPolicy
     """
     if policy is None:
         return ConnectionPolicy()
@@ -135,6 +140,15 @@ def resolve_retry_option(
 
     Only None means unspecified. For example, retry_throttle_total=0 wins over
     retry_total=9; zero must not be replaced with a default retry count.
+
+    :param kwargs: Client options containing the candidate retry settings.
+    :type kwargs: Mapping[str, Any]
+    :param str throttle_keyword: Preferred throttle-specific option name.
+    :param str generic_keyword: Fallback generic retry option name.
+    :param default: Value used when both options are absent or None.
+    :type default: Any
+    :return: First non-None option value, or the supplied default.
+    :rtype: Any
     """
     value = kwargs.get(throttle_keyword)
     if value is None:
@@ -152,6 +166,11 @@ def resolve_connection_policy_kwargs(kwargs: Mapping[str, Any]) -> dict[str, Any
 
     Connection timeouts are handled separately by the legacy connection-policy
     builder; Rust clients require runtime-level connection settings.
+
+    :param kwargs: Client options, including an optional connection_policy.
+    :type kwargs: Mapping[str, Any]
+    :return: Copied options with supported policy values merged without mutating the input.
+    :rtype: dict[str, Any]
     """
     reject_removed_options(kwargs)
     resolved = dict(kwargs)

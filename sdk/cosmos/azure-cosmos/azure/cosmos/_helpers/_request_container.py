@@ -37,7 +37,15 @@ def parse_container_create_args(
     method_name: str = "create_container",
     target_parameter: str = "id",
 ) -> tuple[Any, Any]:
-    """Bind a container target/id and partition key without expanding the public signature."""
+    """Bind a container target/id and partition key without expanding the public signature.
+
+    :param tuple args: Positional target and partition key supplied by the caller.
+    :param dict kwargs: Keyword arguments; bound required arguments are removed.
+    :keyword str method_name: Operation name used in argument errors.
+    :keyword str target_parameter: Name of the required container target argument.
+    :return: The container target and partition key.
+    :rtype: tuple
+    """
     required = (target_parameter, "partition_key")
     if len(args) > len(required):
         raise TypeError(
@@ -61,7 +69,13 @@ def parse_container_create_args(
 def validate_container_create_kwargs(
     kwargs: dict[str, Any], *, method_name: str = "create_container"
 ) -> None:
-    """Reject obsolete options on container operations."""
+    """Reject obsolete options on container operations.
+
+    :param dict kwargs: Creation keywords to inspect without consuming them.
+    :keyword str method_name: Operation name used in the error.
+    :return: None.
+    :rtype: None
+    """
     for option in ("session_token", "populate_query_metrics"):
         if option in kwargs:
             raise TypeError("{}() does not support the '{}' keyword argument".format(method_name, option))
@@ -70,7 +84,13 @@ def validate_container_create_kwargs(
 def validate_container_retry_write_kwargs(
     kwargs: Mapping[str, Any], operation: str
 ) -> None:
-    """Reject Rust write-retry overrides before reading or deleting a container."""
+    """Reject Rust write-retry overrides before reading or deleting a container.
+
+    :param Mapping[str, Any] kwargs: Call keywords, including nested request or feed options.
+    :param str operation: Operation name used in the error.
+    :return: None.
+    :rtype: None
+    """
     for options in (kwargs, kwargs.get("request_options"), kwargs.get("feed_options")):
         if (
             isinstance(options, Mapping)
@@ -88,7 +108,14 @@ def prepare_container_get_or_create_read(
     initial_headers: Optional[dict[str, str]],
     offer_throughput: Optional[Union[int, ThroughputProperties]],
 ) -> tuple[dict[str, Any], dict[str, Any], bool, Optional[float]]:
-    """Preflight both legs and give supported calls one read-and-create deadline."""
+    """Preflight both legs and give supported calls one read-and-create deadline.
+
+    :param Mapping[str, Any] kwargs: Caller options copied separately for the read and creation.
+    :keyword dict[str, str] or None initial_headers: Header overrides applied to both operations.
+    :keyword int or azure.cosmos.ThroughputProperties or None offer_throughput: Creation throughput.
+    :return: Read options, remaining read keywords, Rust eligibility, and the monotonic deadline.
+    :rtype: tuple[dict, dict, bool, float or None]
+    """
     started = time.monotonic()
     read_kwargs = dict(kwargs)
     create_kwargs = dict(kwargs)
@@ -127,7 +154,12 @@ def prepare_container_get_or_create_read(
 def container_creation_read_options(
     request_options: Mapping[str, Any],
 ) -> dict[str, Any]:
-    """Preserve read settings without replaying creation conditions or provisioning."""
+    """Preserve read settings without replaying creation conditions or provisioning.
+
+    :param Mapping[str, Any] request_options: Creation options, left unchanged.
+    :return: Options with creation-only settings and headers removed.
+    :rtype: dict[str, Any]
+    """
     create_only = {
         "accessCondition",
         "responsePayloadOnWriteDisabled",
@@ -163,7 +195,15 @@ def build_create_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build a prepared request to create a container in its parent database."""
+    """Build a prepared request to create a container in its parent database.
+
+    :param Any database_link: Parent database link in ``dbs/{id}`` form.
+    :param Mapping[str, Any] container_definition: Container properties to validate and serialize.
+    :param Mapping[str, Any] request_options: Internal request options to translate.
+    :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords, including timeout.
+    :return: The serialized container creation request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     _validate_resource(container_definition)
     create_options = dict(request_options)
     create_options.pop("sessionToken", None)
@@ -185,7 +225,15 @@ def preflight_create_container(
     request_options: Mapping[str, Any],
     kwargs: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Prepare creation before a GSI source lookup, without sending a request."""
+    """Prepare creation before a GSI source lookup, without sending a request.
+
+    :param Any database_link: Parent database link in ``dbs/{id}`` form.
+    :param Mapping[str, Any] container_definition: Container properties to validate and serialize.
+    :param Mapping[str, Any] request_options: Internal creation options checked for Rust support.
+    :param Mapping[str, Any] kwargs: Remaining operation keywords checked for Rust support.
+    :return: The prepared creation request after eligibility validation.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     OperationRouting(
         OP_CREATE_CONTAINER, is_create_container_rust_eligible(request_options, kwargs)
     ).require_rust_support()
@@ -196,7 +244,13 @@ def _is_container_mutation_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Reject an explicit RID and apply the shared database-request eligibility checks."""
+    """Reject an explicit RID and apply the shared database-request eligibility checks.
+
+    :param Mapping[str, Any] request_options: Internal options to check, including a possible container RID.
+    :param Mapping[str, Any] operation_kwargs: Remaining call keywords to check.
+    :return: Whether the options can be represented by the Rust request.
+    :rtype: bool
+    """
     if request_options.get(Constants.ContainerRID) is not None:
         return False
     return is_read_database_rust_eligible(request_options, operation_kwargs)
@@ -206,7 +260,13 @@ def is_create_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Apply the shared container-mutation option checks to creation."""
+    """Apply the shared container-mutation option checks to creation.
+
+    :param Mapping[str, Any] request_options: Internal creation options to check.
+    :param Mapping[str, Any] operation_kwargs: Remaining call keywords to check.
+    :return: Whether the creation options can be represented by Rust.
+    :rtype: bool
+    """
     return _is_container_mutation_rust_eligible(request_options, operation_kwargs)
 
 
@@ -216,7 +276,14 @@ def build_read_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build a prepared request to read a container's properties."""
+    """Build a prepared request to read a container's properties.
+
+    :param Any container_link: Container link in ``dbs/{db}/colls/{container}`` form.
+    :param Mapping[str, Any] request_options: Internal read options to translate.
+    :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords, including timeout.
+    :return: The container read request with a normalized link.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     read_options = dict(request_options)
     read_options.pop("sessionToken", None)
     headers, settings = account_request_settings(read_options, kwargs)
@@ -231,7 +298,12 @@ def build_read_container_prepared(
 
 
 def _normalized_container_link(container_link: Any) -> str:
-    """Validate and return ``dbs/{db}/colls/{container}``."""
+    """Validate and return ``dbs/{db}/colls/{container}``.
+
+    :param Any container_link: Link to stringify and validate.
+    :return: The container link without leading or trailing slashes.
+    :rtype: str
+    """
     normalized = str(container_link).strip("/")
     parts = normalized.split("/")
     if len(parts) != 4 or parts[0] != "dbs" or parts[2] != "colls" or not parts[1] or not parts[3]:
@@ -245,7 +317,13 @@ def is_read_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Apply the shared database-request eligibility checks to a container read."""
+    """Apply the shared database-request eligibility checks to a container read.
+
+    :param Mapping[str, Any] request_options: Internal read options to check.
+    :param Mapping[str, Any] operation_kwargs: Remaining call keywords to check.
+    :return: Whether the read options can be represented by Rust.
+    :rtype: bool
+    """
     return is_read_database_rust_eligible(request_options, operation_kwargs)
 
 
@@ -255,7 +333,14 @@ def build_delete_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build a named container's delete request without resolving service metadata."""
+    """Build a named container's delete request without resolving service metadata.
+
+    :param Any container_link: Container link in ``dbs/{db}/colls/{container}`` form.
+    :param Mapping[str, Any] request_options: Internal delete options to translate.
+    :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords, including timeout.
+    :return: The container deletion request with a normalized link.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     delete_options = dict(request_options)
     delete_options.pop("sessionToken", None)
     headers, settings = account_request_settings(delete_options, kwargs)
@@ -273,7 +358,13 @@ def is_delete_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Apply the shared container-mutation option checks to deletion."""
+    """Apply the shared container-mutation option checks to deletion.
+
+    :param Mapping[str, Any] request_options: Internal delete options to check.
+    :param Mapping[str, Any] operation_kwargs: Remaining call keywords to check.
+    :return: Whether the deletion options can be represented by Rust.
+    :rtype: bool
+    """
     return _is_container_mutation_rust_eligible(request_options, operation_kwargs)
 
 
@@ -284,7 +375,15 @@ def build_replace_container_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build a replacement request with body bytes; do not send or resolve metadata."""
+    """Build a replacement request with body bytes; do not send or resolve metadata.
+
+    :param Any container_link: Container link in ``dbs/{db}/colls/{container}`` form.
+    :param Mapping[str, Any] container_definition: Replacement properties to validate and serialize.
+    :param Mapping[str, Any] request_options: Internal replacement options to translate.
+    :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords, including timeout.
+    :return: The container replacement request with serialized properties.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     _validate_resource(container_definition)
     replace_options = dict(request_options)
     replace_options.pop("sessionToken", None)
@@ -303,5 +402,11 @@ def is_replace_container_rust_eligible(
     request_options: Mapping[str, Any],
     operation_kwargs: Mapping[str, Any],
 ) -> bool:
-    """Apply the shared container-mutation option checks to replacement."""
+    """Apply the shared container-mutation option checks to replacement.
+
+    :param Mapping[str, Any] request_options: Internal replacement options to check.
+    :param Mapping[str, Any] operation_kwargs: Remaining call keywords to check.
+    :return: Whether the replacement options can be represented by Rust.
+    :rtype: bool
+    """
     return _is_container_mutation_rust_eligible(request_options, operation_kwargs)

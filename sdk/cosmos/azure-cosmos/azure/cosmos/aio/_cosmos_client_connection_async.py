@@ -42,7 +42,7 @@ after its remaining responsibilities move and callers no longer depend
 on it. The public CosmosClient, DatabaseProxy, and ContainerProxy classes
 remain; their dependency on this internal connection object is removed.
 """
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio  # Used for locks, not transport sleeps.
 import logging
 import os
 import uuid
@@ -104,7 +104,19 @@ from .._backend.credentials import reject_resource_token_fields
 from .._constants import _Constants as Constants
 from .._query_advisor import get_query_advice_info
 from .._cosmos_responses import CosmosDict, CosmosList
-from .._query_rust_routing import build_list_databases_prepared_page_request, build_query_databases_prepared_page_request, build_list_containers_prepared_page_request, build_query_containers_prepared_page_request, build_query_items_prepared_page_request, can_use_rust_backend_for_list_databases_page, can_use_rust_backend_for_query_databases_page, can_use_rust_backend_for_list_containers_page, can_use_rust_backend_for_query_containers_page, can_use_rust_backend_for_query_page, process_query_page
+from .._query_rust_routing import (
+    build_list_databases_page,
+    build_query_databases_page,
+    build_list_containers_page,
+    build_query_containers_page,
+    build_query_items_prepared_page_request,
+    can_use_rust_list_databases,
+    can_use_rust_query_databases,
+    can_use_rust_list_containers,
+    can_use_rust_query_containers,
+    can_use_rust_backend_for_query_page,
+    process_query_page,
+)
 from .. import http_constants, exceptions
 from . import _query_iterable_async as query_iterable
 from ._backend.cosmos_backend import AsyncCosmosBackend
@@ -164,7 +176,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     @property
     def last_response_headers(self) -> CaseInsensitiveDict:
-        """Historical header view shared with connection-free item execution."""
+        """Historical header view shared with connection-free item execution.
+
+        :return: Shared last-response headers.
+        :rtype: ~azure.core.utils.CaseInsensitiveDict
+        """
         return self._response_state.last_response_headers
 
     @last_response_headers.setter
@@ -313,14 +329,22 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     @cached_property
     def pipeline_client(self) -> AsyncPipelineClient[HttpRequest, AsyncHttpResponse]:
-        """Construct the retained Python pipeline only when it is needed."""
+        """Construct the retained Python pipeline only when it is needed.
+
+        :return: Cached legacy asynchronous HTTP pipeline client.
+        :rtype: ~azure.core.AsyncPipelineClient
+        """
         return AsyncPipelineClient(
             base_url=self.url_connection,
             policies=self._pipeline_policies,
         )
 
     async def _close_pipeline(self, *args: Any) -> None:
-        """Close an existing pipeline without constructing an unused one."""
+        """Close an existing pipeline without constructing an unused one.
+
+        :param args: Exception details forwarded to the pipeline's context-manager exit.
+        :type args: Any
+        """
         pipeline = vars(self).get("pipeline_client")
         if pipeline is not None:
             await pipeline.__aexit__(*args)
@@ -1961,7 +1985,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             rust_request_headers: Mapping[str, Any] = {}
             if resource_type == http_constants.ResourceType.Database:
                 page_op = OP_LIST_DATABASES
-                rust_eligible = can_use_rust_backend_for_list_databases_page(
+                rust_eligible = can_use_rust_list_databases(
                     options=options,
                     kwargs=kwargs,
                     is_query_plan=is_query_plan,
@@ -1970,7 +1994,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 def _build_list_databases_page() -> PreparedPageRequest:
                     nonlocal rust_request_headers
-                    prepared = build_list_databases_prepared_page_request(
+                    prepared = build_list_databases_page(
                         options=options,
                         req_headers=self.default_headers,
                     )
@@ -1979,7 +2003,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 build_request_page = _build_list_databases_page
             elif resource_type == http_constants.ResourceType.Collection:
                 page_op = OP_LIST_CONTAINERS
-                rust_eligible = can_use_rust_backend_for_list_containers_page(
+                rust_eligible = can_use_rust_list_containers(
                     path=path,
                     options=options,
                     kwargs=kwargs,
@@ -1989,7 +2013,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
                 def _build_list_containers_page() -> PreparedPageRequest:
                     nonlocal rust_request_headers
-                    prepared = build_list_containers_prepared_page_request(
+                    prepared = build_list_containers_page(
                         path=path,
                         options=options,
                         req_headers=self.default_headers,
@@ -2073,7 +2097,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # or container properties -- the three things that block is keyed on.
         if resource_type == http_constants.ResourceType.Database:
             page_op = OP_QUERY_DATABASES
-            rust_eligible = can_use_rust_backend_for_query_databases_page(
+            rust_eligible = can_use_rust_query_databases(
                 query_payload=query,
                 options=options,
                 kwargs=kwargs,
@@ -2083,7 +2107,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
-                prepared = build_query_databases_prepared_page_request(
+                prepared = build_query_databases_page(
                     query_payload=query,
                     options=options,
                     req_headers=self.default_headers,
@@ -2096,7 +2120,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # point -- but the owning database has to reach the Rust side, so the
             # builder parses it out of ``path``.
             page_op = OP_QUERY_CONTAINERS
-            rust_eligible = can_use_rust_backend_for_query_containers_page(
+            rust_eligible = can_use_rust_query_containers(
                 path=path,
                 query_payload=query,
                 options=options,
@@ -2107,7 +2131,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             def _build_query_page() -> PreparedPageRequest:
                 nonlocal rust_query_headers
-                prepared = build_query_containers_prepared_page_request(
+                prepared = build_query_containers_page(
                     path=path,
                     query_payload=query,
                     options=options,

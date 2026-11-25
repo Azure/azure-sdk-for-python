@@ -12,6 +12,7 @@ from unittest.mock import Mock
 
 import pytest
 
+from azure.core.exceptions import ClientAuthenticationError
 from azure.cosmos import exceptions
 from common.sdk_subprocess import sdk_python_command
 from config import clients, resources
@@ -19,6 +20,32 @@ from config.settings import TestSettings, unique_database_id
 
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize("async_mode", [False, True])
+@pytest.mark.parametrize("signed_in", [False, True])
+def test_retained_aad_lazy_init_setup_checks_sign_in_rust(monkeypatch, async_mode, signed_in):
+    surface, suffix = ("aio", "_async") if async_mode else ("sync", "")
+    path = ROOT / "tests" / "semantic_rerank" / surface / f"test_aad_inference_service_lazy_init{suffix}.py"
+    spec = importlib.util.spec_from_file_location("_aad_lazy_init_tests", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    owner = getattr(module, "TestAADInferenceServiceLazyInit" + ("Async" if async_mode else ""))
+    monkeypatch.setattr(owner, "configs", SimpleNamespace(is_emulator=False))
+    credential = Mock()
+    if not signed_in:
+        credential.get_token.side_effect = ClientAuthenticationError(message="Not signed in")
+    factory = Mock(return_value=credential)
+    monkeypatch.setattr(module.clients, "_aad_credential", factory)
+    case = owner("test_aad_client_construction_without_inference_endpoint_rust")
+    if signed_in:
+        case.setUp()
+        assert case.credential is credential
+    else:
+        with pytest.raises(pytest.skip.Exception, match="environment-gap: no Azure sign-in"):
+            case.setUp()
+    credential.get_token.assert_called_once_with("https://cosmos.azure.com/.default")
+    factory.assert_any_call(async_mode)
 
 
 @pytest.mark.parametrize("async_mode", [False, True])

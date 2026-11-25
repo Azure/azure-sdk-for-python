@@ -31,7 +31,15 @@ from ._wire_encoding import serialize_body_to_bytes
 def prepare_batch(
     proxy: Any, operations: Any, partition_key: Any, kwargs: dict[str, Any]
 ) -> tuple[PreparedRequest, Optional[float], Any]:
-    """Snapshot input and establish a budget before native metadata resolution."""
+    """Snapshot input and establish a budget before native metadata resolution.
+
+    :param Any proxy: Container proxy owning the execution context and resource link.
+    :param Any operations: Batch operation tuples copied and converted to service operation dictionaries.
+    :param Any partition_key: Public partition key shared by every operation.
+    :param dict[str, Any] kwargs: Call options copied before request preparation.
+    :return: Prepared batch request, monotonic deadline, and optional response callback.
+    :rtype: tuple[PreparedRequest, float or None, callable or None]
+    """
     started = time.monotonic()
     kwargs = dict(kwargs)
     hook = kwargs.get("response_hook")
@@ -44,11 +52,13 @@ def prepare_batch(
     deadline = prepare_item_deadline(kwargs, OP_EXECUTE_ITEM_BATCH, started)
     options = compose_item_options(kwargs)
     validate_rust_item_options({"kwargs": kwargs}, options)
-    proxy._client_context.defaults.apply_to_options(options)
+    # Batch preparation is part of the proxy implementation and shares its internal defaults.
+    context = proxy._client_context  # pylint: disable=protected-access
+    context.defaults.apply_to_options(options)
     headers, settings = build_request_headers_and_settings(options)
     body = _format_batch_operations(deepcopy(operations))
     # Match legacy: read/delete-only batches carry no item body and stay escaped.
-    compact_utf8 = proxy._client_context.defaults.enable_compact_utf8_item_writes and any(
+    compact_utf8 = context.defaults.enable_compact_utf8_item_writes and any(
         isinstance(operation, dict) and "resourceBody" in operation for operation in body
     )
     prepared = PreparedRequest(
@@ -70,9 +80,19 @@ def prepare_batch(
 def complete_batch(
     proxy: Any, response: BackendResponse, hook: Any, deadline: Optional[float]
 ) -> CosmosList:
-    """Preserve batch error indices, operation results, response headers and hooks."""
+    """Preserve batch error indices, operation results, response headers and hooks.
+
+    :param Any proxy: Container proxy owning the client response-header state.
+    :param BackendResponse response: Batch response carrying per-operation statuses.
+    :param callable or None hook: Callback receiving copied headers and successful operation results.
+    :param float or None deadline: Monotonic deadline checked before success completion.
+    :return: Successful operation results with response headers.
+    :rtype: ~azure.cosmos.CosmosList
+    """
     headers = build_response_headers(response)
-    proxy._client_context.response_state.last_response_headers = CaseInsensitiveDict(headers)
+    # Completion publishes diagnostic headers to the proxy's internal client context.
+    context = proxy._client_context  # pylint: disable=protected-access
+    context.response_state.last_response_headers = CaseInsensitiveDict(headers)
     results = parse_response_body(replace(response, headers=headers))
     if not isinstance(results, list) or any(
         not isinstance(result, dict) or "statusCode" not in result for result in results
@@ -117,7 +137,8 @@ def complete_batch(
 
 def execute_batch(proxy: Any, operations: Any, partition_key: Any, kwargs: dict[str, Any]) -> CosmosList:
     prepared, deadline, hook = prepare_batch(proxy, operations, partition_key, kwargs)
-    return proxy._client_context.adapter.run_operation(
+    # The proxy delegates execution to its already-selected internal adapter.
+    return proxy._client_context.adapter.run_operation(  # pylint: disable=protected-access
         routing=OperationRouting(OP_EXECUTE_ITEM_BATCH),
         build_request=lambda: prepared,
         process_response=lambda response: complete_batch(proxy, response, hook, deadline),
@@ -129,7 +150,8 @@ async def execute_batch_async(
     proxy: Any, operations: Any, partition_key: Any, kwargs: dict[str, Any]
 ) -> CosmosList:
     prepared, deadline, hook = prepare_batch(proxy, operations, partition_key, kwargs)
-    return await proxy._client_context.adapter.run_operation(
+    # The proxy delegates execution to its already-selected internal adapter.
+    return await proxy._client_context.adapter.run_operation(  # pylint: disable=protected-access
         routing=OperationRouting(OP_EXECUTE_ITEM_BATCH),
         build_request=lambda: prepared,
         process_response=lambda response: complete_batch(proxy, response, hook, deadline),

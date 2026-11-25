@@ -66,6 +66,16 @@ class ContainerHelper:
 
         Unsupported Rust-path calls fail rather than falling back.
         Explicit legacy-path selection remains available for migration.
+
+        :param Any database_link: Parent database resource link.
+        :param Mapping[str, Any] container_definition: Container properties to create.
+        :param Mapping[str, Any] request_options: Internal creation options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword float or None deadline: Monotonic deadline shared by preparation and execution.
+        :keyword PreparedRequest or None prepared: Preflighted request whose body is refreshed before execution.
+        :return: Created container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -120,7 +130,17 @@ class ContainerHelper:
         routing: Optional[OperationRouting] = None,
         deadline: Optional[float] = None,
     ) -> CosmosDict:
-        """Read a container and return its properties."""
+        """Read a container and return its properties.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] request_options: Internal read options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword OperationRouting or None routing: Optional routing policy combined with read eligibility.
+        :keyword float or None deadline: Monotonic deadline shared by preparation and execution.
+        :return: Container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         supported = is_read_container_rust_eligible(request_options, operation_kwargs)
@@ -164,7 +184,15 @@ class ContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], None], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> None:
-        """Delete through the selected Python backend without legacy replay."""
+        """Delete through the selected Python backend without legacy replay.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] request_options: Internal deletion options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and a None body.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :return: None.
+        :rtype: None
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         on_response = with_response_header_snapshot(response_hook)
@@ -201,7 +229,16 @@ class ContainerHelper:
         response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
         kwargs: Optional[Mapping[str, Any]] = None,
     ) -> CosmosDict:
-        """Replace properties without legacy replay or callback mutation of the result."""
+        """Replace properties without legacy replay or callback mutation of the result.
+
+        :param Any container_link: Container resource link.
+        :param Mapping[str, Any] container_definition: Replacement container properties.
+        :param Mapping[str, Any] request_options: Internal replacement options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :return: Replaced container properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
         result = self._backend.run_operation(

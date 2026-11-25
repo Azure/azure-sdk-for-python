@@ -12,14 +12,24 @@ _COMPACT_SEPARATORS = (",", ":")
 
 
 def normalize_utf16_surrogates(value: str) -> str:
-    """Combine UTF-16 pairs while retaining unpaired code units unchanged."""
+    """Combine UTF-16 pairs while retaining unpaired code units unchanged.
+
+    :param str value: Text that may contain surrogate code units.
+    :return: Text with valid surrogate pairs combined into Unicode characters.
+    :rtype: str
+    """
     return value.encode("utf-16-le", "surrogatepass").decode(
         "utf-16-le", "surrogatepass"
     )
 
 
 def encode_json_to_utf8(json_body: str) -> bytes:
-    """Encode JSON, combining UTF-16 pairs and escaping unpaired surrogates."""
+    """Encode JSON, combining UTF-16 pairs and escaping unpaired surrogates.
+
+    :param str json_body: Serialized JSON text to encode.
+    :return: UTF-8 bytes with unpaired surrogates represented as backslash escapes.
+    :rtype: bytes
+    """
     try:
         return json_body.encode("utf-8")
     except UnicodeEncodeError:

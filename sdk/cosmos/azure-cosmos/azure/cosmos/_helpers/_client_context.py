@@ -47,7 +47,12 @@ class ClientOperationDefaults:
     operation_timeout_seconds: Optional[float] = None
 
     def apply_timeout(self, kwargs: dict[str, Any]) -> None:
-        """Resolve the default before preparation establishes a call or page deadline."""
+        """Resolve the default before preparation establishes a call or page deadline.
+
+        :param dict[str, Any] kwargs: Working call keywords receiving the default when no timeout is set.
+        :return: None.
+        :rtype: None
+        """
         if self.operation_timeout_seconds is None:
             return
         options = kwargs.get("request_options", kwargs.get("feed_options")) or {}
@@ -62,6 +67,10 @@ class ClientOperationDefaults:
 
         Truthy per-call priority and bucket values or matching headers prevent
         default insertion. A bucket of zero is treated as absent.
+
+        :param dict[str, Any] options: Working request options updated with applicable client defaults.
+        :return: None.
+        :rtype: None
         """
         if options.get("availabilityStrategy") is True and self.hedging_threshold_ms is not None:
             options["availabilityStrategy"] = CrossRegionHedgingStrategy(

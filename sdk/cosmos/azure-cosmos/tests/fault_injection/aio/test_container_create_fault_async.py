@@ -21,7 +21,7 @@ from fault_injection._container_create import (
 from fault_injection._delayed_create import assert_route, emit
 from fault_injection._query_resume import set_rule
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.asyncio

@@ -40,11 +40,11 @@ from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos._change_feed.feed_range_internal import FeedRangeInternalEpk
 from azure.cosmos._backend.operations import OP_FEED_RANGE_FROM_PARTITION_KEY
 from azure.cosmos._feed_ranges_rust_routing import (
-    build_feed_range_from_partition_key_prepared_request,
+    build_partition_key_range_request,
     build_read_feed_ranges_prepared_request,
-    can_use_rust_backend_for_feed_range_from_partition_key,
-    can_use_rust_backend_for_read_feed_ranges,
-    parse_feed_range_from_partition_key_payload,
+    can_use_rust_partition_key_range,
+    can_use_rust_read_feed_ranges,
+    parse_partition_key_range_payload,
     parse_read_feed_ranges_payload,
 )
 
@@ -133,18 +133,18 @@ def test_rust_parser_rejects_non_string_bounds_rust():
 
 def test_gate_requires_backend_rust():
     """Python handles the call when Rust is unavailable."""
-    assert can_use_rust_backend_for_read_feed_ranges(backend=LEGACY_BACKEND, kwargs={}) is False
+    assert can_use_rust_read_feed_ranges(backend=LEGACY_BACKEND, kwargs={}) is False
 
 
 def test_gate_allows_backend_with_no_kwargs_rust():
     """Rust handles a supported read-feed-ranges call."""
-    assert can_use_rust_backend_for_read_feed_ranges(backend=RUST_BACKEND, kwargs={}) is True
+    assert can_use_rust_read_feed_ranges(backend=RUST_BACKEND, kwargs={}) is True
 
 
 def test_gate_rejects_extra_rust_options_rust():
     """The operation policy rejects unsupported options without a legacy call."""
     assert (
-        can_use_rust_backend_for_read_feed_ranges(
+        can_use_rust_read_feed_ranges(
             backend=RUST_BACKEND, kwargs={"partition_key": "x"}
         )
         is False
@@ -153,17 +153,17 @@ def test_gate_rejects_extra_rust_options_rust():
 
 def test_feed_range_from_partition_key_gate_requires_backend_rust():
     """Python handles partition-key conversion when Rust is unavailable."""
-    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=LEGACY_BACKEND) is False
+    assert can_use_rust_partition_key_range(backend=LEGACY_BACKEND) is False
 
 
 def test_feed_range_from_partition_key_gate_allows_backend_rust():
     """Rust handles supported partition-key conversion."""
-    assert can_use_rust_backend_for_feed_range_from_partition_key(backend=RUST_BACKEND) is True
+    assert can_use_rust_partition_key_range(backend=RUST_BACKEND) is True
 
 
 def test_feed_range_from_partition_key_builds_prepared_request_rust():
     """The request targets the correct container and partition key."""
-    prepared = build_feed_range_from_partition_key_prepared_request(
+    prepared = build_partition_key_range_request(
         container_link="/dbs/d/colls/c/",
         partition_key_value="customerA",
     )
@@ -175,7 +175,7 @@ def test_feed_range_from_partition_key_builds_prepared_request_rust():
 
 def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case_rust():
     """Rust returns the same normalized public feed range as Python."""
-    parsed = parse_feed_range_from_partition_key_payload(
+    parsed = parse_partition_key_range_payload(
         {"Range": {"min": "3c", "max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
     )
     assert parsed == {
@@ -186,19 +186,19 @@ def test_feed_range_from_partition_key_payload_round_trips_and_normalizes_case_r
 def test_feed_range_from_partition_key_payload_requires_range_object_rust():
     """A missing or invalid range raises the expected public parsing error."""
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload({})
+        parse_partition_key_range_payload({})
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload({"Range": "not-an-object"})
+        parse_partition_key_range_payload({"Range": "not-an-object"})
 
 
 def test_feed_range_from_partition_key_payload_requires_string_bounds_rust():
     """Missing or non-string boundaries raise the expected public parsing error."""
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload(
+        parse_partition_key_range_payload(
             {"Range": {"max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
         )
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload(
+        parse_partition_key_range_payload(
             {"Range": {"min": 60, "max": "3cff", "isMinInclusive": True, "isMaxInclusive": False}}
         )
 
@@ -206,11 +206,11 @@ def test_feed_range_from_partition_key_payload_requires_string_bounds_rust():
 def test_feed_range_from_partition_key_payload_requires_boolean_flags_rust():
     """Missing or non-boolean boundary flags raise the expected public error."""
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload(
+        parse_partition_key_range_payload(
             {"Range": {"min": "3c", "max": "3cff", "isMaxInclusive": False}}
         )
     with pytest.raises(ValueError):
-        parse_feed_range_from_partition_key_payload(
+        parse_partition_key_range_payload(
             {"Range": {"min": "3c", "max": "3cff", "isMinInclusive": "true", "isMaxInclusive": False}}
         )
 

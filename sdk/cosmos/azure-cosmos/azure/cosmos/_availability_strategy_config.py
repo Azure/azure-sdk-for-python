@@ -55,10 +55,15 @@ class CrossRegionHedgingStrategy:
 
 
 def reject_rust_threshold_steps(config: Any) -> None:
-    """Keep legacy step configuration from silently becoming threshold-only."""
+    """Keep legacy step configuration from silently becoming threshold-only.
+
+    :param config: Availability strategy options or a previously constructed strategy.
+    :type config: Any
+    """
     if (
         isinstance(config, dict) and "threshold_steps_ms" in config
-        or isinstance(config, CrossRegionHedgingStrategy) and config._explicit_threshold_steps
+        # This module owns the strategy's explicit-option marker.
+        or isinstance(config, CrossRegionHedgingStrategy) and config._explicit_threshold_steps  # pylint: disable=protected-access
     ):
         raise TypeError(
             "threshold_steps_ms is not supported by the Rust-backed APIs; "

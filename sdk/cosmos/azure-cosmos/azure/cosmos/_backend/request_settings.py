@@ -18,7 +18,8 @@ from .partition_key_input import BindingPartitionKey
 
 def validate_utf8_decoding_mode(value: Optional[str]) -> None:
     if value is not None:
-        if type(value) is not str:
+        # Native settings accept exact built-ins, not custom subclasses.
+        if type(value) is not str:  # pylint: disable=unidiomatic-typecheck
             raise TypeError("utf8_decoding_mode must be a string or None.")
         if value not in ("Strict", "Lossy"):
             raise ValueError("utf8_decoding_mode must be 'Strict' or 'Lossy'.")
@@ -38,16 +39,22 @@ class _ValidatedSettings:
         raise TypeError(f"{type(self).__name__}.{name} has an invalid value type")
 
     def _check_type(self, name: str, value: Any, expected: type, *, optional: bool = True) -> None:
+        # Reject bool-as-int and subclasses with behavior outside the native protocol.
+        # pylint: disable-next=unidiomatic-typecheck
         if (value is not None or not optional) and type(value) is not expected:
             self._invalid_type(name)
 
     def _check_strings(self, name: str, value: Any) -> None:
         if value is not None and (
+            # String subclasses are not part of the native settings protocol.
+            # pylint: disable-next=unidiomatic-typecheck
             not isinstance(value, tuple) or any(type(item) is not str for item in value)
         ):
             self._invalid_type(name)
 
     def _check_number(self, name: str, value: Any) -> None:
+        # Exact numeric types intentionally exclude bool and numeric subclasses.
+        # pylint: disable-next=unidiomatic-typecheck
         if type(value) is not int and (type(value) is not float or not math.isfinite(value)):
             self._invalid_type(name)
 
@@ -83,7 +90,8 @@ class ItemSettings(_ValidatedSettings):
 
 
 @dataclass(frozen=True)
-class QuerySettings(_ValidatedSettings):
+# This flat immutable record mirrors fields consumed directly by the native binding.
+class QuerySettings(_ValidatedSettings):  # pylint: disable=too-many-instance-attributes
     max_item_count: Optional[int] = None
     continuation: Optional[str] = None
     is_query: Optional[bool] = None
@@ -151,7 +159,8 @@ class ResourceSettings(_ValidatedSettings):
 
 
 @dataclass(frozen=True)
-class RequestSettings(_ValidatedSettings):
+# Keep the native request protocol's field layout stable.
+class RequestSettings(_ValidatedSettings):  # pylint: disable=too-many-instance-attributes
     """Typed request options, including the configured driver timeout.
 
     ``timeout_seconds`` is the effective requested timeout, not the remaining
@@ -176,7 +185,8 @@ class RequestSettings(_ValidatedSettings):
 
     def __post_init__(self) -> None:
         if self.priority is not None:
-            if type(self.priority) is not str:
+            # Exact strings exclude subclasses from the native protocol.
+            if type(self.priority) is not str:  # pylint: disable=unidiomatic-typecheck
                 raise TypeError("priority must be a string or None.")
             if self.priority not in ("High", "Low"):
                 raise ValueError("priority must be 'High' or 'Low'.")
@@ -205,10 +215,16 @@ class RequestSettings(_ValidatedSettings):
 
 
 def _request_settings_schema() -> dict[str, tuple[str, ...]]:
-    """List setting fields so Python and the compiled binding can be compared."""
+    """List setting fields so Python and the compiled binding can be compared.
+
+    :return: Mapping from settings class names to ordered dataclass field names.
+    :rtype: dict[str, tuple[str, ...]]
+    """
     return {
         cls.__name__: tuple(member.name for member in fields(cls))
-        for cls in (RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings, BindingPartitionKey)
+        for cls in (
+            RequestSettings, ItemSettings, QuerySettings, ResourceSettings, HedgingSettings, BindingPartitionKey
+        )
     }
 
 
@@ -217,6 +233,11 @@ def binding_settings_contract_error(binding: Any) -> Optional[str]:
 
     The Python wrapper saves this result and raises it before driver acquisition.
     This function does not itself raise the returned compatibility error.
+
+    :param binding: Native module expected to export the request-settings schema.
+    :type binding: typing.Any
+    :return: Compatibility error message, or None if the schemas agree.
+    :rtype: str or None
     """
     exported = getattr(binding, "_request_settings_schema", None)
     if exported is None:

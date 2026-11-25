@@ -8,8 +8,7 @@ import uuid
 import pytest
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos import PartitionKey, exceptions
-from azure.cosmos.http_constants import StatusCodes
+from azure.cosmos import PartitionKey
 from config.clients import create_data_client_async, create_setup_client_async
 
 
@@ -70,55 +69,3 @@ class TestQueryResponseHeadersAsync(_OwnedReadAllTests):
             assert "x-ms-request-charge" in headers
         finally:
             await self._delete_container_for_test(cid)
-
-
-@pytest.mark.cosmosEmulator
-@pytest.mark.cosmosAADLong
-class TestTransactionalBatchAsync(_OwnedReadAllTests):
-
-    async def test_batch_delete_async_rust(self):
-        # Source: tests/test_transactional_batch_async.py::TestTransactionalBatchAsync.test_batch_delete_async
-        cid = "batch_delete_async" + str(uuid.uuid4())
-        container = await self._create_container_for_test(
-            cid, PartitionKey(path="/company")
-        )
-        create_batch = []
-        delete_batch = []
-        for i in range(10):
-            item_id = str(uuid.uuid4())
-            create_batch.append(("create", ({"id": item_id, "company": "Microsoft"},)))
-            delete_batch.append(("delete", (item_id,)))
-
-        batch_response = await container.execute_item_batch(
-            batch_operations=create_batch, partition_key="Microsoft"
-        )
-        assert len(batch_response) == 10
-        all_items = [item async for item in container.read_all_items()]
-        assert len(all_items) == 10
-
-        batch_response = await container.execute_item_batch(
-            batch_operations=delete_batch, partition_key="Microsoft"
-        )
-        assert len(batch_response) == 10
-        all_items = [item async for item in container.read_all_items()]
-        assert len(all_items) == 0
-
-        # delete non-existent item
-        batch = [("delete", ("new-item",)), ("delete", ("new-item",))]
-
-        try:
-            await container.execute_item_batch(
-                batch_operations=batch, partition_key="Microsoft"
-            )
-            self.fail("Request should have failed.")
-        except exceptions.CosmosBatchOperationError as e:
-            assert e.status_code == StatusCodes.NOT_FOUND
-            assert e.error_index == 0
-            operation_results = e.operation_responses
-            assert len(operation_results) == 2
-            assert operation_results[0].get("statusCode") == StatusCodes.NOT_FOUND
-            assert (
-                operation_results[1].get("statusCode") == StatusCodes.FAILED_DEPENDENCY
-            )
-
-        await self._delete_container_for_test(cid)

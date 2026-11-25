@@ -12,10 +12,10 @@ Legacy item operations use a separate helper.
 
 from __future__ import annotations
 
+from typing import Awaitable, Any, Callable, Optional
+
 from azure.cosmos._backend.capabilities import OperationRouting
 from azure.cosmos._backend.errors import BindingProtocolError
-
-from typing import Awaitable, Any, Callable, Optional
 
 from azure.cosmos._backend.contracts import (
     BackendResponse,
@@ -45,6 +45,13 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
 
         Use run_operation or run_page_operation with a legacy-path function
         that already has the original call arguments.
+
+        :param prepared: Unsupported binding request, retained for interface compatibility.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :keyword deadline: Unused caller deadline retained for interface compatibility.
+        :paramtype deadline: float or None
+        :return: No result; this backend always raises NotImplementedError.
+        :rtype: ~azure.cosmos._backend.contracts.BackendResponse
         """
         raise NotImplementedError(
             "AsyncLegacyBackend does not send prepared requests on the wire; the "
@@ -61,7 +68,21 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Await the selected legacy-path function without building a prepared request."""
+        """Await the selected legacy-path function without building a prepared request.
+
+        :keyword routing: Operation identifier used if the legacy callable is missing.
+        :paramtype routing: ~azure.cosmos._backend.capabilities.OperationRouting
+        :keyword build_request: Unused request factory retained for interface compatibility.
+        :paramtype build_request: typing.Callable
+        :keyword process_response: Unused response callback; the legacy callable returns the public result.
+        :paramtype process_response: typing.Callable
+        :keyword legacy_call: Function returning an awaitable for the legacy operation.
+        :paramtype legacy_call: typing.Callable or None
+        :keyword deadline: Unused deadline; the supplied callable owns legacy timeout handling.
+        :paramtype deadline: float or None
+        :return: Awaited result of the legacy callable.
+        :rtype: typing.Any
+        """
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"
@@ -77,7 +98,21 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         legacy_call: Optional[Callable[[], Awaitable[Any]]] = None,
         deadline: Optional[float] = None,
     ) -> Any:
-        """Await the legacy-path page function without building a prepared page request."""
+        """Await the legacy-path page function without building a prepared page request.
+
+        :keyword routing: Operation identifier used if the legacy callable is missing.
+        :paramtype routing: ~azure.cosmos._backend.capabilities.OperationRouting
+        :keyword build_request: Unused page factory retained for interface compatibility.
+        :paramtype build_request: typing.Callable
+        :keyword process_response: Unused response callback; the legacy callable processes its own page.
+        :paramtype process_response: typing.Callable
+        :keyword legacy_call: Function returning an awaitable for the legacy page fetch.
+        :paramtype legacy_call: typing.Callable or None
+        :keyword deadline: Unused deadline; the supplied callable owns legacy timeout handling.
+        :paramtype deadline: float or None
+        :return: Awaited result of the legacy page callable.
+        :rtype: typing.Any
+        """
         if legacy_call is None:
             raise BindingProtocolError(
                 f"No legacy callable supplied for {routing.op!r}"

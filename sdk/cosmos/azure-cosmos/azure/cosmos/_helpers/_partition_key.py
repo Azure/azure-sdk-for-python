@@ -36,6 +36,10 @@ def normalize_partition_key(value: Any) -> BindingPartitionKey:
     For example, "customer-17" becomes one component. An empty sequence and
     NonePartitionKeyValue keep different kinds so later handling can distinguish
     the original inputs.
+
+    :param Any value: Public scalar, hierarchical key, or missing-key sentinel.
+    :return: Typed binding input retaining the supplied key's kind.
+    :rtype: ~azure.cosmos._backend.partition_key_input.BindingPartitionKey
     """
     if isinstance(value, _Undefined):
         return BindingPartitionKey("components", (UNDEFINED_PARTITION_KEY,))
@@ -59,7 +63,12 @@ def normalize_partition_key(value: Any) -> BindingPartitionKey:
 
 
 def query_partition_key_components(components: Sequence[Any]) -> BindingPartitionKey:
-    """Query/change-feed normalization retains undefined hierarchical components."""
+    """Query/change-feed normalization retains undefined hierarchical components.
+
+    :param Sequence[Any] components: Hierarchical key components, including missing-key sentinels.
+    :return: Typed binding components with undefined and null values kept distinct.
+    :rtype: ~azure.cosmos._backend.partition_key_input.BindingPartitionKey
+    """
     return BindingPartitionKey(
         "components",
         tuple(
@@ -74,7 +83,12 @@ def query_partition_key_components(components: Sequence[Any]) -> BindingPartitio
 
 
 def normalize_feed_range_partition_key(value: Any) -> BindingPartitionKey:
-    """Keep missing range components distinct from JSON null without changing item inputs."""
+    """Keep missing range components distinct from JSON null without changing item inputs.
+
+    :param Any value: Public partition key used to derive a feed range.
+    :return: Typed binding input preserving undefined hierarchical components.
+    :rtype: ~azure.cosmos._backend.partition_key_input.BindingPartitionKey
+    """
     if not isinstance(value, Sequence) or isinstance(value, (str, bytes)) or not value:
         return normalize_partition_key(value)
     return BindingPartitionKey(
@@ -89,7 +103,12 @@ def normalize_feed_range_partition_key(value: Any) -> BindingPartitionKey:
 
 
 def parse_customer_partition_key_header(header: str) -> BindingPartitionKey:
-    """Decode an explicitly supplied HTTP header, never an internally serialized key."""
+    """Decode an explicitly supplied HTTP header, never an internally serialized key.
+
+    :param str header: Customer-supplied JSON array of partition-key components.
+    :return: Normalized components, or a cross-partition input for an empty array.
+    :rtype: ~azure.cosmos._backend.partition_key_input.BindingPartitionKey
+    """
     values = json.loads(header)
     if not isinstance(values, list):
         raise ValueError("Partition-key header must contain a JSON array")
@@ -103,6 +122,10 @@ def serialize_partition_key_for_continuation(key: BindingPartitionKey) -> str:
 
     For example, ("customer-17",) becomes '["customer-17"]'. Preserve this
     representation so already-saved continuation tokens keep the same identity.
+
+    :param BindingPartitionKey key: Component-based binding input to serialize.
+    :return: Compact JSON array with undefined components represented as empty objects.
+    :rtype: str
     """
     if key.kind != "components":
         raise ValueError("A scoped bookmark requires partition-key components")

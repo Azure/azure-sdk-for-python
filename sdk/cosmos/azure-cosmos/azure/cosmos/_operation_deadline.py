@@ -15,7 +15,7 @@ running synchronous response hook or undo work performed by the service backend.
 """
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import threading
 import time
 from contextlib import asynccontextmanager, contextmanager
@@ -41,6 +41,11 @@ def remaining_timeout(deadline: Optional[float]) -> Optional[float]:
 
     Raise CosmosClientTimeoutError when no time remains, including when the
     clock exactly equals the deadline.
+
+    :param deadline: Absolute time on the monotonic clock, or None for no deadline.
+    :type deadline: float or None
+    :return: Positive remaining seconds, or None when no deadline was supplied.
+    :rtype: float or None
     """
     if deadline is None:
         return None
@@ -56,6 +61,13 @@ def legacy_deadline_options(options: Any, deadline: Optional[float]) -> dict[str
     Keep the original deadline in _item_operation_deadline. Legacy timeout
     handling also needs a time.time() start value and the remaining duration;
     those use a different clock from the deadline.
+
+    :param options: Legacy request options to copy, or a falsy value for an empty mapping.
+    :type options: Any
+    :param deadline: Absolute monotonic deadline, or None for no deadline.
+    :type deadline: float or None
+    :return: Copied options with the remaining budget and legacy operation timing fields.
+    :rtype: dict[str, Any]
     """
     result = dict(options or {})
     remaining = remaining_timeout(deadline)
@@ -72,6 +84,13 @@ def legacy_deadline_kwargs(kwargs: Any, deadline: Optional[float]) -> dict[str, 
 
     Use remaining seconds rather than restarting the original timeout.
     With no deadline, return a copy without changing its timeout settings.
+
+    :param kwargs: Legacy keyword arguments to copy, or a falsy value for an empty mapping.
+    :type kwargs: Any
+    :param deadline: Absolute monotonic deadline, or None for no deadline.
+    :type deadline: float or None
+    :return: Copied arguments with remaining timeout and operation start time when limited.
+    :rtype: dict[str, Any]
     """
     result = dict(kwargs or {})
     remaining = remaining_timeout(deadline)
@@ -91,6 +110,13 @@ async def run_with_deadline(operation: Callable[[], Awaitable[_T]], deadline: Op
     The wait can exceed the deadline if the task is slow to stop or ignores
     cancellation. This is not a promise to interrupt synchronous code or undo
     a request already received by the service backend.
+
+    :param operation: Zero-argument callable that creates the awaitable operation.
+    :type operation: typing.Callable
+    :param deadline: Absolute monotonic deadline, or None to await without a timer.
+    :type deadline: float or None
+    :return: Result of the completed operation.
+    :rtype: Any
     """
     timeout = remaining_timeout(deadline)
     if timeout is None:
@@ -117,6 +143,13 @@ def deadline_lock(lock: Any, deadline: Optional[float]) -> Iterator[None]:
 
     Check the deadline again after acquiring the lock. This helper limits the
     wait for the lock, not the code run while the caller holds it.
+
+    :param lock: Synchronous lock supporting acquire, release and context management.
+    :type lock: Any
+    :param deadline: Absolute monotonic deadline, or None to wait without a limit.
+    :type deadline: float or None
+    :return: Context manager that releases the acquired lock on exit.
+    :rtype: contextlib.AbstractContextManager[None]
     """
     if deadline is None:
         with lock:
@@ -138,6 +171,13 @@ async def async_deadline_lock(lock: Any, deadline: Optional[float]) -> AsyncIter
     Like deadline_lock, check the time after acquisition but do not put a timer
     around the code run while holding the lock. A timed-out wait becomes
     CosmosClientTimeoutError.
+
+    :param lock: Async lock supporting acquire, release and async context management.
+    :type lock: Any
+    :param deadline: Absolute monotonic deadline, or None to wait without a limit.
+    :type deadline: float or None
+    :return: Async context manager that releases the acquired lock on exit.
+    :rtype: contextlib.AbstractAsyncContextManager[None]
     """
     if deadline is None:
         async with lock:

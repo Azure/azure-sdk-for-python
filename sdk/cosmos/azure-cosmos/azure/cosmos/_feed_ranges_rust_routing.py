@@ -17,12 +17,11 @@ This module does not choose service-backend regions or replicas.
 
 from __future__ import annotations
 
-from ._backend.partition_key_input import BindingPartitionKey
-
 from typing import Any, Mapping
 
 from . import _base as base
 from ._backend.constants import is_rust_backend
+from ._backend.partition_key_input import BindingPartitionKey
 from ._backend.operations import (
     OP_FEED_RANGE_FROM_PARTITION_KEY,
     OP_IS_FEED_RANGE_SUBSET,
@@ -35,19 +34,30 @@ from ._helpers._partition_key import normalize_feed_range_partition_key
 from ._routing.routing_range import Range
 
 
-def can_use_rust_backend_for_read_feed_ranges(
+def can_use_rust_read_feed_ranges(
     *,
     backend: Any,
     kwargs: Mapping[str, Any],
 ) -> bool:
-    """Allow the discovery deadline, but reject unsupported request options."""
+    """Allow the discovery deadline, but reject unsupported request options.
+
+    :keyword backend: Selected Python backend.
+    :paramtype backend: Any
+    :keyword kwargs: Call options to check for supported discovery arguments.
+    :paramtype kwargs: Mapping[str, Any]
+    :return: Whether the backend is Rust-backed and only timeout was supplied.
+    :rtype: bool
+    """
     if not is_rust_backend(backend):
         return False
     return kwargs.keys() <= {"timeout"}
 
 
 def validate_read_feed_ranges_force_refresh(force_refresh: bool) -> None:
-    """Require True or False; do not silently turn values such as 1 into True."""
+    """Require True or False; do not silently turn values such as 1 into True.
+
+    :param bool force_refresh: Discovery refresh flag to validate.
+    """
     if not isinstance(force_refresh, bool):
         raise TypeError("read_feed_ranges force_refresh must be a bool.")
 
@@ -61,6 +71,11 @@ def build_read_feed_ranges_prepared_request(
 
     For example, force_refresh=True becomes {"forceRefresh": true} in JSON body
     bytes. This records the request; it does not refresh metadata here.
+
+    :keyword str container_link: Container resource link, normalized by trimming boundary slashes.
+    :keyword bool force_refresh: Whether discovery should refresh cached range metadata.
+    :return: Prepared discovery request with the refresh flag encoded in its body.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     validate_read_feed_ranges_force_refresh(force_refresh)
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
@@ -80,6 +95,11 @@ def parse_read_feed_ranges_payload(payload: Mapping[str, Any]) -> list[dict[str,
 
     Check the expected field types and uppercase the bounds. For example, a
     returned minInclusive of "ab" becomes "AB" in the customer-facing range.
+
+    :param payload: Decoded response containing a nonempty PartitionKeyRanges list.
+    :type payload: Mapping[str, Any]
+    :return: SDK feed-range dictionaries with uppercase, half-open bounds.
+    :rtype: list[dict[str, Any]]
     """
     if not isinstance(payload, Mapping):
         raise ValueError("read_feed_ranges Rust payload must be an object.")
@@ -114,15 +134,21 @@ def parse_read_feed_ranges_payload(payload: Mapping[str, Any]) -> list[dict[str,
     return feed_ranges
 
 
-def can_use_rust_backend_for_feed_range_from_partition_key(
+def can_use_rust_partition_key_range(
     *,
     backend: Any,
 ) -> bool:
-    """Check whether the selected Python backend is Rust-backed."""
+    """Check whether the selected Python backend is Rust-backed.
+
+    :keyword backend: Selected Python backend.
+    :paramtype backend: Any
+    :return: Whether the backend identifies itself as Rust-backed.
+    :rtype: bool
+    """
     return is_rust_backend(backend)
 
 
-def build_feed_range_from_partition_key_prepared_request(
+def build_partition_key_range_request(
     *,
     container_link: str,
     partition_key_value: Any,
@@ -131,6 +157,12 @@ def build_feed_range_from_partition_key_prepared_request(
 
     For example, "customer-17" becomes a BindingPartitionKey. Computing its
     feed range happens later through the binding, not in this builder.
+
+    :keyword str container_link: Container resource link to normalize.
+    :keyword partition_key_value: Customer partition key to convert to binding representation.
+    :paramtype partition_key_value: Any
+    :return: Prepared partition-key range request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     normalized_container_link = base.TrimBeginningAndEndingSlashes(container_link)
     partition_key = normalize_feed_range_partition_key(partition_key_value)
@@ -144,13 +176,18 @@ def build_feed_range_from_partition_key_prepared_request(
     )
 
 
-def parse_feed_range_from_partition_key_payload(
+def parse_partition_key_range_payload(
     payload: Mapping[str, Any],
 ) -> dict[str, Any]:
     """Check a decoded {"Range": {...]} body and return a feed-range dictionary.
 
     Keep the supplied inclusion flags and uppercase both bounds, matching the
     legacy format used by a customer app that saves or reuses this value.
+
+    :param payload: Decoded response containing the Range object and inclusion flags.
+    :type payload: Mapping[str, Any]
+    :return: SDK feed-range dictionary with normalized uppercase bounds.
+    :rtype: dict[str, Any]
     """
     raw_range = payload.get("Range")
     if not isinstance(raw_range, Mapping):
@@ -186,6 +223,11 @@ def validate_is_feed_range_subset(
 
     Both ranges must have exactly the expected keys, boolean inclusion flags,
     and hexadecimal bounds of even length.
+
+    :keyword parent_feed_range: SDK feed-range dictionary representing the containing range.
+    :paramtype parent_feed_range: dict[str, Any]
+    :keyword child_feed_range: SDK feed-range dictionary representing the candidate subset.
+    :paramtype child_feed_range: dict[str, Any]
     """
     for name, value in (("parent_feed_range", parent_feed_range), ("child_feed_range", child_feed_range)):
         if not isinstance(value, dict) or set(value) != {"Range"}:
@@ -218,7 +260,7 @@ def validate_is_feed_range_subset(
             raise ValueError(f"{name} must not have reversed bounds.")
 
 
-def build_is_feed_range_subset_prepared_request(
+def build_feed_range_subset_request(
     *,
     parent_feed_range: dict[str, Any],
     child_feed_range: dict[str, Any],
@@ -228,6 +270,13 @@ def build_is_feed_range_subset_prepared_request(
     Body bytes contain {"parent": <feed-range dict>, "child": <feed-range dict>}.
     The binding's range comparison is local and does not contact the service
     backend, so the container link is empty. This builder only prepares inputs.
+
+    :keyword parent_feed_range: Validatable SDK dictionary for the containing range.
+    :paramtype parent_feed_range: dict[str, Any]
+    :keyword child_feed_range: Validatable SDK dictionary for the candidate subset.
+    :paramtype child_feed_range: dict[str, Any]
+    :return: Prepared comparison request carrying both ranges in its JSON body.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     validate_is_feed_range_subset(
         parent_feed_range=parent_feed_range,
@@ -247,7 +296,13 @@ def build_is_feed_range_subset_prepared_request(
 
 
 def parse_is_feed_range_subset_payload(payload: Mapping[str, Any]) -> bool:
-    """Read True or False from a decoded {"IsSubset": <bool>} response body."""
+    """Read True or False from a decoded {"IsSubset": <bool>} response body.
+
+    :param payload: Decoded comparison result containing a Boolean IsSubset field.
+    :type payload: Mapping[str, Any]
+    :return: Whether the compared child range is a subset of its parent.
+    :rtype: bool
+    """
     is_subset = payload.get("IsSubset")
     if not isinstance(is_subset, bool):
         raise ValueError(

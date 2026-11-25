@@ -25,7 +25,7 @@ from fault_injection._throttle_retry import (
     assert_database_retry_metadata,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.asyncio

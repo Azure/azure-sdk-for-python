@@ -26,7 +26,7 @@ from config.diagnostics import fault_rule_hit_count, fault_rule_hit_count_async
 from fault_injection._async_cancellation import wait_for_evidence
 from ._helpers import ForbiddenConnection
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.fixture(scope="module")

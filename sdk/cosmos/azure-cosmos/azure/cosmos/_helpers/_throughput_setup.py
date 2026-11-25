@@ -31,7 +31,12 @@ from .._base import build_options
 from .._constants import _Constants as Constants
 
 def offer_query(resource_self_link: str) -> dict[str, Any]:
-    """Build the query that finds a resource's throughput offer."""
+    """Build the query that finds a resource's throughput offer.
+
+    :param str resource_self_link: Container or database self-link recorded by its offer.
+    :return: Parameterized offer query matching the owning resource.
+    :rtype: dict[str, Any]
+    """
     # Both execution paths use this filter for a container or database offer:
     # the account's offers feed keyed by the resource's self-link.
     return {
@@ -51,8 +56,15 @@ def gather_rust_call_inputs(
     leftover kwargs used to check Rust-path eligibility. They are returned
     together so each public function reads ``client_connection._backend``
     exactly once, in one place.
+
+    :param Any client_connection: Connection owning the selected backend.
+    :param str or None container_rid: Container RID to stamp on the options when supplied.
+    :param Mapping[str, Any] kwargs: Call keywords copied before building internal options.
+    :return: The selected backend, internal options, and remaining eligibility keywords.
+    :rtype: tuple[Any, dict, dict]
     """
-    backend = client_connection._backend
+    # This internal coordinator intentionally reads the connection-owned backend.
+    backend = client_connection._backend  # pylint: disable=protected-access
     rust_kwargs = dict(kwargs)
     options = build_options(rust_kwargs)
     if container_rid is not None:

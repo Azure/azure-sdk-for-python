@@ -8,7 +8,12 @@ from typing import List
 
 
 def parse_paths(paths: List[str]) -> List[str]:
-    """Tokenize Cosmos paths, preserving quoted separators and escaped quotes."""
+    """Tokenize Cosmos paths, preserving quoted separators and escaped quotes.
+
+    :param list[str] paths: Slash-prefixed property paths to tokenize in order.
+    :return: Flattened path components, retaining quoted content and trimming unquoted whitespace.
+    :rtype: list[str]
+    """
     tokens: List[str] = []
     for path in paths:
         current_index = 0

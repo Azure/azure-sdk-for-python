@@ -8,6 +8,9 @@ methods keep the original steps and assertions; only setup changed. Every
 client uses ``_backend="rust"`` and each test owns a uniquely named database
 with the ``/pk`` containers the original class setup provided, deleted
 afterwards.
+
+The shared ``test_partitioned_collection_document_crud_and_query_rust``
+scenario is retained in ``tests/query_items/sync/test_crud.py``.
 """
 
 import logging
@@ -75,96 +78,6 @@ class TestCRUDOperations(unittest.TestCase):
         # Source helper: tests/test_crud.py::TestCRUDOperations._delete_container_for_test
         cid = container_id_or_container if isinstance(container_id_or_container, str) else container_id_or_container.id
         self.key_databaseForTest.delete_container(cid)
-
-    def test_partitioned_collection_document_crud_and_query_rust(self):
-        # Source: tests/test_crud.py::TestCRUDOperations.test_partitioned_collection_document_crud_and_query
-        created_db = self.databaseForTest
-
-        created_collection = self._create_container_for_test("crud-query-container", partition_key=PartitionKey("/pk"))
-
-        document_definition = {'id': 'document',
-                               'key': 'value',
-                               'pk': 'pk'}
-
-        created_document = created_collection.create_item(
-            body=document_definition
-        )
-
-        self.assertEqual(created_document.get('id'), document_definition.get('id'))
-        self.assertEqual(created_document.get('key'), document_definition.get('key'))
-
-        # read document
-        read_document = created_collection.read_item(
-            item=created_document.get('id'),
-            partition_key=created_document.get('pk')
-        )
-
-        self.assertEqual(read_document.get('id'), created_document.get('id'))
-        self.assertEqual(read_document.get('key'), created_document.get('key'))
-
-        # Read document feed doesn't require partitionKey as it's always a cross partition query
-        documentlist = list(created_collection.read_all_items())
-        self.assertEqual(1, len(documentlist))
-
-        # replace document
-        document_definition['key'] = 'new value'
-
-        replaced_document = created_collection.replace_item(
-            item=read_document,
-            body=document_definition
-        )
-
-        self.assertEqual(replaced_document.get('key'), document_definition.get('key'))
-
-        # upsert document(create scenario)
-        new_document_definition = {'id': 'document2',
-                               'key': 'value2',
-                               'pk': 'pk'}
-
-        upserted_document = created_collection.upsert_item(body=new_document_definition)
-
-        self.assertEqual(upserted_document.get('id'), new_document_definition.get('id'))
-        self.assertEqual(upserted_document.get('key'), new_document_definition.get('key'))
-
-        documentlist = list(created_collection.read_all_items())
-        self.assertEqual(2, len(documentlist))
-
-        # delete document
-        created_collection.delete_item(item=upserted_document, partition_key=upserted_document.get('pk'))
-
-        # query document on the partition key specified in the predicate will pass even without setting enableCrossPartitionQuery or passing in the partitionKey value
-        documentlist = list(created_collection.query_items(
-            {
-                'query': 'SELECT * FROM root r WHERE r.id=\'' + replaced_document.get('id') + '\''  # nosec
-            }, enable_cross_partition_query=True))
-        self.assertEqual(1, len(documentlist))
-
-        # query document on any property other than partitionKey will fail without setting enableCrossPartitionQuery or passing in the partitionKey value
-        try:
-            list(created_collection.query_items(
-                {
-                    'query': 'SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\''  # nosec
-                }))
-        except Exception:
-            pass
-
-        # cross partition query
-        documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            enable_cross_partition_query=True
-        ))
-
-        self.assertEqual(1, len(documentlist))
-
-        # query document by providing the partitionKey value
-        documentlist = list(created_collection.query_items(
-            query='SELECT * FROM root r WHERE r.key=\'' + replaced_document.get('key') + '\'',  # nosec
-            partition_key=replaced_document.get('pk')
-        ))
-
-        self.assertEqual(1, len(documentlist))
-        # Known gap 23: Container delete and replace require preliminary metadata. On Rust this delete_container step first resolves container metadata (possible extra GET) before the DELETE; the step still executes.
-        self._delete_container_for_test(created_collection.id)
 
     def test_read_collection_only_once_rust(self):
         # Source: tests/test_crud.py::TestCRUDOperations.test_read_collection_only_once

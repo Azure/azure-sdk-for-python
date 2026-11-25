@@ -62,6 +62,13 @@ def normalize_item_arguments(
     This does not fetch container metadata. The container's internal id and,
     when extraction is requested, a write's partition key are resolved on the
     Rust path after the prepared request reaches the binding.
+
+    :param str op: Single-item operation identifier.
+    :param dict[str, Any] arguments: Caller arguments copied before normalization.
+    :keyword bool compact_utf8: Whether document and patch serialization emits non-ASCII UTF-8 directly.
+    :keyword float or None deadline: Monotonic deadline to carry into execution.
+    :return: Normalized request values and internal request options.
+    :rtype: tuple[dict, dict]
     """
     kwargs = dict(arguments)
     if (
@@ -127,6 +134,11 @@ def validate_rust_item_options(args: Dict[str, Any], options: Dict[str, Any]) ->
     with the option silently dropped, or to divert to the legacy path,
     and both leave the caller believing something happened that did not. The
     error names the option so it can be removed.
+
+    :param dict[str, Any] args: Normalized request values containing remaining call keywords.
+    :param dict[str, Any] options: Internal request options checked for unsupported controls.
+    :return: None.
+    :rtype: None
     """
     for key in ("connection_timeout", "retry_write"):
         if args["kwargs"].get(key) is not None or options.get(key) is not None:
@@ -145,6 +157,11 @@ def normalize_item_partition_key(value: Any, system_key: bool) -> Any:
     of a real key. What the first of those should become depends on whether
     the container uses a system key, so that answer has to be handed in by
     whoever already knows the container's definition.
+
+    :param Any value: Public partition key or sentinel.
+    :param bool system_key: Whether the container uses a system partition key.
+    :return: The original key or the corresponding undefined, empty, or null representation.
+    :rtype: Any
     """
     if value == NonePartitionKeyValue:
         return _return_undefined_or_empty_partition_key(system_key)
@@ -164,17 +181,24 @@ def build_item_request(
     the finished request and nothing else. No lookups, no sending.
 
     Both the sync and async paths call this and get identical results.
+
+    :param str op: Single-item operation identifier selecting the request builder.
+    :param dict[str, Any] args: Normalized target, serialized body, and operation-specific values.
+    :param dict[str, Any] options: Internal request options containing any explicit partition key.
+    :param ClientOperationDefaults defaults: Client defaults for write response bodies.
+    :return: The prepared item request without performing I/O.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     # Nothing here knows whether the container uses a system key, and finding
     # out would mean a lookup before the request is even built. Pass False and
     # keep the long-standing behaviour for the explicit stand-in values.
     partition_key = normalize_item_partition_key(options.get("partitionKey", _Empty()), False)
-    common = dict(
-        container_link=args["container_link"],
-        partition_key_value=partition_key,
-        container_rid=None,
-        request_options=options,
-    )
+    common = {
+        "container_link": args["container_link"],
+        "partition_key_value": partition_key,
+        "container_rid": None,
+        "request_options": options,
+    }
     if op in ("create_item", "upsert_item", "replace_item"):
         common["extract_partition_key"] = "partitionKey" not in options
     if op == "create_item":
@@ -243,6 +267,13 @@ class ItemHelper:
         Patch uses complete_item_response here to check the deadline and invoke
         the hook. Delete records headers, invokes the hook with a None body,
         and returns None.
+
+        :param BackendResponse response: Backend response to validate and parse.
+        :param str op: Operation identifier determining response completion.
+        :param callable or None response_hook: Synchronous callback invoked by response processing when supplied.
+        :param float or None deadline: Monotonic deadline checked for patch and replacement completion.
+        :return: Parsed item properties, or None for deletion.
+        :rtype: ~azure.cosmos.CosmosDict or None
         """
         if op == "patch_item":
             parsed = process_backend_response(response, response_state=self._response_state)
@@ -256,7 +287,14 @@ class ItemHelper:
     def _run(
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
-        """Prepare, send, and interpret one operation."""
+        """Prepare, send, and interpret one operation.
+
+        :param str op: Single-item operation identifier.
+        :param dict[str, Any] arguments: Target, body, and caller request options to normalize.
+        :keyword float or None deadline: Monotonic deadline passed through preparation and execution.
+        :return: Parsed item properties, or None for deletion.
+        :rtype: ~azure.cosmos.CosmosDict or None
+        """
         args, options = normalize_item_arguments(
             op, arguments, compact_utf8=self._defaults.enable_compact_utf8_item_writes,
             deadline=deadline,
@@ -275,25 +313,55 @@ class ItemHelper:
         The time limit arrives as its own argument because the public method
         started the clock before calling in, and that original start time is
         what the limit is measured against.
+
+        :keyword float or None deadline: Monotonic creation deadline established by the public method.
+        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and creation options to normalize.
+        :return: Created item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         return self._run("create_item", kwargs, deadline=deadline)
 
     def read_item(self, **kwargs: Any) -> Any:
-        """Read one item by its id and partition key."""
+        """Read one item by its id and partition key.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and read options.
+        :return: Item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return self._run("read_item", kwargs)
 
     def delete_item(self, **kwargs: Any) -> Any:
-        """Delete an item. Returns nothing; the reply is read for its headers."""
+        """Delete an item. Returns nothing; the reply is read for its headers.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, partition key, and deletion options.
+        :return: None.
+        :rtype: None
+        """
         return self._run("delete_item", kwargs)
 
     def upsert_item(self, **kwargs: Any) -> Any:
-        """Create an item, or replace it if one with that id is already there."""
+        """Create an item, or replace it if one with that id is already there.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, document body, and upsert options.
+        :return: Upserted item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return self._run("upsert_item", kwargs)
 
     def replace_item(self, **kwargs: Any) -> Any:
-        """Replace the item with this id, failing if it is not there."""
+        """Replace the item with this id, failing if it is not there.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, replacement body, and request options.
+        :return: Replaced item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return self._run("replace_item", kwargs)
 
     def patch_item(self, **kwargs: Any) -> Any:
-        """Apply changes to one item and complete its response, including the hook."""
+        """Apply changes to one item and complete its response, including the hook.
+
+        :keyword dict[str, Any] ``**kwargs``: Container link, item target, patch operations, and request options.
+        :return: Patched item properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return self._run("patch_item", kwargs)

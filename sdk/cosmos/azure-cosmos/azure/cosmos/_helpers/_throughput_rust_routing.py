@@ -28,11 +28,19 @@ from ._request_throughput import build_get_throughput_request, build_replace_thr
 from ._response_parse import process_backend_response
 
 
-def can_use_rust_backend_for_get_throughput(*, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]) -> bool:
+def can_use_rust_backend_for_get_throughput(
+    *, backend: Any, options: Mapping[str, Any], kwargs: Mapping[str, Any]
+) -> bool:
     """Check the selected Python backend and options before reading an offer.
 
     False means this call cannot use the Rust path as supplied. The caller
     applies migration policy; this check does not run the legacy operation.
+
+    :keyword Any backend: Already-selected backend checked for Rust execution.
+    :keyword Mapping[str, Any] options: Internal options checked for unsupported hedging and header overrides.
+    :keyword Mapping[str, Any] kwargs: Remaining call keywords; only tracing controls are accepted.
+    :return: Whether the selected backend and options support a Rust offer read.
+    :rtype: bool
     """
     if not is_rust_backend(backend):
         return False
@@ -53,6 +61,13 @@ def build_get_throughput_from_connection(
     """Build a prepared request using connection headers and the supplied offer query.
 
     build_get_throughput_request prepares the inputs; it does not send the request.
+
+    :keyword Any client_connection: Connection supplying default headers.
+    :keyword str container_link: Container or database resource link owning the offer.
+    :keyword Mapping[str, Any] offer_query: Query specification locating the resource's offer.
+    :keyword Mapping[str, Any] options: Internal offer-query request options.
+    :return: The prepared offer query.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     return build_get_throughput_request(
         resource_link=container_link,
@@ -67,6 +82,11 @@ def process_get_throughput_response(backend_response: Any, *, client_connection:
 
     The list retains this response's headers so later operations on the same
     connection cannot replace the headers read from this result.
+
+    :param Any backend_response: Backend offer-query response to parse.
+    :keyword Any client_connection: Connection whose last response headers are updated.
+    :return: Parsed offer dictionaries with operation-owned response headers.
+    :rtype: ~azure.cosmos.CosmosList
     """
     parsed = process_backend_response(
         backend_response,
@@ -84,6 +104,11 @@ def offer_response_headers(result: Any, client_connection: Any) -> CaseInsensiti
 
     A legacy plain list has no response headers of its own. Results that are
     not CosmosDict or CosmosList use the connection's last_response_headers.
+
+    :param Any result: Offer query or replacement result that may own response headers.
+    :param Any client_connection: Connection providing fallback response headers for legacy results.
+    :return: An independent snapshot of the selected response headers.
+    :rtype: ~azure.core.utils.CaseInsensitiveDict
     """
     if isinstance(result, (CosmosDict, CosmosList)):
         return deepcopy(result.get_response_headers())
@@ -95,6 +120,10 @@ def parse_get_throughput_payload(payload: Mapping[str, Any]) -> list[dict[str, A
 
     Check that Offers is a list and each entry is a mapping. Converting these
     records to throughput properties is the caller's next step.
+
+    :param Mapping[str, Any] payload: Decoded response containing an Offers list.
+    :return: Shallow copies of the validated offer dictionaries.
+    :rtype: list[dict[str, Any]]
     """
     raw_offers = payload.get("Offers")
     if not isinstance(raw_offers, list):
@@ -107,7 +136,7 @@ def parse_get_throughput_payload(payload: Mapping[str, Any]) -> list[dict[str, A
     return offers
 
 
-def can_use_rust_backend_for_replace_throughput(
+def can_use_rust_replace_throughput(
     *,
     backend: Any,
     options: Mapping[str, Any],
@@ -117,6 +146,12 @@ def can_use_rust_backend_for_replace_throughput(
 
     The caller first reads the current offer and then replaces it. This shared
     check does not execute either step; the caller performs two separate operations.
+
+    :keyword Any backend: Already-selected backend checked for Rust execution.
+    :keyword Mapping[str, Any] options: Internal options checked for unsupported hedging and header overrides.
+    :keyword Mapping[str, Any] kwargs: Remaining call keywords; only tracing controls are accepted.
+    :return: Whether the selected backend and options support the offer workflow.
+    :rtype: bool
     """
     return can_use_rust_backend_for_get_throughput(backend=backend, options=options, kwargs=kwargs)
 
@@ -128,7 +163,15 @@ def build_replace_throughput_from_connection(
     offer: Mapping[str, Any],
     options: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Build a prepared replacement request using connection headers and the offer body."""
+    """Build a prepared replacement request using connection headers and the offer body.
+
+    :keyword Any client_connection: Connection supplying default headers.
+    :keyword str container_link: Container or database resource link owning the offer.
+    :keyword Mapping[str, Any] offer: Replacement offer body containing its self-link.
+    :keyword Mapping[str, Any] options: Internal replacement request options.
+    :return: The prepared offer replacement.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     return build_replace_throughput_request(
         resource_link=container_link,
         offer_body=offer,
@@ -138,7 +181,13 @@ def build_replace_throughput_from_connection(
 
 
 def process_replace_throughput_response(backend_response: Any, *, client_connection: Any) -> Any:
-    """Parse the backend response and update the connection's latest response headers."""
+    """Parse the backend response and update the connection's latest response headers.
+
+    :param Any backend_response: Offer replacement response to validate and decode.
+    :keyword Any client_connection: Connection whose last response headers are updated.
+    :return: Replaced offer properties with response headers.
+    :rtype: ~azure.cosmos.CosmosDict
+    """
     return process_backend_response(
         backend_response,
         client_connection=client_connection,

@@ -19,11 +19,13 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos import exceptions
 from azure.cosmos._backend.contracts import BackendResponse
+from azure.cosmos._backend.legacy import LEGACY_BACKEND
 from azure.cosmos._backend.operations import OP_READ_CONTAINER
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos.container import ContainerProxy
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from .test_delete_container_backend_unit import delete_case
 
 
@@ -56,7 +58,7 @@ def read_case(delete_case, request):
         body=json.dumps(case.properties).encode(), diagnostics="read trace",
     )
     if case.legacy:
-        case.connection._backend = case.legacy_backend
+        case.connection._backend = ASYNC_LEGACY_BACKEND if case.is_async else LEGACY_BACKEND
 
     def legacy_read(link, options, **kwargs):
         assert "response_hook" not in kwargs

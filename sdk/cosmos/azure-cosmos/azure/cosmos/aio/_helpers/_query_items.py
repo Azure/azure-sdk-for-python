@@ -30,7 +30,15 @@ from ..._telemetry import trace_operation_async
 async def _fetch_rust_page(
     config: QueryConfig, state: QueryPageState, deadline: Optional[float], **_tracing_kwargs: Any
 ) -> Optional[list[Any]]:
-    """Record one internal fetch and finish its authorized work before acceptance."""
+    """Record one internal fetch and finish its authorized work before acceptance.
+
+    :param QueryConfig config: Prepared query configuration and async execution backend.
+    :param QueryPageState state: Iterator progress updated by parsing and response completion.
+    :param float or None deadline: Shared monotonic deadline for the exposed page.
+    Additional ``_tracing_kwargs`` are consumed by the operation's telemetry decorator.
+    :return: Accepted page rows, or None when another internal page must be fetched.
+    :rtype: list[Any] or None
+    """
     previous = state.token
 
     async def fetch_one() -> list[Any]:
@@ -69,6 +77,9 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
         A query can have more rows even when it cannot provide a resumable
         continuation token. In that case this property raises; iteration can
         still continue using the feed cursor.
+
+        :return: The continuation token for the last successfully delivered page.
+        :rtype: str or None
         """
         if not self.state.resumable:
             raise NotImplementedError("The driver cannot bookmark this query shape; continue using this iterator.")
@@ -81,6 +92,9 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
         and token progress; this method does not infer completion from a missing
         token alone. Each exposed response notifies the hook before publishing
         the last delivered continuation token.
+
+        :return: An async iterator over the next accepted page's rows.
+        :rtype: AsyncIterator[Any]
         """
         state = self.state
         if state.done:
@@ -105,7 +119,13 @@ class AsyncQueryPageIterator(AsyncIterator[AsyncIterator[Any]]):
 
 
 def query_items(proxy: Any, kwargs: dict[str, Any]) -> CosmosAsyncItemPaged:
-    """Prepare query inputs and return a pager; fetching waits for async iteration."""
+    """Prepare query inputs and return a pager; fetching waits for async iteration.
+
+    :param Any proxy: Container proxy supplying its context and resource link.
+    :param dict[str, Any] kwargs: Working query keywords consumed during configuration.
+    :return: Lazy async query pager sharing per-operation response headers.
+    :rtype: ~azure.core.async_paging.AsyncItemPaged
+    """
     config = QueryConfig(proxy, kwargs)
     headers = CaseInsensitiveDict()
     return CosmosAsyncItemPaged(

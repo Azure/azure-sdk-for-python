@@ -681,7 +681,7 @@ def test_sync_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) -> 
 def test_sync_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A supported sync replacement uses Rust for its read and write."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: True,
     )
     backend = _Backend()
@@ -712,7 +712,7 @@ def test_async_get_throughput_routes_to_rust(monkeypatch: pytest.MonkeyPatch) ->
 def test_async_replace_throughput_routes_both_legs_to_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """A supported async replacement uses Rust for its read and write."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: True,
     )
     backend = _AsyncBackend()
@@ -757,7 +757,7 @@ def test_sync_explicit_core_python_replacement_applies_options_to_both_legs_rust
 ) -> None:
     """The isolated reference receives owned options on both legs."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: False,
     )
     read_kwargs: Dict[str, Any] = {}
@@ -793,7 +793,7 @@ def test_async_explicit_core_python_replacement_applies_options_to_both_legs_rus
 ) -> None:
     """Async replacement options continue to reach both operations."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: False,
     )
     read_kwargs: Dict[str, Any] = {}
@@ -853,7 +853,7 @@ def test_sync_get_throughput_raises_when_no_offer_exists_rust(monkeypatch: pytes
 def test_sync_replace_throughput_raises_when_no_offer_exists_rust(monkeypatch: pytest.MonkeyPatch) -> None:
     """Missing offer stops the replacement before it attempts a write."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: True,
     )
     backend = _Backend(offers=[])
@@ -871,7 +871,7 @@ def test_async_replace_throughput_uses_consistent_not_found_wording_rust(
 ) -> None:
     """Both replacement variants name the missing throughput resource."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: True,
     )
     database = _async_database(_AsyncBackend(offers=[]))
@@ -936,7 +936,7 @@ def test_async_replace_throughput_raises_before_writing_an_offer_rust(
 ) -> None:
     """An async replacement does not write when no throughput offer exists."""
     monkeypatch.setattr(
-        "azure.cosmos._helpers._database_throughput.can_use_rust_backend_for_replace_throughput",
+        "azure.cosmos._helpers._database_throughput.can_use_rust_replace_throughput",
         lambda **_kwargs: True,
     )
     backend = _AsyncBackend(offers=[])

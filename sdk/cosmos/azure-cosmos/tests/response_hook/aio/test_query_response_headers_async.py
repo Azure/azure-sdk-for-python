@@ -37,32 +37,6 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
     async def _delete_container_for_test(self, container_id):
         await self.key_db.delete_container(container_id)
 
-    async def test_query_response_headers_match_last_response_hook_invocation_async_rust(self):
-        # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_query_response_headers_match_last_response_hook_invocation_async
-        cid = "test_headers_hookparity_async_" + str(uuid.uuid4())
-        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
-        try:
-            for i in range(12):
-                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
-            captured_pages = []
-
-            def hook(headers, _result):
-                captured_pages.append(dict(headers))
-
-            query_iterable = created_collection.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk",
-                parameters=[{"name": "@pk", "value": "test"}],
-                partition_key="test", max_item_count=4, response_hook=hook,
-            )
-            items = [item async for item in query_iterable]
-            assert len(items) == 12
-            assert len(captured_pages) > 0
-            final_headers = query_iterable.get_response_headers()
-            assert final_headers["x-ms-request-charge"] == captured_pages[-1]["x-ms-request-charge"]
-            assert final_headers["x-ms-activity-id"] == captured_pages[-1]["x-ms-activity-id"]
-        finally:
-            await self._delete_container_for_test(cid)
-
     async def test_response_hook_parity_query_items_change_feed_async_rust(self):
         # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_response_hook_parity_query_items_change_feed_async
         cid = "test_hookparity_cf_async_" + str(uuid.uuid4())
@@ -242,5 +216,39 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert result_headers["x-ms-request-charge"] == captured[0]["x-ms-request-charge"]
             assert result_headers["x-ms-activity-id"] == captured[0]["x-ms-activity-id"]
             assert len(result) == 2
+        finally:
+            await self._delete_container_for_test(cid)
+
+    async def test_query_response_headers_match_last_response_hook_invocation_async_rust(self):
+        # pylint: disable-next=line-too-long
+        # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_query_response_headers_match_last_response_hook_invocation_async
+        """The headers returned after async iteration must match the headers
+        handed to the last response_hook call."""
+        cid = "test_headers_hookparity_async_" + str(uuid.uuid4())
+        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
+        try:
+            for i in range(12):
+                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
+
+            captured_pages = []
+
+            def hook(headers, _result):
+                captured_pages.append(dict(headers))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk",
+                parameters=[{"name": "@pk", "value": "test"}],
+                partition_key="test",
+                max_item_count=4,
+                response_hook=hook,
+            )
+
+            items = [item async for item in query_iterable]
+            assert len(items) == 12
+            assert len(captured_pages) > 0
+
+            final_headers = query_iterable.get_response_headers()
+            assert final_headers["x-ms-request-charge"] == captured_pages[-1]["x-ms-request-charge"]
+            assert final_headers["x-ms-activity-id"] == captured_pages[-1]["x-ms-activity-id"]
         finally:
             await self._delete_container_for_test(cid)

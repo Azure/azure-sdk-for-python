@@ -31,10 +31,16 @@ _T = TypeVar("_T")
 def initialize_legacy_connection(
     operation: Callable[Concatenate[Any, _P], _T],
 ) -> Callable[Concatenate[Any, _P], _T]:
-    """Prepare legacy state before a legacy-only request builder runs."""
+    """Prepare legacy state before a legacy-only request builder runs.
+
+    :param operation: Connection method that requires initialized account state.
+    :type operation: typing.Callable
+    :return: Wrapped method that runs setup before forwarding its arguments.
+    :rtype: typing.Callable
+    """
     @wraps(operation)
     def invoke(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> _T:
-        self._setup()
+        self._setup()  # pylint: disable=protected-access
         return operation(self, *args, **kwargs)
     return invoke
 
@@ -42,19 +48,30 @@ def initialize_legacy_connection(
 def initialize_async_legacy_connection(
     operation: Callable[Concatenate[Any, _P], Awaitable[_T]],
 ) -> Callable[Concatenate[Any, _P], Awaitable[_T]]:
-    """Await legacy setup before preparing a legacy-only request."""
+    """Await legacy setup before preparing a legacy-only request.
+
+    :param operation: Async connection method that requires initialized account state.
+    :type operation: typing.Callable
+    :return: Wrapped async method that awaits setup before forwarding its arguments.
+    :rtype: typing.Callable
+    """
     @wraps(operation)
     async def invoke(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> _T:
-        await self._setup()
+        await self._setup()  # pylint: disable=protected-access
         return await operation(self, *args, **kwargs)
     return invoke
 
 
 def _cleanup(action: Callable[[], Any]) -> None:
-    """Run one cleanup action, logging an Exception rather than raising it."""
+    """Run one cleanup action, logging an Exception rather than raising it.
+
+    :param action: Resource-release callback invoked after a startup failure.
+    :type action: typing.Callable
+    """
     try:
         action()
-    except Exception:  # Cleanup must not replace the original startup exception.
+    # Cleanup must not replace the original startup exception.
+    except Exception:  # pylint: disable=broad-exception-caught
         _LOGGER.warning("Failed to release resources after client startup failure", exc_info=True)
 
 
@@ -66,6 +83,11 @@ def unwind_client_construction(
     Call its abort_construction method, if present, before re-raising the
     startup error. The Rust adapters clear their runtime and credential
     references without closing the customer app's credential.
+
+    :param constructor: Client initializer whose partially created adapter may need cleanup.
+    :type constructor: typing.Callable
+    :return: Initializer that aborts adapter construction before re-raising startup errors.
+    :rtype: typing.Callable
     """
     @wraps(constructor)
     def initialize(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> None:
@@ -87,6 +109,11 @@ def unwind_connection_construction(
 
     Only inspect fields already stored on the connection. For example, if
     pipeline_client was never assigned, there is no pipeline client to close.
+
+    :param constructor: Connection initializer whose partially created resources may need cleanup.
+    :type constructor: typing.Callable
+    :return: Initializer that releases stored resources before re-raising startup errors.
+    :rtype: typing.Callable
     """
     @wraps(constructor)
     def initialize(self: Any, /, *args: _P.args, **kwargs: _P.kwargs) -> None:

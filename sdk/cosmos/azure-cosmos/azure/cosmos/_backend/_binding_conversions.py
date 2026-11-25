@@ -50,6 +50,11 @@ def build_binding_request_from_page(prepared: PreparedPageRequest) -> PreparedRe
     continuation values in typed query settings, removing their corresponding
     headers from the copy except for the change-feed continuation header.
     The original prepared page request is not changed.
+
+    :param prepared: Page inputs, including query settings and any retained cursor.
+    :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    :return: Binding request with serialized body and page settings.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
     """
     if prepared.op == OP_QUERY_ITEMS_CHANGE_FEED:
         body = json.dumps(
@@ -103,6 +108,17 @@ def page_binding_call_arguments(
     Stateless paging passes (driver_handle, request). Retained paging also
     passes prepared.cursor. A supplied deadline contributes only its remaining
     seconds, not a fresh operation budget.
+
+    :param driver_handle: Owning handle for the driver executing the page fetch.
+    :type driver_handle: ~azure.cosmos._rust._DriverHandle
+    :param request: Converted binding request.
+    :type request: ~azure.cosmos._backend.contracts.PreparedRequest
+    :param prepared: Original page request carrying any retained cursor.
+    :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    :param deadline: Absolute monotonic deadline, or None for no deadline.
+    :type deadline: float or None
+    :return: Positional arguments and timeout keyword arguments for the binding.
+    :rtype: tuple[tuple[typing.Any, ...], dict[str, typing.Optional[float]]]
     """
     args: tuple[Any, ...] = (driver_handle, request)
     if prepared.cursor is not None:
@@ -122,6 +138,13 @@ def build_backend_page(prepared: PreparedPageRequest, response: BackendResponse)
     queries, read-many, and read-all operations, also copy has_more and
     continuation_supported from the feed cursor.
     Other page paths leave has_more as None and apply their own completion rules.
+
+    :param prepared: Page inputs and optional cursor supplying progress.
+    :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    :param response: Converted binding response.
+    :type response: ~azure.cosmos._backend.contracts.BackendResponse
+    :return: Response body and page continuation metadata.
+    :rtype: ~azure.cosmos._backend.contracts.BackendPage
     """
     cursor = prepared.cursor if prepared.op in (OP_QUERY_ITEMS, OP_READ_ITEMS, OP_READ_ALL_ITEMS) else None
     return BackendPage(
@@ -141,6 +164,11 @@ def build_container_metadata(raw: Any) -> ContainerMetadata:
 
     This returns container properties, not a service response, and does not
     change the client's saved response headers.
+
+    :param raw: Binding tuple of resource ID, partition-key paths, kind, and system-key flag.
+    :type raw: typing.Any
+    :return: Validated container metadata.
+    :rtype: ~azure.cosmos._backend.contracts.ContainerMetadata
     """
     if not isinstance(raw, tuple) or len(raw) != 4:
         raise BindingProtocolError("The binding returned invalid container metadata")
@@ -162,6 +190,11 @@ def response_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     Used for driver initialization, metadata lookups, and item operations.
     Keep its headers on the exception without replacing the client's saved
     response headers.
+
+    :param error: Binding exception containing a five-element response tuple in its arguments.
+    :type error: BaseException
+    :return: Public exception with normalized headers and response diagnostics.
+    :rtype: ~azure.cosmos.exceptions.CosmosHttpResponseError
     """
     from .._helpers._exceptions import error_message_from_body, map_backend_response_to_exception
     from .._helpers._response_parse import apply_response_diagnostics, apply_request_charge_format
@@ -175,7 +208,9 @@ def response_exception_from_binding(error: BaseException) -> CosmosHttpResponseE
     apply_request_charge_format(headers)
     apply_response_diagnostics(headers, response.diagnostics)
     response = replace(response, headers=headers)
-    return map_backend_response_to_exception(response, message=error_message_from_body(response.body, response.status_code))
+    return map_backend_response_to_exception(
+        response, message=error_message_from_body(response.body, response.status_code)
+    )
 
 
 def normalize_response_headers(
@@ -186,6 +221,11 @@ def normalize_response_headers(
     Copy entries into a new mapping. Names that differ only in case can collapse
     to one entry, with the later assignment winning. ``None`` or empty input
     returns ``None``. This cannot recover service headers omitted by the driver.
+
+    :param headers: Response headers to copy, or None.
+    :type headers: typing.Mapping[str, typing.Any] or None
+    :return: Case-insensitive copy, or None for absent or empty headers.
+    :rtype: ~azure.core.utils.CaseInsensitiveDict or None
     """
     if not headers:
         return None
@@ -206,6 +246,17 @@ def acquire_driver_handle_args(
     A token credential is the fourth argument, with None in the master-key
     position. A master key uses the three-argument form. Supplying both raises
     here; supplying neither is rejected by the binding.
+
+    :param endpoint: Cosmos account endpoint URL.
+    :type endpoint: str
+    :param master_key: Account key, or None when using a token credential.
+    :type master_key: str or None
+    :param client_config: Prepared client settings, or None for defaults.
+    :type client_config: ~azure.cosmos._backend.contracts.PreparedClientConfig or None
+    :param token_credential: Token credential retained for driver authentication, or None.
+    :type token_credential: typing.Any
+    :return: Positional arguments for acquiring a driver handle.
+    :rtype: tuple[typing.Any, ...]
     """
     if master_key is not None and token_credential is not None:
         raise ValueError(
@@ -231,6 +282,19 @@ def build_backend_response(
     ``(status, sub_status, headers, body, diagnostics_or_none)``. The default
     diagnostics argument also allows tests to supply only four values. It does
     not make an older binding compatible with current prepared requests.
+
+    :param status_code: HTTP status convertible to an integer.
+    :type status_code: typing.Any
+    :param sub_status: Cosmos sub-status convertible to an integer.
+    :type sub_status: typing.Any
+    :param headers: Binding response headers, or None.
+    :type headers: typing.Mapping[str, typing.Any] or None
+    :param body: Response body convertible to bytes; false values produce an empty body.
+    :type body: typing.Any
+    :param diagnostics: Driver diagnostics, or None when absent.
+    :type diagnostics: typing.Any
+    :return: Normalized backend response.
+    :rtype: ~azure.cosmos._backend.contracts.BackendResponse
     """
     return BackendResponse(
         status_code=int(status_code),

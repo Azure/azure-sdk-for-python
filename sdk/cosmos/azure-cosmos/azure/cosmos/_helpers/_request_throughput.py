@@ -24,7 +24,15 @@ def build_get_throughput_request(
     request_options: Mapping[str, Any],
     default_headers: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Build a prepared request to find the offer; do not execute its query."""
+    """Build a prepared request to find the offer; do not execute its query.
+
+    :keyword str resource_link: Container or database link owning the offer.
+    :keyword Mapping[str, Any] offer_query: Parameterized query specification to serialize.
+    :keyword Mapping[str, Any] request_options: Internal offer-query options.
+    :keyword Mapping[str, Any] default_headers: Connection defaults used to prepare service settings.
+    :return: The account-level offer-query request.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     headers, settings = prepare_service_request_settings(
         request_options, default_headers, resource_type="offers"
     )
@@ -45,7 +53,15 @@ def build_replace_throughput_request(
     request_options: Mapping[str, Any],
     default_headers: Mapping[str, Any],
 ) -> PreparedRequest:
-    """Build a replacement request targeting the offer id parsed from its self-link."""
+    """Build a replacement request targeting the offer id parsed from its self-link.
+
+    :keyword str resource_link: Container or database link owning the offer.
+    :keyword Mapping[str, Any] offer_body: Replacement properties containing the offer's self-link.
+    :keyword Mapping[str, Any] request_options: Internal offer-replacement options.
+    :keyword Mapping[str, Any] default_headers: Connection defaults used to prepare service settings.
+    :return: The account-level request targeting the parsed offer ID.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+    """
     offer_id = GetResourceIdOrFullNameFromLink(offer_body["_self"])
     headers, settings = prepare_service_request_settings(
         request_options, default_headers, resource_type="offers"

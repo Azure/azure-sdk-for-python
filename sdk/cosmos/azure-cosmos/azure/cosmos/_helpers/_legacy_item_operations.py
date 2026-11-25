@@ -31,7 +31,14 @@ _LegacyItemHelperT = TypeVar("_LegacyItemHelperT", bound="LegacyItemHelper")
 def _prepare_legacy_create_item_body(
     body: Any, *, generate_id: bool, compact_utf8: bool
 ) -> Dict[str, Any]:
-    """Temporary parity snapshot for the dictionary-based legacy pipeline."""
+    """Temporary parity snapshot for the dictionary-based legacy pipeline.
+
+    :param Any body: Document mapping copied before legacy execution.
+    :keyword bool generate_id: Whether to mint a missing document ID.
+    :keyword bool compact_utf8: Whether encoding validation permits direct non-ASCII UTF-8.
+    :return: An independent, validated document with its resolved ID.
+    :rtype: dict[str, Any]
+    """
     if not isinstance(body, Mapping):
         raise TypeError("create_item body must be a mapping.")
     prepared = build_create_document(deepcopy(dict(body)), generate_id=generate_id)
@@ -45,6 +52,10 @@ def require_legacy_item_connection(connection: Any) -> None:
 
     This check never constructs an item context or acquires a driver handle.
     Missing or Rust selection requires the independently supplied client context.
+
+    :param Any connection: Connection whose explicitly selected backend must be core-python.
+    :return: None.
+    :rtype: None
     """
     attributes = getattr(connection, "__dict__", None)
     backend = attributes.get("_backend") if isinstance(attributes, dict) else getattr(connection, "_backend", None)
@@ -59,7 +70,15 @@ def prepare_legacy_item_arguments(
     op: str, arguments: Dict[str, Any], *, compact_utf8: bool = False,
     deadline: Optional[float] = None,
 ) -> tuple[Dict[str, Any], Dict[str, Any]]:
-    """Keep legacy build_options, mutations and pipeline bookkeeping in parity only."""
+    """Keep legacy build_options, mutations and pipeline bookkeeping in parity only.
+
+    :param str op: Single-item operation identifier.
+    :param dict[str, Any] arguments: Caller arguments copied before normalization.
+    :keyword bool compact_utf8: Whether creation-body validation permits direct non-ASCII UTF-8.
+    :keyword float or None deadline: Monotonic deadline to carry through execution.
+    :return: Legacy request values and internal request options.
+    :rtype: tuple[dict, dict]
+    """
     kwargs = dict(arguments)
     inherited_deadline = kwargs.pop("_item_operation_deadline", deadline)
     args = {
@@ -106,7 +125,13 @@ def prepare_legacy_item_arguments(
 
 
 def set_legacy_item_timeout(args: Dict[str, Any], options: Dict[str, Any]) -> None:
-    """Adapt the shared monotonic budget to legacy per-request timing."""
+    """Adapt the shared monotonic budget to legacy per-request timing.
+
+    :param dict[str, Any] args: Normalized request values containing the deadline and remaining call keywords.
+    :param dict[str, Any] options: Working options updated with remaining timeout and a wall-clock start time.
+    :return: None.
+    :rtype: None
+    """
     remaining = remaining_timeout(args["deadline"])
     if remaining is not None:
         options[Constants.Kwargs.TIMEOUT] = remaining
@@ -118,7 +143,15 @@ def set_legacy_item_timeout(args: Dict[str, Any], options: Dict[str, Any]) -> No
 def prepare_legacy_item_metadata(
     op: str, args: Dict[str, Any], options: Dict[str, Any], properties: Dict[str, Any]
 ) -> None:
-    """Normalize sentinels only after metadata has been resolved inside the budget."""
+    """Normalize sentinels only after metadata has been resolved inside the budget.
+
+    :param str op: Item operation identifier; reads normalize the partition-key sentinel.
+    :param dict[str, Any] args: Request values carrying the shared operation deadline.
+    :param dict[str, Any] options: Working options receiving the key, container RID, and remaining timeout.
+    :param dict[str, Any] properties: Resolved container metadata.
+    :return: None.
+    :rtype: None
+    """
     if op == "read_item":
         options["partitionKey"] = normalize_item_partition_key(
             options["partitionKey"], properties.get("partitionKey", {}).get("systemKey", False)
@@ -130,7 +163,12 @@ def prepare_legacy_item_metadata(
 
 
 def legacy_item_metadata_options(options: Dict[str, Any]) -> Dict[str, Any]:
-    """Do not apply item conditions, hooks, or partition keys to the metadata GET."""
+    """Do not apply item conditions, hooks, or partition keys to the metadata GET.
+
+    :param dict[str, Any] options: Item options from which metadata-safe settings are selected.
+    :return: Present timeout, operation start time, and excluded-location options.
+    :rtype: dict[str, Any]
+    """
     return {
         key: options[key] for key in (
             Constants.Kwargs.TIMEOUT,
@@ -140,7 +178,15 @@ def legacy_item_metadata_options(options: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def legacy_item_call(connection: Any, op: str, args: Dict[str, Any], options: Dict[str, Any]) -> Any:
-    """Retain the six original legacy signatures and option shapes."""
+    """Retain the six original legacy signatures and option shapes.
+
+    :param Any connection: Synchronous or asynchronous legacy connection.
+    :param str op: Single-item operation identifier selecting the legacy method.
+    :param dict[str, Any] args: Normalized target, body, and remaining call keywords.
+    :param dict[str, Any] options: Legacy request options, with private deadline removed for read and create.
+    :return: The legacy result, or an awaitable result for an asynchronous connection.
+    :rtype: Any
+    """
     kwargs = args["kwargs"]
     if op in ("read_item", "create_item"):
         options.pop("_item_operation_deadline", None)
@@ -176,15 +222,23 @@ class LegacyItemHelper:
         cls: Type[_LegacyItemHelperT], client_connection: Any,
         ensure_container_cached: Optional[Callable[..., Any]] = None,
     ) -> _LegacyItemHelperT:
-        """Direct-proxy compatibility factory; never a Rust fallback."""
+        """Direct-proxy compatibility factory; never a Rust fallback.
+
+        :param Any client_connection: Connection explicitly configured for the core-python backend.
+        :param callable or None ensure_container_cached: Optional callback populating container metadata.
+        :return: A helper of the invoked class wrapping the validated legacy connection.
+        :rtype: LegacyItemHelper
+        """
         require_legacy_item_connection(client_connection)
         return cls(client_connection, ensure_container_cached)
 
-    def _run(
+    # This legacy coordinator owns cache maintenance through the connection's internal cache API.
+    def _run(  # pylint: disable=protected-access
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
         args, options = prepare_legacy_item_arguments(
-            op, arguments, compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
+            op, arguments,
+            compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
             deadline=deadline,
         )
         link = args["container_link"]

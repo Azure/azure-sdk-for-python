@@ -16,6 +16,8 @@ from azure.cosmos import PartitionKey
 from azure.cosmos.aio import CosmosClient
 from common._rust_checks import run_on_rust_async
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest_asyncio.fixture
 async def container():

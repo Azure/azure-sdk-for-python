@@ -36,7 +36,8 @@ class BindingPartitionKey:
     values: tuple[PartitionKeyComponent, ...] = ()
 
     def __post_init__(self) -> None:
-        if type(self.kind) is not str or self.kind not in (
+        # Native discriminants accept exact strings, not subclasses.
+        if type(self.kind) is not str or self.kind not in (  # pylint: disable=unidiomatic-typecheck
             "components",
             "extract",
             "cross_partition",
@@ -74,7 +75,8 @@ class BindingPartitionKey:
     def _identity(self) -> tuple:
         # Partition-key equality must distinguish True from 1, and 0.0 from -0.0.
         return self.kind, tuple(
-            (type(value), value.hex() if type(value) is float else value)
+            # Only exact built-in float components are accepted by __post_init__.
+            (type(value), value.hex() if type(value) is float else value)  # pylint: disable=unidiomatic-typecheck
             for value in self.values
         )
 

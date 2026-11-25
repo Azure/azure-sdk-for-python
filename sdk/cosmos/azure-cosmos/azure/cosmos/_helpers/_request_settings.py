@@ -39,7 +39,13 @@ _LEGACY_FEED_KWARGS = frozenset({
 
 
 def reject_unknown_feed_kwargs(operation: str, names: Collection[str]) -> None:
-    """Distinguish unknown keywords from recognized settings unavailable on Rust."""
+    """Distinguish unknown keywords from recognized settings unavailable on Rust.
+
+    :param str operation: Operation name used in the error.
+    :param Collection[str] names: Unconsumed keyword names to classify.
+    :return: None.
+    :rtype: None
+    """
     unknown = set(names) - _LEGACY_FEED_KWARGS
     if unknown:
         rejected = ", ".join(repr(name) for name in sorted(unknown))
@@ -49,7 +55,14 @@ def reject_unknown_feed_kwargs(operation: str, names: Collection[str]) -> None:
 def reject_unsupported_feed_options(
     operation: str, names: Collection[str], options: Mapping[str, Any],
 ) -> None:
-    """Reject per-call legacy controls, including entries in settings dictionaries."""
+    """Reject per-call legacy controls, including entries in settings dictionaries.
+
+    :param str operation: Operation name used in the error.
+    :param Collection[str] names: Unconsumed call keyword names.
+    :param Mapping[str, Any] options: Internal options checked for legacy transport controls.
+    :return: None.
+    :rtype: None
+    """
     reject_unknown_feed_kwargs(operation, names)
     rejected = set(names) | (options.keys() & _LEGACY_FEED_KWARGS)
     if not rejected:
@@ -83,7 +96,14 @@ def reject_unsupported_feed_options(
 def normalize_metadata_page_size(
     options: Dict[str, Any], default_headers: Mapping[str, Any], *, operation: str,
 ) -> None:
-    """Validate the effective page size and store it as a typed option."""
+    """Validate the effective page size and store it as a typed option.
+
+    :param dict[str, Any] options: Working options updated with the effective typed page size.
+    :param Mapping[str, Any] default_headers: Connection headers supplying the lowest-precedence page size.
+    :keyword str operation: Operation name used in validation errors.
+    :return: None.
+    :rtype: None
+    """
     initial = build_customer_headers(options.get("initialHeaders"))
     page_size_header = HttpHeaders.PageSize
     raw_count = initial.get(
@@ -100,7 +120,9 @@ def normalize_metadata_page_size(
             count = int(raw_count)
         except ValueError as error:
             raise ValueError(f"{operation} x-ms-max-item-count must be an integer.") from error
-    if count is not None and (type(count) is not int or count == 0 or count < -1 or count >= 2**63):
+    # Exact builtin integers are required: accepting bool or subclasses changes the existing validation contract.
+    builtin_int = type(count) is int  # pylint: disable=unidiomatic-typecheck
+    if count is not None and (not builtin_int or count == 0 or count < -1 or count >= 2**63):
         raise ValueError(f"{operation} max_item_count must be a positive i64 integer, -1, or None.")
     if count is not None:
         options["maxItemCount"] = count
@@ -112,7 +134,14 @@ def normalize_metadata_page_size(
 def normalize_query_specification(
     query: Any, parameters: Any, *, operation: str,
 ) -> Tuple[str, tuple[dict[str, Any], ...]]:
-    """Validate and snapshot SQL text and parameter values owned by the caller."""
+    """Validate and snapshot SQL text and parameter values owned by the caller.
+
+    :param Any query: SQL string or a query/parameters specification dictionary.
+    :param Any parameters: Optional sequence of parameter name/value dictionaries.
+    :keyword str operation: Operation name used in validation errors.
+    :return: Nonempty SQL text and an owned tuple of parameter dictionaries.
+    :rtype: tuple[str, tuple[dict, ...]]
+    """
     query, parameters = deepcopy(query), deepcopy(parameters)
     if isinstance(query, dict):
         if set(query) - {"query", "parameters"} or parameters is not None:
@@ -190,6 +219,10 @@ def get_match_headers(kwargs: Dict[str, Any]) -> Tuple[Optional[str], Optional[s
 
     Consumes only the supplied working dictionary. Both wrappers use this
     utility so their validation messages and conditional-header precedence agree.
+
+    :param dict[str, Any] kwargs: Working keywords from which condition and ETag arguments are consumed.
+    :return: If-Match and If-None-Match values, each None when absent.
+    :rtype: tuple[str or None, str or None]
     """
     if_match = kwargs.pop("if_match", None)
     if_none_match = kwargs.pop("if_none_match", None)
@@ -222,6 +255,10 @@ def compose_item_options(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     It generates no Python pipeline timing/retry bookkeeping. Consumed kwargs
     are removed from kwargs itself; callers must supply a working copy when
     their original dictionary must remain unchanged.
+
+    :param dict[str, Any] kwargs: Working call keywords consumed during option and condition normalization.
+    :return: Internal item options, including normalized access conditions and timeout.
+    :rtype: dict[str, Any]
     """
     reject_removed_options(kwargs)
     feed_options = kwargs.pop("feed_options", {})
@@ -245,6 +282,7 @@ def get_common_options() -> Mapping[str, str]:
     The Mapping annotation discourages mutation during type checking. This
     does not create an immutable runtime view or copy the underlying dictionary.
 
+    :return: The shared keyword-to-internal-option mapping.
     :rtype: Mapping[str, str]
     """
     return COMMON_OPTIONS
@@ -379,6 +417,10 @@ def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
     The Rust item path raises ``NotImplementedError`` for these overrides.
     This check only returns a boolean; it does not select a backend or execute
     a legacy fallback.
+
+    :param Mapping[str, Any] request_options: Internal options containing optional initialHeaders.
+    :return: Whether any customer header would be silently overwritten by the driver.
+    :rtype: bool
     """
     initial_headers = request_options.get("initialHeaders")
     if not isinstance(initial_headers, Mapping):
@@ -391,7 +433,12 @@ def overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
 
 
 def is_supported_operation_timeout(timeout: Any) -> bool:
-    """Accept None or finite numeric seconds from 1 up to, but not including, 2**64."""
+    """Accept None or finite numeric seconds from 1 up to, but not including, 2**64.
+
+    :param Any timeout: Candidate timeout in seconds.
+    :return: Whether the value is None or a supported non-boolean numeric duration.
+    :rtype: bool
+    """
     if timeout is None:
         return True
     if isinstance(timeout, bool) or not isinstance(timeout, (int, float)):
@@ -411,6 +458,10 @@ def validate_operation_timeout(timeout: Any) -> None:
     whether Rust can run a call use this instead of answering "not eligible".
     For example, ``timeout=0.5`` and ``timeout=-1`` both raise ``ValueError``
     rather than ``NotImplementedError``.
+
+    :param Any timeout: Candidate timeout in seconds.
+    :return: None.
+    :rtype: None
     """
     if not is_supported_operation_timeout(timeout):
         raise ValueError("timeout must be None or a finite number of seconds >= 1 and < 2**64.")
@@ -434,6 +485,8 @@ def apply_no_response_on_write_default(
     :param no_response_on_write_default: The client-level
         default supplied by the caller.
     :type no_response_on_write_default: bool
+    :return: None.
+    :rtype: None
     """
     if no_response_on_write_default and "responsePayloadOnWriteDisabled" not in options:
         options["responsePayloadOnWriteDisabled"] = True
@@ -534,6 +587,10 @@ def build_request_headers_and_settings(
     Known options become fields, such as maxItemCount -> settings.query.max_item_count.
     Explicit headers retain their existing precedence; an unknown option raises
     rather than silently disappearing.
+
+    :param Mapping[str, Any] options: Internal options to translate in insertion order.
+    :return: Customer headers and typed service settings with their precedence resolved.
+    :rtype: tuple[dict[str, str], RequestSettings]
     """
     reject_removed_options(options)
     headers: dict[str, str] = {}
@@ -560,18 +617,7 @@ def build_request_headers_and_settings(
                 headers[name] = text
             continue
         if key == "accessCondition":
-            if value is None:
-                continue
-            if not isinstance(value, Mapping) or value.get("type") not in (
-                "IfMatch",
-                "IfNoneMatch",
-            ):
-                raise ValueError("accessCondition requires type IfMatch or IfNoneMatch")
-            name = "if_match" if value["type"] == "IfMatch" else "if_none_match"
-            if not isinstance(value.get("condition"), str):
-                raise TypeError("accessCondition requires a string condition")
-            groups["item"][name] = value["condition"]
-            headers.pop(name.replace("_", "-"), None)
+            _apply_access_condition(value, headers, groups)
             continue
         target = OPTION_FIELDS.get(key)
         if target is None:
@@ -605,14 +651,7 @@ def build_request_headers_and_settings(
         ) and not value:
             continue
         if key == "availabilityStrategy":
-            reject_rust_threshold_steps(value)
-            value = _validate_request_hedging_strategy(value)
-            if value is False:
-                value = HedgingSettings(False)
-            elif value is True:
-                value = HedgingSettings(True, DEFAULT_THRESHOLD_MS)
-            else:
-                value = HedgingSettings(True, getattr(value, "threshold_ms", None))
+            value = _hedging_settings(value)
         elif key == "excludedLocations":
             if isinstance(value, str):
                 raise TypeError(
@@ -634,6 +673,44 @@ def build_request_headers_and_settings(
         query=QuerySettings(**groups["query"]),
         resource=ResourceSettings(**groups["resource"]),
     )
+
+
+def _apply_access_condition(
+    value: Any, headers: dict[str, str], groups: dict[str, dict[str, Any]],
+) -> None:
+    """Apply a typed condition after validating its shape.
+
+    :param Any value: Access-condition mapping, or None to leave settings unchanged.
+    :param dict[str, str] headers: Headers from which the overridden condition is removed.
+    :param dict[str, dict[str, Any]] groups: Typed setting groups receiving the item condition.
+    :return: None.
+    :rtype: None
+    """
+    if value is None:
+        return
+    if not isinstance(value, Mapping) or value.get("type") not in ("IfMatch", "IfNoneMatch"):
+        raise ValueError("accessCondition requires type IfMatch or IfNoneMatch")
+    name = "if_match" if value["type"] == "IfMatch" else "if_none_match"
+    if not isinstance(value.get("condition"), str):
+        raise TypeError("accessCondition requires a string condition")
+    groups["item"][name] = value["condition"]
+    headers.pop(name.replace("_", "-"), None)
+
+
+def _hedging_settings(value: Any) -> HedgingSettings:
+    """Translate a supported hedging option to binding settings.
+
+    :param Any value: Boolean hedging switch or explicit strategy configuration.
+    :return: Disabled hedging, default-threshold hedging, or the validated configured threshold.
+    :rtype: ~azure.cosmos._backend.request_settings.HedgingSettings
+    """
+    reject_rust_threshold_steps(value)
+    value = _validate_request_hedging_strategy(value)
+    if value is False:
+        return HedgingSettings(False)
+    if value is True:
+        return HedgingSettings(True, DEFAULT_THRESHOLD_MS)
+    return HedgingSettings(True, getattr(value, "threshold_ms", None))
 
 
 def prepare_service_request_settings(

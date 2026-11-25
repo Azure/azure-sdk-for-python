@@ -92,6 +92,15 @@ class TestAADInferenceServiceLazyInit(unittest.TestCase):
         self.credential = (
             CosmosEmulatorCredential() if self.configs.is_emulator else clients._aad_credential(False)
         )
+        if not self.configs.is_emulator:
+            from azure.core.exceptions import ClientAuthenticationError
+            try:
+                clients._aad_credential(False).get_token("https://cosmos.azure.com/.default")
+            except ClientAuthenticationError:
+                pytest.skip(
+                    "environment-gap: no Azure sign-in is available on this machine, so the AAD "
+                    "credential cannot get a token for the live account."
+                )
 
     def tearDown(self):
         """Ensure the env var is always unset after each test to prevent leakage."""

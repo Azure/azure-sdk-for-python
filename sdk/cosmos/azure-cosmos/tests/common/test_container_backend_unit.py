@@ -59,10 +59,10 @@ from azure.cosmos._helpers._client_context import (
     CosmosClientContext,
 )
 from azure.cosmos._query_rust_routing import (
-    build_list_containers_prepared_page_request,
-    build_query_containers_prepared_page_request,
-    can_use_rust_backend_for_list_containers_page,
-    can_use_rust_backend_for_query_containers_page,
+    build_list_containers_page,
+    build_query_containers_page,
+    can_use_rust_list_containers,
+    can_use_rust_query_containers,
 )
 from azure.cosmos.aio._helpers._container_operations import AsyncContainerHelper
 from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
@@ -2218,7 +2218,7 @@ def test_list_containers_sends_no_query_body_rust():
     from azure.cosmos._backend.binding_adapter import build_binding_request_from_page
 
     request = build_binding_request_from_page(
-        build_list_containers_prepared_page_request(
+        build_list_containers_page(
             path="dbs/db1/colls",
             options={},
             req_headers={},
@@ -2234,7 +2234,7 @@ def test_query_containers_sends_the_query_body_rust():
     from azure.cosmos._backend.binding_adapter import build_binding_request_from_page
 
     request = build_binding_request_from_page(
-        build_query_containers_prepared_page_request(
+        build_query_containers_page(
             path="dbs/db1/colls",
             query_payload={"query": "SELECT * FROM c"},
             options={},
@@ -2319,7 +2319,7 @@ def test_list_containers_prepared_carries_the_owning_database_link_rust():
     """``container_link`` holds a database link, not a container link: the feed is
     scoped to a database and this is the only typed field that can carry it."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_list_containers_prepared_page_request(
+    prepared = build_list_containers_page(
         path=path,
         options={"maxItemCount": 10, "continuation": "ct-1"},
         req_headers={},
@@ -2335,7 +2335,7 @@ def test_list_containers_prepared_carries_the_owning_database_link_rust():
 def test_query_containers_prepared_carries_the_query_and_the_database_link_rust():
     """The prepared query must name the owning database and carry the full query string and parameters."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_query_containers_prepared_page_request(
+    prepared = build_query_containers_page(
         path=path,
         query_payload={
             "query": "SELECT * FROM c WHERE c.id=@id",
@@ -2356,7 +2356,7 @@ def test_container_feed_headers_keep_the_customers_own_headers_rust():
     entry the binding forwards verbatim. Left flat it would be dropped by the
     option-key translation on the Rust side."""
     path = base.GetPathFromLink("dbs/db1", _COLLECTION)
-    prepared = build_list_containers_prepared_page_request(
+    prepared = build_list_containers_page(
         path=path,
         options={"initialHeaders": {"x-custom-tag": "value"}},
         req_headers={"x-custom-tag": "value"},
@@ -2369,8 +2369,8 @@ def test_container_feed_headers_keep_the_customers_own_headers_rust():
 
 
 def _list_gate(path="dbs/db1/colls", options=None, kwargs=None, resource_type=_COLLECTION):
-    """Thin wrapper over ``can_use_rust_backend_for_list_containers_page`` so test cases read cleanly."""
-    return can_use_rust_backend_for_list_containers_page(
+    """Thin wrapper over ``can_use_rust_list_containers`` so test cases read cleanly."""
+    return can_use_rust_list_containers(
         path=path,
         options=options or {},
         kwargs=kwargs or {},
@@ -2399,7 +2399,7 @@ def test_list_containers_page_is_not_eligible_for_another_resource_type_rust():
 
 def test_query_containers_page_is_rust_eligible_for_a_dict_query_rust():
     """A dict-form query (``application/query+json``) must be routed to the Rust backend."""
-    assert can_use_rust_backend_for_query_containers_page(
+    assert can_use_rust_query_containers(
         path="dbs/db1/colls",
         query_payload={"query": "SELECT * FROM c"},
         options={},
@@ -2413,7 +2413,7 @@ def test_query_containers_page_is_not_eligible_for_a_string_query_rust():
     """The legacy-only SqlQuery mode posts a bare string as ``text/plain`` while the
     driver always posts ``application/query+json``. Different bytes on the wire, so
     that case stays on legacy."""
-    assert can_use_rust_backend_for_query_containers_page(
+    assert can_use_rust_query_containers(
         path="dbs/db1/colls",
         query_payload="SELECT * FROM c",
         options={},
@@ -2425,7 +2425,7 @@ def test_query_containers_page_is_not_eligible_for_a_string_query_rust():
 
 def test_query_containers_page_is_not_eligible_for_a_query_plan_rust():
     """A query-plan request must stay on legacy; Rust has no query-plan endpoint for containers."""
-    assert can_use_rust_backend_for_query_containers_page(
+    assert can_use_rust_query_containers(
         path="dbs/db1/colls",
         query_payload={"query": "SELECT * FROM c"},
         options={},

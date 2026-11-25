@@ -29,7 +29,9 @@ class AsyncLegacyItemHelper(LegacyItemHelper):
     read_item itself is defined on LegacyItemHelper.
     """
 
-    async def _run(
+    # Inherited wrappers return this coroutine for callers to await; the sync base is intentionally reused.
+    # Cache access is part of this legacy coordinator's implementation, not a public connection dependency.
+    async def _run(  # pylint: disable=invalid-overridden-method,protected-access
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
         """Prepare item inputs, await required metadata, and await the legacy call.
@@ -37,9 +39,16 @@ class AsyncLegacyItemHelper(LegacyItemHelper):
         Reads and creates pass their deadline through metadata preparation.
         The remaining operations keep the legacy metadata lookup behavior,
         including its warning when container properties cannot be read.
+
+        :param str op: Single-item operation identifier.
+        :param dict[str, Any] arguments: Target, body, and caller request options to normalize.
+        :keyword float or None deadline: Monotonic deadline passed through metadata and execution.
+        :return: Legacy item properties, or None for deletion.
+        :rtype: ~azure.cosmos.CosmosDict or None
         """
         args, options = prepare_legacy_item_arguments(
-            op, arguments, compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
+            op, arguments,
+            compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
             deadline=deadline,
         )
         link = args["container_link"]

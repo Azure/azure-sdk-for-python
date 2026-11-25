@@ -18,7 +18,7 @@ from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import assert_live_page_headers, run_on_rust_async
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 CONTAINER_COUNT = 3
 

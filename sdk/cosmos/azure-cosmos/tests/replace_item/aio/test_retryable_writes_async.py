@@ -26,6 +26,9 @@ from azure.cosmos import exceptions, ContainerProxy, DatabaseProxy
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
 # The whl_no_aio CI check uninstalls aiohttp. Only the two multi-write tests need it,
 # so the other tests in this file must still load and run without it.
 HAS_AIOHTTP = importlib.util.find_spec("aiohttp") is not None

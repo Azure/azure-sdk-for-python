@@ -3070,12 +3070,12 @@ def test_partition_key_range_stops_at_failure(partition_key_range, monkeypatch, 
 
         monkeypatch.setattr(
             _feed_ranges_rust_routing,
-            "parse_feed_range_from_partition_key_payload",
+            "parse_partition_key_range_payload",
             parse,
         )
         from azure.cosmos._helpers import _feed_range_operations
 
-        monkeypatch.setattr(_feed_range_operations, "parse_feed_range_from_partition_key_payload", parse)
+        monkeypatch.setattr(_feed_range_operations, "parse_partition_key_range_payload", parse)
     with pytest.raises((TypeError, ValueError)) as caught:
         harness.calculate(key)
     if error is not None:

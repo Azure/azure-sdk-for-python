@@ -15,6 +15,8 @@ from azure.cosmos import CosmosClient, PartitionKey
 from azure.cosmos.exceptions import CosmosResourceNotFoundError
 from common._rust_checks import run_on_rust
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest.fixture
 def database():

@@ -166,6 +166,10 @@ class ChangeFeedConfig(FeedConfig):
         Without a token, normalize the requested settings. A wrapper checkpoint
         restores its saved settings and inner token after backend/container checks.
         Legacy, invalid or incompatible tokens raise ValueError.
+
+        :param str or None token: Wrapper checkpoint to resume, or None for a fresh feed.
+        :return: Normalized feed settings and the opaque inner continuation token.
+        :rtype: tuple[dict[str, Any], str or None]
         """
         if token is None:
             return _normalize_change_feed_settings(self.requested), None
@@ -248,7 +252,12 @@ class ChangeFeedPageState(FeedPageState):
         )
 
     def encode_continuation_token(self, inner: str) -> str:
-        """Wrap the inner continuation token with the selected path and feed settings."""
+        """Wrap the inner continuation token with the selected path and feed settings.
+
+        :param str inner: Opaque continuation returned by the Rust change-feed backend.
+        :return: A cf1 checkpoint recording the container, backend, and normalized feed settings.
+        :rtype: str
+        """
         persisted_settings = dict(self.settings)
         key = persisted_settings["partition_key"]
         if isinstance(key, BindingPartitionKey):
@@ -305,7 +314,16 @@ def _fetch_rust_page(
     deadline: Optional[float],
     **_tracing_kwargs: Any,
 ) -> Optional[tuple[Optional[str], list[dict[str, Any]]]]:
-    """Record one poll; finish the public page only after its final fetch."""
+    """Record one poll; finish the public page only after its final fetch.
+
+    Additional ``_tracing_kwargs`` are consumed by the operation's telemetry decorator.
+
+    :param ChangeFeedConfig config: Prepared feed configuration and execution backend.
+    :param ChangeFeedPageState state: Iterator progress updated by parsing and response completion.
+    :param float or None deadline: Shared monotonic deadline for the exposed page.
+    :return: Continuation and rows, or None when a bootstrap poll requires another fetch.
+    :rtype: tuple[str or None, list[dict]] or None
+    """
     pages = config.backend.execute_pages(state.prepared_page(deadline), deadline=deadline)
     try:
         page = next(pages)
@@ -341,7 +359,9 @@ class ChangeFeedPageIterator(PageIterator):
             raise StopIteration
         if state.failed:
             raise RuntimeError("change-feed pager failed; resume a new pager from the last delivered bookmark.")
-        if not state.lock.acquire(blocking=False):
+        # A blocking context manager would wait rather than reject concurrent pager use.
+        # The finally block releases this explicitly acquired lock.
+        if not state.lock.acquire(blocking=False):  # pylint: disable=consider-using-with
             raise RuntimeError("Concurrent use of a change-feed pager is not supported.")
         try:
             config, deadline = state.config, state.config.deadline()

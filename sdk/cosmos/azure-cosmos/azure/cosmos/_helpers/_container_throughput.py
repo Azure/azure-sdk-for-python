@@ -48,7 +48,7 @@ from ..offer import ThroughputProperties
 from .._operation_deadline import remaining_timeout, run_with_deadline
 from ._throughput_rust_routing import (
     can_use_rust_backend_for_get_throughput,
-    can_use_rust_backend_for_replace_throughput,
+    can_use_rust_replace_throughput,
     process_get_throughput_response,
     process_replace_throughput_response,
     build_get_throughput_from_connection,
@@ -66,7 +66,8 @@ def _require_container_offers(
         raise exceptions.CosmosResourceNotFoundError(
             status_code=StatusCodes.NOT_FOUND,
             message="Could not find ThroughputProperties for container " + properties["_self"],
-            response=exceptions._InternalCosmosException(
+            # The public error needs the SDK's internal response adapter to retain its substatus.
+            response=exceptions._InternalCosmosException(  # pylint: disable=protected-access
                 status_code=StatusCodes.NOT_FOUND,
                 headers={HttpHeaders.SubStatus: SubStatusCodes.THROUGHPUT_OFFER_NOT_FOUND},
             ),
@@ -239,7 +240,17 @@ def get_container_throughput(
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Read dedicated throughput within one metadata-and-offer deadline."""
+    """Read dedicated throughput within one metadata-and-offer deadline.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Metadata reader accepting an optional deadline.
+    :keyword callable refresh_properties: Metadata refresher invoked after a stale container identity.
+    :keyword callable or None response_hook: Synchronous callback receiving headers and copied offer records.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the deadline and prepare requests.
+    :return: The container's dedicated throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
@@ -272,7 +283,17 @@ async def get_container_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Read dedicated throughput asynchronously within the same deadline."""
+    """Read dedicated throughput asynchronously within the same deadline.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Async metadata reader accepting an optional deadline.
+    :keyword callable refresh_properties: Async metadata refresher invoked after a stale container identity.
+    :keyword callable or None response_hook: Synchronous callback receiving headers and copied offer records.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the deadline and prepare requests.
+    :return: The container's dedicated throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(client_connection, None, kwargs)
@@ -311,6 +332,16 @@ def replace_container_throughput(
     Read-modify-write: run one ``get_throughput`` to get the current offer, apply the
     new RU/s to a copy, then run one ``replace_throughput`` to write it back. Both go
     through the same selected Python backend; the public method does not select it.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Metadata reader accepting an optional deadline.
+    :keyword callable refresh_properties: Metadata refresher invoked after a stale container identity.
+    :keyword int or azure.cosmos.ThroughputProperties throughput: Replacement manual or autoscale settings.
+    :keyword callable or None response_hook: Synchronous callback receiving copied headers and replaced offer.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the shared workflow deadline.
+    :return: The replaced container throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
     """
     started = time.monotonic()
     validate_replacement_throughput(throughput)
@@ -318,7 +349,7 @@ def replace_container_throughput(
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
-    rust_eligible = can_use_rust_backend_for_replace_throughput(
+    rust_eligible = can_use_rust_replace_throughput(
         backend=backend,
         options=rust_options,
         kwargs=rust_kwargs,
@@ -372,14 +403,25 @@ async def replace_container_throughput_async(
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
     kwargs: Mapping[str, Any],
 ) -> ThroughputProperties:
-    """Replace throughput, awaiting the offer read and replacement on the same path."""
+    """Replace throughput, awaiting the offer read and replacement on the same path.
+
+    :keyword Any client_connection: Connection supplying the backend, options, and response state.
+    :keyword str container_link: Name-based container resource link.
+    :keyword callable get_properties: Async metadata reader accepting an optional deadline.
+    :keyword callable refresh_properties: Async metadata refresher invoked after a stale container identity.
+    :keyword int or azure.cosmos.ThroughputProperties throughput: Replacement manual or autoscale settings.
+    :keyword callable or None response_hook: Synchronous callback receiving copied headers and replaced offer.
+    :keyword Mapping[str, Any] kwargs: Call options used to establish the shared workflow deadline.
+    :return: The replaced container throughput settings.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     started = time.monotonic()
     validate_replacement_throughput(throughput)
     kwargs = prepare_throughput_kwargs(kwargs, response_hook)
     backend, rust_options, rust_kwargs = gather_rust_call_inputs(
         client_connection, None, kwargs
     )
-    rust_eligible = can_use_rust_backend_for_replace_throughput(
+    rust_eligible = can_use_rust_replace_throughput(
         backend=backend,
         options=rust_options,
         kwargs=rust_kwargs,
@@ -401,7 +443,11 @@ async def replace_container_throughput_async(
     _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
 
     async def run_legacy_replace() -> Any:
-        """Replace the offer through the legacy client connection."""
+        """Replace the offer through the legacy client connection.
+
+        :return: The replaced offer properties.
+        :rtype: ~azure.cosmos.CosmosDict
+        """
         return await client_connection.ReplaceOffer(
             offer_link=new_offer["_self"],
             offer=new_offer,

@@ -13,7 +13,7 @@ import pytest
 
 from azure.cosmos import exceptions, PartitionKey
 from azure.cosmos.aio import CosmosClient
-from azure.cosmos.http_constants import HttpHeaders, StatusCodes
+from azure.cosmos.http_constants import StatusCodes
 from config.clients import create_data_client_async
 from config.settings import TestSettings, unique_database_id
 
@@ -58,32 +58,6 @@ class TestTransactionalBatchAsync(unittest.IsolatedAsyncioTestCase):
     async def _delete_container_for_test(self, container_id):
         """Delete container via key-auth."""
         await self.key_database.delete_container(container_id)
-
-    async def test_batch_lsn_async_rust(self):
-        # Source: tests/test_transactional_batch_async.py::TestTransactionalBatchAsync.test_batch_lsn_async
-        cid = "batch_lsn_async" + str(uuid.uuid4())
-        container = await self._create_container_for_test(cid, PartitionKey(path="/company"))
-        # Create test items
-        await container.upsert_item({"id": "read_item", "company": "Microsoft"})
-        await container.upsert_item({"id": "replace_item", "company": "Microsoft", "value": 0})
-        await container.upsert_item({"id": "patch_item", "company": "Microsoft"})
-        await container.upsert_item({"id": "delete_item", "company": "Microsoft"})
-
-        read_response = await container.read_item(item="read_item", partition_key="Microsoft")
-        lsn = read_response.get_response_headers().get(HttpHeaders.LSN)
-
-        batch = [("create", ({"id": "create_item", "company": "Microsoft"},)),
-                 ("replace", ("replace_item", {"id": "replace_item", "company": "Microsoft", "value": True})),
-                 ("upsert", ({"id": "upsert_item", "company": "Microsoft"},)),
-                 ("patch", ("patch_item", [{"op": "add", "path": "/favorite_color", "value": "red"}])),
-                 ("read", ("read_item",)),
-                 ("delete", ("delete_item",))]
-
-        batch_response = await container.execute_item_batch(batch_operations=batch, partition_key="Microsoft")
-        assert len(batch_response) == 6
-        assert int(lsn) == int(batch_response.get_response_headers().get(HttpHeaders.LSN)) - 1
-
-        await self._delete_container_for_test(cid)
 
     async def test_batch_subpartition_rust(self):
         # Source: tests/test_transactional_batch_async.py::TestTransactionalBatchAsync.test_batch_subpartition

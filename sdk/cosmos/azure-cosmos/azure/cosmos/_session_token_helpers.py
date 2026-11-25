@@ -149,8 +149,7 @@ def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> li
         feed_range_cmp, session_token_cmp = overlapping_ranges[0]
         # compound session tokens are not considered for merging
         if is_compound_session_token(session_token_cmp):
-            processed_ranges.append(overlapping_ranges[0])
-            overlapping_ranges.remove(overlapping_ranges[0])
+            processed_ranges.append(overlapping_ranges.pop(0))
             continue
         _, vector_session_token_cmp = parse_session_token(session_token_cmp)
         subsets = []
@@ -206,8 +205,7 @@ def merge_ranges_with_subsets(overlapping_ranges: list[Tuple[Range, str]]) -> li
 
             j += 1
 
-        processed_ranges.append(overlapping_ranges[0])
-        overlapping_ranges.remove(overlapping_ranges[0])
+        processed_ranges.append(overlapping_ranges.pop(0))
     return processed_ranges
 
 def _normalize_feed_range(feed_range: dict[str, Any], name: str) -> Range:
@@ -227,7 +225,15 @@ def _normalize_feed_range(feed_range: dict[str, Any], name: str) -> Range:
 
 def get_latest_session_token(feed_ranges_to_session_tokens: list[Tuple[dict[str, Any], str]],
                              target_feed_range: dict[str, Any]) -> str:
-    """Merge supplied observations without reading or changing client state."""
+    """Merge supplied observations without reading or changing client state.
+
+    :param feed_ranges_to_session_tokens: SDK feed-range dictionaries paired with observed session tokens.
+    :type feed_ranges_to_session_tokens: list[tuple[dict[str, Any], str]]
+    :param target_feed_range: SDK feed range whose overlapping observations should be merged.
+    :type target_feed_range: dict[str, Any]
+    :return: Merged session token for overlapping ranges, possibly containing comma-separated partitions.
+    :rtype: str
+    """
     target_feed_range_normalized = _normalize_feed_range(target_feed_range, "target_feed_range")
     if isinstance(feed_ranges_to_session_tokens, (str, bytes, dict)) or not isinstance(
         feed_ranges_to_session_tokens, Iterable

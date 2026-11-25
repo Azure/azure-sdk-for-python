@@ -72,18 +72,3 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
             False,
         )
         self.assertEqual(feed_range_epk.get_normalized_range(), expected_range)
-
-    async def test_feed_range_is_subset_from_pk_async_rust(self):
-        """A range built from a partition key sits inside the full range.
-
-        The full range covers everything from empty to ``FF``, so any single
-        key must fall within it.
-
-        Kept here for the conversion: this checks the range handed back is a
-        usable one that the subset comparison recognises, rather than only
-        matching an expected value on paper.
-        """
-        # Source: tests/test_feed_range_async.py::TestFeedRangeAsync.test_feed_range_is_subset_from_pk_async
-        parent_feed_range = FeedRangeInternalEpk(Range("", "FF", True, False)).to_dict()
-        child_feed_range = await self.container.feed_range_from_partition_key("1")
-        self.assertTrue(await self.container.is_feed_range_subset(parent_feed_range, child_feed_range))

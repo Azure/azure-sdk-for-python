@@ -588,10 +588,10 @@ def test_feed_range_builder_keeps_source_provenance_rust(value, kind):
     rather than sending anything.
     """
     from azure.cosmos._feed_ranges_rust_routing import (
-        build_feed_range_from_partition_key_prepared_request,
+        build_partition_key_range_request,
     )
 
-    request = build_feed_range_from_partition_key_prepared_request(
+    request = build_partition_key_range_request(
         container_link="dbs/d/colls/c",
         partition_key_value=value,
     )

@@ -24,11 +24,10 @@ the database properties given to the customer app.
 
 from __future__ import annotations
 
-from azure.cosmos._backend.capabilities import OperationRouting
-
 from typing import Any, Callable, Mapping, Optional
 
 from .. import exceptions
+from .._backend.capabilities import OperationRouting
 from .._backend.cosmos_backend import CosmosBackend
 
 from .._backend.operations import (
@@ -36,7 +35,6 @@ from .._backend.operations import (
     OP_DELETE_DATABASE,
     OP_READ_DATABASE,
 )
-from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._operation_deadline import legacy_deadline_kwargs, legacy_deadline_options, remaining_timeout
 from ._client_context import ClientLastResponseHeaders
@@ -86,6 +84,14 @@ class DatabaseHelper:
         backend.
         ``response_hook`` is invoked once on success with the response headers and
         the created database.
+
+        :param dict[str, Any] database: Database properties containing its ID.
+        :param Mapping[str, Any] request_options: Internal creation options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword float or None deadline: Monotonic deadline covering preparation and execution.
+        :return: Created database properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -138,6 +144,14 @@ class DatabaseHelper:
         Unsupported Rust-path calls fail rather than falling back.
         Explicit legacy-path selection remains available for migration. The
         two-argument hook gets a separate header snapshot on either path.
+
+        :param Any database_id: Name of the database to read.
+        :param Mapping[str, Any] request_options: Internal read options.
+        :keyword callable or None response_hook: Synchronous callback receiving headers and body, or None for HTTP 304.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :keyword float or None deadline: Monotonic deadline covering preparation and execution.
+        :return: Database properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         if response_hook is not None and not callable(response_hook):
             raise TypeError("read_database response_hook must be callable or None.")
@@ -182,6 +196,13 @@ class DatabaseHelper:
 
         The response is still parsed so service errors and response headers are
         handled before this method returns ``None``.
+
+        :param Any database_link: Database resource link to delete.
+        :param Mapping[str, Any] request_options: Internal deletion options.
+        :keyword callable or None response_hook: Synchronous callback receiving copied response headers.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords forwarded to execution.
+        :return: None.
+        :rtype: None
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -243,6 +264,14 @@ class DatabaseHelper:
         recovery and timeout handling. If creation conflicts with another caller,
         read the database once more. A failed follow-up read propagates without
         another creation attempt.
+
+        :param dict[str, Any] database: Database properties containing the ID to read or create.
+        :param Mapping[str, Any] request_options: Creation options, filtered for existence reads.
+        :keyword callable or None response_hook: Synchronous callback receiving copied final headers and properties.
+        :keyword Mapping[str, Any] or None kwargs: Remaining operation keywords shared by the workflow.
+        :keyword float or None deadline: Monotonic deadline shared by all workflow steps.
+        :return: Existing or newly created database properties with response headers.
+        :rtype: ~azure.cosmos.CosmosDict
         """
         validate_resource(database)
         if response_hook is not None and not callable(response_hook):

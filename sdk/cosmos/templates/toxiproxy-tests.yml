@@ -16,10 +16,10 @@ steps:
       & $python -I sdk/cosmos/azure-cosmos/scripts/run_rust_ci.py toxiproxy `
         --require-installed-wheel --results $results
       exit $LASTEXITCODE
-    displayName: Run all 46 Toxiproxy cases against the test-probes wheel
+    displayName: Network Fault Tests - Toxiproxy
     timeoutInMinutes: 20
-    # One Windows standard-matrix job, not every Python/dependency variation.
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    # Every Windows Standard job, but not the Special or Dependency Checks jobs.
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
     env:
       COSMOS_BACKEND: rust
       COSMOS_TEST_DATA_AUTH_MODE: key
@@ -27,8 +27,8 @@ steps:
       # Public emulator credential; never use the live-account test configuration.
       ACCOUNT_KEY: C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==
   - task: PublishTestResults@2
-    displayName: Publish required Toxiproxy results
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    displayName: Publish Network Fault Test Results
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
     inputs:
       testResultsFormat: JUnit
       testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-toxiproxy/pytest.xml

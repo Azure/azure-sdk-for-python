@@ -20,6 +20,8 @@ from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._backend.operations import OP_CREATE_ITEM
 from azure.cosmos._backend.partition_key_input import BindingPartitionKey
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 def test_partitionless_container_rejected_by_rust_binding_rust():
     """Check rejection of the explicit typed partitionless-key sentinel.

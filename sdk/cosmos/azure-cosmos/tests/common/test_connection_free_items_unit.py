@@ -141,7 +141,7 @@ class AsyncBackend(AsyncCosmosBackend, Backend):
         _item_arguments.merge_create_item_explicit_kwargs,
         _item_arguments.merge_delete_item_explicit_kwargs,
         _item_arguments.merge_read_item_explicit_kwargs,
-        _item_arguments.merge_upsert_replace_item_explicit_kwargs,
+        _item_arguments.merge_upsert_replace_item_kwargs,
         _item_arguments.merge_patch_item_explicit_kwargs,
     ],
     ids=["create", "delete", "read", "upsert-replace", "patch"],

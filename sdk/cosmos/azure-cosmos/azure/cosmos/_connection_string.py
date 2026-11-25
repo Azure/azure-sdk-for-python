@@ -13,6 +13,10 @@ def parse_connection_string(conn_str: str) -> dict[str, str]:
 
     This checks the string's structure, not whether the endpoint or credential
     works. Errors identify the missing setting, never the supplied key value.
+
+    :param str conn_str: Semicolon-separated connection settings containing endpoint and key.
+    :return: Setting names mapped to their original string values.
+    :rtype: dict[str, str]
     """
     if not isinstance(conn_str, str):
         raise TypeError("Connection string must be a string.")

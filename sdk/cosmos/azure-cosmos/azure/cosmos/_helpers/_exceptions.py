@@ -75,7 +75,11 @@ class _ResponseAdapter:
             return self._inner.body.decode("utf-8", errors="replace")
 
     def body(self) -> bytes:
-        """Return the raw response body bytes (may be ``b""``)."""
+        """Return the raw response body bytes (may be ``b""``).
+
+        :return: The wrapped response's unmodified body bytes.
+        :rtype: bytes
+        """
         return self._inner.body
 
 
@@ -83,9 +87,14 @@ def backend_response_from_exception(error: BaseException) -> Optional[BackendRes
     """Return the BackendResponse wrapped by an error from map_backend_response_to_exception.
 
     Other errors, such as a client timeout, wrap no response and return None.
+
+    :param BaseException error: Exception that may carry the SDK's backend response adapter.
+    :return: The wrapped backend response, or None for other response types.
+    :rtype: ~azure.cosmos._backend.contracts.BackendResponse or None
     """
     response = getattr(error, "response", None)
-    return response._inner if isinstance(response, _ResponseAdapter) else None
+    # This accessor intentionally unwraps the adapter defined in this module.
+    return response._inner if isinstance(response, _ResponseAdapter) else None  # pylint: disable=protected-access
 
 
 # Status code -> typed exception class.
@@ -208,5 +217,10 @@ def error_message_from_body(body: bytes, status_code: int) -> str:
 
 
 def is_success_status(status_code: int) -> bool:
-    """Return whether ``status_code`` is in the 2xx success range (200..299)."""
+    """Return whether ``status_code`` is in the 2xx success range (200..299).
+
+    :param int status_code: HTTP response status to classify.
+    :return: Whether the status is at least 200 and less than 300.
+    :rtype: bool
+    """
     return 200 <= status_code < 300

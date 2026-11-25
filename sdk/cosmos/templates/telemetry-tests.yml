@@ -19,16 +19,16 @@ steps:
         --require-installed-wheel --results $results 2>&1 |
         Tee-Object -FilePath "$results/live.txt"
       exit $LASTEXITCODE
-    displayName: Run required offline telemetry checks against the test-probes wheel
+    displayName: Telemetry Unit Tests
     timeoutInMinutes: 20
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
     env:
       COSMOS_BACKEND: rust
       APPLICATIONINSIGHTS_CONNECTION_STRING: ''
       COSMOSDBCONNECTIONSTRING: ''
   - task: PublishTestResults@2
-    displayName: Publish required telemetry results
-    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['PythonVersion'], '3.13'), eq(variables['ChecksOverride'], 'whl,sdist'))
+    displayName: Publish Telemetry Unit Test Results
+    condition: and(succeededOrFailed(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ChecksOverride'], 'whl,sdist'))
     inputs:
       testResultsFormat: JUnit
       testResultsFiles: $(Build.ArtifactStagingDirectory)/llm-artifacts/cosmos-telemetry/pytest.xml

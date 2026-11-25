@@ -15,6 +15,8 @@ from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust
 
+pytestmark = pytest.mark.cosmosEmulator
+
 PK = PartitionKey(path="/pk")
 
 

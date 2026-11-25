@@ -16,7 +16,7 @@ from fault_injection._query_page_timeout import (
     assert_page_timeout, capture_page_calls, query_timeout_rule,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.timeout(90)

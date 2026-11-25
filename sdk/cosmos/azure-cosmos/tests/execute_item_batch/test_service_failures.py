@@ -24,7 +24,7 @@ from common.throughput_fixtures import owned_database
 from config import clients, resources, settings
 from fault_injection._query_resume import set_rule
 
-pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]
+pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.cosmosEmulator, pytest.mark.cosmosAADLong, pytest.mark.asyncio]
 
 
 async def invoke(method, *args, **kwargs):

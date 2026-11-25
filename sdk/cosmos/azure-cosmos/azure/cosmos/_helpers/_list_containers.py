@@ -22,10 +22,10 @@ from .._operation_deadline import (
     remaining_timeout,
 )
 from .._query_rust_routing import (
-    build_list_containers_prepared_page_request,
-    build_query_containers_prepared_page_request,
-    can_use_rust_backend_for_list_containers_page,
-    can_use_rust_backend_for_query_containers_page,
+    build_list_containers_page,
+    build_query_containers_page,
+    can_use_rust_list_containers,
+    can_use_rust_query_containers,
 )
 from ._item_arguments import get_selected_backend
 from ._metadata_feed import MetadataFeedPageIterator, RecordingOptions
@@ -104,7 +104,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
     def prepared(self, token: Optional[str], deadline: Optional[float]) -> PreparedPageRequest:
         query = self.query_payload
         eligible = (
-            can_use_rust_backend_for_list_containers_page(
+            can_use_rust_list_containers(
                 path=self.path,
                 options=self.options,
                 kwargs=self.kwargs,
@@ -112,7 +112,7 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
                 resource_type=http_constants.ResourceType.Collection,
             )
             if query is None
-            else can_use_rust_backend_for_query_containers_page(
+            else can_use_rust_query_containers(
                 path=self.path,
                 query_payload=query,
                 options=self.options,
@@ -122,7 +122,9 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
             )
         )
         if not eligible:
-            remaining_kwargs = self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
+            remaining_kwargs = (
+                self.kwargs.keys() - self.recording_options.kwargs.keys() - {_Constants.OperationStartTime}
+            )
             reject_unknown_feed_kwargs(self.operation, remaining_kwargs)
             detail = f": {', '.join(repr(name) for name in sorted(remaining_kwargs))}" if remaining_kwargs else ""
             raise NotImplementedError(
@@ -132,13 +134,13 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         options = dict(self.options)
         options["continuation"] = token
         prepared = (
-            build_list_containers_prepared_page_request(
+            build_list_containers_page(
                 path=self.path,
                 options=options,
                 req_headers=self.default_headers,
             )
             if query is None
-            else build_query_containers_prepared_page_request(
+            else build_query_containers_page(
                 path=self.path,
                 query_payload=query,
                 options=options,

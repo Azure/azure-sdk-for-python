@@ -16,7 +16,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust_async
 
-pytestmark = [pytest.mark.asyncio]
+pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 PK = PartitionKey(path="/pk")
 
 

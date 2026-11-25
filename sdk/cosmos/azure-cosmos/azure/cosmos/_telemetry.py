@@ -713,10 +713,9 @@ def _new_operation(
         if state is None:
             state = _Operation(operation, backend, _current_task(), get_ident(), binding_operation)
         state.handlers += (CompletionHandler(recorder.record, collect_attempts=True, start=recorder.start),)
-        return state
     except Exception:  # pylint: disable=broad-except
         _report("Rust telemetry could not capture the caller span; attempt recording is skipped")
-        return state
+    return state
 
 
 @contextmanager
@@ -927,7 +926,13 @@ def get_operation(backend: object, operation: str) -> Optional[_Operation]:
 
 
 def _logging_operation(backend: object) -> Optional[_Operation]:
-    """Return the active operation only when this backend call belongs to it."""
+    """Return the active operation only when this backend call belongs to it.
+
+    :param backend: Backend executing the current call.
+    :type backend: object
+    :return: Owned active operation, or None outside its execution scope.
+    :rtype: _Operation or None
+    """
     state = _OPERATION.get()
     if state is None or state.closed or state.backend is not backend or not state.owns_execution():
         return None
@@ -935,7 +940,14 @@ def _logging_operation(backend: object) -> Optional[_Operation]:
 
 
 def log_response_diagnostics(backend: object, operation: str, response: BackendResponse) -> None:
-    """Log only a supplied summary belonging to the active native call or page."""
+    """Log only a supplied summary belonging to the active native call or page.
+
+    :param backend: Backend executing the call.
+    :type backend: object
+    :param str operation: Operation name to attach to the diagnostic record.
+    :param response: Backend response containing the supplied diagnostic summary.
+    :type response: ~azure.cosmos._backend.contracts.BackendResponse
+    """
     state = _logging_operation(backend)
     if state is None:
         return
@@ -951,6 +963,13 @@ def log_error_diagnostics(backend: object, error: BaseException, operation: Opti
     Examples are a container-lookup 404 and a driver-setup 401. Without an
     operation name, use the active operation's name. Errors that wrap no
     service response, such as a client timeout, are not logged.
+
+    :param backend: Backend executing the failed call.
+    :type backend: object
+    :param error: Failure that may contain service-response diagnostics.
+    :type error: BaseException
+    :param operation: Explicit diagnostic operation name, or None to use the active operation.
+    :type operation: str or None
     """
     state = _logging_operation(backend)
     if state is None:

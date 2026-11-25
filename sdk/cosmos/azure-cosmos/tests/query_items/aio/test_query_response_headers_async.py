@@ -14,7 +14,6 @@ import gc
 import tracemalloc
 import unittest
 import uuid
-from collections.abc import Mapping
 
 import pytest
 from azure.core.utils import CaseInsensitiveDict
@@ -605,83 +604,5 @@ class TestQueryResponseHeadersAsync(unittest.IsolatedAsyncioTestCase):
             assert isinstance(headers, CaseInsensitiveDict)
             assert not isinstance(headers, list)
             assert not hasattr(query_iterable, "get_last_response_headers")
-        finally:
-            await self._delete_container_for_test(cid)
-
-    async def test_query_response_headers_match_last_response_hook_invocation_async_rust(self):
-        # pylint: disable-next=line-too-long
-        # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_query_response_headers_match_last_response_hook_invocation_async
-        """The headers returned after async iteration must match the headers
-        handed to the last response_hook call."""
-        cid = "test_headers_hookparity_async_" + str(uuid.uuid4())
-        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
-        try:
-            for i in range(12):
-                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
-
-            captured_pages = []
-
-            def hook(headers, _result):
-                captured_pages.append(dict(headers))
-
-            query_iterable = created_collection.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk",
-                parameters=[{"name": "@pk", "value": "test"}],
-                partition_key="test",
-                max_item_count=4,
-                response_hook=hook,
-            )
-
-            items = [item async for item in query_iterable]
-            assert len(items) == 12
-            assert len(captured_pages) > 0
-
-            final_headers = query_iterable.get_response_headers()
-            assert final_headers["x-ms-request-charge"] == captured_pages[-1]["x-ms-request-charge"]
-            assert final_headers["x-ms-activity-id"] == captured_pages[-1]["x-ms-activity-id"]
-        finally:
-            await self._delete_container_for_test(cid)
-
-    async def test_response_hook_fires_at_least_once_for_every_paged_surface_async_rust(self):
-        # pylint: disable-next=line-too-long
-        # Source: tests/test_query_response_headers_async.py::TestQueryResponseHeadersAsync.test_response_hook_fires_at_least_once_for_every_paged_surface_async
-        """A response_hook attached to any async paged surface must fire at
-        least once, and every captured payload must be a Mapping."""
-
-        cid = "test_hookfires_paged_async_" + str(uuid.uuid4())
-        created_collection = await self._create_container_for_test(cid, PartitionKey(path="/pk"))
-        try:
-            for i in range(6):
-                await created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
-
-            async def _run(surface_name, build_pager):
-                captured = []
-
-                def hook(headers, _result):
-                    captured.append(dict(headers))
-
-                pager = build_pager(hook)
-                _ = [item async for item in pager]
-                assert len(captured) > 0, f"{surface_name} response_hook never fired"
-                for payload in captured:
-                    assert isinstance(payload, Mapping), \
-                        f"{surface_name} hook received non-Mapping payload"
-
-            await _run(
-                "query_items",
-                lambda h: created_collection.query_items(
-                    query="SELECT * FROM c",
-                    partition_key="test",
-                    response_hook=h,
-                ),
-            )
-            await _run(
-                "query_items_change_feed",
-                lambda h: created_collection.query_items_change_feed(
-                    start_time="Beginning",
-                    max_item_count=2,
-                    response_hook=h,
-                ),
-            )
         finally:
             await self._delete_container_for_test(cid)

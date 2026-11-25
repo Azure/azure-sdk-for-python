@@ -52,13 +52,22 @@ _QUERY_OPTIONS = {
 
 
 def uses_rust(proxy: Any) -> bool:
-    context = proxy._client_context
-    backend = context.adapter if context is not None else proxy.client_connection._backend
+    # Internal proxy routing reads the existing context or legacy connection selection.
+    context = proxy._client_context  # pylint: disable=protected-access
+    backend = (
+        context.adapter if context is not None
+        else proxy.client_connection._backend  # pylint: disable=protected-access
+    )
     return is_rust_backend(backend)
 
 
 def reject_rust_continuation_token(kwargs: dict[str, Any]) -> None:
-    """Reject Rust-path continuation formats before a legacy query can use them."""
+    """Reject Rust-path continuation formats before a legacy query can use them.
+
+    :param dict[str, Any] kwargs: Call keywords or nested options containing the continuation.
+    :return: None.
+    :rtype: None
+    """
     options = kwargs.get("request_options", kwargs.get("feed_options", {})) or {}
     token = kwargs.get("continuation", options.get("continuation"))
     if isinstance(token, str) and token.startswith(("q1.", "c1.", "c2.", "cf1.")):
@@ -145,12 +154,27 @@ class QueryConfig(RustFeedConfig):
         options["correlatedActivityId"] = str(uuid4())
         kwargs["request_options"] = options
         super().__init__(proxy, kwargs, operation=OP_QUERY_ITEMS)
+        self._prepare_query_settings()
+        payload: dict[str, Any] = {"query": self.query}
+        if self.parameters:
+            payload["parameters"] = list(self.parameters)
+        self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
+        self.parameters = freeze_json(self.parameters)
+        validate_query_continuation(self.options.get("continuation"))
+        # Parse each limit only after the binding identifies the applicable plan.
+        self.hybrid_search_max_items = os.environ.get(
+            Constants.HS_MAX_ITEMS_CONFIG, str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)
+        )
+        self.vector_search_max_items = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
+
+    # Query preparation shares the adapter's internal client-wide hedging configuration.
+    def _prepare_query_settings(self) -> None:
         strategy = self.options.get("availabilityStrategy")
         if strategy is not None:
             if not isinstance(strategy, (bool, dict)):
                 raise TypeError("availability_strategy must be a bool, dict, or None.")
-            if strategy is True and self.backend._client_config is not None:
-                threshold = self.backend._client_config.hedging_threshold_ms
+            if strategy is True and self.backend._client_config is not None:  # pylint: disable=protected-access
+                threshold = self.backend._client_config.hedging_threshold_ms  # pylint: disable=protected-access
                 if threshold is not None:
                     strategy = {"threshold_ms": threshold}
             self.options["availabilityStrategy"] = _validate_request_hedging_strategy(strategy)
@@ -181,17 +205,6 @@ class QueryConfig(RustFeedConfig):
             for name in initial
         ):
             raise NotImplementedError("Query scope, paging and planning headers cannot be overridden; no fallback.")
-        payload: dict[str, Any] = {"query": self.query}
-        if self.parameters:
-            payload["parameters"] = list(self.parameters)
-        self.query_body = serialize_body_to_bytes(payload, allow_nan=False)
-        self.parameters = freeze_json(self.parameters)
-        validate_query_continuation(self.options.get("continuation"))
-        # Parse each limit only after the binding identifies the applicable plan.
-        self.hybrid_search_max_items = os.environ.get(
-            Constants.HS_MAX_ITEMS_CONFIG, str(Constants.HS_MAX_ITEMS_CONFIG_DEFAULT)
-        )
-        self.vector_search_max_items = os.environ.get(Constants.MAX_ITEM_BUFFER_VS_CONFIG)
 
     def prepared(
         self,
@@ -295,7 +308,8 @@ class QueryPageState(FeedPageState):
     def acquire_fetch_lock(self) -> None:
         if self.failed:
             raise RuntimeError("Query pager failed; create a new pager from the last delivered bookmark.")
-        if not self.lock.acquire(blocking=False):
+        # The iterator releases this nonblocking lock in its finally block after the entire fetch.
+        if not self.lock.acquire(blocking=False):  # pylint: disable=consider-using-with
             raise RuntimeError("Concurrent use of a query pager is not supported.")
 
     def should_deliver(self, rows: list[Any], previous: Optional[str]) -> bool:
@@ -317,7 +331,15 @@ def _fetch_rust_page(
     deadline: Optional[float],
     **_tracing_kwargs: Any,
 ) -> Optional[list[Any]]:
-    """Record one internal fetch, accepting the public page only when ready."""
+    """Record one internal fetch, accepting the public page only when ready.
+
+    :param QueryConfig config: Prepared query configuration and execution backend.
+    :param QueryPageState state: Iterator progress updated by parsing and response completion.
+    :param float or None deadline: Shared monotonic deadline for the exposed page.
+    Additional ``_tracing_kwargs`` are consumed by the operation's telemetry decorator.
+    :return: Accepted page rows, or None when another internal page must be fetched.
+    :rtype: list[Any] or None
+    """
     previous = state.token
     pages = config.backend.execute_pages(
         config.prepared(state.token, state.cursor, deadline),

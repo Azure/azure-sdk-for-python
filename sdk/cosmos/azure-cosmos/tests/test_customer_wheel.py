@@ -12,7 +12,7 @@ from azure.cosmos import CosmosClient, _rust
 from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos._backend.binding_adapter import BindingAdapter
 from azure.cosmos.aio._backend.binding_adapter import AsyncBindingAdapter
-from azure.cosmos._feed_ranges_rust_routing import build_is_feed_range_subset_prepared_request
+from azure.cosmos._feed_ranges_rust_routing import build_feed_range_subset_request
 
 
 pytestmark = pytest.mark.cosmosCustomerWheel
@@ -55,7 +55,7 @@ def test_customer_wheel_rejects_fault_rules_at_native_boundary_rust(monkeypatch,
 
 @pytest.mark.parametrize("child_max,expected", [("60", True), ("C0", False)])
 def test_customer_wheel_executes_without_debug_counters_rust(child_max, expected):
-    prepared = build_is_feed_range_subset_prepared_request(
+    prepared = build_feed_range_subset_request(
         parent_feed_range={"Range": {"min": "00", "max": "80", "isMinInclusive": True, "isMaxInclusive": False}},
         child_feed_range={"Range": {"min": "40", "max": child_max, "isMinInclusive": True, "isMaxInclusive": False}},
     )

@@ -22,7 +22,13 @@ def prepare_throughput_kwargs(
     kwargs: Mapping[str, Any],
     response_hook: Optional[Callable[..., None]],
 ) -> dict[str, Any]:
-    """Validate a read or replacement callback and copy caller-owned options."""
+    """Validate a read or replacement callback and copy caller-owned options.
+
+    :param Mapping[str, Any] kwargs: Call keywords whose nested request options are copied.
+    :param callable or None response_hook: Callback checked for callability.
+    :return: Call keywords with independent nested option mappings.
+    :rtype: dict[str, Any]
+    """
     if response_hook is not None and not callable(response_hook):
         raise TypeError("response_hook must be callable or None")
     copied = dict(kwargs)
@@ -73,7 +79,14 @@ def finish_read(
     client_connection: Any,
     response_hook: Optional[Callable[[Mapping[str, Any], list[dict[str, Any]]], None]],
 ) -> ThroughputProperties:
-    """Finish a nonempty lookup without allowing callback mutation of its result."""
+    """Finish a nonempty lookup without allowing callback mutation of its result.
+
+    :param list[dict] offers: Nonempty offer lookup result; the first record supplies throughput.
+    :param Any client_connection: Connection supplying fallback headers for legacy results.
+    :param callable or None response_hook: Callback receiving isolated headers and offer records.
+    :return: Throughput settings isolated from callback mutations.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     headers = offer_response_headers(offers, client_connection)
     result = _deserialize_throughput(
         throughput=[CosmosDict(deepcopy(offers[0]), response_headers=headers)]

@@ -16,6 +16,8 @@ from azure.cosmos import CosmosClient, exceptions
 from azure.cosmos.partition_key import PartitionKey
 from common._rust_checks import run_on_rust
 
+pytestmark = pytest.mark.cosmosEmulator
+
 CONTAINER_COUNT = 3
 
 

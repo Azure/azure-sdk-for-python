@@ -24,7 +24,7 @@ def ensure_item_id(body: Dict[str, Any], *, generate: bool = True) -> Optional[s
         is minted. The caller is responsible for copying first if the
         original dict must be preserved.
     :type body: Dict[str, Any]
-    :param generate: When ``True`` (default), mint a UUID4 for a missing
+    :keyword generate: When ``True`` (default), mint a UUID4 for a missing
         id. When ``False``, leave ``body`` alone and return ``None`` only if
         no truthy id already exists.
     :type generate: bool
@@ -57,7 +57,13 @@ class SerializedDocument:
 
 
 def build_create_document(body: Any, *, generate_id: bool) -> dict[str, Any]:
-    """Resolve the ID in a shallow top-level copy without changing caller data."""
+    """Resolve the ID in a shallow top-level copy without changing caller data.
+
+    :param Any body: Document mapping to validate and copy.
+    :keyword bool generate_id: Whether to generate a UUID for a missing or falsy ID.
+    :return: A shallow document copy with a valid nonempty string ID.
+    :rtype: dict[str, Any]
+    """
     if not isinstance(body, Mapping):
         raise TypeError("create_item body must be a mapping.")
     prepared = dict(body)
@@ -77,7 +83,14 @@ def build_create_document(body: Any, *, generate_id: bool) -> dict[str, Any]:
 def serialize_document(
     body: Any, *, operation: str, compact_utf8: bool = False
 ) -> SerializedDocument:
-    """Encode a normalized document without generating an ID or changing input."""
+    """Encode a normalized document without generating an ID or changing input.
+
+    :param Any body: Document to encode, or a pre-encoded replacement body.
+    :keyword str operation: One of create_item, upsert_item, or replace_item.
+    :keyword bool compact_utf8: Whether to emit non-ASCII characters directly as UTF-8.
+    :return: Serialized body bytes and the normalized body ID, when present.
+    :rtype: ~azure.cosmos._helpers._document.SerializedDocument
+    """
     if operation not in ("create_item", "upsert_item", "replace_item"):
         raise ValueError(f"Cannot serialize a document for {operation!r}.")
     encoded = serialize_body_to_bytes(

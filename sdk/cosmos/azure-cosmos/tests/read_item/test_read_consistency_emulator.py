@@ -16,6 +16,8 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from common._rust_checks import run_on_rust, run_on_rust_async
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 LEVELS = ["Eventual", "ConsistentPrefix", "Session", "BoundedStaleness", "Strong"]
 SOURCES = ["client", "request_options", "feed_options", "initial_headers"]

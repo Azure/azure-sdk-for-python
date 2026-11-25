@@ -21,7 +21,7 @@ from fault_injection._regional_routing import (
     mock_account, rules, topology, wait_topology,
 )
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.timeout(180)

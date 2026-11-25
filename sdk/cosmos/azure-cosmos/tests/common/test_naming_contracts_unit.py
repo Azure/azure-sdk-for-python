@@ -158,10 +158,10 @@ def test_page_contracts_have_no_query_only_aliases_rust(current, retired):
     "current,retired",
     [
         ("build_query_items_prepared_page_request", "build_query_items_prepared_query"),
-        ("build_list_databases_prepared_page_request", "build_list_databases_prepared_query"),
-        ("build_query_databases_prepared_page_request", "build_query_databases_prepared_query"),
-        ("build_list_containers_prepared_page_request", "build_list_containers_prepared_query"),
-        ("build_query_containers_prepared_page_request", "build_query_containers_prepared_query"),
+        ("build_list_databases_page", "build_list_databases_prepared_query"),
+        ("build_query_databases_page", "build_query_databases_prepared_query"),
+        ("build_list_containers_page", "build_list_containers_prepared_query"),
+        ("build_query_containers_page", "build_query_containers_prepared_query"),
         ("_build_prepared_page_request", "_build_feed_request"),
     ],
 )

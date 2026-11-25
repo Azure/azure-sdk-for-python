@@ -87,7 +87,8 @@ class ReadAllPageIterator(Iterator[Iterator[dict[str, Any]]]):
             raise StopIteration
         if state.failed:
             raise RuntimeError("read_all_items pager failed; a new enumeration starts from the beginning.")
-        if not state.lock.acquire(blocking=False):
+        # Reject overlapping fetches instead of blocking; finally below releases the lock.
+        if not state.lock.acquire(blocking=False):  # pylint: disable=consider-using-with
             raise RuntimeError("Concurrent use of a read_all_items pager is not supported.")
         try:
             config = state.config

@@ -174,6 +174,7 @@ class TestSessionAsync(unittest.IsolatedAsyncioTestCase):
         os.getenv("COSMOS_TEST_DATA_AUTH_MODE", "key").strip().lower() == 'aad',
         reason="environment-gap: MWR topology fault-injection test uses localhost secondary endpoint and is emulator-only."
     )
+    @pytest.mark.cosmosSdkFaultInjection
     async def test_session_token_mwr_for_ops_async_rust(self):
         # Source: tests/test_session_async.py::TestSessionAsync.test_session_token_mwr_for_ops_async
         # For multiple write regions, all document requests should send out session tokens

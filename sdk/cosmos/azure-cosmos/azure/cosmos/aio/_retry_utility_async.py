@@ -162,9 +162,13 @@ async def ExecuteAsync(client, global_endpoint_manager, function, *args, **kwarg
             # We manually raise a 404. We raise it here, so we can handle it in retry utilities.
             # Only container lookups can retry against refreshed container metadata.
             # Database offer queries must finish normally, including empty pages.
-            if request is not None and container_recreate_retry_policy.container_link is not None and \
-                    result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers'] \
-                    and request.method == 'POST':
+            is_offer_request = (
+                request is not None
+                and container_recreate_retry_policy.container_link is not None
+                and request.method == 'POST'
+            )
+            if is_offer_request and \
+                    result and isinstance(result[0], dict) and 'Offers' in result[0] and not result[0]['Offers']:
                 if len(result) > 1 and result[1].get(HttpHeaders.Continuation):
                     return result
                 # Grab the link used for getting throughput properties to add to message.

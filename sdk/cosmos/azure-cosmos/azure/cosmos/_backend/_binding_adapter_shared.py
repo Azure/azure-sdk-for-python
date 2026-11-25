@@ -58,6 +58,9 @@ def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
     An existing AZURE_COSMOS_QUERYPLANINTEROP_DIR setting wins. If .libs is
     absent, leave discovery to the driver. Finding the directory does not prove
     the library can load or handle a particular query.
+
+    :param rust_module: Loaded native binding module, or None when unavailable.
+    :type rust_module: typing.Any
     """
     if rust_module is None:
         return
@@ -85,6 +88,13 @@ def _binding_error_type(rust_module: Optional[Any], name: str) -> _BindingErrorM
     A present binding missing the required exception class raises here. Without
     that check, Rust driver errors could bypass conversion to the Python exceptions
     the customer app expects.
+
+    :param rust_module: Loaded native binding module, or None.
+    :type rust_module: typing.Any
+    :param name: Required exception export name.
+    :type name: str
+    :return: Exception class, or an empty tuple when the binding is absent.
+    :rtype: type[BaseException] or tuple[type[BaseException], ...]
     """
     if rust_module is None:
         return _NO_BINDING_ERRORS
@@ -103,6 +113,11 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> _BindingErrorMatc
     The Python wrapper converts that error to azure-core's ``ServiceResponseError``.
     This means it received no HTTP response, not that the request was
     never sent or that the service backend performed no work.
+
+    :param rust_module: Loaded native binding module, or None.
+    :type rust_module: typing.Any
+    :return: Transport exception class, or an empty tuple when no binding is loaded.
+    :rtype: type[BaseException] or tuple[type[BaseException], ...]
     """
     return _binding_error_type(rust_module, "_DriverTransportError")
 
@@ -112,6 +127,11 @@ def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> _BindingE
 
     The Python wrapper translates it to ``UnsupportedQueryError``.
     It is an execution failure, not permission for fallback to the legacy path.
+
+    :param rust_module: Loaded native binding module, or None.
+    :type rust_module: typing.Any
+    :return: Unsupported-query exception class, or an empty tuple without a binding.
+    :rtype: type[BaseException] or tuple[type[BaseException], ...]
     """
     return _binding_error_type(rust_module, "_UnsupportedQueryFeatureError")
 
@@ -120,6 +140,7 @@ def is_credential_error(error: BaseException) -> bool:
     """Read binding provenance without invoking credential exception overrides.
 
     :param error: Exception returned by a binding call.
+    :type error: BaseException
     :return: Whether the binding restored this Python credential exception.
     :rtype: bool
     """
@@ -128,17 +149,24 @@ def is_credential_error(error: BaseException) -> bool:
 
 
 def operation_timeout_error(error: TimeoutError) -> CosmosClientTimeoutError:
-    """Preserve a diagnostic-backed throttle status without inventing response details."""
+    """Preserve a diagnostic-backed throttle status without inventing response details.
+
+    :param error: Timeout carrying optional binding throttle diagnostics.
+    :type error: TimeoutError
+    :return: Client timeout whose cause preserves verified throttle status when available.
+    :rtype: ~azure.cosmos.exceptions.CosmosClientTimeoutError
+    """
     attributes = BaseException.__dict__["__dict__"].__get__(error)
     if "_cosmos_timeout_throttle_status" not in attributes:
         return CosmosClientTimeoutError(error=error)
     status = attributes["_cosmos_timeout_throttle_status"]
+    if not isinstance(status, tuple) or len(status) != 2:
+        raise BindingProtocolError("The binding returned invalid timeout throttle status")
+    # Exact integers exclude bool and subclasses from native diagnostic fields.
     if (
-        not isinstance(status, tuple)
-        or len(status) != 2
-        or type(status[0]) is not int
+        type(status[0]) is not int  # pylint: disable=unidiomatic-typecheck
         or status[0] != 429
-        or type(status[1]) is not int
+        or type(status[1]) is not int  # pylint: disable=unidiomatic-typecheck
         or not 0 <= status[1] < 2**32
     ):
         raise BindingProtocolError("The binding returned invalid timeout throttle status")
@@ -185,6 +213,15 @@ def page_binding_call_errors(
     transport error. This does not guarantee that the service backend stopped
     work already received. No converted error permits repeating the operation
     through the legacy path.
+
+    :param deadline: Absolute monotonic deadline, or None for no timeout conversion.
+    :type deadline: float or None
+    :param unsupported_query_error: Binding exception class or tuple of classes for unsupported queries.
+    :type unsupported_query_error: type[BaseException] or tuple[type[BaseException], ...]
+    :param transport_error: Binding exception class or tuple of classes for transport failures.
+    :type transport_error: type[BaseException] or tuple[type[BaseException], ...]
+    :return: Context manager translating page binding errors.
+    :rtype: contextlib.AbstractContextManager[None]
     """
     try:
         yield
@@ -224,6 +261,17 @@ def validate_page_request(
     raises RuntimeError: the binding must be rebuilt, not treated as an
     optional unsupported operation. Any permitted choice of the legacy path
     belongs to the caller's migration policy, not this check.
+
+    :param prepared: Page request whose operation and cursor mode require validation.
+    :type prepared: ~azure.cosmos._backend.contracts.PreparedPageRequest
+    :param binding: Loaded binding module, or None.
+    :type binding: typing.Any
+    :param lookup_binding_function: Lookup accepting a binding export name or None.
+    :type lookup_binding_function: typing.Callable
+    :param backend_name: Adapter name included in error messages.
+    :type backend_name: str
+    :param suffix: Binding export suffix included in missing-function errors.
+    :type suffix: str
     """
     if binding is None:
         raise PagePreflightError(
@@ -271,6 +319,9 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
     The bridge runs async token requests for the binding. Its last user requests
     cancellation of its pending token calls. Log cleanup failures, and never close
     the customer's credential: the customer app owns it.
+
+    :param credential: Stored credential or bridge whose SDK-owned use should be released.
+    :type credential: typing.Any
     """
     closer = getattr(credential, "_close_cosmos_async_bridge", None)
     if callable(closer):
@@ -293,6 +344,13 @@ def finalize_adapter_resources(credential: Optional[Any], driver_handle: Optiona
     thread without starting a worker. If worker startup otherwise raises
     RuntimeError, use the same synchronous cleanup and log the failure.
     Finalization is not always nonblocking.
+
+    :param credential: Detached credential or bridge, or None.
+    :type credential: typing.Any
+    :param driver_handle: Detached owning driver handle, or None.
+    :type driver_handle: ~azure.cosmos._rust._DriverHandle or None
+    :param binding: Binding module exposing driver release.
+    :type binding: typing.Any
     """
     if credential is None and driver_handle is None:
         return
@@ -339,6 +397,17 @@ class BindingAdapterShared:
     and operations. Acquisition may reuse an existing CosmosDriver object.
     """
 
+    # Concrete constructors initialize these fields through _init_shared.
+    _endpoint: str
+    _master_key: Optional[str]
+    _token_credential: Optional[Any]
+    _client_config: Optional[PreparedClientConfig]
+    _runtime: Optional[CosmosRuntime]
+    _init_future: Optional[Future[_DriverHandle]]
+    _driver_handle: Optional[_DriverHandle]
+    _driver_handle_lock: Any
+    _closing: bool
+
     def _init_shared(
         self,
         endpoint: str,
@@ -369,6 +438,17 @@ class BindingAdapterShared:
         None selects the default singleton when a driver is first acquired.
         The native validation guard rejects old prepared client configurations
         containing network overrides, rather than silently ignoring them.
+
+        :param endpoint: Cosmos account endpoint URL.
+        :type endpoint: str
+        :param master_key: Account key, or None for token authentication.
+        :type master_key: str or None
+        :param client_config: Prepared client settings, or None for defaults.
+        :type client_config: ~azure.cosmos._backend.contracts.PreparedClientConfig or None
+        :param token_credential: Borrowed token credential, or None for account-key authentication.
+        :type token_credential: typing.Any
+        :param runtime: Explicit runtime to retain, or None to select the default at acquisition.
+        :type runtime: ~azure.cosmos.runtime.CosmosRuntime or None
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -429,7 +509,13 @@ class BindingAdapterShared:
         self._close_token_credential_bridge()
 
     def _with_client_headers(self, prepared: PreparedRequest) -> PreparedRequest:
-        """Keep unrelated client defaults when a call overrides a header."""
+        """Keep unrelated client defaults when a call overrides a header.
+
+        :param prepared: Request with per-call header overrides.
+        :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+        :return: Request containing merged headers, or the original when no defaults apply.
+        :rtype: ~azure.cosmos._backend.contracts.PreparedRequest
+        """
         if self._client_config is None or not self._client_config.headers:
             return prepared
         headers = CaseInsensitiveDict(self._client_config.headers)
@@ -439,7 +525,15 @@ class BindingAdapterShared:
     def _request_deadline(
         self, deadline: Optional[float], timeout: Optional[float] = None
     ) -> Optional[float]:
-        """Preserve an outer budget; otherwise bound this request before driver setup."""
+        """Preserve an outer budget; otherwise bound this request before driver setup.
+
+        :param deadline: Existing absolute monotonic deadline, or None.
+        :type deadline: float or None
+        :param timeout: Per-request budget in seconds, or None to use the client default.
+        :type timeout: float or None
+        :return: Absolute monotonic deadline, or None if no timeout is configured.
+        :rtype: float or None
+        """
         if deadline is not None:
             return deadline
         if timeout is None and self._client_config is not None:
@@ -451,6 +545,13 @@ class BindingAdapterShared:
 
         A daemon worker avoids an interpreter-exit join or a shared pool queue.
         Capture inputs and context before close can clear the client's references.
+
+        :param binding: Native module exposing driver acquisition and release.
+        :type binding: typing.Any
+        :param logger: Logger receiving acquisition failures.
+        :type logger: logging.Logger
+        :return: Shared future carrying the acquired driver handle or acquisition error.
+        :rtype: concurrent.futures.Future[azure.cosmos._rust._DriverHandle]
         """
         future = self._init_future
         if future is None:
@@ -479,7 +580,19 @@ class BindingAdapterShared:
         args: tuple[Any, ...],
         logger: logging.Logger,
     ) -> None:
-        """Publish one acquisition, or release a late handle if close won."""
+        """Publish one acquisition, or release a late handle if close won.
+
+        :param future: Shared future on which to publish the acquisition result or error.
+        :type future: concurrent.futures.Future[azure.cosmos._rust._DriverHandle]
+        :param binding: Native module exposing driver acquisition and release.
+        :type binding: typing.Any
+        :param runtime: Retained runtime, or None for the default.
+        :type runtime: ~azure.cosmos.runtime.CosmosRuntime or None
+        :param args: Captured positional driver acquisition arguments.
+        :type args: tuple[typing.Any, ...]
+        :param logger: Logger receiving acquisition failures.
+        :type logger: logging.Logger
+        """
         try:
             handle = self._initialize_driver(binding, runtime, acquisition_args=args)
             with self._driver_handle_lock:
@@ -489,7 +602,8 @@ class BindingAdapterShared:
             if closed:
                 release_driver_handle_quietly(handle, binding)
                 raise RuntimeError(f"{type(self).__name__}: the client was closed during initialization.")
-        except BaseException as error:
+        # Publish every worker failure, including cancellation, so waiters cannot hang.
+        except BaseException as error:  # pylint: disable=broad-exception-caught
             with self._driver_handle_lock:
                 self._init_future = None
             future.set_exception(error)
@@ -515,13 +629,23 @@ class BindingAdapterShared:
         This method returns the handle without storing it or executing the pending
         operation. The caller coordinates with close to store or release the handle.
         Account metadata failures use the same error conversion as container metadata.
+
+        :param binding: Native module exposing driver acquisition.
+        :type binding: typing.Any
+        :param runtime: Explicit runtime, or None for the default.
+        :type runtime: ~azure.cosmos.runtime.CosmosRuntime or None
+        :keyword acquisition_args: Captured acquisition arguments, or None to build them from stored inputs.
+        :paramtype acquisition_args: tuple[typing.Any, ...] or None
+        :return: Owning handle retaining the selected driver.
+        :rtype: ~azure.cosmos._rust._DriverHandle
         """
         configure_packaged_query_plan_interop(binding)
         # A background acquisition retains its inputs even if close clears the adapter.
         args = self._acquire_driver_handle_args() if acquisition_args is None else acquisition_args
         try:
             if runtime is not None:
-                return binding.acquire_driver_handle(*args, runtime=runtime._handle)
+                # The adapter is the internal consumer of the runtime's native handle.
+                return binding.acquire_driver_handle(*args, runtime=runtime._handle)  # pylint: disable=protected-access
             return binding.acquire_driver_handle(*args)
         except _binding_error_type(binding, "_DriverResponseError") as exc:
             raise response_exception_from_binding(exc) from exc
@@ -529,7 +653,11 @@ class BindingAdapterShared:
             raise ServiceResponseError(message=str(exc)) from exc
 
     def _acquire_driver_handle_args(self) -> tuple[Any, ...]:
-        """Build the same driver-handle acquisition arguments for both client types."""
+        """Build the same driver-handle acquisition arguments for both client types.
+
+        :return: Positional binding arguments captured from this client's inputs.
+        :rtype: tuple[typing.Any, ...]
+        """
         return acquire_driver_handle_args(
             self._endpoint,
             self._master_key,
@@ -550,6 +678,9 @@ class BindingAdapterShared:
 
         This only transfers the reference. It does not release the async
         credential bridge or close the customer's credential.
+
+        :return: Detached credential or bridge, or None when already removed.
+        :rtype: typing.Any
         """
         with self._driver_handle_lock:
             credential = self._token_credential

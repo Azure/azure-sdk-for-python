@@ -10,36 +10,24 @@ fault injection rules and count attempts from the ``requests=N`` value in the
 ``x-ms-cosmos-sdk-diagnostics`` response header. Steps and assertions are unchanged.
 """
 
-import asyncio
-import importlib.util
 import os
 import re
 import uuid
-from typing import Callable, TYPE_CHECKING
 
 import pytest
 import pytest_asyncio
-from azure.core.exceptions import ServiceResponseError
-from azure.core.rest import HttpRequest
 
-from azure.cosmos import exceptions, ContainerProxy, DatabaseProxy
+from azure.cosmos import exceptions
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos.partition_key import PartitionKey
 
-# The whl_no_aio CI check uninstalls aiohttp. Only the two multi-write tests need it,
-# so the other tests in this file must still load and run without it.
-HAS_AIOHTTP = importlib.util.find_spec("aiohttp") is not None
-if HAS_AIOHTTP:
-    from _fault_injection_transport_async import FaultInjectionTransportAsync
-if TYPE_CHECKING:
-    from azure.core.pipeline.transport._aiohttp import AioHttpTransport
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
 
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
 _WRITE_OPERATION_TYPES = ("CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem")
 _DIAGNOSTICS_HEADER = "x-ms-cosmos-sdk-diagnostics"
-# Mirrors TestSettings.local_host; the mrw originals target the emulator endpoint.
-_LOCAL_HOST = "https://localhost:8081/"
 
 
 def _host():
@@ -48,16 +36,6 @@ def _host():
 
 def _key():
     return os.environ["ACCOUNT_KEY"]
-
-
-def _injected_errors():
-    """Build the multi-write test errors, or one skipped case when aiohttp is missing."""
-    if not HAS_AIOHTTP:
-        return [pytest.param(None, marks=pytest.mark.skip(
-            reason="aiohttp is not installed; this test builds an aiohttp-based fault injection transport."))]
-    return [FaultInjectionTransportAsync.error_request_timeout(),
-            FaultInjectionTransportAsync.error_internal_server_error(),
-            FaultInjectionTransportAsync.error_service_response()]
 
 
 @pytest_asyncio.fixture()
@@ -99,29 +77,6 @@ class _RecordingContainer(object):
 @pytest.mark.usefixtures("setup")
 class TestRetryableWritesAsync:
     """Rust-path copies of tests/test_retryable_writes_async.py::TestRetryableWritesAsync."""
-    TEST_DATABASE_ID = "upsert_item_retryable_writes_mrw_async_" + uuid.uuid4().hex
-    TEST_CONTAINER_SINGLE_PARTITION_ID = SINGLE_PARTITION_CONTAINER
-
-    @staticmethod
-    async def setup_method_with_custom_transport(
-            custom_transport: "AioHttpTransport",
-            default_endpoint: str = None,
-            key: str = None,
-            database_id: str = TEST_DATABASE_ID,
-            container_id: str = TEST_CONTAINER_SINGLE_PARTITION_ID,
-            **kwargs):
-        client = CosmosClient(default_endpoint or _host(), key or _key(), consistency_level="Session",
-                              transport=custom_transport, enable_diagnostics_logging=True, _backend="rust", **kwargs)
-        await client.__aenter__()
-        db: DatabaseProxy = await client.create_database_if_not_exists(database_id)
-        container: ContainerProxy = await db.create_container_if_not_exists(container_id, PartitionKey(path="/pk"))
-        return {"client": client, "db": db, "col": container}
-
-    @staticmethod
-    async def cleanup_method(initialized_objects):
-        # Stand-in for TestFaultInjectionTransportAsync.cleanup_method: close the method client.
-        await initialized_objects["client"].close()
-
     class MockExecuteFunction(object):
         """Rust stand-in for the original MockExecuteFunction.
 
@@ -691,147 +646,3 @@ class TestRetryableWritesAsync:
             for mock in mocks:
                 await mock.close()
             await client_with_retry.close()
-
-    @pytest.mark.parametrize("injected_error", _injected_errors())
-    async def test_retryable_writes_mrw_request_level_async_rust(self, injected_error):
-        # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_mrw_request_level_async
-        first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")
-        second_region_uri: str = _LOCAL_HOST
-        custom_transport = FaultInjectionTransportAsync()
-
-        # Inject topology transformation that would make Emulator look like a multiple write region account
-        # account with two read regions
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
-            lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
-                first_region_name="First Region",
-                second_region_name="Second Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
-
-        # Inject rule to simulate regional outage in "First Region"
-        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
-                r: FaultInjectionTransportAsync.predicate_targets_region(r, first_region_uri) and \
-                   FaultInjectionTransportAsync.predicate_is_document_operation(r)
-
-        custom_transport.add_fault(
-            is_request_to_first_region,
-            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
-
-        id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
-        # Known gap 13: Closed: Rust owns automatic write retries. Per-call retry_write raises NotImplementedError on the Rust item backend.
-        pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
-                    "is not accepted by the Rust client (known gap 10); the request URL is not observable "
-                    "(known gap 6); per-call retry_write is not supported (known gap 13).")
-        initialized_objects = await self.setup_method_with_custom_transport(
-            custom_transport,
-            preferred_locations=["First Region", "Second Region"],
-            multiple_write_locations=True
-        )
-        try:
-            container: ContainerProxy = initialized_objects["col"]
-
-            create_document = await container.create_item(body=document_definition, retry_write=2)
-            request = create_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            upsert_document = await container.upsert_item(body=document_definition, retry_write=2)
-            request = upsert_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            replace_document = await container.replace_item(item=document_definition['id'], body=document_definition,
-                                                      retry_write=2)
-            request = replace_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            operations = [{"op": "add", "path": "/favorite_color", "value": "red"}, ]
-            patch_document = await container.patch_item(item=document_definition['id'],
-                                                  partition_key=document_definition['pk'],
-                                                  patch_operations=operations, retry_write=2)
-            request = patch_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-        finally:
-            await self.cleanup_method(initialized_objects)
-
-    @pytest.mark.parametrize("injected_error", _injected_errors())
-    async def test_retryable_writes_mrw_client_level_async_rust(self, injected_error):
-        # Source: tests/test_retryable_writes_async.py::TestRetryableWritesAsync.test_retryable_writes_mrw_client_level_async
-        first_region_uri: str = _LOCAL_HOST.replace("localhost", "127.0.0.1")
-        second_region_uri: str = _LOCAL_HOST
-        custom_transport = FaultInjectionTransportAsync()
-
-        # Inject topology transformation that would make Emulator look like a multiple write region account
-        is_get_account_predicate: Callable[[HttpRequest], bool] = lambda \
-            r: FaultInjectionTransportAsync.predicate_is_database_account_call(r)
-        emulator_as_multi_write_region_account_transformation = \
-            lambda r, inner: FaultInjectionTransportAsync.transform_topology_mwr(
-                first_region_name="First Region",
-                second_region_name="Second Region",
-                inner=inner)
-        custom_transport.add_response_transformation(
-            is_get_account_predicate,
-            emulator_as_multi_write_region_account_transformation)
-
-        # Inject rule to simulate regional outage in "First Region"
-        is_request_to_first_region: Callable[[HttpRequest], bool] = lambda \
-                r: FaultInjectionTransportAsync.predicate_targets_region(r, first_region_uri) and \
-                   FaultInjectionTransportAsync.predicate_is_document_operation(r)
-
-        custom_transport.add_fault(
-            is_request_to_first_region,
-            lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_region_down()))
-
-        id_value: str = str(uuid.uuid4())
-        document_definition = {'id': id_value,
-                               'pk': id_value,
-                               'name': 'sample document',
-                               'key': 'value'}
-
-        # Known gap 10: Closed by design: client-level proxy configuration, custom CA, client certificate, and transport options are excluded. The Rust client cannot take the custom transport that fakes the multi-write topology and fails the first region, so the client cannot be built.
-        # Known gap 6: Closed by design: `raw_request_hook` removed from both backends. The Rust-sent request is not exposed as get_response_headers()["_request"], so the region URL checks cannot run.
-        pytest.skip("accepted-vnext-change: custom transport (multi-write topology and regional fault injection) "
-                    "is not accepted by the Rust client (known gap 10); the request URL is not observable "
-                    "(known gap 6).")
-        initialized_objects = await self.setup_method_with_custom_transport(
-            custom_transport,
-            preferred_locations=["First Region", "Second Region"],
-            multiple_write_locations=True,
-            retry_write=2
-        )
-        try:
-            container: ContainerProxy = initialized_objects["col"]
-
-            create_document = await container.create_item(body=document_definition)
-            request = create_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            upsert_document = await container.upsert_item(body=document_definition)
-            request = upsert_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            replace_document = await container.replace_item(item=document_definition['id'], body=document_definition)
-            request = replace_document.get_response_headers()["_request"]
-            assert request.url.startswith(second_region_uri)
-
-            # Patch operation should not retry
-            operations = [{"op": "add", "path": "/favorite_color", "value": "red"}, ]
-            try:
-                await container.patch_item(item=document_definition['id'], partition_key=document_definition['pk'],
-                                     patch_operations=operations)
-            except (ServiceResponseError, exceptions.CosmosHttpResponseError) as e:
-                if isinstance(e, exceptions.CosmosHttpResponseError):
-                    assert e.status_code in [408, 500], "Expected a retryable error for patch_item"
-
-        finally:
-            await self.cleanup_method(initialized_objects)

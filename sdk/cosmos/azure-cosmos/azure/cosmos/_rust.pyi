@@ -1,5 +1,7 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
+# Declarations describe native signatures; Python never executes their bodies.
+# pylint: disable=unused-argument
 """Describe every binding export for Python type checking.
 
 The compiled extension supplies the implementation; these declarations do not
@@ -22,7 +24,11 @@ from ._backend.contracts import PreparedRequest
 from .runtime import ConnectionPoolOptions
 
 def _validate_runtime_configuration(config: Any = None) -> None:
-    """Reject retired client-level network settings without initializing a runtime."""
+    """Reject retired client-level network settings without initializing a runtime.
+
+    :param config: Client configuration inspected for retired network settings.
+    :type config: Any
+    """
     ...
 
 def _runtime_configuration() -> tuple[float, float, float] | None:
@@ -59,7 +65,11 @@ def acquire_driver_handle(
 ) -> _DriverHandle: ...
 
 def release_driver_handle(driver_handle: _DriverHandle) -> None:
-    """Release this handle's cache acquisition without revoking outstanding references."""
+    """Release this handle's cache acquisition without revoking outstanding references.
+
+    :param driver_handle: Acquired driver handle whose cache reference should be released.
+    :type driver_handle: _DriverHandle
+    """
     ...
 
 def execute_item_batch(
@@ -148,7 +158,16 @@ def read_item_async(
     driver_handle: _DriverHandle, prepared: PreparedRequest, *, timeout_seconds: float | None = None,
     include_attempts: bool = False,
 ) -> Awaitable[tuple[Any, ...]]:
-    """A ``test-probes`` build also accepts ``_debug_lifecycle``; see _AsyncOperationProbe."""
+    """A ``test-probes`` build also accepts ``_debug_lifecycle``; see _AsyncOperationProbe.
+
+    :param driver_handle: Acquired driver used for the read.
+    :type driver_handle: _DriverHandle
+    :param prepared: Prepared item request containing identity, partition key and settings.
+    :type prepared: ~azure.cosmos._backend.contracts.PreparedRequest
+    :keyword timeout_seconds: Remaining operation budget in seconds, or None for no binding deadline.
+    :paramtype timeout_seconds: float or None
+    :keyword bool include_attempts: Whether to include attempt details in the response diagnostics.
+    """
     ...
 
 # Remaining operations: (driver_handle, prepared, *, timeout_seconds, include_attempts).

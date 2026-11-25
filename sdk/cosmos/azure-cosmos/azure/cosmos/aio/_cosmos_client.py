@@ -34,7 +34,6 @@ This module is Python wrapper code, not the binding or the Rust driver.
 """
 
 import logging
-from .._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
 from copy import copy, deepcopy
 from typing import Any, Optional, Union, Mapping, Callable, overload, Literal
 
@@ -45,6 +44,7 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 from azure.cosmos.offer import ThroughputProperties
 
+from .._backend.capabilities import reject_removed_options, reject_rust_arguments, prepare_operation_kwargs
 from .._backend.credentials import validate_credential
 from .._backend.constants import is_rust_backend
 from ._backend.binding_adapter import AsyncBindingAdapter
@@ -435,6 +435,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """Prepare account-level state before running statements inside ``async with``.
 
         This does not load a selected container's metadata or partition map.
+
+        :return: This initialized client.
+        :rtype: ~azure.cosmos.aio.CosmosClient
         """
         try:
             if is_rust_backend(self._adapter):
@@ -447,7 +450,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 log_exception_diagnostics(self._client_context.diagnostic_logging, exc, "initialize")
             try:
                 await self.close()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
+                # Cleanup must not replace the original context-entry failure.
                 logging.getLogger(__name__).warning("Failed cleanup after async client entry", exc_info=True)
             raise
         return self
@@ -614,6 +618,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
     @trace_operation_async(binding_operation="create_database")
+    # trace_operation_async already wraps Azure Core's distributed_trace_async.
+    # pylint: disable-next=client-method-missing-tracing-decorator-async
     async def create_database( # pylint:disable=docstring-should-be-keyword
         self,
         id: str,
@@ -778,6 +784,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
     ) -> Union[DatabaseProxy, tuple[DatabaseProxy, CosmosDict]]: ...
 
     @trace_operation_async(binding_operation=("read_database", "create_database", "read_database"))
+    # trace_operation_async already wraps Azure Core's distributed_trace_async.
+    # pylint: disable-next=client-method-missing-tracing-decorator-async
     async def create_database_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         id: str,
@@ -1021,6 +1029,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return _query_databases(self, query, parameters, kwargs)
 
     @trace_operation_async(binding_operation="delete_database")
+    # trace_operation_async already wraps Azure Core's distributed_trace_async.
+    # pylint: disable-next=client-method-missing-tracing-decorator-async
     async def delete_database(
         self,
         database: Union[str, DatabaseProxy, dict[str, Any]],

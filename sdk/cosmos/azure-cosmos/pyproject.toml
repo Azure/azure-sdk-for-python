@@ -109,6 +109,8 @@ include = [
     { path = "CHANGELOG.md", format = "sdist" },
     { path = "rust-toolchain.toml", format = "sdist" },
     { path = "scripts/*.sh", format = "sdist" },
+    { path = "samples/*.py", format = "sdist" },
+    { path = "tests/**/*", format = "sdist" },
 ]
 
 # Do not package IDE metadata, bytecode, or extensions left by local builds.
@@ -116,6 +118,7 @@ exclude = [
     "**/.idea/**",
     "**/__pycache__/**",
     "**/*.py[co]",
+    "tests/workloads/artifacts/**",
     "azure/cosmos/_rust.*.so",
     "azure/cosmos/_rust.*.pyd",
     "azure/cosmos/_rust.*.dylib",

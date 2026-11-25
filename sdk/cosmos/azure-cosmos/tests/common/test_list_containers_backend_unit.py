@@ -42,7 +42,7 @@ from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos._backend.contracts import BackendPage
 from azure.cosmos._backend.errors import PagePreflightError
 from azure.cosmos._backend.operations import OP_LIST_CONTAINERS
-from azure.cosmos._query_rust_routing import can_use_rust_backend_for_query_containers_page
+from azure.cosmos._query_rust_routing import can_use_rust_query_containers
 from azure.cosmos.http_constants import ResourceType
 from .container_feed_stubs import (
     _CapturingPagedBackend, _CapturingAsyncPagedBackend,
@@ -546,7 +546,7 @@ def test_query_container_timeout_policy_matches_listing_rust():
     listing to querying would then be moved to a different engine by a setting
     that has nothing to do with the difference between the two calls.
     """
-    assert can_use_rust_backend_for_query_containers_page(
+    assert can_use_rust_query_containers(
         path="/dbs/db1/colls/", query_payload={"query": "SELECT * FROM c"},
         options={"timeout": 10}, kwargs={"timeout": 10},
         is_query_plan=False, resource_type=ResourceType.Collection,

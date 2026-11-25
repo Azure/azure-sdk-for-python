@@ -22,7 +22,13 @@ class DiagnosticLogging:
     logging_enable: bool = False
 
     def for_operation(self, options: Mapping[str, Any]) -> DiagnosticLogging:
-        """Resolve per-call overrides without changing the client defaults."""
+        """Resolve per-call overrides without changing the client defaults.
+
+        :param options: Call options that may override logger and logging_enable.
+        :type options: Mapping[str, Any]
+        :return: Existing configuration or a copy containing the supplied overrides.
+        :rtype: DiagnosticLogging
+        """
         if "logger" not in options and "logging_enable" not in options:
             return self
         return replace(
@@ -33,7 +39,11 @@ class DiagnosticLogging:
 
     @property
     def level(self) -> Optional[int]:
-        """Select one severity, or disable summary logging."""
+        """Select one severity, or disable summary logging.
+
+        :return: INFO for diagnostic logging, DEBUG for logging_enable, otherwise None.
+        :rtype: int or None
+        """
         # Both switches request the same summary; emit it once at INFO.
         if self.enable_diagnostics_logging:
             return logging.INFO
@@ -42,7 +52,12 @@ class DiagnosticLogging:
         return None
 
     def record(self, operation: str, response: BackendResponse) -> None:
-        """Emit a supplied summary with fields available to Python filters."""
+        """Emit a supplied summary with fields available to Python filters.
+
+        :param str operation: Operation name included in the log record.
+        :param response: Native response carrying status and optional diagnostic text.
+        :type response: ~azure.cosmos._backend.contracts.BackendResponse
+        """
         level = self.level
         logger = self.logger if self.logger is not None else _LOGGER
         if level is None or response.diagnostics is None or not logger.isEnabledFor(level):

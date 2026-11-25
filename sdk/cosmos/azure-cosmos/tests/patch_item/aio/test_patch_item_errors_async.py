@@ -22,6 +22,8 @@ from azure.cosmos.exceptions import (
 )
 from common._rust_checks import run_on_rust_async
 
+pytestmark = pytest.mark.cosmosEmulator
+
 _SEED = {"pk": "customerA", "n": 1, "label": "before", "nested": {"inner": 1}}
 
 

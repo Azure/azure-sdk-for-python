@@ -20,6 +20,8 @@ from azure.cosmos.exceptions import CosmosAccessConditionFailedError, CosmosReso
 from common._rust_checks import assert_rust_client, run_on_rust_async
 from config.diagnostics import _binding_operation_count
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest_asyncio.fixture
 async def container():

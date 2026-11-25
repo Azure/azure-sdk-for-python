@@ -15,6 +15,8 @@ from azure.core import MatchConditions
 from azure.cosmos import CosmosClient, PartitionKey
 from common._rust_checks import run_on_rust
 
+pytestmark = pytest.mark.cosmosEmulator
+
 
 @pytest.fixture
 def container():

@@ -20,7 +20,8 @@ and keep that loop running until its async clients and credential have been clos
 
 from __future__ import annotations
 
-import asyncio
+# This bridge schedules credential coroutines; it never implements transport sleeps.
+import asyncio  # pylint: disable=do-not-import-asyncio
 import concurrent.futures
 import inspect
 import threading
@@ -43,12 +44,22 @@ class AsyncTokenCredentialBridge:
         *,
         loop: Optional[asyncio.AbstractEventLoop] = None,
     ) -> "AsyncTokenCredentialBridge":
-        """Share one bridge per credential and customer event loop."""
+        """Share one bridge per credential and customer event loop.
+
+        :param async_credential: Customer-owned asynchronous token credential.
+        :type async_credential: typing.Any
+        :keyword loop: Credential's running event loop, or None to use the current loop.
+        :paramtype loop: asyncio.AbstractEventLoop or None
+        :return: Shared bridge with one additional acquired use.
+        :rtype: ~azure.cosmos._backend._async_credential_bridge.AsyncTokenCredentialBridge
+        """
         loop = asyncio.get_running_loop() if loop is None else loop
         cls._require_running_loop(loop)
         key = (id(async_credential), loop)
         with _REGISTRY_LOCK:
             for (credential_id, owner_loop), active in _REGISTRY.items():
+                # Registry entries are other instances of this class, not external clients.
+                # pylint: disable-next=protected-access
                 if credential_id == id(async_credential) and active._credential is async_credential:
                     if owner_loop is not loop:
                         raise RuntimeError("The async credential is already in use on a different application loop")
@@ -94,7 +105,14 @@ class AsyncTokenCredentialBridge:
         self._require_running_loop(loop)
 
     def _start_token_request(self, *scopes: Any, **kwargs: Any) -> concurrent.futures.Future:
-        """Schedule credential work on its customer event loop and return a cancellable result."""
+        """Schedule credential work on its customer event loop and return a cancellable result.
+
+        :param scopes: Token scopes forwarded unchanged to the credential.
+        :type scopes: typing.Any
+        :keyword dict[str, typing.Any] ``**kwargs``: Token request options forwarded unchanged to the credential.
+        :return: Thread-safe future containing the token result or credential failure.
+        :rtype: concurrent.futures.Future
+        """
 
         async def invoke() -> Any:
             result = getattr(self._credential, self._token_method_name)(*scopes, **kwargs)

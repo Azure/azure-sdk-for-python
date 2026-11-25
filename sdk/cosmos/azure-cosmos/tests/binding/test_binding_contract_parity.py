@@ -231,13 +231,15 @@ def test_binding_point_operations_return_service_results(account, asynchronous, 
 
 
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-@pytest.mark.parametrize("seconds", [None, 0.25, 2])
+@pytest.mark.parametrize("seconds", [None, 30.25, 30])
 def test_native_listing_accepts_remaining_duration_rust(account, asynchronous, seconds):
     """Move the offline listing regression here, not a copy of a legacy SDK test.
 
     A real handle lets both native exports reach timeout parsing and return a
-    service page for no limit, fractional seconds, and whole seconds. A string
-    handle would fail before that parsing and prove nothing about durations.
+    service page for no limit, fractional seconds, and whole seconds. Successful
+    emulator requests need a realistic budget, not a subsecond latency target.
+    The native remaining_duration_is_not_rounded_to_the_driver_minimum test
+    separately checks that subsecond durations retain their precision.
     """
     prepared = prepared_request(account, "list_databases")
     status, _, headers, body, _ = invoke(

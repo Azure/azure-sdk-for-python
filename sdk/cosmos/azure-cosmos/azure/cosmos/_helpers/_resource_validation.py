@@ -13,7 +13,12 @@ _VALID_COSMOS_RESOURCE = re.compile(r"^[^/\\#?\t\r\n]*$")
 
 
 def validate_resource(resource: Mapping[str, Any]) -> None:
-    """Validate an existing nonempty ID without requiring or generating one."""
+    """Validate an existing nonempty ID without requiring or generating one.
+
+    :param Mapping[str, Any] resource: Resource properties whose truthy ID must be a valid string.
+    :return: None.
+    :rtype: None
+    """
     id_: Optional[str] = resource.get("id")
     if id_:
         try:

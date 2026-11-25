@@ -13,7 +13,7 @@ from config.diagnostics import _binding_operation_count, fault_rule_hit_count
 from fault_injection._delayed_create import assert_control, assert_route, emit
 from fault_injection._response_failure import OPERATION_TIMEOUT, assert_response_failure, response_failure_rule
 
-pytestmark = pytest.mark.cosmosEmulator
+pytestmark = [pytest.mark.cosmosEmulator, pytest.mark.cosmosSdkFaultInjection]
 
 
 @pytest.mark.timeout(90)

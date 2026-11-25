@@ -40,17 +40,15 @@ await database.read() requests the database's properties from the
 service backend; obtaining the DatabaseProxy does not.
 """
 
-from azure.cosmos._backend.capabilities import OperationRouting
-from .._backend.capabilities import prepare_operation_kwargs
-
 from typing import TYPE_CHECKING, Any, Mapping, Optional, Union, Callable, overload, Literal
 
 import time
 import warnings
 from azure.core.async_paging import AsyncItemPaged
-from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
 from azure.core.tracing.decorator import distributed_trace
 
+from .._backend.capabilities import OperationRouting, prepare_operation_kwargs
+from .._telemetry import BindingAlternatives, delegate_operation, trace_operation_async
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, _set_throughput_options, _build_properties_cache
 from ._container import ContainerProxy
@@ -507,15 +505,20 @@ class DatabaseProxy(object):
                 deadline = started + float(timeout)
         remaining_timeout(deadline)
         indexing_policy = kwargs.pop('indexing_policy', None)
-        default_ttl = kwargs.pop('default_ttl', None)
         offer_throughput = kwargs.pop('offer_throughput', None)
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
-        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
-        computed_properties = kwargs.pop('computed_properties', None)
-        change_feed_policy = kwargs.pop('change_feed_policy', None)
-        full_text_policy = kwargs.pop('full_text_policy', None)
+        properties = {
+            wire_name: kwargs.pop(option, None)
+            for option, wire_name in (
+                ("default_ttl", "defaultTtl"),
+                ("unique_key_policy", "uniqueKeyPolicy"),
+                ("conflict_resolution_policy", "conflictResolutionPolicy"),
+                ("analytical_storage_ttl", "analyticalStorageTtl"),
+                ("computed_properties", "computedProperties"),
+                ("vector_embedding_policy", "vectorEmbeddingPolicy"),
+                ("change_feed_policy", "changeFeedPolicy"),
+                ("full_text_policy", "fullTextPolicy"),
+            )
+        }
         global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
 
@@ -529,22 +532,7 @@ class DatabaseProxy(object):
                     DeprecationWarning
                 )
             definition["indexingPolicy"] = indexing_policy
-        if default_ttl is not None:
-            definition["defaultTtl"] = default_ttl
-        if unique_key_policy is not None:
-            definition["uniqueKeyPolicy"] = unique_key_policy
-        if conflict_resolution_policy is not None:
-            definition["conflictResolutionPolicy"] = conflict_resolution_policy
-        if analytical_storage_ttl is not None:
-            definition["analyticalStorageTtl"] = analytical_storage_ttl
-        if computed_properties is not None:
-            definition["computedProperties"] = computed_properties
-        if vector_embedding_policy is not None:
-            definition["vectorEmbeddingPolicy"] = vector_embedding_policy
-        if change_feed_policy is not None:
-            definition["changeFeedPolicy"] = change_feed_policy
-        if full_text_policy is not None:
-            definition["fullTextPolicy"] = full_text_policy
+        definition.update({name: value for name, value in properties.items() if value is not None})
         for name in ("request_options", "feed_options"):
             if name in kwargs:
                 kwargs[name] = dict(kwargs[name])
@@ -658,7 +646,8 @@ class DatabaseProxy(object):
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A synchronous callable invoked once with response headers and properties,
-            or None, even on this async API. Non-callable values and declared async hooks raise TypeError before any request.
+            or None, even on this async API. Non-callable values and declared async hooks raise TypeError
+            before any request.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
             Must be finite, non-boolean, at least one, and less than 2**64.
@@ -760,7 +749,8 @@ class DatabaseProxy(object):
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A synchronous callable invoked once with response headers and properties,
-            or None, even on this async API. Non-callable values and declared async hooks raise TypeError before any request.
+            or None, even on this async API. Non-callable values and declared async hooks raise TypeError
+            before any request.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
             Must be finite, non-boolean, at least one, and less than 2**64.
@@ -792,7 +782,8 @@ class DatabaseProxy(object):
         :raises ValueError: The timeout value is invalid.
         :raises ~azure.cosmos.exceptions.CosmosClientTimeoutError: The shared operation timeout expired.
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The container read or creation failed.
-        :returns: A tuple of the `ContainerProxy` and CosmosDict with properties of the existing or newly created container.
+        :returns: A tuple of the `ContainerProxy` and CosmosDict with properties of the existing
+            or newly created container.
         :rtype: tuple[~azure.cosmos.aio.ContainerProxy, ~azure.cosmos.CosmosDict]
         """
         ...
@@ -848,7 +839,8 @@ class DatabaseProxy(object):
             container in the Azure Cosmos DB Service. For more Information on how to use computed properties visit
             `here: https://learn.microsoft.com/azure/cosmos-db/nosql/query/computed-properties?tabs=dotnet`
         :keyword response_hook: A synchronous callable invoked once with response headers and properties,
-            or None, even on this async API. Non-callable values and declared async hooks raise TypeError before any request.
+            or None, even on this async API. Non-callable values and declared async hooks raise TypeError
+            before any request.
         :paramtype response_hook: Callable[[Mapping[str, str], dict[str, Any]], None]
         :keyword float timeout: Shared operation budget in seconds, or None for no per-call override.
             Must be finite, non-boolean, at least one, and less than 2**64.
@@ -892,18 +884,16 @@ class DatabaseProxy(object):
         validate_obsolete_resource_options(kwargs, "create_container_if_not_exists")
         if get_selected_backend(self.client_connection).name == "rust":
             validate_container_retry_write_kwargs(kwargs, "create_container_if_not_exists")
-        indexing_policy = kwargs.pop('indexing_policy', None)
-        default_ttl = kwargs.pop('default_ttl', None)
+        create_options = {
+            option: kwargs.pop(option, None)
+            for option in (
+                "indexing_policy", "default_ttl", "unique_key_policy", "conflict_resolution_policy",
+                "analytical_storage_ttl", "computed_properties", "vector_embedding_policy",
+                "change_feed_policy", "full_text_policy", "global_secondary_index",
+            )
+        }
         offer_throughput = kwargs.pop('offer_throughput', None)
-        unique_key_policy = kwargs.pop('unique_key_policy', None)
-        conflict_resolution_policy = kwargs.pop('conflict_resolution_policy', None)
         initial_headers = kwargs.pop('initial_headers', None)
-        analytical_storage_ttl = kwargs.pop('analytical_storage_ttl', None)
-        vector_embedding_policy = kwargs.pop('vector_embedding_policy', None)
-        computed_properties = kwargs.pop('computed_properties', None)
-        change_feed_policy = kwargs.pop('change_feed_policy', None)
-        full_text_policy = kwargs.pop('full_text_policy', None)
-        global_secondary_index = kwargs.pop('global_secondary_index', None)
         return_properties = kwargs.pop('return_properties', False)
 
         response_hook = kwargs.pop("response_hook", None)
@@ -949,20 +939,11 @@ class DatabaseProxy(object):
                     return await self.create_container(
                         id=id,
                         partition_key=partition_key,
-                        indexing_policy=indexing_policy,
-                        default_ttl=default_ttl,
                         offer_throughput=offer_throughput,
-                        unique_key_policy=unique_key_policy,
-                        conflict_resolution_policy=conflict_resolution_policy,
-                        analytical_storage_ttl=analytical_storage_ttl,
-                        computed_properties=computed_properties,
-                        vector_embedding_policy=vector_embedding_policy,
-                        change_feed_policy=change_feed_policy,
-                        full_text_policy=full_text_policy,
-                        global_secondary_index=global_secondary_index,
                         return_properties=return_properties,
                         response_hook=on_created,
                         _item_operation_deadline=deadline,
+                        **create_options,
                         **kwargs
                     )
             except CosmosResourceExistsError:
@@ -1012,8 +993,10 @@ class DatabaseProxy(object):
             id_value = container.id
         else:
             id_value = str(container['id'])
-        return ContainerProxy(self.client_connection, self.database_link, id_value, _client_context=self._client_context,
-                              _inference_client=self._inference_client)
+        return ContainerProxy(
+            self.client_connection, self.database_link, id_value,
+            _client_context=self._client_context, _inference_client=self._inference_client,
+        )
 
     async def _resolve_gsi_definition(
         self,
@@ -1491,11 +1474,15 @@ class DatabaseProxy(object):
         request_options = _build_options(kwargs)
         kwargs.pop("etag", None)
         collection_link = self._get_container_link(container)
-        await AsyncContainerHelper(self.client_connection, get_selected_backend(self.client_connection)).delete_container(
+        await AsyncContainerHelper(
+            self.client_connection, get_selected_backend(self.client_connection)
+        ).delete_container(
             collection_link, request_options, response_hook=response_hook, kwargs=kwargs,
         )
 
-    @trace_operation_async(binding_operation=BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",))))
+    @trace_operation_async(
+        binding_operation=BindingAlternatives((("read_database", "get_throughput"), ("get_throughput",)))
+    )
     async def get_throughput(
             self,
             *,

@@ -14,7 +14,6 @@ import threading
 import tracemalloc
 import unittest
 import uuid
-from collections.abc import Mapping
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pytest
@@ -623,100 +622,5 @@ class TestQueryResponseHeaders(unittest.TestCase):
             self.assertIsInstance(headers, CaseInsensitiveDict)
             self.assertNotIsInstance(headers, list)
             self.assertFalse(hasattr(query_iterable, "get_last_response_headers"))
-        finally:
-            self._delete_container_for_test(container_id)
-
-    def test_query_response_headers_match_last_response_hook_invocation_rust(self):
-        # pylint: disable-next=line-too-long
-        # Source: tests/test_query_response_headers.py::TestQueryResponseHeaders.test_query_response_headers_match_last_response_hook_invocation
-        """The headers returned after iteration must match the headers handed
-        to the last response_hook call."""
-        container_id = "test_headers_hookparity_" + str(uuid.uuid4())
-        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
-        try:
-            for i in range(12):
-                created_collection.create_item(body={"pk": "test", "id": f"item_{i}", "value": i})
-
-            captured_pages = []
-
-            def hook(headers, _result):
-                # Snapshot the headers handed to the hook for every page.
-                captured_pages.append(dict(headers))
-
-            query_iterable = created_collection.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk",
-                parameters=[{"name": "@pk", "value": "test"}],
-                partition_key="test",
-                max_item_count=4,
-                response_hook=hook,
-            )
-
-            items = list(query_iterable)
-            self.assertEqual(len(items), 12)
-
-            # At least one page was fetched, so the hook fired at least once.
-            self.assertGreater(len(captured_pages), 0)
-
-            # The getter must return what the last hook invocation saw.
-            final_headers = query_iterable.get_response_headers()
-            self.assertEqual(
-                final_headers["x-ms-request-charge"],
-                captured_pages[-1]["x-ms-request-charge"],
-            )
-            self.assertEqual(
-                final_headers["x-ms-activity-id"],
-                captured_pages[-1]["x-ms-activity-id"],
-            )
-        finally:
-            self._delete_container_for_test(container_id)
-
-    def test_response_hook_fires_at_least_once_for_every_paged_surface_rust(self):
-        # pylint: disable-next=line-too-long
-        # Source: tests/test_query_response_headers.py::TestQueryResponseHeaders.test_response_hook_fires_at_least_once_for_every_paged_surface
-        """A response_hook attached to any paged surface must fire at least
-        once, and every captured payload must be a Mapping."""
-
-        container_id = "test_hookfires_paged_" + str(uuid.uuid4())
-        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))
-        try:
-            for i in range(6):
-                created_collection.create_item(body={"pk": "test", "id": f"item_{i}"})
-
-            def _run(surface_name, build_pager):
-                captured = []
-
-                def hook(headers, _result):
-                    captured.append(dict(headers))
-
-                pager = build_pager(hook)
-                list(pager)
-                self.assertGreater(
-                    len(captured),
-                    0,
-                    f"{surface_name} response_hook never fired",
-                )
-                for payload in captured:
-                    self.assertIsInstance(
-                        payload,
-                        Mapping,
-                        f"{surface_name} hook received non-Mapping payload",
-                    )
-
-            _run(
-                "query_items",
-                lambda h: created_collection.query_items(
-                    query="SELECT * FROM c",
-                    partition_key="test",
-                    response_hook=h,
-                ),
-            )
-            _run(
-                "query_items_change_feed",
-                lambda h: created_collection.query_items_change_feed(
-                    start_time="Beginning",
-                    max_item_count=2,
-                    response_hook=h,
-                ),
-            )
         finally:
             self._delete_container_for_test(container_id)

@@ -17,7 +17,12 @@ from ._throughput_rust_routing import offer_response_headers
 def validate_replacement_throughput(
     throughput: Union[int, ThroughputProperties],
 ) -> None:
-    """Reject invalid types and mixed throughput modes before reading metadata."""
+    """Reject invalid types and mixed throughput modes before reading metadata.
+
+    :param int or azure.cosmos.ThroughputProperties throughput: Replacement manual or autoscale settings.
+    :return: None.
+    :rtype: None
+    """
     if isinstance(throughput, bool) or not isinstance(throughput, (int, ThroughputProperties)):
         raise TypeError(
             "offer_throughput must be int or an instance of ThroughputProperties"
@@ -37,7 +42,14 @@ def finish_replacement(
     client_connection: Any,
     response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]],
 ) -> ThroughputProperties:
-    """Return owned settings and invoke the callback with a separate offer copy."""
+    """Return owned settings and invoke the callback with a separate offer copy.
+
+    :param Mapping[str, Any] updated_offer: Replaced offer record to deserialize.
+    :param Any client_connection: Connection supplying fallback headers for legacy results.
+    :param callable or None response_hook: Callback receiving isolated headers and replaced offer.
+    :return: Throughput settings isolated from callback mutations.
+    :rtype: ~azure.cosmos.ThroughputProperties
+    """
     headers = offer_response_headers(updated_offer, client_connection)
     result = _deserialize_throughput(
         [CosmosDict(deepcopy(dict(updated_offer)), response_headers=headers)]

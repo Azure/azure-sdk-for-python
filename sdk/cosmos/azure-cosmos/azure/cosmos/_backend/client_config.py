@@ -96,6 +96,13 @@ def _normalize_locations(
     Preserve order and spelling, including surrounding whitespace on nonblank
     names. This checks the input shape, not whether a region exists in the
     account. Invalid sequences or blank/non-string entries raise ValueError.
+
+    :param value: Region-name sequence to snapshot, or None.
+    :type value: typing.Sequence[str] or None
+    :param arg_name: Caller option name included in validation failures.
+    :type arg_name: str
+    :return: Tuple of validated region names in their supplied order.
+    :rtype: tuple[str, ...]
     """
     if value is None:
         return ()
@@ -146,10 +153,37 @@ def build_client_config(
     strategy for sending additional requests while one is pending. Driver
     environment overrides still apply. Other unspecified options retain their
     applicable driver, account, or shared connection settings.
+
+    :param preferred_locations: Ordered preferred region names, or None.
+    :type preferred_locations: typing.Sequence[str] or None
+    :keyword excluded_locations: Region names to exclude, or None.
+    :paramtype excluded_locations: typing.Sequence[str] or None
+    :keyword throttling_max_retry_count: Maximum throttle retries, or None for the driver default.
+    :paramtype throttling_max_retry_count: int or None
+    :keyword throttling_max_retry_wait_time_seconds: Ordinary throttle retry waiting threshold, or None.
+    :paramtype throttling_max_retry_wait_time_seconds: float or None
+    :keyword availability_strategy: Cross-region hedging configuration or enablement flag.
+    :paramtype availability_strategy: typing.Any
+    :keyword user_agent_suffix: Optional application label appended to the User-Agent.
+    :paramtype user_agent_suffix: str or None
+    :keyword consistency_level: Requested Python consistency name, or None for the account default.
+    :paramtype consistency_level: str or None
+    :keyword utf8_decoding_mode: Strict or Lossy response decoding, or None for the default.
+    :paramtype utf8_decoding_mode: str or None
+    :keyword operation_timeout_seconds: Default overall operation budget in seconds, or None.
+    :paramtype operation_timeout_seconds: float or None
+    :keyword fault_injection_rules: Internal test-only fault rule mappings, or None.
+    :paramtype fault_injection_rules: typing.Sequence[typing.Mapping[str, typing.Any]] or None
+    :keyword headers: Default application request headers to snapshot, or None.
+    :paramtype headers: typing.Mapping[str, str] or None
+    :return: Prepared configuration, or None when no options require a record.
+    :rtype: ~azure.cosmos._backend.contracts.PreparedClientConfig or None
     """
     preferred = _normalize_locations(preferred_locations, "preferred_locations")
     if operation_timeout_seconds is not None:
-        from .._helpers._request_settings import is_supported_operation_timeout  # pylint: disable=import-outside-toplevel
+        from .._helpers._request_settings import (
+            is_supported_operation_timeout,  # pylint: disable=import-outside-toplevel
+        )
 
         if not is_supported_operation_timeout(operation_timeout_seconds):
             raise ValueError("timeout must be finite, non-boolean seconds >= 1 and < 2**64.")
@@ -184,13 +218,15 @@ def build_client_config(
     if (
         not preferred
         and not excluded
-        and throttling_max_retry_count is None
-        and throttling_max_retry_wait_time_seconds is None
-        and hedging_threshold_ms is None
-        and suffix is None
-        and consistency is None
-        and utf8_decoding_mode is None
-        and operation_timeout_seconds is None
+        and all(value is None for value in (
+            throttling_max_retry_count,
+            throttling_max_retry_wait_time_seconds,
+            hedging_threshold_ms,
+            suffix,
+            consistency,
+            utf8_decoding_mode,
+            operation_timeout_seconds,
+        ))
         and not prepared_fault_rules
         and not prepared_headers
     ):
@@ -208,6 +244,75 @@ def build_client_config(
         fault_injection_rules=prepared_fault_rules,
         headers=prepared_headers,
     )
+
+
+def _prepare_fault_response(
+    rule: Mapping[str, Any], index: int
+) -> tuple[Optional[int], Optional[str], int, bytes, dict[str, str]]:
+    """Validate the synthetic response or transport failure in one fault rule.
+
+    :param rule: Fault-rule mapping whose response settings are being prepared.
+    :type rule: typing.Mapping[str, typing.Any]
+    :param index: Rule position used in validation errors.
+    :type index: int
+    :return: HTTP status, transport error type, sub-status, body, and normalized response headers.
+    :rtype: tuple[typing.Optional[int], typing.Optional[str], int, bytes, dict[str, str]]
+    """
+    status_code = rule.get("status_code")
+    error_type = rule.get("error_type")
+    if error_type is not None and error_type not in (
+        "ConnectionError", "ResponseTimeout", "ResponseTimeoutAfterService"
+    ):
+        raise ValueError(
+            "fault rule error_type must be ConnectionError, ResponseTimeout, ResponseTimeoutAfterService, or None."
+        )
+    if error_type is not None and (status_code is not None or rule.get("sub_status", 0) != 0):
+        raise ValueError("fault rule error_type cannot be combined with status_code or sub_status.")
+    if error_type is None and (
+        isinstance(status_code, bool)
+        or not isinstance(status_code, int)
+        or not 100 <= status_code <= 599
+    ):
+        raise ValueError(
+            "_fault_injection_rules[{}].status_code must be an integer from 100 to 599.".format(index)
+        )
+
+    sub_status = rule.get("sub_status", 0)
+    response_body = rule.get("response_body", b"")
+    if not isinstance(response_body, bytes):
+        raise ValueError("fault rule response_body must be immutable bytes.")
+    if error_type is not None and response_body:
+        raise ValueError("fault rule response_body requires status_code, not error_type.")
+    response_headers = rule.get("response_headers", {})
+    if not isinstance(response_headers, Mapping):
+        raise ValueError("fault rule response_headers must be a mapping of strings to strings.")
+    normalized_headers: dict[str, str] = {}
+    for name, value in response_headers.items():
+        if (
+            # Exact strings exclude subclasses with behavior outside the native protocol.
+            type(name) is not str or type(value) is not str or not name  # pylint: disable=unidiomatic-typecheck
+            or any(char not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&'*+-.^_`|~"
+                   for char in name)
+            or any(ord(char) < 32 and char != "\t" or ord(char) == 127 for char in value)
+        ):
+            raise ValueError("fault rule response_headers must contain valid header names and string values.")
+        name = name.lower()
+        if name == "x-ms-substatus":
+            raise ValueError("fault rule response_headers must use sub_status instead of x-ms-substatus.")
+        if name in normalized_headers:
+            raise ValueError("fault rule response_headers contains duplicate case-insensitive names.")
+        normalized_headers[name] = value
+    if error_type is not None and normalized_headers:
+        raise ValueError("fault rule response_headers requires status_code, not error_type.")
+    if (
+        isinstance(sub_status, bool)
+        or not isinstance(sub_status, int)
+        or not 0 <= sub_status <= 65535
+    ):
+        raise ValueError(
+            "_fault_injection_rules[{}].sub_status must be an integer from 0 to 65535.".format(index)
+        )
+    return status_code, error_type, sub_status, response_body, normalized_headers
 
 
 def _prepare_fault_injection_rules(
@@ -240,6 +345,11 @@ def _prepare_fault_injection_rules(
     the test-only COSMOS_ENABLE_FAULT_INJECTION switch is "1".
     A test-probes build is also required for any non-None input.
     With both enabled, an empty sequence produces no rules.
+
+    :param rules: Internal fault-rule mappings, or None to leave fault injection unconfigured.
+    :type rules: typing.Sequence[typing.Mapping[str, typing.Any]] or None
+    :return: Validated immutable fault-rule records.
+    :rtype: tuple[azure.cosmos._backend.contracts.PreparedFaultInjectionRule, ...]
     """
     if rules is None:
         return ()
@@ -287,63 +397,7 @@ def _prepare_fault_injection_rules(
                 )
             )
 
-        status_code = rule.get("status_code")
-        error_type = rule.get("error_type")
-        if error_type is not None and error_type not in (
-            "ConnectionError", "ResponseTimeout", "ResponseTimeoutAfterService"
-        ):
-            raise ValueError(
-                "fault rule error_type must be ConnectionError, ResponseTimeout, ResponseTimeoutAfterService, or None."
-            )
-        if error_type is not None and (status_code is not None or rule.get("sub_status", 0) != 0):
-            raise ValueError("fault rule error_type cannot be combined with status_code or sub_status.")
-        if error_type is None and (
-            isinstance(status_code, bool)
-            or not isinstance(status_code, int)
-            or not 100 <= status_code <= 599
-        ):
-            raise ValueError(
-                "_fault_injection_rules[{}].status_code must be an integer from 100 to 599.".format(
-                    index
-                )
-            )
-
-        sub_status = rule.get("sub_status", 0)
-        response_body = rule.get("response_body", b"")
-        if not isinstance(response_body, bytes):
-            raise ValueError("fault rule response_body must be immutable bytes.")
-        if error_type is not None and response_body:
-            raise ValueError("fault rule response_body requires status_code, not error_type.")
-        response_headers = rule.get("response_headers", {})
-        if not isinstance(response_headers, Mapping):
-            raise ValueError("fault rule response_headers must be a mapping of strings to strings.")
-        normalized_headers: dict[str, str] = {}
-        for name, value in response_headers.items():
-            if (
-                type(name) is not str or type(value) is not str or not name
-                or any(char not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#$%&'*+-.^_`|~"
-                       for char in name)
-                or any(ord(char) < 32 and char != "\t" or ord(char) == 127 for char in value)
-            ):
-                raise ValueError("fault rule response_headers must contain valid header names and string values.")
-            name = name.lower()
-            if name == "x-ms-substatus":
-                raise ValueError("fault rule response_headers must use sub_status instead of x-ms-substatus.")
-            if name in normalized_headers:
-                raise ValueError("fault rule response_headers contains duplicate case-insensitive names.")
-            normalized_headers[name] = value
-        if error_type is not None and normalized_headers:
-            raise ValueError("fault rule response_headers requires status_code, not error_type.")
-        if (
-            isinstance(sub_status, bool)
-            or not isinstance(sub_status, int)
-            or not 0 <= sub_status <= 65535
-        ):
-            raise ValueError(
-                "_fault_injection_rules[{}].sub_status must be an integer from 0 to 65535.".format(
-                    index
-                )
-            )
+        status_code, error_type, sub_status, response_body, normalized_headers = _prepare_fault_response(rule, index)
 
         delay_ms = rule.get("delay_ms", 0)
         if (
@@ -436,6 +490,11 @@ def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str
     LatestCommitted, and Strong to GlobalStrong. Eventual and Session map
     directly. These read choices do not change account settings or writes.
     An absent or empty value leaves the account default unchanged.
+
+    :param consistency_level: Python consistency name, or None.
+    :type consistency_level: str or None
+    :return: Validated name, or None for absent or empty input.
+    :rtype: str or None
     """
     if not consistency_level:
         return None
@@ -465,6 +524,11 @@ def _resolve_hedging(availability_strategy: Any) -> Optional[int]:
     disabled client strategy, subject to driver environment overrides.
     Explicit threshold_steps_ms is rejected: the Rust driver does not support
     progressively adding more regions.
+
+    :param availability_strategy: Hedging configuration, enablement flag, or another value.
+    :type availability_strategy: typing.Any
+    :return: Initial hedging threshold in milliseconds, or None when disabled or unrecognized.
+    :rtype: int or None
     """
     reject_rust_threshold_steps(availability_strategy)
     if availability_strategy is True:

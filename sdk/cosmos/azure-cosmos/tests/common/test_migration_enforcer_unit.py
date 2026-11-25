@@ -201,14 +201,14 @@ def _skip_reason(dec):
 
 
 def _lane_markers_from(decorators):
-    """``cosmos*`` names from ``@pytest.mark.<name>`` expressions."""
+    """Service-lane names, excluding categories within an existing lane."""
     names = set()
     for dec in decorators:
         target = dec.func if isinstance(dec, ast.Call) else dec
         if (isinstance(target, ast.Attribute) and target.attr.startswith("cosmos")
                 and isinstance(target.value, ast.Attribute) and target.value.attr == "mark"):
             names.add(target.attr)
-    return names
+    return names - {"cosmosSdkFaultInjection", "cosmosToxiproxy"}
 
 
 def _effective_lane_markers(tree, class_name, method_name):
@@ -253,6 +253,25 @@ def _class_method_exists(src_tree, class_name, method_name):
 
 class LegacyMigrationEnforcerTests(unittest.TestCase):
     """Check the copies' source structure and marker-based collection."""
+
+    def test_category_markers_do_not_replace_service_lane_markers_rust(self):
+        tree = ast.parse("""
+pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.cosmosAADLong]
+@pytest.mark.cosmosEmulator
+class TestExample:
+    @pytest.mark.cosmosToxiproxy
+    @pytest.mark.cosmosFutureLane
+    def test_example(self): pass
+""")
+        self.assertEqual(
+            _effective_lane_markers(tree, "TestExample", "test_example"),
+            {"cosmosEmulator", "cosmosAADLong", "cosmosFutureLane"},
+        )
+        tree.body[1].decorator_list.clear()
+        self.assertEqual(
+            _effective_lane_markers(tree, "TestExample", "test_example"),
+            {"cosmosAADLong", "cosmosFutureLane"},
+        )
 
     def test_query_environment_skip_markers_are_preserved_rust(self):
         cases = (

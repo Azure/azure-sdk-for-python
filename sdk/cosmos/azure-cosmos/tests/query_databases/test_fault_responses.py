@@ -14,7 +14,7 @@ from azure.cosmos.aio import CosmosClient as AsyncCosmosClient
 from azure.cosmos.exceptions import CosmosClientTimeoutError, CosmosHttpResponseError
 from config.settings import TestSettings
 
-pytestmark = [pytest.mark.asyncio, pytest.mark.cosmosEmulator]
+pytestmark = [pytest.mark.cosmosSdkFaultInjection, pytest.mark.asyncio, pytest.mark.cosmosEmulator]
 
 
 # Source: (new) Compiled database-query 401 propagation and repeated-429 deadlines.

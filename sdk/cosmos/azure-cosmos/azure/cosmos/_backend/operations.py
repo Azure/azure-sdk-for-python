@@ -104,6 +104,13 @@ def get_page_binding_function_name(op: str, *, uses_cursor: bool) -> str | None:
     For example, query_items uses query_items without a feed cursor and
     fetch_page_with_cursor with one. None means this combination is unsupported,
     not necessarily that the operation has no paging implementation.
+
+    :param op: Prepared page operation name.
+    :type op: str
+    :keyword uses_cursor: Whether the caller retains a native feed cursor.
+    :paramtype uses_cursor: bool
+    :return: Binding function name, or None for an unsupported operation and cursor mode.
+    :rtype: str or None
     """
     binding_function_names = (
         RETAINED_PAGE_BINDING_FUNCTION_NAMES

@@ -271,7 +271,7 @@ def test_windows_cross_build_has_target_and_import_library_inputs_rust():
     }]
 
 
-def test_source_archive_declares_its_build_bootstrap_inputs_rust():
+def test_source_archive_declares_its_build_and_ci_inputs_rust():
     """Check declared source-archive inputs and the named scripts on disk.
 
     No archive is built or installed, so this does not verify actual archive
@@ -289,6 +289,8 @@ def test_source_archive_declares_its_build_bootstrap_inputs_rust():
         "CHANGELOG.md",
         "rust-toolchain.toml",
         "scripts/*.sh",
+        "samples/*.py",
+        "tests/**/*",
     } <= source_inputs
     for name in ("install-msrustup.sh", "configure-cargo-feed.sh"):
         assert (PACKAGE_ROOT / "scripts" / name).is_file()

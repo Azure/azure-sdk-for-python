@@ -25,6 +25,9 @@ from azure.cosmos.partition_key import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
 from config.diagnostics import fault_rule_hit_count
 
+
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
 HPK_CONTAINER = "TestContainerHPK"
 SINGLE_PARTITION_CONTAINER = "TestSinglePartitionContainer"
 _WRITE_OPERATION_TYPES = ("CreateItem", "UpsertItem", "ReplaceItem", "DeleteItem")

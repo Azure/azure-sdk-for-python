@@ -87,10 +87,11 @@ def test_async_rust_backend_dispatches_upsert_to_binding_rust(monkeypatch):
 
 def test_sync_rust_backend_upsert_raises_when_binding_not_built_rust(monkeypatch):
     """Before ``maturin develop``, an upsert on the Rust backend raises
-    the same clear ``NotImplementedError`` every other op raises --
+    the same clear ``ImportError`` every other op raises --
     upsert is no longer special-cased to silently defer to legacy."""
     monkeypatch.setattr("azure.cosmos._backend.binding_adapter._rust_module", None)
     backend = BindingAdapter(endpoint="https://x.documents.azure.com", master_key="k")
-    with pytest.raises(NotImplementedError, match="not present"):
+    with pytest.raises(ImportError, match="not present") as raised:
         backend.execute(_upsert_prepared())
+    assert raised.value.name == "azure.cosmos._rust"
 

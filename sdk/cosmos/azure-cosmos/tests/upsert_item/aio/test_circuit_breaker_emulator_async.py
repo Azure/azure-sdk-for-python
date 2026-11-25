@@ -25,6 +25,9 @@ from azure.cosmos._partition_health_tracker import HEALTH_STATUS, UNHEALTHY_TENT
 from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
+pytestmark = pytest.mark.cosmosSdkFaultInjection
+
+
 REGION_1 = os.getenv("WRITE_LOCATION", "")
 REGION_2 = os.getenv("READ_LOCATION", "West US")
 CHANGE_FEED = "changefeed"

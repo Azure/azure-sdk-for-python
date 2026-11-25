@@ -14,7 +14,7 @@ These pin the three helpers the migrated ``upsert_item`` adds:
 * ``build_upsert_item_request_options`` -- always sets
   ``disableAutomaticIdGeneration`` and honours ``etag`` /
   ``match_condition`` (folded into the ``accessCondition`` shape).
-* ``merge_upsert_replace_item_explicit_kwargs`` -- the shared upsert/replace keyword set:
+* ``merge_upsert_replace_item_kwargs`` -- the shared upsert/replace keyword set:
   create's body-carrying keywords (it keeps ``no_response``) plus
   ``etag`` / ``match_condition``, and no
   ``indexing_directive`` / ``enable_automatic_id_generation``.
@@ -39,7 +39,7 @@ from azure.cosmos._backend.contracts import PreparedRequest
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._item_arguments import (
     build_upsert_item_request_options,
-    merge_upsert_replace_item_explicit_kwargs,
+    merge_upsert_replace_item_kwargs,
 )
 from common.request_preparation import (
     prepare_upsert_item_request,
@@ -275,7 +275,7 @@ def test_compose_consumes_recognised_kwargs_rust():
 
 
 # ---------------------------------------------------------------------------
-# merge_upsert_replace_item_explicit_kwargs -- the shared upsert/replace keyword set
+# merge_upsert_replace_item_kwargs -- the shared upsert/replace keyword set
 # ---------------------------------------------------------------------------
 
 
@@ -283,7 +283,7 @@ def test_merge_omits_none_entries_rust():
     """Only the explicit keyword arguments that aren't None land in the
     merged dict -- None means "not supplied" and must not be set."""
     kwargs: dict = {}
-    merge_upsert_replace_item_explicit_kwargs(
+    merge_upsert_replace_item_kwargs(
         kwargs,
         session_token="0:1#42",
         initial_headers=None,
@@ -302,7 +302,7 @@ def test_merge_omits_none_entries_rust():
 def test_merge_keeps_etag_match_condition_and_no_response_rust():
     """The shared upsert/replace helper retains response suppression and conditions."""
     kwargs: dict = {}
-    merge_upsert_replace_item_explicit_kwargs(
+    merge_upsert_replace_item_kwargs(
         kwargs,
         etag="abc",
         match_condition=MatchConditions.IfNotModified,
@@ -319,9 +319,9 @@ def test_merge_does_not_accept_create_only_kwargs_rust():
     even accept those parameter names."""
     kwargs: dict = {}
     with pytest.raises(TypeError):
-        merge_upsert_replace_item_explicit_kwargs(kwargs, indexing_directive=1)  # type: ignore[call-arg]
+        merge_upsert_replace_item_kwargs(kwargs, indexing_directive=1)  # type: ignore[call-arg]
     with pytest.raises(TypeError):
-        merge_upsert_replace_item_explicit_kwargs(  # type: ignore[call-arg]
+        merge_upsert_replace_item_kwargs(  # type: ignore[call-arg]
             kwargs, enable_automatic_id_generation=True
         )
 
