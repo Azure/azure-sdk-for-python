@@ -85,7 +85,7 @@ class TestAzureLogExporter(unittest.TestCase):
         log = _logs.ReadWriteLogRecord(LogRecord(attributes={_SAMPLE_RATE_KEY: 5}))
         envelope = self._exporter._log_to_envelope(log)
         self.assertIsNone(envelope.sample_rate)
-        self.assertNotIn(_SAMPLE_RATE_KEY, envelope.data.base_data.properties)
+        self.assertEqual(envelope.data.base_data.properties[_SAMPLE_RATE_KEY], "5")
 
     @classmethod
     def setUpClass(cls):

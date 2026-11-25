@@ -54,7 +54,6 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _MICROSOFT_CUSTOM_EVENT_NAME,
     _MICROSOFT_CUSTOM_MEASUREMENTS,
     _MULTI_ENDPOINT_ROUTING_ATTRIBUTES,
-    _SAMPLE_RATE_KEY,
 )
 from azure.monitor.opentelemetry.exporter._generated.exporter.models import (
     AvailabilityData,
@@ -412,7 +411,6 @@ _IGNORED_ATTRS = frozenset(
         _APPLICATION_INSIGHTS_EVENT_MARKER_ATTRIBUTE,
         _MICROSOFT_CUSTOM_EVENT_NAME,
         _MICROSOFT_CUSTOM_MEASUREMENTS,
-        _SAMPLE_RATE_KEY,
         _MICROSOFT_AVAILABILITY_ID,
         _MICROSOFT_AVAILABILITY_NAME,
         _MICROSOFT_AVAILABILITY_DURATION,
