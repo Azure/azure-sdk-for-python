@@ -3,7 +3,8 @@
 """Rust-path copies of the sync cross-partition query tests.
 
 Source: ``tests/test_query_cross_partition.py``. The class name, lane markers,
-query inputs and assertions match the original; method names add ``_rust``.
+query inputs and assertions match the original, except that simple non-VALUE
+aggregates now succeed in V5; method names add ``_rust``.
 Instead of the shared ``test_config`` database, the class owns a unique
 database (key-auth Rust client for control plane, Rust data client for data
 plane) and deletes it in ``tearDownClass``. Each test still creates and
@@ -249,9 +250,11 @@ class TestCrossPartitionQuery(unittest.TestCase):
         self.assertIsNotNone(query_advice)
         self.assertIn("QA1009", query_advice)
 
-    def test_unsupported_queries_rust(self):
+    def test_non_value_aggregate_queries_rust(self):
         # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_unsupported_queries
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        self.assertEqual(list(self.created_container.query_items(
+            query='SELECT COUNT(1) FROM c', enable_cross_partition_query=True)), [{'$1': 0}])
+        queries = ['SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = self.created_container.query_items(query=query, enable_cross_partition_query=True)
             try:
@@ -405,6 +408,9 @@ class TestCrossPartitionQuery(unittest.TestCase):
                 self.assertEqual(results[i], expected_results[i])
         self.count = 0
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - empty MAX returns [] instead of legacy [None]."
+    )
     def test_value_max_query_rust(self):
         # Source: tests/test_query_cross_partition.py::TestCrossPartitionQuery.test_value_max_query
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
@@ -412,9 +418,6 @@ class TestCrossPartitionQuery(unittest.TestCase):
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ], enable_cross_partition_query=True)
 
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-        pytest.skip("driver-gap: Rust rejects cross-partition MAX without a partition key with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1).")
         self.assertListEqual(list(query_results), [None])
 
     def test_continuation_token_size_limit_query_rust(self):

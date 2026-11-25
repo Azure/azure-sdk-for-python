@@ -1075,9 +1075,15 @@ class DatabaseProxy(object):
         Use ``async for`` to consume this iterator; do not await this method.
         All settings are keyword-only. ``session_token``, ``populate_query_metrics``,
         and ``availability_strategy`` are rejected, including explicit ``None`` or ``False``.
-        Invalid page sizes or timeouts raise ``ValueError`` and non-callable hooks raise
-        ``TypeError`` when constructing the pager. Page size must be ``None``, ``-1``,
-        or a positive integer below ``2**63``; booleans are not accepted.
+        Supplying these options inside ``request_options`` or ``feed_options`` also raises
+        ``TypeError`` when constructing the pager, whether using the names above or their
+        aliases ``sessionToken``, ``populateQueryMetrics``, and ``availabilityStrategy``.
+        For example, remove ``request_options={"sessionToken": None}`` rather than
+        passing an unset session token.
+        When constructing the pager, invalid page sizes or timeouts raise ``ValueError``,
+        and non-callable or asynchronous hooks raise ``TypeError``. Use a synchronous
+        ``def`` function for the hook, even with this async client. Page size must be
+        ``None``, ``-1``, or a positive integer below ``2**63``; booleans are not accepted.
         Unsupported Rust page options raise during iteration instead of using legacy Python.
 
         Each page iterator owns its continuation token; other operations cannot

@@ -213,7 +213,7 @@ def test_driver_source_and_features_are_preserved_rust():
     driver = workspace["workspace"]["dependencies"]["azure_data_cosmos_driver"]
     assert driver == {
         "git": "https://github.com/Azure/azure-sdk-for-rust",
-        "rev": "554dc96b730b4b802883552bc0dc9e6e017241f4",
+        "rev": "36c6f191ffe45ef44e5ef4efa26c59f0d71c3300",
     }
     for group in ("dependencies", "dev-dependencies"):
         dependency = binding[group]["azure_data_cosmos_driver"]
@@ -233,8 +233,8 @@ def test_driver_source_and_features_are_preserved_rust():
     locked_drivers = [package for package in lock["package"] if package["name"] == "azure_data_cosmos_driver"]
     assert len(locked_drivers) == 1
     assert locked_drivers[0]["source"] == (
-        "git+https://github.com/Azure/azure-sdk-for-rust?rev=554dc96b730b4b802883552bc0dc9e6e017241f4"
-        "#554dc96b730b4b802883552bc0dc9e6e017241f4"
+        "git+https://github.com/Azure/azure-sdk-for-rust?rev=36c6f191ffe45ef44e5ef4efa26c59f0d71c3300"
+        "#36c6f191ffe45ef44e5ef4efa26c59f0d71c3300"
     )
 
 

@@ -9,6 +9,7 @@ asyncio marker intentionally omits the original shared fixture's class scope.
 """
 
 import uuid
+from copy import deepcopy
 from typing import List, Mapping, Set
 
 import pytest
@@ -102,6 +103,9 @@ class TestQueryFeedRangeAsync:
             actual_pk_values = set()
 
             feed_range = await container.feed_range_from_partition_key(pk_value)
+            original = deepcopy(feed_range)
+            assert feed_range["Range"]["min"] == feed_range["Range"]["max"]
+            assert feed_range["Range"]["isMaxInclusive"] is True
             items = [item async for item in
                 (container.query_items(
                     query=query,
@@ -110,3 +114,4 @@ class TestQueryFeedRangeAsync:
             )]
             await add_all_pk_values_to_set_async(items, actual_pk_values)
             assert expected_pk_values == actual_pk_values
+            assert feed_range == original

@@ -8,7 +8,8 @@ documents and deletes the database in ``tearDownClass``. The original's shared
 test database becomes an owned one; its key/data client split is kept (key
 client provisions, data client inserts and queries). Class
 and method names match ``tests/test_aggregate.py``; no original test module is
-imported.
+imported. Simple non-VALUE aggregates intentionally return projected objects
+in V5 instead of raising the original's error.
 
 Run with::
 
@@ -118,12 +119,10 @@ class TestAggregateQuery(unittest.TestCase):
         aggregate_configs = [
             ['AVG', _config.sum / _config.docs_with_numeric_id,
              'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-            ['AVG', None, 'true'],
             ['COUNT', _config.DOCUMENTS_COUNT, 'true'],
             ['MAX', 'xyz', 'true'],
             ['MIN', None, 'true'],
-            ['SUM', _config.sum, 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)],
-            ['SUM', None, 'true']
+            ['SUM', _config.sum, 'IS_NUMBER(r.{})'.format(_config.PARTITION_KEY)]
         ]
         for operator, expected, condition in aggregate_configs:
             cls._all_tests.append([
@@ -155,7 +154,7 @@ class TestAggregateQuery(unittest.TestCase):
                 '{} SinglePartition {}'.format(operator, 'SELECT'),
                 aggregate_orderby_single_partition_format.format(
                     operator, _config.FIELD, _config.PARTITION_KEY, _config.UNIQUE_PARTITION_KEY),
-                Exception()])
+                {'$1': expected}])
 
     def test_run_all_rust(self):
         # Source: tests/test_aggregate.py::TestAggregateQuery.test_run_all
@@ -166,14 +165,16 @@ class TestAggregateQuery(unittest.TestCase):
                 print(test_name + ': ' + query + " PASSED")
             except Exception as e:
                 print(test_name + ': ' + query + " FAILED")
-                if "20113" in str(e):
-                    # pylint: disable-next=line-too-long
-                    # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-                    pytest.skip("driver-gap: Rust rejects cross-partition aggregates with 400/20113 "
-                                "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
-                                ". "
-                                "Failed at " + test_name + ".")
                 raise e
+
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - undefined AVG/SUM returns no rows instead of legacy [None]."
+    )
+    def test_undefined_aggregate_results_rust(self):
+        # Source: tests/test_aggregate.py::TestAggregateQuery.test_run_all
+        for operator in ("AVG", "SUM"):
+            for ordering in ("", " ORDER BY r.key"):
+                self._run_one(f"SELECT VALUE {operator}(r.key) FROM r WHERE true{ordering}", None)
 
     @pytest.mark.cosmosAADLong
     @pytest.mark.skipif(

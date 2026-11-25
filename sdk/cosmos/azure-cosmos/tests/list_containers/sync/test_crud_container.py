@@ -109,6 +109,53 @@ class TestCRUDContainerOperations(unittest.TestCase):
         self.__AssertHTTPFailureWithStatus(StatusCodes.NOT_FOUND,
                                            created_container.read)
 
+    @pytest.mark.cosmosAADLong
+    def test_collection_listing_with_write_payload_disabled_rust(self):
+        """Disabling write payloads must not suppress listed container properties.
+
+        Retain the original before/after listing assertion with its client setting.
+        """
+        # Source: tests/test_crud_response_payload_on_write_disabled.py::TestCRUDOperationsResponsePayloadOnWriteDisabled.test_collection_crud
+        client = CosmosClient(HOST, KEY, _backend="rust", no_response_on_write=True)
+        self.addCleanup(client.close)
+        created_db = client.get_database_client(self._database_id)
+        collections = list(created_db.list_containers())
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+        )
+
+        collections = list(created_db.list_containers())
+        self.assertEqual(len(collections),
+                         before_create_collections_count + 1,
+                         'create should increase the number of collections')
+        self.assertIn(collection_id, [collection["id"] for collection in collections])
+
+    @pytest.mark.cosmosAADLong
+    def test_collection_listing_with_subpartitions_rust(self):
+        """Retain the original listing count check for a three-level partition key."""
+        # Source: tests/test_crud_subpartition.py::TestSubpartitionCrud.test_collection_crud_subpartition
+        created_db = self.databaseForTest
+        collections = list(created_db.list_containers())
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud_MH ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path=["/pk1", "/pk2", "/pk3"], kind="MultiHash")
+        created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+        )
+
+        collections = list(created_db.list_containers())
+        self.assertEqual(len(collections),
+                         before_create_collections_count + 1,
+                         'create should increase the number of collections')
+        listed = {collection["id"]: collection for collection in collections}
+        self.assertDictEqual(partition_key, listed[collection_id]["partitionKey"])
+
 
 if __name__ == "__main__":
     unittest.main()

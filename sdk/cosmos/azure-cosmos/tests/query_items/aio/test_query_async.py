@@ -274,10 +274,6 @@ class TestQueryAsync(_QueryTestCase):
 
         await self._delete_container_for_test(container_id)
 
-    @pytest.mark.skip(
-        reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
-        "(HTTP 400/1004). Re-enable when the driver supports this aggregate query."
-    )
     async def test_value_max_query_results_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_value_max_query_results_async
         container = self.container
@@ -600,10 +596,13 @@ class TestQueryAsync(_QueryTestCase):
         self.count += 1
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    async def test_unsupported_queries_async_rust(self):
+    async def test_non_value_aggregate_queries_async_rust(self):
         # Source: tests/test_query_async.py::TestQueryAsync.test_unsupported_queries_async
         created_collection = await self._create_multi_partition_container()
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        # V5 supports simple non-VALUE aggregates; composite expressions remain unsupported.
+        assert [item async for item in created_collection.query_items(
+            query='SELECT COUNT(1) FROM c')] == [{'$1': 0}]
+        queries = ['SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = created_collection.query_items(query=query)
             try:
@@ -1098,6 +1097,9 @@ class TestQueryAsync(_QueryTestCase):
         finally:
             await self._delete_container_for_test(container_id)
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - multi-partition feed-range AVG succeeds instead of legacy ValueError."
+    )
     async def test_avg_aggregate_by_page_raises_value_error_cross_partition_async_rust(self):
         # pylint: disable-next=line-too-long
         # Source: tests/test_query_async.py::TestQueryAsync.test_avg_aggregate_by_page_raises_value_error_cross_partition_async
@@ -1121,10 +1123,6 @@ class TestQueryAsync(_QueryTestCase):
             )
             feed_range = create_feed_range_in_dict(full_range)
 
-            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-            pytest.skip("driver-gap: Rust rejects full-range aggregates with 400/20113 "
-                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1)"
-                        ". The items were created.")
             with self.assertRaises(ValueError) as cm:
                 pages = container.query_items(
                     query="SELECT VALUE AVG(c.amount) FROM c",

@@ -2089,11 +2089,6 @@ The response hook runs once for the creation response. If that response is
 empty, the hook receives empty properties and creation headers, not the later
 read's result.
 
-**Related limitations**
-
-- [Conditional-creation behavior](V5/api-review/REQUEST_OPTIONS.md#resource-metadata-differs-from-item-contents)
-- [Conditional-create verification and outstanding global secondary index checks](V5/api-review/LIVE_VERIFICATION.md#container-creation-verification)
-
 <a id="9---creating-a-container-if-it-does-not-exist"></a>
 <a id="databaseproxycreate_container_if_not_exists"></a>
 
@@ -3773,11 +3768,11 @@ separate from whether the original unbounded query is supported.
 
 | Customer requirement | Current difference |
 |---|---|
-| Obtain aggregates beyond one complete partition key | Rust still rejects legacy-supported broader-scope aggregates. Its full-range AVG rejection also has a different exception type. |
+| Preserve aggregate result/error behavior | Broader-scope aggregate execution is integrated. Empty MAX and the compared mixed-type AVG/SUM queries return `[]` instead of `[None]`; full-range AVG succeeds instead of raising the legacy `ValueError`. |
 | Remove duplicates while ranking by vector similarity | A finite TOP/LIMIT does not make the DISTINCT-plus-vector combination supported. |
 | Observe the individual responses used by buffered searches | The compared Rust vector and hybrid queries return results but call `response_hook` fewer times. |
 | Handle mixed numeric/string ORDER BY values | Legacy Python can raise `ValueError`; Rust returns ordered values instead. Approval of that compatibility change is not recorded. |
-| Resume saved progress | A valid legacy feed-range bookmark is rejected. Transferring an ordered Rust bookmark from a key-derived feed range to the equivalent complete hierarchical key also fails. Same-scope Rust resumption is a separate, passing case. |
+| Resume saved V5 progress under an equivalent scope | Transferring an ordered V5 bookmark from a key-derived feed range to the equivalent complete hierarchical key fails. Same-scope V5 resumption passes. V4 tokens are intentionally unsupported, not an open gap. |
 | Catch an unlimited vector query with `except ValueError` | The default Rust path raises `ServiceResponseError` instead. |
 
 These are not approved removals. Query advice and transport-specific
@@ -3790,10 +3785,12 @@ without identifying a supported version. Exception types and status codes
 are unchanged; the original service response or driver cause remains available
 for diagnostics. This wording change does not close Gap 30.
 
-**Fixed for the compared original cases:** the requested `value`
-property is preserved for DISTINCT/OFFSET/LIMIT; unsupported non-`VALUE`
-COUNT forms raise status 400; ordinary TOP/ORDER BY respects the tested
-page size. Those obsolete skips have been removed.
+**Supported for the compared cases:** the requested `value` property is
+preserved for DISTINCT/OFFSET/LIMIT; broader-scope aggregates execute;
+ordinary TOP/ORDER BY respects the tested page size. Simple non-`VALUE`
+aggregates now return projected objects, an accepted V5 expansion. Composite
+expressions such as `COUNT(1) + 5` still raise status 400. Obsolete aggregate
+skips have been removed; unresolved result/error differences remain explicit.
 
 The local comparisons do not establish AAD, multi-region, real-split or
 cloud Gateway V2 parity. Copying a test or preserving its marker does not

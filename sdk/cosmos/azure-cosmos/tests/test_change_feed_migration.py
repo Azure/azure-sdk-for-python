@@ -639,28 +639,39 @@ def test_change_feed_partition_range_id_rust(asynchronous, partition_count):
 @pytest.mark.cosmosEmulator
 @pytest.mark.cosmosAADLong
 @pytest.mark.parametrize("asynchronous", [False, True], ids=["sync", "async"])
-def test_change_feed_point_range_matches_partition_key(asynchronous):
-    """Adapt test_query_change_feed_with_different_filter for Rust scope and resume."""
+@pytest.mark.parametrize("hierarchical", [False, True], ids=["single-key", "complete-hpk"])
+def test_change_feed_point_range_matches_partition_key(asynchronous, hierarchical):
+    """Preserve query/change-feed point scope and resume without mutating the range."""
     database_id = unique_database_id("ChangeFeedPointRange")
     expected = {"old0", "old1", "old2"}
+    key = ["tenant", "customer"] if hierarchical else "customer"
+    definition = (
+        PartitionKey(path=["/tenant", "/pk"], kind="MultiHash")
+        if hierarchical else PartitionKey(path="/pk")
+    )
     with create_data_client(_backend="core-python") as setup:
         database = setup.create_database(database_id)
         try:
-            container = database.create_container("orders", PartitionKey(path="/pk"), offer_throughput=400)
+            container = database.create_container("orders", definition, offer_throughput=400)
             for item_id in sorted(expected):
-                container.create_item({"id": item_id, "pk": "customer"})
-            container.create_item({"id": "out-of-scope", "pk": "other"})
-            setup_point = container.feed_range_from_partition_key("customer")
+                container.create_item({"id": item_id, "tenant": "tenant", "pk": "customer"})
+            container.create_item({"id": "out-of-scope", "tenant": "tenant", "pk": "other"})
+            setup_point = container.feed_range_from_partition_key(key)
+            assert setup_point["Range"]["min"] == setup_point["Range"]["max"]
+            assert setup_point["Range"]["isMaxInclusive"] is True
 
             async def run_async():
                 async with create_data_client_async(_backend="rust") as client:
                     target = client.get_database_client(database_id).get_container_client("orders")
-                    point = await target.feed_range_from_partition_key("customer")
+                    point = await target.feed_range_from_partition_key(key)
                     assert point == setup_point
                     original = deepcopy(point)
+                    _assert_ids([
+                        row async for row in target.query_items("SELECT * FROM c", feed_range=point)
+                    ], expected)
                     baseline = [
                         row async for row in target.query_items_change_feed(
-                            partition_key="customer", start_time="Beginning", timeout=30
+                            partition_key=key, start_time="Beginning", timeout=30
                         )
                     ]
                     _assert_ids(baseline, expected)
@@ -669,8 +680,8 @@ def test_change_feed_point_range_matches_partition_key(asynchronous):
                     ).by_page()
                     _assert_ids([row async for page in pages async for row in page], expected)
                     token = pages.continuation_token
-                    await target.create_item({"id": "later", "pk": "customer"})
-                    await target.create_item({"id": "later-out-of-scope", "pk": "other"})
+                    await target.create_item({"id": "later", "tenant": "tenant", "pk": "customer"})
+                    await target.create_item({"id": "later-out-of-scope", "tenant": "tenant", "pk": "other"})
                     _assert_ids([
                         row async for row in target.query_items_change_feed(continuation=token, timeout=30)
                     ], {"later"})
@@ -681,19 +692,20 @@ def test_change_feed_point_range_matches_partition_key(asynchronous):
             else:
                 with create_data_client(_backend="rust") as client:
                     target = client.get_database_client(database_id).get_container_client("orders")
-                    point = target.feed_range_from_partition_key("customer")
+                    point = target.feed_range_from_partition_key(key)
                     assert point == setup_point
                     original = deepcopy(point)
+                    _assert_ids(list(target.query_items("SELECT * FROM c", feed_range=point)), expected)
                     _assert_ids(list(target.query_items_change_feed(
-                        partition_key="customer", start_time="Beginning", timeout=30
+                        partition_key=key, start_time="Beginning", timeout=30
                     )), expected)
                     pages = target.query_items_change_feed(
                         feed_range=point, start_time="Beginning", max_item_count=1, timeout=30
                     ).by_page()
                     _assert_ids([row for page in pages for row in page], expected)
                     token = pages.continuation_token
-                    target.create_item({"id": "later", "pk": "customer"})
-                    target.create_item({"id": "later-out-of-scope", "pk": "other"})
+                    target.create_item({"id": "later", "tenant": "tenant", "pk": "customer"})
+                    target.create_item({"id": "later-out-of-scope", "tenant": "tenant", "pk": "other"})
                     _assert_ids(list(target.query_items_change_feed(
                         continuation=token, timeout=30
                     )), {"later"})

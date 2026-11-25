@@ -123,7 +123,7 @@ repository. The workspace `Cargo.toml` uses a **Git dependency** pinned to
 one commit of `azure-sdk-for-rust`:
 
 ```toml
-azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "554dc96b730b4b802883552bc0dc9e6e017241f4" }
+azure_data_cosmos_driver = { git = "https://github.com/Azure/azure-sdk-for-rust", rev = "36c6f191ffe45ef44e5ef4efa26c59f0d71c3300" }
 ```
 
 Cargo downloads that exact commit from GitHub. `Cargo.lock` records the same
@@ -1897,16 +1897,14 @@ into the extension.
 ### What the query discussion identifies as missing
 
 Return to Alpha Bank's order-count query. In the pinned driver revision
-`554dc96b730b4b802883552bc0dc9e6e017241f4`, the production pure-Rust
+`36c6f191ffe45ef44e5ef4efa26c59f0d71c3300`, the production pure-Rust
 planning path explicitly declines aggregates and `GROUP BY`. It also
 declines vector and hybrid-search functions, which are separate query
 families. The checks are in `query/local_plan_adapter.rs`.
 
-The shared query discussion describes execution improvements and a separate
-follow-up to extend local planning. Its participants describe missing
-implementation, not a permanent design restriction. However, the discussion
-does not identify the PRs here, prove they have merged, or establish that
-our Python SDK already includes their execution support.
+The pinned driver includes aggregate execution support, and the Python
+binding advertises that support when requesting a query plan. Execution
+support does not by itself add pure-Rust local planning for these queries.
 
 For the bank, a declined local plan does not by itself mean the query fails:
 another source may supply a usable plan. Execution must also support that

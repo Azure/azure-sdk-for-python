@@ -132,9 +132,6 @@ class TestFeedRangeMultiPartitionAsync(_PrefixQueryTestCase):
                 "Page 1 plus the resumed pages must equal the baseline "
                 "documents for this partition key prefix in the same order")
 
-            # Known gap 30: aggregates beyond one complete partition key are unsupported.
-            pytest.skip("driver-gap: prefix partition-key COUNT aggregate is rejected by the Rust driver "
-                        "with 400/20113")
             count_results = [
                 item async for item in created_container.query_items(
                     query="SELECT VALUE COUNT(1) FROM c",
@@ -250,8 +247,6 @@ async def _count_in_range(container, range_min: str, range_max: str) -> int:
     fr = test_config.create_feed_range_in_dict(
         test_config.create_range(range_min=range_min, range_max=range_max,
                                  is_min_inclusive=True, is_max_inclusive=False))
-    # Known gap 30: aggregates beyond one complete partition key are unsupported.
-    pytest.skip("driver-gap: feed-range COUNT aggregate is rejected by the Rust driver with 400/20113")
     items = [it async for it in container.query_items(
         query="SELECT VALUE COUNT(1) FROM c", feed_range=fr)]
     return items[0] if items else 0

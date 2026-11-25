@@ -26,6 +26,7 @@ import asyncio
 import copy
 import inspect
 import time
+from functools import partial
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -322,7 +323,6 @@ def test_supported_timeout_headers_and_explicit_none_query_rust(query_case, quer
     {"initial_headers": {"User-Agent": "override"}},
     {"initial_headers": {"x-ms-version": "override"}},
     {"connection_timeout": 10}, {"unknown_option": None},
-    {"request_options": {"availabilityStrategy": False}},
 ])
 def test_unsupported_rust_options_never_fall_back_rust(query_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the
@@ -375,6 +375,39 @@ def test_invalid_queries_preserve_errors_at_construction_rust(query_case, query,
 
 
 @pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize("kwargs,option", [
+    ({"request_options": {"sessionToken": None}}, "session_token"),
+    ({"feed_options": {"sessionToken": False}}, "session_token"),
+    ({"request_options": {"sessionToken": "0:-1#1"}}, "session_token"),
+    ({"request_options": {"populateQueryMetrics": None}}, "populate_query_metrics"),
+    ({"feed_options": {"populateQueryMetrics": False}}, "populate_query_metrics"),
+    ({"request_options": {"populateQueryMetrics": True}}, "populate_query_metrics"),
+    ({"request_options": {"availabilityStrategy": None}}, "availability_strategy"),
+    ({"feed_options": {"availabilityStrategy": False}}, "availability_strategy"),
+    ({"request_options": {"availabilityStrategy": True}}, "availability_strategy"),
+    ({"request_options": {"session_token": None}}, "session_token"),
+    ({"feed_options": {"populate_query_metrics": False}}, "populate_query_metrics"),
+    ({"request_options": {"availability_strategy": False}}, "availability_strategy"),
+    ({"request_options": {}, "feed_options": {"sessionToken": None}}, "session_token"),
+    ({"request_options": {"maxItemCount": 1}, "feed_options": {"availabilityStrategy": False}},
+     "availability_strategy"),
+])
+def test_container_feed_excluded_nested_options_fail_at_construction_rust(query_case, operation, kwargs, option):
+    """Reject excluded keys even when falsey or hidden by another option dictionary."""
+    original = copy.deepcopy(kwargs)
+    hook = MagicMock()
+    with pytest.raises(TypeError, match=rf"{operation}.*{option}"):
+        getattr(query_case.database, operation)(
+            *([SQL] if operation == "query_containers" else []), response_hook=hook, **kwargs,
+        )
+    assert kwargs == original
+    assert query_case.requests == []
+    hook.assert_not_called()
+    query_case.legacy_get.assert_not_called()
+    query_case.legacy_post.assert_not_called()
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
 @pytest.mark.parametrize("source", ["keyword", "request_options", "feed_options"])
 @pytest.mark.parametrize("name,value", [
     ("max_item_count", 0), ("max_item_count", False), ("max_item_count", True),
@@ -404,6 +437,43 @@ def test_container_feed_invalid_hook_fails_at_construction_rust(query_case, oper
             *([SQL] if operation == "query_containers" else []), response_hook=hook,
         )
     assert query_case.requests == []
+
+
+@pytest.mark.parametrize("operation", ["list_containers", "query_containers"])
+@pytest.mark.parametrize(
+    "kind", ["function", "method", "partial", "callable", "partial-callable", "async-generator"],
+)
+def test_container_feed_async_hook_fails_at_construction_rust(query_case, operation, kind):
+    async def hook(_headers, _results):
+        pytest.fail("An asynchronous response hook must not run")
+
+    class AsyncHook:
+        def __bool__(self):
+            return False
+
+        async def __call__(self, _headers, _results):
+            pytest.fail("An asynchronous response hook must not run")
+
+    async def generator_hook(_headers, results):
+        pytest.fail("An asynchronous generator hook must not run")
+        yield results
+
+    callable_hook = AsyncHook()
+    hooks = {
+        "function": hook,
+        "method": callable_hook.__call__,
+        "partial": partial(hook),
+        "callable": callable_hook,
+        "partial-callable": partial(callable_hook),
+        "async-generator": generator_hook,
+    }
+    with pytest.raises(TypeError, match=f"{operation} response_hook must be synchronous"):
+        getattr(query_case.database, operation)(
+            *([SQL] if operation == "query_containers" else []), response_hook=hooks[kind],
+        )
+    assert query_case.requests == []
+    query_case.legacy_get.assert_not_called()
+    query_case.legacy_post.assert_not_called()
 
 
 @pytest.mark.parametrize("operation", ["list_containers", "query_containers"])

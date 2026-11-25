@@ -176,7 +176,6 @@ async def _perform_operations_on_pk(created_container, pk_field, pk_value):
     # Get Feed Range
     feed_range = await created_container.feed_range_from_partition_key(partition_key=pk_value)
     assert feed_range is not None
-    # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps. The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
     items_iter = created_container.query_items(query='SELECT * FROM c',
                                                feed_range=feed_range)
     items_list = [i async for i in items_iter]

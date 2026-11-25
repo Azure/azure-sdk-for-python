@@ -7,7 +7,7 @@ from __future__ import annotations
 import time
 from copy import deepcopy
 from dataclasses import replace
-from typing import Any, Optional
+from typing import Any, Mapping, Optional
 
 from azure.core.paging import ItemPaged
 from azure.core.utils import CaseInsensitiveDict
@@ -36,6 +36,7 @@ from ._request_settings import (
     normalize_query_specification,
     reject_unknown_feed_kwargs,
 )
+from ._response_parse import validate_response_hook_is_synchronous
 
 
 class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
@@ -48,6 +49,17 @@ class ListContainersConfig:  # pylint: disable=too-many-instance-attributes
         self.hook = kwargs.pop("response_hook", None)
         if self.hook is not None and not callable(self.hook):
             raise TypeError(f"{self.operation} response_hook must be callable or None.")
+        validate_response_hook_is_synchronous(self.hook, self.operation)
+        for options in (kwargs.get("request_options"), kwargs.get("feed_options")):
+            if not isinstance(options, Mapping):
+                continue
+            for name, key in (
+                ("session_token", "sessionToken"),
+                ("populate_query_metrics", "populateQueryMetrics"),
+                ("availability_strategy", "availabilityStrategy"),
+            ):
+                if name in options or key in options:
+                    raise TypeError(f"{self.operation}() does not support the '{name}' option")
         self.options = deepcopy(compose_item_options(kwargs))
         kwargs.pop("timeout", None)
         self.options.pop(_Constants.OperationStartTime, None)

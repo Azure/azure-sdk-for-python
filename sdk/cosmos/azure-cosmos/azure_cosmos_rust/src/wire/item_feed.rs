@@ -233,7 +233,7 @@ async fn query_admission_plan(
     let plan_operation = CosmosOperation::query_plan(
         container,
         std::borrow::Cow::Borrowed(
-            "Distinct,HybridSearch,MultipleOrderBy,NonStreamingOrderBy,OffsetAndLimit,OrderBy,Top,WeightedRankFusion",
+            "Aggregate,DCount,Distinct,GroupBy,HybridSearch,MultipleAggregates,MultipleOrderBy,NonStreamingOrderBy,NonValueAggregate,OffsetAndLimit,OrderBy,Top,WeightedRankFusion",
         ),
     )
     .with_body(operation.body().unwrap_or_default().to_vec());
@@ -2056,63 +2056,28 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn average_error_contract_is_limited_to_multi_partition_feed_ranges() {
+    async fn aggregate_admission_allows_supported_range_queries() {
         let (_emulator, driver) = setup(12).await;
-        let container = driver
-            .resolve_container("db", "c", Default::default())
-            .await
-            .unwrap();
-        let ranges = driver
-            .resolve_all_partition_key_ranges(&container, false)
-            .await
-            .unwrap()
-            .unwrap();
-        let single = &ranges[0];
-        for (scope, sql, legacy_error) in [
+        for (scope, sql, expected) in [
             (
                 Some(("".into(), "FF".into())),
-                "SELECT VALUE AVG(c.value) FROM c",
-                true,
+                "SELECT VALUE AVG(1) FROM c",
+                1.0,
             ),
-            (
-                Some((single.min_inclusive.to_hex(), single.max_exclusive.to_hex())),
-                "SELECT VALUE AVG(c.value) FROM c",
-                false,
-            ),
-            (None, "SELECT VALUE AVG(c.value) FROM c", false),
+            (None, "SELECT VALUE AVG(1) FROM c", 1.0),
             (
                 Some(("".into(), "FF".into())),
-                "SELECT VALUE SUM(c.value) FROM c",
-                false,
+                "SELECT VALUE SUM(1) FROM c",
+                12.0,
             ),
         ] {
             let mut request = query_request(sql);
             if let FeedRequest::Query(ref mut query) = request {
                 query.feed_range = scope;
             }
-            let result = next_plan_page(
-                driver.clone(),
-                Arc::new(Mutex::new(CursorState::default())),
-                ("test".into(), "dbs/db/colls/c".into()),
-                None,
-                modifiers(),
-                request,
-                PlanOptions::default(),
-            )
-            .await;
-            if legacy_error {
-                let error = result.unwrap_err();
-                Python::with_gil(|py| assert!(error.is_instance_of::<PyValueError>(py)));
-                assert!(error
-                    .to_string()
-                    .contains("SELECT VALUE AVG(...) cannot be merged"));
-            } else {
-                let (result, _, _) = result.unwrap();
-                assert_eq!(
-                    result.unwrap_err().status(),
-                    status_codes::CLIENT_UNSUPPORTED_QUERY_FEATURE
-                );
-            }
+            let rows = query_drain(&driver, &request, None).await;
+            assert_eq!(rows.len(), 1, "{sql}");
+            assert_eq!(rows[0].as_f64(), Some(expected), "{sql}");
         }
     }
 

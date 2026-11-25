@@ -7,6 +7,7 @@ Owned key-auth fixtures replace shared provisioning, not the test body.
 """
 
 import uuid
+from copy import deepcopy
 from typing import List, Mapping, Set
 
 import pytest
@@ -92,9 +93,13 @@ class TestQueryFeedRange:
             actual_pk_values = set()
 
             feed_range = container.feed_range_from_partition_key(pk_value)
+            original = deepcopy(feed_range)
+            assert feed_range["Range"]["min"] == feed_range["Range"]["max"]
+            assert feed_range["Range"]["isMaxInclusive"] is True
             items = list(container.query_items(
                 query=query,
                 feed_range=feed_range
             ))
             add_all_pk_values_to_set(items, actual_pk_values)
             assert actual_pk_values == expected_pk_values
+            assert feed_range == original

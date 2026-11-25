@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore msrust msrustup
 parameters:
   - name: ToolchainFeed
     type: string
@@ -20,6 +21,8 @@ steps:
       $wheelDirectory = '$(Agent.TempDirectory)/cosmos-test-probes-wheels'
       python -m venv $venv
       $python = if ($IsWindows) { "$venv/Scripts/python.exe" } else { "$venv/bin/python" }
+      # The build backend launches maturin by name, not through $python.
+      $env:PATH = "$(Split-Path -Parent $python)$([IO.Path]::PathSeparator)$env:PATH"
       $env:PYO3_PYTHON = $python
       Push-Location sdk/cosmos/azure-cosmos
       try {

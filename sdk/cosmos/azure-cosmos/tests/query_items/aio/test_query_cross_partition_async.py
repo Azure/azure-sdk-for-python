@@ -3,7 +3,8 @@
 """Rust-path copies of the async cross-partition query tests.
 
 Source: ``tests/test_query_cross_partition_async.py``. The class name, lane
-markers, query inputs and assertions match the original; method names add
+markers, query inputs and assertions match the original, except that simple
+non-VALUE aggregates now succeed in V5; method names add
 ``_rust``. Each test owns a unique database (key-auth Rust client for control
 plane, Rust data client for data plane) with the original 5-partition ``/pk``
 container, and always deletes it. Rust-backed clients reject
@@ -206,9 +207,11 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         assert query_advice is not None
         assert "QA1009" in query_advice
 
-    async def test_unsupported_queries_async_rust(self):
+    async def test_non_value_aggregate_queries_async_rust(self):
         # Source: tests/test_query_cross_partition_async.py::TestQueryCrossPartitionAsync.test_unsupported_queries_async
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        assert [item async for item in self.created_container.query_items(
+            query='SELECT COUNT(1) FROM c')] == [{'$1': 0}]
+        queries = ['SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = self.created_container.query_items(query=query)
             try:
@@ -280,10 +283,6 @@ class TestQueryCrossPartitionAsync(unittest.IsolatedAsyncioTestCase):
         query_results = self.created_container.query_items(query, parameters=[
             {"name": "@lookupVersion", "value": "console_version"}
         ])
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-        pytest.skip("driver-gap: Rust rejects cross-partition MAX without a partition key with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
-                    ". The items were created.")
         item_list = [item async for item in query_results]
         assert len(item_list) == 1
         assert item_list[0] == 3

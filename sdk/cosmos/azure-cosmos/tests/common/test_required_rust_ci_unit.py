@@ -632,6 +632,8 @@ def test_probe_wheels_stay_out_of_customer_artifacts_and_keep_emulator_coverage_
     assert install["template"].endswith("/install-msrust-toolchain.yml")
     script = build["pwsh"]
     assert "$wheelDirectory = '$(Agent.TempDirectory)/cosmos-test-probes-wheels'" in script
+    tool_path = '$env:PATH = "$(Split-Path -Parent $python)$([IO.Path]::PathSeparator)$env:PATH"'
+    assert script.index("$python = ") < script.index(tool_path) < script.index("pip wheel")
     assert "pip wheel . --no-deps --no-build-isolation" in script
     assert "maturin.build-args=--features test-probes --locked" in script
     assert "AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR = $nativeAssets" in script

@@ -108,6 +108,50 @@ class TestCRUDContainerOperationsAsync(unittest.IsolatedAsyncioTestCase):
         await self.__assert_http_failure_with_status(StatusCodes.NOT_FOUND,
                                                      created_container.read)
 
+    async def test_collection_listing_with_write_payload_disabled_async_rust(self):
+        """Disabling write payloads must not suppress listed container properties.
+
+        Retain the original before/after listing assertion with its client setting.
+        """
+        # Source: tests/test_crud_response_payload_on_write_disabled_async.py::TestCRUDOperationsAsyncResponsePayloadOnWriteDisabled.test_collection_crud_async
+        client = CosmosClient(HOST, KEY, _backend="rust", no_response_on_write=True)
+        self.addAsyncCleanup(client.close)
+        created_db = client.get_database_client(self._database_id)
+        collections = [collection async for collection in created_db.list_containers()]
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        await created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=PartitionKey(path="/pk", kind="Hash"),
+        )
+
+        collections = [collection async for collection in created_db.list_containers()]
+        assert len(collections) == before_create_collections_count + 1
+        assert collection_id in [collection["id"] for collection in collections]
+
+    async def test_collection_listing_with_subpartitions_async_rust(self):
+        """Retain the original listing count check for a two-level partition key.
+
+        Creation-hook header assertions are separate from this listing check.
+        """
+        # Source: tests/test_crud_subpartition_async.py::TestSubpartitionCrudAsync.test_collection_crud_subpartition_async
+        created_db = self.database_for_test
+        collections = [collection async for collection in created_db.list_containers()]
+        before_create_collections_count = len(collections)
+        collection_id = 'test_collection_crud ' + str(uuid.uuid4())
+        partition_key = PartitionKey(path=["/pk1", "/pk2"], kind="MultiHash")
+        await created_db.create_container(
+            id=collection_id,
+            indexing_policy={'indexingMode': 'consistent'},
+            partition_key=partition_key,
+        )
+
+        collections = [collection async for collection in created_db.list_containers()]
+        assert len(collections) == before_create_collections_count + 1
+        listed = {collection["id"]: collection for collection in collections}
+        assert partition_key == listed[collection_id]["partitionKey"]
+
 
 if __name__ == "__main__":
     unittest.main()

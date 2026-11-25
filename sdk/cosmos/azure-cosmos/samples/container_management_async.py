@@ -315,7 +315,7 @@ async def run_sample():
             # get a container using its id
             await read_container(db, CONTAINER_ID)
 
-            # list all container on an account
+            # list containers in this database
             await list_containers(db)
 
             # delete container by id

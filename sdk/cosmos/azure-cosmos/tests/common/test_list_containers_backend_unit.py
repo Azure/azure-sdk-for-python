@@ -346,7 +346,6 @@ def test_supported_timeout_and_application_headers_rust(listing_case, timeout):
     {"initial_headers": {"User-Agent": "override"}},
     {"initial_headers": {"x-ms-version": "override"}},
     {"connection_timeout": 10}, {"unknown_option": None},
-    {"request_options": {"availabilityStrategy": False}},
 ])
 def test_unsupported_rust_options_do_not_dispatch_rust(listing_case, kwargs):
     """Options the Rust path cannot honor never produce a request, and never move the

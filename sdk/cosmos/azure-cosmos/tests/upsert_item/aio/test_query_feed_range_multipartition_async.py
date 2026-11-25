@@ -159,7 +159,6 @@ class TestFeedRangeMultiPartitionAsync:
                 # continuation token; that token must still resume on the
                 # partition-key request path and return the same remaining items.
                 feed_range = await created_container.feed_range_from_partition_key(full_key)
-                # Known gap 30: `query_items()`: remaining query, paging, and continuation-token gaps. The point feed range from feed_range_from_partition_key is rejected with ValueError ("nonempty min-inclusive, max-exclusive Range").
                 epk_pager = created_container.query_items(
                     query=query,
                     feed_range=feed_range,

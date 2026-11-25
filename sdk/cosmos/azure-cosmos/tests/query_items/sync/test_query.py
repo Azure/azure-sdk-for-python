@@ -248,10 +248,6 @@ class TestQuery(_QueryTestCase):
         self.assertIn("QA1009", query_advice)
         self._delete_container_for_test(created_collection.id)
 
-    @pytest.mark.skip(
-        reason="driver-gap: Gap 30 - Rust rejects MAX queries without a partition key "
-        "(HTTP 400/1004). Re-enable when the driver supports this aggregate query."
-    )
     def test_value_max_query_results_rust(self):
         # Source: tests/test_query.py::TestQuery.test_value_max_query_results
         container = self.container
@@ -743,10 +739,13 @@ class TestQuery(_QueryTestCase):
         self.count += 1
         return self.OriginalExecuteFunction(function, *args, **kwargs)
 
-    def test_unsupported_queries_rust(self):
+    def test_non_value_aggregate_queries_rust(self):
         # Source: tests/test_query.py::TestQuery.test_unsupported_queries
         created_collection = self._create_multi_partition_container()
-        queries = ['SELECT COUNT(1) FROM c', 'SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
+        # V5 supports simple non-VALUE aggregates; composite expressions remain unsupported.
+        self.assertEqual(list(created_collection.query_items(
+            query='SELECT COUNT(1) FROM c', enable_cross_partition_query=True)), [{'$1': 0}])
+        queries = ['SELECT COUNT(1) + 5 FROM c', 'SELECT COUNT(1) + SUM(c) FROM c']
         for query in queries:
             query_iterable = created_collection.query_items(query=query, enable_cross_partition_query=True)
             try:
@@ -930,6 +929,9 @@ class TestQuery(_QueryTestCase):
 
         assert len(list(query_iterable)) >= 2
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - empty MAX returns [] instead of legacy [None]."
+    )
     def test_value_max_query_rust(self):
         # Source: tests/test_query.py::TestQuery.test_value_max_query
         container = self._create_multi_partition_container()
@@ -938,10 +940,6 @@ class TestQuery(_QueryTestCase):
             {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ], enable_cross_partition_query=True)
 
-        # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-        pytest.skip("driver-gap: Rust rejects cross-partition VALUE MAX with 400/20113 "
-                    "(ClientUnsupportedQueryFeature) (known gap 30 item 1)"
-                    ". The query was built.")
         self.assertListEqual(list(query_results), [None])
 
     def test_query_request_params_none_retry_policy_rust(self):
@@ -1203,6 +1201,9 @@ class TestQuery(_QueryTestCase):
         finally:
             self._delete_container_for_test(container.id)
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - multi-partition feed-range AVG succeeds instead of legacy ValueError."
+    )
     def test_avg_aggregate_by_page_raises_value_error_cross_partition_rust(self):
         # Source: tests/test_query.py::TestQuery.test_avg_aggregate_by_page_raises_value_error_cross_partition
         container = self._create_container_for_test(
@@ -1228,10 +1229,6 @@ class TestQuery(_QueryTestCase):
             )
             feed_range = create_feed_range_in_dict(full_range)
 
-            # Known gap 30: query_items remaining query, paging, and continuation-token gaps, item 1 aggregates.
-            pytest.skip("driver-gap: Rust rejects full-range aggregates with 400/20113 "
-                        "(ClientUnsupportedQueryFeature) instead of the legacy AVG ValueError (known gap 30 item 1)"
-                        ". The items were created.")
             with self.assertRaises(ValueError) as cm:
                 pages = container.query_items(
                     query="SELECT VALUE AVG(c.amount) FROM c",

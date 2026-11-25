@@ -151,13 +151,6 @@ class TestQueryFeedRange:
         print(f"Deleted owned SUM database: {self.database_id}")
 
     @pytest.mark.usefixtures("owned_orders")
-    @pytest.mark.skip(
-        reason=(
-            "driver-gap: Gap 30 - Rust rejects MIN over the full feed range with HTTP 400 "
-            "'Aggregate unsupported' instead of returning the single minimum value. "
-            "Re-enable when the driver supports this aggregate query without changing its scope."
-        )
-    )
     def test_query_value_min_across_full_feed_range_returns_scalar_rust(self):
         """MIN over a multi-partition feed_range should return one value (the smallest)."""
         # pylint: disable-next=line-too-long
@@ -188,13 +181,6 @@ class TestQueryFeedRange:
         assert items[0] == 100
 
     @pytest.mark.usefixtures("owned_orders")
-    @pytest.mark.skip(
-        reason=(
-            "driver-gap: Gap 30 - Rust rejects SUM over the full feed range with HTTP 400 "
-            "'Aggregate unsupported' instead of returning the combined total. "
-            "Re-enable when the driver supports this aggregate query without changing its scope."
-        )
-    )
     def test_query_value_sum_across_full_feed_range_still_sums_rust(self):
         """SUM should still add per-partition totals together."""
         # pylint: disable-next=line-too-long
@@ -236,11 +222,6 @@ class TestQueryFeedRange:
         )
 
         feed_range = container.feed_range_from_partition_key(PK_VALUES[0])
-        # Known gap 30 item 6: the driver does not keep a point feed range as a single-key scope.
-        pytest.skip(
-            "driver-gap: Rust plans the SDK-produced point feed range as a cross-partition scope and rejects "
-            "AVG with 400/20113 'aggregates in cross-partition queries' (known gap 30 items 1 and 6)."
-        )
         items = list(container.query_items(
             query=query,
             feed_range=feed_range,
@@ -300,6 +281,9 @@ class TestQueryFeedRange:
         add_all_pk_values_to_set(items, actual_pk_values)
         assert expected_pk_values.issubset(actual_pk_values)
 
+    @pytest.mark.skip(
+        reason="driver-gap: Gap 30 - multi-partition feed-range AVG succeeds instead of legacy ValueError."
+    )
     def test_query_with_avg_aggregate_across_full_feed_range_raises_rust(self, setup):
         """AVG over a feed_range spanning multiple partitions must raise."""
         # pylint: disable-next=line-too-long
@@ -426,11 +410,6 @@ class TestQueryFeedRange:
         )
         feed_range = test_config.create_feed_range_in_dict(full_range)
 
-        # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
-        pytest.skip(
-            "driver-gap: Rust rejects MAX over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1)."
-        )
         items = list(container.query_items(
             query=query,
             feed_range=feed_range,
@@ -460,11 +439,6 @@ class TestQueryFeedRange:
         )
         feed_range = test_config.create_feed_range_in_dict(full_range)
 
-        # Known gap 30 item 1: no cross-partition aggregate execution in the driver.
-        pytest.skip(
-            "driver-gap: Rust rejects COUNT over the full feed range with 400/20113 'aggregates in "
-            "cross-partition queries' (known gap 30 item 1)."
-        )
         items = list(container.query_items(
             query=query,
             feed_range=feed_range,
