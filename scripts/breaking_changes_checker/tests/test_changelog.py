@@ -1640,6 +1640,37 @@ def test_class_property_type_changed_when_annotation_matches_name():
     )
 
 
+def test_class_property_type_changed_ignores_legacy_initializer_name():
+    stable = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {"id": {"attr_type": "id"}},
+                }
+            }
+        }
+    }
+    current = {
+        "azure.contoso.models": {
+            "class_nodes": {
+                "ContosoModel": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {
+                        "id": {"attr_type": "Optional[str]", "is_annotation": True}
+                    },
+                }
+            }
+        }
+    }
+    bc = ChangelogTracker(stable, current, "azure-contoso")
+    bc.run_checks()
+
+    assert not bc.breaking_changes
+
+
 def test_quoted_client_operation_group_annotation_classification():
     operation_group_properties = {}
     client_class = ast.parse(

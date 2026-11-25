@@ -5,14 +5,15 @@ import copy
 import errno
 import hashlib
 import logging
+import ntpath
 import os
 import re
 import shutil
 import subprocess
 import tempfile
 import time
-import zipfile
 import urllib.parse
+import zipfile
 from collections import defaultdict
 from io import BytesIO
 from pathlib import Path, PureWindowsPath
@@ -21,14 +22,21 @@ from typing import List, Optional, Sequence, Union
 
 from typing_extensions import Literal
 
-from azure.core.exceptions import AzureError, HttpResponseError
-
 from azure.ai.ml.constants._common import DefaultOpenEncoding
+from azure.core.exceptions import AzureError, HttpResponseError
 
 from ._http_utils import HttpPipeline
 from .utils import get_base_directory_for_cache
 
 _logger = logging.getLogger(__name__)
+
+
+def _is_reserved_windows_name(name: str) -> bool:
+    # pathlib.PurePath.is_reserved() is deprecated in Python 3.13 and removed in 3.15.
+    is_reserved = getattr(ntpath, "isreserved", None)  # cspell:ignore isreserved
+    if is_reserved is not None:
+        return bool(is_reserved(name))
+    return PureWindowsPath(name).is_reserved()  # pylint: disable=deprecated-method
 
 
 class ArtifactCache:
@@ -181,7 +189,7 @@ class ArtifactCache:
             raise ValueError(error_message)
         # Version selectors are valid CLI arguments, but not Windows filenames.
         cache_component = value.replace("%", "%25").replace("*", "%2A")
-        if PureWindowsPath(cache_component).is_reserved():
+        if _is_reserved_windows_name(cache_component):
             raise ValueError(error_message)
         return cache_component
 
