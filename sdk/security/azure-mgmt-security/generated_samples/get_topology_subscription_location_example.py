@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.topology_resources.list_by_home_region(
+    response = client.topology.list_by_home_region(
         asc_location="centralus",
     )
     for item in response:

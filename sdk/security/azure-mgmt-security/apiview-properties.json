@@ -837,10 +837,6 @@
         "azure.mgmt.security.aio.operations.SecuritySolutionsOperations.get": "SecuritySolutionsAPI.SecuritySolutions.get",
         "azure.mgmt.security.operations.SecuritySolutionsOperations.list": "SecuritySolutionsAPI.SecuritySolutionsOperationGroup.list",
         "azure.mgmt.security.aio.operations.SecuritySolutionsOperations.list": "SecuritySolutionsAPI.SecuritySolutionsOperationGroup.list",
-        "azure.mgmt.security.operations.TopologyResourcesOperations.get": "SecuritySolutionsAPI.TopologyResources.get",
-        "azure.mgmt.security.aio.operations.TopologyResourcesOperations.get": "SecuritySolutionsAPI.TopologyResources.get",
-        "azure.mgmt.security.operations.TopologyResourcesOperations.list_by_home_region": "SecuritySolutionsAPI.TopologyResources.listByHomeRegion",
-        "azure.mgmt.security.aio.operations.TopologyResourcesOperations.list_by_home_region": "SecuritySolutionsAPI.TopologyResources.listByHomeRegion",
         "azure.mgmt.security.operations.SecurityStandardsOperations.get": "SecurityStandardsAPI.SecurityStandards.get",
         "azure.mgmt.security.aio.operations.SecurityStandardsOperations.get": "SecurityStandardsAPI.SecurityStandards.get",
         "azure.mgmt.security.operations.SecurityStandardsOperations.create_or_update": "SecurityStandardsAPI.SecurityStandards.createOrUpdate",
@@ -1063,12 +1059,16 @@
         "azure.mgmt.security.aio.operations.ServerVulnerabilityAssessmentOperations.begin_delete": "SecuritySolutionsAPI.ServerVulnerabilityAssessments.delete",
         "azure.mgmt.security.operations.ServerVulnerabilityAssessmentOperations.list_by_extended_resource": "SecuritySolutionsAPI.ServerVulnerabilityAssessments.listByExtendedResource",
         "azure.mgmt.security.aio.operations.ServerVulnerabilityAssessmentOperations.list_by_extended_resource": "SecuritySolutionsAPI.ServerVulnerabilityAssessments.listByExtendedResource",
+        "azure.mgmt.security.operations.TopologyOperations.get": "SecuritySolutionsAPI.TopologyResources.get",
+        "azure.mgmt.security.aio.operations.TopologyOperations.get": "SecuritySolutionsAPI.TopologyResources.get",
+        "azure.mgmt.security.operations.TopologyOperations.list_by_home_region": "SecuritySolutionsAPI.TopologyResources.listByHomeRegion",
+        "azure.mgmt.security.aio.operations.TopologyOperations.list_by_home_region": "SecuritySolutionsAPI.TopologyResources.listByHomeRegion",
+        "azure.mgmt.security.operations.TopologyOperations.list": "SecuritySolutionsAPI.TopologyOperationGroup.list",
+        "azure.mgmt.security.aio.operations.TopologyOperations.list": "SecuritySolutionsAPI.TopologyOperationGroup.list",
         "azure.mgmt.security.operations.SecuritySolutionsReferenceDataOperations.list": "SecuritySolutionsAPI.SecuritySolutionsReferenceDataOperationGroup.list",
         "azure.mgmt.security.aio.operations.SecuritySolutionsReferenceDataOperations.list": "SecuritySolutionsAPI.SecuritySolutionsReferenceDataOperationGroup.list",
         "azure.mgmt.security.operations.SecuritySolutionsReferenceDataOperations.list_by_home_region": "SecuritySolutionsAPI.SecuritySolutionsReferenceDataOperationGroup.listByHomeRegion",
         "azure.mgmt.security.aio.operations.SecuritySolutionsReferenceDataOperations.list_by_home_region": "SecuritySolutionsAPI.SecuritySolutionsReferenceDataOperationGroup.listByHomeRegion",
-        "azure.mgmt.security.operations.TopologyOperations.list": "SecuritySolutionsAPI.TopologyOperationGroup.list",
-        "azure.mgmt.security.aio.operations.TopologyOperations.list": "SecuritySolutionsAPI.TopologyOperationGroup.list",
         "azure.mgmt.security.operations.SensitivitySettingsOperations.get": "SensitivitySettingsAPI.GetSensitivitySettingsResponses.get",
         "azure.mgmt.security.aio.operations.SensitivitySettingsOperations.get": "SensitivitySettingsAPI.GetSensitivitySettingsResponses.get",
         "azure.mgmt.security.operations.SensitivitySettingsOperations.create_or_update": "SensitivitySettingsAPI.GetSensitivitySettingsResponses.createOrUpdate",
@@ -1096,5 +1096,5 @@
         "azure.mgmt.security.operations.SubAssessmentsOperations.list_all": "SubAssessmentsAPI.SubAssessmentsOperationGroup.listAll",
         "azure.mgmt.security.aio.operations.SubAssessmentsOperations.list_all": "SubAssessmentsAPI.SubAssessmentsOperationGroup.listAll"
     },
-    "CrossLanguageVersion": "2fbc65e81395"
+    "CrossLanguageVersion": "24c71a2516d2"
 }

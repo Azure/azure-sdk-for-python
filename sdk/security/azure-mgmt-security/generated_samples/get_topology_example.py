@@ -30,7 +30,7 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.topology_resources.get(
+    response = client.topology.get(
         resource_group_name="myservers",
         asc_location="centralus",
         topology_resource_name="vnets",

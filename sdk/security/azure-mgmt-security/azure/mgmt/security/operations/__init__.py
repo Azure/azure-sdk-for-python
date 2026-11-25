@@ -49,7 +49,6 @@ from ._operations import DiscoveredSecuritySolutionsOperations  # type: ignore
 from ._operations import ExternalSecuritySolutionsOperations  # type: ignore
 from ._operations import JitNetworkAccessPoliciesOperations  # type: ignore
 from ._operations import SecuritySolutionsOperations  # type: ignore
-from ._operations import TopologyResourcesOperations  # type: ignore
 from ._operations import SecurityStandardsOperations  # type: ignore
 from ._operations import StandardAssignmentsOperations  # type: ignore
 from ._operations import CustomRecommendationsOperations  # type: ignore
@@ -84,8 +83,8 @@ from ._operations import GitHubReposOperations  # type: ignore
 from ._operations import GitHubIssuesOperations  # type: ignore
 from ._operations import AllowedConnectionsOperations  # type: ignore
 from ._operations import ServerVulnerabilityAssessmentOperations  # type: ignore
-from ._operations import SecuritySolutionsReferenceDataOperations  # type: ignore
 from ._operations import TopologyOperations  # type: ignore
+from ._operations import SecuritySolutionsReferenceDataOperations  # type: ignore
 from ._operations import SensitivitySettingsOperations  # type: ignore
 from ._operations import SqlVulnerabilityAssessmentSettingsOperations  # type: ignore
 from ._operations import SqlVulnerabilityAssessmentScansOperations  # type: ignore
@@ -133,7 +132,6 @@ __all__ = [
     "ExternalSecuritySolutionsOperations",
     "JitNetworkAccessPoliciesOperations",
     "SecuritySolutionsOperations",
-    "TopologyResourcesOperations",
     "SecurityStandardsOperations",
     "StandardAssignmentsOperations",
     "CustomRecommendationsOperations",
@@ -168,8 +166,8 @@ __all__ = [
     "GitHubIssuesOperations",
     "AllowedConnectionsOperations",
     "ServerVulnerabilityAssessmentOperations",
-    "SecuritySolutionsReferenceDataOperations",
     "TopologyOperations",
+    "SecuritySolutionsReferenceDataOperations",
     "SensitivitySettingsOperations",
     "SqlVulnerabilityAssessmentSettingsOperations",
     "SqlVulnerabilityAssessmentScansOperations",

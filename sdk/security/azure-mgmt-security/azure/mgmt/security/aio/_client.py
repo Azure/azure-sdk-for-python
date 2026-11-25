@@ -97,7 +97,6 @@ from .operations import (
     SubAssessmentsOperations,
     TasksOperations,
     TopologyOperations,
-    TopologyResourcesOperations,
     WorkspaceSettingsOperations,
 )
 
@@ -204,8 +203,6 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
      azure.mgmt.security.aio.operations.JitNetworkAccessPoliciesOperations
     :ivar security_solutions: SecuritySolutionsOperations operations
     :vartype security_solutions: azure.mgmt.security.aio.operations.SecuritySolutionsOperations
-    :ivar topology_resources: TopologyResourcesOperations operations
-    :vartype topology_resources: azure.mgmt.security.aio.operations.TopologyResourcesOperations
     :ivar security_standards: SecurityStandardsOperations operations
     :vartype security_standards: azure.mgmt.security.aio.operations.SecurityStandardsOperations
     :ivar standard_assignments: StandardAssignmentsOperations operations
@@ -293,11 +290,11 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :ivar server_vulnerability_assessment: ServerVulnerabilityAssessmentOperations operations
     :vartype server_vulnerability_assessment:
      azure.mgmt.security.aio.operations.ServerVulnerabilityAssessmentOperations
+    :ivar topology: TopologyOperations operations
+    :vartype topology: azure.mgmt.security.aio.operations.TopologyOperations
     :ivar security_solutions_reference_data: SecuritySolutionsReferenceDataOperations operations
     :vartype security_solutions_reference_data:
      azure.mgmt.security.aio.operations.SecuritySolutionsReferenceDataOperations
-    :ivar topology: TopologyOperations operations
-    :vartype topology: azure.mgmt.security.aio.operations.TopologyOperations
     :ivar sensitivity_settings: SensitivitySettingsOperations operations
     :vartype sensitivity_settings: azure.mgmt.security.aio.operations.SensitivitySettingsOperations
     :ivar sql_vulnerability_assessment_settings: SqlVulnerabilityAssessmentSettingsOperations
@@ -458,9 +455,6 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.security_solutions = SecuritySolutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.topology_resources = TopologyResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.security_standards = SecurityStandardsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -539,10 +533,10 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.server_vulnerability_assessment = ServerVulnerabilityAssessmentOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.security_solutions_reference_data = SecuritySolutionsReferenceDataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.topology = TopologyOperations(self._client, self._config, self._serialize, self._deserialize)
         self.sensitivity_settings = SensitivitySettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

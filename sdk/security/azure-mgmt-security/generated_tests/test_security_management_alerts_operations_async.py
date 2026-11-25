@@ -107,8 +107,8 @@ class TestSecurityManagementAlertsOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_alerts_list_resource_group_level_by_region(self, resource_group):
         response = self.client.alerts.list_resource_group_level_by_region(
-            resource_group_name=resource_group.name,
             asc_location="str",
+            resource_group_name=resource_group.name,
             api_version="2022-01-01",
         )
         result = [r async for r in response]

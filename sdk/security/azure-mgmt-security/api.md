@@ -78,7 +78,6 @@ namespace azure.mgmt.security
         sub_assessments: SubAssessmentsOperations
         tasks: TasksOperations
         topology: TopologyOperations
-        topology_resources: TopologyResourcesOperations
         workspace_settings: WorkspaceSettingsOperations
 
         def __init__(
@@ -182,7 +181,6 @@ namespace azure.mgmt.security.aio
         sub_assessments: SubAssessmentsOperations
         tasks: TasksOperations
         topology: TopologyOperations
-        topology_resources: TopologyResourcesOperations
         workspace_settings: WorkspaceSettingsOperations
 
         def __init__(
@@ -377,8 +375,8 @@ namespace azure.mgmt.security.aio.operations
         @distributed_trace
         def list_resource_group_level_by_region(
                 self, 
-                resource_group_name: str, 
                 asc_location: str, 
+                resource_group_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[Alert]: ...
 
@@ -4161,18 +4159,6 @@ namespace azure.mgmt.security.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        def list(self, **kwargs: Any) -> AsyncItemPaged[TopologyResource]: ...
-
-
-    class azure.mgmt.security.aio.operations.TopologyResourcesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
         @distributed_trace_async
         async def get(
                 self, 
@@ -4181,6 +4167,9 @@ namespace azure.mgmt.security.aio.operations
                 topology_resource_name: str, 
                 **kwargs: Any
             ) -> TopologyResource: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> AsyncItemPaged[TopologyResource]: ...
 
         @distributed_trace
         def list_by_home_region(
@@ -13090,8 +13079,8 @@ namespace azure.mgmt.security.operations
         @distributed_trace
         def list_resource_group_level_by_region(
                 self, 
-                resource_group_name: str, 
                 asc_location: str, 
+                resource_group_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[Alert]: ...
 
@@ -16875,18 +16864,6 @@ namespace azure.mgmt.security.operations
             ) -> None: ...
 
         @distributed_trace
-        def list(self, **kwargs: Any) -> ItemPaged[TopologyResource]: ...
-
-
-    class azure.mgmt.security.operations.TopologyResourcesOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
         def get(
                 self, 
                 resource_group_name: str, 
@@ -16894,6 +16871,9 @@ namespace azure.mgmt.security.operations
                 topology_resource_name: str, 
                 **kwargs: Any
             ) -> TopologyResource: ...
+
+        @distributed_trace
+        def list(self, **kwargs: Any) -> ItemPaged[TopologyResource]: ...
 
         @distributed_trace
         def list_by_home_region(

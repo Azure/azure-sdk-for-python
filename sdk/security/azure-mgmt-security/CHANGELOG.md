@@ -1,11 +1,10 @@
 # Release History
 
-## 8.0.0b3 (2026-11-18)
+## 8.0.0b3 (2026-11-25)
 
 ### Features Added
 
   - Client `SecurityManagementClient` added operation group `batch_pricings`
-  - Client `SecurityManagementClient` added operation group `topology_resources`
   - Model `DefenderCspmAwsOffering` added property `agentless_serverless_posture`
   - Model `DefenderCspmAwsOffering` added property `serverless_containers`
   - Model `DefenderCspmAwsOfferingCiem` added property `cloud_trail_audit_log_ingestion`
@@ -61,9 +60,8 @@
   - Added model `PricingPropertiesReference`
   - Added model `StartMalwareScanRequest`
   - Added model `StartMalwareScanRequestProperties`
-  - Operation group `DefenderForStorageOperations` added parameter `content_type` in method `start_malware_scan`
+  - Model `DefenderForStorageOperations` added parameter `content_type` in method `start_malware_scan`
   - Added operation group `BatchPricingsOperations`
-  - Added operation group `TopologyResourcesOperations`
 
 ### Breaking Changes
 
@@ -76,8 +74,6 @@
   - Method `DefenderForStorageOperations.get` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
   - Method `DefenderForStorageOperations.get_malware_scan` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
   - Method `DefenderForStorageOperations.start_malware_scan` changed type of its parameter `setting_name` from `Union[str, SettingName]` to `str`
-  - Deleted or renamed method `TopologyOperations.get`
-  - Deleted or renamed method `TopologyOperations.list_by_home_region`
 
 ## 8.0.0b2 (2026-05-11)
 

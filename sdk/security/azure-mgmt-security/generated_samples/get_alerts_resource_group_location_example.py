@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.alerts.list_resource_group_level_by_region(
-        resource_group_name="myRg1",
         asc_location="westeurope",
+        resource_group_name="myRg1",
     )
     for item in response:
         print(item)
