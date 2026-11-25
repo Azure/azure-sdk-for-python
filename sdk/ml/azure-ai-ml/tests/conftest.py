@@ -56,6 +56,11 @@ from azure.identity import AzureCliCredential, ClientSecretCredential, DefaultAz
 
 E2E_TEST_LOGGING_ENABLED = "E2E_TEST_LOGGING_ENABLED"
 SANITIZED_SUBSCRIPTION_ID = "00000000-0000-0000-0000-000000000"
+# x-ms-range depends on the installed azure-storage-blob download defaults, not on azure-ai-ml behavior.
+MATCHER_EXCLUDED_HEADERS = (
+    "x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept,"
+    "x-ms-range"
+)
 test_folder = Path(os.path.abspath(__file__)).parent.absolute()
 
 
@@ -94,7 +99,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
         compare_bodies=True,
-        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
+        excluded_headers=MATCHER_EXCLUDED_HEADERS,
         ignored_query_parameters="api-version",
         ignore_query_ordering=True,
     )
@@ -664,7 +669,7 @@ def snapshot_hash_sanitizer(test_proxy):
     )
     set_custom_default_matcher(
         compare_bodies=True,
-        excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
+        excluded_headers=MATCHER_EXCLUDED_HEADERS,
         ignored_query_parameters="api-version,hash",
         ignore_query_ordering=True,
     )

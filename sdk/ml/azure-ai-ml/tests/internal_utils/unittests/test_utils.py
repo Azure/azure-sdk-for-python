@@ -1,6 +1,8 @@
 import os
+import stat
 import tempfile
 from collections import OrderedDict
+from pathlib import Path
 
 import pytest
 
@@ -8,11 +10,13 @@ from azure.ai.ml._internal._schema.component import NodeType as InternalNodeType
 from azure.ai.ml._utils.utils import (
     _get_mfe_base_url_from_batch_endpoint,
     dict_eq,
+    ensure_private_directory,
     get_all_data_binding_expressions,
+    get_base_directory_for_cache,
     get_valid_dot_keys_with_wildcard,
     is_data_binding_expression,
     map_single_brackets_and_warn,
-    write_to_shared_file,
+    write_to_private_file,
 )
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities import BatchEndpoint
@@ -80,21 +84,50 @@ class TestUtils:
         target_list = [ordered_dict1, ordered_dict2]
         assert convert_ordered_dict_to_dict(target_list) == [{"a": 1, "b": 2}, {"d": 3, "c": 4}]
 
-    def test_open_with_int_mode(self):
-        def get_int_mode(file_path: str) -> str:
-            int_mode = os.stat(file_path).st_mode & 0o777
-            return oct(int_mode)
+    def test_write_to_private_file(self, tmp_path) -> None:
+        target_file_path = tmp_path / "test.txt"
+        target_file_path.write_text("test")
+        write_to_private_file(target_file_path, "test2")
+        assert target_file_path.read_text() == "test2"
 
-        with tempfile.TemporaryDirectory() as temp_dir:
-            target_file_path = temp_dir + "/test.txt"
-            with open(target_file_path, "w") as f:
-                # default mode is 0o666 for windows and 0o755 for linux
-                f.write("test")
-            write_to_shared_file(target_file_path, "test2")
-            # check that the file mode is preserved
-            assert get_int_mode(target_file_path) == "0o666"
-            with open(target_file_path, "r") as f:
-                assert f.read() == "test2"
+    @pytest.mark.skipif(os.name == "nt", reason="POSIX file permissions and symlinks are not used on Windows")
+    def test_write_to_private_file_is_owner_only_and_does_not_follow_symlinks(self, tmp_path) -> None:
+        target_file_path = tmp_path / "test.txt"
+        write_to_private_file(target_file_path, "test")
+        assert stat.S_IMODE(target_file_path.stat().st_mode) == 0o600
+
+        link_path = tmp_path / "link.txt"
+        link_path.symlink_to(target_file_path)
+        with pytest.raises(OSError):
+            write_to_private_file(link_path, "test2")
+        assert target_file_path.read_text() == "test"
+
+    def test_get_base_directory_for_cache_is_per_user(self, monkeypatch) -> None:
+        monkeypatch.setattr(os, "getuid", lambda: 1234, raising=False)
+        assert get_base_directory_for_cache() == Path(tempfile.gettempdir()) / "azure-ai-ml-1234"
+
+    def test_ensure_private_directory_rejects_directory_owned_by_another_user(self, tmp_path, monkeypatch) -> None:
+        directory = tmp_path / "cache"
+        directory.mkdir()
+        other_uid = os.lstat(directory).st_uid + 1
+        monkeypatch.setattr(os, "getuid", lambda: other_uid, raising=False)
+        assert not ensure_private_directory(directory)
+
+    @pytest.mark.skipif(os.name == "nt", reason="POSIX file permissions and symlinks are not used on Windows")
+    def test_ensure_private_directory_restricts_access_and_rejects_symlinks(self, tmp_path) -> None:
+        new_directory = tmp_path / "new"
+        assert ensure_private_directory(new_directory)
+        assert stat.S_IMODE(new_directory.stat().st_mode) == 0o700
+
+        shared_directory = tmp_path / "shared"
+        shared_directory.mkdir()
+        os.chmod(shared_directory, 0o777)
+        assert ensure_private_directory(shared_directory)
+        assert stat.S_IMODE(shared_directory.stat().st_mode) == 0o700
+
+        link = tmp_path / "link"
+        link.symlink_to(new_directory, target_is_directory=True)
+        assert not ensure_private_directory(link)
 
     def test_get_valid_dot_keys_with_wildcard(self):
         root = {

@@ -8,6 +8,7 @@ import pytest
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._utils._cache_utils import CachedNodeResolver
+from azure.ai.ml._utils.utils import get_base_directory_for_cache
 from azure.ai.ml.entities import Component, PipelineJob
 
 
@@ -67,10 +68,28 @@ class TestCacheUtils:
             # no change to the file and no exception raised
             assert cur_time == os.stat(target_cache_path).st_mtime
 
-    def test_on_disk_cache_share_among_users(self, mock_machinelearning_client: MLClient) -> None:
+    @pytest.mark.skipif(os.name == "nt", reason="POSIX file permissions are not used on Windows")
+    def test_on_disk_cache_is_private(self, mock_machinelearning_client: MLClient) -> None:
         resolver = self.create_resolver(mock_machinelearning_client)
         target_cache_path = self._get_cache_path(self.get_target_node().component, resolver)
 
         self.register_target_node_and_resolve(resolver)
         assert target_cache_path.exists()
-        assert stat.filemode(target_cache_path.stat().st_mode) == "-rw-rw-rw-"
+        assert stat.S_IMODE(target_cache_path.stat().st_mode) == 0o600
+        cache_root = get_base_directory_for_cache()
+        assert cache_root.stat().st_uid == os.getuid()
+        assert stat.S_IMODE(cache_root.stat().st_mode) == 0o700
+
+    def test_on_disk_cache_ignored_when_cache_root_is_not_private(
+        self, mock_machinelearning_client: MLClient, mocker
+    ) -> None:
+        resolver = self.create_resolver(mock_machinelearning_client)
+        target_component = self.get_target_node().component
+        target_cache_path = self._get_cache_path(target_component, resolver)
+        untrusted_arm_id = "azureml:/subscriptions/other/components/untrusted/versions/1"
+        target_cache_path.parent.mkdir(parents=True, exist_ok=True)
+        target_cache_path.write_text(untrusted_arm_id, encoding="utf-8")
+        mocker.patch("azure.ai.ml._utils._cache_utils.ensure_private_directory", return_value=False)
+
+        assert self.register_target_node_and_resolve(resolver) == target_component._get_anonymous_hash()
+        assert target_cache_path.read_text(encoding="utf-8") == untrusted_arm_id

@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 - Fixed `MLClient.models.get()` for registry models returning `system_metadata` as `None` even when the model has system metadata.
+- Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
+- Changed component and artifact on-disk caches to use a directory that only the current user can access.
 
 ## 1.35.1 (2026-09-30)
 

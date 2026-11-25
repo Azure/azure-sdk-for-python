@@ -14,11 +14,13 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import (
+    ensure_private_directory,
+    get_base_directory_for_cache,
     get_versioned_base_directory_for_cache,
     is_concurrent_component_registration_enabled,
     is_on_disk_cache_enabled,
     is_private_preview_enabled,
-    write_to_shared_file,
+    write_to_private_file,
 )
 from azure.ai.ml.constants._common import (
     AZUREML_COMPONENT_REGISTRATION_MAX_WORKERS,
@@ -111,6 +113,7 @@ class CachedNodeResolver(object):
         self._client_hash = hash_obj.hexdigest()
         # the same client share 1 lock
         self._lock = _node_resolution_lock[self._client_hash]
+        self._on_disk_cache_is_private: Optional[bool] = None
 
     @staticmethod
     def _get_component_registration_max_workers() -> int:
@@ -239,6 +242,23 @@ class CachedNodeResolver(object):
         """
         return self._on_disk_cache_dir.joinpath(on_disk_hash)
 
+    def _is_on_disk_cache_private(self) -> bool:
+        """Check that the on-disk cache is stored in a directory that other users cannot access.
+
+        :return: True if the on-disk cache can be used, False otherwise
+        :rtype: bool
+        """
+        if self._on_disk_cache_is_private is None:
+            cache_root = get_base_directory_for_cache()
+            self._on_disk_cache_is_private = ensure_private_directory(cache_root)
+            if not self._on_disk_cache_is_private:
+                logger.warning(
+                    "On-disk cache for components is disabled because %s is not a directory that only the "
+                    "current user can access.",
+                    cache_root.as_posix(),
+                )
+        return self._on_disk_cache_is_private
+
     def _load_from_on_disk_cache(self, on_disk_hash: str) -> Optional[str]:
         """Load component arm id from on disk cache.
 
@@ -247,6 +267,8 @@ class CachedNodeResolver(object):
         :return: The cached component arm id if reading was successful, None otherwise
         :rtype: Optional[str]
         """
+        if not self._is_on_disk_cache_private():
+            return None
         # on-disk cache will expire in a new SDK version
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
         if on_disk_cache_path.is_file() and time.time() - on_disk_cache_path.stat().st_ctime < EXPIRE_TIME_IN_SECONDS:
@@ -272,14 +294,17 @@ class CachedNodeResolver(object):
         # this shouldn't happen in real case, but in case of current mock tests and potential future changes
         if not isinstance(arm_id, str):
             return
+        if not self._is_on_disk_cache_private():
+            return
         on_disk_cache_path = self._get_on_disk_cache_path(on_disk_hash)
-        on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
         try:
-            write_to_shared_file(on_disk_cache_path, arm_id)
-        except PermissionError:
+            on_disk_cache_path.parent.mkdir(parents=True, exist_ok=True)
+            write_to_private_file(on_disk_cache_path, arm_id)
+        except OSError as e:
             logger.warning(
-                "Failed to save on-disk cache for component due to permission error. "
+                "Failed to save on-disk cache for component due to %s. "
                 "Please check if the file %s is in use or current user doesn't have the permission.",
+                type(e).__name__,
                 on_disk_cache_path.as_posix(),
             )
 

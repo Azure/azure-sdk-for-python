@@ -5,14 +5,15 @@ import copy
 import errno
 import hashlib
 import logging
+import ntpath
 import os
 import re
 import shutil
 import subprocess
 import tempfile
 import time
-import zipfile
 import urllib.parse
+import zipfile
 from collections import defaultdict
 from io import BytesIO
 from pathlib import Path, PureWindowsPath
@@ -21,14 +22,21 @@ from typing import List, Optional, Sequence, Union
 
 from typing_extensions import Literal
 
+from azure.ai.ml.constants._common import DefaultOpenEncoding
 from azure.core.exceptions import AzureError, HttpResponseError
 
-from azure.ai.ml.constants._common import DefaultOpenEncoding
-
 from ._http_utils import HttpPipeline
-from .utils import get_base_directory_for_cache
+from .utils import ensure_private_directory, get_base_directory_for_cache
 
 _logger = logging.getLogger(__name__)
+
+
+def _is_reserved_windows_name(name: str) -> bool:
+    # pathlib.PurePath.is_reserved() is deprecated in Python 3.13 and removed in 3.15.
+    is_reserved = getattr(ntpath, "isreserved", None)  # cspell:ignore isreserved
+    if is_reserved is not None:
+        return bool(is_reserved(name))
+    return PureWindowsPath(name).is_reserved()  # pylint: disable=deprecated-method
 
 
 class ArtifactCache:
@@ -80,6 +88,12 @@ class ArtifactCache:
 
     def __init__(self, cache_directory=None):
         self._cache_directory = Path(cache_directory or self.DEFAULT_DISK_CACHE_DIRECTORY)
+        cache_root = get_base_directory_for_cache()
+        if cache_root in self._cache_directory.parents and not ensure_private_directory(cache_root):
+            raise RuntimeError(
+                f"Artifact cache directory {cache_root.as_posix()} must be a directory that only the current user "
+                "can access."
+            )
         self._cache_directory.mkdir(exist_ok=True, parents=True)
         self._artifacts_tool_path = None
         self._download_locks = defaultdict(Lock)
@@ -181,7 +195,7 @@ class ArtifactCache:
             raise ValueError(error_message)
         # Version selectors are valid CLI arguments, but not Windows filenames.
         cache_component = value.replace("%", "%25").replace("*", "%2A")
-        if PureWindowsPath(cache_component).is_reserved():
+        if _is_reserved_windows_name(cache_component):
             raise ValueError(error_message)
         return cache_component
 

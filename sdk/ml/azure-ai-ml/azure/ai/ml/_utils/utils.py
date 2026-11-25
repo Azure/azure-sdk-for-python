@@ -11,6 +11,7 @@ import logging
 import os
 import random
 import re
+import stat
 import string
 import sys
 import tempfile
@@ -1273,24 +1274,49 @@ def get_all_enum_values_iter(enum_type: type) -> Iterable[Any]:
             yield getattr(enum_type, key)
 
 
-def write_to_shared_file(file_path: Union[str, PathLike], content: str):
-    """Open file with specific mode and return the file object.
+def write_to_private_file(file_path: Union[str, PathLike], content: str) -> None:
+    """Write content to a file that only the current user can read or write.
 
     :param file_path: Path to the file.
     :type file_path: Union[str, os.PathLike]
     :param content: Content to write to the file.
     :type content: str
     """
-    with open(file_path, "w", encoding=DefaultOpenEncoding.WRITE) as f:
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)  # cspell:ignore WRONLY CREAT
+    with os.fdopen(os.open(file_path, flags, 0o600), "w", encoding=DefaultOpenEncoding.WRITE) as f:
         f.write(content)
 
-    # share_mode means read/write for owner, group and others
-    share_mode, mode_mask = 0o666, 0o777
-    if os.stat(file_path).st_mode & mode_mask != share_mode:
-        try:
-            os.chmod(file_path, share_mode)
-        except PermissionError:
-            pass
+
+def _get_current_uid() -> Optional[int]:
+    get_uid = getattr(os, "getuid", None)
+    return None if get_uid is None else get_uid()
+
+
+def ensure_private_directory(path: Union[str, PathLike]) -> bool:
+    """Create a directory if needed and check that other users cannot access it.
+
+    :param path: Path to the directory.
+    :type path: Union[str, os.PathLike]
+    :return: True if the path is a directory owned by the current user that other users cannot access,
+        False otherwise.
+    :rtype: bool
+    """
+    try:
+        os.makedirs(path, mode=0o700, exist_ok=True)
+        status = os.lstat(path)
+        if not stat.S_ISDIR(status.st_mode):
+            return False
+        uid = _get_current_uid()
+        if uid is None:
+            # The temporary directory on Windows is private to the current user.
+            return True
+        if status.st_uid != uid:
+            return False
+        if stat.S_IMODE(status.st_mode) & 0o077:
+            os.chmod(path, 0o700)
+        return True
+    except OSError:
+        return False
 
 
 def _get_valid_dot_keys_with_wildcard_impl(
@@ -1369,10 +1395,14 @@ def get_valid_dot_keys_with_wildcard(
 def get_base_directory_for_cache() -> Path:
     """Get the base directory for cache files.
 
+    On POSIX systems, the directory is specific to the current user because the temporary directory can be shared.
+
     :return: The base directory for cache files.
     :rtype: Path
     """
-    return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
+    uid = _get_current_uid()
+    directory_name = "azure-ai-ml" if uid is None else f"azure-ai-ml-{uid}"
+    return Path(tempfile.gettempdir()).joinpath(directory_name)
 
 
 def get_versioned_base_directory_for_cache() -> Path:
