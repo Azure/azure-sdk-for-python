@@ -9,6 +9,7 @@
 ### Bugs Fixed
 - Fixed `MLClient.models.get()` for registry models returning `system_metadata` as `None` even when the model has system metadata.
 - Fixed `.amlignore` and `.gitignore` rules not applying to files in symlinked folders when uploading local folders.
+- Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
 
 ## 1.35.1 (2026-09-30)
 
