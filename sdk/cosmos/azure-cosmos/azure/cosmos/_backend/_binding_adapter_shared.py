@@ -489,7 +489,7 @@ class BindingAdapterShared:
             if closed:
                 release_driver_handle_quietly(handle, binding)
                 raise RuntimeError(f"{type(self).__name__}: the client was closed during initialization.")
-        except BaseException as error:
+        except BaseException as error:  # pylint: disable=broad-exception-caught
             with self._driver_handle_lock:
                 self._init_future = None
             future.set_exception(error)

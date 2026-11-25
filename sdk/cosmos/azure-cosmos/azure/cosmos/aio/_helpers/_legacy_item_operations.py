@@ -29,7 +29,7 @@ class AsyncLegacyItemHelper(LegacyItemHelper):
     read_item itself is defined on LegacyItemHelper.
     """
 
-    async def _run(
+    async def _run(  # pylint: disable=invalid-overridden-method
         self, op: str, arguments: Dict[str, Any], *, deadline: Optional[float] = None
     ) -> Any:
         """Prepare item inputs, await required metadata, and await the legacy call.
@@ -38,8 +38,9 @@ class AsyncLegacyItemHelper(LegacyItemHelper):
         The remaining operations keep the legacy metadata lookup behavior,
         including its warning when container properties cannot be read.
         """
+        compact_utf8 = getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True
         args, options = prepare_legacy_item_arguments(
-            op, arguments, compact_utf8=getattr(self.client_connection, "_enable_compact_utf8_item_writes", False) is True,
+            op, arguments, compact_utf8=compact_utf8,
             deadline=deadline,
         )
         link = args["container_link"]

@@ -30,6 +30,7 @@ words:
   - iscontinuationexpected
   - isquery
   - llsn
+  - msrustup
   - mycoll
   - mycontainer
   - mydb

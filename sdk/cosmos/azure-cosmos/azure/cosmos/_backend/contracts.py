@@ -255,7 +255,8 @@ class PreparedClientConfig(_ValidatedSettings):
         if any(not isinstance(rule, PreparedFaultInjectionRule) for rule in self.fault_injection_rules):
             self._invalid_type("fault_injection_rules")
         if not isinstance(self.headers, Mapping) or any(
-            type(key) is not str or type(value) is not str for key, value in self.headers.items()
+            type(key) is not str or type(value) is not str  # pylint: disable=unidiomatic-typecheck
+            for key, value in self.headers.items()
         ):
             self._invalid_type("headers")
         self._check_type("aad_scope_override", self.aad_scope_override, str)
