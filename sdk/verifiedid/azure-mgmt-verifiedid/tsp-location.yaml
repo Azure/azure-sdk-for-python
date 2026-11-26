@@ -1,0 +1,4 @@
+directory: specification/verifiedid/resource-manager/Microsoft.VerifiedId/VerifiedId
+commit: 663934c93853cb58f6477c2e8e0f48d5eca2d770
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
