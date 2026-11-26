@@ -36,17 +36,12 @@ def main():
         community_name="TestMyCommunity",
         check_address_space_availability_request={
             "communityResourceId": "/subscriptions/c64f6eca-bdc5-4bc2-88d6-f8f1dc23f86c/resourceGroups/TestMyRg/providers/Microsoft.Mission/communities/TestMyCommunity",
-            "enclaveVirtualNetwork": {
-                "allowSubnetCommunication": True,
-                "customCidrRange": "10.0.0.0/24",
-                "networkSize": "small",
-                "subnetConfigurations": [{"networkPrefixSize": 26, "subnetName": "test"}],
-            },
+            "prefixLength": 23,
         },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/Community_PostCheckAddressSpaceAvailability.json
+# x-ms-original-file: 2026-10-01-preview/Community_PostCheckAddressSpaceAvailability.json
 if __name__ == "__main__":
     main()

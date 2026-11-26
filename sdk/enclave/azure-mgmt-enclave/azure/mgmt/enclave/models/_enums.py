@@ -20,12 +20,67 @@ class ActionPerformed(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Extensible enum. Indicates the action type. "Internal" refers to actions that are for internal
+    """Extensible enum. Indicates the action type. \"Internal\" refers to actions that are for internal
     only APIs.
     """
 
     INTERNAL = "Internal"
     """Actions are for internal-only APIs."""
+
+
+class AddressSpaceOwnership(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates who manages the address space lifecycle."""
+
+    CUSTOMER_MANAGED = "CustomerManaged"
+    """Customer-provided address space. Customer specifies prefixLength, RP allocates CIDR."""
+    PRODUCT_MANAGED = "ProductManaged"
+    """Product-managed address space. RP-injected for internal platform use (e.g., hub connectivity)."""
+
+
+class ApprovalActionRequestApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The approval status for an approval action request."""
+
+    APPROVED = "Approved"
+    """The request is approved."""
+    REJECTED = "Rejected"
+    """The request is rejected."""
+
+
+class ApprovalCallbackRequestApprovalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The approval status for an approval callback request."""
+
+    APPROVED = "Approved"
+    """The request is approved."""
+    REJECTED = "Rejected"
+    """The request is rejected."""
+
+
+class ApprovalCallbackRequestResourceRequestAction(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The resource action for an approval callback."""
+
+    CREATE = "Create"
+    """Create the resource."""
+    DELETE = "Delete"
+    """Delete the resource."""
+    UPDATE = "Update"
+    """Update the resource."""
+    RESET = "Reset"
+    """Reset the resource."""
+
+
+class ApprovalDeletionCallbackRequestResourceRequestAction(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The resource action for an approval deletion callback."""
+
+    CREATE = "Create"
+    """Create the resource."""
+    DELETE = "Delete"
+    """Delete the resource."""
+    UPDATE = "Update"
+    """Update the resource."""
 
 
 class ApprovalPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -71,6 +126,15 @@ class CommunityEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """CommunityEndpointProtocol Type HTTPS."""
     HTTP = "HTTP"
     """CommunityEndpointProtocol Type HTTP."""
+
+
+class CommunityPropertiesPolicyOverride(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy override setting for a community."""
+
+    ENCLAVE = "Enclave"
+    """Apply enclave-specific policies."""
+    NONE = "None"
+    """Do not apply a policy override."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -119,6 +183,8 @@ class DiagnosticDestination(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DiagnosticDestination Type EnclaveOnly."""
     BOTH = "Both"
     """DiagnosticDestination Type Both."""
+    UNSPECIFIED = "Unspecified"
+    """DiagnosticDestination Type Unspecified."""
 
 
 class EnclaveConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -138,6 +204,10 @@ class EnclaveConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """EnclaveConnectionState Type Connected."""
     DISCONNECTED = "Disconnected"
     """EnclaveConnectionState Type Disconnected."""
+    RECONCILING = "Reconciling"
+    """A topology reconciliation is applying NSG rule changes for this connection."""
+    DEGRADED = "Degraded"
+    """Sticky health state after at least 3 consecutive non-full-success reconciliations."""
 
 
 class EnclaveEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -168,6 +238,67 @@ class FirewallSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """FirewallSKU Premium."""
 
 
+class GovernedServiceItemEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enforcement state for a governed service."""
+
+    ENABLED = "Enabled"
+    """Enforcement is enabled."""
+    DISABLED = "Disabled"
+    """Enforcement is disabled."""
+
+
+class GovernedServiceItemOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The governance option for a governed service."""
+
+    ALLOW = "Allow"
+    """Allow the governed service."""
+    DENY = "Deny"
+    """Deny the governed service."""
+    EXCEPTION_ONLY = "ExceptionOnly"
+    """Allow only configured exceptions for the governed service."""
+    NOT_APPLICABLE = "NotApplicable"
+    """The governance option does not apply to the governed service."""
+
+
+class GovernedServiceItemPolicyAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The policy action for a governed service."""
+
+    AUDIT_ONLY = "AuditOnly"
+    """Audit policy violations without enforcing the policy."""
+    ENFORCE = "Enforce"
+    """Enforce the policy."""
+    NONE = "None"
+    """Do not apply a policy action."""
+
+
+class MaintenanceModeConfigurationModelJustification(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """The justification for entering or exiting virtual enclave maintenance mode."""
+
+    NETWORKING = "Networking"
+    """Maintenance mode is required for networking changes."""
+    GOVERNANCE = "Governance"
+    """Maintenance mode is required for governance changes."""
+    OFF = "Off"
+    """No maintenance mode justification applies."""
+
+
+class MaintenanceModeConfigurationModelMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The maintenance mode for a virtual enclave."""
+
+    ON = "On"
+    """Maintenance mode is on."""
+    CAN_NOT_DELETE = "CanNotDelete"
+    """Resources cannot be deleted while maintenance mode is active."""
+    OFF = "Off"
+    """Maintenance mode is off."""
+    GENERAL = "General"
+    """General maintenance mode is active."""
+    ADVANCED = "Advanced"
+    """Advanced maintenance mode is active."""
+
+
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of managed service identity (where both SystemAssigned and UserAssigned types are
     allowed).
@@ -196,7 +327,7 @@ class MonitoringDestinationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
+    logs UX. Default value is \"user,system\".
     """
 
     USER = "user"
@@ -205,6 +336,17 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a system."""
     USER_SYSTEM = "user,system"
     """Indicates the operation is initiated by a user or system."""
+
+
+class PrincipalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of a virtual enclave principal."""
+
+    USER = "User"
+    """A user principal."""
+    GROUP = "Group"
+    """A group principal."""
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    """A service principal."""
 
 
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -246,6 +388,15 @@ class ResourceVisibilityMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ResourceVisibilityMode Type Enabled."""
     DISABLED = "Disabled"
     """ResourceVisibilityMode Type Disabled."""
+
+
+class RuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction of traffic for a Community Endpoint rule."""
+
+    OUTBOUND = "Outbound"
+    """Outbound traffic from the client enclave to the server destination (default)."""
+    INBOUND = "Inbound"
+    """Inbound traffic from the server to the client enclave."""
 
 
 class SecurityProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -290,6 +441,46 @@ class ServiceIdentifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Service identifier for Service Bus."""
     STORAGE = "Storage"
     """Service identifier for Storage."""
+    AZURE_LOCAL = "AzureLocal"
+    """Service identifier for Azure Local."""
+
+
+class SubnetJoinPolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired enforcement mode for the subnet join deny policy."""
+
+    DENY = "Deny"
+    """Deny all subnet joins from resource groups not in the approved workload set. Secure-by-default
+    on new API versions."""
+    AUDIT = "Audit"
+    """Log non-compliant joins without blocking. Use during rollout review or when deny cannot yet be
+    enabled."""
+
+
+class SubnetPurpose(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The purpose of the subnet, used to determine automatic configuration behavior."""
+
+    GENERAL = "General"
+    """General purpose subnet with no specialized configuration (default)."""
+    AKS = "AKS"
+    """Subnet configured for Azure Kubernetes Service (AKS) workloads."""
+    AKS_API_SERVER = "AKSApiServer"
+    """Subnet configured for the Azure Kubernetes Service (AKS) API server."""
+
+
+class SyncStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The synchronization status of a Community Endpoint."""
+
+    NOT_CONFIGURED = "NotConfigured"
+    """Synchronization is not configured for this endpoint."""
+    SUCCEEDED = "Succeeded"
+    """Synchronization completed successfully on all destinations."""
+    IN_PROGRESS = "InProgress"
+    """Synchronization is currently in progress."""
+    FAILED = "Failed"
+    """Synchronization failed on all destinations."""
+    PARTIALLY_SUCCEEDED = "PartiallySucceeded"
+    """Synchronization succeeded on some destinations but failed on others. Check
+    syncDestinationStatuses for per-destination details."""
 
 
 class TransitHubState(str, Enum, metaclass=CaseInsensitiveEnumMeta):

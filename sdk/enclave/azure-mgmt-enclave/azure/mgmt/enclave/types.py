@@ -7,15 +7,21 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Literal, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union
 from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
         ActionPerformed,
+        AddressSpaceOwnership,
+        ApprovalActionRequestApprovalStatus,
+        ApprovalCallbackRequestApprovalStatus,
+        ApprovalCallbackRequestResourceRequestAction,
+        ApprovalDeletionCallbackRequestResourceRequestAction,
         ApprovalPolicy,
         ApprovalStatus,
         CommunityEndpointProtocol,
+        CommunityPropertiesPolicyOverride,
         CreatedByType,
         Designation,
         DestinationType,
@@ -23,56 +29,82 @@ if TYPE_CHECKING:
         EnclaveConnectionState,
         EnclaveEndpointProtocol,
         FirewallSKU,
+        GovernedServiceItemEnforcement,
+        GovernedServiceItemOption,
+        GovernedServiceItemPolicyAction,
+        MaintenanceModeConfigurationModelJustification,
+        MaintenanceModeConfigurationModelMode,
         ManagedServiceIdentityType,
         MonitoringDestinationType,
+        PrincipalType,
         ProvisioningState,
         RbacInheritanceMode,
         ResourceVisibilityMode,
+        RuleDirection,
         SecurityProvider,
         ServiceIdentifier,
+        SubnetJoinPolicyMode,
+        SubnetPurpose,
+        SyncStatus,
         TransitHubState,
         TransitOptionType,
         UpdateMode,
     )
 
 
+class AddressSpaceEntry(TypedDict, total=False):
+    """A customer-requested address space for the enclave. The RP returns this entry exactly as
+    provided.
+
+    :ivar prefixLength: CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address
+     space.
+    :vartype prefixLength: int
+    :ivar addressSpace: CIDR notation address space (e.g., '10.0.0.0/23'). Optional — if omitted,
+     RP allocates based on prefixLength. If provided, used as-is (custom address space).
+    :vartype addressSpace: str
+    """
+
+    prefixLength: int
+    """CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address space."""
+    addressSpace: str
+    """CIDR notation address space (e.g., '10.0.0.0/23'). Optional — if omitted, RP allocates based on
+     prefixLength. If provided, used as-is (custom address space)."""
+
+
 class ApprovalActionRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
-    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
-     the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approvalStatus: Union[Literal["Approved"], Literal["Rejected"], str]
+    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype approvalStatus: Union[str, "ApprovalActionRequestApprovalStatus"]
     """
 
-    approvalStatus: Required[Union[Literal["Approved"], Literal["Rejected"], str]]
-    """Approval status indicating 'Approved' or 'Rejected'. Required. Is one of the following types:
-     Literal[\"Approved\"], Literal[\"Rejected\"], str"""
+    approvalStatus: Required[Union[str, "ApprovalActionRequestApprovalStatus"]]
+    """Approval status indicating 'Approved' or 'Rejected'. Required. Known values are: \"Approved\"
+     and \"Rejected\"."""
 
 
 class ApprovalCallbackRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
     :ivar resourceRequestAction: Resource request action indicating action which needed to be
-     performed upon calling approval-callback post action. Required. Is one of the following types:
-     Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str
-    :vartype resourceRequestAction: Union[Literal["Create"], Literal["Delete"], Literal["Update"],
-     Literal["Reset"], str]
-    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Is one of
-     the following types: Literal["Approved"], Literal["Rejected"], str
-    :vartype approvalStatus: Union[Literal["Approved"], Literal["Rejected"], str]
+     performed upon calling approval-callback post action. Required. Known values are: "Create",
+     "Delete", "Update", and "Reset".
+    :vartype resourceRequestAction: Union[str, "ApprovalCallbackRequestResourceRequestAction"]
+    :ivar approvalStatus: Approval status indicating 'Approved' or 'Rejected'. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype approvalStatus: Union[str, "ApprovalCallbackRequestApprovalStatus"]
     :ivar approvalCallbackPayload: Payload requested by client upon approval action.
     :vartype approvalCallbackPayload: str
     """
 
-    resourceRequestAction: Required[
-        Union[Literal["Create"], Literal["Delete"], Literal["Update"], Literal["Reset"], str]
-    ]
+    resourceRequestAction: Required[Union[str, "ApprovalCallbackRequestResourceRequestAction"]]
     """Resource request action indicating action which needed to be performed upon calling
-     approval-callback post action. Required. Is one of the following types: Literal[\"Create\"],
-     Literal[\"Delete\"], Literal[\"Update\"], Literal[\"Reset\"], str"""
-    approvalStatus: Required[Union[Literal["Approved"], Literal["Rejected"], str]]
-    """Approval status indicating 'Approved' or 'Rejected'. Required. Is one of the following types:
-     Literal[\"Approved\"], Literal[\"Rejected\"], str"""
+     approval-callback post action. Required. Known values are: \"Create\", \"Delete\", \"Update\",
+     and \"Reset\"."""
+    approvalStatus: Required[Union[str, "ApprovalCallbackRequestApprovalStatus"]]
+    """Approval status indicating 'Approved' or 'Rejected'. Required. Known values are: \"Approved\"
+     and \"Rejected\"."""
     approvalCallbackPayload: str
     """Payload requested by client upon approval action."""
 
@@ -81,16 +113,16 @@ class ApprovalDeletionCallbackRequest(TypedDict, total=False):
     """Request body for calling post-action.
 
     :ivar resourceRequestAction: Resource request action indicating action which needed to be
-     performed upon calling approval-deletion-callback post action. Required. Is one of the
-     following types: Literal["Create"], Literal["Delete"], Literal["Update"], str
-    :vartype resourceRequestAction: Union[Literal["Create"], Literal["Delete"], Literal["Update"],
-     str]
+     performed upon calling approval-deletion-callback post action. Required. Known values are:
+     "Create", "Delete", and "Update".
+    :vartype resourceRequestAction: Union[str,
+     "ApprovalDeletionCallbackRequestResourceRequestAction"]
     """
 
-    resourceRequestAction: Required[Union[Literal["Create"], Literal["Delete"], Literal["Update"], str]]
+    resourceRequestAction: Required[Union[str, "ApprovalDeletionCallbackRequestResourceRequestAction"]]
     """Resource request action indicating action which needed to be performed upon calling
-     approval-deletion-callback post action. Required. Is one of the following types:
-     Literal[\"Create\"], Literal[\"Delete\"], Literal[\"Update\"], str"""
+     approval-deletion-callback post action. Required. Known values are: \"Create\", \"Delete\", and
+     \"Update\"."""
 
 
 class ApprovalPatchModel(TypedDict, total=False):
@@ -393,14 +425,21 @@ class CheckAddressSpaceAvailabilityRequest(TypedDict, total=False):
 
     :ivar communityResourceId: Resource Id of the Community. Required.
     :vartype communityResourceId: str
-    :ivar enclaveVirtualNetwork: Information about the enclave virtual network. Required.
-    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
+    :ivar prefixLength: CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address
+     space to check.
+    :vartype prefixLength: int
+    :ivar addressSpace: Specific CIDR address space to check availability for. If omitted, RP
+     checks for any available space of the given prefixLength.
+    :vartype addressSpace: str
     """
 
     communityResourceId: Required[str]
     """Resource Id of the Community. Required."""
-    enclaveVirtualNetwork: Required["EnclaveVirtualNetworkModel"]
-    """Information about the enclave virtual network. Required."""
+    prefixLength: int
+    """CIDR prefix length (e.g., 22, 23, 24). Determines the size of the address space to check."""
+    addressSpace: str
+    """Specific CIDR address space to check availability for. If omitted, RP checks for any available
+     space of the given prefixLength."""
 
 
 class CommunityEndpointDestinationRule(TypedDict, total=False):
@@ -413,6 +452,9 @@ class CommunityEndpointDestinationRule(TypedDict, total=False):
     :vartype protocols: list[Union[str, "CommunityEndpointProtocol"]]
     :ivar transitHubResourceId: Transit Hub Resource Id.
     :vartype transitHubResourceId: str
+    :ivar direction: The direction of traffic for this rule. Defaults to Outbound if not specified.
+     Known values are: "Outbound" and "Inbound".
+    :vartype direction: Union[str, "RuleDirection"]
     :ivar endpointRuleName: Endpoint Rule Name.
     :vartype endpointRuleName: str
     :ivar destination: Destination address. Can include multiple CIDR/IP Addresses or fqdn tags or
@@ -430,6 +472,9 @@ class CommunityEndpointDestinationRule(TypedDict, total=False):
     """Protocols. Options specified by Endpoint Protocol Enum."""
     transitHubResourceId: str
     """Transit Hub Resource Id."""
+    direction: Union[str, "RuleDirection"]
+    """The direction of traffic for this rule. Defaults to Outbound if not specified. Known values
+     are: \"Outbound\" and \"Inbound\"."""
     endpointRuleName: str
     """Endpoint Rule Name."""
     destination: str
@@ -462,12 +507,20 @@ class CommunityEndpointPatchProperties(TypedDict, total=False):
     :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
      "Manual".
     :vartype updateMode: Union[str, "UpdateMode"]
+    :ivar syncTo: Array of ARM resource IDs of destination communities to synchronize this
+     endpoint's rules to. The RP creates and manages the destination CEPs automatically within each
+     community. Maximum 100 destinations per source endpoint.
+    :vartype syncTo: list[str]
     """
 
     ruleCollection: Required[list["CommunityEndpointDestinationRule"]]
     """Community Endpoint Rule Collection. Required."""
     updateMode: Union[str, "UpdateMode"]
     """Whether update mode is automatic or manual. Known values are: \"Automatic\" and \"Manual\"."""
+    syncTo: list[str]
+    """Array of ARM resource IDs of destination communities to synchronize this endpoint's rules to.
+     The RP creates and manages the destination CEPs automatically within each community. Maximum
+     100 destinations per source endpoint."""
 
 
 class CommunityEndpointProperties(TypedDict, total=False):
@@ -483,6 +536,24 @@ class CommunityEndpointProperties(TypedDict, total=False):
     :ivar updateMode: Whether update mode is automatic or manual. Known values are: "Automatic" and
      "Manual".
     :vartype updateMode: Union[str, "UpdateMode"]
+    :ivar syncTo: Array of ARM resource IDs of destination communities to synchronize this
+     endpoint's rules to. The RP creates and manages the destination CEPs automatically within each
+     community. Maximum 100 destinations per source endpoint.
+    :vartype syncTo: list[str]
+    :ivar syncFrom: ARM resource ID of the source Community Endpoint that manages this endpoint's
+     rules via synchronization. This property is read-only and set by the RP on destination CEPs
+     created by the sync process.
+    :vartype syncFrom: str
+    :ivar syncStatus: The synchronization status of this Community Endpoint. Tracks sync state
+     independently of provisioningState. Known values are: "NotConfigured", "Succeeded",
+     "InProgress", "Failed", and "PartiallySucceeded".
+    :vartype syncStatus: Union[str, "SyncStatus"]
+    :ivar syncDestinationStatuses: Per-destination synchronization status. Only populated on source
+     CEPs that have syncTo configured.
+    :vartype syncDestinationStatuses: list["SyncDestinationStatus"]
+    :ivar syncPerformedBy: Information about the principal who last configured or modified syncTo.
+     Set by the RP and surfaced for audit transparency.
+    :vartype syncPerformedBy: "SyncPerformedBy"
     """
 
     ruleCollection: Required[list["CommunityEndpointDestinationRule"]]
@@ -494,6 +565,24 @@ class CommunityEndpointProperties(TypedDict, total=False):
      \"Creating\", \"Deleting\", \"NotSpecified\", \"Running\", and \"Updating\"."""
     updateMode: Union[str, "UpdateMode"]
     """Whether update mode is automatic or manual. Known values are: \"Automatic\" and \"Manual\"."""
+    syncTo: list[str]
+    """Array of ARM resource IDs of destination communities to synchronize this endpoint's rules to.
+     The RP creates and manages the destination CEPs automatically within each community. Maximum
+     100 destinations per source endpoint."""
+    syncFrom: str
+    """ARM resource ID of the source Community Endpoint that manages this endpoint's rules via
+     synchronization. This property is read-only and set by the RP on destination CEPs created by
+     the sync process."""
+    syncStatus: Union[str, "SyncStatus"]
+    """The synchronization status of this Community Endpoint. Tracks sync state independently of
+     provisioningState. Known values are: \"NotConfigured\", \"Succeeded\", \"InProgress\",
+     \"Failed\", and \"PartiallySucceeded\"."""
+    syncDestinationStatuses: list["SyncDestinationStatus"]
+    """Per-destination synchronization status. Only populated on source CEPs that have syncTo
+     configured."""
+    syncPerformedBy: "SyncPerformedBy"
+    """Information about the principal who last configured or modified syncTo. Set by the RP and
+     surfaced for audit transparency."""
 
 
 class TrackedResource(Resource):
@@ -575,14 +664,18 @@ class CommunityPatchProperties(TypedDict, total=False):
     :ivar governedServiceList: List of services governed by a community.
     :vartype governedServiceList: list["GovernedServiceItem"]
     :ivar policyOverride: Policy override setting for the community. Specifies whether to apply
-     enclave-specific policies or disable policy enforcement. Is one of the following types:
-     Literal["Enclave"], Literal["None"], str
-    :vartype policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+     enclave-specific policies or disable policy enforcement. Known values are: "Enclave" and
+     "None".
+    :vartype policyOverride: Union[str, "CommunityPropertiesPolicyOverride"]
     :ivar communityRoleAssignments: Community role assignments.
     :vartype communityRoleAssignments: list["RoleAssignmentItem"]
     :ivar firewallSku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
     :vartype firewallSku: Union[str, "FirewallSKU"]
+    :ivar subnetJoinPolicyMode: Desired enforcement mode for the subscription-scoped subnet join
+     deny policy. Defaults to 'Deny' on api-version 2026-10-01-preview and later. Known values are:
+     "Deny" and "Audit".
+    :vartype subnetJoinPolicyMode: Union[str, "SubnetJoinPolicyMode"]
     :ivar approvalSettings: Granular approval requirements for various actions on the community's
      resources.
     :vartype approvalSettings: "ApprovalSettingsPatchProperties"
@@ -599,15 +692,17 @@ class CommunityPatchProperties(TypedDict, total=False):
     """DNS Servers."""
     governedServiceList: list["GovernedServiceItem"]
     """List of services governed by a community."""
-    policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+    policyOverride: Union[str, "CommunityPropertiesPolicyOverride"]
     """Policy override setting for the community. Specifies whether to apply enclave-specific policies
-     or disable policy enforcement. Is one of the following types: Literal[\"Enclave\"],
-     Literal[\"None\"], str"""
+     or disable policy enforcement. Known values are: \"Enclave\" and \"None\"."""
     communityRoleAssignments: list["RoleAssignmentItem"]
     """Community role assignments."""
     firewallSku: Union[str, "FirewallSKU"]
     """SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard is the default.
      Known values are: \"Basic\", \"Standard\", and \"Premium\"."""
+    subnetJoinPolicyMode: Union[str, "SubnetJoinPolicyMode"]
+    """Desired enforcement mode for the subscription-scoped subnet join deny policy. Defaults to
+     'Deny' on api-version 2026-10-01-preview and later. Known values are: \"Deny\" and \"Audit\"."""
     approvalSettings: "ApprovalSettingsPatchProperties"
     """Granular approval requirements for various actions on the community's resources."""
     maintenanceModeConfiguration: "MaintenanceModeConfigurationPatchModel"
@@ -637,14 +732,18 @@ class CommunityProperties(TypedDict, total=False):
     :ivar governedServiceList: List of services governed by a community.
     :vartype governedServiceList: list["GovernedServiceItem"]
     :ivar policyOverride: Policy override setting for the community. Specifies whether to apply
-     enclave-specific policies or disable policy enforcement. Is one of the following types:
-     Literal["Enclave"], Literal["None"], str
-    :vartype policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+     enclave-specific policies or disable policy enforcement. Known values are: "Enclave" and
+     "None".
+    :vartype policyOverride: Union[str, "CommunityPropertiesPolicyOverride"]
     :ivar communityRoleAssignments: Community role assignments.
     :vartype communityRoleAssignments: list["RoleAssignmentItem"]
     :ivar firewallSku: SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard
      is the default. Known values are: "Basic", "Standard", and "Premium".
     :vartype firewallSku: Union[str, "FirewallSKU"]
+    :ivar subnetJoinPolicyMode: Desired enforcement mode for the subscription-scoped subnet join
+     deny policy. Defaults to 'Deny' on api-version 2026-10-01-preview and later. Known values are:
+     "Deny" and "Audit".
+    :vartype subnetJoinPolicyMode: Union[str, "SubnetJoinPolicyMode"]
     :ivar approvalSettings: Granular approval requirements for various actions on the community's
      resources.
     :vartype approvalSettings: "ApprovalSettings"
@@ -674,15 +773,17 @@ class CommunityProperties(TypedDict, total=False):
     """Managed On Behalf Of Configuration."""
     governedServiceList: list["GovernedServiceItem"]
     """List of services governed by a community."""
-    policyOverride: Union[Literal["Enclave"], Literal["None"], str]
+    policyOverride: Union[str, "CommunityPropertiesPolicyOverride"]
     """Policy override setting for the community. Specifies whether to apply enclave-specific policies
-     or disable policy enforcement. Is one of the following types: Literal[\"Enclave\"],
-     Literal[\"None\"], str"""
+     or disable policy enforcement. Known values are: \"Enclave\" and \"None\"."""
     communityRoleAssignments: list["RoleAssignmentItem"]
     """Community role assignments."""
     firewallSku: Union[str, "FirewallSKU"]
     """SKU of the community's Azure Firewall (Basic, Standard, Premium). Standard is the default.
      Known values are: \"Basic\", \"Standard\", and \"Premium\"."""
+    subnetJoinPolicyMode: Union[str, "SubnetJoinPolicyMode"]
+    """Desired enforcement mode for the subscription-scoped subnet join deny policy. Defaults to
+     'Deny' on api-version 2026-10-01-preview and later. Known values are: \"Deny\" and \"Audit\"."""
     approvalSettings: "ApprovalSettings"
     """Granular approval requirements for various actions on the community's resources."""
     maintenanceModeConfiguration: "MaintenanceModeConfigurationModel"
@@ -723,6 +824,29 @@ class CommunityResource(TrackedResource):
     """The resource-specific properties for this resource."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+
+
+class ComputedAddressSpaceEntry(TypedDict, total=False):
+    """An address space computed by the RP for the enclave. Customer-requested entries have ownership
+    'CustomerManaged'; the RP-managed address space has ownership 'ProductManaged' and is always
+    the last element.
+
+    :ivar prefixLength: CIDR prefix length of the address space.
+    :vartype prefixLength: int
+    :ivar addressSpace: CIDR notation address space allocated to the enclave (e.g., '10.0.0.0/23').
+    :vartype addressSpace: str
+    :ivar ownership: Indicates whether this address space is customer-managed or product-managed.
+     Known values are: "CustomerManaged" and "ProductManaged".
+    :vartype ownership: Union[str, "AddressSpaceOwnership"]
+    """
+
+    prefixLength: int
+    """CIDR prefix length of the address space."""
+    addressSpace: str
+    """CIDR notation address space allocated to the enclave (e.g., '10.0.0.0/23')."""
+    ownership: Union[str, "AddressSpaceOwnership"]
+    """Indicates whether this address space is customer-managed or product-managed. Known values are:
+     \"CustomerManaged\" and \"ProductManaged\"."""
 
 
 class DedicatedHubPatchModel(TypedDict, total=False):
@@ -811,21 +935,6 @@ class DedicatedHubResource(TrackedResource):
     """The resource-specific properties for this resource."""
 
 
-class EnclaveAddressSpacesModel(TypedDict, total=False):
-    """Enclave Address Spaces.
-
-    :ivar enclaveAddressSpace: Enclave Address Space.
-    :vartype enclaveAddressSpace: str
-    :ivar managedAddressSpace: Managed Address Space.
-    :vartype managedAddressSpace: str
-    """
-
-    enclaveAddressSpace: str
-    """Enclave Address Space."""
-    managedAddressSpace: str
-    """Managed Address Space."""
-
-
 class EnclaveConnectionPatchModel(TypedDict, total=False):
     """Enclave Connection Patch Resource.
 
@@ -856,7 +965,8 @@ class EnclaveConnectionProperties(TypedDict, total=False):
     """Enclave Connection Resource properties.
 
     :ivar state: The state of the enclaveConnection. Known values are: "PendingApproval",
-     "PendingUpdate", "Approved", "Active", "Failed", "Connected", and "Disconnected".
+     "PendingUpdate", "Approved", "Active", "Failed", "Connected", "Disconnected", "Reconciling",
+     and "Degraded".
     :vartype state: Union[str, "EnclaveConnectionState"]
     :ivar communityResourceId: Community Resource Id. Required.
     :vartype communityResourceId: str
@@ -878,7 +988,8 @@ class EnclaveConnectionProperties(TypedDict, total=False):
 
     state: Union[str, "EnclaveConnectionState"]
     """The state of the enclaveConnection. Known values are: \"PendingApproval\", \"PendingUpdate\",
-     \"Approved\", \"Active\", \"Failed\", \"Connected\", and \"Disconnected\"."""
+     \"Approved\", \"Active\", \"Failed\", \"Connected\", \"Disconnected\", \"Reconciling\", and
+     \"Degraded\"."""
     communityResourceId: Required[str]
     """Community Resource Id. Required."""
     sourceResourceId: Required[str]
@@ -933,7 +1044,7 @@ class EnclaveDefaultSettingsModel(TypedDict, total=False):
     :ivar logAnalyticsResourceIdCollection: Log Analytics Resource Ids.
     :vartype logAnalyticsResourceIdCollection: list[str]
     :ivar diagnosticDestination: Diagnostic Destination. Known values are: "CommunityOnly",
-     "EnclaveOnly", and "Both".
+     "EnclaveOnly", "Both", and "Unspecified".
     :vartype diagnosticDestination: Union[str, "DiagnosticDestination"]
     """
 
@@ -944,19 +1055,21 @@ class EnclaveDefaultSettingsModel(TypedDict, total=False):
     logAnalyticsResourceIdCollection: list[str]
     """Log Analytics Resource Ids."""
     diagnosticDestination: Union[str, "DiagnosticDestination"]
-    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", and \"Both\"."""
+    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", \"Both\", and
+     \"Unspecified\"."""
 
 
 class EnclaveDefaultSettingsPatchModel(TypedDict, total=False):
     """Virtual Enclave Default Settings.
 
     :ivar diagnosticDestination: Diagnostic Destination. Known values are: "CommunityOnly",
-     "EnclaveOnly", and "Both".
+     "EnclaveOnly", "Both", and "Unspecified".
     :vartype diagnosticDestination: Union[str, "DiagnosticDestination"]
     """
 
     diagnosticDestination: Union[str, "DiagnosticDestination"]
-    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", and \"Both\"."""
+    """Diagnostic Destination. Known values are: \"CommunityOnly\", \"EnclaveOnly\", \"Both\", and
+     \"Unspecified\"."""
 
 
 class EnclaveEndpointDestinationRule(TypedDict, total=False):
@@ -1098,53 +1211,25 @@ class EnclaveResource(TrackedResource):
     """The managed service identities assigned to this resource."""
 
 
-class EnclaveVirtualNetworkModel(TypedDict, total=False):
-    """Enclave Virtual Network Properties.
-
-    :ivar networkName: Network Name.
-    :vartype networkName: str
-    :ivar networkSize: Network Size.
-    :vartype networkSize: str
-    :ivar customCidrRange: Custom CIDR Range.
-    :vartype customCidrRange: str
-    :ivar subnetConfigurations: Subnet Configurations.
-    :vartype subnetConfigurations: list["SubnetConfiguration"]
-    :ivar allowSubnetCommunication: Allow Subnet Communication.
-    :vartype allowSubnetCommunication: bool
-    """
-
-    networkName: str
-    """Network Name."""
-    networkSize: str
-    """Network Size."""
-    customCidrRange: str
-    """Custom CIDR Range."""
-    subnetConfigurations: list["SubnetConfiguration"]
-    """Subnet Configurations."""
-    allowSubnetCommunication: bool
-    """Allow Subnet Communication."""
-
-
 class GovernedServiceItem(TypedDict, total=False):
     """GovernedServiceItem Properties.
 
     :ivar serviceId: Service ID. Required. Known values are: "AKS", "AppService", "AzureFirewalls",
      "ContainerRegistry", "CosmosDB", "DataConnectors", "Insights", "KeyVault", "Logic",
-     "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus", and "Storage".
+     "MicrosoftSQL", "Monitoring", "PostgreSQL", "PrivateDNSZones", "ServiceBus", "Storage", and
+     "AzureLocal".
     :vartype serviceId: Union[str, "ServiceIdentifier"]
     :ivar serviceName: Service name.
     :vartype serviceName: str
     :ivar option: Governance option for this service (Allow, Deny, ExceptionOnly, or
-     NotApplicable). Is one of the following types: Literal["Allow"], Literal["Deny"],
-     Literal["ExceptionOnly"], Literal["NotApplicable"], str
-    :vartype option: Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"],
-     Literal["NotApplicable"], str]
-    :ivar enforcement: Initiative enforcement (Enabled or Disabled). Is one of the following types:
-     Literal["Enabled"], Literal["Disabled"], str
-    :vartype enforcement: Union[Literal["Enabled"], Literal["Disabled"], str]
-    :ivar policyAction: Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the
-     following types: Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str
-    :vartype policyAction: Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]
+     NotApplicable). Known values are: "Allow", "Deny", "ExceptionOnly", and "NotApplicable".
+    :vartype option: Union[str, "GovernedServiceItemOption"]
+    :ivar enforcement: Initiative enforcement (Enabled or Disabled). Known values are: "Enabled"
+     and "Disabled".
+    :vartype enforcement: Union[str, "GovernedServiceItemEnforcement"]
+    :ivar policyAction: Enforcement mode for policy. AuditOnly, Enforce, or None. Known values are:
+     "AuditOnly", "Enforce", and "None".
+    :vartype policyAction: Union[str, "GovernedServiceItemPolicyAction"]
     :ivar initiatives: Initiatives associated with this service.
     :vartype initiatives: list[str]
     """
@@ -1152,20 +1237,18 @@ class GovernedServiceItem(TypedDict, total=False):
     serviceId: Required[Union[str, "ServiceIdentifier"]]
     """Service ID. Required. Known values are: \"AKS\", \"AppService\", \"AzureFirewalls\",
      \"ContainerRegistry\", \"CosmosDB\", \"DataConnectors\", \"Insights\", \"KeyVault\", \"Logic\",
-     \"MicrosoftSQL\", \"Monitoring\", \"PostgreSQL\", \"PrivateDNSZones\", \"ServiceBus\", and
-     \"Storage\"."""
+     \"MicrosoftSQL\", \"Monitoring\", \"PostgreSQL\", \"PrivateDNSZones\", \"ServiceBus\",
+     \"Storage\", and \"AzureLocal\"."""
     serviceName: str
     """Service name."""
-    option: Union[Literal["Allow"], Literal["Deny"], Literal["ExceptionOnly"], Literal["NotApplicable"], str]
-    """Governance option for this service (Allow, Deny, ExceptionOnly, or NotApplicable). Is one of
-     the following types: Literal[\"Allow\"], Literal[\"Deny\"], Literal[\"ExceptionOnly\"],
-     Literal[\"NotApplicable\"], str"""
-    enforcement: Union[Literal["Enabled"], Literal["Disabled"], str]
-    """Initiative enforcement (Enabled or Disabled). Is one of the following types:
-     Literal[\"Enabled\"], Literal[\"Disabled\"], str"""
-    policyAction: Union[Literal["AuditOnly"], Literal["Enforce"], Literal["None"], str]
-    """Enforcement mode for policy. AuditOnly, Enforce, or None. Is one of the following types:
-     Literal[\"AuditOnly\"], Literal[\"Enforce\"], Literal[\"None\"], str"""
+    option: Union[str, "GovernedServiceItemOption"]
+    """Governance option for this service (Allow, Deny, ExceptionOnly, or NotApplicable). Known values
+     are: \"Allow\", \"Deny\", \"ExceptionOnly\", and \"NotApplicable\"."""
+    enforcement: Union[str, "GovernedServiceItemEnforcement"]
+    """Initiative enforcement (Enabled or Disabled). Known values are: \"Enabled\" and \"Disabled\"."""
+    policyAction: Union[str, "GovernedServiceItemPolicyAction"]
+    """Enforcement mode for policy. AuditOnly, Enforce, or None. Known values are: \"AuditOnly\",
+     \"Enforce\", and \"None\"."""
     initiatives: list[str]
     """Initiatives associated with this service."""
 
@@ -1173,59 +1256,47 @@ class GovernedServiceItem(TypedDict, total=False):
 class MaintenanceModeConfigurationModel(TypedDict, total=False):
     """Maintenance Mode.
 
-    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
-     types: Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"],
-     Literal["Advanced"], str
-    :vartype mode: Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"],
-     Literal["General"], Literal["Advanced"], str]
+    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Known values are: "On",
+     "CanNotDelete", "Off", "General", and "Advanced".
+    :vartype mode: Union[str, "MaintenanceModeConfigurationModelMode"]
     :ivar principals: The user, group or service principal object affected by Maintenance Mode.
     :vartype principals: list["Principal"]
-    :ivar justification: Justification for entering or exiting Maintenance Mode. Is one of the
-     following types: Literal["Networking"], Literal["Governance"], Literal["Off"], str
-    :vartype justification: Union[Literal["Networking"], Literal["Governance"], Literal["Off"],
-     str]
+    :ivar justification: Justification for entering or exiting Maintenance Mode. Known values are:
+     "Networking", "Governance", and "Off".
+    :vartype justification: Union[str, "MaintenanceModeConfigurationModelJustification"]
     """
 
-    mode: Required[
-        Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]
-    ]
-    """Current mode of Maintenance Mode Configuration. Required. Is one of the following types:
-     Literal[\"On\"], Literal[\"CanNotDelete\"], Literal[\"Off\"], Literal[\"General\"],
-     Literal[\"Advanced\"], str"""
+    mode: Required[Union[str, "MaintenanceModeConfigurationModelMode"]]
+    """Current mode of Maintenance Mode Configuration. Required. Known values are: \"On\",
+     \"CanNotDelete\", \"Off\", \"General\", and \"Advanced\"."""
     principals: list["Principal"]
     """The user, group or service principal object affected by Maintenance Mode."""
-    justification: Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]
-    """Justification for entering or exiting Maintenance Mode. Is one of the following types:
-     Literal[\"Networking\"], Literal[\"Governance\"], Literal[\"Off\"], str"""
+    justification: Union[str, "MaintenanceModeConfigurationModelJustification"]
+    """Justification for entering or exiting Maintenance Mode. Known values are: \"Networking\",
+     \"Governance\", and \"Off\"."""
 
 
 class MaintenanceModeConfigurationPatchModel(TypedDict, total=False):
     """Maintenance Mode Patch Model.
 
-    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Is one of the following
-     types: Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"],
-     Literal["Advanced"], str
-    :vartype mode: Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"],
-     Literal["General"], Literal["Advanced"], str]
+    :ivar mode: Current mode of Maintenance Mode Configuration. Required. Known values are: "On",
+     "CanNotDelete", "Off", "General", and "Advanced".
+    :vartype mode: Union[str, "MaintenanceModeConfigurationModelMode"]
     :ivar principals: The user, group or service principal object affected by Maintenance Mode.
     :vartype principals: list["Principal"]
-    :ivar justification: Justification for entering or exiting Maintenance Mode. Is one of the
-     following types: Literal["Networking"], Literal["Governance"], Literal["Off"], str
-    :vartype justification: Union[Literal["Networking"], Literal["Governance"], Literal["Off"],
-     str]
+    :ivar justification: Justification for entering or exiting Maintenance Mode. Known values are:
+     "Networking", "Governance", and "Off".
+    :vartype justification: Union[str, "MaintenanceModeConfigurationModelJustification"]
     """
 
-    mode: Required[
-        Union[Literal["On"], Literal["CanNotDelete"], Literal["Off"], Literal["General"], Literal["Advanced"], str]
-    ]
-    """Current mode of Maintenance Mode Configuration. Required. Is one of the following types:
-     Literal[\"On\"], Literal[\"CanNotDelete\"], Literal[\"Off\"], Literal[\"General\"],
-     Literal[\"Advanced\"], str"""
+    mode: Required[Union[str, "MaintenanceModeConfigurationModelMode"]]
+    """Current mode of Maintenance Mode Configuration. Required. Known values are: \"On\",
+     \"CanNotDelete\", \"Off\", \"General\", and \"Advanced\"."""
     principals: list["Principal"]
     """The user, group or service principal object affected by Maintenance Mode."""
-    justification: Union[Literal["Networking"], Literal["Governance"], Literal["Off"], str]
-    """Justification for entering or exiting Maintenance Mode. Is one of the following types:
-     Literal[\"Networking\"], Literal[\"Governance\"], Literal[\"Off\"], str"""
+    justification: Union[str, "MaintenanceModeConfigurationModelJustification"]
+    """Justification for entering or exiting Maintenance Mode. Known values are: \"Networking\",
+     \"Governance\", and \"Off\"."""
 
 
 class ManagedOnBehalfOfConfiguration(TypedDict, total=False):
@@ -1374,17 +1445,15 @@ class Principal(TypedDict, total=False):
     :ivar id: The object id associated with the principal. Required.
     :vartype id: str
     :ivar type: The type of the object id. We currently allow users, groups, and service
-     principals. Required. Is one of the following types: Literal["User"], Literal["Group"],
-     Literal["ServicePrincipal"], str
-    :vartype type: Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str]
+     principals. Required. Known values are: "User", "Group", and "ServicePrincipal".
+    :vartype type: Union[str, "PrincipalType"]
     """
 
     id: Required[str]
     """The object id associated with the principal. Required."""
-    type: Required[Union[Literal["User"], Literal["Group"], Literal["ServicePrincipal"], str]]
+    type: Required[Union[str, "PrincipalType"]]
     """The type of the object id. We currently allow users, groups, and service principals. Required.
-     Is one of the following types: Literal[\"User\"], Literal[\"Group\"],
-     Literal[\"ServicePrincipal\"], str"""
+     Known values are: \"User\", \"Group\", and \"ServicePrincipal\"."""
 
 
 class RequestMetadata(TypedDict, total=False):
@@ -1471,6 +1540,9 @@ class SubnetConfiguration(TypedDict, total=False):
     :vartype addressPrefix: str
     :ivar networkSecurityGroupResourceId: Network security group ID.
     :vartype networkSecurityGroupResourceId: str
+    :ivar subnetPurpose: The purpose of the subnet, used to determine automatic configuration
+     behavior. Known values are: "General", "AKS", and "AKSApiServer".
+    :vartype subnetPurpose: Union[str, "SubnetPurpose"]
     """
 
     subnetName: Required[str]
@@ -1485,6 +1557,61 @@ class SubnetConfiguration(TypedDict, total=False):
     """Address prefix."""
     networkSecurityGroupResourceId: str
     """Network security group ID."""
+    subnetPurpose: Union[str, "SubnetPurpose"]
+    """The purpose of the subnet, used to determine automatic configuration behavior. Known values
+     are: \"General\", \"AKS\", and \"AKSApiServer\"."""
+
+
+class SyncDestinationStatus(TypedDict, total=False):
+    """Status of synchronization to a specific destination Community Endpoint.
+
+    :ivar destinationId: ARM resource ID of the destination Community Endpoint. Required.
+    :vartype destinationId: str
+    :ivar status: The synchronization status for this destination. Required. Known values are:
+     "NotConfigured", "Succeeded", "InProgress", "Failed", and "PartiallySucceeded".
+    :vartype status: Union[str, "SyncStatus"]
+    :ivar errorMessage: Error message if the sync to this destination failed.
+    :vartype errorMessage: str
+    :ivar lastSyncTime: Timestamp of the last successful sync to this destination.
+    :vartype lastSyncTime: str
+    """
+
+    destinationId: Required[str]
+    """ARM resource ID of the destination Community Endpoint. Required."""
+    status: Required[Union[str, "SyncStatus"]]
+    """The synchronization status for this destination. Required. Known values are: \"NotConfigured\",
+     \"Succeeded\", \"InProgress\", \"Failed\", and \"PartiallySucceeded\"."""
+    errorMessage: str
+    """Error message if the sync to this destination failed."""
+    lastSyncTime: str
+    """Timestamp of the last successful sync to this destination."""
+
+
+class SyncPerformedBy(TypedDict, total=False):
+    """Information about the principal who performed the sync operation.
+
+    :ivar principalId: Object ID of the user principal who configured syncTo. Required.
+    :vartype principalId: str
+    :ivar principalType: The type of principal (e.g., User, ServicePrincipal). Required.
+    :vartype principalType: str
+    :ivar tenantId: Tenant ID of the principal. Required.
+    :vartype tenantId: str
+    :ivar performedAt: Timestamp when the syncTo was configured or last modified. Required.
+    :vartype performedAt: str
+    :ivar correlationId: ARM correlation ID from the source PUT that set up syncTo. Required.
+    :vartype correlationId: str
+    """
+
+    principalId: Required[str]
+    """Object ID of the user principal who configured syncTo. Required."""
+    principalType: Required[str]
+    """The type of principal (e.g., User, ServicePrincipal). Required."""
+    tenantId: Required[str]
+    """Tenant ID of the principal. Required."""
+    performedAt: Required[str]
+    """Timestamp when the syncTo was configured or last modified. Required."""
+    correlationId: Required[str]
+    """ARM correlation ID from the source PUT that set up syncTo. Required."""
 
 
 class SystemData(TypedDict, total=False):
@@ -1733,8 +1860,6 @@ class VirtualEnclavePatchModel(TypedDict, total=False):
 class VirtualEnclavePatchProperties(TypedDict, total=False):
     """Virtual Enclave Patchable Properties.
 
-    :ivar enclaveVirtualNetwork: Virtual Network. Required.
-    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
     :ivar bastionEnabled: Deploy Bastion service (True or False).
     :vartype bastionEnabled: bool
     :ivar workloadResourceVisibility: Specifies whether resources in the workload resource group(s)
@@ -1749,6 +1874,13 @@ class VirtualEnclavePatchProperties(TypedDict, total=False):
     :vartype workloadRoleAssignments: list["RoleAssignmentItem"]
     :ivar governedServiceList: Enclave specific policies.
     :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar addressSpaces: Customer-requested address spaces for the enclave. Supports multiple
+     entries. Each entry specifies a prefixLength for the RP to allocate, or a custom addressSpace
+     CIDR. The RP returns these entries exactly as provided; allocated values are reported in
+     computedAddressSpaces.
+    :vartype addressSpaces: list["AddressSpaceEntry"]
+    :ivar subnetConfigurations: Subnet configurations for the enclave network.
+    :vartype subnetConfigurations: list["SubnetConfiguration"]
     :ivar enclaveDefaultSettings: Enclave default settings.
     :vartype enclaveDefaultSettings: "EnclaveDefaultSettingsPatchModel"
     :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
@@ -1762,8 +1894,6 @@ class VirtualEnclavePatchProperties(TypedDict, total=False):
     :vartype monitoringSettings: "MonitoringSettingsPatchModel"
     """
 
-    enclaveVirtualNetwork: Required["EnclaveVirtualNetworkModel"]
-    """Virtual Network. Required."""
     bastionEnabled: bool
     """Deploy Bastion service (True or False)."""
     workloadResourceVisibility: Union[str, "ResourceVisibilityMode"]
@@ -1778,6 +1908,12 @@ class VirtualEnclavePatchProperties(TypedDict, total=False):
     """Workload role assignments."""
     governedServiceList: list["GovernedServiceItem"]
     """Enclave specific policies."""
+    addressSpaces: list["AddressSpaceEntry"]
+    """Customer-requested address spaces for the enclave. Supports multiple entries. Each entry
+     specifies a prefixLength for the RP to allocate, or a custom addressSpace CIDR. The RP returns
+     these entries exactly as provided; allocated values are reported in computedAddressSpaces."""
+    subnetConfigurations: list["SubnetConfiguration"]
+    """Subnet configurations for the enclave network."""
     enclaveDefaultSettings: "EnclaveDefaultSettingsPatchModel"
     """Enclave default settings."""
     maintenanceModeConfiguration: "MaintenanceModeConfigurationPatchModel"
@@ -1796,10 +1932,6 @@ class VirtualEnclaveProperties(TypedDict, total=False):
     :ivar provisioningState: Provisioning State. Known values are: "Succeeded", "Failed",
      "Canceled", "Accepted", "Creating", "Deleting", "NotSpecified", "Running", and "Updating".
     :vartype provisioningState: Union[str, "ProvisioningState"]
-    :ivar enclaveVirtualNetwork: Virtual Network. Required.
-    :vartype enclaveVirtualNetwork: "EnclaveVirtualNetworkModel"
-    :ivar enclaveAddressSpaces: Enclave Address Spaces.
-    :vartype enclaveAddressSpaces: "EnclaveAddressSpacesModel"
     :ivar communityResourceId: Community Resource Id. Required.
     :vartype communityResourceId: str
     :ivar resourceCollection: List of resource ids created by Virtual Enclave.
@@ -1822,6 +1954,22 @@ class VirtualEnclaveProperties(TypedDict, total=False):
     :vartype workloadRoleAssignments: list["RoleAssignmentItem"]
     :ivar governedServiceList: Enclave specific policies.
     :vartype governedServiceList: list["GovernedServiceItem"]
+    :ivar addressSpaces: Customer-requested address spaces for the enclave. Supports multiple
+     entries. Each entry specifies a prefixLength for the RP to allocate, or a custom addressSpace
+     CIDR. The RP returns these entries exactly as provided; allocated values are reported in
+     computedAddressSpaces.
+    :vartype addressSpaces: list["AddressSpaceEntry"]
+    :ivar computedAddressSpaces: Address spaces computed by the RP for the enclave. Contains an
+     entry for each customer-requested address space with its allocated CIDR, followed by the
+     product-managed address space.
+    :vartype computedAddressSpaces: list["ComputedAddressSpaceEntry"]
+    :ivar networkName: The name of the enclave's virtual network.
+    :vartype networkName: str
+    :ivar subnetConfigurations: Subnet configurations for the enclave network.
+    :vartype subnetConfigurations: list["SubnetConfiguration"]
+    :ivar allowSubnetCommunication: Whether subnets within the enclave can communicate with each
+     other.
+    :vartype allowSubnetCommunication: bool
     :ivar enclaveDefaultSettings: Enclave default settings.
     :vartype enclaveDefaultSettings: "EnclaveDefaultSettingsModel"
     :ivar maintenanceModeConfiguration: Maintenance Mode configuration.
@@ -1838,10 +1986,6 @@ class VirtualEnclaveProperties(TypedDict, total=False):
     provisioningState: Union[str, "ProvisioningState"]
     """Provisioning State. Known values are: \"Succeeded\", \"Failed\", \"Canceled\", \"Accepted\",
      \"Creating\", \"Deleting\", \"NotSpecified\", \"Running\", and \"Updating\"."""
-    enclaveVirtualNetwork: Required["EnclaveVirtualNetworkModel"]
-    """Virtual Network. Required."""
-    enclaveAddressSpaces: "EnclaveAddressSpacesModel"
-    """Enclave Address Spaces."""
     communityResourceId: Required[str]
     """Community Resource Id. Required."""
     resourceCollection: list[str]
@@ -1864,6 +2008,20 @@ class VirtualEnclaveProperties(TypedDict, total=False):
     """Workload role assignments."""
     governedServiceList: list["GovernedServiceItem"]
     """Enclave specific policies."""
+    addressSpaces: list["AddressSpaceEntry"]
+    """Customer-requested address spaces for the enclave. Supports multiple entries. Each entry
+     specifies a prefixLength for the RP to allocate, or a custom addressSpace CIDR. The RP returns
+     these entries exactly as provided; allocated values are reported in computedAddressSpaces."""
+    computedAddressSpaces: list["ComputedAddressSpaceEntry"]
+    """Address spaces computed by the RP for the enclave. Contains an entry for each
+     customer-requested address space with its allocated CIDR, followed by the product-managed
+     address space."""
+    networkName: str
+    """The name of the enclave's virtual network."""
+    subnetConfigurations: list["SubnetConfiguration"]
+    """Subnet configurations for the enclave network."""
+    allowSubnetCommunication: bool
+    """Whether subnets within the enclave can communicate with each other."""
     enclaveDefaultSettings: "EnclaveDefaultSettingsModel"
     """Enclave default settings."""
     maintenanceModeConfiguration: "MaintenanceModeConfigurationModel"

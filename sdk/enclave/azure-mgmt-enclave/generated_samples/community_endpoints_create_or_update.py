@@ -42,6 +42,7 @@ def main():
                     {
                         "destination": "foo.example.com",
                         "destinationType": "FQDNTag",
+                        "direction": "Outbound",
                         "ports": "443",
                         "protocols": ["TCP"],
                         "transitHubResourceId": "/subscriptions/c64f6eca-bdc5-4bc2-88d6-f8f1dc23f86c/resourceGroups/testrg/providers/Microsoft.Mission/communities/TestMyCommunity/transitHubs/TestThName",
@@ -55,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/CommunityEndpoints_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01-preview/CommunityEndpoints_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

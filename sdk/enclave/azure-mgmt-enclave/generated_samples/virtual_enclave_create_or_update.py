@@ -43,6 +43,8 @@ def main():
             },
             "location": "westcentralus",
             "properties": {
+                "addressSpaces": [{"addressSpace": "10.1.0.0/23", "prefixLength": 23}],
+                "allowSubnetCommunication": True,
                 "approvalSettings": {
                     "connectionCreation": {
                         "approvalPolicy": "Required",
@@ -75,12 +77,6 @@ def main():
                         "roleDefinitionId": "18d7d88d-d35e-4fb5-a5c3-7773c20a72d9",
                     },
                 ],
-                "enclaveVirtualNetwork": {
-                    "allowSubnetCommunication": True,
-                    "customCidrRange": "10.0.0.0/24",
-                    "networkSize": "small",
-                    "subnetConfigurations": [{"networkPrefixSize": 26, "subnetName": "test"}],
-                },
                 "maintenanceModeConfiguration": {
                     "justification": "Off",
                     "mode": "Off",
@@ -108,6 +104,7 @@ def main():
                     },
                 },
                 "rbacInheritance": "Disabled",
+                "subnetConfigurations": [{"networkPrefixSize": 26, "subnetName": "test"}],
                 "workloadResourceVisibility": "Disabled",
                 "workloadRoleAssignments": [
                     {
@@ -127,6 +124,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/VirtualEnclave_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01-preview/VirtualEnclave_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

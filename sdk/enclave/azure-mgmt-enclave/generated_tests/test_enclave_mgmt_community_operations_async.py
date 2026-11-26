@@ -91,7 +91,7 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                             {
                                 "roleDefinitionId": "str",
                                 "condition": "str",
-                                "principals": [{"id": "str", "type": "User"}],
+                                "principals": [{"id": "str", "type": "str"}],
                             }
                         ],
                         "dedicatedHubList": [
@@ -123,17 +123,17 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                         "governedServiceList": [
                             {
                                 "serviceId": "str",
-                                "enforcement": "Enabled",
+                                "enforcement": "str",
                                 "initiatives": ["str"],
-                                "option": "Allow",
-                                "policyAction": "AuditOnly",
+                                "option": "str",
+                                "policyAction": "str",
                                 "serviceName": "str",
                             }
                         ],
                         "maintenanceModeConfiguration": {
-                            "mode": "On",
-                            "justification": "Networking",
-                            "principals": [{"id": "str", "type": "User"}],
+                            "mode": "str",
+                            "justification": "str",
+                            "principals": [{"id": "str", "type": "str"}],
                         },
                         "managedOnBehalfOfConfiguration": {"moboBrokerResources": [{"id": "str"}]},
                         "managedResourceGroupName": "str",
@@ -151,9 +151,10 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                                 "diagnosticSettingsName": "str",
                             },
                         },
-                        "policyOverride": "Enclave",
+                        "policyOverride": "str",
                         "provisioningState": "str",
                         "resourceCollection": ["str"],
+                        "subnetJoinPolicyMode": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -229,7 +230,7 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                             {
                                 "roleDefinitionId": "str",
                                 "condition": "str",
-                                "principals": [{"id": "str", "type": "User"}],
+                                "principals": [{"id": "str", "type": "str"}],
                             }
                         ],
                         "dnsServers": ["str"],
@@ -237,17 +238,17 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                         "governedServiceList": [
                             {
                                 "serviceId": "str",
-                                "enforcement": "Enabled",
+                                "enforcement": "str",
                                 "initiatives": ["str"],
-                                "option": "Allow",
-                                "policyAction": "AuditOnly",
+                                "option": "str",
+                                "policyAction": "str",
                                 "serviceName": "str",
                             }
                         ],
                         "maintenanceModeConfiguration": {
-                            "mode": "On",
-                            "justification": "Networking",
-                            "principals": [{"id": "str", "type": "User"}],
+                            "mode": "str",
+                            "justification": "str",
+                            "principals": [{"id": "str", "type": "str"}],
                         },
                         "monitoringSettings": {
                             "diagnosticDestinations": [
@@ -263,7 +264,8 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
                                 "diagnosticSettingsName": "str",
                             },
                         },
-                        "policyOverride": "Enclave",
+                        "policyOverride": "str",
+                        "subnetJoinPolicyMode": "str",
                     },
                     "tags": {"str": "str"},
                 },
@@ -312,22 +314,8 @@ class TestEnclaveMgmtCommunityOperationsAsync(AzureMgmtRecordedTestCase):
             community_name="str",
             check_address_space_availability_request={
                 "communityResourceId": "str",
-                "enclaveVirtualNetwork": {
-                    "allowSubnetCommunication": bool,
-                    "customCidrRange": "str",
-                    "networkName": "str",
-                    "networkSize": "str",
-                    "subnetConfigurations": [
-                        {
-                            "networkPrefixSize": 0,
-                            "subnetName": "str",
-                            "addressPrefix": "str",
-                            "networkSecurityGroupResourceId": "str",
-                            "subnetDelegation": "str",
-                            "subnetResourceId": "str",
-                        }
-                    ],
-                },
+                "addressSpace": "str",
+                "prefixLength": 0,
             },
         )
 

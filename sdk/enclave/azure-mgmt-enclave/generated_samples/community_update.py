@@ -35,6 +35,7 @@ def main():
         community_name="TestMyCommunity",
         properties={
             "properties": {
+                "addressSpaces": ["10.0.0.0/16", "10.1.0.0/16"],
                 "approvalSettings": {
                     "communityEndpointUpdate": {
                         "approvalPolicy": "Required",
@@ -49,9 +50,13 @@ def main():
                         ],
                         "minimumApproversRequired": 2,
                     },
-                    "connectionCreation": {"approvalPolicy": "Required", "minimumApproversRequired": 1},
-                    "connectionUpdate": {"approvalPolicy": "NotRequired"},
-                    "enclaveCreation": {"approvalPolicy": "Required", "minimumApproversRequired": 1},
+                    "connectionCreation": {
+                        "approvalPolicy": "Required",
+                        "mandatoryApprovers": [{"approverEntraId": "00000000-0000-0000-0000-000000000002"}],
+                        "minimumApproversRequired": 1,
+                    },
+                    "connectionUpdate": {"approvalPolicy": "Required", "minimumApproversRequired": 1},
+                    "enclaveCreation": {"approvalPolicy": "NotRequired"},
                     "enclaveEndpointUpdate": {"approvalPolicy": "Required", "minimumApproversRequired": 1},
                     "enclaveMaintenanceMode": {"approvalPolicy": "NotRequired"},
                 },
@@ -119,6 +124,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-01/Community_Update.json
+# x-ms-original-file: 2026-10-01-preview/Community_Update.json
 if __name__ == "__main__":
     main()
