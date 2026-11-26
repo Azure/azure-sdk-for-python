@@ -155,76 +155,58 @@
         },
         "properties": {
           "client_side_validation": {
-            "attr_type": false,
-            "is_annotation": false
+            "attr_type": false
           },
           "peer_asns": {
-            "attr_type": "PeerAsnsOperations",
-            "is_annotation": false
+            "attr_type": "PeerAsnsOperations"
           },
           "peerings": {
-            "attr_type": "PeeringsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringsOperations"
           },
           "connection_monitor_tests": {
-            "attr_type": "ConnectionMonitorTestsOperations",
-            "is_annotation": false
+            "attr_type": "ConnectionMonitorTestsOperations"
           },
           "peering_services": {
-            "attr_type": "PeeringServicesOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServicesOperations"
           },
           "operations": {
-            "attr_type": "Operations",
-            "is_annotation": false
+            "attr_type": "Operations"
           },
           "registered_asns": {
-            "attr_type": "RegisteredAsnsOperations",
-            "is_annotation": false
+            "attr_type": "RegisteredAsnsOperations"
           },
           "received_routes": {
-            "attr_type": "ReceivedRoutesOperations",
-            "is_annotation": false
+            "attr_type": "ReceivedRoutesOperations"
           },
           "rp_unbilled_prefixes": {
-            "attr_type": "RpUnbilledPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "RpUnbilledPrefixesOperations"
           },
           "registered_prefixes": {
-            "attr_type": "RegisteredPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "RegisteredPrefixesOperations"
           },
           "prefixes": {
-            "attr_type": "PrefixesOperations",
-            "is_annotation": false
+            "attr_type": "PrefixesOperations"
           },
           "cdn_peering_prefixes": {
-            "attr_type": "CdnPeeringPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "CdnPeeringPrefixesOperations"
           },
           "legacy_peerings": {
-            "attr_type": "LegacyPeeringsOperations",
-            "is_annotation": false
+            "attr_type": "LegacyPeeringsOperations"
           },
           "looking_glass": {
-            "attr_type": "LookingGlassOperations",
-            "is_annotation": false
+            "attr_type": "LookingGlassOperations"
           },
           "peering_locations": {
-            "attr_type": "PeeringLocationsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringLocationsOperations"
           },
           "peering_service_countries": {
-            "attr_type": "PeeringServiceCountriesOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceCountriesOperations"
           },
           "peering_service_locations": {
-            "attr_type": "PeeringServiceLocationsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceLocationsOperations"
           },
           "peering_service_providers": {
-            "attr_type": "PeeringServiceProvidersOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceProvidersOperations"
           }
         }
       }
@@ -387,76 +369,58 @@
         },
         "properties": {
           "client_side_validation": {
-            "attr_type": false,
-            "is_annotation": false
+            "attr_type": false
           },
           "peer_asns": {
-            "attr_type": "PeerAsnsOperations",
-            "is_annotation": false
+            "attr_type": "PeerAsnsOperations"
           },
           "peerings": {
-            "attr_type": "PeeringsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringsOperations"
           },
           "connection_monitor_tests": {
-            "attr_type": "ConnectionMonitorTestsOperations",
-            "is_annotation": false
+            "attr_type": "ConnectionMonitorTestsOperations"
           },
           "peering_services": {
-            "attr_type": "PeeringServicesOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServicesOperations"
           },
           "operations": {
-            "attr_type": "Operations",
-            "is_annotation": false
+            "attr_type": "Operations"
           },
           "registered_asns": {
-            "attr_type": "RegisteredAsnsOperations",
-            "is_annotation": false
+            "attr_type": "RegisteredAsnsOperations"
           },
           "received_routes": {
-            "attr_type": "ReceivedRoutesOperations",
-            "is_annotation": false
+            "attr_type": "ReceivedRoutesOperations"
           },
           "rp_unbilled_prefixes": {
-            "attr_type": "RpUnbilledPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "RpUnbilledPrefixesOperations"
           },
           "registered_prefixes": {
-            "attr_type": "RegisteredPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "RegisteredPrefixesOperations"
           },
           "prefixes": {
-            "attr_type": "PrefixesOperations",
-            "is_annotation": false
+            "attr_type": "PrefixesOperations"
           },
           "cdn_peering_prefixes": {
-            "attr_type": "CdnPeeringPrefixesOperations",
-            "is_annotation": false
+            "attr_type": "CdnPeeringPrefixesOperations"
           },
           "legacy_peerings": {
-            "attr_type": "LegacyPeeringsOperations",
-            "is_annotation": false
+            "attr_type": "LegacyPeeringsOperations"
           },
           "looking_glass": {
-            "attr_type": "LookingGlassOperations",
-            "is_annotation": false
+            "attr_type": "LookingGlassOperations"
           },
           "peering_locations": {
-            "attr_type": "PeeringLocationsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringLocationsOperations"
           },
           "peering_service_countries": {
-            "attr_type": "PeeringServiceCountriesOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceCountriesOperations"
           },
           "peering_service_locations": {
-            "attr_type": "PeeringServiceLocationsOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceLocationsOperations"
           },
           "peering_service_providers": {
-            "attr_type": "PeeringServiceProvidersOperations",
-            "is_annotation": false
+            "attr_type": "PeeringServiceProvidersOperations"
           }
         }
       }
@@ -3207,37 +3171,48 @@
         },
         "properties": {
           "session_prefix_v4": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "session_prefix_v6": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "microsoft_session_i_pv4_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "microsoft_session_i_pv6_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peer_session_i_pv4_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peer_session_i_pv6_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "session_state_v4": {
-            "attr_type": "Optional[Union[str, '_models.SessionStateV4']]"
+            "attr_type": "Optional[Union[str, '_models.SessionStateV4']]",
+            "is_annotation": true
           },
           "session_state_v6": {
-            "attr_type": "Optional[Union[str, '_models.SessionStateV6']]"
+            "attr_type": "Optional[Union[str, '_models.SessionStateV6']]",
+            "is_annotation": true
           },
           "max_prefixes_advertised_v4": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "max_prefixes_advertised_v6": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "md5_authentication_key": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -3558,19 +3533,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.CdnPeeringPrefixProperties']"
+            "attr_type": "Optional['_models.CdnPeeringPrefixProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -3858,19 +3838,24 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_region": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_service": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "is_primary_region": {
-            "attr_type": "Optional[bool]"
+            "attr_type": "Optional[bool]",
+            "is_annotation": true
           },
           "bgp_community": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -4196,10 +4181,12 @@
         },
         "properties": {
           "peering_service_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peering_service_provider": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -4576,19 +4563,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.ConnectionMonitorTestProperties']"
+            "attr_type": "Optional['_models.ConnectionMonitorTestProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -4924,25 +4916,32 @@
         },
         "properties": {
           "source_agent": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "destination": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "destination_port": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "test_frequency_in_sec": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "is_test_successful": {
-            "attr_type": "Optional[bool]"
+            "attr_type": "Optional[bool]",
+            "is_annotation": true
           },
           "path": {
-            "attr_type": "Optional[list[str]]"
+            "attr_type": "Optional[list[str]]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           }
         }
       },
@@ -5337,16 +5336,20 @@
         },
         "properties": {
           "endpoint": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_region": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "protocol": {
-            "attr_type": "Optional[Union[str, '_models.Protocol']]"
+            "attr_type": "Optional[Union[str, '_models.Protocol']]",
+            "is_annotation": true
           },
           "prefixes_to_accesslist": {
-            "attr_type": "Optional[list[str]]"
+            "attr_type": "Optional[list[str]]",
+            "is_annotation": true
           }
         }
       },
@@ -5677,13 +5680,16 @@
         },
         "properties": {
           "role": {
-            "attr_type": "Optional[Union[str, '_models.Role']]"
+            "attr_type": "Optional[Union[str, '_models.Role']]",
+            "is_annotation": true
           },
           "email": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "phone": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -6086,34 +6092,44 @@
         },
         "properties": {
           "bandwidth_in_mbps": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "provisioned_bandwidth_in_mbps": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "session_address_provider": {
-            "attr_type": "Optional[Union[str, '_models.SessionAddressProvider']]"
+            "attr_type": "Optional[Union[str, '_models.SessionAddressProvider']]",
+            "is_annotation": true
           },
           "use_for_peering_service": {
-            "attr_type": "Optional[bool]"
+            "attr_type": "Optional[bool]",
+            "is_annotation": true
           },
           "microsoft_tracking_id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peering_db_facility_id": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "connection_state": {
-            "attr_type": "Optional[Union[str, '_models.ConnectionState']]"
+            "attr_type": "Optional[Union[str, '_models.ConnectionState']]",
+            "is_annotation": true
           },
           "bgp_session": {
-            "attr_type": "Optional['_models.BgpSession']"
+            "attr_type": "Optional['_models.BgpSession']",
+            "is_annotation": true
           },
           "connection_identifier": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "error_message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -6449,16 +6465,20 @@
         },
         "properties": {
           "address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "direct_peering_type": {
-            "attr_type": "Optional[Union[str, '_models.DirectPeeringType']]"
+            "attr_type": "Optional[Union[str, '_models.DirectPeeringType']]",
+            "is_annotation": true
           },
           "peering_db_facility_id": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "peering_db_facility_link": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -6863,10 +6883,12 @@
         },
         "properties": {
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "info": {
-            "attr_type": "Optional[Any]"
+            "attr_type": "Optional[Any]",
+            "is_annotation": true
           }
         }
       },
@@ -7154,19 +7176,24 @@
         },
         "properties": {
           "code": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "target": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "details": {
-            "attr_type": "Optional[list['_models.ErrorDetail']]"
+            "attr_type": "Optional[list['_models.ErrorDetail']]",
+            "is_annotation": true
           },
           "additional_info": {
-            "attr_type": "Optional[list['_models.ErrorAdditionalInfo']]"
+            "attr_type": "Optional[list['_models.ErrorAdditionalInfo']]",
+            "is_annotation": true
           }
         }
       },
@@ -7487,7 +7514,8 @@
         },
         "properties": {
           "error": {
-            "attr_type": "Optional['_models.ErrorDetail']"
+            "attr_type": "Optional['_models.ErrorDetail']",
+            "is_annotation": true
           }
         }
       },
@@ -7818,19 +7846,24 @@
         },
         "properties": {
           "peering_db_facility_id": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "connection_state": {
-            "attr_type": "Optional[Union[str, '_models.ConnectionState']]"
+            "attr_type": "Optional[Union[str, '_models.ConnectionState']]",
+            "is_annotation": true
           },
           "bgp_session": {
-            "attr_type": "Optional['_models.BgpSession']"
+            "attr_type": "Optional['_models.BgpSession']",
+            "is_annotation": true
           },
           "connection_identifier": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "error_message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -8186,28 +8219,36 @@
         },
         "properties": {
           "exchange_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "bandwidth_in_mbps": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "microsoft_i_pv4_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "microsoft_i_pv6_address": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "facility_i_pv4_prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "facility_i_pv6_prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peering_db_facility_id": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "peering_db_facility_link": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -8716,13 +8757,16 @@
         },
         "properties": {
           "workspace_id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "key": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "connected_agents": {
-            "attr_type": "Optional[list[str]]"
+            "attr_type": "Optional[list[str]]",
+            "is_annotation": true
           }
         }
       },
@@ -9104,10 +9148,12 @@
         },
         "properties": {
           "command": {
-            "attr_type": "Optional[Union[str, '_models.Command']]"
+            "attr_type": "Optional[Union[str, '_models.Command']]",
+            "is_annotation": true
           },
           "output": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -9450,10 +9496,12 @@
         },
         "properties": {
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "display_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -9741,25 +9789,32 @@
         },
         "properties": {
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "display_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "display_description": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "unit": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "aggregation_type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "supported_time_grain_types": {
-            "attr_type": "Optional[list[str]]"
+            "attr_type": "Optional[list[str]]",
+            "is_annotation": true
           },
           "dimensions": {
-            "attr_type": "Optional[list['_models.MetricDimension']]"
+            "attr_type": "Optional[list['_models.MetricDimension']]",
+            "is_annotation": true
           }
         }
       },
@@ -10047,16 +10102,20 @@
         },
         "properties": {
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "display": {
-            "attr_type": "Optional['_models.OperationDisplayInfo']"
+            "attr_type": "Optional['_models.OperationDisplayInfo']",
+            "is_annotation": true
           },
           "is_data_action": {
-            "attr_type": "Optional[bool]"
+            "attr_type": "Optional[bool]",
+            "is_annotation": true
           },
           "properties": {
-            "attr_type": "Optional['_models.OperationProperties']"
+            "attr_type": "Optional['_models.OperationProperties']",
+            "is_annotation": true
           }
         }
       },
@@ -10344,16 +10403,20 @@
         },
         "properties": {
           "provider": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "resource": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "operation": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "description": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -10641,7 +10704,8 @@
         },
         "properties": {
           "service_specification": {
-            "attr_type": "Optional['_models.ServiceSpecification']"
+            "attr_type": "Optional['_models.ServiceSpecification']",
+            "is_annotation": true
           }
         }
       },
@@ -10962,19 +11026,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeerAsnProperties']"
+            "attr_type": "Optional['_models.PeerAsnProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -11305,19 +11374,24 @@
         },
         "properties": {
           "peer_asn": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "peer_contact_detail": {
-            "attr_type": "Optional[list['_models.ContactDetail']]"
+            "attr_type": "Optional[list['_models.ContactDetail']]",
+            "is_annotation": true
           },
           "peer_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "validation_state": {
-            "attr_type": "Optional[Union[str, '_models.ValidationState']]"
+            "attr_type": "Optional[Union[str, '_models.ValidationState']]",
+            "is_annotation": true
           },
           "error_message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -11695,31 +11769,40 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringProperties']"
+            "attr_type": "Optional['_models.PeeringProperties']",
+            "is_annotation": true
           },
           "sku": {
-            "attr_type": "'_models.PeeringSku'"
+            "attr_type": "_models.PeeringSku",
+            "is_annotation": true
           },
           "kind": {
-            "attr_type": "Union[str, '_models.Kind']"
+            "attr_type": "Union[str, '_models.Kind']",
+            "is_annotation": true
           },
           "tags": {
-            "attr_type": "Optional[dict[str, str]]"
+            "attr_type": "Optional[dict[str, str]]",
+            "is_annotation": true
           },
           "location": {
-            "attr_type": "str"
+            "attr_type": "str",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -12045,10 +12128,12 @@
         },
         "properties": {
           "offer_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "value_in_mbps": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           }
         }
       },
@@ -12374,22 +12459,28 @@
         },
         "properties": {
           "kind": {
-            "attr_type": "Optional[Union[str, '_models.Kind']]"
+            "attr_type": "Optional[Union[str, '_models.Kind']]",
+            "is_annotation": true
           },
           "properties": {
-            "attr_type": "Optional['_models.PeeringLocationProperties']"
+            "attr_type": "Optional['_models.PeeringLocationProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -12730,19 +12821,24 @@
         },
         "properties": {
           "direct": {
-            "attr_type": "Optional['_models.PeeringLocationPropertiesDirect']"
+            "attr_type": "Optional['_models.PeeringLocationPropertiesDirect']",
+            "is_annotation": true
           },
           "exchange": {
-            "attr_type": "Optional['_models.PeeringLocationPropertiesExchange']"
+            "attr_type": "Optional['_models.PeeringLocationPropertiesExchange']",
+            "is_annotation": true
           },
           "peering_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "country": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_region": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -13068,10 +13164,12 @@
         },
         "properties": {
           "peering_facilities": {
-            "attr_type": "Optional[list['_models.DirectPeeringFacility']]"
+            "attr_type": "Optional[list['_models.DirectPeeringFacility']]",
+            "is_annotation": true
           },
           "bandwidth_offers": {
-            "attr_type": "Optional[list['_models.PeeringBandwidthOffer']]"
+            "attr_type": "Optional[list['_models.PeeringBandwidthOffer']]",
+            "is_annotation": true
           }
         }
       },
@@ -13392,7 +13490,8 @@
         },
         "properties": {
           "peering_facilities": {
-            "attr_type": "Optional[list['_models.ExchangePeeringFacility']]"
+            "attr_type": "Optional[list['_models.ExchangePeeringFacility']]",
+            "is_annotation": true
           }
         }
       },
@@ -13845,19 +13944,24 @@
         },
         "properties": {
           "direct": {
-            "attr_type": "Optional['_models.PeeringPropertiesDirect']"
+            "attr_type": "Optional['_models.PeeringPropertiesDirect']",
+            "is_annotation": true
           },
           "exchange": {
-            "attr_type": "Optional['_models.PeeringPropertiesExchange']"
+            "attr_type": "Optional['_models.PeeringPropertiesExchange']",
+            "is_annotation": true
           },
           "connectivity_probes": {
-            "attr_type": "Optional[list['_models.ConnectivityProbe']]"
+            "attr_type": "Optional[list['_models.ConnectivityProbe']]",
+            "is_annotation": true
           },
           "peering_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           }
         }
       },
@@ -14188,16 +14292,20 @@
         },
         "properties": {
           "connections": {
-            "attr_type": "Optional[list['_models.DirectConnection']]"
+            "attr_type": "Optional[list['_models.DirectConnection']]",
+            "is_annotation": true
           },
           "use_for_peering_service": {
-            "attr_type": "Optional[bool]"
+            "attr_type": "Optional[bool]",
+            "is_annotation": true
           },
           "peer_asn": {
-            "attr_type": "Optional['_models.SubResource']"
+            "attr_type": "Optional['_models.SubResource']",
+            "is_annotation": true
           },
           "direct_peering_type": {
-            "attr_type": "Optional[Union[str, '_models.DirectPeeringType']]"
+            "attr_type": "Optional[Union[str, '_models.DirectPeeringType']]",
+            "is_annotation": true
           }
         }
       },
@@ -14523,10 +14631,12 @@
         },
         "properties": {
           "connections": {
-            "attr_type": "Optional[list['_models.ExchangeConnection']]"
+            "attr_type": "Optional[list['_models.ExchangeConnection']]",
+            "is_annotation": true
           },
           "peer_asn": {
-            "attr_type": "Optional['_models.SubResource']"
+            "attr_type": "Optional['_models.SubResource']",
+            "is_annotation": true
           }
         }
       },
@@ -14814,25 +14924,32 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "next_hop": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "as_path": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "origin_as_validation_state": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "rpki_validation_state": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "trust_anchor": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "received_timestamp": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -15153,19 +15270,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringRegisteredAsnProperties']"
+            "attr_type": "Optional['_models.PeeringRegisteredAsnProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -15486,13 +15608,16 @@
         },
         "properties": {
           "asn": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           },
           "peering_service_prefix_key": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           }
         }
       },
@@ -15813,19 +15938,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringRegisteredPrefixProperties']"
+            "attr_type": "Optional['_models.PeeringRegisteredPrefixProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -16146,19 +16276,24 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "prefix_validation_state": {
-            "attr_type": "Optional[Union[str, '_models.PrefixValidationState']]"
+            "attr_type": "Optional[Union[str, '_models.PrefixValidationState']]",
+            "is_annotation": true
           },
           "peering_service_prefix_key": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "error_message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           }
         }
       },
@@ -16531,28 +16666,36 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringServiceProperties']"
+            "attr_type": "Optional['_models.PeeringServiceProperties']",
+            "is_annotation": true
           },
           "sku": {
-            "attr_type": "Optional['_models.PeeringServiceSku']"
+            "attr_type": "Optional['_models.PeeringServiceSku']",
+            "is_annotation": true
           },
           "tags": {
-            "attr_type": "Optional[dict[str, str]]"
+            "attr_type": "Optional[dict[str, str]]",
+            "is_annotation": true
           },
           "location": {
-            "attr_type": "str"
+            "attr_type": "str",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -16840,16 +16983,20 @@
         },
         "properties": {
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -17170,19 +17317,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringServiceLocationProperties']"
+            "attr_type": "Optional['_models.PeeringServiceLocationProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -17513,13 +17665,16 @@
         },
         "properties": {
           "country": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "state": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_region": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -17840,19 +17995,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringServicePrefixProperties']"
+            "attr_type": "Optional['_models.PeeringServicePrefixProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -18140,19 +18300,24 @@
         },
         "properties": {
           "event_timestamp": {
-            "attr_type": "Optional[datetime.datetime]"
+            "attr_type": "Optional[datetime.datetime]",
+            "is_annotation": true
           },
           "event_type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "event_summary": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "event_level": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "event_description": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -18478,25 +18643,32 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "prefix_validation_state": {
-            "attr_type": "Optional[Union[str, '_models.PrefixValidationState']]"
+            "attr_type": "Optional[Union[str, '_models.PrefixValidationState']]",
+            "is_annotation": true
           },
           "learned_type": {
-            "attr_type": "Optional[Union[str, '_models.LearnedType']]"
+            "attr_type": "Optional[Union[str, '_models.LearnedType']]",
+            "is_annotation": true
           },
           "error_message": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "events": {
-            "attr_type": "Optional[list['_models.PeeringServicePrefixEvent']]"
+            "attr_type": "Optional[list['_models.PeeringServicePrefixEvent']]",
+            "is_annotation": true
           },
           "peering_service_prefix_key": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           }
         }
       },
@@ -18837,22 +19009,28 @@
         },
         "properties": {
           "peering_service_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peering_service_provider": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provisioning_state": {
-            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]"
+            "attr_type": "Optional[Union[str, '_models.ProvisioningState']]",
+            "is_annotation": true
           },
           "provider_primary_peering_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "provider_backup_peering_location": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "log_analytics_workspace_properties": {
-            "attr_type": "Optional['_models.LogAnalyticsWorkspaceProperties']"
+            "attr_type": "Optional['_models.LogAnalyticsWorkspaceProperties']",
+            "is_annotation": true
           }
         }
       },
@@ -19173,19 +19351,24 @@
         },
         "properties": {
           "properties": {
-            "attr_type": "Optional['_models.PeeringServiceProviderProperties']"
+            "attr_type": "Optional['_models.PeeringServiceProviderProperties']",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -19511,10 +19694,12 @@
         },
         "properties": {
           "service_provider_name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peering_locations": {
-            "attr_type": "Optional[list[str]]"
+            "attr_type": "Optional[list[str]]",
+            "is_annotation": true
           }
         }
       },
@@ -19835,7 +20020,8 @@
         },
         "properties": {
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -20156,16 +20342,20 @@
         },
         "properties": {
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "tier": {
-            "attr_type": "Optional[Union[str, '_models.Tier']]"
+            "attr_type": "Optional[Union[str, '_models.Tier']]",
+            "is_annotation": true
           },
           "family": {
-            "attr_type": "Optional[Union[str, '_models.Family']]"
+            "attr_type": "Optional[Union[str, '_models.Family']]",
+            "is_annotation": true
           },
           "size": {
-            "attr_type": "Optional[Union[str, '_models.Size']]"
+            "attr_type": "Optional[Union[str, '_models.Size']]",
+            "is_annotation": true
           }
         }
       },
@@ -20627,16 +20817,20 @@
         },
         "properties": {
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -20924,16 +21118,20 @@
         },
         "properties": {
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },
@@ -21254,7 +21452,8 @@
         },
         "properties": {
           "tags": {
-            "attr_type": "Optional[dict[str, str]]"
+            "attr_type": "Optional[dict[str, str]]",
+            "is_annotation": true
           }
         }
       },
@@ -21601,13 +21800,16 @@
         },
         "properties": {
           "prefix": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "azure_region": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "peer_asn": {
-            "attr_type": "Optional[int]"
+            "attr_type": "Optional[int]",
+            "is_annotation": true
           }
         }
       },
@@ -21895,7 +22097,8 @@
         },
         "properties": {
           "metric_specifications": {
-            "attr_type": "Optional[list['_models.MetricSpecification']]"
+            "attr_type": "Optional[list['_models.MetricSpecification']]",
+            "is_annotation": true
           }
         }
       },
@@ -22455,7 +22658,8 @@
         },
         "properties": {
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           }
         }
       },
@@ -22801,22 +23005,28 @@
         },
         "properties": {
           "created_by": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "created_by_type": {
-            "attr_type": "Optional[Union[str, '_models.CreatedByType']]"
+            "attr_type": "Optional[Union[str, '_models.CreatedByType']]",
+            "is_annotation": true
           },
           "created_at": {
-            "attr_type": "Optional[datetime.datetime]"
+            "attr_type": "Optional[datetime.datetime]",
+            "is_annotation": true
           },
           "last_modified_by": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "last_modified_by_type": {
-            "attr_type": "Optional[Union[str, '_models.CreatedByType']]"
+            "attr_type": "Optional[Union[str, '_models.CreatedByType']]",
+            "is_annotation": true
           },
           "last_modified_at": {
-            "attr_type": "Optional[datetime.datetime]"
+            "attr_type": "Optional[datetime.datetime]",
+            "is_annotation": true
           }
         }
       },
@@ -23197,22 +23407,28 @@
         },
         "properties": {
           "tags": {
-            "attr_type": "Optional[dict[str, str]]"
+            "attr_type": "Optional[dict[str, str]]",
+            "is_annotation": true
           },
           "location": {
-            "attr_type": "str"
+            "attr_type": "str",
+            "is_annotation": true
           },
           "id": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "name": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "type": {
-            "attr_type": "Optional[str]"
+            "attr_type": "Optional[str]",
+            "is_annotation": true
           },
           "system_data": {
-            "attr_type": "Optional['_models.SystemData']"
+            "attr_type": "Optional['_models.SystemData']",
+            "is_annotation": true
           }
         }
       },

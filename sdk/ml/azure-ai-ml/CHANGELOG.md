@@ -8,6 +8,9 @@
 
 ### Bugs Fixed
 - Fixed `MLClient.models.get()` for registry models returning `system_metadata` as `None` even when the model has system metadata.
+- Validated datastore storage account names before creating storage clients.
+- Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
+- Fixed online and batch endpoint `invoke()` to build request headers for each call.
 
 ## 1.35.1 (2026-09-30)
 
