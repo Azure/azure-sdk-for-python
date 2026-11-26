@@ -14,12 +14,11 @@ if TYPE_CHECKING:
 
 from ._operations import Operations  # type: ignore
 from ._operations import OperationStatusOperations  # type: ignore
+from ._operations import AsyncOperationStatusOperations  # type: ignore
 from ._operations import AssetsOperations  # type: ignore
 from ._operations import AssetEndpointProfilesOperations  # type: ignore
 from ._operations import BillingContainersOperations  # type: ignore
 from ._operations import NamespacesOperations  # type: ignore
-from ._operations import CredentialsOperations  # type: ignore
-from ._operations import PoliciesOperations  # type: ignore
 from ._operations import NamespaceAssetsOperations  # type: ignore
 from ._operations import NamespaceDevicesOperations  # type: ignore
 from ._operations import NamespaceDiscoveredAssetsOperations  # type: ignore
@@ -27,6 +26,9 @@ from ._operations import NamespaceDiscoveredDevicesOperations  # type: ignore
 from ._operations import SchemaRegistriesOperations  # type: ignore
 from ._operations import SchemasOperations  # type: ignore
 from ._operations import SchemaVersionsOperations  # type: ignore
+from ._operations import CertificateAuthoritiesOperations  # type: ignore
+from ._operations import CertificatePoliciesOperations  # type: ignore
+from ._operations import RegistryDevicesOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -35,12 +37,11 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "Operations",
     "OperationStatusOperations",
+    "AsyncOperationStatusOperations",
     "AssetsOperations",
     "AssetEndpointProfilesOperations",
     "BillingContainersOperations",
     "NamespacesOperations",
-    "CredentialsOperations",
-    "PoliciesOperations",
     "NamespaceAssetsOperations",
     "NamespaceDevicesOperations",
     "NamespaceDiscoveredAssetsOperations",
@@ -48,6 +49,9 @@ __all__ = [
     "SchemaRegistriesOperations",
     "SchemasOperations",
     "SchemaVersionsOperations",
+    "CertificateAuthoritiesOperations",
+    "CertificatePoliciesOperations",
+    "RegistryDevicesOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
