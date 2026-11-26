@@ -25,7 +25,7 @@ from azure.mgmt.fileshares import models as fs_models
 
 ARM_ENDPOINT = os.environ.get("ARM_ENDPOINT", "https://eastus2euap.management.azure.com")
 LOCATION = os.environ.get("FILESHARES_TEST_LOCATION", "eastus2euap")
-RESOURCE_GROUP = os.environ.get("FILESHARES_TEST_RG", "mfstest-prod-eastus2euap-crud-2026-06-01-rg")
+RESOURCE_GROUP = os.environ.get("FILESHARES_TEST_RG", "azsdk-python-fileshares-rg")
 
 
 # --- Name generation ------------------------------------------------------
