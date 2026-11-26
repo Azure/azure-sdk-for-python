@@ -3935,10 +3935,13 @@ Items are grouped by area. Each item is identified `C-AREA-N`
   retain the exact, stream-ID-bound cleanup owner for retry without exposing
   it as a usable replay or releasing another stream's resources.
 - **C-STR-FBR-7.** **Concurrency.** Implementations MUST use a
-  single-writer lock (POSIX `fcntl` advisory lock preferred,
-  `.lock` sentinel-file fallback) to prevent two processes from
+  single-writer lock (POSIX `fcntl` advisory lock, Windows `msvcrt`
+  byte-range lock on a `.lock` sidecar, `.lock` sentinel-file fallback
+  where neither is available) to prevent two processes from
   appending to the same file concurrently. The lock guards the
-  file for the lifetime of the stream instance.
+  file for the lifetime of the stream instance. An OS-managed lock
+  releases ownership when the owning process dies, so a sidecar left
+  by a crashed writer MUST NOT block recovery.
 - **C-STR-FBR-8.** **Compaction.** After ~1000 evictions,
   implementations SHOULD rewrite the file to compact away evicted
   lines (avoids unbounded file growth on long-lived streams with
