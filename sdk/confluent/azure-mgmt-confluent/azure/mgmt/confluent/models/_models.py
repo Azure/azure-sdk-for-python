@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessCreateRoleBindingRequestModel(_Model):
+class AccessCreateRoleBindingRequestModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create role binding request model.
 
     :ivar principal: The principal User or Group to bind the role to.
@@ -57,7 +57,7 @@ class AccessCreateRoleBindingRequestModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessInvitedUserDetails(_Model):
+class AccessInvitedUserDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the user being invited.
 
     :ivar invited_email: UPN/Email of the user who is being invited.
@@ -92,7 +92,7 @@ class AccessInvitedUserDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessInviteUserAccountModel(_Model):
+class AccessInviteUserAccountModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Invite User Account model.
 
     :ivar organization_id: Id of the organization.
@@ -139,7 +139,7 @@ class AccessInviteUserAccountModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListClusterSuccessResponse(_Model):
+class AccessListClusterSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the clusters returned on successful response.
 
     :ivar kind: Type of response.
@@ -181,7 +181,7 @@ class AccessListClusterSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListEnvironmentsSuccessResponse(_Model):
+class AccessListEnvironmentsSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the environments returned on successful response.
 
     :ivar kind: Type of response.
@@ -223,7 +223,7 @@ class AccessListEnvironmentsSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListInvitationsSuccessResponse(_Model):
+class AccessListInvitationsSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List invitations success response.
 
     :ivar kind: Type of response.
@@ -265,7 +265,7 @@ class AccessListInvitationsSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListRoleBindingsSuccessResponse(_Model):
+class AccessListRoleBindingsSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the role bindings returned on successful response.
 
     :ivar kind: Type of response.
@@ -307,7 +307,7 @@ class AccessListRoleBindingsSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListServiceAccountsSuccessResponse(_Model):
+class AccessListServiceAccountsSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List service accounts success response.
 
     :ivar kind: Type of response.
@@ -349,7 +349,7 @@ class AccessListServiceAccountsSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessListUsersSuccessResponse(_Model):
+class AccessListUsersSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List users success response.
 
     :ivar kind: Type of response.
@@ -389,7 +389,7 @@ class AccessListUsersSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessPointProperties(_Model):
+class AccessPointProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access Point Properties.
 
     :ivar access_point_name: Display name of the access point. Required.
@@ -512,7 +512,7 @@ class ProxyResource(Resource):
     """
 
 
-class AccessPointResource(ProxyResource):
+class AccessPointResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of access point record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -553,7 +553,7 @@ class AccessPointResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AccessRoleBindingNameListSuccessResponse(_Model):
+class AccessRoleBindingNameListSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the role binding names returned on successful response.
 
     :ivar kind: Type of response.
@@ -593,7 +593,7 @@ class AccessRoleBindingNameListSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActivateSaaSParameterRequest(_Model):
+class ActivateSaaSParameterRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS guid & PublisherId for Activate and Validate SaaS Resource.
 
     :ivar saas_guid: SaaS guid for Activate and Validate SaaS Resource. Required.
@@ -628,7 +628,7 @@ class ActivateSaaSParameterRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIKeyOwnerEntity(_Model):
+class APIKeyOwnerEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Key Owner details which can be a user or service account.
 
     :ivar id: API Key owner id.
@@ -673,7 +673,7 @@ class APIKeyOwnerEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIKeyProperties(_Model):
+class APIKeyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Key Properties.
 
     :ivar metadata: Metadata of the record.
@@ -708,7 +708,7 @@ class APIKeyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIKeyRecord(_Model):
+class APIKeyRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details API key.
 
     :ivar kind: Type of api key.
@@ -768,7 +768,7 @@ class APIKeyRecord(_Model):
             super().__setattr__(key, value)
 
 
-class APIKeyResourceEntity(_Model):
+class APIKeyResourceEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """API Key Resource details which can be kafka cluster or schema registry cluster.
 
     :ivar id: Id of the resource.
@@ -818,7 +818,7 @@ class APIKeyResourceEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class APIKeySpecEntity(_Model):
+class APIKeySpecEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spec of the API Key record.
 
     :ivar description: The description of the API Key.
@@ -870,7 +870,7 @@ class APIKeySpecEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorServiceTypeInfoBase(_Model):
+class ConnectorServiceTypeInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The connector service type info.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -913,7 +913,7 @@ class ConnectorServiceTypeInfoBase(_Model):
 
 class AzureBlobStorageSinkConnectorServiceInfo(
     ConnectorServiceTypeInfoBase, discriminator="AzureBlobStorageSinkConnector"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication info when auth_type is azureBlobStorageSinkConnector.
 
     :ivar storage_account_name: Azure Blob Storage Account Name.
@@ -924,8 +924,7 @@ class AzureBlobStorageSinkConnectorServiceInfo(
     :vartype storage_container_name: str
     :ivar connector_service_type: The connector service type. Required.
      AZURE_BLOB_STORAGE_SINK_CONNECTOR.
-    :vartype connector_service_type: str or
-     ~azure.mgmt.confluent.models.AZURE_BLOB_STORAGE_SINK_CONNECTOR
+    :vartype connector_service_type: str or ~azure.mgmt.confluent.models.ConnectorServiceType
     """
 
     storage_account_name: Optional[str] = rest_field(
@@ -966,7 +965,7 @@ class AzureBlobStorageSinkConnectorServiceInfo(
 
 class AzureBlobStorageSourceConnectorServiceInfo(
     ConnectorServiceTypeInfoBase, discriminator="AzureBlobStorageSourceConnector"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The connector service type is AzureBlobStorageSourceConnector.
 
     :ivar storage_account_name: Azure Blob Storage Account Name.
@@ -977,8 +976,7 @@ class AzureBlobStorageSourceConnectorServiceInfo(
     :vartype storage_container_name: str
     :ivar connector_service_type: The connector service type. Required.
      AZURE_BLOB_STORAGE_SOURCE_CONNECTOR.
-    :vartype connector_service_type: str or
-     ~azure.mgmt.confluent.models.AZURE_BLOB_STORAGE_SOURCE_CONNECTOR
+    :vartype connector_service_type: str or ~azure.mgmt.confluent.models.ConnectorServiceType
     """
 
     storage_account_name: Optional[str] = rest_field(
@@ -1017,7 +1015,9 @@ class AzureBlobStorageSourceConnectorServiceInfo(
         self.connector_service_type = ConnectorServiceType.AZURE_BLOB_STORAGE_SOURCE_CONNECTOR  # type: ignore
 
 
-class AzureCosmosDBSinkConnectorServiceInfo(ConnectorServiceTypeInfoBase, discriminator="AzureCosmosDBSinkConnector"):
+class AzureCosmosDBSinkConnectorServiceInfo(
+    ConnectorServiceTypeInfoBase, discriminator="AzureCosmosDBSinkConnector"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication info when auth_type is AzureCosmosDBSinkConnector.
 
     :ivar cosmos_database_name: Azure Cosmos Database Name.
@@ -1034,8 +1034,7 @@ class AzureCosmosDBSinkConnectorServiceInfo(ConnectorServiceTypeInfoBase, discri
     :vartype cosmos_write_details: str
     :ivar connector_service_type: The connector service type. Required.
      AZURE_COSMOS_DB_SINK_CONNECTOR.
-    :vartype connector_service_type: str or
-     ~azure.mgmt.confluent.models.AZURE_COSMOS_DB_SINK_CONNECTOR
+    :vartype connector_service_type: str or ~azure.mgmt.confluent.models.ConnectorServiceType
     """
 
     cosmos_database_name: Optional[str] = rest_field(
@@ -1091,7 +1090,7 @@ class AzureCosmosDBSinkConnectorServiceInfo(ConnectorServiceTypeInfoBase, discri
 
 class AzureCosmosDBSourceConnectorServiceInfo(
     ConnectorServiceTypeInfoBase, discriminator="AzureCosmosDBSourceConnector"
-):
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The authentication info when auth_type is AzureCosmosDBSourceConnector.
 
     :ivar cosmos_database_name: Azure Cosmos Database Name.
@@ -1108,8 +1107,7 @@ class AzureCosmosDBSourceConnectorServiceInfo(
     :vartype cosmos_message_key_field: str
     :ivar connector_service_type: The connector service type. Required.
      AZURE_COSMOS_DB_SOURCE_CONNECTOR.
-    :vartype connector_service_type: str or
-     ~azure.mgmt.confluent.models.AZURE_COSMOS_DB_SOURCE_CONNECTOR
+    :vartype connector_service_type: str or ~azure.mgmt.confluent.models.ConnectorServiceType
     :ivar cosmos_include_all_containers: Azure Cosmos Database Include all the containers in the
      database.
     :vartype cosmos_include_all_containers: str
@@ -1173,7 +1171,7 @@ class AzureCosmosDBSourceConnectorServiceInfo(
 
 class AzureSynapseAnalyticsSinkConnectorServiceInfo(
     ConnectorServiceTypeInfoBase, discriminator="AzureSynapseAnalyticsSinkConnector"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The authentication info when auth_type is AzureSynapseAnalyticsSinkConnector.
 
     :ivar synapse_sql_server_name: Azure Synapse Analytics SQL Server Name.
@@ -1186,8 +1184,7 @@ class AzureSynapseAnalyticsSinkConnectorServiceInfo(
     :vartype synapse_sql_database_name: str
     :ivar connector_service_type: The connector service type. Required.
      AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR.
-    :vartype connector_service_type: str or
-     ~azure.mgmt.confluent.models.AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR
+    :vartype connector_service_type: str or ~azure.mgmt.confluent.models.ConnectorServiceType
     """
 
     synapse_sql_server_name: Optional[str] = rest_field(
@@ -1231,7 +1228,7 @@ class AzureSynapseAnalyticsSinkConnectorServiceInfo(
         self.connector_service_type = ConnectorServiceType.AZURE_SYNAPSE_ANALYTICS_SINK_CONNECTOR  # type: ignore
 
 
-class ClusterByokEntity(_Model):
+class ClusterByokEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network associated with this object.
 
     :ivar id: ID of the referred resource.
@@ -1269,7 +1266,7 @@ class ClusterByokEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterConfigEntity(_Model):
+class ClusterConfigEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configuration of the Kafka cluster.
 
     :ivar kind: The lifecycle phase of the cluster.
@@ -1297,7 +1294,7 @@ class ClusterConfigEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterEnvironmentEntity(_Model):
+class ClusterEnvironmentEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The environment to which cluster belongs.
 
     :ivar id: ID of the referred resource.
@@ -1340,7 +1337,7 @@ class ClusterEnvironmentEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterNetworkEntity(_Model):
+class ClusterNetworkEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network associated with this object.
 
     :ivar id: ID of the referred resource.
@@ -1383,7 +1380,7 @@ class ClusterNetworkEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterProperties(_Model):
+class ClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service Connector Cluster Properties.
 
     :ivar metadata: Metadata of the record.
@@ -1427,7 +1424,7 @@ class ClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterRecord(_Model):
+class ClusterRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of cluster record.
 
     :ivar kind: Type of cluster.
@@ -1484,7 +1481,7 @@ class ClusterRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterSpecEntity(_Model):
+class ClusterSpecEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spec of the cluster record.
 
     :ivar display_name: The name of the cluster.
@@ -1574,7 +1571,7 @@ class ClusterSpecEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClusterStatusEntity(_Model):
+class ClusterStatusEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of the cluster record.
 
     :ivar phase: The lifecycle phase of the cluster.
@@ -1607,7 +1604,7 @@ class ClusterStatusEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfluentAgreementProperties(_Model):
+class ConfluentAgreementProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Terms properties for Marketplace and Confluent.
 
     :ivar publisher: Publisher identifier string.
@@ -1677,7 +1674,7 @@ class ConfluentAgreementProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfluentAgreementResource(_Model):
+class ConfluentAgreementResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Agreement Terms definition.
 
     :ivar id: The ARM id of the resource.
@@ -1752,7 +1749,7 @@ class ConfluentAgreementResource(_Model):
             super().__setattr__(key, value)
 
 
-class ConfluentListMetadata(_Model):
+class ConfluentListMetadata(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata of the list.
 
     :ivar first: First page of the list.
@@ -1800,7 +1797,7 @@ class ConfluentListMetadata(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorInfoBase(_Model):
+class ConnectorInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Connector Info Base properties.
 
     :ivar connector_type: Connector Type. Known values are: "SINK" and "SOURCE".
@@ -1861,7 +1858,7 @@ class ConnectorInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConnectorResource(ProxyResource):
+class ConnectorResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of connector record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1922,7 +1919,7 @@ class ConnectorResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConnectorResourceProperties(_Model):
+class ConnectorResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource properties of the Connector.
 
     :ivar connector_basic_info: Connector Info Base.
@@ -1966,7 +1963,7 @@ class ConnectorResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreateAPIKeyModel(_Model):
+class CreateAPIKeyModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Create API Key model.
 
     :ivar name: Name of the API Key.
@@ -1999,7 +1996,7 @@ class CreateAPIKeyModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentProperties(_Model):
+class EnvironmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Environment resource property.
 
     :ivar stream_governance_config: Stream governance configuration.
@@ -2036,7 +2033,7 @@ class EnvironmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentRecord(_Model):
+class EnvironmentRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about environment name, metadata and environment id of an environment.
 
     :ivar kind: Type of environment.
@@ -2125,7 +2122,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -2176,7 +2173,49 @@ class ErrorResponseBody(_Model):
     """Error detail."""
 
 
-class InvitationRecord(_Model):
+class FilteringTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A tag filter that includes or excludes activity logs from matching Azure resources.
+
+    :ivar name: The Azure resource tag name to match. Required.
+    :vartype name: str
+    :ivar value: The Azure resource tag value to match. When omitted, the filter matches any value
+     for the specified tag name.
+    :vartype value: str
+    :ivar action: Specifies whether logs from resources matching the tag filter are included or
+     excluded. Required. Known values are: "Include" and "Exclude".
+    :vartype action: str or ~azure.mgmt.confluent.models.TagAction
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource tag name to match. Required."""
+    value: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Azure resource tag value to match. When omitted, the filter matches any value for the
+     specified tag name."""
+    action: Union[str, "_models.TagAction"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies whether logs from resources matching the tag filter are included or excluded.
+     Required. Known values are: \"Include\" and \"Exclude\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        action: Union[str, "_models.TagAction"],
+        value: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InvitationRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record of the invitation.
 
     :ivar kind: Type of account.
@@ -2241,7 +2280,7 @@ class InvitationRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartnerInfoBase(_Model):
+class PartnerInfoBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner info base.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2281,7 +2320,9 @@ class PartnerInfoBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KafkaAzureBlobStorageSinkConnectorInfo(PartnerInfoBase, discriminator="KafkaAzureBlobStorageSink"):
+class KafkaAzureBlobStorageSinkConnectorInfo(
+    PartnerInfoBase, discriminator="KafkaAzureBlobStorageSink"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner connector type is KafkaAzureBlobStorageSink.
 
     :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
@@ -2312,8 +2353,7 @@ class KafkaAzureBlobStorageSinkConnectorInfo(PartnerInfoBase, discriminator="Kaf
     :vartype time_interval: str
     :ivar partner_connector_type: The partner connector type. Required.
      KAFKA_AZURE_BLOB_STORAGE_SINK.
-    :vartype partner_connector_type: str or
-     ~azure.mgmt.confluent.models.KAFKA_AZURE_BLOB_STORAGE_SINK
+    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.PartnerConnectorType
     """
 
     auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
@@ -2387,7 +2427,9 @@ class KafkaAzureBlobStorageSinkConnectorInfo(PartnerInfoBase, discriminator="Kaf
         self.partner_connector_type = PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SINK  # type: ignore
 
 
-class KafkaAzureBlobStorageSourceConnectorInfo(PartnerInfoBase, discriminator="KafkaAzureBlobStorageSource"):
+class KafkaAzureBlobStorageSourceConnectorInfo(
+    PartnerInfoBase, discriminator="KafkaAzureBlobStorageSource"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner connector type is KafkaAzureBlobStorageSource.
 
     :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
@@ -2414,8 +2456,7 @@ class KafkaAzureBlobStorageSourceConnectorInfo(PartnerInfoBase, discriminator="K
     :vartype max_tasks: str
     :ivar partner_connector_type: The partner connector type. Required.
      KAFKA_AZURE_BLOB_STORAGE_SOURCE.
-    :vartype partner_connector_type: str or
-     ~azure.mgmt.confluent.models.KAFKA_AZURE_BLOB_STORAGE_SOURCE
+    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.PartnerConnectorType
     """
 
     auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
@@ -2483,7 +2524,9 @@ class KafkaAzureBlobStorageSourceConnectorInfo(PartnerInfoBase, discriminator="K
         self.partner_connector_type = PartnerConnectorType.KAFKA_AZURE_BLOB_STORAGE_SOURCE  # type: ignore
 
 
-class KafkaAzureCosmosDBSinkConnectorInfo(PartnerInfoBase, discriminator="KafkaAzureCosmosDBSink"):
+class KafkaAzureCosmosDBSinkConnectorInfo(
+    PartnerInfoBase, discriminator="KafkaAzureCosmosDBSink"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner connector type is KafkaAzureCosmosDBSink.
 
     :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
@@ -2513,7 +2556,7 @@ class KafkaAzureCosmosDBSinkConnectorInfo(PartnerInfoBase, discriminator="KafkaA
     :ivar time_interval: Time Interval.
     :vartype time_interval: str
     :ivar partner_connector_type: The partner connector type. Required. KAFKA_AZURE_COSMOS_DB_SINK.
-    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.KAFKA_AZURE_COSMOS_DB_SINK
+    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.PartnerConnectorType
     """
 
     auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
@@ -2587,7 +2630,9 @@ class KafkaAzureCosmosDBSinkConnectorInfo(PartnerInfoBase, discriminator="KafkaA
         self.partner_connector_type = PartnerConnectorType.KAFKA_AZURE_COSMOS_DB_SINK  # type: ignore
 
 
-class KafkaAzureCosmosDBSourceConnectorInfo(PartnerInfoBase, discriminator="KafkaAzureCosmosDBSource"):
+class KafkaAzureCosmosDBSourceConnectorInfo(
+    PartnerInfoBase, discriminator="KafkaAzureCosmosDBSource"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The partner connector type is KafkaAzureCosmosDBSource.
 
     :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
@@ -2614,8 +2659,7 @@ class KafkaAzureCosmosDBSourceConnectorInfo(PartnerInfoBase, discriminator="Kafk
     :vartype max_tasks: str
     :ivar partner_connector_type: The partner connector type. Required.
      KAFKA_AZURE_COSMOS_DB_SOURCE.
-    :vartype partner_connector_type: str or
-     ~azure.mgmt.confluent.models.KAFKA_AZURE_COSMOS_DB_SOURCE
+    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.PartnerConnectorType
     """
 
     auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
@@ -2685,7 +2729,7 @@ class KafkaAzureCosmosDBSourceConnectorInfo(PartnerInfoBase, discriminator="Kafk
 
 class KafkaAzureSynapseAnalyticsSinkConnectorInfo(
     PartnerInfoBase, discriminator="KafkaAzureSynapseAnalyticsSink"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The partner connector type is KafkaAzureSynapseAnalyticsSink.
 
     :ivar auth_type: Kafka Auth Type. Known values are: "SERVICE_ACCOUNT" and "KAFKA_API_KEY".
@@ -2716,8 +2760,7 @@ class KafkaAzureSynapseAnalyticsSinkConnectorInfo(
     :vartype time_interval: str
     :ivar partner_connector_type: The partner connector type. Required.
      KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK.
-    :vartype partner_connector_type: str or
-     ~azure.mgmt.confluent.models.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK
+    :vartype partner_connector_type: str or ~azure.mgmt.confluent.models.PartnerConnectorType
     """
 
     auth_type: Optional[Union[str, "_models.AuthType"]] = rest_field(
@@ -2791,7 +2834,7 @@ class KafkaAzureSynapseAnalyticsSinkConnectorInfo(
         self.partner_connector_type = PartnerConnectorType.KAFKA_AZURE_SYNAPSE_ANALYTICS_SINK  # type: ignore
 
 
-class KeyValuePair(_Model):
+class KeyValuePair(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A key-value pair for extensibility.
 
     :ivar key: The key. Required.
@@ -2824,7 +2867,7 @@ class KeyValuePair(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LatestLinkedSaaSResponse(_Model):
+class LatestLinkedSaaSResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Response of get latest linked SaaS resource operation.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -2861,7 +2904,7 @@ class LatestLinkedSaaSResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinkOrganization(_Model):
+class LinkOrganization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Link an existing Confluent organization.
 
     :ivar token: User auth token. Required.
@@ -2889,7 +2932,7 @@ class LinkOrganization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListAccessRequestModel(_Model):
+class ListAccessRequestModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List Access Request Model.
 
     :ivar search_filters: Search filters for the request.
@@ -2919,7 +2962,7 @@ class ListAccessRequestModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListRegionsSuccessResponse(_Model):
+class ListRegionsSuccessResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of POST request to list regions supported by confluent.
 
     :ivar data: List of regions supported by confluent.
@@ -2949,7 +2992,66 @@ class ListRegionsSuccessResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MetadataEntity(_Model):
+class LogRules(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Rules that select Azure log categories and Azure resources whose logs are sent to the monitor's
+    configured Confluent topic.
+
+    :ivar send_aad_logs: Specifies whether Microsoft Entra ID logs are sent to Confluent.
+    :vartype send_aad_logs: bool
+    :ivar send_subscription_logs: Specifies whether Azure subscription logs are sent to Confluent.
+    :vartype send_subscription_logs: bool
+    :ivar send_activity_logs: Specifies whether activity logs from Azure resources are sent to
+     Confluent.
+    :vartype send_activity_logs: bool
+    :ivar filtering_tags: Azure resource-tag filters applied when activity logs are enabled. If
+     only exclusion filters are present, logs from all resources except matching resources are sent.
+     If any inclusion filter is present, logs are sent only from matching resources. Exclusion
+     filters take precedence over inclusion filters.
+    :vartype filtering_tags: list[~azure.mgmt.confluent.models.FilteringTag]
+    """
+
+    send_aad_logs: Optional[bool] = rest_field(
+        name="sendAadLogs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether Microsoft Entra ID logs are sent to Confluent."""
+    send_subscription_logs: Optional[bool] = rest_field(
+        name="sendSubscriptionLogs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether Azure subscription logs are sent to Confluent."""
+    send_activity_logs: Optional[bool] = rest_field(
+        name="sendActivityLogs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether activity logs from Azure resources are sent to Confluent."""
+    filtering_tags: Optional[list["_models.FilteringTag"]] = rest_field(
+        name="filteringTags", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Azure resource-tag filters applied when activity logs are enabled. If only exclusion filters
+     are present, logs from all resources except matching resources are sent. If any inclusion
+     filter is present, logs are sent only from matching resources. Exclusion filters take
+     precedence over inclusion filters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        send_aad_logs: Optional[bool] = None,
+        send_subscription_logs: Optional[bool] = None,
+        send_activity_logs: Optional[bool] = None,
+        filtering_tags: Optional[list["_models.FilteringTag"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MetadataEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata of the data record.
 
     :ivar self_property: Self lookup url.
@@ -2997,7 +3099,296 @@ class MetadataEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkGatewayProperties(_Model):
+class MonitorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Confluent log destination and current status of a monitor.
+
+    :ivar organization_id: The identifier of the Confluent organization that contains the
+     destination environment.
+    :vartype organization_id: str
+    :ivar environment_id: The identifier of the Confluent environment that contains the destination
+     cluster. Required.
+    :vartype environment_id: str
+    :ivar environment_name: The display name of the Confluent environment that contains the
+     destination cluster.
+    :vartype environment_name: str
+    :ivar cluster_id: The identifier of the Confluent cluster containing the destination topic.
+     Required.
+    :vartype cluster_id: str
+    :ivar cluster_name: The display name of the Confluent cluster containing the destination topic.
+    :vartype cluster_name: str
+    :ivar topic_id: The identifier of the Confluent topic that receives the selected Azure logs.
+    :vartype topic_id: str
+    :ivar topic_name: The name of the Confluent topic that receives the selected Azure logs.
+     Required.
+    :vartype topic_name: str
+    :ivar dictionary: Additional key-value information associated with the monitor.
+    :vartype dictionary: list[~azure.mgmt.confluent.models.KeyValuePair]
+    :ivar provisioning_state: The status of the most recent operation performed on the monitor.
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.confluent.models.ProvisionState
+    :ivar monitoring_status: Indicates whether the monitor is currently sending Azure logs to
+     Confluent. Known values are: "Enabled" and "Disabled".
+    :vartype monitoring_status: str or ~azure.mgmt.confluent.models.MonitoringStatus
+    """
+
+    organization_id: Optional[str] = rest_field(name="organizationId", visibility=["read", "create"])
+    """The identifier of the Confluent organization that contains the destination environment."""
+    environment_id: str = rest_field(name="environmentId", visibility=["read", "create"])
+    """The identifier of the Confluent environment that contains the destination cluster. Required."""
+    environment_name: Optional[str] = rest_field(name="environmentName", visibility=["read", "create"])
+    """The display name of the Confluent environment that contains the destination cluster."""
+    cluster_id: str = rest_field(name="clusterId", visibility=["read", "create"])
+    """The identifier of the Confluent cluster containing the destination topic. Required."""
+    cluster_name: Optional[str] = rest_field(name="clusterName", visibility=["read", "create"])
+    """The display name of the Confluent cluster containing the destination topic."""
+    topic_id: Optional[str] = rest_field(name="topicId", visibility=["read", "create"])
+    """The identifier of the Confluent topic that receives the selected Azure logs."""
+    topic_name: str = rest_field(name="topicName", visibility=["read", "create"])
+    """The name of the Confluent topic that receives the selected Azure logs. Required."""
+    dictionary: Optional[list["_models.KeyValuePair"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Additional key-value information associated with the monitor."""
+    provisioning_state: Optional[Union[str, "_models.ProvisionState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the most recent operation performed on the monitor. Known values are:
+     \"Accepted\", \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
+    monitoring_status: Optional[Union[str, "_models.MonitoringStatus"]] = rest_field(
+        name="monitoringStatus", visibility=["read"]
+    )
+    """Indicates whether the monitor is currently sending Azure logs to Confluent. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        environment_id: str,
+        cluster_id: str,
+        topic_name: str,
+        organization_id: Optional[str] = None,
+        environment_name: Optional[str] = None,
+        cluster_name: Optional[str] = None,
+        topic_id: Optional[str] = None,
+        dictionary: Optional[list["_models.KeyValuePair"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+    location: str = rest_field(visibility=["read", "create"])
+    """The geo-location where the resource lives. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MonitorResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A monitor that defines the Confluent environment, cluster, and topic to which selected Azure
+    logs are sent.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The configured Confluent log destination and current status of the monitor.
+     Required.
+    :vartype properties: ~azure.mgmt.confluent.models.MonitorProperties
+    """
+
+    properties: "_models.MonitorProperties" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The configured Confluent log destination and current status of the monitor. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        properties: "_models.MonitorProperties",
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MonitorResourceUpdateParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The parameters for updating the Azure resource tags of a Confluent monitor.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MonitorTagRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A rule set that specifies which Azure logs are sent to a monitor's configured Confluent topic.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
+    :ivar properties: The rules that select Azure logs and the current status of the rule set.
+    :vartype properties: ~azure.mgmt.confluent.models.MonitorTagRuleProperties
+    """
+
+    properties: Optional["_models.MonitorTagRuleProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The rules that select Azure logs and the current status of the rule set."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.MonitorTagRuleProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MonitorTagRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The Azure log-selection rules and current status of a monitor rule set.
+
+    :ivar provisioning_state: The status of the most recent operation performed on the rule set.
+     Known values are: "Accepted", "Creating", "Updating", "Deleting", "Succeeded", "Failed",
+     "Canceled", "Deleted", and "NotSpecified".
+    :vartype provisioning_state: str or ~azure.mgmt.confluent.models.ProvisionState
+    :ivar log_rules: Rules that specify which Azure logs are sent to the monitor's configured
+     Confluent topic.
+    :vartype log_rules: ~azure.mgmt.confluent.models.LogRules
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisionState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The status of the most recent operation performed on the rule set. Known values are:
+     \"Accepted\", \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\",
+     \"Canceled\", \"Deleted\", and \"NotSpecified\"."""
+    log_rules: Optional["_models.LogRules"] = rest_field(
+        name="logRules", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Rules that specify which Azure logs are sent to the monitor's configured Confluent topic."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        log_rules: Optional["_models.LogRules"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class NetworkGatewayProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network Gateway Properties.
 
     :ivar network_gateway_name: Display name of the network gateway. Required.
@@ -3056,7 +3447,7 @@ class NetworkGatewayProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkGatewayResource(ProxyResource):
+class NetworkGatewayResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of network gateway record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3097,7 +3488,7 @@ class NetworkGatewayResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class OfferDetail(_Model):
+class OfferDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Confluent Offer detail.
 
     :ivar publisher_id: Publisher Id. Required.
@@ -3175,7 +3566,7 @@ class OfferDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationDisplay(_Model):
+class OperationDisplay(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The object that represents the operation.
 
     :ivar provider: Service provider: Microsoft.Confluent.
@@ -3218,7 +3609,7 @@ class OperationDisplay(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationResult(_Model):
+class OperationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An Confluent REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
@@ -3260,51 +3651,7 @@ class OperationResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.confluent.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OrganizationResource(TrackedResource):
+class OrganizationResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Organization resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3379,7 +3726,7 @@ class OrganizationResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class OrganizationResourceProperties(_Model):
+class OrganizationResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Organization resource property.
 
     :ivar created_time: The creation time of the resource.
@@ -3444,7 +3791,7 @@ class OrganizationResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrganizationResourceUpdate(_Model):
+class OrganizationResourceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Organization Resource update.
 
     :ivar tags: ARM resource tags.
@@ -3472,7 +3819,7 @@ class OrganizationResourceUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionProperties(_Model):
+class RegionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Region Properties.
 
     :ivar metadata: Metadata of the record.
@@ -3507,7 +3854,7 @@ class RegionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegionRecord(_Model):
+class RegionRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of region record.
 
     :ivar kind: Kind of the cluster.
@@ -3567,7 +3914,7 @@ class RegionRecord(_Model):
             super().__setattr__(key, value)
 
 
-class RegionSpecEntity(_Model):
+class RegionSpecEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Region spec details.
 
     :ivar name: Display Name of the region.
@@ -3622,7 +3969,7 @@ class ResourceProviderDefaultErrorResponse(_Model):
     """Response body of Error."""
 
 
-class RoleBindingRecord(_Model):
+class RoleBindingRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details on principal, role name and crn pattern of a role binding.
 
     :ivar kind: The type of the resource.
@@ -3678,7 +4025,7 @@ class RoleBindingRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSData(_Model):
+class SaaSData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SaaS-related data properties.
 
     :ivar saa_s_resource_id: SaaS resource id.
@@ -3708,7 +4055,7 @@ class SaaSData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SaaSResourceDetailsResponse(Resource):
+class SaaSResourceDetailsResponse(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Proxy Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3747,7 +4094,7 @@ class SaaSResourceDetailsResponse(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SCClusterByokEntity(_Model):
+class SCClusterByokEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The network associated with this object.
 
     :ivar id: ID of the referred resource.
@@ -3787,7 +4134,7 @@ class SCClusterByokEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SCClusterNetworkEnvironmentEntity(_Model):
+class SCClusterNetworkEnvironmentEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The environment or the network to which cluster belongs.
 
     :ivar id: ID of the referred resource.
@@ -3832,7 +4179,7 @@ class SCClusterNetworkEnvironmentEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SCClusterRecord(ProxyResource):
+class SCClusterRecord(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of cluster record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3898,7 +4245,7 @@ class SCClusterRecord(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SCClusterSpecEntity(_Model):
+class SCClusterSpecEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Spec of the cluster record.
 
     :ivar name: The name of the cluster.
@@ -4003,7 +4350,7 @@ class SCClusterSpecEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SCEnvironmentRecord(ProxyResource):
+class SCEnvironmentRecord(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about environment name, metadata and environment id of an environment.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4069,7 +4416,9 @@ class SCEnvironmentRecord(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SchemaRegistryClusterEnvironmentRegionEntity(_Model):  # pylint: disable=name-too-long
+class SchemaRegistryClusterEnvironmentRegionEntity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The environment associated with this object.
 
     :ivar id: ID of the referred resource.
@@ -4109,7 +4458,7 @@ class SchemaRegistryClusterEnvironmentRegionEntity(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class SchemaRegistryClusterProperties(_Model):
+class SchemaRegistryClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Schema Registry Cluster Properties.
 
     :ivar metadata: Metadata of the record.
@@ -4153,7 +4502,7 @@ class SchemaRegistryClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaRegistryClusterRecord(_Model):
+class SchemaRegistryClusterRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of schema registry cluster record.
 
     :ivar kind: Kind of the cluster.
@@ -4213,7 +4562,7 @@ class SchemaRegistryClusterRecord(_Model):
             super().__setattr__(key, value)
 
 
-class SchemaRegistryClusterSpecEntity(_Model):
+class SchemaRegistryClusterSpecEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of schema registry cluster spec.
 
     :ivar name: Name of the schema registry cluster.
@@ -4272,7 +4621,7 @@ class SchemaRegistryClusterSpecEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchemaRegistryClusterStatusEntity(_Model):
+class SchemaRegistryClusterStatusEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Status of the schema registry cluster record.
 
     :ivar phase: The lifecycle phase of the cluster.
@@ -4300,7 +4649,7 @@ class SchemaRegistryClusterStatusEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SCMetadataEntity(_Model):
+class SCMetadataEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata of the data record.
 
     :ivar self_property: Self lookup url.
@@ -4356,7 +4705,7 @@ class SCMetadataEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceAccountRecord(_Model):
+class ServiceAccountRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record of the service account.
 
     :ivar kind: Type of account.
@@ -4406,7 +4755,7 @@ class ServiceAccountRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StreamGovernanceConfig(_Model):
+class StreamGovernanceConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Stream governance configuration.
 
     :ivar package: Stream governance configuration. Known values are: "ESSENTIALS" and "ADVANCED".
@@ -4436,7 +4785,7 @@ class StreamGovernanceConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4503,7 +4852,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicMetadataEntity(_Model):
+class TopicMetadataEntity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata of the data record.
 
     :ivar self_property: Self lookup url.
@@ -4538,7 +4887,7 @@ class TopicMetadataEntity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicProperties(_Model):
+class TopicProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Topic Properties.
 
     :ivar kind: Type of topic.
@@ -4620,7 +4969,7 @@ class TopicProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicRecord(ProxyResource):
+class TopicRecord(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of topic record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4691,7 +5040,7 @@ class TopicRecord(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TopicsInputConfig(_Model):
+class TopicsInputConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Topics input config.
 
     :ivar name: Name of the topic input config.
@@ -4724,7 +5073,7 @@ class TopicsInputConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopicsRelatedLink(_Model):
+class TopicsRelatedLink(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Partition Config spec of the topic record.
 
     :ivar related: Relationship of the topic.
@@ -4752,7 +5101,7 @@ class TopicsRelatedLink(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDetail(_Model):
+class UserDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Subscriber detail.
 
     :ivar first_name: First name.
@@ -4802,7 +5151,7 @@ class UserDetail(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserRecord(_Model):
+class UserRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record of the user.
 
     :ivar kind: Type of account.
@@ -4857,7 +5206,7 @@ class UserRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ValidationResponse(_Model):
+class ValidationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Validation response from the provider.
 
     :ivar info: Info from the response.
@@ -4885,7 +5234,7 @@ class ValidationResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VnetInjectionDetails(_Model):
+class VnetInjectionDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details for VNet injection.
 
     :ivar virtual_network_resource_id: Resource ID of the virtual network. Required.
