@@ -17,6 +17,7 @@ from ._operations import OperationStatusOperations  # type: ignore
 from ._operations import GoalAssignmentsOperations  # type: ignore
 from ._operations import GoalResourcesOperations  # type: ignore
 from ._operations import RecoveryPlansOperations  # type: ignore
+from ._operations import RecoveryConfigProfilesOperations  # type: ignore
 from ._operations import RecoveryPlanActionsOperations  # type: ignore
 from ._operations import RecoveryResourcesOperations  # type: ignore
 from ._operations import RecoveryJobsOperations  # type: ignore
@@ -39,6 +40,7 @@ __all__ = [
     "GoalAssignmentsOperations",
     "GoalResourcesOperations",
     "RecoveryPlansOperations",
+    "RecoveryConfigProfilesOperations",
     "RecoveryPlanActionsOperations",
     "RecoveryResourcesOperations",
     "RecoveryJobsOperations",

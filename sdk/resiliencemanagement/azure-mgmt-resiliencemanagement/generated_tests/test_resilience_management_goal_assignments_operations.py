@@ -48,6 +48,8 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "target": "str",
                     },
                     "provisioningState": "str",
+                    "regionalObjectives": {"targetRecoveryPointObjective": "str", "targetRecoveryTimeObjective": "str"},
+                    "requireRegionalResiliency": bool,
                     "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                 },
                 "systemData": {
@@ -84,6 +86,8 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "target": "str",
                     },
                     "provisioningState": "str",
+                    "regionalObjectives": {"targetRecoveryPointObjective": "str", "targetRecoveryTimeObjective": "str"},
+                    "requireRegionalResiliency": bool,
                     "serviceLevelResources": [{"serviceLevelIndicatorResourceId": "str"}],
                 },
                 "systemData": {
@@ -115,6 +119,18 @@ class TestResilienceManagementGoalAssignmentsOperations(AzureMgmtRecordedTestCas
                         "properties": {
                             "resourceArmId": "str",
                             "provisioningState": "str",
+                            "regionalResiliency": {
+                                "attestationStatus": "str",
+                                "exclusionReason": "str",
+                                "goalParticipation": "str",
+                                "userConfirmation": [
+                                    {
+                                        "confirmationStatus": "str",
+                                        "solutionDisplayName": "str",
+                                        "reasonForRequestingConfirmation": "str",
+                                    }
+                                ],
+                            },
                             "zonalResiliency": {
                                 "attestationStatus": "str",
                                 "exclusionReason": "str",
