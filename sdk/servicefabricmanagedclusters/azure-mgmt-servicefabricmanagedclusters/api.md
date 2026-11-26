@@ -877,7 +877,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.aio.operations
         def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[ManagedCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         def list_fault_simulation(
                 self, 
                 resource_group_name: str, 
@@ -1143,6 +1143,42 @@ namespace azure.mgmt.servicefabricmanagedclusters.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @overload
+        async def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: ReimageAllDisksParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: ReimageAllDisksParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
+        async def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @overload
         async def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -1376,7 +1412,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.aio.operations
             ) -> AsyncItemPaged[NodeType]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'node_type_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'node_type_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         def list_fault_simulation(
                 self, 
                 resource_group_name: str, 
@@ -1631,6 +1667,12 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.servicefabricmanagedclusters.models.AllocationStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CAPACITY_OPTIMIZED = "CapacityOptimized"
+        LOWEST_PRICE = "LowestPrice"
+        PRIORITIZED = "Prioritized"
 
 
     class azure.mgmt.servicefabricmanagedclusters.models.ApplicationFetchHealthRequest(_Model):
@@ -2156,6 +2198,12 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
     class azure.mgmt.servicefabricmanagedclusters.models.Direction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INBOUND = "inbound"
         OUTBOUND = "outbound"
+
+
+    class azure.mgmt.servicefabricmanagedclusters.models.DiskCachingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        READ_ONLY = "ReadOnly"
+        READ_WRITE = "ReadWrite"
 
 
     class azure.mgmt.servicefabricmanagedclusters.models.DiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2937,9 +2985,13 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
         application_ports: Optional[EndpointRangeDescription]
         capacities: Optional[dict[str, str]]
         computer_name_prefix: Optional[str]
+        data_disk_caching: Optional[Union[str, DiskCachingType]]
+        data_disk_iops_read_write: Optional[int]
         data_disk_letter: Optional[str]
+        data_disk_m_bps_read_write: Optional[int]
         data_disk_size_gb: Optional[int]
         data_disk_type: Optional[Union[str, DiskType]]
+        data_disk_write_accelerator_enabled: Optional[bool]
         dscp_configuration_id: Optional[str]
         enable_accelerated_networking: Optional[bool]
         enable_encryption_at_host: Optional[bool]
@@ -2967,6 +3019,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
         security_encryption_type: Optional[Union[str, SecurityEncryptionType]]
         security_type: Optional[Union[str, SecurityType]]
         service_artifact_reference_id: Optional[str]
+        sku_profile: Optional[SkuProfile]
         spot_restore_timeout: Optional[str]
         subnet_id: Optional[str]
         use_default_public_load_balancer: Optional[bool]
@@ -2998,9 +3051,13 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
                 application_ports: Optional[EndpointRangeDescription] = ..., 
                 capacities: Optional[dict[str, str]] = ..., 
                 computer_name_prefix: Optional[str] = ..., 
+                data_disk_caching: Optional[Union[str, DiskCachingType]] = ..., 
+                data_disk_iops_read_write: Optional[int] = ..., 
                 data_disk_letter: Optional[str] = ..., 
+                data_disk_m_bps_read_write: Optional[int] = ..., 
                 data_disk_size_gb: Optional[int] = ..., 
                 data_disk_type: Optional[Union[str, DiskType]] = ..., 
+                data_disk_write_accelerator_enabled: Optional[bool] = ..., 
                 dscp_configuration_id: Optional[str] = ..., 
                 enable_accelerated_networking: Optional[bool] = ..., 
                 enable_encryption_at_host: Optional[bool] = ..., 
@@ -3027,6 +3084,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
                 security_encryption_type: Optional[Union[str, SecurityEncryptionType]] = ..., 
                 security_type: Optional[Union[str, SecurityType]] = ..., 
                 service_artifact_reference_id: Optional[str] = ..., 
+                sku_profile: Optional[SkuProfile] = ..., 
                 spot_restore_timeout: Optional[str] = ..., 
                 subnet_id: Optional[str] = ..., 
                 use_default_public_load_balancer: Optional[bool] = ..., 
@@ -3239,6 +3297,22 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
     class azure.mgmt.servicefabricmanagedclusters.models.PublicIPAddressVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         I_PV4 = "IPv4"
         I_PV6 = "IPv6"
+
+
+    class azure.mgmt.servicefabricmanagedclusters.models.ReimageAllDisksParameters(_Model):
+        force: Optional[bool]
+        nodes: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                force: Optional[bool] = ..., 
+                nodes: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.servicefabricmanagedclusters.models.Resource(_Model):
@@ -3889,6 +3963,38 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
         STANDARD = "Standard"
 
 
+    class azure.mgmt.servicefabricmanagedclusters.models.SkuProfile(_Model):
+        allocation_strategy: Optional[Union[str, AllocationStrategy]]
+        vm_sizes: list[SkuProfileVmSize]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                allocation_strategy: Optional[Union[str, AllocationStrategy]] = ..., 
+                vm_sizes: list[SkuProfileVmSize]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.servicefabricmanagedclusters.models.SkuProfileVmSize(_Model):
+        name: str
+        rank: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                name: str, 
+                rank: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.servicefabricmanagedclusters.models.StatefulServiceProperties(ServiceResourceProperties, discriminator='Stateful'):
         correlation_scheme: list[ServiceCorrelation]
         default_move_cost: Union[str, MoveCost]
@@ -4243,19 +4349,27 @@ namespace azure.mgmt.servicefabricmanagedclusters.models
 
 
     class azure.mgmt.servicefabricmanagedclusters.models.VmssDataDisk(_Model):
+        caching: Optional[Union[str, DiskCachingType]]
+        disk_iops_read_write: Optional[int]
         disk_letter: str
+        disk_m_bps_read_write: Optional[int]
         disk_size_gb: int
         disk_type: Union[str, DiskType]
         lun: int
+        write_accelerator_enabled: Optional[bool]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                caching: Optional[Union[str, DiskCachingType]] = ..., 
+                disk_iops_read_write: Optional[int] = ..., 
                 disk_letter: str, 
+                disk_m_bps_read_write: Optional[int] = ..., 
                 disk_size_gb: int, 
                 disk_type: Union[str, DiskType], 
-                lun: int
+                lun: int, 
+                write_accelerator_enabled: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -5084,7 +5198,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.operations
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[ManagedCluster]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         def list_fault_simulation(
                 self, 
                 resource_group_name: str, 
@@ -5350,6 +5464,42 @@ namespace azure.mgmt.servicefabricmanagedclusters.operations
             ) -> LROPoller[None]: ...
 
         @overload
+        def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: ReimageAllDisksParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: ReimageAllDisksParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
+        def begin_reimage_all_disks(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                node_type_name: str, 
+                parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @overload
         def begin_restart(
                 self, 
                 resource_group_name: str, 
@@ -5583,7 +5733,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.operations
             ) -> ItemPaged[NodeType]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'node_type_name', 'accept']}, api_versions_list=['2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-05-01-preview', params_added_on={'2026-05-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'node_type_name', 'accept']}, api_versions_list=['2026-05-01-preview', '2026-09-01-preview'])
         def list_fault_simulation(
                 self, 
                 resource_group_name: str, 
@@ -6346,9 +6496,13 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
     class azure.mgmt.servicefabricmanagedclusters.types.NodeTypeProperties(TypedDict, total=False):
         key "applicationPorts": ForwardRef('EndpointRangeDescription', module='types')
         key "computerNamePrefix": str
+        key "dataDiskCaching": Union[str, DiskCachingType]
+        key "dataDiskIOPSReadWrite": int
         key "dataDiskLetter": str
+        key "dataDiskMBpsReadWrite": int
         key "dataDiskSizeGB": int
         key "dataDiskType": Union[str, DiskType]
+        key "dataDiskWriteAcceleratorEnabled": bool
         key "dscpConfigurationId": str
         key "enableAcceleratedNetworking": bool
         key "enableEncryptionAtHost": bool
@@ -6372,6 +6526,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
         key "securityEncryptionType": Union[str, SecurityEncryptionType]
         key "securityType": Union[str, SecurityType]
         key "serviceArtifactReferenceId": str
+        key "skuProfile": ForwardRef('SkuProfile', module='types')
         key "spotRestoreTimeout": str
         key "subnetId": str
         key "useDefaultPublicLoadBalancer": bool
@@ -6393,9 +6548,13 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
         applicationPorts: EndpointRangeDescription
         capacities: dict[str, str]
         computerNamePrefix: str
+        dataDiskCaching: Union[str, DiskCachingType]
+        dataDiskIOPSReadWrite: int
         dataDiskLetter: str
+        dataDiskMBpsReadWrite: int
         dataDiskSizeGB: int
         dataDiskType: Union[str, DiskType]
+        dataDiskWriteAcceleratorEnabled: bool
         dscpConfigurationId: str
         enableAcceleratedNetworking: bool
         enableEncryptionAtHost: bool
@@ -6423,6 +6582,7 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
         securityEncryptionType: Union[str, SecurityEncryptionType]
         securityType: Union[str, SecurityType]
         serviceArtifactReferenceId: str
+        skuProfile: SkuProfile
         spotRestoreTimeout: str
         subnetId: str
         useDefaultPublicLoadBalancer: bool
@@ -6500,6 +6660,13 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
         name: str
         systemData: SystemData
         type: str
+
+
+    class azure.mgmt.servicefabricmanagedclusters.types.ReimageAllDisksParameters(TypedDict, total=False):
+        key "force": bool
+        key "nodes": Required[list[str]]
+        force: bool
+        nodes: list[str]
 
 
     class azure.mgmt.servicefabricmanagedclusters.types.Resource(TypedDict, total=False):
@@ -6772,6 +6939,20 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
         name: Union[str, SkuName]
 
 
+    class azure.mgmt.servicefabricmanagedclusters.types.SkuProfile(TypedDict, total=False):
+        key "allocationStrategy": Union[str, AllocationStrategy]
+        key "vmSizes": Required[list[SkuProfileVmSize]]
+        allocationStrategy: Union[str, AllocationStrategy]
+        vmSizes: list[SkuProfileVmSize]
+
+
+    class azure.mgmt.servicefabricmanagedclusters.types.SkuProfileVmSize(TypedDict, total=False):
+        key "name": Required[str]
+        key "rank": int
+        name: str
+        rank: int
+
+
     class azure.mgmt.servicefabricmanagedclusters.types.StatefulServiceProperties(TypedDict, total=False):
         key "defaultMoveCost": Union[str, MoveCost]
         key "hasPersistedState": bool
@@ -6978,14 +7159,22 @@ namespace azure.mgmt.servicefabricmanagedclusters.types
 
 
     class azure.mgmt.servicefabricmanagedclusters.types.VmssDataDisk(TypedDict, total=False):
+        key "caching": Union[str, DiskCachingType]
+        key "diskIOPSReadWrite": int
         key "diskLetter": Required[str]
+        key "diskMBpsReadWrite": int
         key "diskSizeGB": Required[int]
         key "diskType": Required[Union[str, DiskType]]
         key "lun": Required[int]
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, DiskCachingType]
+        diskIOPSReadWrite: int
         diskLetter: str
+        diskMBpsReadWrite: int
         diskSizeGB: int
         diskType: Union[str, DiskType]
         lun: int
+        writeAcceleratorEnabled: bool
 
 
     class azure.mgmt.servicefabricmanagedclusters.types.ZoneFaultSimulationContent(TypedDict, total=False):

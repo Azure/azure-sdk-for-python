@@ -128,7 +128,7 @@ class AddRemoveIncrementalNamedPartitionScalingMechanism(
      scaling mechanism for adding or removing named partitions of a stateless service. The value is
      1.
     :vartype kind: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.ADD_REMOVE_INCREMENTAL_NAMED_PARTITION
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingMechanismKind
     """
 
     min_partition_count: int = rest_field(
@@ -1110,8 +1110,7 @@ class AveragePartitionLoadScalingTrigger(
     :vartype scale_interval: str
     :ivar kind: Specifies the trigger associated with this scaling policy. Required. Represents a
      scaling trigger related to an average load of a metric/resource of a partition. The value is 0.
-    :vartype kind: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.AVERAGE_PARTITION_LOAD_TRIGGER
+    :vartype kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingTriggerKind
     """
 
     metric_name: str = rest_field(name="metricName", visibility=["read", "create", "update", "delete", "query"])
@@ -1176,8 +1175,7 @@ class AverageServiceLoadScalingTrigger(
     :vartype use_only_primary_load: bool
     :ivar kind: Specifies the trigger associated with this scaling policy. Required. Represents a
      scaling policy related to an average load of a metric/resource of a service. The value is 1.
-    :vartype kind: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.AVERAGE_SERVICE_LOAD_TRIGGER
+    :vartype kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingTriggerKind
     """
 
     metric_name: str = rest_field(name="metricName", visibility=["read", "create", "update", "delete", "query"])
@@ -3332,7 +3330,8 @@ class NamedPartitionScheme(
     :vartype names: list[str]
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Indicates that the
      partition is based on string names, and is a NamedPartitionScheme object. The value is 2.
-    :vartype partition_scheme: str or ~azure.mgmt.servicefabricmanagedclusters.models.NAMED
+    :vartype partition_scheme: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.PartitionScheme
     """
 
     names: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3581,6 +3580,11 @@ class NodeType(ProxyResource):  # pylint: disable=docstring-keyword-should-match
         "enable_resilient_ephemeral_os_disk",
         "scale_in_policy",
         "proxy_agent_settings",
+        "sku_profile",
+        "data_disk_caching",
+        "data_disk_write_accelerator_enabled",
+        "data_disk_iops_read_write",
+        "data_disk_m_bps_read_write",
     ]
 
     @overload
@@ -3985,6 +3989,23 @@ class NodeTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
     :ivar proxy_agent_settings: Specifies the settings for the proxy agent on the node type.
     :vartype proxy_agent_settings:
      ~azure.mgmt.servicefabricmanagedclusters.models.ProxyAgentSettings
+    :ivar sku_profile: Specifies the sku profile for the node type when vmSize is set to Mix. This
+     allows specifying multiple VM sizes and an allocation strategy for Instance Mix scenarios.
+    :vartype sku_profile: ~azure.mgmt.servicefabricmanagedclusters.models.SkuProfile
+    :ivar data_disk_caching: Specifies the caching requirements for the primary Service Fabric data
+     disk. Possible values include: None, ReadOnly, ReadWrite. Known values are: "None", "ReadOnly",
+     and "ReadWrite".
+    :vartype data_disk_caching: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.DiskCachingType
+    :ivar data_disk_write_accelerator_enabled: Specifies whether write accelerator should be
+     enabled or disabled on the primary Service Fabric data disk.
+    :vartype data_disk_write_accelerator_enabled: bool
+    :ivar data_disk_iops_read_write: Specifies the Read-Write IOPS for the primary Service Fabric
+     data disk.
+    :vartype data_disk_iops_read_write: int
+    :ivar data_disk_m_bps_read_write: Specifies the bandwidth in MB per second for the primary
+     Service Fabric data disk.
+    :vartype data_disk_m_bps_read_write: int
     """
 
     is_primary: bool = rest_field(name="isPrimary", visibility=["read", "create", "update", "delete", "query"])
@@ -4259,6 +4280,30 @@ class NodeTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
         name="proxyAgentSettings", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the settings for the proxy agent on the node type."""
+    sku_profile: Optional["_models.SkuProfile"] = rest_field(
+        name="skuProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the sku profile for the node type when vmSize is set to Mix. This allows specifying
+     multiple VM sizes and an allocation strategy for Instance Mix scenarios."""
+    data_disk_caching: Optional[Union[str, "_models.DiskCachingType"]] = rest_field(
+        name="dataDiskCaching", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the caching requirements for the primary Service Fabric data disk. Possible values
+     include: None, ReadOnly, ReadWrite. Known values are: \"None\", \"ReadOnly\", and
+     \"ReadWrite\"."""
+    data_disk_write_accelerator_enabled: Optional[bool] = rest_field(
+        name="dataDiskWriteAcceleratorEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether write accelerator should be enabled or disabled on the primary Service Fabric
+     data disk."""
+    data_disk_iops_read_write: Optional[int] = rest_field(
+        name="dataDiskIOPSReadWrite", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Read-Write IOPS for the primary Service Fabric data disk."""
+    data_disk_m_bps_read_write: Optional[int] = rest_field(
+        name="dataDiskMBpsReadWrite", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the bandwidth in MB per second for the primary Service Fabric data disk."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -4321,6 +4366,11 @@ class NodeTypeProperties(_Model):  # pylint: disable=docstring-keyword-should-ma
         enable_resilient_ephemeral_os_disk: Optional[bool] = None,
         scale_in_policy: Optional["_models.ScaleInPolicy"] = None,
         proxy_agent_settings: Optional["_models.ProxyAgentSettings"] = None,
+        sku_profile: Optional["_models.SkuProfile"] = None,
+        data_disk_caching: Optional[Union[str, "_models.DiskCachingType"]] = None,
+        data_disk_write_accelerator_enabled: Optional[bool] = None,
+        data_disk_iops_read_write: Optional[int] = None,
+        data_disk_m_bps_read_write: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -4519,7 +4569,7 @@ class PartitionInstanceCountScaleMechanism(
      scaling mechanism for adding or removing instances of stateless service partition. The value is
      0.
     :vartype kind: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.SCALE_PARTITION_INSTANCE_COUNT
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServiceScalingMechanismKind
     """
 
     min_instance_count: int = rest_field(
@@ -4610,6 +4660,39 @@ class ProxyAgentSettings(_Model):  # pylint: disable=docstring-keyword-should-ma
         wire_server: Optional["_models.HostEndpointSettings"] = None,
         imds: Optional["_models.HostEndpointSettings"] = None,
         add_proxy_agent_extension: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ReimageAllDisksParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Parameters for the operation that reimages all disks on a single node.
+
+    :ivar nodes: The name of the node to reimage. Required.
+    :vartype nodes: list[str]
+    :ivar force: Force the action to go through.
+    :vartype force: bool
+    """
+
+    nodes: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the node to reimage. Required."""
+    force: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Force the action to go through."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        nodes: list[str],
+        force: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5550,7 +5633,8 @@ class ServicePlacementInvalidDomainPolicy(
      possible values. Required. Indicates that the ServicePlacementPolicyDescription is of type
      ServicePlacementInvalidDomainPolicyDescription, which indicates that a particular fault or
      upgrade domain cannot be used for placement of this service. The value is 0.
-    :vartype type: str or ~azure.mgmt.servicefabricmanagedclusters.models.INVALID_DOMAIN
+    :vartype type: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
     domain_name: str = rest_field(name="domainName", visibility=["read", "create", "update", "delete", "query"])
@@ -5589,7 +5673,7 @@ class ServicePlacementNonPartiallyPlaceServicePolicy(
      ServicePlacementNonPartiallyPlaceServicePolicyDescription, which indicates that if possible all
      replicas of a particular partition of the service should be placed atomically. The value is 4.
     :vartype type: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.NON_PARTIALLY_PLACE_SERVICE
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
     type: Literal[ServicePlacementPolicyType.NON_PARTIALLY_PLACE_SERVICE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5637,7 +5721,8 @@ class ServicePlacementPreferPrimaryDomainPolicy(
      ServicePlacementPreferPrimaryDomainPolicyDescription, which indicates that if possible the
      Primary replica for the partitions of the service should be located in a particular domain as
      an optimization. The value is 2.
-    :vartype type: str or ~azure.mgmt.servicefabricmanagedclusters.models.PREFERRED_PRIMARY_DOMAIN
+    :vartype type: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
     domain_name: str = rest_field(name="domainName", visibility=["read", "create", "update", "delete", "query"])
@@ -5681,7 +5766,8 @@ class ServicePlacementRequiredDomainPolicy(
      possible values. Required. Indicates that the ServicePlacementPolicyDescription is of type
      ServicePlacementRequireDomainDistributionPolicyDescription indicating that the replicas of the
      service must be placed in a specific domain. The value is 1.
-    :vartype type: str or ~azure.mgmt.servicefabricmanagedclusters.models.REQUIRED_DOMAIN
+    :vartype type: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
     domain_name: str = rest_field(name="domainName", visibility=["read", "create", "update", "delete", "query"])
@@ -5736,7 +5822,7 @@ class ServicePlacementRequireDomainDistributionPolicy(
      disallow placement of any two replicas from the same partition in the same domain at any time.
      The value is 3.
     :vartype type: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.REQUIRED_DOMAIN_DISTRIBUTION
+     ~azure.mgmt.servicefabricmanagedclusters.models.ServicePlacementPolicyType
     """
 
     domain_name: str = rest_field(name="domainName", visibility=["read", "create", "update", "delete", "query"])
@@ -6204,7 +6290,8 @@ class SingletonPartitionScheme(Partition, discriminator="Singleton"):
 
     :ivar partition_scheme: Specifies how the service is partitioned. Required. Indicates that the
      partition is based on string names, and is a SingletonPartitionScheme object, The value is 0.
-    :vartype partition_scheme: str or ~azure.mgmt.servicefabricmanagedclusters.models.SINGLETON
+    :vartype partition_scheme: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.PartitionScheme
     """
 
     partition_scheme: Literal[PartitionScheme.SINGLETON] = rest_discriminator(name="partitionScheme", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -6243,6 +6330,81 @@ class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-onl
         self,
         *,
         name: Union[str, "_models.SkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies the sku profile for Instance Mix scenarios on a node type.
+
+    :ivar vm_sizes: Specifies the VM sizes for the node type. Required.
+    :vartype vm_sizes: list[~azure.mgmt.servicefabricmanagedclusters.models.SkuProfileVmSize]
+    :ivar allocation_strategy: Specifies the allocation strategy for the VM sizes in the sku
+     profile. Known values are: "LowestPrice", "CapacityOptimized", and "Prioritized".
+    :vartype allocation_strategy: str or
+     ~azure.mgmt.servicefabricmanagedclusters.models.AllocationStrategy
+    """
+
+    vm_sizes: list["_models.SkuProfileVmSize"] = rest_field(
+        name="vmSizes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the VM sizes for the node type. Required."""
+    allocation_strategy: Optional[Union[str, "_models.AllocationStrategy"]] = rest_field(
+        name="allocationStrategy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the allocation strategy for the VM sizes in the sku profile. Known values are:
+     \"LowestPrice\", \"CapacityOptimized\", and \"Prioritized\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_sizes: list["_models.SkuProfileVmSize"],
+        allocation_strategy: Optional[Union[str, "_models.AllocationStrategy"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SkuProfileVmSize(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Specifies a VM size in the sku profile.
+
+    :ivar name: The name of the VM size. For example, Standard_D2s_v3. Required.
+    :vartype name: str
+    :ivar rank: Specifies the rank or priority of the VM size when allocationStrategy is
+     Prioritized. Lower values indicate higher priority.
+    :vartype rank: int
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the VM size. For example, Standard_D2s_v3. Required."""
+    rank: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Specifies the rank or priority of the VM size when allocationStrategy is Prioritized. Lower
+     values indicate higher priority."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        rank: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -6321,7 +6483,7 @@ class StatefulServiceProperties(
     :vartype service_placement_time_limit: str
     :ivar service_kind: The kind of service (Stateless or Stateful). Required. Uses Service Fabric
      to make its state or part of its state highly available and reliable. The value is 1.
-    :vartype service_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.STATEFUL
+    :vartype service_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ServiceKind
     """
 
     has_persisted_state: Optional[bool] = rest_field(
@@ -6458,7 +6620,7 @@ class StatelessServiceProperties(
     :vartype min_instance_percentage: int
     :ivar service_kind: The kind of service (Stateless or Stateful). Required. Does not use Service
      Fabric to make its state highly available or reliable. The value is 0.
-    :vartype service_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.STATELESS
+    :vartype service_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ServiceKind
     """
 
     instance_count: int = rest_field(name="instanceCount", visibility=["read", "create", "update", "delete", "query"])
@@ -6694,7 +6856,7 @@ class UniformInt64RangePartitionScheme(
      partition is based on Int64 key ranges, and is a UniformInt64RangePartitionScheme object. The
      value is 1.
     :vartype partition_scheme: str or
-     ~azure.mgmt.servicefabricmanagedclusters.models.UNIFORM_INT64_RANGE
+     ~azure.mgmt.servicefabricmanagedclusters.models.PartitionScheme
     """
 
     count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7021,6 +7183,17 @@ class VmssDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     :ivar disk_letter: Managed data disk letter. It can not use the reserved letter C or D and it
      can not change after created. Required.
     :vartype disk_letter: str
+    :ivar caching: Specifies the caching requirements for the managed data disk. Possible values
+     include: None, ReadOnly, ReadWrite. Known values are: "None", "ReadOnly", and "ReadWrite".
+    :vartype caching: str or ~azure.mgmt.servicefabricmanagedclusters.models.DiskCachingType
+    :ivar write_accelerator_enabled: Specifies whether write accelerator should be enabled or
+     disabled on the managed data disk.
+    :vartype write_accelerator_enabled: bool
+    :ivar disk_iops_read_write: Specifies the Read-Write IOPS for the managed data disk.
+    :vartype disk_iops_read_write: int
+    :ivar disk_m_bps_read_write: Specifies the bandwidth in MB per second for the managed data
+     disk.
+    :vartype disk_m_bps_read_write: int
     """
 
     lun: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7038,6 +7211,23 @@ class VmssDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-ke
     disk_letter: str = rest_field(name="diskLetter", visibility=["read", "create", "update", "delete", "query"])
     """Managed data disk letter. It can not use the reserved letter C or D and it can not change after
      created. Required."""
+    caching: Optional[Union[str, "_models.DiskCachingType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the caching requirements for the managed data disk. Possible values include: None,
+     ReadOnly, ReadWrite. Known values are: \"None\", \"ReadOnly\", and \"ReadWrite\"."""
+    write_accelerator_enabled: Optional[bool] = rest_field(
+        name="writeAcceleratorEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies whether write accelerator should be enabled or disabled on the managed data disk."""
+    disk_iops_read_write: Optional[int] = rest_field(
+        name="diskIOPSReadWrite", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the Read-Write IOPS for the managed data disk."""
+    disk_m_bps_read_write: Optional[int] = rest_field(
+        name="diskMBpsReadWrite", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the bandwidth in MB per second for the managed data disk."""
 
     @overload
     def __init__(
@@ -7047,6 +7237,10 @@ class VmssDataDisk(_Model):  # pylint: disable=docstring-keyword-should-match-ke
         disk_size_gb: int,
         disk_type: Union[str, "_models.DiskType"],
         disk_letter: str,
+        caching: Optional[Union[str, "_models.DiskCachingType"]] = None,
+        write_accelerator_enabled: Optional[bool] = None,
+        disk_iops_read_write: Optional[int] = None,
+        disk_m_bps_read_write: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -7244,7 +7438,7 @@ class ZoneFaultSimulationContent(
     :ivar zones: Indicates the zones of the fault simulation.
     :vartype zones: list[str]
     :ivar fault_kind: The kind of fault simulation. Required. Simulates an availability zone down.
-    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.ZONE
+    :vartype fault_kind: str or ~azure.mgmt.servicefabricmanagedclusters.models.FaultKind
     """
 
     zones: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])

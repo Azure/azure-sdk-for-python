@@ -38,8 +38,26 @@ def main():
         parameters={
             "properties": {
                 "additionalDataDisks": [
-                    {"diskLetter": "F", "diskSizeGB": 256, "diskType": "StandardSSD_LRS", "lun": 1},
-                    {"diskLetter": "G", "diskSizeGB": 150, "diskType": "Premium_LRS", "lun": 2},
+                    {
+                        "caching": "ReadOnly",
+                        "diskIOPSReadWrite": 3000,
+                        "diskLetter": "F",
+                        "diskMBpsReadWrite": 125,
+                        "diskSizeGB": 256,
+                        "diskType": "StandardSSD_LRS",
+                        "lun": 1,
+                        "writeAcceleratorEnabled": False,
+                    },
+                    {
+                        "caching": "ReadOnly",
+                        "diskIOPSReadWrite": 3000,
+                        "diskLetter": "G",
+                        "diskMBpsReadWrite": 125,
+                        "diskSizeGB": 150,
+                        "diskType": "Premium_LRS",
+                        "lun": 2,
+                        "writeAcceleratorEnabled": False,
+                    },
                 ],
                 "additionalNetworkInterfaceConfigurations": [
                     {
@@ -81,9 +99,13 @@ def main():
                 ],
                 "capacities": {"ClientConnections": "65536"},
                 "computerNamePrefix": "BE",
+                "dataDiskCaching": "ReadOnly",
+                "dataDiskIOPSReadWrite": 5000,
                 "dataDiskLetter": "S",
+                "dataDiskMBpsReadWrite": 200,
                 "dataDiskSizeGB": 200,
                 "dataDiskType": "Premium_LRS",
+                "dataDiskWriteAcceleratorEnabled": False,
                 "dscpConfigurationId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/dscpConfigurations/myDscpConfig",
                 "enableAcceleratedNetworking": True,
                 "enableEncryptionAtHost": True,
@@ -118,6 +140,10 @@ def main():
                 "securityEncryptionType": "DiskWithVMGuestState",
                 "securityType": "ConfidentialVM",
                 "serviceArtifactReferenceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Compute/galleries/myGallery/serviceArtifacts/myServiceArtifact/vmArtifactsProfiles/myVmArtifactProfile",
+                "skuProfile": {
+                    "allocationStrategy": "Prioritized",
+                    "vmSizes": [{"name": "Standard_D2s_v3", "rank": 1}, {"name": "Standard_D4s_v3", "rank": 2}],
+                },
                 "spotRestoreTimeout": "PT30M",
                 "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/resRg/providers/Microsoft.Network/virtualNetworks/vnet1/subnets/subnet1",
                 "useDefaultPublicLoadBalancer": True,
@@ -172,13 +198,13 @@ def main():
                     }
                 ],
                 "vmSetupActions": ["EnableContainers", "EnableHyperV"],
-                "vmSize": "Standard_DS3",
+                "vmSize": "Mix",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/NodeTypePutOperation_example_max.json
+# x-ms-original-file: 2026-09-01-preview/NodeTypePutOperation_example_max.json
 if __name__ == "__main__":
     main()

@@ -45,7 +45,18 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
                     "properties": {
                         "isPrimary": bool,
                         "vmInstanceCount": 0,
-                        "additionalDataDisks": [{"diskLetter": "str", "diskSizeGB": 0, "diskType": "str", "lun": 0}],
+                        "additionalDataDisks": [
+                            {
+                                "diskLetter": "str",
+                                "diskSizeGB": 0,
+                                "diskType": "str",
+                                "lun": 0,
+                                "caching": "str",
+                                "diskIOPSReadWrite": 0,
+                                "diskMBpsReadWrite": 0,
+                                "writeAcceleratorEnabled": bool,
+                            }
+                        ],
                         "additionalNetworkInterfaceConfigurations": [
                             {
                                 "ipConfigurations": [
@@ -71,9 +82,13 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
                         "applicationPorts": {"endPort": 0, "startPort": 0},
                         "capacities": {"str": "str"},
                         "computerNamePrefix": "str",
+                        "dataDiskCaching": "str",
+                        "dataDiskIOPSReadWrite": 0,
                         "dataDiskLetter": "str",
+                        "dataDiskMBpsReadWrite": 0,
                         "dataDiskSizeGB": 0,
                         "dataDiskType": "str",
+                        "dataDiskWriteAcceleratorEnabled": bool,
                         "dscpConfigurationId": "str",
                         "enableAcceleratedNetworking": bool,
                         "enableEncryptionAtHost": bool,
@@ -132,6 +147,7 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
                         "securityEncryptionType": "str",
                         "securityType": "str",
                         "serviceArtifactReferenceId": "str",
+                        "skuProfile": {"vmSizes": [{"name": "str", "rank": 0}], "allocationStrategy": "str"},
                         "spotRestoreTimeout": "str",
                         "subnetId": "str",
                         "useDefaultPublicLoadBalancer": bool,
@@ -296,6 +312,21 @@ class TestServiceFabricManagedClustersManagementNodeTypesOperationsAsync(AzureMg
                 cluster_name="str",
                 node_type_name="str",
                 parameters={"force": bool, "nodes": ["str"], "updateType": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_node_types_begin_reimage_all_disks(self, resource_group):
+        response = await (
+            await self.client.node_types.begin_reimage_all_disks(
+                resource_group_name=resource_group.name,
+                cluster_name="str",
+                node_type_name="str",
+                parameters={"nodes": ["str"], "force": bool},
             )
         ).result()  # call '.result()' to poll until service return final result
 
