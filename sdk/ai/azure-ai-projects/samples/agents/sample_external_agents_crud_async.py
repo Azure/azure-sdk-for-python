@@ -75,7 +75,7 @@ async def main() -> None:
         external_agents = []
         async for external_agent in project_client.agents.list(kind="external", limit=10):
             external_agents.append(external_agent)
-        print(f"Found {len(external_agents)} external agents or more")
+        print(f"Found {len(external_agents)} external agents")
         for external_agent in external_agents:
             print(f"  - {external_agent.name} ({external_agent.id})")
 
