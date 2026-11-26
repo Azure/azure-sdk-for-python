@@ -33,6 +33,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-04-01/carbonEmissionsDataAvailableDateRange.json
+# x-ms-original-file: 2026-05-01-preview/carbonEmissionsDataAvailableDateRange.json
 if __name__ == "__main__":
     main()
