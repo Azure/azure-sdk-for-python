@@ -31,12 +31,12 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import SecurityManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -1078,6 +1078,85 @@ def build_security_contacts_list_request(subscription_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_batch_pricings_list_request(scope_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{scopeId}/providers/Microsoft.Security/batchPricings"
+    path_format_arguments = {
+        "scopeId": _SERIALIZER.url("scope_id", scope_id, "str", skip_quote=True),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_pricings_get_request(scope_id: str, pricing_batch_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{scopeId}/providers/Microsoft.Security/batchPricings/{pricingBatchName}"
+    path_format_arguments = {
+        "scopeId": _SERIALIZER.url("scope_id", scope_id, "str", skip_quote=True),
+        "pricingBatchName": _SERIALIZER.url("pricing_batch_name", pricing_batch_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_batch_pricings_create_or_update_request(  # pylint: disable=name-too-long
+    scope_id: str, pricing_batch_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{scopeId}/providers/Microsoft.Security/batchPricings/{pricingBatchName}"
+    path_format_arguments = {
+        "scopeId": _SERIALIZER.url("scope_id", scope_id, "str", skip_quote=True),
+        "pricingBatchName": _SERIALIZER.url("pricing_batch_name", pricing_batch_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_compliance_results_get_request(resource_id: str, compliance_result_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1961,7 +2040,7 @@ def build_pricings_get_request(scope_id: str, pricing_name: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1986,7 +2065,7 @@ def build_pricings_update_request(scope_id: str, pricing_name: str, **kwargs: An
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2013,7 +2092,7 @@ def build_pricings_update_request(scope_id: str, pricing_name: str, **kwargs: An
 def build_pricings_delete_request(scope_id: str, pricing_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/{scopeId}/providers/Microsoft.Security/pricings/{pricingName}"
     path_format_arguments = {
@@ -2033,7 +2112,7 @@ def build_pricings_list_request(scope_id: str, *, filter: Optional[str] = None, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2449,7 +2528,7 @@ def build_security_connectors_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2477,7 +2556,7 @@ def build_security_connectors_create_or_update_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2508,7 +2587,7 @@ def build_security_connectors_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -2538,7 +2617,7 @@ def build_security_connectors_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Security/securityConnectors/{securityConnectorName}"
     path_format_arguments = {
@@ -2561,7 +2640,7 @@ def build_security_connectors_list_by_resource_group_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2586,7 +2665,7 @@ def build_security_connectors_list_request(subscription_id: str, **kwargs: Any) 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5437,13 +5516,11 @@ def build_advanced_threat_protection_create_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_defender_for_storage_get_request(
-    resource_id: str, setting_name: Union[str, _models.SettingName], **kwargs: Any
-) -> HttpRequest:
+def build_defender_for_storage_get_request(resource_id: str, setting_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5465,12 +5542,12 @@ def build_defender_for_storage_get_request(
 
 
 def build_defender_for_storage_create_request(  # pylint: disable=name-too-long
-    resource_id: str, setting_name: Union[str, _models.SettingName], **kwargs: Any
+    resource_id: str, setting_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -5498,7 +5575,7 @@ def build_defender_for_storage_list_request(resource_id: str, **kwargs: Any) -> 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5518,40 +5595,13 @@ def build_defender_for_storage_list_request(resource_id: str, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_defender_for_storage_start_malware_scan_request(  # pylint: disable=name-too-long
-    resource_id: str, setting_name: Union[str, _models.SettingName], **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/{resourceId}/providers/Microsoft.Security/defenderForStorageSettings/{settingName}/startMalwareScan"
-    path_format_arguments = {
-        "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
-        "settingName": _SERIALIZER.url("setting_name", setting_name, "str"),
-    }
-
-    _url: str = _url.format(**path_format_arguments)  # type: ignore
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_defender_for_storage_cancel_malware_scan_request(  # pylint: disable=name-too-long
-    resource_id: str, setting_name: Union[str, _models.SettingName], scan_id: str, **kwargs: Any
+    resource_id: str, setting_name: str, scan_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -5573,13 +5623,43 @@ def build_defender_for_storage_cancel_malware_scan_request(  # pylint: disable=n
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_defender_for_storage_get_malware_scan_request(  # pylint: disable=name-too-long
-    resource_id: str, setting_name: Union[str, _models.SettingName], scan_id: str, **kwargs: Any
+def build_defender_for_storage_start_malware_scan_request(  # pylint: disable=name-too-long
+    resource_id: str, setting_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/{resourceId}/providers/Microsoft.Security/defenderForStorageSettings/{settingName}/startMalwareScan"
+    path_format_arguments = {
+        "resourceId": _SERIALIZER.url("resource_id", resource_id, "str", skip_quote=True),
+        "settingName": _SERIALIZER.url("setting_name", setting_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_defender_for_storage_get_malware_scan_request(  # pylint: disable=name-too-long
+    resource_id: str, setting_name: str, scan_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -7416,7 +7496,7 @@ def build_sub_assessments_list_all_request(scope: str, **kwargs: Any) -> HttpReq
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AlertsOperations:
+class AlertsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7548,7 +7628,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -7956,7 +8036,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8292,7 +8372,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8376,7 +8456,7 @@ class AlertsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -8420,7 +8500,9 @@ class AlertsOperations:
     def _simulate_initial(
         self,
         asc_location: str,
-        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, JSON, IO[bytes]],
+        alert_simulator_request_body: Union[
+            _models.AlertSimulatorRequestBody, _types.AlertSimulatorRequestBody, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8518,7 +8600,7 @@ class AlertsOperations:
     def begin_simulate(
         self,
         asc_location: str,
-        alert_simulator_request_body: JSON,
+        alert_simulator_request_body: _types.AlertSimulatorRequestBody,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8529,7 +8611,7 @@ class AlertsOperations:
          retrieved from Get locations. Required.
         :type asc_location: str
         :param alert_simulator_request_body: The request body. Required.
-        :type alert_simulator_request_body: JSON
+        :type alert_simulator_request_body: ~azure.mgmt.security.types.AlertSimulatorRequestBody
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8566,7 +8648,9 @@ class AlertsOperations:
     def begin_simulate(
         self,
         asc_location: str,
-        alert_simulator_request_body: Union[_models.AlertSimulatorRequestBody, JSON, IO[bytes]],
+        alert_simulator_request_body: Union[
+            _models.AlertSimulatorRequestBody, _types.AlertSimulatorRequestBody, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Simulate security alerts.
@@ -8574,10 +8658,10 @@ class AlertsOperations:
         :param asc_location: The location where ASC stores the data of the subscription. can be
          retrieved from Get locations. Required.
         :type asc_location: str
-        :param alert_simulator_request_body: The request body. Is one of the following types:
-         AlertSimulatorRequestBody, JSON, IO[bytes] Required.
+        :param alert_simulator_request_body: The request body. Is either a AlertSimulatorRequestBody
+         type or a IO[bytes] type. Required.
         :type alert_simulator_request_body: ~azure.mgmt.security.models.AlertSimulatorRequestBody or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.AlertSimulatorRequestBody or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8631,7 +8715,7 @@ class AlertsOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AlertsSuppressionRulesOperations:
+class AlertsSuppressionRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8742,7 +8826,7 @@ class AlertsSuppressionRulesOperations:
     def update(
         self,
         alerts_suppression_rule_name: str,
-        alerts_suppression_rule: JSON,
+        alerts_suppression_rule: _types.AlertsSuppressionRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8752,7 +8836,7 @@ class AlertsSuppressionRulesOperations:
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
         :param alerts_suppression_rule: Suppression rule object. Required.
-        :type alerts_suppression_rule: JSON
+        :type alerts_suppression_rule: ~azure.mgmt.security.types.AlertsSuppressionRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8788,17 +8872,17 @@ class AlertsSuppressionRulesOperations:
     def update(
         self,
         alerts_suppression_rule_name: str,
-        alerts_suppression_rule: Union[_models.AlertsSuppressionRule, JSON, IO[bytes]],
+        alerts_suppression_rule: Union[_models.AlertsSuppressionRule, _types.AlertsSuppressionRule, IO[bytes]],
         **kwargs: Any
     ) -> _models.AlertsSuppressionRule:
         """Update existing rule or create new rule if it doesn't exist.
 
         :param alerts_suppression_rule_name: The unique name of the suppression alert rule. Required.
         :type alerts_suppression_rule_name: str
-        :param alerts_suppression_rule: Suppression rule object. Is one of the following types:
-         AlertsSuppressionRule, JSON, IO[bytes] Required.
-        :type alerts_suppression_rule: ~azure.mgmt.security.models.AlertsSuppressionRule or JSON or
-         IO[bytes]
+        :param alerts_suppression_rule: Suppression rule object. Is either a AlertsSuppressionRule type
+         or a IO[bytes] type. Required.
+        :type alerts_suppression_rule: ~azure.mgmt.security.models.AlertsSuppressionRule or
+         ~azure.mgmt.security.types.AlertsSuppressionRule or IO[bytes]
         :return: AlertsSuppressionRule. The AlertsSuppressionRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.AlertsSuppressionRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8968,7 +9052,7 @@ class AlertsSuppressionRulesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9010,7 +9094,7 @@ class AlertsSuppressionRulesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApplicationsOperations:
+class ApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9066,7 +9150,7 @@ class ApplicationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9108,7 +9192,7 @@ class ApplicationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityConnectorApplicationOperations:
+class SecurityConnectorApplicationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9239,7 +9323,7 @@ class SecurityConnectorApplicationOperations:
         resource_group_name: str,
         security_connector_name: str,
         application_id: str,
-        application: JSON,
+        application: _types.Application,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9255,7 +9339,7 @@ class SecurityConnectorApplicationOperations:
          Required.
         :type application_id: str
         :param application: Application over a subscription scope. Required.
-        :type application: JSON
+        :type application: ~azure.mgmt.security.types.Application
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9301,7 +9385,7 @@ class SecurityConnectorApplicationOperations:
         resource_group_name: str,
         security_connector_name: str,
         application_id: str,
-        application: Union[_models.Application, JSON, IO[bytes]],
+        application: Union[_models.Application, _types.Application, IO[bytes]],
         **kwargs: Any
     ) -> _models.Application:
         """Creates or update a security Application on the given security connector.
@@ -9314,9 +9398,10 @@ class SecurityConnectorApplicationOperations:
         :param application_id: The security Application key - unique key for the standard application.
          Required.
         :type application_id: str
-        :param application: Application over a subscription scope. Is one of the following types:
-         Application, JSON, IO[bytes] Required.
-        :type application: ~azure.mgmt.security.models.Application or JSON or IO[bytes]
+        :param application: Application over a subscription scope. Is either a Application type or a
+         IO[bytes] type. Required.
+        :type application: ~azure.mgmt.security.models.Application or
+         ~azure.mgmt.security.types.Application or IO[bytes]
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9455,7 +9540,7 @@ class SecurityConnectorApplicationOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class AssessmentsMetadataOperations:
+class AssessmentsMetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9572,7 +9657,7 @@ class AssessmentsMetadataOperations:
     def create_in_subscription(
         self,
         assessment_metadata_name: str,
-        assessment_metadata: JSON,
+        assessment_metadata: _types.SecurityAssessmentMetadataResponse,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9583,7 +9668,7 @@ class AssessmentsMetadataOperations:
          Required.
         :type assessment_metadata_name: str
         :param assessment_metadata: AssessmentMetadata object. Required.
-        :type assessment_metadata: JSON
+        :type assessment_metadata: ~azure.mgmt.security.types.SecurityAssessmentMetadataResponse
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9622,7 +9707,9 @@ class AssessmentsMetadataOperations:
     def create_in_subscription(
         self,
         assessment_metadata_name: str,
-        assessment_metadata: Union[_models.SecurityAssessmentMetadataResponse, JSON, IO[bytes]],
+        assessment_metadata: Union[
+            _models.SecurityAssessmentMetadataResponse, _types.SecurityAssessmentMetadataResponse, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SecurityAssessmentMetadataResponse:
         """Create metadata information on an assessment type in a specific subscription.
@@ -9630,10 +9717,10 @@ class AssessmentsMetadataOperations:
         :param assessment_metadata_name: The Assessment Key - Unique key for the assessment type.
          Required.
         :type assessment_metadata_name: str
-        :param assessment_metadata: AssessmentMetadata object. Is one of the following types:
-         SecurityAssessmentMetadataResponse, JSON, IO[bytes] Required.
+        :param assessment_metadata: AssessmentMetadata object. Is either a
+         SecurityAssessmentMetadataResponse type or a IO[bytes] type. Required.
         :type assessment_metadata: ~azure.mgmt.security.models.SecurityAssessmentMetadataResponse or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.SecurityAssessmentMetadataResponse or IO[bytes]
         :return: SecurityAssessmentMetadataResponse. The SecurityAssessmentMetadataResponse is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentMetadataResponse
@@ -9804,7 +9891,7 @@ class AssessmentsMetadataOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9952,7 +10039,7 @@ class AssessmentsMetadataOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -9994,7 +10081,7 @@ class AssessmentsMetadataOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AutomationsOperations:
+class AutomationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10115,7 +10202,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: JSON,
+        automation: _types.Automation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10129,7 +10216,7 @@ class AutomationsOperations:
         :param automation_name: The security automation name. Required.
         :type automation_name: str
         :param automation: The security automation resource. Required.
-        :type automation: JSON
+        :type automation: ~azure.mgmt.security.types.Automation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10171,7 +10258,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: Union[_models.Automation, JSON, IO[bytes]],
+        automation: Union[_models.Automation, _types.Automation, IO[bytes]],
         **kwargs: Any
     ) -> _models.Automation:
         """Creates or updates a security automation. If a security automation is already created and a
@@ -10182,9 +10269,10 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :param automation: The security automation resource. Is one of the following types: Automation,
-         JSON, IO[bytes] Required.
-        :type automation: ~azure.mgmt.security.models.Automation or JSON or IO[bytes]
+        :param automation: The security automation resource. Is either a Automation type or a IO[bytes]
+         type. Required.
+        :type automation: ~azure.mgmt.security.models.Automation or
+         ~azure.mgmt.security.types.Automation or IO[bytes]
         :return: Automation. The Automation is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10289,7 +10377,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: JSON,
+        automation: _types.AutomationUpdateModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10302,7 +10390,7 @@ class AutomationsOperations:
         :param automation_name: The security automation name. Required.
         :type automation_name: str
         :param automation: The update model of security automation resource. Required.
-        :type automation: JSON
+        :type automation: ~azure.mgmt.security.types.AutomationUpdateModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10343,7 +10431,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: Union[_models.AutomationUpdateModel, JSON, IO[bytes]],
+        automation: Union[_models.AutomationUpdateModel, _types.AutomationUpdateModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.Automation:
         """Updates a security automation.
@@ -10353,9 +10441,10 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :param automation: The update model of security automation resource. Is one of the following
-         types: AutomationUpdateModel, JSON, IO[bytes] Required.
-        :type automation: ~azure.mgmt.security.models.AutomationUpdateModel or JSON or IO[bytes]
+        :param automation: The update model of security automation resource. Is either a
+         AutomationUpdateModel type or a IO[bytes] type. Required.
+        :type automation: ~azure.mgmt.security.models.AutomationUpdateModel or
+         ~azure.mgmt.security.types.AutomationUpdateModel or IO[bytes]
         :return: Automation. The Automation is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Automation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10532,7 +10621,7 @@ class AutomationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -10613,7 +10702,7 @@ class AutomationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -10688,7 +10777,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: JSON,
+        automation: _types.Automation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10702,7 +10791,7 @@ class AutomationsOperations:
         :param automation_name: The security automation name. Required.
         :type automation_name: str
         :param automation: The security automation resource. Required.
-        :type automation: JSON
+        :type automation: ~azure.mgmt.security.types.Automation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10746,7 +10835,7 @@ class AutomationsOperations:
         self,
         resource_group_name: str,
         automation_name: str,
-        automation: Union[_models.Automation, JSON, IO[bytes]],
+        automation: Union[_models.Automation, _types.Automation, IO[bytes]],
         **kwargs: Any
     ) -> _models.AutomationValidationStatus:
         """Validates the security automation model before create or update. Any validation errors are
@@ -10757,9 +10846,10 @@ class AutomationsOperations:
         :type resource_group_name: str
         :param automation_name: The security automation name. Required.
         :type automation_name: str
-        :param automation: The security automation resource. Is one of the following types: Automation,
-         JSON, IO[bytes] Required.
-        :type automation: ~azure.mgmt.security.models.Automation or JSON or IO[bytes]
+        :param automation: The security automation resource. Is either a Automation type or a IO[bytes]
+         type. Required.
+        :type automation: ~azure.mgmt.security.models.Automation or
+         ~azure.mgmt.security.types.Automation or IO[bytes]
         :return: AutomationValidationStatus. The AutomationValidationStatus is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.AutomationValidationStatus
@@ -10834,7 +10924,7 @@ class AutomationsOperations:
         return deserialized  # type: ignore
 
 
-class SecurityContactsOperations:
+class SecurityContactsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10947,7 +11037,7 @@ class SecurityContactsOperations:
     def create(
         self,
         security_contact_name: Union[str, _models.SecurityContactName],
-        security_contact: JSON,
+        security_contact: _types.SecurityContact,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10957,7 +11047,7 @@ class SecurityContactsOperations:
         :param security_contact_name: Name of the security contact object. "default" Required.
         :type security_contact_name: str or ~azure.mgmt.security.models.SecurityContactName
         :param security_contact: Security contact object. Required.
-        :type security_contact: JSON
+        :type security_contact: ~azure.mgmt.security.types.SecurityContact
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10993,16 +11083,17 @@ class SecurityContactsOperations:
     def create(
         self,
         security_contact_name: Union[str, _models.SecurityContactName],
-        security_contact: Union[_models.SecurityContact, JSON, IO[bytes]],
+        security_contact: Union[_models.SecurityContact, _types.SecurityContact, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityContact:
         """Create security contact configurations for the subscription.
 
         :param security_contact_name: Name of the security contact object. "default" Required.
         :type security_contact_name: str or ~azure.mgmt.security.models.SecurityContactName
-        :param security_contact: Security contact object. Is one of the following types:
-         SecurityContact, JSON, IO[bytes] Required.
-        :type security_contact: ~azure.mgmt.security.models.SecurityContact or JSON or IO[bytes]
+        :param security_contact: Security contact object. Is either a SecurityContact type or a
+         IO[bytes] type. Required.
+        :type security_contact: ~azure.mgmt.security.models.SecurityContact or
+         ~azure.mgmt.security.types.SecurityContact or IO[bytes]
         :return: SecurityContact. The SecurityContact is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityContact
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11169,7 +11260,7 @@ class SecurityContactsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -11211,7 +11302,343 @@ class SecurityContactsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ComplianceResultsOperations:
+class BatchPricingsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.security.SecurityManagementClient`'s
+        :attr:`batch_pricings` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: SecurityManagementClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list(self, scope_id: str, **kwargs: Any) -> ItemPaged["_models.PricingBatch"]:
+        """Lists the pricing batch resources for the specified scope.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :return: An iterator like instance of PricingBatch
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.security.models.PricingBatch]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+        cls: ClsType[List[_models.PricingBatch]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_batch_pricings_list_request(
+                    scope_id=scope_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                _request = HttpRequest("GET", next_link, headers=_headers)
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.PricingBatch],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.CloudError,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def get(self, scope_id: str, pricing_batch_name: str, **kwargs: Any) -> _models.PricingBatch:
+        """Gets the current pricing batch configuration for the specified scope.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :param pricing_batch_name: Name of the pricing batch resource. Required.
+        :type pricing_batch_name: str
+        :return: PricingBatch. The PricingBatch is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+        cls: ClsType[_models.PricingBatch] = kwargs.pop("cls", None)
+
+        _request = build_batch_pricings_get_request(
+            scope_id=scope_id,
+            pricing_batch_name=pricing_batch_name,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PricingBatch, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def create_or_update(
+        self,
+        scope_id: str,
+        pricing_batch_name: str,
+        pricing_batch: _models.PricingBatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PricingBatch:
+        """Updates multiple pricing plan configurations in a single operation.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :param pricing_batch_name: Name of the pricing batch resource. Required.
+        :type pricing_batch_name: str
+        :param pricing_batch: Resource create parameters. Required.
+        :type pricing_batch: ~azure.mgmt.security.models.PricingBatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PricingBatch. The PricingBatch is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        scope_id: str,
+        pricing_batch_name: str,
+        pricing_batch: _types.PricingBatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PricingBatch:
+        """Updates multiple pricing plan configurations in a single operation.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :param pricing_batch_name: Name of the pricing batch resource. Required.
+        :type pricing_batch_name: str
+        :param pricing_batch: Resource create parameters. Required.
+        :type pricing_batch: ~azure.mgmt.security.types.PricingBatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PricingBatch. The PricingBatch is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def create_or_update(
+        self,
+        scope_id: str,
+        pricing_batch_name: str,
+        pricing_batch: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PricingBatch:
+        """Updates multiple pricing plan configurations in a single operation.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :param pricing_batch_name: Name of the pricing batch resource. Required.
+        :type pricing_batch_name: str
+        :param pricing_batch: Resource create parameters. Required.
+        :type pricing_batch: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PricingBatch. The PricingBatch is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def create_or_update(
+        self,
+        scope_id: str,
+        pricing_batch_name: str,
+        pricing_batch: Union[_models.PricingBatch, _types.PricingBatch, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PricingBatch:
+        """Updates multiple pricing plan configurations in a single operation.
+
+        :param scope_id: The subscription scope for the batch pricing resource. Required.
+        :type scope_id: str
+        :param pricing_batch_name: Name of the pricing batch resource. Required.
+        :type pricing_batch_name: str
+        :param pricing_batch: Resource create parameters. Is either a PricingBatch type or a IO[bytes]
+         type. Required.
+        :type pricing_batch: ~azure.mgmt.security.models.PricingBatch or
+         ~azure.mgmt.security.types.PricingBatch or IO[bytes]
+        :return: PricingBatch. The PricingBatch is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingBatch
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PricingBatch] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(pricing_batch, (IOBase, bytes)):
+            _content = pricing_batch
+        else:
+            _content = json.dumps(pricing_batch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_batch_pricings_create_or_update_request(
+            scope_id=scope_id,
+            pricing_batch_name=pricing_batch_name,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PricingBatch, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class ComplianceResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11339,7 +11766,7 @@ class ComplianceResultsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -11381,7 +11808,7 @@ class ComplianceResultsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GovernanceAssignmentsOperations:
+class GovernanceAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11505,7 +11932,7 @@ class GovernanceAssignmentsOperations:
         scope: str,
         assessment_name: str,
         assignment_key: str,
-        governance_assignment: JSON,
+        governance_assignment: _types.GovernanceAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11519,7 +11946,7 @@ class GovernanceAssignmentsOperations:
         :param assignment_key: The governance assignment key. Required.
         :type assignment_key: str
         :param governance_assignment: Governance assignment over a subscription scope. Required.
-        :type governance_assignment: JSON
+        :type governance_assignment: ~azure.mgmt.security.types.GovernanceAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11563,7 +11990,7 @@ class GovernanceAssignmentsOperations:
         scope: str,
         assessment_name: str,
         assignment_key: str,
-        governance_assignment: Union[_models.GovernanceAssignment, JSON, IO[bytes]],
+        governance_assignment: Union[_models.GovernanceAssignment, _types.GovernanceAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.GovernanceAssignment:
         """Creates or updates a governance assignment on the given subscription.
@@ -11574,10 +12001,10 @@ class GovernanceAssignmentsOperations:
         :type assessment_name: str
         :param assignment_key: The governance assignment key. Required.
         :type assignment_key: str
-        :param governance_assignment: Governance assignment over a subscription scope. Is one of the
-         following types: GovernanceAssignment, JSON, IO[bytes] Required.
-        :type governance_assignment: ~azure.mgmt.security.models.GovernanceAssignment or JSON or
-         IO[bytes]
+        :param governance_assignment: Governance assignment over a subscription scope. Is either a
+         GovernanceAssignment type or a IO[bytes] type. Required.
+        :type governance_assignment: ~azure.mgmt.security.models.GovernanceAssignment or
+         ~azure.mgmt.security.types.GovernanceAssignment or IO[bytes]
         :return: GovernanceAssignment. The GovernanceAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.GovernanceAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -11755,7 +12182,7 @@ class GovernanceAssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -11797,7 +12224,7 @@ class GovernanceAssignmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GovernanceRulesOperations:
+class GovernanceRulesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11913,7 +12340,13 @@ class GovernanceRulesOperations:
 
     @overload
     def create_or_update(
-        self, scope: str, rule_id: str, governance_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        rule_id: str,
+        governance_rule: _types.GovernanceRule,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GovernanceRule:
         """Creates or updates a governance rule over a given scope.
 
@@ -11923,7 +12356,7 @@ class GovernanceRulesOperations:
          Required.
         :type rule_id: str
         :param governance_rule: Governance rule over a given scope. Required.
-        :type governance_rule: JSON
+        :type governance_rule: ~azure.mgmt.security.types.GovernanceRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11961,7 +12394,11 @@ class GovernanceRulesOperations:
 
     @distributed_trace
     def create_or_update(
-        self, scope: str, rule_id: str, governance_rule: Union[_models.GovernanceRule, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        rule_id: str,
+        governance_rule: Union[_models.GovernanceRule, _types.GovernanceRule, IO[bytes]],
+        **kwargs: Any
     ) -> _models.GovernanceRule:
         """Creates or updates a governance rule over a given scope.
 
@@ -11970,9 +12407,10 @@ class GovernanceRulesOperations:
         :param rule_id: The governance rule key - unique key for the standard governance rule (GUID).
          Required.
         :type rule_id: str
-        :param governance_rule: Governance rule over a given scope. Is one of the following types:
-         GovernanceRule, JSON, IO[bytes] Required.
-        :type governance_rule: ~azure.mgmt.security.models.GovernanceRule or JSON or IO[bytes]
+        :param governance_rule: Governance rule over a given scope. Is either a GovernanceRule type or
+         a IO[bytes] type. Required.
+        :type governance_rule: ~azure.mgmt.security.models.GovernanceRule or
+         ~azure.mgmt.security.types.GovernanceRule or IO[bytes]
         :return: GovernanceRule. The GovernanceRule is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.GovernanceRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12203,7 +12641,7 @@ class GovernanceRulesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -12248,7 +12686,9 @@ class GovernanceRulesOperations:
         self,
         scope: str,
         rule_id: str,
-        execute_governance_rule_params: Optional[Union[_models.ExecuteGovernanceRuleParams, JSON, IO[bytes]]] = None,
+        execute_governance_rule_params: Optional[
+            Union[_models.ExecuteGovernanceRuleParams, _types.ExecuteGovernanceRuleParams, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12355,7 +12795,7 @@ class GovernanceRulesOperations:
         self,
         scope: str,
         rule_id: str,
-        execute_governance_rule_params: Optional[JSON] = None,
+        execute_governance_rule_params: Optional[_types.ExecuteGovernanceRuleParams] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12369,7 +12809,7 @@ class GovernanceRulesOperations:
         :type rule_id: str
         :param execute_governance_rule_params: Execute governance rule over a given scope. Default
          value is None.
-        :type execute_governance_rule_params: JSON
+        :type execute_governance_rule_params: ~azure.mgmt.security.types.ExecuteGovernanceRuleParams
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12411,7 +12851,9 @@ class GovernanceRulesOperations:
         self,
         scope: str,
         rule_id: str,
-        execute_governance_rule_params: Optional[Union[_models.ExecuteGovernanceRuleParams, JSON, IO[bytes]]] = None,
+        execute_governance_rule_params: Optional[
+            Union[_models.ExecuteGovernanceRuleParams, _types.ExecuteGovernanceRuleParams, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Execute a governance rule.
@@ -12421,10 +12863,10 @@ class GovernanceRulesOperations:
         :param rule_id: The governance rule key - unique key for the standard governance rule (GUID).
          Required.
         :type rule_id: str
-        :param execute_governance_rule_params: Execute governance rule over a given scope. Is one of
-         the following types: ExecuteGovernanceRuleParams, JSON, IO[bytes] Default value is None.
+        :param execute_governance_rule_params: Execute governance rule over a given scope. Is either a
+         ExecuteGovernanceRuleParams type or a IO[bytes] type. Default value is None.
         :type execute_governance_rule_params: ~azure.mgmt.security.models.ExecuteGovernanceRuleParams
-         or JSON or IO[bytes]
+         or ~azure.mgmt.security.types.ExecuteGovernanceRuleParams or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12562,7 +13004,7 @@ class GovernanceRulesOperations:
         return deserialized  # type: ignore
 
 
-class HealthReportsOperations:
+class HealthReportsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12692,7 +13134,7 @@ class HealthReportsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -12734,7 +13176,7 @@ class HealthReportsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DeviceSecurityGroupsOperations:
+class DeviceSecurityGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12856,7 +13298,7 @@ class DeviceSecurityGroupsOperations:
         self,
         resource_id: str,
         device_security_group_name: str,
-        device_security_group: JSON,
+        device_security_group: _types.DeviceSecurityGroup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12871,7 +13313,7 @@ class DeviceSecurityGroupsOperations:
          the device security group is case insensitive. Required.
         :type device_security_group_name: str
         :param device_security_group: Security group object. Required.
-        :type device_security_group: JSON
+        :type device_security_group: ~azure.mgmt.security.types.DeviceSecurityGroup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12914,7 +13356,7 @@ class DeviceSecurityGroupsOperations:
         self,
         resource_id: str,
         device_security_group_name: str,
-        device_security_group: Union[_models.DeviceSecurityGroup, JSON, IO[bytes]],
+        device_security_group: Union[_models.DeviceSecurityGroup, _types.DeviceSecurityGroup, IO[bytes]],
         **kwargs: Any
     ) -> _models.DeviceSecurityGroup:
         """Use this method to creates or updates the device security group on a specified IoT Hub
@@ -12926,10 +13368,10 @@ class DeviceSecurityGroupsOperations:
         :param device_security_group_name: The name of the device security group. Note that the name of
          the device security group is case insensitive. Required.
         :type device_security_group_name: str
-        :param device_security_group: Security group object. Is one of the following types:
-         DeviceSecurityGroup, JSON, IO[bytes] Required.
-        :type device_security_group: ~azure.mgmt.security.models.DeviceSecurityGroup or JSON or
-         IO[bytes]
+        :param device_security_group: Security group object. Is either a DeviceSecurityGroup type or a
+         IO[bytes] type. Required.
+        :type device_security_group: ~azure.mgmt.security.models.DeviceSecurityGroup or
+         ~azure.mgmt.security.types.DeviceSecurityGroup or IO[bytes]
         :return: DeviceSecurityGroup. The DeviceSecurityGroup is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.DeviceSecurityGroup
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13103,7 +13545,7 @@ class DeviceSecurityGroupsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13145,7 +13587,7 @@ class DeviceSecurityGroupsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AutoProvisioningSettingsOperations:
+class AutoProvisioningSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13254,14 +13696,19 @@ class AutoProvisioningSettingsOperations:
 
     @overload
     def create(
-        self, setting_name: str, setting: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        setting_name: str,
+        setting: _types.AutoProvisioningSetting,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.AutoProvisioningSetting:
         """Details of a specific setting.
 
         :param setting_name: Auto provisioning setting key. Required.
         :type setting_name: str
         :param setting: Auto provisioning setting key. Required.
-        :type setting: JSON
+        :type setting: ~azure.mgmt.security.types.AutoProvisioningSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13290,15 +13737,19 @@ class AutoProvisioningSettingsOperations:
 
     @distributed_trace
     def create(
-        self, setting_name: str, setting: Union[_models.AutoProvisioningSetting, JSON, IO[bytes]], **kwargs: Any
+        self,
+        setting_name: str,
+        setting: Union[_models.AutoProvisioningSetting, _types.AutoProvisioningSetting, IO[bytes]],
+        **kwargs: Any
     ) -> _models.AutoProvisioningSetting:
         """Details of a specific setting.
 
         :param setting_name: Auto provisioning setting key. Required.
         :type setting_name: str
-        :param setting: Auto provisioning setting key. Is one of the following types:
-         AutoProvisioningSetting, JSON, IO[bytes] Required.
-        :type setting: ~azure.mgmt.security.models.AutoProvisioningSetting or JSON or IO[bytes]
+        :param setting: Auto provisioning setting key. Is either a AutoProvisioningSetting type or a
+         IO[bytes] type. Required.
+        :type setting: ~azure.mgmt.security.models.AutoProvisioningSetting or
+         ~azure.mgmt.security.types.AutoProvisioningSetting or IO[bytes]
         :return: AutoProvisioningSetting. The AutoProvisioningSetting is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.AutoProvisioningSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -13409,7 +13860,7 @@ class AutoProvisioningSettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13451,7 +13902,7 @@ class AutoProvisioningSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CompliancesOperations:
+class CompliancesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13578,7 +14029,7 @@ class CompliancesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13620,7 +14071,7 @@ class CompliancesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class InformationProtectionPoliciesOperations:
+class InformationProtectionPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13748,7 +14199,7 @@ class InformationProtectionPoliciesOperations:
         self,
         scope: str,
         information_protection_policy_name: Union[str, _models.InformationProtectionPolicyName],
-        information_protection_policy: JSON,
+        information_protection_policy: _types.InformationProtectionPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13762,7 +14213,7 @@ class InformationProtectionPoliciesOperations:
         :type information_protection_policy_name: str or
          ~azure.mgmt.security.models.InformationProtectionPolicyName
         :param information_protection_policy: Information protection policy. Required.
-        :type information_protection_policy: JSON
+        :type information_protection_policy: ~azure.mgmt.security.types.InformationProtectionPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13806,7 +14257,9 @@ class InformationProtectionPoliciesOperations:
         self,
         scope: str,
         information_protection_policy_name: Union[str, _models.InformationProtectionPolicyName],
-        information_protection_policy: Union[_models.InformationProtectionPolicy, JSON, IO[bytes]],
+        information_protection_policy: Union[
+            _models.InformationProtectionPolicy, _types.InformationProtectionPolicy, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.InformationProtectionPolicy:
         """Details of the information protection policy.
@@ -13817,10 +14270,10 @@ class InformationProtectionPoliciesOperations:
          values are: "effective" and "custom". Required.
         :type information_protection_policy_name: str or
          ~azure.mgmt.security.models.InformationProtectionPolicyName
-        :param information_protection_policy: Information protection policy. Is one of the following
-         types: InformationProtectionPolicy, JSON, IO[bytes] Required.
+        :param information_protection_policy: Information protection policy. Is either a
+         InformationProtectionPolicy type or a IO[bytes] type. Required.
         :type information_protection_policy: ~azure.mgmt.security.models.InformationProtectionPolicy or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.InformationProtectionPolicy or IO[bytes]
         :return: InformationProtectionPolicy. The InformationProtectionPolicy is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.InformationProtectionPolicy
@@ -13934,7 +14387,7 @@ class InformationProtectionPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -13976,7 +14429,7 @@ class InformationProtectionPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class WorkspaceSettingsOperations:
+class WorkspaceSettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14088,7 +14541,7 @@ class WorkspaceSettingsOperations:
     def create(
         self,
         workspace_setting_name: str,
-        workspace_setting: JSON,
+        workspace_setting: _types.WorkspaceSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14098,7 +14551,7 @@ class WorkspaceSettingsOperations:
         :param workspace_setting_name: Name of the security setting. Required.
         :type workspace_setting_name: str
         :param workspace_setting: Security data setting object. Required.
-        :type workspace_setting: JSON
+        :type workspace_setting: ~azure.mgmt.security.types.WorkspaceSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14134,16 +14587,17 @@ class WorkspaceSettingsOperations:
     def create(
         self,
         workspace_setting_name: str,
-        workspace_setting: Union[_models.WorkspaceSetting, JSON, IO[bytes]],
+        workspace_setting: Union[_models.WorkspaceSetting, _types.WorkspaceSetting, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkspaceSetting:
         """creating settings about where we should store your security data and logs.
 
         :param workspace_setting_name: Name of the security setting. Required.
         :type workspace_setting_name: str
-        :param workspace_setting: Security data setting object. Is one of the following types:
-         WorkspaceSetting, JSON, IO[bytes] Required.
-        :type workspace_setting: ~azure.mgmt.security.models.WorkspaceSetting or JSON or IO[bytes]
+        :param workspace_setting: Security data setting object. Is either a WorkspaceSetting type or a
+         IO[bytes] type. Required.
+        :type workspace_setting: ~azure.mgmt.security.models.WorkspaceSetting or
+         ~azure.mgmt.security.types.WorkspaceSetting or IO[bytes]
         :return: WorkspaceSetting. The WorkspaceSetting is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.WorkspaceSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14242,7 +14696,7 @@ class WorkspaceSettingsOperations:
     def update(
         self,
         workspace_setting_name: str,
-        workspace_setting: JSON,
+        workspace_setting: _types.WorkspaceSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14252,7 +14706,7 @@ class WorkspaceSettingsOperations:
         :param workspace_setting_name: Name of the security setting. Required.
         :type workspace_setting_name: str
         :param workspace_setting: Security data setting object. Required.
-        :type workspace_setting: JSON
+        :type workspace_setting: ~azure.mgmt.security.types.WorkspaceSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14288,16 +14742,17 @@ class WorkspaceSettingsOperations:
     def update(
         self,
         workspace_setting_name: str,
-        workspace_setting: Union[_models.WorkspaceSetting, JSON, IO[bytes]],
+        workspace_setting: Union[_models.WorkspaceSetting, _types.WorkspaceSetting, IO[bytes]],
         **kwargs: Any
     ) -> _models.WorkspaceSetting:
         """Settings about where we should store your security data and logs.
 
         :param workspace_setting_name: Name of the security setting. Required.
         :type workspace_setting_name: str
-        :param workspace_setting: Security data setting object. Is one of the following types:
-         WorkspaceSetting, JSON, IO[bytes] Required.
-        :type workspace_setting: ~azure.mgmt.security.models.WorkspaceSetting or JSON or IO[bytes]
+        :param workspace_setting: Security data setting object. Is either a WorkspaceSetting type or a
+         IO[bytes] type. Required.
+        :type workspace_setting: ~azure.mgmt.security.models.WorkspaceSetting or
+         ~azure.mgmt.security.types.WorkspaceSetting or IO[bytes]
         :return: WorkspaceSetting. The WorkspaceSetting is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.WorkspaceSetting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14466,7 +14921,7 @@ class WorkspaceSettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14508,7 +14963,7 @@ class WorkspaceSettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MdeOnboardingsOperations:
+class MdeOnboardingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14654,7 +15109,7 @@ class MdeOnboardingsOperations:
         return deserialized  # type: ignore
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14709,7 +15164,7 @@ class Operations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -14751,7 +15206,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class PricingsOperations:
+class PricingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14794,7 +15249,7 @@ class PricingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
         cls: ClsType[_models.Pricing] = kwargs.pop("cls", None)
 
         _request = build_pricings_get_request(
@@ -14871,7 +15326,13 @@ class PricingsOperations:
 
     @overload
     def update(
-        self, scope_id: str, pricing_name: str, pricing: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope_id: str,
+        pricing_name: str,
+        pricing: _types.Pricing,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Pricing:
         """Updates a provided Microsoft Defender for Cloud pricing configuration in the scope. Valid
         scopes are: subscription id or a specific resource id (Supported resources are:
@@ -14883,7 +15344,7 @@ class PricingsOperations:
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
         :param pricing: Pricing object. Required.
-        :type pricing: JSON
+        :type pricing: ~azure.mgmt.security.types.Pricing
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14923,7 +15384,11 @@ class PricingsOperations:
 
     @distributed_trace
     def update(
-        self, scope_id: str, pricing_name: str, pricing: Union[_models.Pricing, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope_id: str,
+        pricing_name: str,
+        pricing: Union[_models.Pricing, _types.Pricing, IO[bytes]],
+        **kwargs: Any
     ) -> _models.Pricing:
         """Updates a provided Microsoft Defender for Cloud pricing configuration in the scope. Valid
         scopes are: subscription id or a specific resource id (Supported resources are:
@@ -14934,9 +15399,9 @@ class PricingsOperations:
         :type scope_id: str
         :param pricing_name: name of the pricing configuration. Required.
         :type pricing_name: str
-        :param pricing: Pricing object. Is one of the following types: Pricing, JSON, IO[bytes]
-         Required.
-        :type pricing: ~azure.mgmt.security.models.Pricing or JSON or IO[bytes]
+        :param pricing: Pricing object. Is either a Pricing type or a IO[bytes] type. Required.
+        :type pricing: ~azure.mgmt.security.models.Pricing or ~azure.mgmt.security.types.Pricing or
+         IO[bytes]
         :return: Pricing. The Pricing is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Pricing
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -14952,7 +15417,7 @@ class PricingsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.Pricing] = kwargs.pop("cls", None)
 
@@ -15036,7 +15501,7 @@ class PricingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_pricings_delete_request(
@@ -15098,7 +15563,7 @@ class PricingsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
         cls: ClsType[_models.PricingList] = kwargs.pop("cls", None)
 
         _request = build_pricings_list_request(
@@ -15145,7 +15610,7 @@ class PricingsOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15289,7 +15754,7 @@ class PrivateLinkResourcesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -15331,7 +15796,7 @@ class PrivateLinkResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15433,7 +15898,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         private_link_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15548,7 +16015,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         private_link_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: JSON,
+        private_endpoint_connection: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15566,7 +16033,7 @@ class PrivateEndpointConnectionsOperations:
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param private_endpoint_connection: The private endpoint connection resource. Required.
-        :type private_endpoint_connection: JSON
+        :type private_endpoint_connection: ~azure.mgmt.security.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15616,7 +16083,9 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         private_link_name: str,
         private_endpoint_connection_name: str,
-        private_endpoint_connection: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        private_endpoint_connection: Union[
+            _models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Update the state of specified private endpoint connection associated with the private link.
@@ -15631,10 +16100,10 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param private_endpoint_connection: The private endpoint connection resource. Is one of the
-         following types: PrivateEndpointConnection, JSON, IO[bytes] Required.
+        :param private_endpoint_connection: The private endpoint connection resource. Is either a
+         PrivateEndpointConnection type or a IO[bytes] type. Required.
         :type private_endpoint_connection: ~azure.mgmt.security.models.PrivateEndpointConnection or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.PrivateEndpointConnection]
@@ -15878,7 +16347,7 @@ class PrivateEndpointConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -15920,7 +16389,7 @@ class PrivateEndpointConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RegulatoryComplianceStandardsOperations:
+class RegulatoryComplianceStandardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16048,7 +16517,7 @@ class RegulatoryComplianceStandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16090,7 +16559,7 @@ class RegulatoryComplianceStandardsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RegulatoryComplianceControlsOperations:
+class RegulatoryComplianceControlsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16230,7 +16699,7 @@ class RegulatoryComplianceControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16272,7 +16741,7 @@ class RegulatoryComplianceControlsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class RegulatoryComplianceAssessmentsOperations:  # pylint: disable=name-too-long
+class RegulatoryComplianceAssessmentsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16430,7 +16899,7 @@ class RegulatoryComplianceAssessmentsOperations:  # pylint: disable=name-too-lon
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -16472,7 +16941,7 @@ class RegulatoryComplianceAssessmentsOperations:  # pylint: disable=name-too-lon
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityConnectorsOperations:
+class SecurityConnectorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16513,7 +16982,7 @@ class SecurityConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         cls: ClsType[_models.SecurityConnector] = kwargs.pop("cls", None)
 
         _request = build_security_connectors_get_request(
@@ -16593,7 +17062,7 @@ class SecurityConnectorsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        security_connector: JSON,
+        security_connector: _types.SecurityConnector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16607,7 +17076,7 @@ class SecurityConnectorsOperations:
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
         :param security_connector: The security connector resource. Required.
-        :type security_connector: JSON
+        :type security_connector: ~azure.mgmt.security.types.SecurityConnector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16649,7 +17118,7 @@ class SecurityConnectorsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        security_connector: Union[_models.SecurityConnector, JSON, IO[bytes]],
+        security_connector: Union[_models.SecurityConnector, _types.SecurityConnector, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityConnector:
         """Creates or updates a security connector. If a security connector is already created and a
@@ -16660,9 +17129,10 @@ class SecurityConnectorsOperations:
         :type resource_group_name: str
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
-        :param security_connector: The security connector resource. Is one of the following types:
-         SecurityConnector, JSON, IO[bytes] Required.
-        :type security_connector: ~azure.mgmt.security.models.SecurityConnector or JSON or IO[bytes]
+        :param security_connector: The security connector resource. Is either a SecurityConnector type
+         or a IO[bytes] type. Required.
+        :type security_connector: ~azure.mgmt.security.models.SecurityConnector or
+         ~azure.mgmt.security.types.SecurityConnector or IO[bytes]
         :return: SecurityConnector. The SecurityConnector is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityConnector
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16678,7 +17148,7 @@ class SecurityConnectorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityConnector] = kwargs.pop("cls", None)
 
@@ -16767,7 +17237,7 @@ class SecurityConnectorsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        security_connector: JSON,
+        security_connector: _types.SecurityConnector,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16780,7 +17250,7 @@ class SecurityConnectorsOperations:
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
         :param security_connector: The security connector resource. Required.
-        :type security_connector: JSON
+        :type security_connector: ~azure.mgmt.security.types.SecurityConnector
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16821,7 +17291,7 @@ class SecurityConnectorsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        security_connector: Union[_models.SecurityConnector, JSON, IO[bytes]],
+        security_connector: Union[_models.SecurityConnector, _types.SecurityConnector, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityConnector:
         """Updates a security connector.
@@ -16831,9 +17301,10 @@ class SecurityConnectorsOperations:
         :type resource_group_name: str
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
-        :param security_connector: The security connector resource. Is one of the following types:
-         SecurityConnector, JSON, IO[bytes] Required.
-        :type security_connector: ~azure.mgmt.security.models.SecurityConnector or JSON or IO[bytes]
+        :param security_connector: The security connector resource. Is either a SecurityConnector type
+         or a IO[bytes] type. Required.
+        :type security_connector: ~azure.mgmt.security.models.SecurityConnector or
+         ~azure.mgmt.security.types.SecurityConnector or IO[bytes]
         :return: SecurityConnector. The SecurityConnector is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityConnector
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -16849,7 +17320,7 @@ class SecurityConnectorsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.SecurityConnector] = kwargs.pop("cls", None)
 
@@ -16932,7 +17403,7 @@ class SecurityConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_security_connectors_delete_request(
@@ -16981,7 +17452,7 @@ class SecurityConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         cls: ClsType[List[_models.SecurityConnector]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17010,7 +17481,7 @@ class SecurityConnectorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -17063,7 +17534,7 @@ class SecurityConnectorsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-08-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-08-01-preview"))
         cls: ClsType[List[_models.SecurityConnector]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -17091,7 +17562,7 @@ class SecurityConnectorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -17133,7 +17604,7 @@ class SecurityConnectorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AzureDevOpsOrgsOperations:
+class AzureDevOpsOrgsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17233,7 +17704,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, JSON, IO[bytes]],
+        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, _types.AzureDevOpsOrg, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17347,7 +17818,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: JSON,
+        azure_dev_ops_org: _types.AzureDevOpsOrg,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17364,7 +17835,7 @@ class AzureDevOpsOrgsOperations:
         :param org_name: Required.
         :type org_name: str
         :param azure_dev_ops_org: The Azure DevOps organization resource payload. Required.
-        :type azure_dev_ops_org: JSON
+        :type azure_dev_ops_org: ~azure.mgmt.security.types.AzureDevOpsOrg
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17413,7 +17884,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, JSON, IO[bytes]],
+        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, _types.AzureDevOpsOrg, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsOrg]:
         """Creates or updates monitored Azure DevOps organization details.
@@ -17427,9 +17898,10 @@ class AzureDevOpsOrgsOperations:
         :type security_connector_name: str
         :param org_name: Required.
         :type org_name: str
-        :param azure_dev_ops_org: The Azure DevOps organization resource payload. Is one of the
-         following types: AzureDevOpsOrg, JSON, IO[bytes] Required.
-        :type azure_dev_ops_org: ~azure.mgmt.security.models.AzureDevOpsOrg or JSON or IO[bytes]
+        :param azure_dev_ops_org: The Azure DevOps organization resource payload. Is either a
+         AzureDevOpsOrg type or a IO[bytes] type. Required.
+        :type azure_dev_ops_org: ~azure.mgmt.security.models.AzureDevOpsOrg or
+         ~azure.mgmt.security.types.AzureDevOpsOrg or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsOrg. The AzureDevOpsOrg is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsOrg]
@@ -17495,7 +17967,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, JSON, IO[bytes]],
+        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, _types.AzureDevOpsOrg, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17609,7 +18081,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: JSON,
+        azure_dev_ops_org: _types.AzureDevOpsOrg,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17626,7 +18098,7 @@ class AzureDevOpsOrgsOperations:
         :param org_name: Required.
         :type org_name: str
         :param azure_dev_ops_org: The Azure DevOps organization resource payload. Required.
-        :type azure_dev_ops_org: JSON
+        :type azure_dev_ops_org: ~azure.mgmt.security.types.AzureDevOpsOrg
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17675,7 +18147,7 @@ class AzureDevOpsOrgsOperations:
         resource_group_name: str,
         security_connector_name: str,
         org_name: str,
-        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, JSON, IO[bytes]],
+        azure_dev_ops_org: Union[_models.AzureDevOpsOrg, _types.AzureDevOpsOrg, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsOrg]:
         """Updates monitored Azure DevOps organization details.
@@ -17689,9 +18161,10 @@ class AzureDevOpsOrgsOperations:
         :type security_connector_name: str
         :param org_name: Required.
         :type org_name: str
-        :param azure_dev_ops_org: The Azure DevOps organization resource payload. Is one of the
-         following types: AzureDevOpsOrg, JSON, IO[bytes] Required.
-        :type azure_dev_ops_org: ~azure.mgmt.security.models.AzureDevOpsOrg or JSON or IO[bytes]
+        :param azure_dev_ops_org: The Azure DevOps organization resource payload. Is either a
+         AzureDevOpsOrg type or a IO[bytes] type. Required.
+        :type azure_dev_ops_org: ~azure.mgmt.security.models.AzureDevOpsOrg or
+         ~azure.mgmt.security.types.AzureDevOpsOrg or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsOrg. The AzureDevOpsOrg is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsOrg]
@@ -17802,7 +18275,7 @@ class AzureDevOpsOrgsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -17922,7 +18395,7 @@ class AzureDevOpsOrgsOperations:
         return deserialized  # type: ignore
 
 
-class GitHubOwnersOperations:
+class GitHubOwnersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18067,7 +18540,7 @@ class GitHubOwnersOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18184,7 +18657,7 @@ class GitHubOwnersOperations:
         return deserialized  # type: ignore
 
 
-class GitLabGroupsOperations:
+class GitLabGroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18329,7 +18802,7 @@ class GitLabGroupsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -18446,7 +18919,7 @@ class GitLabGroupsOperations:
         return deserialized  # type: ignore
 
 
-class DevOpsConfigurationsOperations:
+class DevOpsConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18540,7 +19013,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: Union[_models.DevOpsConfiguration, JSON, IO[bytes]],
+        dev_ops_configuration: Union[_models.DevOpsConfiguration, _types.DevOpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18651,7 +19124,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: JSON,
+        dev_ops_configuration: _types.DevOpsConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18666,7 +19139,7 @@ class DevOpsConfigurationsOperations:
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
         :param dev_ops_configuration: The DevOps configuration resource payload. Required.
-        :type dev_ops_configuration: JSON
+        :type dev_ops_configuration: ~azure.mgmt.security.types.DevOpsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18711,7 +19184,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: Union[_models.DevOpsConfiguration, JSON, IO[bytes]],
+        dev_ops_configuration: Union[_models.DevOpsConfiguration, _types.DevOpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DevOpsConfiguration]:
         """Creates or updates a DevOps Configuration.
@@ -18723,10 +19196,10 @@ class DevOpsConfigurationsOperations:
         :type resource_group_name: str
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
-        :param dev_ops_configuration: The DevOps configuration resource payload. Is one of the
-         following types: DevOpsConfiguration, JSON, IO[bytes] Required.
-        :type dev_ops_configuration: ~azure.mgmt.security.models.DevOpsConfiguration or JSON or
-         IO[bytes]
+        :param dev_ops_configuration: The DevOps configuration resource payload. Is either a
+         DevOpsConfiguration type or a IO[bytes] type. Required.
+        :type dev_ops_configuration: ~azure.mgmt.security.models.DevOpsConfiguration or
+         ~azure.mgmt.security.types.DevOpsConfiguration or IO[bytes]
         :return: An instance of LROPoller that returns DevOpsConfiguration. The DevOpsConfiguration is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.DevOpsConfiguration]
@@ -18790,7 +19263,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: Union[_models.DevOpsConfiguration, JSON, IO[bytes]],
+        dev_ops_configuration: Union[_models.DevOpsConfiguration, _types.DevOpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18899,7 +19372,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: JSON,
+        dev_ops_configuration: _types.DevOpsConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18914,7 +19387,7 @@ class DevOpsConfigurationsOperations:
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
         :param dev_ops_configuration: The DevOps configuration resource payload. Required.
-        :type dev_ops_configuration: JSON
+        :type dev_ops_configuration: ~azure.mgmt.security.types.DevOpsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18959,7 +19432,7 @@ class DevOpsConfigurationsOperations:
         self,
         resource_group_name: str,
         security_connector_name: str,
-        dev_ops_configuration: Union[_models.DevOpsConfiguration, JSON, IO[bytes]],
+        dev_ops_configuration: Union[_models.DevOpsConfiguration, _types.DevOpsConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DevOpsConfiguration]:
         """Updates a DevOps Configuration.
@@ -18971,10 +19444,10 @@ class DevOpsConfigurationsOperations:
         :type resource_group_name: str
         :param security_connector_name: The security connector name. Required.
         :type security_connector_name: str
-        :param dev_ops_configuration: The DevOps configuration resource payload. Is one of the
-         following types: DevOpsConfiguration, JSON, IO[bytes] Required.
-        :type dev_ops_configuration: ~azure.mgmt.security.models.DevOpsConfiguration or JSON or
-         IO[bytes]
+        :param dev_ops_configuration: The DevOps configuration resource payload. Is either a
+         DevOpsConfiguration type or a IO[bytes] type. Required.
+        :type dev_ops_configuration: ~azure.mgmt.security.models.DevOpsConfiguration or
+         ~azure.mgmt.security.types.DevOpsConfiguration or IO[bytes]
         :return: An instance of LROPoller that returns DevOpsConfiguration. The DevOpsConfiguration is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.DevOpsConfiguration]
@@ -19205,7 +19678,7 @@ class DevOpsConfigurationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19247,7 +19720,7 @@ class DevOpsConfigurationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AzureDevOpsProjectsOperations:
+class AzureDevOpsProjectsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -19351,7 +19824,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: Union[_models.AzureDevOpsProject, JSON, IO[bytes]],
+        azure_dev_ops_project: Union[_models.AzureDevOpsProject, _types.AzureDevOpsProject, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19470,7 +19943,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: JSON,
+        azure_dev_ops_project: _types.AzureDevOpsProject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19489,7 +19962,7 @@ class AzureDevOpsProjectsOperations:
         :param project_name: Required.
         :type project_name: str
         :param azure_dev_ops_project: The Azure DevOps project resource payload. Required.
-        :type azure_dev_ops_project: JSON
+        :type azure_dev_ops_project: ~azure.mgmt.security.types.AzureDevOpsProject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19542,7 +20015,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: Union[_models.AzureDevOpsProject, JSON, IO[bytes]],
+        azure_dev_ops_project: Union[_models.AzureDevOpsProject, _types.AzureDevOpsProject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsProject]:
         """Creates or updates a monitored Azure DevOps project resource.
@@ -19558,10 +20031,10 @@ class AzureDevOpsProjectsOperations:
         :type org_name: str
         :param project_name: Required.
         :type project_name: str
-        :param azure_dev_ops_project: The Azure DevOps project resource payload. Is one of the
-         following types: AzureDevOpsProject, JSON, IO[bytes] Required.
-        :type azure_dev_ops_project: ~azure.mgmt.security.models.AzureDevOpsProject or JSON or
-         IO[bytes]
+        :param azure_dev_ops_project: The Azure DevOps project resource payload. Is either a
+         AzureDevOpsProject type or a IO[bytes] type. Required.
+        :type azure_dev_ops_project: ~azure.mgmt.security.models.AzureDevOpsProject or
+         ~azure.mgmt.security.types.AzureDevOpsProject or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsProject. The AzureDevOpsProject is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsProject]
@@ -19629,7 +20102,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: Union[_models.AzureDevOpsProject, JSON, IO[bytes]],
+        azure_dev_ops_project: Union[_models.AzureDevOpsProject, _types.AzureDevOpsProject, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19748,7 +20221,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: JSON,
+        azure_dev_ops_project: _types.AzureDevOpsProject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19767,7 +20240,7 @@ class AzureDevOpsProjectsOperations:
         :param project_name: Required.
         :type project_name: str
         :param azure_dev_ops_project: The Azure DevOps project resource payload. Required.
-        :type azure_dev_ops_project: JSON
+        :type azure_dev_ops_project: ~azure.mgmt.security.types.AzureDevOpsProject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19820,7 +20293,7 @@ class AzureDevOpsProjectsOperations:
         security_connector_name: str,
         org_name: str,
         project_name: str,
-        azure_dev_ops_project: Union[_models.AzureDevOpsProject, JSON, IO[bytes]],
+        azure_dev_ops_project: Union[_models.AzureDevOpsProject, _types.AzureDevOpsProject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsProject]:
         """Updates a monitored Azure DevOps project resource.
@@ -19836,10 +20309,10 @@ class AzureDevOpsProjectsOperations:
         :type org_name: str
         :param project_name: Required.
         :type project_name: str
-        :param azure_dev_ops_project: The Azure DevOps project resource payload. Is one of the
-         following types: AzureDevOpsProject, JSON, IO[bytes] Required.
-        :type azure_dev_ops_project: ~azure.mgmt.security.models.AzureDevOpsProject or JSON or
-         IO[bytes]
+        :param azure_dev_ops_project: The Azure DevOps project resource payload. Is either a
+         AzureDevOpsProject type or a IO[bytes] type. Required.
+        :type azure_dev_ops_project: ~azure.mgmt.security.models.AzureDevOpsProject or
+         ~azure.mgmt.security.types.AzureDevOpsProject or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsProject. The AzureDevOpsProject is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsProject]
@@ -19954,7 +20427,7 @@ class AzureDevOpsProjectsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -19996,7 +20469,7 @@ class AzureDevOpsProjectsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GitLabProjectsOperations:
+class GitLabProjectsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20156,7 +20629,7 @@ class GitLabProjectsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20198,7 +20671,7 @@ class GitLabProjectsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityOperatorsOperations:
+class SecurityOperatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20458,7 +20931,7 @@ class SecurityOperatorsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20500,7 +20973,7 @@ class SecurityOperatorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class DiscoveredSecuritySolutionsOperations:
+class DiscoveredSecuritySolutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20638,7 +21111,7 @@ class DiscoveredSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20718,7 +21191,7 @@ class DiscoveredSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20760,7 +21233,7 @@ class DiscoveredSecuritySolutionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ExternalSecuritySolutionsOperations:
+class ExternalSecuritySolutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -20898,7 +21371,7 @@ class ExternalSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -20978,7 +21451,7 @@ class ExternalSecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21020,7 +21493,7 @@ class ExternalSecuritySolutionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JitNetworkAccessPoliciesOperations:
+class JitNetworkAccessPoliciesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -21154,7 +21627,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         asc_location: str,
         jit_network_access_policy_name: str,
-        body: JSON,
+        body: _types.JitNetworkAccessPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21171,7 +21644,7 @@ class JitNetworkAccessPoliciesOperations:
          Required.
         :type jit_network_access_policy_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.security.types.JitNetworkAccessPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21218,7 +21691,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         asc_location: str,
         jit_network_access_policy_name: str,
-        body: Union[_models.JitNetworkAccessPolicy, JSON, IO[bytes]],
+        body: Union[_models.JitNetworkAccessPolicy, _types.JitNetworkAccessPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.JitNetworkAccessPolicy:
         """Create a policy for protecting resources using Just-in-Time access control.
@@ -21232,8 +21705,9 @@ class JitNetworkAccessPoliciesOperations:
         :param jit_network_access_policy_name: Name of a Just-in-Time access configuration policy.
          Required.
         :type jit_network_access_policy_name: str
-        :param body: Is one of the following types: JitNetworkAccessPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.security.models.JitNetworkAccessPolicy or JSON or IO[bytes]
+        :param body: Is either a JitNetworkAccessPolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.security.models.JitNetworkAccessPolicy or
+         ~azure.mgmt.security.types.JitNetworkAccessPolicy or IO[bytes]
         :return: JitNetworkAccessPolicy. The JitNetworkAccessPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.JitNetworkAccessPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21422,7 +21896,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21507,7 +21981,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21586,7 +22060,7 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         asc_location: str,
         jit_network_access_policy_name: str,
-        body: JSON,
+        body: _types.JitNetworkAccessPolicyInitiateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21603,7 +22077,7 @@ class JitNetworkAccessPoliciesOperations:
          Required.
         :type jit_network_access_policy_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.security.types.JitNetworkAccessPolicyInitiateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21650,7 +22124,9 @@ class JitNetworkAccessPoliciesOperations:
         resource_group_name: str,
         asc_location: str,
         jit_network_access_policy_name: str,
-        body: Union[_models.JitNetworkAccessPolicyInitiateRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.JitNetworkAccessPolicyInitiateRequest, _types.JitNetworkAccessPolicyInitiateRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.JitNetworkAccessRequest:
         """Initiate a JIT access from a specific Just-in-Time policy configuration.
@@ -21664,10 +22140,10 @@ class JitNetworkAccessPoliciesOperations:
         :param jit_network_access_policy_name: Name of a Just-in-Time access configuration policy.
          Required.
         :type jit_network_access_policy_name: str
-        :param body: Is one of the following types: JitNetworkAccessPolicyInitiateRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateRequest or JSON or
-         IO[bytes]
+        :param body: Is either a JitNetworkAccessPolicyInitiateRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.security.models.JitNetworkAccessPolicyInitiateRequest or
+         ~azure.mgmt.security.types.JitNetworkAccessPolicyInitiateRequest or IO[bytes]
         :return: JitNetworkAccessRequest. The JitNetworkAccessRequest is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.JitNetworkAccessRequest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21784,7 +22260,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21871,7 +22347,7 @@ class JitNetworkAccessPoliciesOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -21913,7 +22389,7 @@ class JitNetworkAccessPoliciesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecuritySolutionsOperations:
+class SecuritySolutionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22046,7 +22522,7 @@ class SecuritySolutionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22088,7 +22564,7 @@ class SecuritySolutionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityStandardsOperations:
+class SecurityStandardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22202,7 +22678,13 @@ class SecurityStandardsOperations:
 
     @overload
     def create_or_update(
-        self, scope: str, standard_id: str, standard: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        scope: str,
+        standard_id: str,
+        standard: _types.SecurityStandard,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SecurityStandard:
         """Creates or updates a security standard over a given scope.
 
@@ -22211,7 +22693,7 @@ class SecurityStandardsOperations:
         :param standard_id: The Security Standard key - unique key for the standard type. Required.
         :type standard_id: str
         :param standard: Custom security standard over a pre-defined scope. Required.
-        :type standard: JSON
+        :type standard: ~azure.mgmt.security.types.SecurityStandard
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22248,7 +22730,11 @@ class SecurityStandardsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, scope: str, standard_id: str, standard: Union[_models.SecurityStandard, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        standard_id: str,
+        standard: Union[_models.SecurityStandard, _types.SecurityStandard, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SecurityStandard:
         """Creates or updates a security standard over a given scope.
 
@@ -22256,9 +22742,10 @@ class SecurityStandardsOperations:
         :type scope: str
         :param standard_id: The Security Standard key - unique key for the standard type. Required.
         :type standard_id: str
-        :param standard: Custom security standard over a pre-defined scope. Is one of the following
-         types: SecurityStandard, JSON, IO[bytes] Required.
-        :type standard: ~azure.mgmt.security.models.SecurityStandard or JSON or IO[bytes]
+        :param standard: Custom security standard over a pre-defined scope. Is either a
+         SecurityStandard type or a IO[bytes] type. Required.
+        :type standard: ~azure.mgmt.security.models.SecurityStandard or
+         ~azure.mgmt.security.types.SecurityStandard or IO[bytes]
         :return: SecurityStandard. The SecurityStandard is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityStandard
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22429,7 +22916,7 @@ class SecurityStandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22471,7 +22958,7 @@ class SecurityStandardsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class StandardAssignmentsOperations:
+class StandardAssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -22599,7 +23086,7 @@ class StandardAssignmentsOperations:
         self,
         resource_id: str,
         standard_assignment_name: str,
-        standard_assignment: JSON,
+        standard_assignment: _types.StandardAssignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22617,7 +23104,7 @@ class StandardAssignmentsOperations:
          standard assignment. Required.
         :type standard_assignment_name: str
         :param standard_assignment: Custom standard assignment over a pre-defined scope. Required.
-        :type standard_assignment: JSON
+        :type standard_assignment: ~azure.mgmt.security.types.StandardAssignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22663,7 +23150,7 @@ class StandardAssignmentsOperations:
         self,
         resource_id: str,
         standard_assignment_name: str,
-        standard_assignment: Union[_models.StandardAssignment, JSON, IO[bytes]],
+        standard_assignment: Union[_models.StandardAssignment, _types.StandardAssignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.StandardAssignment:
         """Creates or updates a standard assignment.
@@ -22678,9 +23165,10 @@ class StandardAssignmentsOperations:
         :param standard_assignment_name: The standard assignments assignment key - unique key for the
          standard assignment. Required.
         :type standard_assignment_name: str
-        :param standard_assignment: Custom standard assignment over a pre-defined scope. Is one of the
-         following types: StandardAssignment, JSON, IO[bytes] Required.
-        :type standard_assignment: ~azure.mgmt.security.models.StandardAssignment or JSON or IO[bytes]
+        :param standard_assignment: Custom standard assignment over a pre-defined scope. Is either a
+         StandardAssignment type or a IO[bytes] type. Required.
+        :type standard_assignment: ~azure.mgmt.security.models.StandardAssignment or
+         ~azure.mgmt.security.types.StandardAssignment or IO[bytes]
         :return: StandardAssignment. The StandardAssignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.StandardAssignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22857,7 +23345,7 @@ class StandardAssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -22899,7 +23387,7 @@ class StandardAssignmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class CustomRecommendationsOperations:
+class CustomRecommendationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23016,7 +23504,7 @@ class CustomRecommendationsOperations:
         self,
         scope: str,
         custom_recommendation_name: str,
-        custom_recommendation_body: JSON,
+        custom_recommendation_body: _types.CustomRecommendation,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23028,7 +23516,7 @@ class CustomRecommendationsOperations:
         :param custom_recommendation_name: Name of the Custom Recommendation. Required.
         :type custom_recommendation_name: str
         :param custom_recommendation_body: Custom Recommendation body. Required.
-        :type custom_recommendation_body: JSON
+        :type custom_recommendation_body: ~azure.mgmt.security.types.CustomRecommendation
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23068,7 +23556,7 @@ class CustomRecommendationsOperations:
         self,
         scope: str,
         custom_recommendation_name: str,
-        custom_recommendation_body: Union[_models.CustomRecommendation, JSON, IO[bytes]],
+        custom_recommendation_body: Union[_models.CustomRecommendation, _types.CustomRecommendation, IO[bytes]],
         **kwargs: Any
     ) -> _models.CustomRecommendation:
         """Creates or updates a custom recommendation over a given scope.
@@ -23077,10 +23565,10 @@ class CustomRecommendationsOperations:
         :type scope: str
         :param custom_recommendation_name: Name of the Custom Recommendation. Required.
         :type custom_recommendation_name: str
-        :param custom_recommendation_body: Custom Recommendation body. Is one of the following types:
-         CustomRecommendation, JSON, IO[bytes] Required.
-        :type custom_recommendation_body: ~azure.mgmt.security.models.CustomRecommendation or JSON or
-         IO[bytes]
+        :param custom_recommendation_body: Custom Recommendation body. Is either a CustomRecommendation
+         type or a IO[bytes] type. Required.
+        :type custom_recommendation_body: ~azure.mgmt.security.models.CustomRecommendation or
+         ~azure.mgmt.security.types.CustomRecommendation or IO[bytes]
         :return: CustomRecommendation. The CustomRecommendation is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.CustomRecommendation
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23251,7 +23739,7 @@ class CustomRecommendationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -23293,7 +23781,7 @@ class CustomRecommendationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-too-long
+class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23416,7 +23904,7 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
     def create_or_update(
         self,
         setting_kind: Union[str, _models.ServerVulnerabilityAssessmentsSettingKindName],
-        server_vulnerability_assessments_setting: JSON,
+        server_vulnerability_assessments_setting: _types.ServerVulnerabilityAssessmentsSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23430,7 +23918,8 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
          ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSettingKindName
         :param server_vulnerability_assessments_setting: A server vulnerability assessments setting
          over a predefined scope. Required.
-        :type server_vulnerability_assessments_setting: JSON
+        :type server_vulnerability_assessments_setting:
+         ~azure.mgmt.security.types.ServerVulnerabilityAssessmentsSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23472,7 +23961,9 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
     def create_or_update(
         self,
         setting_kind: Union[str, _models.ServerVulnerabilityAssessmentsSettingKindName],
-        server_vulnerability_assessments_setting: Union[_models.ServerVulnerabilityAssessmentsSetting, JSON, IO[bytes]],
+        server_vulnerability_assessments_setting: Union[
+            _models.ServerVulnerabilityAssessmentsSetting, _types.ServerVulnerabilityAssessmentsSetting, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.ServerVulnerabilityAssessmentsSetting:
         """Create or update a server vulnerability assessments setting of the requested kind on the
@@ -23483,10 +23974,11 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
         :type setting_kind: str or
          ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSettingKindName
         :param server_vulnerability_assessments_setting: A server vulnerability assessments setting
-         over a predefined scope. Is one of the following types: ServerVulnerabilityAssessmentsSetting,
-         JSON, IO[bytes] Required.
+         over a predefined scope. Is either a ServerVulnerabilityAssessmentsSetting type or a IO[bytes]
+         type. Required.
         :type server_vulnerability_assessments_setting:
-         ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSetting or JSON or IO[bytes]
+         ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSetting or
+         ~azure.mgmt.security.types.ServerVulnerabilityAssessmentsSetting or IO[bytes]
         :return: ServerVulnerabilityAssessmentsSetting. The ServerVulnerabilityAssessmentsSetting is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSetting
@@ -23659,7 +24151,7 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -23701,7 +24193,7 @@ class ServerVulnerabilityAssessmentsSettingsOperations:  # pylint: disable=name-
         return ItemPaged(get_next, extract_data)
 
 
-class SettingsOperations:
+class SettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -23816,7 +24308,7 @@ class SettingsOperations:
     def update(
         self,
         setting_name: Union[str, _models.SettingName],
-        setting: JSON,
+        setting: _types.Setting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23828,7 +24320,7 @@ class SettingsOperations:
          Required.
         :type setting_name: str or ~azure.mgmt.security.models.SettingName
         :param setting: Setting object. Required.
-        :type setting: JSON
+        :type setting: ~azure.mgmt.security.types.Setting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23866,7 +24358,7 @@ class SettingsOperations:
     def update(
         self,
         setting_name: Union[str, _models.SettingName],
-        setting: Union[_models.Setting, JSON, IO[bytes]],
+        setting: Union[_models.Setting, _types.Setting, IO[bytes]],
         **kwargs: Any
     ) -> _models.Setting:
         """updating settings about different configurations in Microsoft Defender for Cloud.
@@ -23875,9 +24367,9 @@ class SettingsOperations:
          "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
          Required.
         :type setting_name: str or ~azure.mgmt.security.models.SettingName
-        :param setting: Setting object. Is one of the following types: Setting, JSON, IO[bytes]
-         Required.
-        :type setting: ~azure.mgmt.security.models.Setting or JSON or IO[bytes]
+        :param setting: Setting object. Is either a Setting type or a IO[bytes] type. Required.
+        :type setting: ~azure.mgmt.security.models.Setting or ~azure.mgmt.security.types.Setting or
+         IO[bytes]
         :return: Setting. The Setting is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Setting
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23988,7 +24480,7 @@ class SettingsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24030,7 +24522,7 @@ class SettingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24167,7 +24659,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         self,
         resource_id: str,
         rule_id: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.RuleResultsInput] = None,
         *,
         database_name: Optional[str] = None,
         content_type: str = "application/json",
@@ -24183,7 +24675,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         :param rule_id: The rule Id. Required.
         :type rule_id: str
         :param body: The baseline results for this rule. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.security.types.RuleResultsInput
         :keyword database_name: The name of the database to assess. Required when the API is called on
          the parent resource (e.g., server level) rather than on a specific database resource, since the
          database name is not part of the resource URI. This is the only way to assess system databases
@@ -24237,7 +24729,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         self,
         resource_id: str,
         rule_id: str,
-        body: Optional[Union[_models.RuleResultsInput, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RuleResultsInput, _types.RuleResultsInput, IO[bytes]]] = None,
         *,
         database_name: Optional[str] = None,
         **kwargs: Any
@@ -24251,9 +24743,10 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         :type resource_id: str
         :param rule_id: The rule Id. Required.
         :type rule_id: str
-        :param body: The baseline results for this rule. Is one of the following types:
-         RuleResultsInput, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.security.models.RuleResultsInput or JSON or IO[bytes]
+        :param body: The baseline results for this rule. Is either a RuleResultsInput type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.security.models.RuleResultsInput or
+         ~azure.mgmt.security.types.RuleResultsInput or IO[bytes]
         :keyword database_name: The name of the database to assess. Required when the API is called on
          the parent resource (e.g., server level) rather than on a specific database resource, since the
          database name is not part of the resource URI. This is the only way to assess system databases
@@ -24454,7 +24947,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24531,7 +25024,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
     def add(
         self,
         resource_id: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.RulesResultsInput] = None,
         *,
         database_name: Optional[str] = None,
         content_type: str = "application/json",
@@ -24545,7 +25038,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
          Required.
         :type resource_id: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.security.types.RulesResultsInput
         :keyword database_name: The name of the database to assess. Required when the API is called on
          the parent resource (e.g., server level) rather than on a specific database resource, since the
          database name is not part of the resource URI. This is the only way to assess system databases
@@ -24595,7 +25088,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
     def add(
         self,
         resource_id: str,
-        body: Optional[Union[_models.RulesResultsInput, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RulesResultsInput, _types.RulesResultsInput, IO[bytes]]] = None,
         *,
         database_name: Optional[str] = None,
         **kwargs: Any
@@ -24607,9 +25100,10 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param body: The content of the action request. Is one of the following types:
-         RulesResultsInput, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.security.models.RulesResultsInput or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a RulesResultsInput type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.security.models.RulesResultsInput or
+         ~azure.mgmt.security.types.RulesResultsInput or IO[bytes]
         :keyword database_name: The name of the database to assess. Required when the API is called on
          the parent resource (e.g., server level) rather than on a specific database resource, since the
          database name is not part of the resource URI. This is the only way to assess system databases
@@ -24691,7 +25185,7 @@ class SqlVulnerabilityAssessmentBaselineRulesOperations:  # pylint: disable=name
         return deserialized  # type: ignore
 
 
-class SqlVulnerabilityAssessmentScanResultsOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScanResultsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -24846,7 +25340,7 @@ class SqlVulnerabilityAssessmentScanResultsOperations:  # pylint: disable=name-t
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -24888,7 +25382,7 @@ class SqlVulnerabilityAssessmentScanResultsOperations:  # pylint: disable=name-t
         return ItemPaged(get_next, extract_data)
 
 
-class StandardsOperations:
+class StandardsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25009,7 +25503,7 @@ class StandardsOperations:
         self,
         resource_group_name: str,
         standard_id: str,
-        standard: JSON,
+        standard: _types.Standard,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25023,7 +25517,7 @@ class StandardsOperations:
         :param standard_id: The Security Standard key - unique key for the standard type. Required.
         :type standard_id: str
         :param standard: Custom security standard over a pre-defined scope. Required.
-        :type standard: JSON
+        :type standard: ~azure.mgmt.security.types.Standard
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25065,7 +25559,7 @@ class StandardsOperations:
         self,
         resource_group_name: str,
         standard_id: str,
-        standard: Union[_models.Standard, JSON, IO[bytes]],
+        standard: Union[_models.Standard, _types.Standard, IO[bytes]],
         **kwargs: Any
     ) -> _models.Standard:
         """Create a security standard on the given scope.  Available only for custom standards.  Will
@@ -25076,9 +25570,10 @@ class StandardsOperations:
         :type resource_group_name: str
         :param standard_id: The Security Standard key - unique key for the standard type. Required.
         :type standard_id: str
-        :param standard: Custom security standard over a pre-defined scope. Is one of the following
-         types: Standard, JSON, IO[bytes] Required.
-        :type standard: ~azure.mgmt.security.models.Standard or JSON or IO[bytes]
+        :param standard: Custom security standard over a pre-defined scope. Is either a Standard type
+         or a IO[bytes] type. Required.
+        :type standard: ~azure.mgmt.security.models.Standard or ~azure.mgmt.security.types.Standard or
+         IO[bytes]
         :return: Standard. The Standard is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Standard
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25254,7 +25749,7 @@ class StandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25334,7 +25829,7 @@ class StandardsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25376,7 +25871,7 @@ class StandardsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AssignmentsOperations:
+class AssignmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -25499,7 +25994,7 @@ class AssignmentsOperations:
         self,
         resource_group_name: str,
         assignment_id: str,
-        assignment: JSON,
+        assignment: _types.Assignment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -25514,7 +26009,7 @@ class AssignmentsOperations:
          Required.
         :type assignment_id: str
         :param assignment: Custom standard assignment over a pre-defined scope. Required.
-        :type assignment: JSON
+        :type assignment: ~azure.mgmt.security.types.Assignment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25557,7 +26052,7 @@ class AssignmentsOperations:
         self,
         resource_group_name: str,
         assignment_id: str,
-        assignment: Union[_models.Assignment, JSON, IO[bytes]],
+        assignment: Union[_models.Assignment, _types.Assignment, IO[bytes]],
         **kwargs: Any
     ) -> _models.Assignment:
         """Create a security assignment on the given scope. Will create/update the required standard
@@ -25569,9 +26064,10 @@ class AssignmentsOperations:
         :param assignment_id: The security assignment key - unique key for the standard assignment.
          Required.
         :type assignment_id: str
-        :param assignment: Custom standard assignment over a pre-defined scope. Is one of the following
-         types: Assignment, JSON, IO[bytes] Required.
-        :type assignment: ~azure.mgmt.security.models.Assignment or JSON or IO[bytes]
+        :param assignment: Custom standard assignment over a pre-defined scope. Is either a Assignment
+         type or a IO[bytes] type. Required.
+        :type assignment: ~azure.mgmt.security.models.Assignment or
+         ~azure.mgmt.security.types.Assignment or IO[bytes]
         :return: Assignment. The Assignment is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Assignment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -25748,7 +26244,7 @@ class AssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25828,7 +26324,7 @@ class AssignmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -25870,7 +26366,7 @@ class AssignmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TasksOperations:
+class TasksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26016,7 +26512,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26249,7 +26745,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26400,7 +26896,7 @@ class TasksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26442,7 +26938,7 @@ class TasksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class APICollectionsOperations:
+class APICollectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -26799,7 +27295,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26882,7 +27378,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -26969,7 +27465,7 @@ class APICollectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -27011,7 +27507,7 @@ class APICollectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ApplicationOperations:
+class ApplicationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27122,7 +27618,12 @@ class ApplicationOperations:
 
     @overload
     def create_or_update(
-        self, application_id: str, application: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        application_id: str,
+        application: _types.Application,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.Application:
         """Creates or update a security application on the given subscription.
 
@@ -27130,7 +27631,7 @@ class ApplicationOperations:
          Required.
         :type application_id: str
         :param application: Application over a subscription scope. Required.
-        :type application: JSON
+        :type application: ~azure.mgmt.security.types.Application
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27160,16 +27661,17 @@ class ApplicationOperations:
 
     @distributed_trace
     def create_or_update(
-        self, application_id: str, application: Union[_models.Application, JSON, IO[bytes]], **kwargs: Any
+        self, application_id: str, application: Union[_models.Application, _types.Application, IO[bytes]], **kwargs: Any
     ) -> _models.Application:
         """Creates or update a security application on the given subscription.
 
         :param application_id: The security Application key - unique key for the standard application.
          Required.
         :type application_id: str
-        :param application: Application over a subscription scope. Is one of the following types:
-         Application, JSON, IO[bytes] Required.
-        :type application: ~azure.mgmt.security.models.Application or JSON or IO[bytes]
+        :param application: Application over a subscription scope. Is either a Application type or a
+         IO[bytes] type. Required.
+        :type application: ~azure.mgmt.security.models.Application or
+         ~azure.mgmt.security.types.Application or IO[bytes]
         :return: Application. The Application is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.Application
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27297,7 +27799,7 @@ class ApplicationOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SecurityConnectorApplicationsOperations:
+class SecurityConnectorApplicationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27362,7 +27864,7 @@ class SecurityConnectorApplicationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -27404,7 +27906,7 @@ class SecurityConnectorApplicationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AssessmentsOperations:
+class AssessmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27537,7 +28039,7 @@ class AssessmentsOperations:
         self,
         resource_id: str,
         assessment_name: str,
-        assessment: JSON,
+        assessment: _types.SecurityAssessment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27551,7 +28053,7 @@ class AssessmentsOperations:
         :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
         :type assessment_name: str
         :param assessment: Calculated assessment on a pre-defined assessment metadata. Required.
-        :type assessment: JSON
+        :type assessment: ~azure.mgmt.security.types.SecurityAssessment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27595,7 +28097,7 @@ class AssessmentsOperations:
         self,
         resource_id: str,
         assessment_name: str,
-        assessment: Union[_models.SecurityAssessment, JSON, IO[bytes]],
+        assessment: Union[_models.SecurityAssessment, _types.SecurityAssessment, IO[bytes]],
         **kwargs: Any
     ) -> _models.SecurityAssessmentResponse:
         """Create a security assessment on your resource. An assessment metadata that describes this
@@ -27606,9 +28108,10 @@ class AssessmentsOperations:
         :type resource_id: str
         :param assessment_name: The Assessment Key - Unique key for the assessment type. Required.
         :type assessment_name: str
-        :param assessment: Calculated assessment on a pre-defined assessment metadata. Is one of the
-         following types: SecurityAssessment, JSON, IO[bytes] Required.
-        :type assessment: ~azure.mgmt.security.models.SecurityAssessment or JSON or IO[bytes]
+        :param assessment: Calculated assessment on a pre-defined assessment metadata. Is either a
+         SecurityAssessment type or a IO[bytes] type. Required.
+        :type assessment: ~azure.mgmt.security.models.SecurityAssessment or
+         ~azure.mgmt.security.types.SecurityAssessment or IO[bytes]
         :return: SecurityAssessmentResponse. The SecurityAssessmentResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.SecurityAssessmentResponse
@@ -27782,7 +28285,7 @@ class AssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -27824,7 +28327,7 @@ class AssessmentsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class AdvancedThreatProtectionOperations:
+class AdvancedThreatProtectionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -27941,7 +28444,7 @@ class AdvancedThreatProtectionOperations:
     def create(
         self,
         resource_id: str,
-        advanced_threat_protection_setting: JSON,
+        advanced_threat_protection_setting: _types.AdvancedThreatProtectionSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -27952,7 +28455,8 @@ class AdvancedThreatProtectionOperations:
          Required.
         :type resource_id: str
         :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Required.
-        :type advanced_threat_protection_setting: JSON
+        :type advanced_threat_protection_setting:
+         ~azure.mgmt.security.types.AdvancedThreatProtectionSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -27991,7 +28495,9 @@ class AdvancedThreatProtectionOperations:
     def create(
         self,
         resource_id: str,
-        advanced_threat_protection_setting: Union[_models.AdvancedThreatProtectionSetting, JSON, IO[bytes]],
+        advanced_threat_protection_setting: Union[
+            _models.AdvancedThreatProtectionSetting, _types.AdvancedThreatProtectionSetting, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.AdvancedThreatProtectionSetting:
         """Creates or updates the Advanced Threat Protection settings on a specified resource.
@@ -27999,10 +28505,11 @@ class AdvancedThreatProtectionOperations:
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Is one of the
-         following types: AdvancedThreatProtectionSetting, JSON, IO[bytes] Required.
+        :param advanced_threat_protection_setting: Advanced Threat Protection Settings. Is either a
+         AdvancedThreatProtectionSetting type or a IO[bytes] type. Required.
         :type advanced_threat_protection_setting:
-         ~azure.mgmt.security.models.AdvancedThreatProtectionSetting or JSON or IO[bytes]
+         ~azure.mgmt.security.models.AdvancedThreatProtectionSetting or
+         ~azure.mgmt.security.types.AdvancedThreatProtectionSetting or IO[bytes]
         :return: AdvancedThreatProtectionSetting. The AdvancedThreatProtectionSetting is compatible
          with MutableMapping
         :rtype: ~azure.mgmt.security.models.AdvancedThreatProtectionSetting
@@ -28077,7 +28584,7 @@ class AdvancedThreatProtectionOperations:
         return deserialized  # type: ignore
 
 
-class DefenderForStorageOperations:
+class DefenderForStorageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28095,18 +28602,15 @@ class DefenderForStorageOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(
-        self, resource_id: str, setting_name: Union[str, _models.SettingName], **kwargs: Any
-    ) -> _models.DefenderForStorageSetting:
+    def get(self, resource_id: str, setting_name: str, **kwargs: Any) -> _models.DefenderForStorageSetting:
         """Gets the Defender for Storage settings for the specified storage account.
 
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :return: DefenderForStorageSetting. The DefenderForStorageSetting is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.DefenderForStorageSetting
@@ -28123,7 +28627,7 @@ class DefenderForStorageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         cls: ClsType[_models.DefenderForStorageSetting] = kwargs.pop("cls", None)
 
         _request = build_defender_for_storage_get_request(
@@ -28173,7 +28677,7 @@ class DefenderForStorageOperations:
     def create(
         self,
         resource_id: str,
-        setting_name: Union[str, _models.SettingName],
+        setting_name: str,
         defender_for_storage_setting: _models.DefenderForStorageSetting,
         *,
         content_type: str = "application/json",
@@ -28184,10 +28688,9 @@ class DefenderForStorageOperations:
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :param defender_for_storage_setting: Defender for Storage Settings. Required.
         :type defender_for_storage_setting: ~azure.mgmt.security.models.DefenderForStorageSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -28203,8 +28706,8 @@ class DefenderForStorageOperations:
     def create(
         self,
         resource_id: str,
-        setting_name: Union[str, _models.SettingName],
-        defender_for_storage_setting: JSON,
+        setting_name: str,
+        defender_for_storage_setting: _types.DefenderForStorageSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28214,12 +28717,11 @@ class DefenderForStorageOperations:
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :param defender_for_storage_setting: Defender for Storage Settings. Required.
-        :type defender_for_storage_setting: JSON
+        :type defender_for_storage_setting: ~azure.mgmt.security.types.DefenderForStorageSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -28233,7 +28735,7 @@ class DefenderForStorageOperations:
     def create(
         self,
         resource_id: str,
-        setting_name: Union[str, _models.SettingName],
+        setting_name: str,
         defender_for_storage_setting: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -28244,10 +28746,9 @@ class DefenderForStorageOperations:
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :param defender_for_storage_setting: Defender for Storage Settings. Required.
         :type defender_for_storage_setting: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -28263,8 +28764,10 @@ class DefenderForStorageOperations:
     def create(
         self,
         resource_id: str,
-        setting_name: Union[str, _models.SettingName],
-        defender_for_storage_setting: Union[_models.DefenderForStorageSetting, JSON, IO[bytes]],
+        setting_name: str,
+        defender_for_storage_setting: Union[
+            _models.DefenderForStorageSetting, _types.DefenderForStorageSetting, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.DefenderForStorageSetting:
         """Creates or updates the Defender for Storage settings on a specified storage account.
@@ -28272,14 +28775,13 @@ class DefenderForStorageOperations:
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
-        :param defender_for_storage_setting: Defender for Storage Settings. Is one of the following
-         types: DefenderForStorageSetting, JSON, IO[bytes] Required.
+        :type setting_name: str
+        :param defender_for_storage_setting: Defender for Storage Settings. Is either a
+         DefenderForStorageSetting type or a IO[bytes] type. Required.
         :type defender_for_storage_setting: ~azure.mgmt.security.models.DefenderForStorageSetting or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.DefenderForStorageSetting or IO[bytes]
         :return: DefenderForStorageSetting. The DefenderForStorageSetting is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.DefenderForStorageSetting
@@ -28296,7 +28798,7 @@ class DefenderForStorageOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.DefenderForStorageSetting] = kwargs.pop("cls", None)
 
@@ -28366,7 +28868,7 @@ class DefenderForStorageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         cls: ClsType[List[_models.DefenderForStorageSetting]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
@@ -28394,7 +28896,7 @@ class DefenderForStorageOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -28436,93 +28938,17 @@ class DefenderForStorageOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def start_malware_scan(
-        self, resource_id: str, setting_name: Union[str, _models.SettingName], **kwargs: Any
-    ) -> _models.MalwareScan:
-        """Initiate a Defender for Storage malware scan for the specified storage account. Blobs and Files
-        will be scanned for malware.
-
-        :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
-         Required.
-        :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
-         Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
-        :return: MalwareScan. The MalwareScan is compatible with MutableMapping
-        :rtype: ~azure.mgmt.security.models.MalwareScan
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
-        cls: ClsType[_models.MalwareScan] = kwargs.pop("cls", None)
-
-        _request = build_defender_for_storage_start_malware_scan_request(
-            resource_id=resource_id,
-            setting_name=setting_name,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.CloudError,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.MalwareScan, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace
     def cancel_malware_scan(
-        self, resource_id: str, setting_name: Union[str, _models.SettingName], scan_id: str, **kwargs: Any
+        self, resource_id: str, setting_name: str, scan_id: str, **kwargs: Any
     ) -> _models.MalwareScan:
         """Cancels a Defender for Storage malware scan for the specified storage account.
 
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :param scan_id: The identifier of the scan. Can be either 'latest' or a GUID. Required.
         :type scan_id: str
         :return: MalwareScan. The MalwareScan is compatible with MutableMapping
@@ -28540,7 +28966,7 @@ class DefenderForStorageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         cls: ClsType[_models.MalwareScan] = kwargs.pop("cls", None)
 
         _request = build_defender_for_storage_cancel_malware_scan_request(
@@ -28587,19 +29013,206 @@ class DefenderForStorageOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def get_malware_scan(
-        self, resource_id: str, setting_name: Union[str, _models.SettingName], scan_id: str, **kwargs: Any
+    @overload
+    def start_malware_scan(
+        self,
+        resource_id: str,
+        setting_name: str,
+        body: Optional[_models.StartMalwareScanRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.MalwareScan:
+        """Initiate a Defender for Storage malware scan for the specified storage account. Blobs and Files
+        will be scanned for malware.
+
+        :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_id: str
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
+         Required.
+        :type setting_name: str
+        :param body: Optional request body to filter which blobs and files to scan. Default value is
+         None.
+        :type body: ~azure.mgmt.security.models.StartMalwareScanRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MalwareScan. The MalwareScan is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.MalwareScan
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def start_malware_scan(
+        self,
+        resource_id: str,
+        setting_name: str,
+        body: Optional[_types.StartMalwareScanRequest] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MalwareScan:
+        """Initiate a Defender for Storage malware scan for the specified storage account. Blobs and Files
+        will be scanned for malware.
+
+        :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_id: str
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
+         Required.
+        :type setting_name: str
+        :param body: Optional request body to filter which blobs and files to scan. Default value is
+         None.
+        :type body: ~azure.mgmt.security.types.StartMalwareScanRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MalwareScan. The MalwareScan is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.MalwareScan
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def start_malware_scan(
+        self,
+        resource_id: str,
+        setting_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.MalwareScan:
+        """Initiate a Defender for Storage malware scan for the specified storage account. Blobs and Files
+        will be scanned for malware.
+
+        :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_id: str
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
+         Required.
+        :type setting_name: str
+        :param body: Optional request body to filter which blobs and files to scan. Default value is
+         None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MalwareScan. The MalwareScan is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.MalwareScan
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-01-01-preview": ["content_type"]},
+        api_versions_list=["2025-09-01-preview", "2026-01-01-preview", "2026-03-01-preview", "2026-09-01"],
+    )
+    def start_malware_scan(
+        self,
+        resource_id: str,
+        setting_name: str,
+        body: Optional[Union[_models.StartMalwareScanRequest, _types.StartMalwareScanRequest, IO[bytes]]] = None,
+        **kwargs: Any
+    ) -> _models.MalwareScan:
+        """Initiate a Defender for Storage malware scan for the specified storage account. Blobs and Files
+        will be scanned for malware.
+
+        :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_id: str
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
+         Required.
+        :type setting_name: str
+        :param body: Optional request body to filter which blobs and files to scan. Is either a
+         StartMalwareScanRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.security.models.StartMalwareScanRequest or
+         ~azure.mgmt.security.types.StartMalwareScanRequest or IO[bytes]
+        :return: MalwareScan. The MalwareScan is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.MalwareScan
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[_models.MalwareScan] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_defender_for_storage_start_malware_scan_request(
+            resource_id=resource_id,
+            setting_name=setting_name,
+            api_version=api_version,
+            content_type=content_type,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MalwareScan, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def get_malware_scan(self, resource_id: str, setting_name: str, scan_id: str, **kwargs: Any) -> _models.MalwareScan:
         """Gets the Defender for Storage malware scan for the specified storage resource.
 
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param setting_name: The defender for storage setting name. Known values are: "MCAS", "WDATP",
-         "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW", "WDATP_UNIFIED_SOLUTION", "Sentinel", and "current".
+        :param setting_name: The Defender for Storage setting name. Only 'current' is supported.
          Required.
-        :type setting_name: str or ~azure.mgmt.security.models.SettingName
+        :type setting_name: str
         :param scan_id: The identifier of the scan. Can be either 'latest' or a GUID. Required.
         :type scan_id: str
         :return: MalwareScan. The MalwareScan is compatible with MutableMapping
@@ -28617,7 +29230,7 @@ class DefenderForStorageOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-09-01"))
         cls: ClsType[_models.MalwareScan] = kwargs.pop("cls", None)
 
         _request = build_defender_for_storage_get_malware_scan_request(
@@ -28665,7 +29278,7 @@ class DefenderForStorageOperations:
         return deserialized  # type: ignore
 
 
-class IotSecuritySolutionAnalyticsOperations:
+class IotSecuritySolutionAnalyticsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28831,7 +29444,7 @@ class IotSecuritySolutionAnalyticsOperations:
         return deserialized  # type: ignore
 
 
-class IotSecuritySolutionOperations:
+class IotSecuritySolutionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -28953,7 +29566,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        iot_security_solution_data: JSON,
+        iot_security_solution_data: _types.IoTSecuritySolutionModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -28966,7 +29579,7 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param iot_security_solution_data: The security solution data. Required.
-        :type iot_security_solution_data: JSON
+        :type iot_security_solution_data: ~azure.mgmt.security.types.IoTSecuritySolutionModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29009,7 +29622,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        iot_security_solution_data: Union[_models.IoTSecuritySolutionModel, JSON, IO[bytes]],
+        iot_security_solution_data: Union[_models.IoTSecuritySolutionModel, _types.IoTSecuritySolutionModel, IO[bytes]],
         **kwargs: Any
     ) -> _models.IoTSecuritySolutionModel:
         """Use this method to create or update yours IoT Security solution.
@@ -29019,10 +29632,10 @@ class IotSecuritySolutionOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :param iot_security_solution_data: The security solution data. Is one of the following types:
-         IoTSecuritySolutionModel, JSON, IO[bytes] Required.
-        :type iot_security_solution_data: ~azure.mgmt.security.models.IoTSecuritySolutionModel or JSON
-         or IO[bytes]
+        :param iot_security_solution_data: The security solution data. Is either a
+         IoTSecuritySolutionModel type or a IO[bytes] type. Required.
+        :type iot_security_solution_data: ~azure.mgmt.security.models.IoTSecuritySolutionModel or
+         ~azure.mgmt.security.types.IoTSecuritySolutionModel or IO[bytes]
         :return: IoTSecuritySolutionModel. The IoTSecuritySolutionModel is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
@@ -29131,7 +29744,7 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        update_iot_security_solution_data: JSON,
+        update_iot_security_solution_data: _types.UpdateIotSecuritySolutionData,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -29145,7 +29758,8 @@ class IotSecuritySolutionOperations:
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
         :param update_iot_security_solution_data: The security solution data. Required.
-        :type update_iot_security_solution_data: JSON
+        :type update_iot_security_solution_data:
+         ~azure.mgmt.security.types.UpdateIotSecuritySolutionData
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -29189,7 +29803,9 @@ class IotSecuritySolutionOperations:
         self,
         resource_group_name: str,
         solution_name: str,
-        update_iot_security_solution_data: Union[_models.UpdateIotSecuritySolutionData, JSON, IO[bytes]],
+        update_iot_security_solution_data: Union[
+            _models.UpdateIotSecuritySolutionData, _types.UpdateIotSecuritySolutionData, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.IoTSecuritySolutionModel:
         """Use this method to update existing IoT Security solution tags or user defined resources. To
@@ -29200,10 +29816,11 @@ class IotSecuritySolutionOperations:
         :type resource_group_name: str
         :param solution_name: The name of the IoT Security solution. Required.
         :type solution_name: str
-        :param update_iot_security_solution_data: The security solution data. Is one of the following
-         types: UpdateIotSecuritySolutionData, JSON, IO[bytes] Required.
+        :param update_iot_security_solution_data: The security solution data. Is either a
+         UpdateIotSecuritySolutionData type or a IO[bytes] type. Required.
         :type update_iot_security_solution_data:
-         ~azure.mgmt.security.models.UpdateIotSecuritySolutionData or JSON or IO[bytes]
+         ~azure.mgmt.security.models.UpdateIotSecuritySolutionData or
+         ~azure.mgmt.security.types.UpdateIotSecuritySolutionData or IO[bytes]
         :return: IoTSecuritySolutionModel. The IoTSecuritySolutionModel is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.IoTSecuritySolutionModel
@@ -29386,7 +30003,7 @@ class IotSecuritySolutionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -29472,7 +30089,7 @@ class IotSecuritySolutionOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -29514,7 +30131,7 @@ class IotSecuritySolutionOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable=name-too-long
+class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29660,7 +30277,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -29765,7 +30382,7 @@ class IotSecuritySolutionsAnalyticsAggregatedAlertOperations:  # pylint: disable
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IotSecuritySolutionsAnalyticsRecommendationOperations:  # pylint: disable=name-too-long
+class IotSecuritySolutionsAnalyticsRecommendationOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -29914,7 +30531,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations:  # pylint: disable=
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -29956,7 +30573,7 @@ class IotSecuritySolutionsAnalyticsRecommendationOperations:  # pylint: disable=
         return ItemPaged(get_next, extract_data)
 
 
-class LocationsOperations:
+class LocationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30082,7 +30699,7 @@ class LocationsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -30124,7 +30741,7 @@ class LocationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationResultsOperations:
+class OperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30206,7 +30823,7 @@ class OperationResultsOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class OperationStatusesOperations:
+class OperationStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30294,7 +30911,7 @@ class OperationStatusesOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinksOperations:
+class PrivateLinksOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -30448,7 +31065,7 @@ class PrivateLinksOperations:
         self,
         resource_group_name: str,
         private_link_name: str,
-        private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]],
+        private_link: Union[_models.PrivateLinkResource, _types.PrivateLinkResource, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -30560,7 +31177,7 @@ class PrivateLinksOperations:
         self,
         resource_group_name: str,
         private_link_name: str,
-        private_link: JSON,
+        private_link: _types.PrivateLinkResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30578,7 +31195,7 @@ class PrivateLinksOperations:
         :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
          create operations. Required.
-        :type private_link: JSON
+        :type private_link: ~azure.mgmt.security.types.PrivateLinkResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30626,7 +31243,7 @@ class PrivateLinksOperations:
         self,
         resource_group_name: str,
         private_link_name: str,
-        private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]],
+        private_link: Union[_models.PrivateLinkResource, _types.PrivateLinkResource, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateLinkResource]:
         """Create a private link resource. This operation creates the necessary infrastructure to enable
@@ -30641,9 +31258,9 @@ class PrivateLinksOperations:
          resource group and follow Azure naming conventions. Required.
         :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
-         create operations. Is one of the following types: PrivateLinkResource, JSON, IO[bytes]
-         Required.
-        :type private_link: ~azure.mgmt.security.models.PrivateLinkResource or JSON or IO[bytes]
+         create operations. Is either a PrivateLinkResource type or a IO[bytes] type. Required.
+        :type private_link: ~azure.mgmt.security.models.PrivateLinkResource or
+         ~azure.mgmt.security.types.PrivateLinkResource or IO[bytes]
         :return: An instance of LROPoller that returns PrivateLinkResource. The PrivateLinkResource is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.PrivateLinkResource]
@@ -30738,7 +31355,7 @@ class PrivateLinksOperations:
         self,
         resource_group_name: str,
         private_link_name: str,
-        private_link: JSON,
+        private_link: _types.PrivateLinkUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -30754,7 +31371,7 @@ class PrivateLinksOperations:
         :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
          Required.
-        :type private_link: JSON
+        :type private_link: ~azure.mgmt.security.types.PrivateLinkUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -30798,7 +31415,7 @@ class PrivateLinksOperations:
         self,
         resource_group_name: str,
         private_link_name: str,
-        private_link: Union[_models.PrivateLinkUpdate, JSON, IO[bytes]],
+        private_link: Union[_models.PrivateLinkUpdate, _types.PrivateLinkUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.PrivateLinkResource:
         """Update specific properties of a private link resource. Use this operation to update mutable
@@ -30811,8 +31428,9 @@ class PrivateLinksOperations:
          resource group and follow Azure naming conventions. Required.
         :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
-         Is one of the following types: PrivateLinkUpdate, JSON, IO[bytes] Required.
-        :type private_link: ~azure.mgmt.security.models.PrivateLinkUpdate or JSON or IO[bytes]
+         Is either a PrivateLinkUpdate type or a IO[bytes] type. Required.
+        :type private_link: ~azure.mgmt.security.models.PrivateLinkUpdate or
+         ~azure.mgmt.security.types.PrivateLinkUpdate or IO[bytes]
         :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -31056,7 +31674,7 @@ class PrivateLinksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31139,7 +31757,7 @@ class PrivateLinksOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31181,7 +31799,7 @@ class PrivateLinksOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecureScoresOperations:
+class SecureScoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31307,7 +31925,7 @@ class SecureScoresOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31349,7 +31967,7 @@ class SecureScoresOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecureScoreControlsOperations:
+class SecureScoreControlsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31414,7 +32032,7 @@ class SecureScoreControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31499,7 +32117,7 @@ class SecureScoreControlsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31541,7 +32159,7 @@ class SecureScoreControlsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecureScoreControlDefinitionsOperations:
+class SecureScoreControlDefinitionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31597,7 +32215,7 @@ class SecureScoreControlDefinitionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31679,7 +32297,7 @@ class SecureScoreControlDefinitionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -31721,7 +32339,7 @@ class SecureScoreControlDefinitionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GitLabSubgroupsOperations:
+class GitLabSubgroupsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31817,7 +32435,7 @@ class GitLabSubgroupsOperations:
         return deserialized  # type: ignore
 
 
-class DevOpsOperationResultsOperations:
+class DevOpsOperationResultsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -31913,7 +32531,7 @@ class DevOpsOperationResultsOperations:
         return deserialized  # type: ignore
 
 
-class AzureDevOpsReposOperations:
+class AzureDevOpsReposOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32027,7 +32645,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, JSON, IO[bytes]],
+        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, _types.AzureDevOpsRepository, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -32151,7 +32769,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: JSON,
+        azure_dev_ops_repository: _types.AzureDevOpsRepository,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32172,7 +32790,7 @@ class AzureDevOpsReposOperations:
         :param repo_name: Required.
         :type repo_name: str
         :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Required.
-        :type azure_dev_ops_repository: JSON
+        :type azure_dev_ops_repository: ~azure.mgmt.security.types.AzureDevOpsRepository
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32229,7 +32847,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, JSON, IO[bytes]],
+        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, _types.AzureDevOpsRepository, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsRepository]:
         """Creates or updates a monitored Azure DevOps repository resource.
@@ -32247,10 +32865,10 @@ class AzureDevOpsReposOperations:
         :type project_name: str
         :param repo_name: Required.
         :type repo_name: str
-        :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Is one of the
-         following types: AzureDevOpsRepository, JSON, IO[bytes] Required.
-        :type azure_dev_ops_repository: ~azure.mgmt.security.models.AzureDevOpsRepository or JSON or
-         IO[bytes]
+        :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Is either a
+         AzureDevOpsRepository type or a IO[bytes] type. Required.
+        :type azure_dev_ops_repository: ~azure.mgmt.security.models.AzureDevOpsRepository or
+         ~azure.mgmt.security.types.AzureDevOpsRepository or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsRepository. The AzureDevOpsRepository
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsRepository]
@@ -32320,7 +32938,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, JSON, IO[bytes]],
+        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, _types.AzureDevOpsRepository, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -32444,7 +33062,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: JSON,
+        azure_dev_ops_repository: _types.AzureDevOpsRepository,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -32465,7 +33083,7 @@ class AzureDevOpsReposOperations:
         :param repo_name: Required.
         :type repo_name: str
         :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Required.
-        :type azure_dev_ops_repository: JSON
+        :type azure_dev_ops_repository: ~azure.mgmt.security.types.AzureDevOpsRepository
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -32522,7 +33140,7 @@ class AzureDevOpsReposOperations:
         org_name: str,
         project_name: str,
         repo_name: str,
-        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, JSON, IO[bytes]],
+        azure_dev_ops_repository: Union[_models.AzureDevOpsRepository, _types.AzureDevOpsRepository, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AzureDevOpsRepository]:
         """Updates a monitored Azure DevOps repository resource.
@@ -32540,10 +33158,10 @@ class AzureDevOpsReposOperations:
         :type project_name: str
         :param repo_name: Required.
         :type repo_name: str
-        :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Is one of the
-         following types: AzureDevOpsRepository, JSON, IO[bytes] Required.
-        :type azure_dev_ops_repository: ~azure.mgmt.security.models.AzureDevOpsRepository or JSON or
-         IO[bytes]
+        :param azure_dev_ops_repository: The Azure DevOps repository resource payload. Is either a
+         AzureDevOpsRepository type or a IO[bytes] type. Required.
+        :type azure_dev_ops_repository: ~azure.mgmt.security.models.AzureDevOpsRepository or
+         ~azure.mgmt.security.types.AzureDevOpsRepository or IO[bytes]
         :return: An instance of LROPoller that returns AzureDevOpsRepository. The AzureDevOpsRepository
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.security.models.AzureDevOpsRepository]
@@ -32662,7 +33280,7 @@ class AzureDevOpsReposOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -32704,7 +33322,7 @@ class AzureDevOpsReposOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GitHubReposOperations:
+class GitHubReposOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32855,7 +33473,7 @@ class GitHubReposOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -32897,7 +33515,7 @@ class GitHubReposOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class GitHubIssuesOperations:
+class GitHubIssuesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -32920,7 +33538,9 @@ class GitHubIssuesOperations:
         security_connector_name: str,
         owner_name: str,
         repo_name: str,
-        create_issue_request: Optional[Union[_models.IssueCreationRequest, JSON, IO[bytes]]] = None,
+        create_issue_request: Optional[
+            Union[_models.IssueCreationRequest, _types.IssueCreationRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -33046,7 +33666,7 @@ class GitHubIssuesOperations:
         security_connector_name: str,
         owner_name: str,
         repo_name: str,
-        create_issue_request: Optional[JSON] = None,
+        create_issue_request: Optional[_types.IssueCreationRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -33066,7 +33686,7 @@ class GitHubIssuesOperations:
         :type repo_name: str
         :param create_issue_request: The request model containing details for creating the GitHub
          issue. Default value is None.
-        :type create_issue_request: JSON
+        :type create_issue_request: ~azure.mgmt.security.types.IssueCreationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -33118,7 +33738,9 @@ class GitHubIssuesOperations:
         security_connector_name: str,
         owner_name: str,
         repo_name: str,
-        create_issue_request: Optional[Union[_models.IssueCreationRequest, JSON, IO[bytes]]] = None,
+        create_issue_request: Optional[
+            Union[_models.IssueCreationRequest, _types.IssueCreationRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Creates a GitHub issue for the specified repository and assessment.
@@ -33135,10 +33757,9 @@ class GitHubIssuesOperations:
         :param repo_name: Required.
         :type repo_name: str
         :param create_issue_request: The request model containing details for creating the GitHub
-         issue. Is one of the following types: IssueCreationRequest, JSON, IO[bytes] Default value is
-         None.
-        :type create_issue_request: ~azure.mgmt.security.models.IssueCreationRequest or JSON or
-         IO[bytes]
+         issue. Is either a IssueCreationRequest type or a IO[bytes] type. Default value is None.
+        :type create_issue_request: ~azure.mgmt.security.models.IssueCreationRequest or
+         ~azure.mgmt.security.types.IssueCreationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -33196,7 +33817,7 @@ class GitHubIssuesOperations:
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class AllowedConnectionsOperations:
+class AllowedConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33340,7 +33961,7 @@ class AllowedConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -33420,7 +34041,7 @@ class AllowedConnectionsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -33462,7 +34083,7 @@ class AllowedConnectionsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ServerVulnerabilityAssessmentOperations:
+class ServerVulnerabilityAssessmentOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33860,7 +34481,7 @@ class ServerVulnerabilityAssessmentOperations:
         return deserialized  # type: ignore
 
 
-class TopologyOperations:
+class TopologyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -33997,7 +34618,7 @@ class TopologyOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -34077,7 +34698,7 @@ class TopologyOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -34119,7 +34740,7 @@ class TopologyOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecuritySolutionsReferenceDataOperations:
+class SecuritySolutionsReferenceDataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34271,7 +34892,7 @@ class SecuritySolutionsReferenceDataOperations:
         return deserialized  # type: ignore
 
 
-class SensitivitySettingsOperations:
+class SensitivitySettingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34375,12 +34996,16 @@ class SensitivitySettingsOperations:
 
     @overload
     def create_or_update(
-        self, sensitivity_settings: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        sensitivity_settings: _types.UpdateSensitivitySettingsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.GetSensitivitySettingsResponse:
         """Create or update data sensitivity settings for sensitive data discovery.
 
         :param sensitivity_settings: The data sensitivity settings to update. Required.
-        :type sensitivity_settings: JSON
+        :type sensitivity_settings: ~azure.mgmt.security.types.UpdateSensitivitySettingsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34409,14 +35034,18 @@ class SensitivitySettingsOperations:
 
     @distributed_trace
     def create_or_update(
-        self, sensitivity_settings: Union[_models.UpdateSensitivitySettingsRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        sensitivity_settings: Union[
+            _models.UpdateSensitivitySettingsRequest, _types.UpdateSensitivitySettingsRequest, IO[bytes]
+        ],
+        **kwargs: Any
     ) -> _models.GetSensitivitySettingsResponse:
         """Create or update data sensitivity settings for sensitive data discovery.
 
-        :param sensitivity_settings: The data sensitivity settings to update. Is one of the following
-         types: UpdateSensitivitySettingsRequest, JSON, IO[bytes] Required.
+        :param sensitivity_settings: The data sensitivity settings to update. Is either a
+         UpdateSensitivitySettingsRequest type or a IO[bytes] type. Required.
         :type sensitivity_settings: ~azure.mgmt.security.models.UpdateSensitivitySettingsRequest or
-         JSON or IO[bytes]
+         ~azure.mgmt.security.types.UpdateSensitivitySettingsRequest or IO[bytes]
         :return: GetSensitivitySettingsResponse. The GetSensitivitySettingsResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.security.models.GetSensitivitySettingsResponse
@@ -34552,7 +35181,7 @@ class SensitivitySettingsOperations:
         return deserialized  # type: ignore
 
 
-class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34668,7 +35297,12 @@ class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-
 
     @overload
     def create_or_update(
-        self, resource_id: str, body: Optional[JSON] = None, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        resource_id: str,
+        body: Optional[_types.SqlVulnerabilityAssessmentSettings] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SqlVulnerabilityAssessmentSettings:
         """Creates or updates the SQL Vulnerability Assessment settings.
 
@@ -34678,7 +35312,7 @@ class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-
          Required.
         :type resource_id: str
         :param body: The SQL Vulnerability Assessment settings. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.security.types.SqlVulnerabilityAssessmentSettings
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -34719,7 +35353,9 @@ class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-
     def create_or_update(
         self,
         resource_id: str,
-        body: Optional[Union[_models.SqlVulnerabilityAssessmentSettings, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.SqlVulnerabilityAssessmentSettings, _types.SqlVulnerabilityAssessmentSettings, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> _models.SqlVulnerabilityAssessmentSettings:
         """Creates or updates the SQL Vulnerability Assessment settings.
@@ -34729,9 +35365,10 @@ class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-
         :param resource_id: The fully qualified Azure Resource manager identifier of the resource.
          Required.
         :type resource_id: str
-        :param body: The SQL Vulnerability Assessment settings. Is one of the following types:
-         SqlVulnerabilityAssessmentSettings, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.security.models.SqlVulnerabilityAssessmentSettings or JSON or IO[bytes]
+        :param body: The SQL Vulnerability Assessment settings. Is either a
+         SqlVulnerabilityAssessmentSettings type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.security.models.SqlVulnerabilityAssessmentSettings or
+         ~azure.mgmt.security.types.SqlVulnerabilityAssessmentSettings or IO[bytes]
         :return: SqlVulnerabilityAssessmentSettings. The SqlVulnerabilityAssessmentSettings is
          compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.SqlVulnerabilityAssessmentSettings
@@ -34864,7 +35501,7 @@ class SqlVulnerabilityAssessmentSettingsOperations:  # pylint: disable=name-too-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -34982,14 +35619,10 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.SqlVulnerabilityAssessmentScanOperationResult, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -35225,7 +35858,7 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -35267,7 +35900,7 @@ class SqlVulnerabilityAssessmentScansOperations:  # pylint: disable=name-too-lon
         return ItemPaged(get_next, extract_data)
 
 
-class SubAssessmentsOperations:
+class SubAssessmentsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -35405,7 +36038,7 @@ class SubAssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True
@@ -35487,7 +36120,7 @@ class SubAssessmentsOperations:
                 _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
             else:
-                _request = HttpRequest("GET", next_link)
+                _request = HttpRequest("GET", next_link, headers=_headers)
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
                         "self._config.base_url", self._config.base_url, "str", skip_quote=True

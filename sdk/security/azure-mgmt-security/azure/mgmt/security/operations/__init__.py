@@ -19,6 +19,7 @@ from ._operations import SecurityConnectorApplicationOperations  # type: ignore
 from ._operations import AssessmentsMetadataOperations  # type: ignore
 from ._operations import AutomationsOperations  # type: ignore
 from ._operations import SecurityContactsOperations  # type: ignore
+from ._operations import BatchPricingsOperations  # type: ignore
 from ._operations import ComplianceResultsOperations  # type: ignore
 from ._operations import GovernanceAssignmentsOperations  # type: ignore
 from ._operations import GovernanceRulesOperations  # type: ignore
@@ -101,6 +102,7 @@ __all__ = [
     "AssessmentsMetadataOperations",
     "AutomationsOperations",
     "SecurityContactsOperations",
+    "BatchPricingsOperations",
     "ComplianceResultsOperations",
     "GovernanceAssignmentsOperations",
     "GovernanceRulesOperations",

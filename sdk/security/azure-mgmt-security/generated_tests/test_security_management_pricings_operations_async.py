@@ -25,7 +25,7 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.pricings.get(
             scope_id="str",
             pricing_name="str",
-            api_version="2024-01-01",
+            api_version="2026-07-01",
         )
 
         # please add some check logic here by yourself
@@ -51,13 +51,17 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
                             "name": "str",
                             "additionalExtensionProperties": {"str": {}},
                             "operationStatus": {"code": "str", "message": "str"},
+                            "securityOperatorResourceId": "str",
                         }
                     ],
                     "freeTrialRemainingTime": "1 day, 0:00:00",
                     "inherited": "str",
                     "inheritedFrom": "str",
+                    "managedBy": "str",
+                    "originatedFrom": "str",
                     "replacedBy": ["str"],
                     "resourcesCoverageStatus": "str",
+                    "securityOperatorResourceId": "str",
                     "subPlan": "str",
                 },
                 "systemData": {
@@ -70,7 +74,7 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2024-01-01",
+            api_version="2026-07-01",
         )
 
         # please add some check logic here by yourself
@@ -82,7 +86,7 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.pricings.delete(
             scope_id="str",
             pricing_name="str",
-            api_version="2024-01-01",
+            api_version="2026-07-01",
         )
 
         # please add some check logic here by yourself
@@ -93,7 +97,7 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_pricings_list(self, resource_group):
         response = await self.client.pricings.list(
             scope_id="str",
-            api_version="2024-01-01",
+            api_version="2026-07-01",
         )
 
         # please add some check logic here by yourself

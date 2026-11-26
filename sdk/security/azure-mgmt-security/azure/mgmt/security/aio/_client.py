@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,8 +8,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
@@ -35,6 +36,7 @@ from .operations import (
     AzureDevOpsOrgsOperations,
     AzureDevOpsProjectsOperations,
     AzureDevOpsReposOperations,
+    BatchPricingsOperations,
     ComplianceResultsOperations,
     CompliancesOperations,
     CustomRecommendationsOperations,
@@ -98,12 +100,17 @@ from .operations import (
     WorkspaceSettingsOperations,
 )
 
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
+
 if TYPE_CHECKING:
     from azure.core import AzureClouds
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """SecurityManagementClient.
 
     :ivar alerts: AlertsOperations operations
@@ -122,6 +129,8 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
     :vartype automations: azure.mgmt.security.aio.operations.AutomationsOperations
     :ivar security_contacts: SecurityContactsOperations operations
     :vartype security_contacts: azure.mgmt.security.aio.operations.SecurityContactsOperations
+    :ivar batch_pricings: BatchPricingsOperations operations
+    :vartype batch_pricings: azure.mgmt.security.aio.operations.BatchPricingsOperations
     :ivar compliance_results: ComplianceResultsOperations operations
     :vartype compliance_results: azure.mgmt.security.aio.operations.ComplianceResultsOperations
     :ivar governance_assignments: GovernanceAssignmentsOperations operations
@@ -374,6 +383,7 @@ class SecurityManagementClient:  # pylint: disable=client-accepts-api-version-ke
         self.security_contacts = SecurityContactsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.batch_pricings = BatchPricingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.compliance_results = ComplianceResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

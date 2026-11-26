@@ -77,7 +77,7 @@ class ProxyResource(Resource):
     """
 
 
-class ExternalSecuritySolution(ProxyResource):
+class ExternalSecuritySolution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a security solution external to Microsoft Defender for Cloud which sends information
     to an OMS workspace and whose data is displayed by Microsoft Defender for Cloud.
 
@@ -130,7 +130,9 @@ class ExternalSecuritySolution(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AadExternalSecuritySolution(ExternalSecuritySolution, discriminator="AAD"):
+class AadExternalSecuritySolution(
+    ExternalSecuritySolution, discriminator="AAD"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an AAD identity protection solution which sends logs to an OMS workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -149,7 +151,7 @@ class AadExternalSecuritySolution(ExternalSecuritySolution, discriminator="AAD")
     :ivar properties: The external security solution properties for AAD solutions.
     :vartype properties: ~azure.mgmt.security.models.AadSolutionProperties
     :ivar kind: Required. AAD.
-    :vartype kind: str or ~azure.mgmt.security.models.AAD
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     """
 
     properties: Optional["_models.AadSolutionProperties"] = rest_field(
@@ -178,7 +180,7 @@ class AadExternalSecuritySolution(ExternalSecuritySolution, discriminator="AAD")
         self.kind = ExternalSecuritySolutionKindEnum.AAD  # type: ignore
 
 
-class ExternalSecuritySolutionProperties(_Model):
+class ExternalSecuritySolutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The solution properties (correspond to the solution kind).
 
     :ivar device_vendor:
@@ -220,7 +222,9 @@ class ExternalSecuritySolutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AadSolutionProperties(ExternalSecuritySolutionProperties):
+class AadSolutionProperties(
+    ExternalSecuritySolutionProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external security solution properties for AAD solutions.
 
     :ivar device_vendor:
@@ -261,7 +265,7 @@ class AadSolutionProperties(ExternalSecuritySolutionProperties):
         super().__init__(*args, **kwargs)
 
 
-class Authentication(_Model):
+class Authentication(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The environment authentication details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -295,7 +299,9 @@ class Authentication(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessTokenAuthentication(Authentication, discriminator="AccessToken"):
+class AccessTokenAuthentication(
+    Authentication, discriminator="AccessToken"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The environment authentication details.
 
     :ivar username: The user name that will be used while authenticating with the onboarded
@@ -305,7 +311,7 @@ class AccessTokenAuthentication(Authentication, discriminator="AccessToken"):
      environment.
     :vartype access_token: str
     :ivar authentication_type: The authentication type. Required. AccessToken.
-    :vartype authentication_type: str or ~azure.mgmt.security.models.ACCESS_TOKEN
+    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     """
 
     username: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -337,7 +343,7 @@ class AccessTokenAuthentication(Authentication, discriminator="AccessToken"):
         self.authentication_type = AuthenticationType.ACCESS_TOKEN  # type: ignore
 
 
-class ActionableRemediation(_Model):
+class ActionableRemediation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration payload for PR Annotations.
 
     :ivar state: ActionableRemediation Setting. None - the setting was never set. Enabled -
@@ -400,7 +406,7 @@ class ActionableRemediation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalData(_Model):
+class AdditionalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the sub-assessment.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -439,7 +445,7 @@ class AdditionalData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdditionalWorkspacesProperties(_Model):
+class AdditionalWorkspacesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the additional workspaces.
 
     :ivar workspace: Workspace resource id.
@@ -481,7 +487,7 @@ class AdditionalWorkspacesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedThreatProtectionProperties(_Model):
+class AdvancedThreatProtectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advanced Threat Protection settings.
 
     :ivar is_enabled: Indicates whether Advanced Threat Protection is enabled.
@@ -528,7 +534,7 @@ class ExtensionResource(Resource):
     """
 
 
-class AdvancedThreatProtectionSetting(ExtensionResource):
+class AdvancedThreatProtectionSetting(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Advanced Threat Protection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -589,7 +595,7 @@ class AdvancedThreatProtectionSetting(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class AgentlessConfiguration(_Model):
+class AgentlessConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about Agentless configuration.
 
     :ivar agentless_enabled: Agentless Enablement states. Known values are: "Disabled", "Enabled",
@@ -651,7 +657,7 @@ class AgentlessConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Alert(ProxyResource):
+class Alert(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security alert.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -751,7 +757,7 @@ class AlertEntity(_Model):
     """Type of entity."""
 
 
-class AlertProperties(_Model):
+class AlertProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes security alert properties.
 
     :ivar version: Schema version.
@@ -942,7 +948,7 @@ class AlertPropertiesSupportingEvidence(_Model):
     """Type of the supportingEvidence."""
 
 
-class AlertSimulatorRequestProperties(_Model):
+class AlertSimulatorRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an alert simulation request.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -974,13 +980,15 @@ class AlertSimulatorRequestProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties, discriminator="Bundles"):
+class AlertSimulatorBundlesRequestProperties(
+    AlertSimulatorRequestProperties, discriminator="Bundles"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Simulate alerts according to this bundles.
 
     :ivar bundles: Bundles list.
     :vartype bundles: list[str or ~azure.mgmt.security.models.BundleType]
     :ivar kind: The kind of alert simulation. Required. Simulate alerts according to bundles.
-    :vartype kind: str or ~azure.mgmt.security.models.BUNDLES
+    :vartype kind: str or ~azure.mgmt.security.models.KindEnum
     """
 
     bundles: Optional[list[Union[str, "_models.BundleType"]]] = rest_field(
@@ -1009,7 +1017,7 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties, di
         self.kind = KindEnum.BUNDLES  # type: ignore
 
 
-class AlertSimulatorRequestBody(_Model):
+class AlertSimulatorRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert Simulator request body.
 
     :ivar properties: Alert Simulator request body data.
@@ -1039,7 +1047,7 @@ class AlertSimulatorRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertsSuppressionRule(ProxyResource):
+class AlertsSuppressionRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the suppression rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1108,7 +1116,7 @@ class AlertsSuppressionRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AlertsSuppressionRuleProperties(_Model):
+class AlertsSuppressionRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes AlertsSuppressionRule properties.
 
     :ivar alert_type: Type of the alert to automatically suppress. For all alert types, use '*'.
@@ -1176,7 +1184,7 @@ class AlertsSuppressionRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertSyncSettingProperties(_Model):
+class AlertSyncSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The alert sync setting properties.
 
     :ivar enabled: Is the alert sync setting enabled. Required.
@@ -1204,7 +1212,7 @@ class AlertSyncSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Setting(ProxyResource):
+class Setting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The kind of the security setting.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1221,17 +1229,13 @@ class Setting(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: any
     :ivar kind: the kind of the settings string. Required. Known values are: "DataExportSettings",
      "AlertSuppressionSetting", and "AlertSyncSettings".
     :vartype kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     __mapping__: dict[str, _Model] = {}
-    properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource-specific properties for this resource."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update"])
     """the kind of the settings string. Required. Known values are: \"DataExportSettings\",
      \"AlertSuppressionSetting\", and \"AlertSyncSettings\"."""
 
@@ -1240,7 +1244,6 @@ class Setting(ProxyResource):
         self,
         *,
         kind: str,
-        properties: Optional[Any] = None,
     ) -> None: ...
 
     @overload
@@ -1254,7 +1257,9 @@ class Setting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AlertSyncSettings(Setting, discriminator="AlertSyncSettings"):
+class AlertSyncSettings(
+    Setting, discriminator="AlertSyncSettings"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an alert sync setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1271,7 +1276,7 @@ class AlertSyncSettings(Setting, discriminator="AlertSyncSettings"):
     :ivar properties: Alert sync setting data.
     :vartype properties: ~azure.mgmt.security.models.AlertSyncSettingProperties
     :ivar kind: the kind of the settings string. Required. AlertSyncSettings.
-    :vartype kind: str or ~azure.mgmt.security.models.ALERT_SYNC_SETTINGS
+    :vartype kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     properties: Optional["_models.AlertSyncSettingProperties"] = rest_field(
@@ -1367,7 +1372,7 @@ class AllowedConnectionsResourceProperties(_Model):
     """List of connectable resources."""
 
 
-class CustomAlertRule(_Model):
+class CustomAlertRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1413,7 +1418,9 @@ class CustomAlertRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ListCustomAlertRule(CustomAlertRule, discriminator="ListCustomAlertRule"):
+class ListCustomAlertRule(
+    CustomAlertRule, discriminator="ListCustomAlertRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A List custom alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -1457,7 +1464,9 @@ class ListCustomAlertRule(CustomAlertRule, discriminator="ListCustomAlertRule"):
         self.rule_type = "ListCustomAlertRule"  # type: ignore
 
 
-class AllowlistCustomAlertRule(ListCustomAlertRule, discriminator="AllowlistCustomAlertRule"):
+class AllowlistCustomAlertRule(
+    ListCustomAlertRule, discriminator="AllowlistCustomAlertRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom alert rule that checks if a value (depends on the custom alert type) is allowed.
 
     :ivar display_name: The display name of the custom alert.
@@ -1503,7 +1512,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule, discriminator="AllowlistCust
         self.rule_type = "AllowlistCustomAlertRule"  # type: ignore
 
 
-class ApiCollection(ExtensionResource):
+class ApiCollection(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An API collection as represented by Microsoft Defender for APIs.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1645,7 +1654,7 @@ class ApiCollectionProperties(_Model):
     """The highest priority sensitivity label from Microsoft Purview in this API collection."""
 
 
-class Application(ProxyResource):
+class Application(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Application over a given scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1706,7 +1715,7 @@ class Application(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationProperties(_Model):
+class ApplicationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an application.
 
     :ivar display_name: display name of the application.
@@ -1756,7 +1765,7 @@ class ApplicationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArcAutoProvisioning(_Model):
+class ArcAutoProvisioning(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1791,7 +1800,7 @@ class ArcAutoProvisioning(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArcAutoProvisioningAws(ArcAutoProvisioning):
+class ArcAutoProvisioningAws(ArcAutoProvisioning):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration for an AWS environment.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1827,7 +1836,7 @@ class ArcAutoProvisioningAws(ArcAutoProvisioning):
         super().__init__(*args, **kwargs)
 
 
-class ArcAutoProvisioningConfiguration(_Model):
+class ArcAutoProvisioningConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for servers Arc auto provisioning for a given environment.
 
     :ivar proxy: Optional HTTP proxy endpoint to use for the Arc agent.
@@ -1862,7 +1871,7 @@ class ArcAutoProvisioningConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ArcAutoProvisioningGcp(ArcAutoProvisioning):
+class ArcAutoProvisioningGcp(ArcAutoProvisioning):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration for an GCP environment.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -1890,7 +1899,7 @@ class ArcAutoProvisioningGcp(ArcAutoProvisioning):
         super().__init__(*args, **kwargs)
 
 
-class AscLocation(ProxyResource):
+class AscLocation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ASC location of the subscription is in the "name" field.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1960,7 +1969,7 @@ class AssessmentLinks(_Model):
     """Link to assessment in Azure Portal."""
 
 
-class AssessmentStatus(_Model):
+class AssessmentStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the assessment.
 
     :ivar code: Programmatic code for the status of the assessment. Required. Known values are:
@@ -2002,7 +2011,7 @@ class AssessmentStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssessmentStatusResponse(AssessmentStatus):
+class AssessmentStatusResponse(AssessmentStatus):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of the assessment.
 
     :ivar code: Programmatic code for the status of the assessment. Required. Known values are:
@@ -2051,7 +2060,7 @@ class AssessmentStatusResponse(AssessmentStatus):
         super().__init__(*args, **kwargs)
 
 
-class AssignedAssessmentItem(_Model):
+class AssignedAssessmentItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the properties of a security assessment object reference (by key).
 
     :ivar assessment_key: Unique key to a security assessment object.
@@ -2081,7 +2090,7 @@ class AssignedAssessmentItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssignedComponentItem(_Model):
+class AssignedComponentItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describe the properties of a security assessment object reference (by key).
 
     :ivar key: unique key to a security assessment object.
@@ -2109,7 +2118,7 @@ class AssignedComponentItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssignedStandardItem(_Model):
+class AssignedStandardItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the properties of a of a standard assignments object reference.
 
     :ivar id: Full resourceId of the Microsoft.Security/standard object.
@@ -2137,7 +2146,7 @@ class AssignedStandardItem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Assignment(ProxyResource):
+class Assignment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Assignment on a resource group over a given scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2229,7 +2238,7 @@ class Assignment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AssignmentProperties(_Model):
+class AssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a standardAssignment.
 
     :ivar display_name: display name of the standardAssignment.
@@ -2313,7 +2322,7 @@ class AssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssignmentPropertiesAdditionalData(_Model):
+class AssignmentPropertiesAdditionalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Additional data about the assignment.
 
     :ivar exemption_category: Exemption category of this assignment.
@@ -2343,7 +2352,9 @@ class AssignmentPropertiesAdditionalData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AtaExternalSecuritySolution(ExternalSecuritySolution, discriminator="ATA"):
+class AtaExternalSecuritySolution(
+    ExternalSecuritySolution, discriminator="ATA"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an ATA security solution which sends logs to an OMS workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2362,7 +2373,7 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution, discriminator="ATA")
     :ivar properties: The external security solution properties for ATA solutions.
     :vartype properties: ~azure.mgmt.security.models.AtaSolutionProperties
     :ivar kind: Required. ATA.
-    :vartype kind: str or ~azure.mgmt.security.models.ATA
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     """
 
     properties: Optional["_models.AtaSolutionProperties"] = rest_field(
@@ -2391,7 +2402,9 @@ class AtaExternalSecuritySolution(ExternalSecuritySolution, discriminator="ATA")
         self.kind = ExternalSecuritySolutionKindEnum.ATA  # type: ignore
 
 
-class AtaSolutionProperties(ExternalSecuritySolutionProperties):
+class AtaSolutionProperties(
+    ExternalSecuritySolutionProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external security solution properties for ATA solutions.
 
     :ivar device_vendor:
@@ -2429,7 +2442,7 @@ class AtaSolutionProperties(ExternalSecuritySolutionProperties):
         super().__init__(*args, **kwargs)
 
 
-class AttestationEvidence(_Model):
+class AttestationEvidence(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the properties of a assignment attestation.
 
     :ivar description: The description of the evidence.
@@ -2462,7 +2475,7 @@ class AttestationEvidence(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Authorization(_Model):
+class Authorization(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Authorization payload.
 
     :ivar code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
@@ -2494,7 +2507,7 @@ class Authorization(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Automation(ProxyResource):
+class Automation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security automation resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2576,7 +2589,7 @@ class Automation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AutomationAction(_Model):
+class AutomationAction(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The action that should be triggered.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -2610,7 +2623,9 @@ class AutomationAction(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationActionEventHub(AutomationAction, discriminator="EventHub"):
+class AutomationActionEventHub(
+    AutomationAction, discriminator="EventHub"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The target Event Hub to which event data will be exported. To learn more about Microsoft
     Defender for Cloud continuous export capabilities, visit `https://aka.ms/ASCExportLearnMore
     <https://aka.ms/ASCExportLearnMore>`_.
@@ -2626,7 +2641,7 @@ class AutomationActionEventHub(AutomationAction, discriminator="EventHub"):
     :vartype is_trusted_service_enabled: bool
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      EventHub.
-    :vartype action_type: str or ~azure.mgmt.security.models.EVENT_HUB
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
     """
 
     event_hub_resource_id: Optional[str] = rest_field(
@@ -2667,7 +2682,9 @@ class AutomationActionEventHub(AutomationAction, discriminator="EventHub"):
         self.action_type = ActionType.EVENT_HUB  # type: ignore
 
 
-class AutomationActionLogicApp(AutomationAction, discriminator="LogicApp"):
+class AutomationActionLogicApp(
+    AutomationAction, discriminator="LogicApp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The logic app action that should be triggered. To learn more about Microsoft Defender for
     Cloud's Workflow Automation capabilities, visit `https://aka.ms/ASCWorkflowAutomationLearnMore
     <https://aka.ms/ASCWorkflowAutomationLearnMore>`_.
@@ -2679,7 +2696,7 @@ class AutomationActionLogicApp(AutomationAction, discriminator="LogicApp"):
     :vartype uri: str
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      LogicApp.
-    :vartype action_type: str or ~azure.mgmt.security.models.LOGIC_APP
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
     """
 
     logic_app_resource_id: Optional[str] = rest_field(
@@ -2712,7 +2729,9 @@ class AutomationActionLogicApp(AutomationAction, discriminator="LogicApp"):
         self.action_type = ActionType.LOGIC_APP  # type: ignore
 
 
-class AutomationActionWorkspace(AutomationAction, discriminator="Workspace"):
+class AutomationActionWorkspace(
+    AutomationAction, discriminator="Workspace"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Log Analytics Workspace to which event data will be exported. Security alerts data will
     reside in the 'SecurityAlert' table and the assessments data will reside in the
     'SecurityRecommendation' table (under the 'Security'/'SecurityCenterFree' solutions). Note that
@@ -2725,7 +2744,7 @@ class AutomationActionWorkspace(AutomationAction, discriminator="Workspace"):
     :vartype workspace_resource_id: str
     :ivar action_type: The type of the action that will be triggered by the Automation. Required.
      Workspace.
-    :vartype action_type: str or ~azure.mgmt.security.models.WORKSPACE
+    :vartype action_type: str or ~azure.mgmt.security.models.ActionType
     """
 
     workspace_resource_id: Optional[str] = rest_field(
@@ -2754,7 +2773,7 @@ class AutomationActionWorkspace(AutomationAction, discriminator="Workspace"):
         self.action_type = ActionType.WORKSPACE  # type: ignore
 
 
-class AutomationProperties(_Model):
+class AutomationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of properties that defines the behavior of the automation configuration. To learn more
     about the supported security events data models schemas - please visit
     `https://aka.ms/ASCAutomationSchemas <https://aka.ms/ASCAutomationSchemas>`_.
@@ -2819,7 +2838,7 @@ class AutomationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationRuleSet(_Model):
+class AutomationRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule set which evaluates all its rules upon an event interception. Only when all the included
     rules in the rule set will be evaluated as 'true', will the event trigger the defined actions.
 
@@ -2849,7 +2868,7 @@ class AutomationRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationScope(_Model):
+class AutomationScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A single automation scope.
 
     :ivar description: The resources scope description.
@@ -2884,7 +2903,7 @@ class AutomationScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationSource(_Model):
+class AutomationSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The source event types which evaluate the security automation set of rules. For example -
     security alerts and security assessments. To learn more about the supported security events
     data models schemas - please visit `https://aka.ms/ASCAutomationSchemas
@@ -2934,7 +2953,7 @@ class AutomationSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationTriggeringRule(_Model):
+class AutomationTriggeringRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A rule which is evaluated upon event interception. The rule is configured by comparing a
     specific value from the event model to an expected value. This comparison is done by using one
     of the supported operators set.
@@ -2995,7 +3014,7 @@ class AutomationTriggeringRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Tags(_Model):
+class Tags(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of key value pairs that describe the resource.
 
     :ivar tags: A list of key value pairs that describe the resource.
@@ -3023,7 +3042,7 @@ class Tags(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutomationUpdateModel(Tags):
+class AutomationUpdateModel(Tags):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The update model of security automation resource.
 
     :ivar tags: A list of key value pairs that describe the resource.
@@ -3076,7 +3095,7 @@ class AutomationUpdateModel(Tags):
             super().__setattr__(key, value)
 
 
-class AutomationValidationStatus(_Model):
+class AutomationValidationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security automation model state property bag.
 
     :ivar is_valid: Indicates whether the model is valid or not.
@@ -3109,7 +3128,7 @@ class AutomationValidationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoProvisioningSetting(ProxyResource):
+class AutoProvisioningSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Auto provisioning setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3170,7 +3189,7 @@ class AutoProvisioningSetting(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AutoProvisioningSettingProperties(_Model):
+class AutoProvisioningSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes properties of an auto provisioning setting.
 
     :ivar auto_provision: Describes what kind of security agent provisioning action to take.
@@ -3202,7 +3221,115 @@ class AutoProvisioningSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnvironmentData(_Model):
+class AwsCloudTrailConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The configuration for AWS CloudTrail audit log ingestion.
+
+    :ivar provisioning_type: The provisioning type for the CloudTrail resources. Known values are:
+     "BringYourOwn", "ManualProvisioning", and "AutoProvisioning".
+    :vartype provisioning_type: str or ~azure.mgmt.security.models.AwsCloudTrailProvisioningType
+    :ivar cloud_trail_resource_sets: The existing CloudTrail resource sets. Required when
+     provisioningType is BringYourOwn.
+    :vartype cloud_trail_resource_sets: list[~azure.mgmt.security.models.AwsCloudTrailResourceSet]
+    :ivar resource_name_prefix: The resource name prefix used when provisioning the CloudTrail
+     resources.
+    :vartype resource_name_prefix: str
+    :ivar deployment_region: The AWS region in which the CloudTrail resources are provisioned.
+     Required when provisioningType is ManualProvisioning or AutoProvisioning.
+    :vartype deployment_region: str
+    """
+
+    provisioning_type: Optional[Union[str, "_models.AwsCloudTrailProvisioningType"]] = rest_field(
+        name="provisioningType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The provisioning type for the CloudTrail resources. Known values are: \"BringYourOwn\",
+     \"ManualProvisioning\", and \"AutoProvisioning\"."""
+    cloud_trail_resource_sets: Optional[list["_models.AwsCloudTrailResourceSet"]] = rest_field(
+        name="cloudTrailResourceSets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The existing CloudTrail resource sets. Required when provisioningType is BringYourOwn."""
+    resource_name_prefix: Optional[str] = rest_field(
+        name="resourceNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource name prefix used when provisioning the CloudTrail resources."""
+    deployment_region: Optional[str] = rest_field(
+        name="deploymentRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AWS region in which the CloudTrail resources are provisioned. Required when
+     provisioningType is ManualProvisioning or AutoProvisioning."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioning_type: Optional[Union[str, "_models.AwsCloudTrailProvisioningType"]] = None,
+        cloud_trail_resource_sets: Optional[list["_models.AwsCloudTrailResourceSet"]] = None,
+        resource_name_prefix: Optional[str] = None,
+        deployment_region: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AwsCloudTrailResourceSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource set describing existing AWS CloudTrail audit log resources.
+
+    :ivar resource_region: The AWS region of the resources in this set.
+    :vartype resource_region: str
+    :ivar s3_bucket_arn: The S3 bucket ARN in which the CloudTrail logs are stored.
+    :vartype s3_bucket_arn: str
+    :ivar sqs_queue_arn: The SQS queue ARN used for CloudTrail log notifications.
+    :vartype sqs_queue_arn: str
+    :ivar kms_key_arn: The KMS key ARN used for CloudTrail log encryption.
+    :vartype kms_key_arn: str
+    """
+
+    resource_region: Optional[str] = rest_field(
+        name="resourceRegion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AWS region of the resources in this set."""
+    s3_bucket_arn: Optional[str] = rest_field(
+        name="s3BucketArn", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The S3 bucket ARN in which the CloudTrail logs are stored."""
+    sqs_queue_arn: Optional[str] = rest_field(
+        name="sqsQueueArn", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SQS queue ARN used for CloudTrail log notifications."""
+    kms_key_arn: Optional[str] = rest_field(
+        name="kmsKeyArn", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The KMS key ARN used for CloudTrail log encryption."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        resource_region: Optional[str] = None,
+        s3_bucket_arn: Optional[str] = None,
+        sqs_queue_arn: Optional[str] = None,
+        kms_key_arn: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class EnvironmentData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security connector environment data.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3242,7 +3369,9 @@ class EnvironmentData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsEnvironmentData(EnvironmentData, discriminator="AwsAccount"):
+class AwsEnvironmentData(
+    EnvironmentData, discriminator="AwsAccount"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AWS connector environment data.
 
     :ivar organizational_data: The AWS account's organizational data.
@@ -3254,7 +3383,7 @@ class AwsEnvironmentData(EnvironmentData, discriminator="AwsAccount"):
     :ivar scan_interval: Scan interval in hours (value should be between 1-hour to 24-hours).
     :vartype scan_interval: int
     :ivar environment_type: The type of the environment data. Required. AwsAccount.
-    :vartype environment_type: str or ~azure.mgmt.security.models.AWS_ACCOUNT
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     organizational_data: Optional["_models.AwsOrganizationalData"] = rest_field(
@@ -3293,7 +3422,7 @@ class AwsEnvironmentData(EnvironmentData, discriminator="AwsAccount"):
         self.environment_type = EnvironmentType.AWS_ACCOUNT  # type: ignore
 
 
-class AwsOrganizationalData(_Model):
+class AwsOrganizationalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AWS organization data.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3330,7 +3459,9 @@ class AwsOrganizationalData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AwsOrganizationalDataMaster(AwsOrganizationalData, discriminator="Organization"):
+class AwsOrganizationalDataMaster(
+    AwsOrganizationalData, discriminator="Organization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AWS organization data for the master account.
 
     :ivar stackset_name: If the multi cloud account is of membership type organization, this will
@@ -3341,7 +3472,8 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData, discriminator="Organiza
     :vartype excluded_account_ids: list[str]
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Organization.
-    :vartype organization_membership_type: str or ~azure.mgmt.security.models.ORGANIZATION
+    :vartype organization_membership_type: str or
+     ~azure.mgmt.security.models.OrganizationMembershipType
     """
 
     stackset_name: Optional[str] = rest_field(
@@ -3377,7 +3509,9 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData, discriminator="Organiza
         self.organization_membership_type = OrganizationMembershipType.ORGANIZATION  # type: ignore
 
 
-class AwsOrganizationalDataMember(AwsOrganizationalData, discriminator="Member"):
+class AwsOrganizationalDataMember(
+    AwsOrganizationalData, discriminator="Member"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The AWS organization data for the member account.
 
     :ivar parent_hierarchy_id: If the multi cloud account is not of membership type organization,
@@ -3385,7 +3519,8 @@ class AwsOrganizationalDataMember(AwsOrganizationalData, discriminator="Member")
     :vartype parent_hierarchy_id: str
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Member.
-    :vartype organization_membership_type: str or ~azure.mgmt.security.models.MEMBER
+    :vartype organization_membership_type: str or
+     ~azure.mgmt.security.models.OrganizationMembershipType
     """
 
     parent_hierarchy_id: Optional[str] = rest_field(
@@ -3415,7 +3550,7 @@ class AwsOrganizationalDataMember(AwsOrganizationalData, discriminator="Member")
         self.organization_membership_type = OrganizationMembershipType.MEMBER  # type: ignore
 
 
-class AzureDevOpsOrg(ProxyResource):
+class AzureDevOpsOrg(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Organization resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3456,7 +3591,7 @@ class AzureDevOpsOrg(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsOrgListResponse(_Model):
+class AzureDevOpsOrgListResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of RP resources which supports pagination.
 
     :ivar value: The AzureDevOpsOrg items on this page.
@@ -3491,7 +3626,7 @@ class AzureDevOpsOrgListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsOrgProperties(_Model):
+class AzureDevOpsOrgProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Organization properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -3576,7 +3711,7 @@ class AzureDevOpsOrgProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsProject(ProxyResource):
+class AzureDevOpsProject(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Project resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3617,7 +3752,7 @@ class AzureDevOpsProject(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsProjectProperties(_Model):
+class AzureDevOpsProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Project properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -3713,7 +3848,7 @@ class AzureDevOpsProjectProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsRepository(ProxyResource):
+class AzureDevOpsRepository(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Repository resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3754,7 +3889,7 @@ class AzureDevOpsRepository(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureDevOpsRepositoryProperties(_Model):
+class AzureDevOpsRepositoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure DevOps Repository properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -3870,7 +4005,7 @@ class AzureDevOpsScopeEnvironmentData(EnvironmentData, discriminator="AzureDevOp
     """The AzureDevOps scope connector's environment data.
 
     :ivar environment_type: The type of the environment data. Required. AzureDevOpsScope.
-    :vartype environment_type: str or ~azure.mgmt.security.models.AZURE_DEV_OPS_SCOPE
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     environment_type: Literal[EnvironmentType.AZURE_DEV_OPS_SCOPE] = rest_discriminator(name="environmentType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -3893,7 +4028,7 @@ class AzureDevOpsScopeEnvironmentData(EnvironmentData, discriminator="AzureDevOp
         self.environment_type = EnvironmentType.AZURE_DEV_OPS_SCOPE  # type: ignore
 
 
-class CommonResourceDetails(_Model):
+class CommonResourceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the resource that was assessed.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -3933,7 +4068,7 @@ class AzureResourceDetails(CommonResourceDetails, discriminator="Azure"):
     :ivar id: Azure resource Id of the assessed resource.
     :vartype id: str
     :ivar source: The platform where the assessed resource resides. Required. Resource is in Azure.
-    :vartype source: str or ~azure.mgmt.security.models.AZURE
+    :vartype source: str or ~azure.mgmt.security.models.Source
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -3958,7 +4093,7 @@ class AzureResourceDetails(CommonResourceDetails, discriminator="Azure"):
         self.source = Source.AZURE  # type: ignore
 
 
-class ResourceIdentifier(_Model):
+class ResourceIdentifier(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A resource identifier for an alert which can be used to direct the alert to the right product
     exposure group (tenant, workspace, subscription etc.).
 
@@ -4000,7 +4135,7 @@ class AzureResourceIdentifier(ResourceIdentifier, discriminator="AzureResource")
     :vartype azure_resource_id: str
     :ivar type: There can be multiple identifiers of different type per alert, this field specify
      the identifier type. Required. AzureResource.
-    :vartype type: str or ~azure.mgmt.security.models.AZURE_RESOURCE
+    :vartype type: str or ~azure.mgmt.security.models.ResourceIdentifierType
     """
 
     azure_resource_id: Optional[str] = rest_field(name="azureResourceId", visibility=["read"])
@@ -4037,7 +4172,9 @@ class AzureResourceLink(_Model):
     """Azure resource Id."""
 
 
-class ServerVulnerabilityAssessmentsSetting(ProxyResource):
+class ServerVulnerabilityAssessmentsSetting(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A base vulnerability assessments setting on servers in the defined scope.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4054,17 +4191,13 @@ class ServerVulnerabilityAssessmentsSetting(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: any
     :ivar kind: The kind of the server vulnerability assessments setting. Required.
      "AzureServersSetting"
     :vartype kind: str or ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSettingKind
     """
 
     __mapping__: dict[str, _Model] = {}
-    properties: Optional[Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The resource-specific properties for this resource."""
-    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update"])
     """The kind of the server vulnerability assessments setting. Required. \"AzureServersSetting\""""
 
     @overload
@@ -4072,7 +4205,6 @@ class ServerVulnerabilityAssessmentsSetting(ProxyResource):
         self,
         *,
         kind: str,
-        properties: Optional[Any] = None,
     ) -> None: ...
 
     @overload
@@ -4086,7 +4218,9 @@ class ServerVulnerabilityAssessmentsSetting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AzureServersSetting(ServerVulnerabilityAssessmentsSetting, discriminator="AzureServersSetting"):
+class AzureServersSetting(
+    ServerVulnerabilityAssessmentsSetting, discriminator="AzureServersSetting"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessments setting on Azure servers in the defined scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4106,7 +4240,7 @@ class AzureServersSetting(ServerVulnerabilityAssessmentsSetting, discriminator="
      ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsAzureSettingProperties
     :ivar kind: The kind of the server vulnerability assessments setting. Required.
      AzureServersSetting.
-    :vartype kind: str or ~azure.mgmt.security.models.AZURE_SERVERS_SETTING
+    :vartype kind: str or ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsSettingKind
     """
 
     properties: Optional["_models.ServerVulnerabilityAssessmentsAzureSettingProperties"] = rest_field(
@@ -4154,7 +4288,7 @@ class AzureServersSetting(ServerVulnerabilityAssessmentsSetting, discriminator="
             super().__setattr__(key, value)
 
 
-class Baseline(_Model):
+class Baseline(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Baseline details.
 
     :ivar expected_results: Expected results.
@@ -4191,7 +4325,7 @@ class Baseline(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaselineAdjustedResult(_Model):
+class BaselineAdjustedResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rule result adjusted with baseline.
 
     :ivar baseline: Baseline details.
@@ -4242,7 +4376,7 @@ class BaselineAdjustedResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BenchmarkReference(_Model):
+class BenchmarkReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The benchmark references.
 
     :ivar benchmark: The benchmark name.
@@ -4275,7 +4409,47 @@ class BenchmarkReference(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BlobsScanSummary(_Model):
+class BlobScanFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Filter for blob scanning. At least one of 'container' or 'blob' must be specified; a request
+    with neither is rejected by the service. If only container is provided, all blobs in that
+    container are scanned. If only blob is provided, blobs matching the filter across all
+    containers are scanned.
+
+    :ivar container: Optional filter for the blob container to scan. If not provided, the blob
+     filter will apply across all containers.
+    :vartype container: ~azure.mgmt.security.models.MatchFilter
+    :ivar blob: Optional filter for specific blob(s). If container is specified, this filters blobs
+     within that container. If container is not specified, this filters blobs across all containers.
+    :vartype blob: ~azure.mgmt.security.models.MatchFilter
+    """
+
+    container: Optional["_models.MatchFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for the blob container to scan. If not provided, the blob filter will apply
+     across all containers."""
+    blob: Optional["_models.MatchFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for specific blob(s). If container is specified, this filters blobs within that
+     container. If container is not specified, this filters blobs across all containers."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        container: Optional["_models.MatchFilter"] = None,
+        blob: Optional["_models.MatchFilter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BlobsScanSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A summary of the scan results of the blobs that were scanned.
 
     :ivar total_blobs_scanned: The total number of blobs that were scanned.
@@ -4333,7 +4507,7 @@ class BlobsScanSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BuiltInInfoType(_Model):
+class BuiltInInfoType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pre-configured sensitive information type.
 
     :ivar name: Display name of the info type.
@@ -4371,7 +4545,7 @@ class BuiltInInfoType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CategoryConfiguration(_Model):
+class CategoryConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Severity level per category configuration for PR Annotations.
 
     :ivar minimum_severity_level: Gets or sets minimum severity level for a given category.
@@ -4413,7 +4587,9 @@ class CategoryConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CefExternalSecuritySolution(ExternalSecuritySolution, discriminator="CEF"):
+class CefExternalSecuritySolution(
+    ExternalSecuritySolution, discriminator="CEF"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a security solution which sends CEF logs to an OMS workspace.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4432,7 +4608,7 @@ class CefExternalSecuritySolution(ExternalSecuritySolution, discriminator="CEF")
     :ivar properties: The external security solution properties for CEF solutions.
     :vartype properties: ~azure.mgmt.security.models.CefSolutionProperties
     :ivar kind: Required. CEF.
-    :vartype kind: str or ~azure.mgmt.security.models.CEF
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
     """
 
     properties: Optional["_models.CefSolutionProperties"] = rest_field(
@@ -4461,7 +4637,9 @@ class CefExternalSecuritySolution(ExternalSecuritySolution, discriminator="CEF")
         self.kind = ExternalSecuritySolutionKindEnum.CEF  # type: ignore
 
 
-class CefSolutionProperties(ExternalSecuritySolutionProperties):
+class CefSolutionProperties(
+    ExternalSecuritySolutionProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The external security solution properties for CEF solutions.
 
     :ivar device_vendor:
@@ -4507,7 +4685,7 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
         super().__init__(*args, **kwargs)
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
 
@@ -4585,7 +4763,7 @@ class CloudErrorBody(_Model):
     """The error additional info."""
 
 
-class CloudOffering(_Model):
+class CloudOffering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security offering details.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4641,7 +4819,7 @@ class CloudOffering(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Compliance(ExtensionResource):
+class Compliance(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Compliance of a scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4730,7 +4908,7 @@ class ComplianceProperties(_Model):
     """An array of segment, which is the actually the compliance assessment."""
 
 
-class ComplianceResult(ExtensionResource):
+class ComplianceResult(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """a compliance result.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4866,7 +5044,7 @@ class ConnectedResource(_Model):
     """The allowed udp ports."""
 
 
-class ConnectedWorkspace(_Model):
+class ConnectedWorkspace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents an OMS workspace to which the solution is connected.
 
     :ivar id: Azure resource ID of the connected OMS workspace.
@@ -4916,8 +5094,7 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData, discriminator="Co
     :vartype image_digest: str
     :ivar assessed_resource_type: Sub-assessment resource type. Required.
      ContainerRegistryVulnerability.
-    :vartype assessed_resource_type: str or
-     ~azure.mgmt.security.models.CONTAINER_REGISTRY_VULNERABILITY
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     """
 
     type: Optional[str] = rest_field(visibility=["read"])
@@ -4960,7 +5137,9 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData, discriminator="Co
         self.assessed_resource_type = AssessedResourceType.CONTAINER_REGISTRY_VULNERABILITY  # type: ignore
 
 
-class CspmMonitorAwsOffering(CloudOffering, discriminator="CspmMonitorAws"):
+class CspmMonitorAwsOffering(
+    CloudOffering, discriminator="CspmMonitorAws"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CSPM monitoring for AWS offering.
 
     :ivar description: The offering description.
@@ -4969,7 +5148,7 @@ class CspmMonitorAwsOffering(CloudOffering, discriminator="CspmMonitorAws"):
     :vartype native_cloud_connection:
      ~azure.mgmt.security.models.CspmMonitorAwsOfferingNativeCloudConnection
     :ivar offering_type: The type of the security offering. Required. CspmMonitorAws.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_AWS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     native_cloud_connection: Optional["_models.CspmMonitorAwsOfferingNativeCloudConnection"] = rest_field(
@@ -4998,7 +5177,9 @@ class CspmMonitorAwsOffering(CloudOffering, discriminator="CspmMonitorAws"):
         self.offering_type = OfferingType.CSPM_MONITOR_AWS  # type: ignore
 
 
-class CspmMonitorAwsOfferingNativeCloudConnection(_Model):  # pylint: disable=name-too-long
+class CspmMonitorAwsOfferingNativeCloudConnection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The native cloud connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -5034,7 +5215,7 @@ class CspmMonitorAzureDevOpsOffering(CloudOffering, discriminator="CspmMonitorAz
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. CspmMonitorAzureDevOps.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_AZURE_DEV_OPS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.CSPM_MONITOR_AZURE_DEV_OPS] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5063,7 +5244,7 @@ class CspmMonitorDockerHubOffering(CloudOffering, discriminator="CspmMonitorDock
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. CspmMonitorDockerHub.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_DOCKER_HUB
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.CSPM_MONITOR_DOCKER_HUB] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5086,7 +5267,9 @@ class CspmMonitorDockerHubOffering(CloudOffering, discriminator="CspmMonitorDock
         self.offering_type = OfferingType.CSPM_MONITOR_DOCKER_HUB  # type: ignore
 
 
-class CspmMonitorGcpOffering(CloudOffering, discriminator="CspmMonitorGcp"):
+class CspmMonitorGcpOffering(
+    CloudOffering, discriminator="CspmMonitorGcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CSPM monitoring for GCP offering.
 
     :ivar description: The offering description.
@@ -5095,7 +5278,7 @@ class CspmMonitorGcpOffering(CloudOffering, discriminator="CspmMonitorGcp"):
     :vartype native_cloud_connection:
      ~azure.mgmt.security.models.CspmMonitorGcpOfferingNativeCloudConnection
     :ivar offering_type: The type of the security offering. Required. CspmMonitorGcp.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_GCP
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     native_cloud_connection: Optional["_models.CspmMonitorGcpOfferingNativeCloudConnection"] = rest_field(
@@ -5124,7 +5307,9 @@ class CspmMonitorGcpOffering(CloudOffering, discriminator="CspmMonitorGcp"):
         self.offering_type = OfferingType.CSPM_MONITOR_GCP  # type: ignore
 
 
-class CspmMonitorGcpOfferingNativeCloudConnection(_Model):  # pylint: disable=name-too-long
+class CspmMonitorGcpOfferingNativeCloudConnection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The native cloud connection configuration.
 
     :ivar workload_identity_provider_id: The GCP workload identity provider id for the offering.
@@ -5168,7 +5353,7 @@ class CspmMonitorGithubOffering(CloudOffering, discriminator="CspmMonitorGithub"
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. CspmMonitorGithub.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_GITHUB
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.CSPM_MONITOR_GITHUB] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5197,7 +5382,7 @@ class CspmMonitorGitLabOffering(CloudOffering, discriminator="CspmMonitorGitLab"
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. CspmMonitorGitLab.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_GIT_LAB
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.CSPM_MONITOR_GIT_LAB] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5226,7 +5411,7 @@ class CspmMonitorJFrogOffering(CloudOffering, discriminator="CspmMonitorJFrog"):
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. CspmMonitorJFrog.
-    :vartype offering_type: str or ~azure.mgmt.security.models.CSPM_MONITOR_J_FROG
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.CSPM_MONITOR_J_FROG] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5249,7 +5434,7 @@ class CspmMonitorJFrogOffering(CloudOffering, discriminator="CspmMonitorJFrog"):
         self.offering_type = OfferingType.CSPM_MONITOR_J_FROG  # type: ignore
 
 
-class CustomRecommendation(ExtensionResource):
+class CustomRecommendation(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom Recommendation.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5319,7 +5504,7 @@ class CustomRecommendation(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class CustomRecommendationProperties(_Model):
+class CustomRecommendationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes the Custom Recommendation properties.
 
     :ivar query: KQL query representing the Recommendation results required.
@@ -5427,7 +5612,7 @@ class CVSS(_Model):
     """CVSS base."""
 
 
-class DataExportSettingProperties(_Model):
+class DataExportSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The data export setting properties.
 
     :ivar enabled: Is the data export setting enabled. Required.
@@ -5455,7 +5640,9 @@ class DataExportSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataExportSettings(Setting, discriminator="DataExportSettings"):
+class DataExportSettings(
+    Setting, discriminator="DataExportSettings"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a data export setting.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -5472,7 +5659,7 @@ class DataExportSettings(Setting, discriminator="DataExportSettings"):
     :ivar properties: Data export setting data.
     :vartype properties: ~azure.mgmt.security.models.DataExportSettingProperties
     :ivar kind: the kind of the settings string. Required. DataExportSettings.
-    :vartype kind: str or ~azure.mgmt.security.models.DATA_EXPORT_SETTINGS
+    :vartype kind: str or ~azure.mgmt.security.models.SettingKind
     """
 
     properties: Optional["_models.DataExportSettingProperties"] = rest_field(
@@ -5520,7 +5707,9 @@ class DataExportSettings(Setting, discriminator="DataExportSettings"):
             super().__setattr__(key, value)
 
 
-class DefenderCspmAwsOffering(CloudOffering, discriminator="DefenderCspmAws"):
+class DefenderCspmAwsOffering(
+    CloudOffering, discriminator="DefenderCspmAws"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CSPM P1 for AWS offering.
 
     :ivar description: The offering description.
@@ -5543,8 +5732,15 @@ class DefenderCspmAwsOffering(CloudOffering, discriminator="DefenderCspmAws"):
      discovery K8s configuration.
     :vartype mdc_containers_agentless_discovery_k8_s:
      ~azure.mgmt.security.models.DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S
+    :ivar serverless_containers: The Microsoft Defender serverless containers configuration.
+    :vartype serverless_containers:
+     ~azure.mgmt.security.models.DefenderCspmAwsOfferingServerlessContainers
+    :ivar agentless_serverless_posture: The Microsoft Defender agentless serverless posture
+     configuration.
+    :vartype agentless_serverless_posture:
+     ~azure.mgmt.security.models.DefenderCspmAwsOfferingAgentlessServerlessPosture
     :ivar offering_type: The type of the security offering. Required. DefenderCspmAws.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_CSPM_AWS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     vm_scanners: Optional["_models.DefenderCspmAwsOfferingVmScanners"] = rest_field(
@@ -5573,6 +5769,14 @@ class DefenderCspmAwsOffering(CloudOffering, discriminator="DefenderCspmAws"):
         name="mdcContainersAgentlessDiscoveryK8s", visibility=["read", "create", "update", "delete", "query"]
     )
     """The Microsoft Defender container agentless discovery K8s configuration."""
+    serverless_containers: Optional["_models.DefenderCspmAwsOfferingServerlessContainers"] = rest_field(
+        name="serverlessContainers", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Defender serverless containers configuration."""
+    agentless_serverless_posture: Optional["_models.DefenderCspmAwsOfferingAgentlessServerlessPosture"] = rest_field(
+        name="agentlessServerlessPosture", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Defender agentless serverless posture configuration."""
     offering_type: Literal[OfferingType.DEFENDER_CSPM_AWS] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of the security offering. Required. DefenderCspmAws."""
 
@@ -5588,6 +5792,8 @@ class DefenderCspmAwsOffering(CloudOffering, discriminator="DefenderCspmAws"):
         mdc_containers_agentless_discovery_k8_s: Optional[
             "_models.DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S"
         ] = None,
+        serverless_containers: Optional["_models.DefenderCspmAwsOfferingServerlessContainers"] = None,
+        agentless_serverless_posture: Optional["_models.DefenderCspmAwsOfferingAgentlessServerlessPosture"] = None,
     ) -> None: ...
 
     @overload
@@ -5602,31 +5808,30 @@ class DefenderCspmAwsOffering(CloudOffering, discriminator="DefenderCspmAws"):
         self.offering_type = OfferingType.DEFENDER_CSPM_AWS  # type: ignore
 
 
-class DefenderCspmAwsOfferingCiem(_Model):
-    """Defenders CSPM Permissions Management offering configurations.
+class DefenderCspmAwsOfferingAgentlessServerlessPosture(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The Microsoft Defender agentless serverless posture configuration.
 
-    :ivar ciem_discovery: Defender CSPM Permissions Management discovery configuration.
-    :vartype ciem_discovery: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemDiscovery
-    :ivar ciem_oidc: AWS Defender CSPM Permissions Management OIDC (open id connect) connection
-     configurations.
-    :vartype ciem_oidc: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemOidc
+    :ivar enabled: Is agentless serverless posture enabled.
+    :vartype enabled: bool
+    :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
+    :vartype cloud_role_arn: str
     """
 
-    ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemDiscovery"] = rest_field(
-        name="ciemDiscovery", visibility=["read", "create", "update", "delete", "query"]
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is agentless serverless posture enabled."""
+    cloud_role_arn: Optional[str] = rest_field(
+        name="cloudRoleArn", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Defender CSPM Permissions Management discovery configuration."""
-    ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = rest_field(
-        name="ciemOidc", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """AWS Defender CSPM Permissions Management OIDC (open id connect) connection configurations."""
+    """The cloud role ARN in AWS for this feature."""
 
     @overload
     def __init__(
         self,
         *,
-        ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemDiscovery"] = None,
-        ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = None,
+        enabled: Optional[bool] = None,
+        cloud_role_arn: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -5640,17 +5845,67 @@ class DefenderCspmAwsOfferingCiem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingCiemDiscovery(_Model):
-    """Defender CSPM Permissions Management discovery configuration.
+class DefenderCspmAwsOfferingCiem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Defenders CSPM Permissions Management offering configurations.
 
-    :ivar cloud_role_arn: The cloud role ARN in AWS for Permissions Management discovery.
+    :ivar ciem_oidc: AWS Defender CSPM Permissions Management OIDC (open id connect) connection
+     configurations.
+    :vartype ciem_oidc: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemOidc
+    :ivar log_collection_oidc: The AWS log collection OIDC (open id connect) connection
+     configuration.
+    :vartype log_collection_oidc:
+     ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemLogCollectionOidc
+    :ivar cloud_trail_audit_log_ingestion: The CloudTrail audit log ingestion configuration.
+    :vartype cloud_trail_audit_log_ingestion:
+     ~azure.mgmt.security.models.AwsCloudTrailConfiguration
+    """
+
+    ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = rest_field(
+        name="ciemOidc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """AWS Defender CSPM Permissions Management OIDC (open id connect) connection configurations."""
+    log_collection_oidc: Optional["_models.DefenderCspmAwsOfferingCiemLogCollectionOidc"] = rest_field(
+        name="logCollectionOidc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AWS log collection OIDC (open id connect) connection configuration."""
+    cloud_trail_audit_log_ingestion: Optional["_models.AwsCloudTrailConfiguration"] = rest_field(
+        name="cloudTrailAuditLogIngestion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The CloudTrail audit log ingestion configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = None,
+        log_collection_oidc: Optional["_models.DefenderCspmAwsOfferingCiemLogCollectionOidc"] = None,
+        cloud_trail_audit_log_ingestion: Optional["_models.AwsCloudTrailConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefenderCspmAwsOfferingCiemLogCollectionOidc(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The AWS log collection OIDC (open id connect) connection configuration.
+
+    :ivar cloud_role_arn: The cloud role ARN in AWS used for the log collection oidc connection.
     :vartype cloud_role_arn: str
     """
 
     cloud_role_arn: Optional[str] = rest_field(
         name="cloudRoleArn", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The cloud role ARN in AWS for Permissions Management discovery."""
+    """The cloud role ARN in AWS used for the log collection oidc connection."""
 
     @overload
     def __init__(
@@ -5670,7 +5925,7 @@ class DefenderCspmAwsOfferingCiemDiscovery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingCiemOidc(_Model):
+class DefenderCspmAwsOfferingCiemOidc(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AWS Defender CSPM Permissions Management OIDC (open id connect) connection configurations.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for Permissions Management used for oidc
@@ -5709,7 +5964,7 @@ class DefenderCspmAwsOfferingCiemOidc(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingDatabasesDspm(_Model):
+class DefenderCspmAwsOfferingDatabasesDspm(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The databases DSPM configuration.
 
     :ivar enabled: Is databases DSPM protection enabled.
@@ -5744,7 +5999,9 @@ class DefenderCspmAwsOfferingDatabasesDspm(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingDataSensitivityDiscovery(_Model):  # pylint: disable=name-too-long
+class DefenderCspmAwsOfferingDataSensitivityDiscovery(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Data Sensitivity discovery configuration.
 
     :ivar enabled: Is Microsoft Defender Data Sensitivity discovery enabled.
@@ -5779,7 +6036,9 @@ class DefenderCspmAwsOfferingDataSensitivityDiscovery(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pylint: disable=name-too-long
+class DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender container agentless discovery K8s configuration.
 
     :ivar enabled: Is Microsoft Defender container agentless discovery K8s enabled.
@@ -5814,13 +6073,17 @@ class DefenderCspmAwsOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingMdcContainersImageAssessment(_Model):  # pylint: disable=name-too-long
+class DefenderCspmAwsOfferingMdcContainersImageAssessment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender container image assessment configuration.
 
     :ivar enabled: Is Microsoft Defender container image assessment enabled.
     :vartype enabled: bool
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
     :vartype cloud_role_arn: str
+    :ivar security_findings_enabled: Is security findings enabled for container image assessment.
+    :vartype security_findings_enabled: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5829,6 +6092,10 @@ class DefenderCspmAwsOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         name="cloudRoleArn", visibility=["read", "create", "update", "delete", "query"]
     )
     """The cloud role ARN in AWS for this feature."""
+    security_findings_enabled: Optional[bool] = rest_field(
+        name="securityFindingsEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security findings enabled for container image assessment."""
 
     @overload
     def __init__(
@@ -5836,6 +6103,7 @@ class DefenderCspmAwsOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         *,
         enabled: Optional[bool] = None,
         cloud_role_arn: Optional[str] = None,
+        security_findings_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5849,7 +6117,37 @@ class DefenderCspmAwsOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class VmScannersBase(_Model):
+class DefenderCspmAwsOfferingServerlessContainers(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
+    """The Microsoft Defender serverless containers configuration.
+
+    :ivar enabled: Is serverless containers scanning enabled.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Is serverless containers scanning enabled."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VmScannersBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VM scanning configuration for a security offering of a given environment.
 
     :ivar enabled: Is VM scanning enabled.
@@ -5884,7 +6182,7 @@ class VmScannersBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VmScannersAws(VmScannersBase):
+class VmScannersAws(VmScannersBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VM scanning configuration for a security offering of a Aws environment.
 
     :ivar enabled: Is VM scanning enabled.
@@ -5920,7 +6218,7 @@ class VmScannersAws(VmScannersBase):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingVmScanners(VmScannersAws):
+class DefenderCspmAwsOfferingVmScanners(VmScannersAws):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for CSPM offering VM scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -5957,7 +6255,7 @@ class DefenderCspmDockerHubOffering(CloudOffering, discriminator="DefenderCspmDo
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. DefenderCspmDockerHub.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_CSPM_DOCKER_HUB
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.DEFENDER_CSPM_DOCKER_HUB] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5980,7 +6278,9 @@ class DefenderCspmDockerHubOffering(CloudOffering, discriminator="DefenderCspmDo
         self.offering_type = OfferingType.DEFENDER_CSPM_DOCKER_HUB  # type: ignore
 
 
-class DefenderCspmGcpOffering(CloudOffering, discriminator="DefenderCspmGcp"):
+class DefenderCspmGcpOffering(
+    CloudOffering, discriminator="DefenderCspmGcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CSPM P1 for GCP offering.
 
     :ivar description: The offering description.
@@ -5988,6 +6288,8 @@ class DefenderCspmGcpOffering(CloudOffering, discriminator="DefenderCspmGcp"):
     :ivar ciem_discovery: GCP Defenders CSPM Permissions Management OIDC (Open ID connect)
      connection configurations.
     :vartype ciem_discovery: ~azure.mgmt.security.models.DefenderCspmGcpOfferingCiemDiscovery
+    :ivar ciem: The GCP Defender CSPM Permissions Management configurations.
+    :vartype ciem: ~azure.mgmt.security.models.DefenderCspmGcpOfferingCiem
     :ivar vm_scanners: The Microsoft Defender for CSPM VM scanning configuration.
     :vartype vm_scanners: ~azure.mgmt.security.models.DefenderCspmGcpOfferingVmScanners
     :ivar data_sensitivity_discovery: The Microsoft Defender Data Sensitivity discovery
@@ -6003,13 +6305,17 @@ class DefenderCspmGcpOffering(CloudOffering, discriminator="DefenderCspmGcp"):
     :vartype mdc_containers_agentless_discovery_k8_s:
      ~azure.mgmt.security.models.DefenderCspmGcpOfferingMdcContainersAgentlessDiscoveryK8S
     :ivar offering_type: The type of the security offering. Required. DefenderCspmGcp.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_CSPM_GCP
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     ciem_discovery: Optional["_models.DefenderCspmGcpOfferingCiemDiscovery"] = rest_field(
         name="ciemDiscovery", visibility=["read", "create", "update", "delete", "query"]
     )
     """GCP Defenders CSPM Permissions Management OIDC (Open ID connect) connection configurations."""
+    ciem: Optional["_models.DefenderCspmGcpOfferingCiem"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP Defender CSPM Permissions Management configurations."""
     vm_scanners: Optional["_models.DefenderCspmGcpOfferingVmScanners"] = rest_field(
         name="vmScanners", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6036,6 +6342,7 @@ class DefenderCspmGcpOffering(CloudOffering, discriminator="DefenderCspmGcp"):
         self,
         *,
         ciem_discovery: Optional["_models.DefenderCspmGcpOfferingCiemDiscovery"] = None,
+        ciem: Optional["_models.DefenderCspmGcpOfferingCiem"] = None,
         vm_scanners: Optional["_models.DefenderCspmGcpOfferingVmScanners"] = None,
         data_sensitivity_discovery: Optional["_models.DefenderCspmGcpOfferingDataSensitivityDiscovery"] = None,
         mdc_containers_image_assessment: Optional["_models.DefenderCspmGcpOfferingMdcContainersImageAssessment"] = None,
@@ -6056,7 +6363,53 @@ class DefenderCspmGcpOffering(CloudOffering, discriminator="DefenderCspmGcp"):
         self.offering_type = OfferingType.DEFENDER_CSPM_GCP  # type: ignore
 
 
-class DefenderCspmGcpOfferingCiemDiscovery(_Model):
+class DefenderCspmGcpOfferingCiem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The GCP Defender CSPM Permissions Management configurations.
+
+    :ivar ciem_oidc: The GCP Permissions Management OIDC (open id connect) connection
+     configuration.
+    :vartype ciem_oidc: ~azure.mgmt.security.models.DefenderCspmGcpOfferingCiemOidc
+    :ivar log_collection_oidc: The GCP log collection OIDC (open id connect) connection
+     configuration.
+    :vartype log_collection_oidc: ~azure.mgmt.security.models.DefenderCspmGcpOfferingCiemOidc
+    :ivar gcp_audit_log_ingestion: The GCP audit log ingestion configuration.
+    :vartype gcp_audit_log_ingestion: ~azure.mgmt.security.models.GcpAuditLogConfiguration
+    """
+
+    ciem_oidc: Optional["_models.DefenderCspmGcpOfferingCiemOidc"] = rest_field(
+        name="ciemOidc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP Permissions Management OIDC (open id connect) connection configuration."""
+    log_collection_oidc: Optional["_models.DefenderCspmGcpOfferingCiemOidc"] = rest_field(
+        name="logCollectionOidc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP log collection OIDC (open id connect) connection configuration."""
+    gcp_audit_log_ingestion: Optional["_models.GcpAuditLogConfiguration"] = rest_field(
+        name="gcpAuditLogIngestion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP audit log ingestion configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ciem_oidc: Optional["_models.DefenderCspmGcpOfferingCiemOidc"] = None,
+        log_collection_oidc: Optional["_models.DefenderCspmGcpOfferingCiemOidc"] = None,
+        gcp_audit_log_ingestion: Optional["_models.GcpAuditLogConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefenderCspmGcpOfferingCiemDiscovery(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GCP Defenders CSPM Permissions Management OIDC (Open ID connect) connection configurations.
 
     :ivar workload_identity_provider_id: The GCP workload identity provider id for Permissions
@@ -6068,6 +6421,9 @@ class DefenderCspmGcpOfferingCiemDiscovery(_Model):
     :ivar azure_active_directory_app_name: the azure active directory app name used of
      authenticating against GCP workload identity federation.
     :vartype azure_active_directory_app_name: str
+    :ivar enable_audit_log_ingestion: Is audit log ingestion enabled for the Permissions Management
+     offering.
+    :vartype enable_audit_log_ingestion: bool
     """
 
     workload_identity_provider_id: Optional[str] = rest_field(
@@ -6083,6 +6439,10 @@ class DefenderCspmGcpOfferingCiemDiscovery(_Model):
     )
     """the azure active directory app name used of authenticating against GCP workload identity
      federation."""
+    enable_audit_log_ingestion: Optional[bool] = rest_field(
+        name="enableAuditLogIngestion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is audit log ingestion enabled for the Permissions Management offering."""
 
     @overload
     def __init__(
@@ -6091,6 +6451,7 @@ class DefenderCspmGcpOfferingCiemDiscovery(_Model):
         workload_identity_provider_id: Optional[str] = None,
         service_account_email_address: Optional[str] = None,
         azure_active_directory_app_name: Optional[str] = None,
+        enable_audit_log_ingestion: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6104,7 +6465,46 @@ class DefenderCspmGcpOfferingCiemDiscovery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmGcpOfferingDataSensitivityDiscovery(_Model):  # pylint: disable=name-too-long
+class DefenderCspmGcpOfferingCiemOidc(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A GCP OIDC (open id connect) connection configuration.
+
+    :ivar workload_identity_provider_id: The GCP workload identity provider id for this feature.
+    :vartype workload_identity_provider_id: str
+    :ivar service_account_email_address: The service account email address in GCP for this feature.
+    :vartype service_account_email_address: str
+    """
+
+    workload_identity_provider_id: Optional[str] = rest_field(
+        name="workloadIdentityProviderId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The GCP workload identity provider id for this feature."""
+    service_account_email_address: Optional[str] = rest_field(
+        name="serviceAccountEmailAddress", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The service account email address in GCP for this feature."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        workload_identity_provider_id: Optional[str] = None,
+        service_account_email_address: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DefenderCspmGcpOfferingDataSensitivityDiscovery(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Data Sensitivity discovery configuration.
 
     :ivar enabled: Is Microsoft Defender Data Sensitivity discovery enabled.
@@ -6146,7 +6546,9 @@ class DefenderCspmGcpOfferingDataSensitivityDiscovery(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmGcpOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pylint: disable=name-too-long
+class DefenderCspmGcpOfferingMdcContainersAgentlessDiscoveryK8S(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Container agentless discovery configuration.
 
     :ivar enabled: Is Microsoft Defender container agentless discovery enabled.
@@ -6188,7 +6590,9 @@ class DefenderCspmGcpOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: disable=name-too-long
+class DefenderCspmGcpOfferingMdcContainersImageAssessment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Container image assessment configuration.
 
     :ivar enabled: Is Microsoft Defender container image assessment enabled.
@@ -6197,6 +6601,8 @@ class DefenderCspmGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: di
     :vartype workload_identity_provider_id: str
     :ivar service_account_email_address: The service account email address in GCP for this feature.
     :vartype service_account_email_address: str
+    :ivar security_findings_enabled: Is security findings enabled for container image assessment.
+    :vartype security_findings_enabled: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6209,6 +6615,10 @@ class DefenderCspmGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         name="serviceAccountEmailAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """The service account email address in GCP for this feature."""
+    security_findings_enabled: Optional[bool] = rest_field(
+        name="securityFindingsEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security findings enabled for container image assessment."""
 
     @overload
     def __init__(
@@ -6217,6 +6627,7 @@ class DefenderCspmGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         enabled: Optional[bool] = None,
         workload_identity_provider_id: Optional[str] = None,
         service_account_email_address: Optional[str] = None,
+        security_findings_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6230,7 +6641,7 @@ class DefenderCspmGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class VmScannersGcp(VmScannersBase):
+class VmScannersGcp(VmScannersBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A VM scanning configuration for a security offering of a GCP environment.
 
     :ivar enabled: Is VM scanning enabled.
@@ -6258,7 +6669,7 @@ class VmScannersGcp(VmScannersBase):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmGcpOfferingVmScanners(VmScannersGcp):
+class DefenderCspmGcpOfferingVmScanners(VmScannersGcp):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for CSPM VM scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -6286,7 +6697,9 @@ class DefenderCspmGcpOfferingVmScanners(VmScannersGcp):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmJFrogOffering(CloudOffering, discriminator="DefenderCspmJFrog"):
+class DefenderCspmJFrogOffering(
+    CloudOffering, discriminator="DefenderCspmJFrog"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The CSPM P1 for JFrog Artifactory offering.
 
     :ivar description: The offering description.
@@ -6296,7 +6709,7 @@ class DefenderCspmJFrogOffering(CloudOffering, discriminator="DefenderCspmJFrog"
     :vartype mdc_containers_image_assessment:
      ~azure.mgmt.security.models.DefenderCspmJFrogOfferingMdcContainersImageAssessment
     :ivar offering_type: The type of the security offering. Required. DefenderCspmJFrog.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_CSPM_J_FROG
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     mdc_containers_image_assessment: Optional["_models.DefenderCspmJFrogOfferingMdcContainersImageAssessment"] = (
@@ -6327,7 +6740,9 @@ class DefenderCspmJFrogOffering(CloudOffering, discriminator="DefenderCspmJFrog"
         self.offering_type = OfferingType.DEFENDER_CSPM_J_FROG  # type: ignore
 
 
-class DefenderCspmJFrogOfferingMdcContainersImageAssessment(_Model):  # pylint: disable=name-too-long
+class DefenderCspmJFrogOfferingMdcContainersImageAssessment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Container image assessment configuration.
 
     :ivar enabled: Is Microsoft Defender container image assessment enabled.
@@ -6355,7 +6770,9 @@ class DefenderCspmJFrogOfferingMdcContainersImageAssessment(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class DefenderFoDatabasesAwsOffering(CloudOffering, discriminator="DefenderForDatabasesAws"):
+class DefenderFoDatabasesAwsOffering(
+    CloudOffering, discriminator="DefenderForDatabasesAws"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Databases AWS offering.
 
     :ivar description: The offering description.
@@ -6369,7 +6786,7 @@ class DefenderFoDatabasesAwsOffering(CloudOffering, discriminator="DefenderForDa
     :vartype databases_dspm:
      ~azure.mgmt.security.models.DefenderFoDatabasesAwsOfferingDatabasesDspm
     :ivar offering_type: The type of the security offering. Required. DefenderForDatabasesAws.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_DATABASES_AWS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     arc_auto_provisioning: Optional["_models.DefenderFoDatabasesAwsOfferingArcAutoProvisioning"] = rest_field(
@@ -6408,7 +6825,9 @@ class DefenderFoDatabasesAwsOffering(CloudOffering, discriminator="DefenderForDa
         self.offering_type = OfferingType.DEFENDER_FOR_DATABASES_AWS  # type: ignore
 
 
-class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(ArcAutoProvisioningAws):  # pylint: disable=name-too-long
+class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(
+    ArcAutoProvisioningAws
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -6439,7 +6858,9 @@ class DefenderFoDatabasesAwsOfferingArcAutoProvisioning(ArcAutoProvisioningAws):
         super().__init__(*args, **kwargs)
 
 
-class DefenderFoDatabasesAwsOfferingDatabasesDspm(_Model):  # pylint: disable=name-too-long
+class DefenderFoDatabasesAwsOfferingDatabasesDspm(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The databases data security posture management (DSPM) configuration.
 
     :ivar enabled: Is databases data security posture management (DSPM) protection enabled.
@@ -6474,7 +6895,7 @@ class DefenderFoDatabasesAwsOfferingDatabasesDspm(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class DefenderFoDatabasesAwsOfferingRds(_Model):
+class DefenderFoDatabasesAwsOfferingRds(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The RDS configuration.
 
     :ivar enabled: Is RDS protection enabled.
@@ -6509,7 +6930,9 @@ class DefenderFoDatabasesAwsOfferingRds(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderForContainersAws"):
+class DefenderForContainersAwsOffering(
+    CloudOffering, discriminator="DefenderForContainersAws"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Containers AWS offering.
 
     :ivar description: The offering description.
@@ -6525,6 +6948,13 @@ class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderFor
      ~azure.mgmt.security.models.DefenderForContainersAwsOfferingCloudWatchToKinesis
     :ivar kinesis_to_s3: The kinesis to s3 connection configuration.
     :vartype kinesis_to_s3: ~azure.mgmt.security.models.DefenderForContainersAwsOfferingKinesisToS3
+    :ivar installation_method: The installation method for the Defender for Containers agent. Known
+     values are: "Arc" and "Helm".
+    :vartype installation_method: str or ~azure.mgmt.security.models.InstallationMethod
+    :ivar security_gating_enabled: Is security gating enabled.
+    :vartype security_gating_enabled: bool
+    :ivar container_anti_malware_enabled: Is defender anti-malware enabled.
+    :vartype container_anti_malware_enabled: bool
     :ivar enable_audit_logs_auto_provisioning: Is audit logs data collection enabled.
     :vartype enable_audit_logs_auto_provisioning: bool
     :ivar enable_defender_agent_auto_provisioning: Is Microsoft Defender for Cloud Kubernetes agent
@@ -6550,7 +6980,7 @@ class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderFor
     :ivar vm_scanners: The Microsoft Defender for Container K8s VM host scanning configuration.
     :vartype vm_scanners: ~azure.mgmt.security.models.DefenderForContainersAwsOfferingVmScanners
     :ivar offering_type: The type of the security offering. Required. DefenderForContainersAws.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_CONTAINERS_AWS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     kubernetes_service: Optional["_models.DefenderForContainersAwsOfferingKubernetesService"] = rest_field(
@@ -6569,6 +6999,19 @@ class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderFor
         name="kinesisToS3", visibility=["read", "create", "update", "delete", "query"]
     )
     """The kinesis to s3 connection configuration."""
+    installation_method: Optional[Union[str, "_models.InstallationMethod"]] = rest_field(
+        name="installationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The installation method for the Defender for Containers agent. Known values are: \"Arc\" and
+     \"Helm\"."""
+    security_gating_enabled: Optional[bool] = rest_field(
+        name="securityGatingEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security gating enabled."""
+    container_anti_malware_enabled: Optional[bool] = rest_field(
+        name="containerAntiMalwareEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is defender anti-malware enabled."""
     enable_audit_logs_auto_provisioning: Optional[bool] = rest_field(
         name="enableAuditLogsAutoProvisioning", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6614,6 +7057,9 @@ class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderFor
         kubernetes_data_collection: Optional["_models.DefenderForContainersAwsOfferingKubernetesDataCollection"] = None,
         cloud_watch_to_kinesis: Optional["_models.DefenderForContainersAwsOfferingCloudWatchToKinesis"] = None,
         kinesis_to_s3: Optional["_models.DefenderForContainersAwsOfferingKinesisToS3"] = None,
+        installation_method: Optional[Union[str, "_models.InstallationMethod"]] = None,
+        security_gating_enabled: Optional[bool] = None,
+        container_anti_malware_enabled: Optional[bool] = None,
         enable_audit_logs_auto_provisioning: Optional[bool] = None,
         enable_defender_agent_auto_provisioning: Optional[bool] = None,
         enable_policy_agent_auto_provisioning: Optional[bool] = None,
@@ -6640,7 +7086,9 @@ class DefenderForContainersAwsOffering(CloudOffering, discriminator="DefenderFor
         self.offering_type = OfferingType.DEFENDER_FOR_CONTAINERS_AWS  # type: ignore
 
 
-class DefenderForContainersAwsOfferingCloudWatchToKinesis(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingCloudWatchToKinesis(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The cloudwatch to kinesis connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS used by CloudWatch to transfer data into
@@ -6671,7 +7119,9 @@ class DefenderForContainersAwsOfferingCloudWatchToKinesis(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingKinesisToS3(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingKinesisToS3(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The kinesis to s3 connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS used by Kinesis to transfer data into S3.
@@ -6701,7 +7151,9 @@ class DefenderForContainersAwsOfferingKinesisToS3(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingKubernetesDataCollection(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingKubernetesDataCollection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The kubernetes data collection connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature used for reading data.
@@ -6731,7 +7183,9 @@ class DefenderForContainersAwsOfferingKubernetesDataCollection(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingKubernetesService(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingKubernetesService(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The kubernetes service connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature used for provisioning
@@ -6762,7 +7216,9 @@ class DefenderForContainersAwsOfferingKubernetesService(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingMdcContainersAgentlessDiscoveryK8S(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender container agentless discovery K8s configuration.
 
     :ivar enabled: Is Microsoft Defender container agentless discovery K8s enabled.
@@ -6797,13 +7253,17 @@ class DefenderForContainersAwsOfferingMdcContainersAgentlessDiscoveryK8S(_Model)
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingMdcContainersImageAssessment(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingMdcContainersImageAssessment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender container image assessment configuration.
 
     :ivar enabled: Is Microsoft Defender container image assessment enabled.
     :vartype enabled: bool
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
     :vartype cloud_role_arn: str
+    :ivar security_findings_enabled: Is security findings enabled for container image assessment.
+    :vartype security_findings_enabled: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6812,6 +7272,10 @@ class DefenderForContainersAwsOfferingMdcContainersImageAssessment(_Model):  # p
         name="cloudRoleArn", visibility=["read", "create", "update", "delete", "query"]
     )
     """The cloud role ARN in AWS for this feature."""
+    security_findings_enabled: Optional[bool] = rest_field(
+        name="securityFindingsEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security findings enabled for container image assessment."""
 
     @overload
     def __init__(
@@ -6819,6 +7283,7 @@ class DefenderForContainersAwsOfferingMdcContainersImageAssessment(_Model):  # p
         *,
         enabled: Optional[bool] = None,
         cloud_role_arn: Optional[str] = None,
+        security_findings_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -6832,7 +7297,9 @@ class DefenderForContainersAwsOfferingMdcContainersImageAssessment(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersAwsOfferingVmScanners(VmScannersAws):  # pylint: disable=name-too-long
+class DefenderForContainersAwsOfferingVmScanners(
+    VmScannersAws
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Container K8s VM host scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -6870,7 +7337,7 @@ class DefenderForContainersDockerHubOffering(CloudOffering, discriminator="Defen
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required.
      DefenderForContainersDockerHub.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_CONTAINERS_DOCKER_HUB
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.DEFENDER_FOR_CONTAINERS_DOCKER_HUB] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -6893,7 +7360,9 @@ class DefenderForContainersDockerHubOffering(CloudOffering, discriminator="Defen
         self.offering_type = OfferingType.DEFENDER_FOR_CONTAINERS_DOCKER_HUB  # type: ignore
 
 
-class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderForContainersGcp"):
+class DefenderForContainersGcpOffering(
+    CloudOffering, discriminator="DefenderForContainersGcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The containers GCP offering.
 
     :ivar description: The offering description.
@@ -6906,6 +7375,13 @@ class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderFor
      ~azure.mgmt.security.models.DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection
     :ivar enable_audit_logs_auto_provisioning: Is audit logs data collection enabled.
     :vartype enable_audit_logs_auto_provisioning: bool
+    :ivar installation_method: The installation method for the Defender for Containers agent. Known
+     values are: "Arc" and "Helm".
+    :vartype installation_method: str or ~azure.mgmt.security.models.InstallationMethod
+    :ivar security_gating_enabled: Is security gating enabled.
+    :vartype security_gating_enabled: bool
+    :ivar container_anti_malware_enabled: Is defender anti-malware enabled.
+    :vartype container_anti_malware_enabled: bool
     :ivar enable_defender_agent_auto_provisioning: Is Microsoft Defender for Cloud Kubernetes agent
      auto provisioning enabled.
     :vartype enable_defender_agent_auto_provisioning: bool
@@ -6923,7 +7399,7 @@ class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderFor
     :ivar vm_scanners: The Microsoft Defender for Container K8s VM host scanning configuration.
     :vartype vm_scanners: ~azure.mgmt.security.models.DefenderForContainersGcpOfferingVmScanners
     :ivar offering_type: The type of the security offering. Required. DefenderForContainersGcp.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_CONTAINERS_GCP
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     native_cloud_connection: Optional["_models.DefenderForContainersGcpOfferingNativeCloudConnection"] = rest_field(
@@ -6938,6 +7414,19 @@ class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderFor
         name="enableAuditLogsAutoProvisioning", visibility=["read", "create", "update", "delete", "query"]
     )
     """Is audit logs data collection enabled."""
+    installation_method: Optional[Union[str, "_models.InstallationMethod"]] = rest_field(
+        name="installationMethod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The installation method for the Defender for Containers agent. Known values are: \"Arc\" and
+     \"Helm\"."""
+    security_gating_enabled: Optional[bool] = rest_field(
+        name="securityGatingEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security gating enabled."""
+    container_anti_malware_enabled: Optional[bool] = rest_field(
+        name="containerAntiMalwareEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is defender anti-malware enabled."""
     enable_defender_agent_auto_provisioning: Optional[bool] = rest_field(
         name="enableDefenderAgentAutoProvisioning", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6972,6 +7461,9 @@ class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderFor
             "_models.DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection"
         ] = None,
         enable_audit_logs_auto_provisioning: Optional[bool] = None,
+        installation_method: Optional[Union[str, "_models.InstallationMethod"]] = None,
+        security_gating_enabled: Optional[bool] = None,
+        container_anti_malware_enabled: Optional[bool] = None,
         enable_defender_agent_auto_provisioning: Optional[bool] = None,
         enable_policy_agent_auto_provisioning: Optional[bool] = None,
         mdc_containers_image_assessment: Optional[
@@ -6995,7 +7487,9 @@ class DefenderForContainersGcpOffering(CloudOffering, discriminator="DefenderFor
         self.offering_type = OfferingType.DEFENDER_FOR_CONTAINERS_GCP  # type: ignore
 
 
-class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The data collection service account email address in GCP
@@ -7034,7 +7528,9 @@ class DefenderForContainersGcpOfferingDataPipelineNativeCloudConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersGcpOfferingMdcContainersAgentlessDiscoveryK8S(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersGcpOfferingMdcContainersAgentlessDiscoveryK8S(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Container agentless discovery configuration.
 
     :ivar enabled: Is Microsoft Defender container agentless discovery enabled.
@@ -7076,7 +7572,9 @@ class DefenderForContainersGcpOfferingMdcContainersAgentlessDiscoveryK8S(_Model)
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersGcpOfferingMdcContainersImageAssessment(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersGcpOfferingMdcContainersImageAssessment(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender Container image assessment configuration.
 
     :ivar enabled: Is Microsoft Defender container image assessment enabled.
@@ -7085,6 +7583,8 @@ class DefenderForContainersGcpOfferingMdcContainersImageAssessment(_Model):  # p
     :vartype workload_identity_provider_id: str
     :ivar service_account_email_address: The service account email address in GCP for this feature.
     :vartype service_account_email_address: str
+    :ivar security_findings_enabled: Is security findings enabled for container image assessment.
+    :vartype security_findings_enabled: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7097,6 +7597,10 @@ class DefenderForContainersGcpOfferingMdcContainersImageAssessment(_Model):  # p
         name="serviceAccountEmailAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """The service account email address in GCP for this feature."""
+    security_findings_enabled: Optional[bool] = rest_field(
+        name="securityFindingsEnabled", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is security findings enabled for container image assessment."""
 
     @overload
     def __init__(
@@ -7105,6 +7609,7 @@ class DefenderForContainersGcpOfferingMdcContainersImageAssessment(_Model):  # p
         enabled: Optional[bool] = None,
         workload_identity_provider_id: Optional[str] = None,
         service_account_email_address: Optional[str] = None,
+        security_findings_enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7118,7 +7623,9 @@ class DefenderForContainersGcpOfferingMdcContainersImageAssessment(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersGcpOfferingNativeCloudConnection(_Model):  # pylint: disable=name-too-long
+class DefenderForContainersGcpOfferingNativeCloudConnection(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The service account email address in GCP for this
@@ -7156,7 +7663,9 @@ class DefenderForContainersGcpOfferingNativeCloudConnection(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class DefenderForContainersGcpOfferingVmScanners(VmScannersGcp):  # pylint: disable=name-too-long
+class DefenderForContainersGcpOfferingVmScanners(
+    VmScannersGcp
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Container K8s VM host scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -7190,7 +7699,7 @@ class DefenderForContainersJFrogOffering(CloudOffering, discriminator="DefenderF
     :ivar description: The offering description.
     :vartype description: str
     :ivar offering_type: The type of the security offering. Required. DefenderForContainersJFrog.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_CONTAINERS_J_FROG
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     offering_type: Literal[OfferingType.DEFENDER_FOR_CONTAINERS_J_FROG] = rest_discriminator(name="offeringType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -7213,7 +7722,9 @@ class DefenderForContainersJFrogOffering(CloudOffering, discriminator="DefenderF
         self.offering_type = OfferingType.DEFENDER_FOR_CONTAINERS_J_FROG  # type: ignore
 
 
-class DefenderForDatabasesGcpOffering(CloudOffering, discriminator="DefenderForDatabasesGcp"):
+class DefenderForDatabasesGcpOffering(
+    CloudOffering, discriminator="DefenderForDatabasesGcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Databases GCP offering configurations.
 
     :ivar description: The offering description.
@@ -7225,7 +7736,7 @@ class DefenderForDatabasesGcpOffering(CloudOffering, discriminator="DefenderForD
     :vartype defender_for_databases_arc_auto_provisioning:
      ~azure.mgmt.security.models.DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning
     :ivar offering_type: The type of the security offering. Required. DefenderForDatabasesGcp.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_DATABASES_GCP
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     arc_auto_provisioning: Optional["_models.DefenderForDatabasesGcpOfferingArcAutoProvisioning"] = rest_field(
@@ -7263,7 +7774,9 @@ class DefenderForDatabasesGcpOffering(CloudOffering, discriminator="DefenderForD
         self.offering_type = OfferingType.DEFENDER_FOR_DATABASES_GCP  # type: ignore
 
 
-class DefenderForDatabasesGcpOfferingArcAutoProvisioning(ArcAutoProvisioningGcp):  # pylint: disable=name-too-long
+class DefenderForDatabasesGcpOfferingArcAutoProvisioning(
+    ArcAutoProvisioningGcp
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -7291,7 +7804,9 @@ class DefenderForDatabasesGcpOfferingArcAutoProvisioning(ArcAutoProvisioningGcp)
         super().__init__(*args, **kwargs)
 
 
-class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(_Model):  # pylint: disable=name-too-long
+class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The native cloud connection configuration.
 
     :ivar service_account_email_address: The service account email address in GCP for this
@@ -7329,7 +7844,9 @@ class DefenderForDatabasesGcpOfferingDefenderForDatabasesArcAutoProvisioning(_Mo
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOffering(CloudOffering, discriminator="DefenderForServersAws"):
+class DefenderForServersAwsOffering(
+    CloudOffering, discriminator="DefenderForServersAws"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Servers AWS offering.
 
     :ivar description: The offering description.
@@ -7352,7 +7869,7 @@ class DefenderForServersAwsOffering(CloudOffering, discriminator="DefenderForSer
     :ivar vm_scanners: The Microsoft Defender for Server VM scanning configuration.
     :vartype vm_scanners: ~azure.mgmt.security.models.DefenderForServersAwsOfferingVmScanners
     :ivar offering_type: The type of the security offering. Required. DefenderForServersAws.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_SERVERS_AWS
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     defender_for_servers: Optional["_models.DefenderForServersAwsOfferingDefenderForServers"] = rest_field(
@@ -7406,7 +7923,9 @@ class DefenderForServersAwsOffering(CloudOffering, discriminator="DefenderForSer
         self.offering_type = OfferingType.DEFENDER_FOR_SERVERS_AWS  # type: ignore
 
 
-class DefenderForServersAwsOfferingArcAutoProvisioning(ArcAutoProvisioningAws):  # pylint: disable=name-too-long
+class DefenderForServersAwsOfferingArcAutoProvisioning(
+    ArcAutoProvisioningAws
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -7437,7 +7956,9 @@ class DefenderForServersAwsOfferingArcAutoProvisioning(ArcAutoProvisioningAws): 
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingDefenderForServers(_Model):  # pylint: disable=name-too-long
+class DefenderForServersAwsOfferingDefenderForServers(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Defender for servers connection configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for this feature.
@@ -7467,7 +7988,9 @@ class DefenderForServersAwsOfferingDefenderForServers(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingMdeAutoProvisioning(_Model):  # pylint: disable=name-too-long
+class DefenderForServersAwsOfferingMdeAutoProvisioning(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Endpoint autoprovisioning configuration.
 
     :ivar enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
@@ -7500,7 +8023,7 @@ class DefenderForServersAwsOfferingMdeAutoProvisioning(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingSubPlan(_Model):
+class DefenderForServersAwsOfferingSubPlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """configuration for the servers offering subPlan.
 
     :ivar type: The available sub plans. Known values are: "P1" and "P2".
@@ -7530,7 +8053,9 @@ class DefenderForServersAwsOfferingSubPlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingVaAutoProvisioning(_Model):  # pylint: disable=name-too-long
+class DefenderForServersAwsOfferingVaAutoProvisioning(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Vulnerability Assessment autoprovisioning configuration.
 
     :ivar enabled: Is Vulnerability Assessment auto provisioning enabled.
@@ -7566,7 +8091,9 @@ class DefenderForServersAwsOfferingVaAutoProvisioning(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(_Model):  # pylint: disable=name-too-long
+class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """configuration for Vulnerability Assessment autoprovisioning.
 
     :ivar type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
@@ -7596,7 +8123,9 @@ class DefenderForServersAwsOfferingVaAutoProvisioningConfiguration(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersAwsOfferingVmScanners(VmScannersAws):
+class DefenderForServersAwsOfferingVmScanners(
+    VmScannersAws
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Server VM scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -7627,7 +8156,9 @@ class DefenderForServersAwsOfferingVmScanners(VmScannersAws):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOffering(CloudOffering, discriminator="DefenderForServersGcp"):
+class DefenderForServersGcpOffering(
+    CloudOffering, discriminator="DefenderForServersGcp"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Servers GCP offering configurations.
 
     :ivar description: The offering description.
@@ -7650,7 +8181,7 @@ class DefenderForServersGcpOffering(CloudOffering, discriminator="DefenderForSer
     :ivar vm_scanners: The Microsoft Defender for Server VM scanning configuration.
     :vartype vm_scanners: ~azure.mgmt.security.models.DefenderForServersGcpOfferingVmScanners
     :ivar offering_type: The type of the security offering. Required. DefenderForServersGcp.
-    :vartype offering_type: str or ~azure.mgmt.security.models.DEFENDER_FOR_SERVERS_GCP
+    :vartype offering_type: str or ~azure.mgmt.security.models.OfferingType
     """
 
     defender_for_servers: Optional["_models.DefenderForServersGcpOfferingDefenderForServers"] = rest_field(
@@ -7704,7 +8235,9 @@ class DefenderForServersGcpOffering(CloudOffering, discriminator="DefenderForSer
         self.offering_type = OfferingType.DEFENDER_FOR_SERVERS_GCP  # type: ignore
 
 
-class DefenderForServersGcpOfferingArcAutoProvisioning(ArcAutoProvisioningGcp):  # pylint: disable=name-too-long
+class DefenderForServersGcpOfferingArcAutoProvisioning(
+    ArcAutoProvisioningGcp
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The ARC autoprovisioning configuration.
 
     :ivar enabled: Is arc auto provisioning enabled.
@@ -7732,7 +8265,9 @@ class DefenderForServersGcpOfferingArcAutoProvisioning(ArcAutoProvisioningGcp): 
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingDefenderForServers(_Model):  # pylint: disable=name-too-long
+class DefenderForServersGcpOfferingDefenderForServers(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Defender for servers connection configuration.
 
     :ivar workload_identity_provider_id: The workload identity provider id in GCP for this feature.
@@ -7769,7 +8304,9 @@ class DefenderForServersGcpOfferingDefenderForServers(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingMdeAutoProvisioning(_Model):  # pylint: disable=name-too-long
+class DefenderForServersGcpOfferingMdeAutoProvisioning(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Endpoint autoprovisioning configuration.
 
     :ivar enabled: Is Microsoft Defender for Endpoint auto provisioning enabled.
@@ -7802,7 +8339,7 @@ class DefenderForServersGcpOfferingMdeAutoProvisioning(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingSubPlan(_Model):
+class DefenderForServersGcpOfferingSubPlan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """configuration for the servers offering subPlan.
 
     :ivar type: The available sub plans. Known values are: "P1" and "P2".
@@ -7832,7 +8369,9 @@ class DefenderForServersGcpOfferingSubPlan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingVaAutoProvisioning(_Model):  # pylint: disable=name-too-long
+class DefenderForServersGcpOfferingVaAutoProvisioning(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The Vulnerability Assessment autoprovisioning configuration.
 
     :ivar enabled: Is Vulnerability Assessment auto provisioning enabled.
@@ -7868,7 +8407,9 @@ class DefenderForServersGcpOfferingVaAutoProvisioning(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(_Model):  # pylint: disable=name-too-long
+class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """configuration for Vulnerability Assessment autoprovisioning.
 
     :ivar type: The Vulnerability Assessment solution to be provisioned. Can be either 'TVM' or
@@ -7898,7 +8439,9 @@ class DefenderForServersGcpOfferingVaAutoProvisioningConfiguration(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class DefenderForServersGcpOfferingVmScanners(VmScannersGcp):
+class DefenderForServersGcpOfferingVmScanners(
+    VmScannersGcp
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Microsoft Defender for Server VM scanning configuration.
 
     :ivar enabled: Is VM scanning enabled.
@@ -7926,7 +8469,7 @@ class DefenderForServersGcpOfferingVmScanners(VmScannersGcp):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForStorageSetting(ExtensionResource):
+class DefenderForStorageSetting(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Defender for Storage resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -7967,7 +8510,7 @@ class DefenderForStorageSetting(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class DefenderForStorageSettingProperties(_Model):
+class DefenderForStorageSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defender for Storage resource properties.
 
     :ivar is_enabled: Indicates whether Defender for Storage is enabled on this storage account.
@@ -7979,6 +8522,14 @@ class DefenderForStorageSettingProperties(_Model):
     :ivar override_subscription_level_settings: Indicates whether the settings defined for this
      storage account should override the settings defined for the subscription.
     :vartype override_subscription_level_settings: bool
+    :ivar managed_by: Indicates whether this resource's Defender for Storage settings are managed
+     by a higher MDC enforcement scope and which component is managing them. When set to a value
+     other than 'None', the resource-level settings become read-only and can only be modified by the
+     managing component. Possible values: 'None' (not managed), 'MicrosoftDefenderXDR' (managed by
+     Microsoft Defender XDR), 'SubscriptionSettingsEnforcer' (managed by subscription-level settings
+     enforcer). Known values are: "None", "MicrosoftDefenderXDR", and
+     "SubscriptionSettingsEnforcer".
+    :vartype managed_by: str or ~azure.mgmt.security.models.ManagedByType
     """
 
     is_enabled: Optional[bool] = rest_field(
@@ -7998,6 +8549,14 @@ class DefenderForStorageSettingProperties(_Model):
     )
     """Indicates whether the settings defined for this storage account should override the settings
      defined for the subscription."""
+    managed_by: Optional[Union[str, "_models.ManagedByType"]] = rest_field(name="managedBy", visibility=["read"])
+    """Indicates whether this resource's Defender for Storage settings are managed by a higher MDC
+     enforcement scope and which component is managing them. When set to a value other than 'None',
+     the resource-level settings become read-only and can only be modified by the managing
+     component. Possible values: 'None' (not managed), 'MicrosoftDefenderXDR' (managed by Microsoft
+     Defender XDR), 'SubscriptionSettingsEnforcer' (managed by subscription-level settings
+     enforcer). Known values are: \"None\", \"MicrosoftDefenderXDR\", and
+     \"SubscriptionSettingsEnforcer\"."""
 
     @overload
     def __init__(
@@ -8020,7 +8579,9 @@ class DefenderForStorageSettingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DenylistCustomAlertRule(ListCustomAlertRule, discriminator="DenylistCustomAlertRule"):
+class DenylistCustomAlertRule(
+    ListCustomAlertRule, discriminator="DenylistCustomAlertRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom alert rule that checks if a value (depends on the custom alert type) is denied.
 
     :ivar display_name: The display name of the custom alert.
@@ -8066,7 +8627,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule, discriminator="DenylistCustom
         self.rule_type = "DenylistCustomAlertRule"  # type: ignore
 
 
-class DeviceSecurityGroup(ExtensionResource):
+class DeviceSecurityGroup(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The device security group resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8127,7 +8688,7 @@ class DeviceSecurityGroup(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class DeviceSecurityGroupProperties(_Model):
+class DeviceSecurityGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes properties of a security group.
 
     :ivar threshold_rules: The list of custom alert threshold rules.
@@ -8193,7 +8754,7 @@ class DevOpsCapability(_Model):
     """Gets the value of the DevOps capability."""
 
 
-class DevOpsConfiguration(ProxyResource):
+class DevOpsConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DevOps Configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -8234,7 +8795,7 @@ class DevOpsConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class DevOpsConfigurationProperties(_Model):
+class DevOpsConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DevOps Configuration properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -8327,7 +8888,7 @@ class DevOpsConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DiscoveredSecuritySolution(ProxyResource):
+class DiscoveredSecuritySolution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -8393,7 +8954,7 @@ class DiscoveredSecuritySolution(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DiscoveredSecuritySolutionProperties(_Model):
+class DiscoveredSecuritySolutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DiscoveredSecuritySolutionProperties.
 
     :ivar security_family: The security family of the discovered solution. Required. Known values
@@ -8440,7 +9001,9 @@ class DiscoveredSecuritySolutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DockerHubEnvironmentData(EnvironmentData, discriminator="DockerHubOrganization"):
+class DockerHubEnvironmentData(
+    EnvironmentData, discriminator="DockerHubOrganization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Docker Hub connector environment data.
 
     :ivar authentication: The Docker Hub organization authentication details.
@@ -8448,7 +9011,7 @@ class DockerHubEnvironmentData(EnvironmentData, discriminator="DockerHubOrganiza
     :ivar scan_interval: Scan interval in hours (value should be between 1-hour to 24-hours).
     :vartype scan_interval: int
     :ivar environment_type: The type of the environment data. Required. DockerHubOrganization.
-    :vartype environment_type: str or ~azure.mgmt.security.models.DOCKER_HUB_ORGANIZATION
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     authentication: Optional["_models.Authentication"] = rest_field(
@@ -8482,7 +9045,7 @@ class DockerHubEnvironmentData(EnvironmentData, discriminator="DockerHubOrganiza
         self.environment_type = EnvironmentType.DOCKER_HUB_ORGANIZATION  # type: ignore
 
 
-class EnvironmentDetails(_Model):
+class EnvironmentDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The environment details of the resource.
 
     :ivar native_resource_id: The native resource id of the resource (in case of Azure - the
@@ -8588,7 +9151,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -8616,7 +9179,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecuteGovernanceRuleParams(_Model):
+class ExecuteGovernanceRuleParams(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Governance rule execution parameters.
 
     :ivar override: Describe if governance rule should be override.
@@ -8644,7 +9207,7 @@ class ExecuteGovernanceRuleParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Extension(_Model):
+class Extension(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A plan's extension properties.
 
     :ivar name: The extension name. Supported values are:
@@ -8700,6 +9263,9 @@ class Extension(_Model):
     :ivar operation_status: Optional. A status describing the success/failure of the extension's
      enablement/disablement operation.
     :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
+    :ivar security_operator_resource_id: Resource ID of the security operator associated with the
+     extension.
+    :vartype security_operator_resource_id: str
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -8758,6 +9324,10 @@ class Extension(_Model):
     operation_status: Optional["_models.OperationStatus"] = rest_field(name="operationStatus", visibility=["read"])
     """Optional. A status describing the success/failure of the extension's enablement/disablement
      operation."""
+    security_operator_resource_id: Optional[str] = rest_field(
+        name="securityOperatorResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of the security operator associated with the extension."""
 
     @overload
     def __init__(
@@ -8766,6 +9336,7 @@ class Extension(_Model):
         name: str,
         is_enabled: Union[str, "_models.IsEnabled"],
         additional_extension_properties: Optional[dict[str, Any]] = None,
+        security_operator_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -8779,7 +9350,46 @@ class Extension(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FilesScanSummary(_Model):
+class FileScanFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Filter for file scanning. At least one of 'share' or 'file' must be specified; a request with
+    neither is rejected by the service. If only share is provided, all files in that share are
+    scanned. If only file is provided, files matching the filter across all shares are scanned.
+
+    :ivar share: Optional filter for the file share to scan. If not provided, the file filter will
+     apply across all shares.
+    :vartype share: ~azure.mgmt.security.models.MatchFilter
+    :ivar file: Optional filter for specific file(s). If share is specified, this filters files
+     within that share. If share is not specified, this filters files across all shares.
+    :vartype file: ~azure.mgmt.security.models.MatchFilter
+    """
+
+    share: Optional["_models.MatchFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for the file share to scan. If not provided, the file filter will apply across
+     all shares."""
+    file: Optional["_models.MatchFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for specific file(s). If share is specified, this filters files within that
+     share. If share is not specified, this filters files across all shares."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        share: Optional["_models.MatchFilter"] = None,
+        file: Optional["_models.MatchFilter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FilesScanSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A summary of the scan results of the files that were scanned.
 
     :ivar total_files_scanned: The total number of files that were scanned.
@@ -8837,7 +9447,87 @@ class FilesScanSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GcpOrganizationalData(_Model):
+class GcpAuditLogConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """The configuration for GCP audit log ingestion.
+
+    :ivar provisioning_type: The provisioning type for the GCP logging resources. Known values are:
+     "BringYourOwn", "ManualProvisioning", and "AutoProvisioning".
+    :vartype provisioning_type: str or ~azure.mgmt.security.models.GcpLoggingProvisioningType
+    :ivar resource_sets: The existing GCP logging resource sets. Required when provisioningType is
+     BringYourOwn.
+    :vartype resource_sets: list[~azure.mgmt.security.models.GcpLoggingResourceSet]
+    :ivar resource_name_prefix: The resource name prefix used when provisioning the GCP logging
+     resources. Required when provisioningType is ManualProvisioning or AutoProvisioning.
+    :vartype resource_name_prefix: str
+    """
+
+    provisioning_type: Optional[Union[str, "_models.GcpLoggingProvisioningType"]] = rest_field(
+        name="provisioningType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The provisioning type for the GCP logging resources. Known values are: \"BringYourOwn\",
+     \"ManualProvisioning\", and \"AutoProvisioning\"."""
+    resource_sets: Optional[list["_models.GcpLoggingResourceSet"]] = rest_field(
+        name="resourceSets", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The existing GCP logging resource sets. Required when provisioningType is BringYourOwn."""
+    resource_name_prefix: Optional[str] = rest_field(
+        name="resourceNamePrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource name prefix used when provisioning the GCP logging resources. Required when
+     provisioningType is ManualProvisioning or AutoProvisioning."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        provisioning_type: Optional[Union[str, "_models.GcpLoggingProvisioningType"]] = None,
+        resource_sets: Optional[list["_models.GcpLoggingResourceSet"]] = None,
+        resource_name_prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GcpLoggingResourceSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """A resource set describing existing GCP logging resources.
+
+    :ivar pub_sub_subscription_name: The Pub/Sub subscription name in which the GCP logs are
+     stored.
+    :vartype pub_sub_subscription_name: str
+    """
+
+    pub_sub_subscription_name: Optional[str] = rest_field(
+        name="pubSubSubscriptionName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Pub/Sub subscription name in which the GCP logs are stored."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pub_sub_subscription_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class GcpOrganizationalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The gcpOrganization data.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -8874,7 +9564,9 @@ class GcpOrganizationalData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GcpOrganizationalDataMember(GcpOrganizationalData, discriminator="Member"):
+class GcpOrganizationalDataMember(
+    GcpOrganizationalData, discriminator="Member"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The gcpOrganization data for the member account.
 
     :ivar parent_hierarchy_id: If the multi cloud account is not of membership type organization,
@@ -8885,7 +9577,8 @@ class GcpOrganizationalDataMember(GcpOrganizationalData, discriminator="Member")
     :vartype management_project_number: str
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Member.
-    :vartype organization_membership_type: str or ~azure.mgmt.security.models.MEMBER
+    :vartype organization_membership_type: str or
+     ~azure.mgmt.security.models.OrganizationMembershipType
     """
 
     parent_hierarchy_id: Optional[str] = rest_field(
@@ -8920,7 +9613,9 @@ class GcpOrganizationalDataMember(GcpOrganizationalData, discriminator="Member")
         self.organization_membership_type = OrganizationMembershipType.MEMBER  # type: ignore
 
 
-class GcpOrganizationalDataOrganization(GcpOrganizationalData, discriminator="Organization"):
+class GcpOrganizationalDataOrganization(
+    GcpOrganizationalData, discriminator="Organization"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The gcpOrganization data for the parent account.
 
     :ivar excluded_project_numbers: If the multi cloud account is of membership type organization,
@@ -8936,7 +9631,8 @@ class GcpOrganizationalDataOrganization(GcpOrganizationalData, discriminator="Or
     :vartype organization_name: str
     :ivar organization_membership_type: The multi cloud account's membership type in the
      organization. Required. Organization.
-    :vartype organization_membership_type: str or ~azure.mgmt.security.models.ORGANIZATION
+    :vartype organization_membership_type: str or
+     ~azure.mgmt.security.models.OrganizationMembershipType
     """
 
     excluded_project_numbers: Optional[list[str]] = rest_field(
@@ -8980,7 +9676,7 @@ class GcpOrganizationalDataOrganization(GcpOrganizationalData, discriminator="Or
         self.organization_membership_type = OrganizationMembershipType.ORGANIZATION  # type: ignore
 
 
-class GcpProjectDetails(_Model):
+class GcpProjectDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details about the project represented by the security connector.
 
     :ivar project_number: The unique GCP Project number.
@@ -9023,7 +9719,9 @@ class GcpProjectDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GcpProjectEnvironmentData(EnvironmentData, discriminator="GcpProject"):
+class GcpProjectEnvironmentData(
+    EnvironmentData, discriminator="GcpProject"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The GCP project connector environment data.
 
     :ivar organizational_data: The Gcp project's organizational data.
@@ -9033,7 +9731,7 @@ class GcpProjectEnvironmentData(EnvironmentData, discriminator="GcpProject"):
     :ivar scan_interval: Scan interval in hours (value should be between 1-hour to 24-hours).
     :vartype scan_interval: int
     :ivar environment_type: The type of the environment data. Required. GcpProject.
-    :vartype environment_type: str or ~azure.mgmt.security.models.GCP_PROJECT
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     organizational_data: Optional["_models.GcpOrganizationalData"] = rest_field(
@@ -9072,7 +9770,7 @@ class GcpProjectEnvironmentData(EnvironmentData, discriminator="GcpProject"):
         self.environment_type = EnvironmentType.GCP_PROJECT  # type: ignore
 
 
-class GetSensitivitySettingsListResponse(_Model):
+class GetSensitivitySettingsListResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list with a single sensitivity settings resource.
 
     :ivar value:
@@ -9101,7 +9799,7 @@ class GetSensitivitySettingsListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetSensitivitySettingsResponse(ProxyResource):
+class GetSensitivitySettingsResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data sensitivity settings for sensitive data discovery.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9142,7 +9840,7 @@ class GetSensitivitySettingsResponse(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GetSensitivitySettingsResponseProperties(_Model):
+class GetSensitivitySettingsResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sensitivity settings properties.
 
     :ivar sensitive_info_types_ids: List of selected sensitive info types' IDs.
@@ -9201,7 +9899,9 @@ class GetSensitivitySettingsResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetSensitivitySettingsResponsePropertiesMipInformation(_Model):  # pylint: disable=name-too-long
+class GetSensitivitySettingsResponsePropertiesMipInformation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft information protection built-in and custom information types, labels, and integration
     status.
 
@@ -9253,7 +9953,7 @@ class GetSensitivitySettingsResponsePropertiesMipInformation(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class GitHubOwner(ProxyResource):
+class GitHubOwner(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitHub Owner resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9294,7 +9994,7 @@ class GitHubOwner(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GitHubOwnerListResponse(_Model):
+class GitHubOwnerListResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of RP resources which supports pagination.
 
     :ivar value: The GitHubOwner items on this page.
@@ -9329,7 +10029,7 @@ class GitHubOwnerListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubOwnerProperties(_Model):
+class GitHubOwnerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitHub Owner properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -9415,7 +10115,7 @@ class GitHubOwnerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitHubRepository(ProxyResource):
+class GitHubRepository(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitHub Repository resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9456,7 +10156,7 @@ class GitHubRepository(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GitHubRepositoryProperties(_Model):
+class GitHubRepositoryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitHub Repository properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -9569,7 +10269,7 @@ class GithubScopeEnvironmentData(EnvironmentData, discriminator="GithubScope"):
     """The github scope connector's environment data.
 
     :ivar environment_type: The type of the environment data. Required. GithubScope.
-    :vartype environment_type: str or ~azure.mgmt.security.models.GITHUB_SCOPE
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     environment_type: Literal[EnvironmentType.GITHUB_SCOPE] = rest_discriminator(name="environmentType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -9592,7 +10292,7 @@ class GithubScopeEnvironmentData(EnvironmentData, discriminator="GithubScope"):
         self.environment_type = EnvironmentType.GITHUB_SCOPE  # type: ignore
 
 
-class GitLabGroup(ProxyResource):
+class GitLabGroup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitLab Group resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9633,7 +10333,7 @@ class GitLabGroup(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GitLabGroupListResponse(_Model):
+class GitLabGroupListResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of RP resources which supports pagination.
 
     :ivar value: The GitLabGroup items on this page.
@@ -9668,7 +10368,7 @@ class GitLabGroupListResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitLabGroupProperties(_Model):
+class GitLabGroupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitLab Group properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -9771,7 +10471,7 @@ class GitLabGroupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GitLabProject(ProxyResource):
+class GitLabProject(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitLab Project resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -9812,7 +10512,7 @@ class GitLabProject(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class GitLabProjectProperties(_Model):
+class GitLabProjectProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GitLab Project properties.
 
     :ivar provisioning_status_message: Gets the resource status message.
@@ -9928,7 +10628,7 @@ class GitlabScopeEnvironmentData(EnvironmentData, discriminator="GitlabScope"):
     """The GitLab scope connector's environment data.
 
     :ivar environment_type: The type of the environment data. Required. GitlabScope.
-    :vartype environment_type: str or ~azure.mgmt.security.models.GITLAB_SCOPE
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     environment_type: Literal[EnvironmentType.GITLAB_SCOPE] = rest_discriminator(name="environmentType", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -9951,7 +10651,7 @@ class GitlabScopeEnvironmentData(EnvironmentData, discriminator="GitlabScope"):
         self.environment_type = EnvironmentType.GITLAB_SCOPE  # type: ignore
 
 
-class GovernanceAssignment(ExtensionResource):
+class GovernanceAssignment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Governance assignment over a given scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10019,7 +10719,7 @@ class GovernanceAssignment(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class GovernanceAssignmentAdditionalData(_Model):
+class GovernanceAssignmentAdditionalData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the additional data of governance assignment - optional.
 
     :ivar ticket_number: Ticket number associated with this governance assignment.
@@ -10066,7 +10766,7 @@ class GovernanceAssignmentAdditionalData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GovernanceAssignmentProperties(_Model):
+class GovernanceAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an governance assignment.
 
     :ivar owner: The Owner for the governance assignment - e.g. `user@contoso.com
@@ -10138,7 +10838,7 @@ class GovernanceAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GovernanceEmailNotification(_Model):
+class GovernanceEmailNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The governance email weekly notification configuration.
 
     :ivar disable_manager_email_notification: Exclude manager from weekly email notification.
@@ -10175,7 +10875,7 @@ class GovernanceEmailNotification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GovernanceRule(ExtensionResource):
+class GovernanceRule(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Governance rule over a given scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10252,7 +10952,7 @@ class GovernanceRule(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class GovernanceRuleEmailNotification(_Model):
+class GovernanceRuleEmailNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The governance email weekly notification configuration.
 
     :ivar disable_manager_email_notification: Defines whether manager email notifications are
@@ -10313,7 +11013,7 @@ class GovernanceRuleMetadata(_Model):
     """Governance rule last update date."""
 
 
-class GovernanceRuleOwnerSource(_Model):
+class GovernanceRuleOwnerSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describe the owner source of governance rule.
 
     :ivar type: The owner type for the governance rule owner source. Known values are: "ByTag" and
@@ -10350,7 +11050,7 @@ class GovernanceRuleOwnerSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GovernanceRuleProperties(_Model):
+class GovernanceRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an governance rule.
 
     :ivar tenant_id: The tenantId (GUID).
@@ -10485,7 +11185,7 @@ class GovernanceRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthDataClassification(_Model):
+class HealthDataClassification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The classification of the health report.
 
     :ivar component: The component describes the name of the agent/service that scans the issue.
@@ -10523,7 +11223,7 @@ class HealthDataClassification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HealthReport(ExtensionResource):
+class HealthReport(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The health report resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10593,7 +11293,7 @@ class HealthReport(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class HealthReportProperties(_Model):
+class HealthReportProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of the health report.
 
     :ivar resource_details: The resource details of the health report.
@@ -10669,7 +11369,7 @@ class HealthReportProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the resource.
 
     :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
@@ -10707,7 +11407,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InformationProtectionKeyword(_Model):
+class InformationProtectionKeyword(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The information type keyword.
 
     :ivar pattern: The keyword pattern.
@@ -10752,7 +11452,7 @@ class InformationProtectionKeyword(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InformationProtectionPolicy(ExtensionResource):
+class InformationProtectionPolicy(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information protection policy.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -10813,7 +11513,7 @@ class InformationProtectionPolicy(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class InformationProtectionPolicyProperties(_Model):
+class InformationProtectionPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """describes properties of an information protection policy.
 
     :ivar last_modified_utc: Describes the last UTC time the policy was modified.
@@ -10860,7 +11560,7 @@ class InformationProtectionPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InformationType(_Model):
+class InformationType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The information type.
 
     :ivar display_name: The name of the information type.
@@ -10925,7 +11625,7 @@ class InformationType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InfoType(_Model):
+class InfoType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Custom user-defined information type.
 
     :ivar name: Display name of the info type.
@@ -10963,7 +11663,7 @@ class InfoType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InventoryList(_Model):
+class InventoryList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model for inventory to be included or excluded from Agentless.
 
     :ivar inventory_kind: Types for inventory kind. Known values are: "AzureDevOpsOrganization",
@@ -11000,7 +11700,7 @@ class InventoryList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IoTSecurityAggregatedAlert(ProxyResource):
+class IoTSecurityAggregatedAlert(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Solution Aggregated Alert information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11166,7 +11866,7 @@ class IoTSecurityAggregatedAlertPropertiesTopDevicesListItem(_Model):  # pylint:
     """Most recent time this alert was raised for this device, on this day."""
 
 
-class IoTSecurityAggregatedRecommendation(ProxyResource):
+class IoTSecurityAggregatedRecommendation(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT Security solution recommendation information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11243,7 +11943,9 @@ class IoTSecurityAggregatedRecommendation(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IoTSecurityAggregatedRecommendationProperties(_Model):  # pylint: disable=name-too-long
+class IoTSecurityAggregatedRecommendationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """IoT Security solution aggregated recommendation information.
 
     :ivar recommendation_name: Name of the recommendation.
@@ -11376,7 +12078,7 @@ class IoTSecurityDeviceRecommendation(_Model):
     """Number of devices with this recommendation."""
 
 
-class IoTSecuritySolutionAnalyticsModel(ProxyResource):
+class IoTSecuritySolutionAnalyticsModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security analytics of your IoT Security solution.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11444,7 +12146,7 @@ class IoTSecuritySolutionAnalyticsModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IoTSecuritySolutionAnalyticsModelList(_Model):
+class IoTSecuritySolutionAnalyticsModelList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of Security analytics of your IoT Security solution.
 
     :ivar value: The IoTSecuritySolutionAnalyticsModel items on this page. Required.
@@ -11479,7 +12181,9 @@ class IoTSecuritySolutionAnalyticsModelList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IoTSecuritySolutionAnalyticsModelProperties(_Model):  # pylint: disable=name-too-long
+class IoTSecuritySolutionAnalyticsModelProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Security analytics properties of your IoT Security solution.
 
     :ivar metrics: Security analytics of your IoT Security solution.
@@ -11540,7 +12244,9 @@ class IoTSecuritySolutionAnalyticsModelProperties(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(_Model):  # pylint: disable=name-too-long
+class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem.
 
     :ivar date: Aggregation of IoT Security solution device alert metrics by date.
@@ -11577,7 +12283,7 @@ class IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem(_Model):  # 
         super().__init__(*args, **kwargs)
 
 
-class IoTSecuritySolutionModel(ProxyResource):
+class IoTSecuritySolutionModel(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT Security solution configuration and resource information.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11660,7 +12366,7 @@ class IoTSecuritySolutionModel(ProxyResource):
             super().__setattr__(key, value)
 
 
-class IoTSecuritySolutionProperties(_Model):
+class IoTSecuritySolutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Solution setting data.
 
     :ivar workspace: Workspace resource ID.
@@ -11757,7 +12463,7 @@ class IoTSecuritySolutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IoTSeverityMetrics(_Model):
+class IoTSeverityMetrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IoT Security solution analytics severity metrics.
 
     :ivar high: Count of high severity alerts/recommendations.
@@ -11795,7 +12501,7 @@ class IoTSeverityMetrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Issue(_Model):
+class Issue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue that caused the resource to by unhealthy.
 
     :ivar issue_key: The unique issue key. Required.
@@ -11867,7 +12573,7 @@ class Issue(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IssueCreationRequest(_Model):
+class IssueCreationRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The issue creation request model.
 
     :ivar security_assessment_resource_id: The security assessment resource id that the issue will
@@ -11898,13 +12604,15 @@ class IssueCreationRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JFrogEnvironmentData(EnvironmentData, discriminator="JFrogArtifactory"):
+class JFrogEnvironmentData(
+    EnvironmentData, discriminator="JFrogArtifactory"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The JFrog Artifactory connector environment data.
 
     :ivar scan_interval: Scan interval in hours (value should be between 1-hour to 24-hours).
     :vartype scan_interval: int
     :ivar environment_type: The type of the environment data. Required. JFrogArtifactory.
-    :vartype environment_type: str or ~azure.mgmt.security.models.J_FROG_ARTIFACTORY
+    :vartype environment_type: str or ~azure.mgmt.security.models.EnvironmentType
     """
 
     scan_interval: Optional[int] = rest_field(
@@ -11933,7 +12641,7 @@ class JFrogEnvironmentData(EnvironmentData, discriminator="JFrogArtifactory"):
         self.environment_type = EnvironmentType.J_FROG_ARTIFACTORY  # type: ignore
 
 
-class JitNetworkAccessPolicy(ProxyResource):
+class JitNetworkAccessPolicy(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -12004,7 +12712,7 @@ class JitNetworkAccessPolicy(ProxyResource):
             super().__setattr__(key, value)
 
 
-class JitNetworkAccessPolicyInitiatePort(_Model):
+class JitNetworkAccessPolicyInitiatePort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPolicyInitiatePort.
 
     :ivar number: Required.
@@ -12048,7 +12756,7 @@ class JitNetworkAccessPolicyInitiatePort(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessPolicyInitiateRequest(_Model):
+class JitNetworkAccessPolicyInitiateRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPolicyInitiateRequest.
 
     :ivar virtual_machines: A list of virtual machines & ports to open access for. Required.
@@ -12084,7 +12792,9 @@ class JitNetworkAccessPolicyInitiateRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessPolicyInitiateVirtualMachine(_Model):  # pylint: disable=name-too-long
+class JitNetworkAccessPolicyInitiateVirtualMachine(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPolicyInitiateVirtualMachine.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
@@ -12119,7 +12829,7 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessPolicyProperties(_Model):
+class JitNetworkAccessPolicyProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPolicyProperties.
 
     :ivar virtual_machines: Configurations for Microsoft.Compute/virtualMachines resource type.
@@ -12161,7 +12871,7 @@ class JitNetworkAccessPolicyProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessPolicyVirtualMachine(_Model):
+class JitNetworkAccessPolicyVirtualMachine(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPolicyVirtualMachine.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
@@ -12204,7 +12914,7 @@ class JitNetworkAccessPolicyVirtualMachine(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessPortRule(_Model):
+class JitNetworkAccessPortRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessPortRule.
 
     :ivar number: Required.
@@ -12265,7 +12975,7 @@ class JitNetworkAccessPortRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessRequest(_Model):
+class JitNetworkAccessRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessRequest.
 
     :ivar virtual_machines: Required.
@@ -12313,7 +13023,7 @@ class JitNetworkAccessRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessRequestPort(_Model):
+class JitNetworkAccessRequestPort(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessRequestPort.
 
     :ivar number: Required.
@@ -12387,7 +13097,7 @@ class JitNetworkAccessRequestPort(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JitNetworkAccessRequestVirtualMachine(_Model):
+class JitNetworkAccessRequestVirtualMachine(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JitNetworkAccessRequestVirtualMachine.
 
     :ivar id: Resource ID of the virtual machine that is linked to this policy. Required.
@@ -12422,7 +13132,7 @@ class JitNetworkAccessRequestVirtualMachine(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Label(_Model):
+class Label(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft information protection sensitivity label.
 
     :ivar name: The display name of the label.
@@ -12478,7 +13188,7 @@ class LogAnalyticsIdentifier(ResourceIdentifier, discriminator="LogAnalytics"):
     :vartype agent_id: str
     :ivar type: There can be multiple identifiers of different type per alert, this field specify
      the identifier type. Required. LogAnalytics.
-    :vartype type: str or ~azure.mgmt.security.models.LOG_ANALYTICS
+    :vartype type: str or ~azure.mgmt.security.models.ResourceIdentifierType
     """
 
     workspace_id: Optional[str] = rest_field(name="workspaceId", visibility=["read"])
@@ -12510,16 +13220,28 @@ class LogAnalyticsIdentifier(ResourceIdentifier, discriminator="LogAnalytics"):
         self.type = ResourceIdentifierType.LOG_ANALYTICS  # type: ignore
 
 
-class MalwareScan(_Model):
+class MalwareScan(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the state of a malware scan operation.
 
-    :ivar properties:
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.security.models.MalwareScanProperties
     """
 
     properties: Optional["_models.MalwareScanProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
+    """The resource-specific properties for this resource."""
 
     @overload
     def __init__(
@@ -12539,7 +13261,40 @@ class MalwareScan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MalwareScanningProperties(_Model):
+class MalwareScanFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Filters to scope the malware scan.
+
+    :ivar blobs: Optional filter for blob scanning. Specifies which blobs to scan.
+    :vartype blobs: ~azure.mgmt.security.models.BlobScanFilter
+    :ivar files: Optional filter for file scanning. Specifies which files to scan.
+    :vartype files: ~azure.mgmt.security.models.FileScanFilter
+    """
+
+    blobs: Optional["_models.BlobScanFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for blob scanning. Specifies which blobs to scan."""
+    files: Optional["_models.FileScanFilter"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Optional filter for file scanning. Specifies which files to scan."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        blobs: Optional["_models.BlobScanFilter"] = None,
+        files: Optional["_models.FileScanFilter"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MalwareScanningProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Malware Scanning.
 
     :ivar on_upload: Properties of On Upload malware scanning.
@@ -12553,6 +13308,9 @@ class MalwareScanningProperties(_Model):
     :ivar automated_response: Optional. Specifies the automated response action to take when
      malware is detected. Known values are: "None" and "BlobSoftDelete".
     :vartype automated_response: str or ~azure.mgmt.security.models.AutomatedResponseType
+    :ivar scanner_resource_id: Optional. Resource id of the scanner resource (e.g.,
+     securityOperator or dataScanner) whose identity will be used for malware scanning.
+    :vartype scanner_resource_id: str
     :ivar operation_status: Upon failure or partial success. Additional data describing Malware
      Scanning enable/disable operation.
     :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
@@ -12576,6 +13334,11 @@ class MalwareScanningProperties(_Model):
     )
     """Optional. Specifies the automated response action to take when malware is detected. Known
      values are: \"None\" and \"BlobSoftDelete\"."""
+    scanner_resource_id: Optional[str] = rest_field(
+        name="scannerResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Resource id of the scanner resource (e.g., securityOperator or dataScanner) whose
+     identity will be used for malware scanning."""
     operation_status: Optional["_models.OperationStatus"] = rest_field(name="operationStatus", visibility=["read"])
     """Upon failure or partial success. Additional data describing Malware Scanning enable/disable
      operation."""
@@ -12588,6 +13351,7 @@ class MalwareScanningProperties(_Model):
         scan_results_event_grid_topic_resource_id: Optional[str] = None,
         blob_scan_results_options: Optional[Union[str, "_models.BlobScanResultsOptions"]] = None,
         automated_response: Optional[Union[str, "_models.AutomatedResponseType"]] = None,
+        scanner_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -12601,40 +13365,42 @@ class MalwareScanningProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MalwareScanProperties(_Model):
-    """MalwareScanProperties.
+class MalwareScanProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties of a malware scan operation.
 
     :ivar scan_id: The identifier of the scan.
     :vartype scan_id: str
-    :ivar scan_status: A status code of the scan operation.
-    :vartype scan_status: str
+    :ivar scan_status: A status code of the scan operation. Known values are: "Queued",
+     "InProgress", "WaitingForCompletion", "Canceling", "Canceled", "Failed", and "Completed".
+    :vartype scan_status: str or ~azure.mgmt.security.models.MalwareScanStatus
     :ivar scan_status_message: A description of the status of the scan.
     :vartype scan_status_message: str
     :ivar scan_start_time: The time at which the scan had been initiated.
-    :vartype scan_start_time: str
+    :vartype scan_start_time: ~datetime.datetime
     :ivar scan_end_time: The time at which the scan has ended. Only available for a scan which has
      terminated.
-    :vartype scan_end_time: str
+    :vartype scan_end_time: ~datetime.datetime
     :ivar scan_summary: A summary of the scan results.
     :vartype scan_summary: ~azure.mgmt.security.models.ScanSummary
     """
 
     scan_id: Optional[str] = rest_field(name="scanId", visibility=["read", "create", "update", "delete", "query"])
     """The identifier of the scan."""
-    scan_status: Optional[str] = rest_field(
+    scan_status: Optional[Union[str, "_models.MalwareScanStatus"]] = rest_field(
         name="scanStatus", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A status code of the scan operation."""
+    """A status code of the scan operation. Known values are: \"Queued\", \"InProgress\",
+     \"WaitingForCompletion\", \"Canceling\", \"Canceled\", \"Failed\", and \"Completed\"."""
     scan_status_message: Optional[str] = rest_field(
         name="scanStatusMessage", visibility=["read", "create", "update", "delete", "query"]
     )
     """A description of the status of the scan."""
-    scan_start_time: Optional[str] = rest_field(
-        name="scanStartTime", visibility=["read", "create", "update", "delete", "query"]
+    scan_start_time: Optional[datetime.datetime] = rest_field(
+        name="scanStartTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The time at which the scan had been initiated."""
-    scan_end_time: Optional[str] = rest_field(
-        name="scanEndTime", visibility=["read", "create", "update", "delete", "query"]
+    scan_end_time: Optional[datetime.datetime] = rest_field(
+        name="scanEndTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
     """The time at which the scan has ended. Only available for a scan which has terminated."""
     scan_summary: Optional["_models.ScanSummary"] = rest_field(
@@ -12647,10 +13413,10 @@ class MalwareScanProperties(_Model):
         self,
         *,
         scan_id: Optional[str] = None,
-        scan_status: Optional[str] = None,
+        scan_status: Optional[Union[str, "_models.MalwareScanStatus"]] = None,
         scan_status_message: Optional[str] = None,
-        scan_start_time: Optional[str] = None,
-        scan_end_time: Optional[str] = None,
+        scan_start_time: Optional[datetime.datetime] = None,
+        scan_end_time: Optional[datetime.datetime] = None,
         scan_summary: Optional["_models.ScanSummary"] = None,
     ) -> None: ...
 
@@ -12665,7 +13431,41 @@ class MalwareScanProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MdeOnboardingData(ProxyResource):
+class MatchFilter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Filter with value and matching strategy.
+
+    :ivar value: The value to match against. Required.
+    :vartype value: str
+    :ivar match: The matching strategy for the filter. Required. Known values are: "Prefix" and
+     "Exact".
+    :vartype match: str or ~azure.mgmt.security.models.MatchType
+    """
+
+    value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The value to match against. Required."""
+    match: Union[str, "_models.MatchType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The matching strategy for the filter. Required. Known values are: \"Prefix\" and \"Exact\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: str,
+        match: Union[str, "_models.MatchType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MdeOnboardingData(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource of the configuration or data needed to onboard the machine to MDE.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12727,7 +13527,7 @@ class MdeOnboardingData(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MdeOnboardingDataList(_Model):
+class MdeOnboardingDataList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of all MDE onboarding data resources.
 
     :ivar value: List of the resources of the configuration or data needed to onboard the machine
@@ -12758,7 +13558,7 @@ class MdeOnboardingDataList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MdeOnboardingDataProperties(_Model):
+class MdeOnboardingDataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the MDE configuration or data parameter needed to onboard the machine to MDE.
 
     :ivar onboarding_package_windows: The onboarding package used to onboard Windows machines to
@@ -12799,7 +13599,7 @@ class MdeOnboardingDataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationsSource(_Model):
+class NotificationsSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A valid notification source type.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12833,14 +13633,16 @@ class NotificationsSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationsSourceAlert(NotificationsSource, discriminator="Alert"):
+class NotificationsSourceAlert(
+    NotificationsSource, discriminator="Alert"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert notification source.
 
     :ivar minimal_severity: Defines the minimal alert severity which will be sent as email
      notifications. Known values are: "High", "Medium", and "Low".
     :vartype minimal_severity: str or ~azure.mgmt.security.models.MinimalSeverity
     :ivar source_type: The source type that will trigger the notification. Required. Alert.
-    :vartype source_type: str or ~azure.mgmt.security.models.ALERT
+    :vartype source_type: str or ~azure.mgmt.security.models.SourceType
     """
 
     minimal_severity: Optional[Union[str, "_models.MinimalSeverity"]] = rest_field(
@@ -12870,14 +13672,16 @@ class NotificationsSourceAlert(NotificationsSource, discriminator="Alert"):
         self.source_type = SourceType.ALERT  # type: ignore
 
 
-class NotificationsSourceAttackPath(NotificationsSource, discriminator="AttackPath"):
+class NotificationsSourceAttackPath(
+    NotificationsSource, discriminator="AttackPath"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Attack path notification source.
 
     :ivar minimal_risk_level: Defines the minimal attach path risk level which will be sent as
      email notifications. Known values are: "Critical", "High", "Medium", and "Low".
     :vartype minimal_risk_level: str or ~azure.mgmt.security.models.MinimalRiskLevel
     :ivar source_type: The source type that will trigger the notification. Required. AttackPath.
-    :vartype source_type: str or ~azure.mgmt.security.models.ATTACK_PATH
+    :vartype source_type: str or ~azure.mgmt.security.models.SourceType
     """
 
     minimal_risk_level: Optional[Union[str, "_models.MinimalRiskLevel"]] = rest_field(
@@ -12907,7 +13711,9 @@ class NotificationsSourceAttackPath(NotificationsSource, discriminator="AttackPa
         self.source_type = SourceType.ATTACK_PATH  # type: ignore
 
 
-class OnPremiseResourceDetails(CommonResourceDetails, discriminator="OnPremiseResourceDetails"):
+class OnPremiseResourceDetails(
+    CommonResourceDetails, discriminator="OnPremiseResourceDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the On Premise resource that was assessed.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -12922,7 +13728,7 @@ class OnPremiseResourceDetails(CommonResourceDetails, discriminator="OnPremiseRe
     :ivar machine_name: The name of the machine. Required.
     :vartype machine_name: str
     :ivar source: Required. On premise resource details.
-    :vartype source: str or ~azure.mgmt.security.models.ON_PREMISE_RESOURCE_DETAILS
+    :vartype source: str or ~azure.mgmt.security.models.Source
     """
 
     __mapping__: dict[str, _Model] = {}
@@ -12961,7 +13767,9 @@ class OnPremiseResourceDetails(CommonResourceDetails, discriminator="OnPremiseRe
         self.source = Source.ON_PREMISE_RESOURCE_DETAILS  # type: ignore
 
 
-class OnPremiseSqlResourceDetails(OnPremiseResourceDetails, discriminator="OnPremiseSql"):
+class OnPremiseSqlResourceDetails(
+    OnPremiseResourceDetails, discriminator="OnPremiseSql"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the On Premise Sql resource that was assessed.
 
     :ivar workspace_id: Azure resource Id of the workspace the machine is attached to. Required.
@@ -12978,7 +13786,7 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails, discriminator="OnPre
     :vartype database_name: str
     :ivar source: The platform where the assessed resource resides. Required. SQL Resource in an on
      premise machine connected to Azure cloud.
-    :vartype source: str or ~azure.mgmt.security.models.ON_PREMISE_SQL
+    :vartype source: str or ~azure.mgmt.security.models.Source
     """
 
     server_name: str = rest_field(name="serverName", visibility=["read", "create", "update", "delete", "query"])
@@ -13013,7 +13821,7 @@ class OnPremiseSqlResourceDetails(OnPremiseResourceDetails, discriminator="OnPre
         self.source = Source.ON_PREMISE_SQL  # type: ignore
 
 
-class OnUploadFilters(_Model):
+class OnUploadFilters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Optional. Determine which blobs get scanned by On Upload malware scanning. An Or operation is
     performed between each filter type.
 
@@ -13030,7 +13838,7 @@ class OnUploadFilters(_Model):
     :ivar exclude_blobs_larger_than: Optional. Specifies the maximum size in bytes for blobs to be
      scanned. This parameter accepts a single positive integer value. Blobs larger than this value
      will be excluded from scanning.
-    :vartype exclude_blobs_larger_than: any
+    :vartype exclude_blobs_larger_than: int
     """
 
     exclude_blobs_with_prefix: Optional[list[str]] = rest_field(
@@ -13046,7 +13854,7 @@ class OnUploadFilters(_Model):
     )
     """Optional. A list of suffixes to exclude from on-upload malware scanning. Suffixes match only
      the end of blob names, and should be used for file extensions or blob name endings only."""
-    exclude_blobs_larger_than: Optional[Any] = rest_field(
+    exclude_blobs_larger_than: Optional[int] = rest_field(
         name="excludeBlobsLargerThan", visibility=["read", "create", "update", "delete", "query"]
     )
     """Optional. Specifies the maximum size in bytes for blobs to be scanned. This parameter accepts a
@@ -13058,7 +13866,7 @@ class OnUploadFilters(_Model):
         *,
         exclude_blobs_with_prefix: Optional[list[str]] = None,
         exclude_blobs_with_suffix: Optional[list[str]] = None,
-        exclude_blobs_larger_than: Optional[Any] = None,
+        exclude_blobs_larger_than: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -13072,7 +13880,7 @@ class OnUploadFilters(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OnUploadProperties(_Model):
+class OnUploadProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of On Upload malware scanning.
 
     :ivar is_enabled: Indicates whether On Upload malware scanning should be enabled.
@@ -13120,7 +13928,7 @@ class OnUploadProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -13221,7 +14029,7 @@ class OperationResultAutoGenerated(_Model):
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
 
 
-class OperationStatus(_Model):
+class OperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A status describing the success/failure of the enablement/disablement operation.
 
     :ivar code: The operation status code.
@@ -13254,7 +14062,7 @@ class OperationStatus(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -13330,7 +14138,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PartialAssessmentProperties(_Model):
+class PartialAssessmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment as related to the standard.
 
     :ivar assessment_key: The assessment key.
@@ -13360,7 +14168,7 @@ class PartialAssessmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Pricing(ExtensionResource):
+class Pricing(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Defender for Cloud is provided in two pricing tiers: free and standard. The standard
     tier offers advanced security capabilities, while the free tier offers basic security features.
 
@@ -13396,6 +14204,9 @@ class Pricing(ExtensionResource):
         "extensions",
         "deprecated",
         "replaced_by",
+        "security_operator_resource_id",
+        "originated_from",
+        "managed_by",
     ]
 
     @overload
@@ -13434,7 +14245,120 @@ class Pricing(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class PricingList(_Model):
+class PricingBatch(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Pricing batch resource for updating multiple pricing configurations.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar properties: Pricing batch properties.
+    :vartype properties: ~azure.mgmt.security.models.PricingBatchProperties
+    """
+
+    properties: Optional["_models.PricingBatchProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pricing batch properties."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PricingBatchProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PricingBatchPlanItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """An individual pricing plan configuration.
+
+    :ivar plan_name: Name of the pricing plan. Required.
+    :vartype plan_name: str
+    :ivar properties: Pricing configuration properties for the plan. Required.
+    :vartype properties: ~azure.mgmt.security.models.PricingPropertiesReference
+    :ivar operation_status: Status of this plan's update operation. This property is returned only
+     after a PUT operation.
+    :vartype operation_status: ~azure.mgmt.security.models.PricingPlanOperationStatus
+    """
+
+    plan_name: str = rest_field(name="planName", visibility=["read", "create", "update", "delete", "query"])
+    """Name of the pricing plan. Required."""
+    properties: "_models.PricingPropertiesReference" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Pricing configuration properties for the plan. Required."""
+    operation_status: Optional["_models.PricingPlanOperationStatus"] = rest_field(
+        name="operationStatus", visibility=["read"]
+    )
+    """Status of this plan's update operation. This property is returned only after a PUT operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        plan_name: str,
+        properties: "_models.PricingPropertiesReference",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PricingBatchProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for a pricing batch resource.
+
+    :ivar plans_configurations: Pricing plan configurations represented by this resource. Required.
+    :vartype plans_configurations: list[~azure.mgmt.security.models.PricingBatchPlanItem]
+    """
+
+    plans_configurations: list["_models.PricingBatchPlanItem"] = rest_field(
+        name="plansConfigurations", visibility=["read", "create", "update"]
+    )
+    """Pricing plan configurations represented by this resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        plans_configurations: list["_models.PricingBatchPlanItem"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PricingList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of pricing configurations response.
 
     :ivar value: List of pricing configurations. Required.
@@ -13462,7 +14386,42 @@ class PricingList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PricingProperties(_Model):
+class PricingPlanOperationStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Status of a pricing plan update operation.
+
+    :ivar code: The operation status code. Known values are: "Succeeded" and "Failed".
+    :vartype code: str or ~azure.mgmt.security.models.PricingPlanOperationStatusCode
+    :ivar message: Additional information about the operation result.
+    :vartype message: str
+    """
+
+    code: Optional[Union[str, "_models.PricingPlanOperationStatusCode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The operation status code. Known values are: \"Succeeded\" and \"Failed\"."""
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Additional information about the operation result."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Optional[Union[str, "_models.PricingPlanOperationStatusCode"]] = None,
+        message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PricingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pricing properties for the relevant scope.
 
     :ivar pricing_tier: Indicates whether the Defender plan is enabled on the selected scope.
@@ -13514,6 +14473,13 @@ class PricingProperties(_Model):
     :ivar replaced_by: Optional. List of plans that replace this plan. This property exists only if
      this plan is deprecated.
     :vartype replaced_by: list[str]
+    :ivar security_operator_resource_id: Resource ID of the security operator associated with the
+     pricing configuration.
+    :vartype security_operator_resource_id: str
+    :ivar originated_from: Indicates the origin of the most recent configuration change. "M365"
+    :vartype originated_from: str or ~azure.mgmt.security.models.OriginatedFrom
+    :ivar managed_by: Indicates who exclusively manages the pricing configuration.
+    :vartype managed_by: str
     """
 
     pricing_tier: Union[str, "_models.PricingTier"] = rest_field(
@@ -13575,6 +14541,16 @@ class PricingProperties(_Model):
     replaced_by: Optional[list[str]] = rest_field(name="replacedBy", visibility=["read"])
     """Optional. List of plans that replace this plan. This property exists only if this plan is
      deprecated."""
+    security_operator_resource_id: Optional[str] = rest_field(
+        name="securityOperatorResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Resource ID of the security operator associated with the pricing configuration."""
+    originated_from: Optional[Union[str, "_models.OriginatedFrom"]] = rest_field(
+        name="originatedFrom", visibility=["read"]
+    )
+    """Indicates the origin of the most recent configuration change. \"M365\""""
+    managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read"])
+    """Indicates who exclusively manages the pricing configuration."""
 
     @overload
     def __init__(
@@ -13584,6 +14560,7 @@ class PricingProperties(_Model):
         sub_plan: Optional[str] = None,
         enforce: Optional[Union[str, "_models.Enforce"]] = None,
         extensions: Optional[list["_models.Extension"]] = None,
+        security_operator_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -13597,6 +14574,10 @@ class PricingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PricingPropertiesReference(_Model):
+    """Reference to the pricing properties defined in pricings.json."""
+
+
 class PrivateEndpoint(_Model):
     """The private endpoint resource.
 
@@ -13608,7 +14589,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13669,7 +14650,7 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -13722,7 +14703,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkGroupResource(ProxyResource):
+class PrivateLinkGroupResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link group resource that describes a grouping for the private link.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13783,7 +14764,7 @@ class PrivateLinkGroupResource(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkProperties(_Model):
+class PrivateLinkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource. These properties control the behavior and configuration
     of private endpoint connectivity to Defender services.
 
@@ -13846,7 +14827,7 @@ class PrivateLinkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13890,7 +14871,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(TrackedResource):
+class PrivateLinkResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource that enables secure, private connectivity to Microsoft Defender for
     Cloud services. This resource manages the lifecycle of private endpoint connections and
     provides the necessary infrastructure for private connectivity.
@@ -13962,7 +14943,7 @@ class PrivateLinkResource(TrackedResource):
             super().__setattr__(key, value)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -14000,7 +14981,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -14046,7 +15027,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkUpdate(_Model):
+class PrivateLinkUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request payload for updating a private link resource. Used in PATCH operations to update
     specific mutable properties without affecting the entire resource configuration.
 
@@ -14075,7 +15056,7 @@ class PrivateLinkUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QueryCheck(_Model):
+class QueryCheck(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The rule query details.
 
     :ivar query: The rule query.
@@ -14117,7 +15098,7 @@ class QueryCheck(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RecommendationConfigurationProperties(_Model):
+class RecommendationConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of IoT Security recommendation.
 
     :ivar recommendation_type: The type of IoT Security recommendation. Required. Known values are:
@@ -14171,7 +15152,7 @@ class RecommendationConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegulatoryComplianceAssessment(ProxyResource):
+class RegulatoryComplianceAssessment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance assessment details and state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14241,7 +15222,7 @@ class RegulatoryComplianceAssessment(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegulatoryComplianceAssessmentProperties(_Model):
+class RegulatoryComplianceAssessmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance assessment data.
 
     :ivar description: The description of the regulatory compliance assessment.
@@ -14304,7 +15285,7 @@ class RegulatoryComplianceAssessmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegulatoryComplianceControl(ProxyResource):
+class RegulatoryComplianceControl(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance control details and state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14365,7 +15346,7 @@ class RegulatoryComplianceControl(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegulatoryComplianceControlProperties(_Model):
+class RegulatoryComplianceControlProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance control data.
 
     :ivar description: The description of the regulatory compliance control.
@@ -14419,7 +15400,7 @@ class RegulatoryComplianceControlProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RegulatoryComplianceStandard(ProxyResource):
+class RegulatoryComplianceStandard(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance standard details and state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14480,7 +15461,7 @@ class RegulatoryComplianceStandard(ProxyResource):
             super().__setattr__(key, value)
 
 
-class RegulatoryComplianceStandardProperties(_Model):
+class RegulatoryComplianceStandardProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Regulatory compliance standard data.
 
     :ivar state: Aggregative state based on the standard's supported controls states. Known values
@@ -14536,7 +15517,7 @@ class RegulatoryComplianceStandardProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Remediation(_Model):
+class Remediation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Remediation details.
 
     :ivar description: Remediation description.
@@ -14581,7 +15562,7 @@ class Remediation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RemediationEta(_Model):
+class RemediationEta(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The ETA (estimated time of arrival) for remediation.
 
     :ivar eta: ETA for remediation. Required.
@@ -14614,7 +15595,7 @@ class RemediationEta(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceDetails(_Model):
+class ResourceDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The resource details of the health report.
 
     :ivar source: The status of the health report. Known values are: "Azure", "OnPremise",
@@ -14654,7 +15635,7 @@ class ResourceDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleResults(ExtensionResource):
+class RuleResults(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule results.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14695,7 +15676,7 @@ class RuleResults(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class RuleResultsInput(_Model):
+class RuleResultsInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule results input.
 
     :ivar latest_scan: Take results from latest scan.
@@ -14732,7 +15713,7 @@ class RuleResultsInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuleResultsProperties(_Model):
+class RuleResultsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rule results properties.
 
     :ivar results: Expected results in the baseline.
@@ -14767,7 +15748,7 @@ class RuleResultsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulesResults(_Model):
+class RulesResults(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of rules results.
 
     :ivar value: List of rule results.
@@ -14801,7 +15782,7 @@ class RulesResults(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RulesResultsInput(_Model):
+class RulesResultsInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rules results input.
 
     :ivar latest_scan: Take results from latest scan.
@@ -14840,7 +15821,7 @@ class RulesResultsInput(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScanPropertiesV2(_Model):
+class ScanPropertiesV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan record properties.
 
     :ivar trigger_type: The scan trigger type. Known values are: "OnDemand" and "Recurring".
@@ -14965,7 +15946,7 @@ class ScanPropertiesV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScanResult(ExtensionResource):
+class ScanResult(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan result for a single rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15006,7 +15987,7 @@ class ScanResult(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ScanResultProperties(_Model):
+class ScanResultProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan result properties for a single rule.
 
     :ivar rule_id: The rule Id.
@@ -15078,7 +16059,7 @@ class ScanResultProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScanSummary(_Model):
+class ScanSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A summary of the scan results.
 
     :ivar blobs: A summary of the scan results of the blobs that were scanned.
@@ -15119,7 +16100,7 @@ class ScanSummary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ScanV2(ExtensionResource):
+class ScanV2(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A vulnerability assessment scan record.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15160,7 +16141,7 @@ class ScanV2(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ScopeElement(_Model):
+class ScopeElement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A more specific scope used to identify the alerts to suppress.
 
     :ivar field: The alert entity type to suppress by.
@@ -15208,7 +16189,7 @@ class ScoreDetails(_Model):
     """Ratio of the current score divided by the maximum. Rounded to 4 digits after the decimal point."""
 
 
-class SecureScoreControlDefinitionItem(Resource):
+class SecureScoreControlDefinitionItem(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about the security control.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15299,7 +16280,7 @@ class SecureScoreControlDefinitionItemProperties(_Model):  # pylint: disable=nam
     """Array of assessments metadata IDs that are included in this security control."""
 
 
-class SecureScoreControlDefinitionSource(_Model):
+class SecureScoreControlDefinitionSource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The type of the security control (For example, BuiltIn).
 
     :ivar source_type: The type of security control (for example, BuiltIn). Known values are:
@@ -15331,7 +16312,7 @@ class SecureScoreControlDefinitionSource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecureScoreControlDetails(Resource):
+class SecureScoreControlDetails(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of the security control, its score, and the health status of the relevant resources.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15372,7 +16353,7 @@ class SecureScoreControlDetails(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SecureScoreControlScoreDetails(_Model):
+class SecureScoreControlScoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Calculation result data in control level.
 
     :ivar display_name: User friendly display name of the control.
@@ -15494,7 +16475,7 @@ class SecureScoreItemProperties(_Model):
     __flattened_items = ["max", "current", "percentage"]
 
 
-class SecurityAssessment(Resource):
+class SecurityAssessment(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security assessment on a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15564,7 +16545,7 @@ class SecurityAssessment(Resource):
             super().__setattr__(key, value)
 
 
-class SecurityAssessmentMetadataPartnerData(_Model):
+class SecurityAssessmentMetadataPartnerData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the partner that created the assessment.
 
     :ivar partner_name: Name of the company of the partner. Required.
@@ -15605,7 +16586,7 @@ class SecurityAssessmentMetadataPartnerData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentMetadataProperties(_Model):
+class SecurityAssessmentMetadataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment metadata.
 
     :ivar display_name: User friendly display name of the assessment. Required.
@@ -15715,7 +16696,7 @@ class SecurityAssessmentMetadataProperties(_Model):
 
 class SecurityAssessmentMetadataPropertiesResponse(
     SecurityAssessmentMetadataProperties
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment metadata response.
 
     :ivar display_name: User friendly display name of the assessment. Required.
@@ -15807,7 +16788,9 @@ class SecurityAssessmentMetadataPropertiesResponse(
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentMetadataPropertiesResponsePublishDates(_Model):  # pylint: disable=name-too-long
+class SecurityAssessmentMetadataPropertiesResponsePublishDates(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SecurityAssessmentMetadataPropertiesResponsePublishDates.
 
     :ivar ga:
@@ -15839,7 +16822,7 @@ class SecurityAssessmentMetadataPropertiesResponsePublishDates(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentMetadataResponse(ProxyResource):
+class SecurityAssessmentMetadataResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security assessment metadata response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -15917,7 +16900,7 @@ class SecurityAssessmentMetadataResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecurityAssessmentPartnerData(_Model):
+class SecurityAssessmentPartnerData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data regarding 3rd party partner integration.
 
     :ivar partner_name: Name of the company of the partner. Required.
@@ -15950,7 +16933,7 @@ class SecurityAssessmentPartnerData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesBase(_Model):
+class SecurityAssessmentPropertiesBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment.
 
     :ivar risk: External model of risk result.
@@ -16016,7 +16999,9 @@ class SecurityAssessmentPropertiesBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
+class SecurityAssessmentProperties(
+    SecurityAssessmentPropertiesBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment.
 
     :ivar risk: External model of risk result.
@@ -16063,7 +17048,7 @@ class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesBaseRisk(_Model):
+class SecurityAssessmentPropertiesBaseRisk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """External model of risk result.
 
     :ivar risk_factors: The factors of the risk adding base factor.
@@ -16120,7 +17105,9 @@ class SecurityAssessmentPropertiesBaseRisk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesBaseRiskPathsItem(_Model):  # pylint: disable=name-too-long
+class SecurityAssessmentPropertiesBaseRiskPathsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SecurityAssessmentPropertiesBaseRiskPathsItem.
 
     :ivar id: Unique identifier for the path.
@@ -16163,7 +17150,9 @@ class SecurityAssessmentPropertiesBaseRiskPathsItem(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem(_Model):  # pylint: disable=name-too-long
+class SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem.
 
     :ivar id: Edge identifier. Required.
@@ -16201,7 +17190,9 @@ class SecurityAssessmentPropertiesBaseRiskPathsItemEdgeItem(_Model):  # pylint: 
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem(_Model):  # pylint: disable=name-too-long
+class SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem.
 
     :ivar id: Node identifier.
@@ -16236,7 +17227,9 @@ class SecurityAssessmentPropertiesBaseRiskPathsItemNodesItem(_Model):  # pylint:
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
+class SecurityAssessmentPropertiesResponse(
+    SecurityAssessmentPropertiesBase
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an assessment.
 
     :ivar risk: External model of risk result.
@@ -16283,7 +17276,7 @@ class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class SecurityAssessmentResponse(ExtensionResource):
+class SecurityAssessmentResponse(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security assessment on a resource - response format.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16353,7 +17346,7 @@ class SecurityAssessmentResponse(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class SecurityConnector(ProxyResource):
+class SecurityConnector(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security connector resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16441,7 +17434,7 @@ class SecurityConnector(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecurityConnectorProperties(_Model):
+class SecurityConnectorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A set of properties that defines the security connector configuration.
 
     :ivar hierarchy_identifier: The multi cloud resource identifier (account id in case of AWS
@@ -16504,7 +17497,7 @@ class SecurityConnectorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityContact(ProxyResource):
+class SecurityContact(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contact details and configurations for notifications coming from Microsoft Defender for Cloud.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16565,7 +17558,7 @@ class SecurityContact(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecurityContactProperties(_Model):
+class SecurityContactProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes security contact properties.
 
     :ivar emails: List of email addresses which will get notifications from Microsoft Defender for
@@ -16625,7 +17618,9 @@ class SecurityContactProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityContactPropertiesNotificationsByRole(_Model):  # pylint: disable=name-too-long
+class SecurityContactPropertiesNotificationsByRole(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Defines whether to send email notifications from Microsoft Defender for Cloud to persons with
     specific RBAC roles on the subscription.
 
@@ -16669,7 +17664,7 @@ class SecurityContactPropertiesNotificationsByRole(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class SecurityOperator(ProxyResource):
+class SecurityOperator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security operator under a given subscription and pricing.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16708,7 +17703,7 @@ class SecurityOperator(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySolution(ProxyResource):
+class SecuritySolution(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -16773,7 +17768,7 @@ class SecuritySolution(ProxyResource):
             super().__setattr__(key, value)
 
 
-class SecuritySolutionProperties(_Model):
+class SecuritySolutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecuritySolutionProperties.
 
     :ivar security_family: The security family of the security solution. Required. Known values
@@ -16826,7 +17821,7 @@ class SecuritySolutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySolutionsReferenceData(_Model):
+class SecuritySolutionsReferenceData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecuritySolutionsReferenceData.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -16909,7 +17904,7 @@ class SecuritySolutionsReferenceData(_Model):
             super().__setattr__(key, value)
 
 
-class SecuritySolutionsReferenceDataList(_Model):
+class SecuritySolutionsReferenceDataList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecuritySolutionsReferenceDataList.
 
     :ivar value:
@@ -16938,7 +17933,7 @@ class SecuritySolutionsReferenceDataList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySolutionsReferenceDataProperties(_Model):
+class SecuritySolutionsReferenceDataProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecuritySolutionsReferenceDataProperties.
 
     :ivar security_family: The security family of the security solution. Required. Known values
@@ -17006,7 +18001,7 @@ class SecuritySolutionsReferenceDataProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityStandard(ExtensionResource):
+class SecurityStandard(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Standard on a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17075,7 +18070,7 @@ class SecurityStandard(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class SecurityStandardProperties(_Model):
+class SecurityStandardProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of a standard.
 
     :ivar display_name: Display name of the standard, equivalent to the standardId.
@@ -17144,7 +18139,7 @@ class SecurityStandardProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecuritySubAssessment(ExtensionResource):
+class SecuritySubAssessment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security sub-assessment on a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17216,7 +18211,7 @@ class SecuritySubAssessment(ExtensionResource):
             super().__setattr__(key, value)
 
 
-class SecuritySubAssessmentProperties(_Model):
+class SecuritySubAssessmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an sub-assessment.
 
     :ivar id: Vulnerability ID.
@@ -17290,7 +18285,7 @@ class SecuritySubAssessmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SecurityTask(ProxyResource):
+class SecurityTask(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security task that we recommend to do in order to strengthen security.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17368,7 +18363,7 @@ class SecurityTaskParameters(_Model):
     """Name of the task type."""
 
 
-class SecurityTaskProperties(_Model):
+class SecurityTaskProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of a task.
 
     :ivar state: State of the task (Active, Resolved etc.).
@@ -17419,11 +18414,14 @@ class SecurityTaskProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SensitiveDataDiscoveryProperties(_Model):
+class SensitiveDataDiscoveryProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Sensitive Data Discovery.
 
     :ivar is_enabled: Indicates whether Sensitive Data Discovery should be enabled.
     :vartype is_enabled: bool
+    :ivar scanner_resource_id: Optional. Resource id of the scanner resource (e.g.,
+     securityOperator or dataScanner) whose identity will be used for sensitive data discovery.
+    :vartype scanner_resource_id: str
     :ivar operation_status: Upon failure or partial success. Additional data describing Sensitive
      Data Discovery enable/disable operation.
     :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
@@ -17433,6 +18431,11 @@ class SensitiveDataDiscoveryProperties(_Model):
         name="isEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Indicates whether Sensitive Data Discovery should be enabled."""
+    scanner_resource_id: Optional[str] = rest_field(
+        name="scannerResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional. Resource id of the scanner resource (e.g., securityOperator or dataScanner) whose
+     identity will be used for sensitive data discovery."""
     operation_status: Optional["_models.OperationStatus"] = rest_field(name="operationStatus", visibility=["read"])
     """Upon failure or partial success. Additional data describing Sensitive Data Discovery
      enable/disable operation."""
@@ -17442,6 +18445,7 @@ class SensitiveDataDiscoveryProperties(_Model):
         self,
         *,
         is_enabled: Optional[bool] = None,
+        scanner_resource_id: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -17455,7 +18459,7 @@ class SensitiveDataDiscoveryProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SensitivityLabel(_Model):
+class SensitivityLabel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The sensitivity label.
 
     :ivar display_name: The name of the sensitivity label.
@@ -17507,7 +18511,7 @@ class SensitivityLabel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerVulnerabilityAssessment(ProxyResource):
+class ServerVulnerabilityAssessment(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the server vulnerability assessment details on a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17585,7 +18589,9 @@ class ServerVulnerabilityAssessmentProperties(_Model):
      \"Succeeded\", \"Failed\", \"Canceled\", \"Provisioning\", and \"Deprovisioning\"."""
 
 
-class ServerVulnerabilityAssessmentsAzureSettingProperties(_Model):  # pylint: disable=name-too-long
+class ServerVulnerabilityAssessmentsAzureSettingProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the vulnerability assessments setting properties on Azure servers in the defined
     scope.
 
@@ -17619,7 +18625,7 @@ class ServerVulnerabilityAssessmentsAzureSettingProperties(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ServerVulnerabilityAssessmentsList(_Model):
+class ServerVulnerabilityAssessmentsList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """List of server vulnerability assessments.
 
     :ivar value:
@@ -17668,8 +18674,7 @@ class ServerVulnerabilityProperties(AdditionalData, discriminator="ServerVulnera
     :vartype vendor_references: list[~azure.mgmt.security.models.VendorReference]
     :ivar assessed_resource_type: Sub-assessment resource type. Required.
      ServerVulnerabilityAssessment.
-    :vartype assessed_resource_type: str or
-     ~azure.mgmt.security.models.SERVER_VULNERABILITY_ASSESSMENT
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     """
 
     type: Optional[str] = rest_field(visibility=["read"])
@@ -17717,7 +18722,7 @@ class SqlServerVulnerabilityProperties(AdditionalData, discriminator="SqlServerV
     :ivar query: The T-SQL query that runs on your SQL database to perform the particular check.
     :vartype query: str
     :ivar assessed_resource_type: Sub-assessment resource type. Required. SqlServerVulnerability.
-    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.SQL_SERVER_VULNERABILITY
+    :vartype assessed_resource_type: str or ~azure.mgmt.security.models.AssessedResourceType
     """
 
     type: Optional[str] = rest_field(visibility=["read"])
@@ -17744,7 +18749,9 @@ class SqlServerVulnerabilityProperties(AdditionalData, discriminator="SqlServerV
         self.assessed_resource_type = AssessedResourceType.SQL_SERVER_VULNERABILITY  # type: ignore
 
 
-class SqlVulnerabilityAssessmentScanOperationResult(Resource):  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScanOperationResult(
+    Resource
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the result of a SQL Vulnerability Assessment scan operation, wrapped in the ARM
     resource envelope.
 
@@ -17788,7 +18795,9 @@ class SqlVulnerabilityAssessmentScanOperationResult(Resource):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class SqlVulnerabilityAssessmentScanOperationResultProperties(_Model):  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentScanOperationResultProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Represents the properties of a SQL Vulnerability Assessment scan operation result.
 
     :ivar operation_id: Gets or sets the operation id.
@@ -17827,7 +18836,9 @@ class SqlVulnerabilityAssessmentScanOperationResultProperties(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class SqlVulnerabilityAssessmentSettings(ExtensionResource):
+class SqlVulnerabilityAssessmentSettings(
+    ExtensionResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SQL Vulnerability Assessment settings resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17868,7 +18879,9 @@ class SqlVulnerabilityAssessmentSettings(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class SqlVulnerabilityAssessmentSettingsProperties(_Model):  # pylint: disable=name-too-long
+class SqlVulnerabilityAssessmentSettingsProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SQL Vulnerability Assessment settings properties.
 
     :ivar creation_time: The creation time of the SQL Vulnerability Assessment settings.
@@ -17904,7 +18917,7 @@ class SqlVulnerabilityAssessmentSettingsProperties(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class Standard(ProxyResource):
+class Standard(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Standard on a resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -17986,7 +18999,7 @@ class Standard(ProxyResource):
             super().__setattr__(key, value)
 
 
-class StandardAssignment(ExtensionResource):
+class StandardAssignment(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security Assignment on a resource group over a given scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -18082,7 +19095,7 @@ class StandardAssignmentMetadata(_Model):
     """Standard assignment last update date."""
 
 
-class StandardAssignmentProperties(_Model):
+class StandardAssignmentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a standardAssignment.
 
     :ivar display_name: Display name of the standardAssignment.
@@ -18171,7 +19184,9 @@ class StandardAssignmentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StandardAssignmentPropertiesAttestationData(_Model):  # pylint: disable=name-too-long
+class StandardAssignmentPropertiesAttestationData(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Additional data about assignment that has Attest effect.
 
     :ivar compliance_state: Attest category of this assignment. Known values are: "unknown",
@@ -18224,7 +19239,9 @@ class StandardAssignmentPropertiesAttestationData(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class StandardAssignmentPropertiesExemptionData(_Model):  # pylint: disable=name-too-long
+class StandardAssignmentPropertiesExemptionData(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Additional data about assignment that has Exempt effect.
 
     :ivar exemption_category: Exemption category of this assignment. Known values are: "waiver" and
@@ -18263,7 +19280,7 @@ class StandardAssignmentPropertiesExemptionData(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class StandardComponentProperties(_Model):
+class StandardComponentProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of an component as related to the standard.
 
     :ivar key: Component Key matching componentMetadata.
@@ -18316,7 +19333,7 @@ class StandardMetadata(_Model):
     """Standard last update date."""
 
 
-class StandardProperties(_Model):
+class StandardProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes properties of a standard.
 
     :ivar display_name: display name of the standard, equivalent to the standardId.
@@ -18376,7 +19393,67 @@ class StandardProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StatusAutoGenerated(_Model):
+class StartMalwareScanRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Request body for starting a malware scan with optional filters.
+
+    :ivar properties: Properties for the malware scan request.
+    :vartype properties: ~azure.mgmt.security.models.StartMalwareScanRequestProperties
+    """
+
+    properties: Optional["_models.StartMalwareScanRequestProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties for the malware scan request."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.StartMalwareScanRequestProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StartMalwareScanRequestProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
+    """Properties for the malware scan request.
+
+    :ivar filters: Optional filters to scope the malware scan to specific blobs or files.
+    :vartype filters: ~azure.mgmt.security.models.MalwareScanFilters
+    """
+
+    filters: Optional["_models.MalwareScanFilters"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional filters to scope the malware scan to specific blobs or files."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        filters: Optional["_models.MalwareScanFilters"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StatusAutoGenerated(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The status of the health report.
 
     :ivar code: The status of the health report. Known values are: "Healthy", "NotHealthy", and
@@ -18459,7 +19536,7 @@ class SubAssessmentStatus(_Model):
      \"Critical\"."""
 
 
-class SuppressionAlertsScope(_Model):
+class SuppressionAlertsScope(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SuppressionAlertsScope.
 
     :ivar all_of: All the conditions inside need to be true in order to suppress the alert.
@@ -18490,7 +19567,7 @@ class SuppressionAlertsScope(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -18557,7 +19634,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsResource(_Model):
+class TagsResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A container holding only the Tags for a resource, allowing the user to update the tags.
 
     :ivar tags: Resource tags.
@@ -18585,7 +19662,7 @@ class TagsResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TargetBranchConfiguration(_Model):
+class TargetBranchConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Repository branch configuration for PR Annotations.
 
     :ivar branch_names: Gets or sets branches that should have annotations.
@@ -18630,7 +19707,9 @@ class TargetBranchConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ThresholdCustomAlertRule(CustomAlertRule, discriminator="ThresholdCustomAlertRule"):
+class ThresholdCustomAlertRule(
+    CustomAlertRule, discriminator="ThresholdCustomAlertRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom alert rule that checks if a value (depends on the custom alert type) is within the
     given range.
 
@@ -18680,7 +19759,9 @@ class ThresholdCustomAlertRule(CustomAlertRule, discriminator="ThresholdCustomAl
         self.rule_type = "ThresholdCustomAlertRule"  # type: ignore
 
 
-class TimeWindowCustomAlertRule(ThresholdCustomAlertRule, discriminator="TimeWindowCustomAlertRule"):
+class TimeWindowCustomAlertRule(
+    ThresholdCustomAlertRule, discriminator="TimeWindowCustomAlertRule"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A custom alert rule that checks if the number of activities (depends on the custom alert type)
     in a time window is within the given range.
 
@@ -18827,7 +19908,7 @@ class TopologySingleResourceParent(_Model):
     """Azure resource id which serves as parent resource in topology view."""
 
 
-class UpdateIotSecuritySolutionData(TagsResource):
+class UpdateIotSecuritySolutionData(TagsResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UpdateIotSecuritySolutionData.
 
     :ivar tags: Resource tags.
@@ -18880,7 +19961,7 @@ class UpdateIotSecuritySolutionData(TagsResource):
             super().__setattr__(key, value)
 
 
-class UpdateIoTSecuritySolutionProperties(_Model):
+class UpdateIoTSecuritySolutionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update Security Solution setting data.
 
     :ivar user_defined_resources: Properties of the IoT Security solution's user defined resources.
@@ -18919,7 +20000,7 @@ class UpdateIoTSecuritySolutionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateSensitivitySettingsRequest(_Model):
+class UpdateSensitivitySettingsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request to update data sensitivity settings for sensitive data discovery.
 
     :ivar sensitive_info_types_ids: List of selected sensitive info types' IDs. Required.
@@ -18968,7 +20049,7 @@ class UpdateSensitivitySettingsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserDefinedResourcesProperties(_Model):
+class UserDefinedResourcesProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the IoT Security solution's user defined resources.
 
     :ivar query: Azure Resource Graph query which represents the security solution's user defined
@@ -19007,7 +20088,7 @@ class UserDefinedResourcesProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VaRule(_Model):
+class VaRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """vulnerability assessment rule metadata details.
 
     :ivar rule_id: The rule Id.
@@ -19102,7 +20183,7 @@ class VendorReference(_Model):
     """Link url."""
 
 
-class VmScannersBaseConfiguration(_Model):
+class VmScannersBaseConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for VM scanning.
 
     :ivar scanning_mode: The scanning mode for the VM scan. "Default"
@@ -19139,7 +20220,7 @@ class VmScannersBaseConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceSetting(ProxyResource):
+class WorkspaceSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configures where to store the OMS agent data for workspaces under a scope.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -19200,7 +20281,7 @@ class WorkspaceSetting(ProxyResource):
             super().__setattr__(key, value)
 
 
-class WorkspaceSettingProperties(_Model):
+class WorkspaceSettingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workspace setting data.
 
     :ivar workspace_id: The full Azure ID of the workspace to save the data in. Required.
