@@ -158,7 +158,7 @@ class TestExceptions(object):
         assert error.error.error.code == "FakeErrorOne"
         assert error.error.error.message == "A fake error"
 
-        assert str(error) == "(FakeErrorOne) A fake error\nCode: FakeErrorOne\nMessage: A fake error"
+        assert str(error) == "(FakeErrorOne) A fake error\nCode: FakeErrorOne"  # #41937: message no longer duplicated
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_deserialized_httpresponse_error_message(self, mock_response):
@@ -245,6 +245,26 @@ class TestExceptions(object):
         assert exp.target is None
         assert not exp.details
         assert not exp.innererror
+
+    def test_odata_v4_str_does_not_duplicate_message(self):
+        """https://github.com/Azure/azure-sdk-for-python/issues/41937
+
+        str(ODataV4Format) must render the error message exactly once: it is
+        already part of the "(code) message" header, so the details block must
+        not repeat it.
+        """
+        error = ODataV4Format(
+            {
+                "code": "ResourceGroupNotFound",
+                "message": "Resource group 'non-exist' could not be found.",
+                "target": "non-exist",
+            }
+        )
+        rendered = str(error)
+        assert rendered.count("Resource group 'non-exist' could not be found.") == 1
+        assert rendered.startswith("(ResourceGroupNotFound) Resource group 'non-exist' could not be found.")
+        assert "Code: ResourceGroupNotFound" in rendered
+        assert "Target: non-exist" in rendered
 
     @pytest.mark.parametrize("mock_response", MOCK_RESPONSES)
     def test_broken_odata_details(self, mock_response):
