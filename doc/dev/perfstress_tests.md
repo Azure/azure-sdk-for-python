@@ -178,7 +178,7 @@ The framework has a series of common command line options built in:
   together with `--parallel` to distribute the number of concurrent tests first between available processes, then between threads within each
   process. For example if `--parallel=16 --processes=4`, 4 processes will be started, each running 4 concurrent threaded test instances.
   Best effort will be made to distribute evenly, for example if `--parallel=10 --processes=4`, 4 processes will be start, two of which run 3 threads, and two that run 2 threads. It's therefore recommended that the value of `parallel` be less than, or a multiple of, the value of `processes`.
-- `-w --warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
+- `-w --warmup=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
 - `--insecure` Whether to run without SSL validation. Default is False.
