@@ -1,5 +1,29 @@
 # Release History
 
+## 2.1.0 (2026-09-14)
+
+### Features Added
+
+  - Model `ManagedRuleDefinition` added property `paranoia_level`
+  - Model `ManagedRuleSetDefinitionProperties` added property `display_name`
+  - Model `ManagedRuleSetDefinitionProperties` added property `status`
+  - Model `ManagedRuleSetList` added property `exceptions_list`
+  - Enum `MatchVariable` added member `JA4`
+  - Enum `Operator` added member `ASN_MATCH`
+  - Enum `Operator` added member `CLIENT_FINGERPRINT`
+  - Enum `VariableName` added member `ASN`
+  - Enum `VariableName` added member `JA4`
+  - Added enum `ExceptionMatchVariable`
+  - Added enum `ExceptionSelectorMatchOperator`
+  - Added enum `ExceptionValueMatchOperator`
+  - Added model `ManagedRuleSetException`
+  - Added model `ManagedRuleSetExceptionList`
+  - Added model `ManagedRuleSetScope`
+  - Added enum `ManagedRuleSetStatus`
+  - Added enum `ParanoiaLevel`
+  - Added model `RuleGroupScope`
+  - Added model `RuleScope`
+
 ## 2.0.0 (2026-06-30)
 
 ### Features Added
