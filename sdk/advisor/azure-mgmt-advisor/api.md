@@ -330,7 +330,12 @@ namespace azure.mgmt.advisor.aio.operations
             ) -> MetadataEntity: ...
 
         @distributed_trace
-        def list(self, **kwargs: Any) -> AsyncItemPaged[MetadataEntity]: ...
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MetadataEntity]: ...
 
 
     class azure.mgmt.advisor.aio.operations.RecommendationsOperations:
@@ -353,6 +358,14 @@ namespace azure.mgmt.advisor.aio.operations
             ) -> ResourceRecommendationBase: ...
 
         @distributed_trace_async
+        async def get_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @distributed_trace_async
         async def get_generate_status(
                 self, 
                 operation_id: str, 
@@ -360,10 +373,24 @@ namespace azure.mgmt.advisor.aio.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'filter', 'mode', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list(
                 self, 
                 *, 
                 filter: Optional[str] = ..., 
+                mode: Optional[Union[str, RecommendationListMode]] = ..., 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[ResourceRecommendationBase]: ...
+
+        @distributed_trace
+        def list_by_service_group(
+                self, 
+                service_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                mode: Optional[Union[str, RecommendationListMode]] = ..., 
                 skip_token: Optional[str] = ..., 
                 top: Optional[int] = ..., 
                 **kwargs: Any
@@ -403,6 +430,39 @@ namespace azure.mgmt.advisor.aio.operations
         @overload
         async def update(
                 self, 
+                recommendation_id: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        async def update_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                properties: RecommendationPatchPayload, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        async def update_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                properties: RecommendationPatchPayload, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        async def update_by_service_group(
+                self, 
+                service_group_name: str, 
                 recommendation_id: str, 
                 properties: IO[bytes], 
                 *, 
@@ -1049,6 +1109,11 @@ namespace azure.mgmt.advisor.models
         TOO_COMPLEX_OR_IMPRACTICAL_TO_IMPLEMENT = "TooComplexOrImpracticalToImplement"
 
 
+    class azure.mgmt.advisor.models.RecommendationListMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALL = "all"
+        CONTEXTUAL = "contextual"
+
+
     class azure.mgmt.advisor.models.RecommendationPatchPayload(_Model):
         properties: Optional[RecommendationStatePropertiesPayload]
 
@@ -1069,6 +1134,8 @@ namespace azure.mgmt.advisor.models
         completion_type: Optional[str]
         control: Optional[Union[str, Control]]
         created_time: Optional[datetime]
+        criticality: Optional[str]
+        criticality_score: Optional[str]
         description: Optional[str]
         exposed_metadata_properties: Optional[dict[str, Any]]
         extended_properties: Optional[dict[str, str]]
@@ -1091,6 +1158,9 @@ namespace azure.mgmt.advisor.models
         resource_workload: Optional[RecommendationPropertiesResourceWorkload]
         review: Optional[RecommendationPropertiesReview]
         risk: Optional[Union[str, Risk]]
+        savings: Optional[ResourceRecommendationSavings]
+        score_changed_at: Optional[str]
+        service_group_id: Optional[str]
         short_description: Optional[ShortDescription]
         source_system: Optional[str]
         suppression_id: Optional[str]
@@ -1282,6 +1352,54 @@ namespace azure.mgmt.advisor.models
                 key: str, 
                 value: Any
             ) -> None: ...
+
+
+    class azure.mgmt.advisor.models.ResourceRecommendationSavings(_Model):
+        billing_currency: Optional[str]
+        contracted: Optional[ResourceRecommendationSavingsDetails]
+        is_direct_channel: Optional[bool]
+        provider_currency: Optional[str]
+        resource_deleted_on: Optional[datetime]
+        retail: Optional[ResourceRecommendationSavingsDetails]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                billing_currency: Optional[str] = ..., 
+                contracted: Optional[ResourceRecommendationSavingsDetails] = ..., 
+                is_direct_channel: Optional[bool] = ..., 
+                provider_currency: Optional[str] = ..., 
+                resource_deleted_on: Optional[datetime] = ..., 
+                retail: Optional[ResourceRecommendationSavingsDetails] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.advisor.models.ResourceRecommendationSavingsDetails(_Model):
+        potential_savings: Optional[float]
+        potential_savings_in_billing_currency: Optional[float]
+        realized_savings: Optional[float]
+        realized_savings_in_billing_currency: Optional[float]
+        wasted_till_date: Optional[float]
+        wasted_till_date_in_billing_currency: Optional[float]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                potential_savings: Optional[float] = ..., 
+                potential_savings_in_billing_currency: Optional[float] = ..., 
+                realized_savings: Optional[float] = ..., 
+                realized_savings_in_billing_currency: Optional[float] = ..., 
+                wasted_till_date: Optional[float] = ..., 
+                wasted_till_date_in_billing_currency: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.advisor.models.ReviewStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1661,7 +1779,12 @@ namespace azure.mgmt.advisor.operations
             ) -> MetadataEntity: ...
 
         @distributed_trace
-        def list(self, **kwargs: Any) -> ItemPaged[MetadataEntity]: ...
+        def list(
+                self, 
+                *, 
+                filter: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[MetadataEntity]: ...
 
 
     class azure.mgmt.advisor.operations.RecommendationsOperations:
@@ -1684,6 +1807,14 @@ namespace azure.mgmt.advisor.operations
             ) -> ResourceRecommendationBase: ...
 
         @distributed_trace
+        def get_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @distributed_trace
         def get_generate_status(
                 self, 
                 operation_id: str, 
@@ -1691,10 +1822,24 @@ namespace azure.mgmt.advisor.operations
             ) -> None: ...
 
         @distributed_trace
+        @api_version_validation(method_added_on='2026-08-01-preview', params_added_on={'2026-08-01-preview': ['api_version', 'subscription_id', 'filter', 'mode', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-08-01-preview'])
         def list(
                 self, 
                 *, 
                 filter: Optional[str] = ..., 
+                mode: Optional[Union[str, RecommendationListMode]] = ..., 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[ResourceRecommendationBase]: ...
+
+        @distributed_trace
+        def list_by_service_group(
+                self, 
+                service_group_name: str, 
+                *, 
+                filter: Optional[str] = ..., 
+                mode: Optional[Union[str, RecommendationListMode]] = ..., 
                 skip_token: Optional[str] = ..., 
                 top: Optional[int] = ..., 
                 **kwargs: Any
@@ -1734,6 +1879,39 @@ namespace azure.mgmt.advisor.operations
         @overload
         def update(
                 self, 
+                recommendation_id: str, 
+                properties: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        def update_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                properties: RecommendationPatchPayload, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        def update_by_service_group(
+                self, 
+                service_group_name: str, 
+                recommendation_id: str, 
+                properties: RecommendationPatchPayload, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ResourceRecommendationBase: ...
+
+        @overload
+        def update_by_service_group(
+                self, 
+                service_group_name: str, 
                 recommendation_id: str, 
                 properties: IO[bytes], 
                 *, 
@@ -1854,38 +2032,6 @@ namespace azure.mgmt.advisor.operations
 
 namespace azure.mgmt.advisor.types
 
-    class azure.mgmt.advisor.types.ARMErrorResponseBody(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        code: str
-        message: str
-
-
-    class azure.mgmt.advisor.types.AdvisorScoreEntity(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('AdvisorScoreEntityProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: AdvisorScoreEntityProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.advisor.types.AdvisorScoreEntityProperties(TypedDict, total=False):
-        key "lastRefreshedScore": ForwardRef('ScoreEntity', module='types')
-        last_refreshed_score: ScoreEntity
-        timeSeries: list[TimeSeriesEntity]
-        time_series: list[TimeSeriesEntity]
-
-
-    class azure.mgmt.advisor.types.ArmErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ARMErrorResponseBody', module='types')
-        error: ARMErrorResponseBody
-
-
     class azure.mgmt.advisor.types.AssessmentResult(ProxyResource):
         key "id": str
         key "name": str
@@ -1895,7 +2041,7 @@ namespace azure.mgmt.advisor.types
         id: str
         name: str
         properties: AssessmentResultProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1910,29 +2056,16 @@ namespace azure.mgmt.advisor.types
         key "typeVersion": str
         key "workloadId": str
         key "workloadName": str
-        assessment_id: str
+        assessmentId: str
         description: str
         locale: str
         score: int
         state: str
         type: str
-        type_id: str
-        type_version: str
-        workload_id: str
-        workload_name: str
-
-
-    class azure.mgmt.advisor.types.AssessmentTypeResult(TypedDict, total=False):
-        key "description": str
-        key "id": str
-        key "locale": str
-        key "title": str
-        key "version": str
-        description: str
-        id: str
-        locale: str
-        title: str
-        version: str
+        typeId: str
+        typeVersion: str
+        workloadId: str
+        workloadName: str
 
 
     class azure.mgmt.advisor.types.ConfigData(Resource):
@@ -1944,7 +2077,7 @@ namespace azure.mgmt.advisor.types
         id: str
         name: str
         properties: ConfigDataProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -1955,7 +2088,7 @@ namespace azure.mgmt.advisor.types
         digests: list[DigestConfig]
         duration: Union[str, Duration]
         exclude: bool
-        low_cpu_threshold: Union[str, CpuThreshold]
+        lowCpuThreshold: Union[str, CpuThreshold]
 
 
     class azure.mgmt.advisor.types.DigestConfig(TypedDict, total=False):
@@ -1964,36 +2097,12 @@ namespace azure.mgmt.advisor.types
         key "language": str
         key "name": str
         key "state": Union[str, DigestConfigState]
-        action_group_resource_id: str
+        actionGroupResourceId: str
         categories: list[Union[str, Category]]
         frequency: int
         language: str
         name: str
         state: Union[str, DigestConfigState]
-
-
-    class azure.mgmt.advisor.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.advisor.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.advisor.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
 
 
     class azure.mgmt.advisor.types.ExtensionResource(Resource):
@@ -2003,57 +2112,8 @@ namespace azure.mgmt.advisor.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.advisor.types.MetadataEntity(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('MetadataEntityProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: MetadataEntityProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.advisor.types.MetadataEntityProperties(TypedDict, total=False):
-        key "displayName": str
-        applicableScenarios: list[Union[str, Scenario]]
-        applicable_scenarios: list[Union[str, Scenario]]
-        dependsOn: list[str]
-        depends_on: list[str]
-        display_name: str
-        supportedValues: list[MetadataSupportedValueDetail]
-        supported_values: list[MetadataSupportedValueDetail]
-
-
-    class azure.mgmt.advisor.types.MetadataSupportedValueDetail(TypedDict, total=False):
-        key "displayName": str
-        key "id": str
-        display_name: str
-        id: str
-
-
-    class azure.mgmt.advisor.types.OperationDisplayInfo(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
-    class azure.mgmt.advisor.types.OperationEntity(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplayInfo', module='types')
-        key "name": str
-        display: OperationDisplayInfo
-        name: str
 
 
     class azure.mgmt.advisor.types.PredictionRequest(TypedDict, total=False):
@@ -2064,30 +2124,8 @@ namespace azure.mgmt.advisor.types
     class azure.mgmt.advisor.types.PredictionRequestProperties(TypedDict, total=False):
         key "extendedProperties": Any
         key "predictionType": Union[str, PredictionType]
-        extended_properties: Any
-        prediction_type: Union[str, PredictionType]
-
-
-    class azure.mgmt.advisor.types.PredictionResponse(TypedDict, total=False):
-        key "properties": ForwardRef('PredictionResponseProperties', module='types')
-        properties: PredictionResponseProperties
-
-
-    class azure.mgmt.advisor.types.PredictionResponseProperties(TypedDict, total=False):
-        key "category": Union[str, Category]
-        key "extendedProperties": Any
-        key "impact": Union[str, Impact]
-        key "impactedField": str
-        key "lastUpdated": str
-        key "predictionType": Union[str, PredictionType]
-        key "shortDescription": ForwardRef('ShortDescription', module='types')
-        category: Union[str, Category]
-        extended_properties: Any
-        impact: Union[str, Impact]
-        impacted_field: str
-        last_updated: str
-        prediction_type: Union[str, PredictionType]
-        short_description: ShortDescription
+        extendedProperties: Any
+        predictionType: Union[str, PredictionType]
 
 
     class azure.mgmt.advisor.types.ProxyResource(Resource):
@@ -2097,7 +2135,7 @@ namespace azure.mgmt.advisor.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2106,117 +2144,13 @@ namespace azure.mgmt.advisor.types
         properties: RecommendationStatePropertiesPayload
 
 
-    class azure.mgmt.advisor.types.RecommendationProperties(TypedDict, total=False):
-        key "category": Union[str, Category]
-        key "completionType": str
-        key "control": Union[str, Control]
-        key "createdTime": str
-        key "description": str
-        key "impact": Union[str, Impact]
-        key "impactedField": str
-        key "impactedValue": str
-        key "label": str
-        key "lastRefreshed": str
-        key "lastUpdated": str
-        key "learnMoreLink": str
-        key "notes": str
-        key "postponedUntilDateTime": str
-        key "potentialBenefits": str
-        key "recommendationDismissReason": Union[str, RecommendationDismissReason]
-        key "recommendationStatus": Union[str, RecommendationStatus]
-        key "recommendationTypeId": str
-        key "resourceMetadata": ForwardRef('ResourceMetadata', module='types')
-        key "resourceWorkload": ForwardRef('RecommendationPropertiesResourceWorkload', module='types')
-        key "review": ForwardRef('RecommendationPropertiesReview', module='types')
-        key "risk": Union[str, Risk]
-        key "shortDescription": ForwardRef('ShortDescription', module='types')
-        key "sourceSystem": str
-        key "suppressionId": str
-        key "trackedProperties": ForwardRef('TrackedRecommendationProperties', module='types')
-        actions: list[dict[str, Any]]
-        category: Union[str, Category]
-        completion_type: str
-        control: Union[str, Control]
-        created_time: str
-        description: str
-        exposedMetadataProperties: dict[str, Any]
-        exposed_metadata_properties: dict[str, Any]
-        extendedProperties: dict[str, str]
-        extended_properties: dict[str, str]
-        impact: Union[str, Impact]
-        impacted_field: str
-        impacted_value: str
-        label: str
-        last_refreshed: str
-        last_updated: str
-        learn_more_link: str
-        metadata: dict[str, Any]
-        notes: str
-        postponed_until_date_time: str
-        potential_benefits: str
-        recommendation_dismiss_reason: Union[str, RecommendationDismissReason]
-        recommendation_status: Union[str, RecommendationStatus]
-        recommendation_type_id: str
-        remediation: dict[str, Any]
-        resource_metadata: ResourceMetadata
-        resource_workload: RecommendationPropertiesResourceWorkload
-        review: RecommendationPropertiesReview
-        risk: Union[str, Risk]
-        short_description: ShortDescription
-        source_system: str
-        suppression_id: str
-        tracked_properties: TrackedRecommendationProperties
-
-
-    class azure.mgmt.advisor.types.RecommendationPropertiesResourceWorkload(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        id: str
-        name: str
-
-
-    class azure.mgmt.advisor.types.RecommendationPropertiesReview(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        id: str
-        name: str
-
-
     class azure.mgmt.advisor.types.RecommendationStatePropertiesPayload(TypedDict, total=False):
         key "postponedUntilDateTime": str
         key "recommendationDismissReason": Union[str, RecommendationDismissReason]
         key "recommendationStatus": Union[str, RecommendationStatus]
-        postponed_until_date_time: str
-        recommendation_dismiss_reason: Union[str, RecommendationDismissReason]
-        recommendation_status: Union[str, RecommendationStatus]
-
-
-    class azure.mgmt.advisor.types.ResiliencyReview(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('ResiliencyReviewProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: ResiliencyReviewProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.advisor.types.ResiliencyReviewProperties(TypedDict, total=False):
-        key "publishedAt": str
-        key "recommendationsCount": int
-        key "reviewName": str
-        key "reviewStatus": Union[str, ReviewStatus]
-        key "updatedAt": str
-        key "workloadName": str
-        published_at: str
-        recommendations_count: int
-        review_name: str
-        review_status: Union[str, ReviewStatus]
-        updated_at: str
-        workload_name: str
+        postponedUntilDateTime: str
+        recommendationDismissReason: Union[str, RecommendationDismissReason]
+        recommendationStatus: Union[str, RecommendationStatus]
 
 
     class azure.mgmt.advisor.types.Resource(TypedDict, total=False):
@@ -2226,55 +2160,8 @@ namespace azure.mgmt.advisor.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
-
-
-    class azure.mgmt.advisor.types.ResourceMetadata(TypedDict, total=False):
-        key "plural": str
-        key "resourceId": str
-        key "singular": str
-        key "source": str
-        action: dict[str, Any]
-        plural: str
-        resource_id: str
-        singular: str
-        source: str
-
-
-    class azure.mgmt.advisor.types.ResourceRecommendationBase(ExtensionResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('RecommendationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: RecommendationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.advisor.types.ScoreEntity(TypedDict, total=False):
-        key "categoryCount": float
-        key "consumptionUnits": float
-        key "date": str
-        key "impactedResourceCount": float
-        key "potentialScoreIncrease": float
-        key "score": float
-        category_count: float
-        consumption_units: float
-        date: str
-        impacted_resource_count: float
-        potential_score_increase: float
-        score: float
-
-
-    class azure.mgmt.advisor.types.ShortDescription(TypedDict, total=False):
-        key "problem": str
-        key "solution": str
-        problem: str
-        solution: str
 
 
     class azure.mgmt.advisor.types.SuppressionContract(ExtensionResource):
@@ -2286,7 +2173,7 @@ namespace azure.mgmt.advisor.types
         id: str
         name: str
         properties: SuppressionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2294,8 +2181,8 @@ namespace azure.mgmt.advisor.types
         key "expirationTimeStamp": str
         key "suppressionId": str
         key "ttl": str
-        expiration_time_stamp: str
-        suppression_id: str
+        expirationTimeStamp: str
+        suppressionId: str
         ttl: str
 
 
@@ -2306,35 +2193,12 @@ namespace azure.mgmt.advisor.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
-
-
-    class azure.mgmt.advisor.types.TimeSeriesEntity(TypedDict, total=False):
-        key "aggregationLevel": Union[str, Aggregated]
-        aggregation_level: Union[str, Aggregated]
-        scoreHistory: list[ScoreEntity]
-        score_history: list[ScoreEntity]
-
-
-    class azure.mgmt.advisor.types.TrackedRecommendationProperties(TypedDict, total=False):
-        key "priority": Union[str, Priority]
-        priority: Union[str, Priority]
-
-
-    class azure.mgmt.advisor.types.WorkloadResult(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "subscriptionId": str
-        key "subscriptionName": str
-        id: str
-        name: str
-        subscription_id: str
-        subscription_name: str
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
 ```
