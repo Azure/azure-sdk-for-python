@@ -1282,8 +1282,12 @@ def write_to_private_file(file_path: Union[str, PathLike], content: str) -> None
     :param content: Content to write to the file.
     :type content: str
     """
-    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)  # cspell:ignore WRONLY CREAT
+    flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC | getattr(os, "O_NOFOLLOW", 0)  # cspell:ignore WRONLY CREAT fchmod
     with os.fdopen(os.open(file_path, flags, 0o600), "w", encoding=DefaultOpenEncoding.WRITE) as f:
+        # The mode passed to os.open only applies to new files, so also restrict a file that already exists.
+        fchmod = getattr(os, "fchmod", None)
+        if fchmod is not None:
+            fchmod(f.fileno(), 0o600)
         f.write(content)
 
 
@@ -1295,27 +1299,53 @@ def _get_current_uid() -> Optional[int]:
 def ensure_private_directory(path: Union[str, PathLike]) -> bool:
     """Create a directory if needed and check that other users cannot access it.
 
+    Windows has no owner ID or mode bits to check, so only directories in the user's local application data folder,
+    which other users cannot access, are trusted there.
+
     :param path: Path to the directory.
     :type path: Union[str, os.PathLike]
-    :return: True if the path is a directory owned by the current user that other users cannot access,
-        False otherwise.
+    :return: True if the path is a directory owned by the current user that other users cannot write to,
+        False otherwise. Read access for other users is removed.
     :rtype: bool
     """
+    uid = _get_current_uid()
+    if uid is None:
+        local_app_data = os.environ.get("LOCALAPPDATA")
+        if not local_app_data or not is_path_inside_directory(path, local_app_data):
+            return False
     try:
         os.makedirs(path, mode=0o700, exist_ok=True)
         status = os.lstat(path)
         if not stat.S_ISDIR(status.st_mode):
             return False
-        uid = _get_current_uid()
         if uid is None:
-            # The temporary directory on Windows is private to the current user.
             return True
-        if status.st_uid != uid:
+        mode = stat.S_IMODE(status.st_mode)
+        # If other users could write to the directory, they may already have added entries, so restricting access now
+        # would not make it safe.
+        if status.st_uid != uid or mode & 0o022:
             return False
-        if stat.S_IMODE(status.st_mode) & 0o077:
+        if mode & 0o077:
             os.chmod(path, 0o700)
         return True
     except OSError:
+        return False
+
+
+def is_path_inside_directory(path: Union[str, PathLike], directory: Union[str, PathLike]) -> bool:
+    """Check that a path stays inside a directory after following symlinks.
+
+    :param path: The path to check. It doesn't need to exist.
+    :type path: Union[str, os.PathLike]
+    :param directory: The directory that should contain the path.
+    :type directory: Union[str, os.PathLike]
+    :return: True if the resolved path is inside the resolved directory, False otherwise.
+    :rtype: bool
+    """
+    try:
+        return Path(directory).resolve() in Path(path).resolve().parents
+    except (OSError, RuntimeError):
+        # RuntimeError is raised for symlink loops before Python 3.13.
         return False
 
 
@@ -1395,14 +1425,20 @@ def get_valid_dot_keys_with_wildcard(
 def get_base_directory_for_cache() -> Path:
     """Get the base directory for cache files.
 
-    On POSIX systems, the directory is specific to the current user because the temporary directory can be shared.
+    The directory is specific to the current user. On POSIX systems, it is in the temporary directory, which can be
+    shared by all users. On Windows, it is in the user's local application data folder, because the temporary
+    directory can be changed to a folder that other users can access.
 
     :return: The base directory for cache files.
     :rtype: Path
     """
     uid = _get_current_uid()
-    directory_name = "azure-ai-ml" if uid is None else f"azure-ai-ml-{uid}"
-    return Path(tempfile.gettempdir()).joinpath(directory_name)
+    if uid is not None:
+        return Path(tempfile.gettempdir()).joinpath(f"azure-ai-ml-{uid}")
+    local_app_data = os.environ.get("LOCALAPPDATA")
+    if local_app_data:
+        return Path(local_app_data).joinpath("azure-ai-ml", "cache")
+    return Path(tempfile.gettempdir()).joinpath("azure-ai-ml")
 
 
 def get_versioned_base_directory_for_cache() -> Path:

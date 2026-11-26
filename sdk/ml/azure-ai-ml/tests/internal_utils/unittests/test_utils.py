@@ -96,6 +96,13 @@ class TestUtils:
         write_to_private_file(target_file_path, "test")
         assert stat.S_IMODE(target_file_path.stat().st_mode) == 0o600
 
+        existing_file_path = tmp_path / "existing.txt"
+        existing_file_path.write_text("old")
+        os.chmod(existing_file_path, 0o666)
+        write_to_private_file(existing_file_path, "new")
+        assert existing_file_path.read_text() == "new"
+        assert stat.S_IMODE(existing_file_path.stat().st_mode) == 0o600
+
         link_path = tmp_path / "link.txt"
         link_path.symlink_to(target_file_path)
         with pytest.raises(OSError):
@@ -105,6 +112,19 @@ class TestUtils:
     def test_get_base_directory_for_cache_is_per_user(self, monkeypatch) -> None:
         monkeypatch.setattr(os, "getuid", lambda: 1234, raising=False)
         assert get_base_directory_for_cache() == Path(tempfile.gettempdir()) / "azure-ai-ml-1234"
+
+    def test_cache_directory_without_user_id_must_be_in_local_app_data(self, tmp_path, monkeypatch) -> None:
+        monkeypatch.setattr("azure.ai.ml._utils.utils._get_current_uid", lambda: None)
+        local_app_data = tmp_path / "local"
+        monkeypatch.setenv("LOCALAPPDATA", str(local_app_data))
+
+        cache_root = get_base_directory_for_cache()
+        assert cache_root == local_app_data / "azure-ai-ml" / "cache"
+        assert ensure_private_directory(cache_root)
+
+        shared_directory = tmp_path / "shared" / "azure-ai-ml"
+        assert not ensure_private_directory(shared_directory)
+        assert not shared_directory.exists()
 
     def test_ensure_private_directory_rejects_directory_owned_by_another_user(self, tmp_path, monkeypatch) -> None:
         directory = tmp_path / "cache"
@@ -119,11 +139,18 @@ class TestUtils:
         assert ensure_private_directory(new_directory)
         assert stat.S_IMODE(new_directory.stat().st_mode) == 0o700
 
-        shared_directory = tmp_path / "shared"
-        shared_directory.mkdir()
-        os.chmod(shared_directory, 0o777)
-        assert ensure_private_directory(shared_directory)
-        assert stat.S_IMODE(shared_directory.stat().st_mode) == 0o700
+        readable_directory = tmp_path / "readable"
+        readable_directory.mkdir()
+        os.chmod(readable_directory, 0o755)
+        assert ensure_private_directory(readable_directory)
+        assert stat.S_IMODE(readable_directory.stat().st_mode) == 0o700
+
+        for mode in (0o775, 0o777):
+            writable_directory = tmp_path / f"writable_{mode:o}"
+            writable_directory.mkdir()
+            os.chmod(writable_directory, mode)
+            assert not ensure_private_directory(writable_directory)
+            assert stat.S_IMODE(writable_directory.stat().st_mode) == mode
 
         link = tmp_path / "link"
         link.symlink_to(new_directory, target_is_directory=True)

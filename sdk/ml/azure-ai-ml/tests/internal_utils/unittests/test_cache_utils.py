@@ -1,5 +1,6 @@
 import os
 import stat
+import subprocess
 from pathlib import Path
 from typing import Union
 
@@ -8,7 +9,6 @@ import pytest
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._utils._cache_utils import CachedNodeResolver
-from azure.ai.ml._utils.utils import get_base_directory_for_cache
 from azure.ai.ml.entities import Component, PipelineJob
 
 
@@ -52,6 +52,16 @@ class TestCacheUtils:
         resolver.resolve_nodes()
         return target_node.component
 
+    @pytest.fixture
+    def cache_root(self, tmp_path: Path, mocker) -> Path:
+        cache_root = tmp_path / "azure-ai-ml"
+        mocker.patch("azure.ai.ml._utils._cache_utils.get_base_directory_for_cache", return_value=cache_root)
+        mocker.patch(
+            "azure.ai.ml._utils._cache_utils.get_versioned_base_directory_for_cache",
+            return_value=cache_root / "1.0.0",
+        )
+        return cache_root
+
     def test_on_disk_cache_occupied(self, mock_machinelearning_client: MLClient) -> None:
         resolver = self.create_resolver(mock_machinelearning_client)
         target_cache_path = self._get_cache_path(self.get_target_node().component, resolver)
@@ -69,19 +79,18 @@ class TestCacheUtils:
             assert cur_time == os.stat(target_cache_path).st_mtime
 
     @pytest.mark.skipif(os.name == "nt", reason="POSIX file permissions are not used on Windows")
-    def test_on_disk_cache_is_private(self, mock_machinelearning_client: MLClient) -> None:
+    def test_on_disk_cache_is_private(self, mock_machinelearning_client: MLClient, cache_root: Path) -> None:
         resolver = self.create_resolver(mock_machinelearning_client)
         target_cache_path = self._get_cache_path(self.get_target_node().component, resolver)
 
         self.register_target_node_and_resolve(resolver)
         assert target_cache_path.exists()
         assert stat.S_IMODE(target_cache_path.stat().st_mode) == 0o600
-        cache_root = get_base_directory_for_cache()
         assert cache_root.stat().st_uid == os.getuid()
         assert stat.S_IMODE(cache_root.stat().st_mode) == 0o700
 
     def test_on_disk_cache_ignored_when_cache_root_is_not_private(
-        self, mock_machinelearning_client: MLClient, mocker
+        self, mock_machinelearning_client: MLClient, cache_root: Path, mocker
     ) -> None:
         resolver = self.create_resolver(mock_machinelearning_client)
         target_component = self.get_target_node().component
@@ -93,3 +102,26 @@ class TestCacheUtils:
 
         assert self.register_target_node_and_resolve(resolver) == target_component._get_anonymous_hash()
         assert target_cache_path.read_text(encoding="utf-8") == untrusted_arm_id
+
+    def test_on_disk_cache_ignored_when_cache_directory_is_redirected(
+        self, mock_machinelearning_client: MLClient, cache_root: Path, tmp_path: Path, mocker
+    ) -> None:
+        shared_directory = tmp_path / "shared"
+        cache_root.mkdir()
+        shared_directory.mkdir()
+        link = cache_root / "1.0.0"
+        if os.name == "nt":
+            # Junctions don't need the extra privileges that symlinks need on Windows.
+            subprocess.run(
+                [os.environ["COMSPEC"], "/c", "mklink", "/J", str(link), str(shared_directory)],
+                check=True,
+                capture_output=True,
+            )
+        else:
+            link.symlink_to(shared_directory, target_is_directory=True)
+        mocker.patch("azure.ai.ml._utils._cache_utils.ensure_private_directory", return_value=True)
+        resolver = self.create_resolver(mock_machinelearning_client)
+        target_component = self.get_target_node().component
+
+        assert self.register_target_node_and_resolve(resolver) == target_component._get_anonymous_hash()
+        assert not list(shared_directory.iterdir())

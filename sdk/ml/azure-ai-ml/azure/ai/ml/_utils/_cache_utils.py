@@ -19,6 +19,7 @@ from azure.ai.ml._utils.utils import (
     get_versioned_base_directory_for_cache,
     is_concurrent_component_registration_enabled,
     is_on_disk_cache_enabled,
+    is_path_inside_directory,
     is_private_preview_enabled,
     write_to_private_file,
 )
@@ -250,7 +251,10 @@ class CachedNodeResolver(object):
         """
         if self._on_disk_cache_is_private is None:
             cache_root = get_base_directory_for_cache()
-            self._on_disk_cache_is_private = ensure_private_directory(cache_root)
+            # A symlink inside the cache root could also send the cache to a directory that other users can access.
+            self._on_disk_cache_is_private = ensure_private_directory(cache_root) and is_path_inside_directory(
+                self._on_disk_cache_dir, cache_root
+            )
             if not self._on_disk_cache_is_private:
                 logger.warning(
                     "On-disk cache for components is disabled because %s is not a directory that only the "
