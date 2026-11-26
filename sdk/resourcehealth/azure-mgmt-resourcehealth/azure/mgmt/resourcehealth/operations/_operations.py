@@ -45,7 +45,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,7 +66,7 @@ def build_availability_statuses_get_by_resource_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -96,7 +96,7 @@ def build_availability_statuses_list_by_subscription_id_request(  # pylint: disa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -126,7 +126,7 @@ def build_availability_statuses_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +161,7 @@ def build_availability_statuses_list_by_resource_group_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +192,7 @@ def build_child_availability_statuses_get_by_resource_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -222,7 +222,7 @@ def build_child_availability_statuses_list_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -252,7 +252,7 @@ def build_impacted_resources_get_by_tenant_id_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -279,7 +279,7 @@ def build_impacted_resources_list_by_tenant_id_and_event_id_request(  # pylint: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -307,7 +307,7 @@ def build_impacted_resources_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -335,7 +335,7 @@ def build_impacted_resources_list_by_subscription_id_and_event_id_request(  # py
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -364,7 +364,7 @@ def build_metadata_get_entity_request(name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -388,7 +388,7 @@ def build_metadata_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -414,7 +414,7 @@ def build_event_get_by_subscription_id_and_tracking_id_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -445,7 +445,7 @@ def build_event_fetch_details_by_subscription_id_and_tracking_id_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -474,7 +474,7 @@ def build_event_fetch_billling_communication_details_by_subscription_id_and_trac
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -501,7 +501,7 @@ def build_event_get_by_tenant_id_and_tracking_id_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -531,7 +531,7 @@ def build_event_fetch_details_by_tenant_id_and_tracking_id_request(  # pylint: d
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -557,7 +557,7 @@ def build_events_list_by_subscription_id_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -587,7 +587,7 @@ def build_events_list_by_tenant_id_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -612,7 +612,7 @@ def build_events_list_by_single_resource_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -640,7 +640,7 @@ def build_security_advisory_impacted_resources_list_by_subscription_id_and_event
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -669,7 +669,7 @@ def build_security_advisory_impacted_resources_list_by_tenant_id_and_event_id_re
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -695,7 +695,7 @@ def build_emerging_issues_get_request(issue_name: Union[str, _models.IssueNamePa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -719,7 +719,7 @@ def build_emerging_issues_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -740,7 +740,7 @@ def build_child_resources_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-05-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -764,7 +764,7 @@ def build_child_resources_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -844,7 +844,7 @@ class Operations:
         return deserialized  # type: ignore
 
 
-class AvailabilityStatusesOperations:
+class AvailabilityStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1262,7 +1262,7 @@ class AvailabilityStatusesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ChildAvailabilityStatusesOperations:
+class ChildAvailabilityStatusesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1465,7 +1465,7 @@ class ChildAvailabilityStatusesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ImpactedResourcesOperations:
+class ImpactedResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1829,7 +1829,7 @@ class ImpactedResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MetadataOperations:
+class MetadataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2004,7 +2004,7 @@ class MetadataOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class EventOperations:
+class EventOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2399,7 +2399,7 @@ class EventOperations:
         return deserialized  # type: ignore
 
 
-class EventsOperations:
+class EventsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2732,7 +2732,7 @@ class EventsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=name-too-long
+class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2957,7 +2957,7 @@ class SecurityAdvisoryImpactedResourcesOperations:  # pylint: disable=name-too-l
         return ItemPaged(get_next, extract_data)
 
 
-class EmergingIssuesOperations:
+class EmergingIssuesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3132,7 +3132,7 @@ class EmergingIssuesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ChildResourcesOperations:
+class ChildResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

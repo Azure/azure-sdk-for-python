@@ -37,6 +37,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-05-01/SecurityAdvisoryImpactedResources_ListByTenantId_ListByEventId.json
+# x-ms-original-file: 2026-07-01/SecurityAdvisoryImpactedResources_ListByTenantId_ListByEventId.json
 if __name__ == "__main__":
     main()
