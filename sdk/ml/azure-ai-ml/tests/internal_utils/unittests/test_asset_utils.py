@@ -23,6 +23,7 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.constants._common import AutoDeleteCondition
 from azure.ai.ml.entities._assets.auto_delete_setting import AutoDeleteSetting
+from azure.ai.ml.entities._component.code import ComponentIgnoreFile
 from azure.ai.ml.exceptions import AssetPathException, ValidationException
 
 
@@ -71,6 +72,26 @@ def generate_link_file(base_dir: str) -> Tuple[os.PathLike, os.PathLike]:
 
     assert os.path.islink(link_file)
     return convert_windows_path_to_unix(target_file), convert_windows_path_to_unix(link_file)
+
+
+def _create_code_with_symlinked_secrets(tmp_path: Path, through_linked_parent: bool) -> Tuple[Path, Path]:
+    """Create a code folder whose .amlignore excludes a symlinked folder that points outside the code folder.
+
+    :return: The code folder, optionally reached through a symlinked parent folder, and the folder the link points to.
+    """
+    project_dir = tmp_path / "project"
+    outside_dir = tmp_path / "outside"
+    (project_dir / "code").mkdir(parents=True)
+    outside_dir.mkdir()
+    (project_dir / "code" / "main.py").write_text("print('hello')")
+    (project_dir / "code" / ".amlignore").write_text("/secrets/\n")
+    (outside_dir / "token.txt").write_text("secret")
+    (project_dir / "code" / "secrets").symlink_to(outside_dir, target_is_directory=True)
+    if not through_linked_parent:
+        return project_dir / "code", outside_dir
+    linked_project_dir = tmp_path / "linked_project"
+    linked_project_dir.symlink_to(project_dir, target_is_directory=True)
+    return linked_project_dir / "code", outside_dir
 
 
 @dataclasses.dataclass
@@ -297,6 +318,32 @@ class TestAssetUtils:
             assert list(sorted(remote_paths)) == list(
                 sorted([prefix + p for p in test_case.expected_remote_paths_without_prefix])
             )
+
+    @pytest.mark.parametrize("through_linked_parent", [False, True], ids=["direct", "linked_parent"])
+    @pytest.mark.parametrize(
+        "create_ignore_file", [get_ignore_file, ComponentIgnoreFile], ids=["ignore_file", "component_ignore_file"]
+    )
+    def test_ignore_file_applies_inside_symlinked_folder(
+        self, tmp_path: Path, through_linked_parent: bool, create_ignore_file: Callable[[Path], IgnoreFile]
+    ) -> None:
+        code_dir, _ = _create_code_with_symlinked_secrets(tmp_path, through_linked_parent)
+
+        upload_paths = get_upload_files_from_folder(code_dir, ignore_file=create_ignore_file(code_dir))
+
+        assert sorted(remote_path for _, remote_path in upload_paths) == [".amlignore", "main.py"]
+
+    @pytest.mark.parametrize("through_linked_parent", [False, True], ids=["direct", "linked_parent"])
+    def test_object_hash_skips_ignored_files_inside_symlinked_folder(
+        self, tmp_path: Path, through_linked_parent: bool
+    ) -> None:
+        code_dir, outside_dir = _create_code_with_symlinked_secrets(tmp_path, through_linked_parent)
+        ignore_file = get_ignore_file(code_dir)
+        object_hash = get_object_hash(code_dir, ignore_file)
+
+        # Uploads made while the ignored files were included used this identity, so they can't be reused.
+        assert object_hash != get_object_hash(code_dir, IgnoreFile())
+        (outside_dir / "token.txt").write_text("changed secret")
+        assert get_object_hash(code_dir, ignore_file) == object_hash
 
     def test_directory_size_with_ignore_file(self, storage_test_directory: str, amlignore_file: AmlIgnoreFile) -> None:
         base_size = get_directory_size(storage_test_directory)

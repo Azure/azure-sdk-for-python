@@ -23,11 +23,6 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
-from azure.ai.ml._utils._registry_utils import (
-    begin_create_or_update_registry_versioned_asset,
-    get_registry_versioned_asset,
-    list_registry_assets,
-)
 from azure.ai.ml._utils._asset_utils import (
     IgnoreFile,
     _archive_or_restore,
@@ -44,6 +39,11 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    get_registry_versioned_asset,
+    list_registry_assets,
+)
 from azure.ai.ml._vendor.azure_resources.operations import DeploymentsOperations
 from azure.ai.ml.constants._common import (
     DEFAULT_COMPONENT_VERSION,
@@ -690,7 +690,7 @@ class ComponentOperations(_ScopeDependentOperations):
         if isinstance(component, ComponentCodeMixin):
             with component._build_code() as code:
                 delete_two_catalog_files(code.path)
-                ignore_file = get_ignore_file(code.path) if code._ignore_file is None else ignore_file
+                ignore_file = get_ignore_file(code.path) if code._ignore_file is None else code._ignore_file
                 file_list = get_upload_files_from_folder(code.path, ignore_file=ignore_file)
                 json_stub = {}
                 json_stub["HashAlgorithm"] = "SHA256"
