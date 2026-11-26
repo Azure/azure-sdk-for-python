@@ -186,7 +186,7 @@ class _SharedTokenCacheCredential(SharedTokenCacheBase):
         account = self._get_account(self._username, self._tenant_id, is_cae=is_cae)
 
         if not claims:
-            token = self._get_cached_access_token(scopes, account, is_cae=is_cae)
+            token = self._get_cached_access_token(scopes, account, is_cae=is_cae, tenant_id=tenant_id)
             if token:
                 return token
 
