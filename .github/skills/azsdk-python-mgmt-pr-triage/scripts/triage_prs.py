@@ -327,12 +327,14 @@ def recent_reviews(client, now=None):
     runs = {}
     issues = []
     cutoff = (now or datetime.now(timezone.utc)) - RUN_WINDOW
-    created = quote(">=" + cutoff.isoformat(), safe="")
     try:
         for run in client.pages(
-            f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?per_page=100&created={created}",
+            f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?per_page=100",
             "workflow_runs",
         ):
+            if run["status"] != "completed":
+                runs[run["id"]] = run
+                continue
             try:
                 recent = timestamp(run["created_at"]) >= cutoff
             except (AttributeError, KeyError, TypeError, ValueError):
@@ -345,7 +347,7 @@ def recent_reviews(client, now=None):
     for run in runs.values():
         if run["status"] != "completed" and not run.get("pull_requests"):
             issues.append(
-                "Review activity unknown: automatic triggers blocked by a run created within the last 3 days "
+                "Review activity unknown: automatic triggers blocked by an active run "
                 f"with status `{run['status']}` and no PR association: {run['html_url']}"
             )
     return list(runs.values()), issues
@@ -493,7 +495,7 @@ def classify(row, client, workflow_id, runs, activity_issues, now=None, ignore_r
     elif activity_issues:
         row["issues"].append(
             "Review activity unknown; automatic triggering withheld to avoid duplicate reviews. "
-            "Inspect the recent workflow runs before changing any review label."
+            "Inspect the workflow runs before changing any review label."
         )
     else:
         try:
@@ -649,7 +651,7 @@ def render_report(repo, rows, issues, apply=False):
     output = [
         f"Scanned {len(rows)} open, non-draft management AutoPRs" + ("; verification incomplete." if warnings else "."),
         f"Mode: {'apply-labels' if apply else 'read-only'}.",
-        "Workflow activity window: runs created within the last 3 days (72 hours, UTC); older runs are ignored.",
+        "Workflow activity: active runs of any age; completed attempts created within the last 3 days (72 hours, UTC).",
         "",
         f"[Management review runs]({runs_url}). Point-in-time report; confirm activity before changing labels.",
     ]

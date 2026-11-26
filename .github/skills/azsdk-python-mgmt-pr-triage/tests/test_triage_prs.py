@@ -332,7 +332,7 @@ class ActivityTests(unittest.TestCase):
             runs, issues = triage.recent_reviews(client)
             endpoint, key = pages.call_args.args
             self.assertTrue(endpoint.startswith(f"repos/{REPO}/actions/workflows/{triage.WORKFLOW}/runs?"))
-            self.assertIn("created=", endpoint)
+            self.assertNotIn("created=", endpoint)
             self.assertNotIn("status=", endpoint)
             self.assertEqual(key, "workflow_runs")
             pages.assert_called_once()
@@ -363,16 +363,19 @@ class ActivityTests(unittest.TestCase):
         client = triage.GitHub(REPO)
         pages = [
             {"total_count": 2, "workflow_runs": [run()]},
-            {"total_count": 2, "workflow_runs": [dict(run("queued"), id=101)]},
+            {
+                "total_count": 2,
+                "workflow_runs": [dict(run("queued"), id=101, created_at="2026-01-01T00:00:00Z")],
+            },
         ]
         with patch.object(triage, "gh", return_value=pages):
             runs, issues = triage.recent_reviews(client)
         self.assertFalse(issues)
         self.assertEqual([item["status"] for item in runs], ["completed", "queued"])
 
-    def test_three_day_boundary_ignores_old_unassociated_queued_and_failed_runs(self):
+    def test_three_day_boundary_applies_only_to_completed_attempts(self):
         now = triage.timestamp("2026-11-26T09:00:00Z")
-        for status in ("queued", "in_progress", "completed"):
+        for status in (*triage.ACTIVE_STATUSES, "completed"):
             for created, expected in (
                 ("2026-11-23T08:59:59Z", False),
                 ("2026-11-23T09:00:00Z", True),
@@ -381,26 +384,41 @@ class ActivityTests(unittest.TestCase):
                 with self.subTest(status=status, created=created):
                     client = FakeGitHub()
                     client.workflow_runs = [
-                        dict(run(status, associated=False), created_at=created, conclusion="failure")
+                        dict(
+                            run(status, associated=False),
+                            created_at=created,
+                            conclusion="failure" if status == "completed" else None,
+                        )
                     ]
                     runs, issues = triage.recent_reviews(client, now=now)
-                    self.assertEqual(bool(runs), expected)
-                    self.assertEqual(bool(issues), expected and status != "completed")
+                    self.assertEqual(bool(runs), expected or status != "completed")
+                    self.assertEqual(bool(issues), status != "completed")
 
-    def test_old_queued_run_does_not_block_new_trigger(self):
-        client = FakeGitHub()
-        client.workflow_runs = [dict(run("queued", associated=False), created_at="2026-01-01T00:00:00Z")]
-        runs, issues = triage.recent_reviews(client)
-        item = row()
-        triage.classify(item, client, 9, runs, issues)
-        self.assertIn(1, item["queues"])
-        self.assertFalse(item["issues"])
+    def test_old_active_run_blocks_new_trigger_with_or_without_association(self):
+        for status in triage.ACTIVE_STATUSES:
+            for associated in (True, False):
+                with self.subTest(status=status, associated=associated):
+                    client = FakeGitHub()
+                    client.workflow_runs = [
+                        dict(run(status, OLD, associated=associated), created_at="2026-01-01T00:00:00Z")
+                    ]
+                    runs, issues = triage.recent_reviews(client)
+                    item = row()
+                    triage.classify(item, client, 9, runs, issues)
+                    self.assertNotIn(1, item["queues"])
+                    if associated:
+                        self.assertIn(2, item["queues"])
+                        self.assertIn(RUN_URL, item["queues"][2])
+                        self.assertFalse(item["issues"])
+                    else:
+                        self.assertIn("Review activity unknown", " ".join(item["issues"]))
+                        self.assertIn(RUN_URL, " ".join(issues))
 
     def test_missing_run_timestamp_is_unknown_not_silently_ignored(self):
         for value in (None, "invalid", "2026-11-26T09:00:00"):
             with self.subTest(value=value):
                 client = FakeGitHub()
-                client.workflow_runs = [dict(run("queued"), created_at=value)]
+                client.workflow_runs = [dict(run(), created_at=value)]
                 _, issues = triage.recent_reviews(client)
                 self.assertIn("creation time unavailable", " ".join(issues))
 
@@ -991,7 +1009,12 @@ class AutomaticLabelTests(unittest.TestCase):
                 self.assertEqual(item["label_status"], "skipped")
 
     def test_fresh_active_or_unassociated_run_prevents_writes(self):
-        for active in (run("queued"), run("waiting", associated=False)):
+        for active in (
+            run("queued"),
+            run("waiting", associated=False),
+            dict(run("waiting"), created_at="2026-01-01T00:00:00Z"),
+            dict(run("queued", associated=False), created_at="2026-01-01T00:00:00Z"),
+        ):
             with self.subTest(active=active):
                 client = LabelGitHub()
                 item = client.trigger_row()
@@ -1031,13 +1054,17 @@ class AutomaticLabelTests(unittest.TestCase):
         self.assertEqual(client.actions, [])
 
     def test_recheck_after_removal_stops_when_review_starts_or_head_changes(self):
-        for change in ("active", "head"):
+        for change in ("active", "old-active", "head"):
             with self.subTest(change=change):
                 client = LabelGitHub()
                 client.details["labels"] = [{"name": triage.REVIEW_LABEL}]
                 item = client.trigger_row()
                 if change == "active":
                     client.on_remove = lambda: client.workflow_runs.append(run("queued"))
+                elif change == "old-active":
+                    client.on_remove = lambda: client.workflow_runs.append(
+                        dict(run("waiting"), created_at="2026-01-01T00:00:00Z")
+                    )
                 else:
                     client.on_remove = lambda: client.details["head"].update(sha=OLD)
                 triage.apply_labels(client, [item], 9)
