@@ -55,6 +55,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-09-01/Volumes_CreateOrUpdate_SMB.json
+# x-ms-original-file: 2026-09-15-preview/Volumes_CreateOrUpdate_SMB.json
 if __name__ == "__main__":
     main()
