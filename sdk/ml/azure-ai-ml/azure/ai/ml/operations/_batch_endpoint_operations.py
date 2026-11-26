@@ -30,10 +30,7 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import convert_v1_dataset_to_v2, validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import (
-    _get_mfe_base_url_from_discovery_service,
-    is_private_preview_enabled,
-)
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
     AZUREML_REGEX_FORMAT,
@@ -377,7 +374,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             **self._init_kwargs,
         )
 
-        headers = EndpointInvokeFields.DEFAULT_HEADER
+        headers = dict(EndpointInvokeFields.DEFAULT_HEADER)
         ml_audience_scopes = _resource_to_scopes(_get_aml_resource_id_from_metadata())
         module_logger.debug("ml_audience_scopes used: `%s`\n", ml_audience_scopes)
         key = self._credentials.get_token(*ml_audience_scopes).token if self._credentials is not None else ""
