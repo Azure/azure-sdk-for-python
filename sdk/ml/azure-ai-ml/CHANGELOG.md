@@ -11,6 +11,7 @@
 - Validated datastore storage account names before creating storage clients.
 - Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
 - Fixed online and batch endpoint `invoke()` to build request headers for each call.
+- Validated that workspace discovery and API URLs are HTTPS Azure Machine Learning endpoints for the current cloud before sending authenticated requests.
 
 ## 1.35.1 (2026-09-30)
 

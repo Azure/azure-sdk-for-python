@@ -698,20 +698,47 @@ def _get_base_urls_from_discovery_service(
 ) -> Dict[WorkspaceDiscoveryUrlKey, str]:
     """Fetch base urls for a workspace from the discovery service.
 
+    The workspace discovery URL and the ``api`` URL it returns must be HTTPS URLs on the current cloud's Azure
+    Machine Learning API domain, because the ``api`` URL is the base URL for authenticated requests. Other URLs in
+    the response are not checked.
+
     :param WorkspaceOperations workspace_operations:
     :param str workspace_name: The name of the workspace
     :param HttpPipeline requests_pipeline: An HTTP pipeline to make requests with
     :returns: A dictionary mapping url types to base urls
     :rtype: Dict[WorkspaceDiscoveryUrlKey,str]
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if the discovery URL or the ``api`` URL is not trusted.
     """
-    discovery_url = workspace_operations.get(workspace_name).discovery_url
+    # These imports can't be placed at the top of the file because they cause a circular import
+    from azure.ai.ml._azure_environments import _get_aml_api_domain, _is_trusted_aml_api_url
+    from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-    return json.loads(
+    def _validate_url(url: Any, url_name: str) -> str:
+        if not _is_trusted_aml_api_url(url):
+            raise ValidationException(
+                message=(
+                    f"The {url_name} for workspace '{workspace_name}' is not trusted: {url!r}. Azure Machine "
+                    f"Learning only uses HTTPS URLs under '{_get_aml_api_domain()}' for the current cloud."
+                ),
+                no_personal_data_message=f"The workspace {url_name} is not trusted for the current cloud.",
+                target=ErrorTarget.WORKSPACE,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return url
+
+    discovery_url = _validate_url(workspace_operations.get(workspace_name).discovery_url, "discovery URL")
+    all_urls = json.loads(
         download_text_from_url(
             discovery_url,
             create_requests_pipeline_with_retry(requests_pipeline=requests_pipeline),
         )
     )
+    _validate_url(
+        all_urls.get(WorkspaceDiscoveryUrlKey.API) if isinstance(all_urls, dict) else None,
+        "API URL from the discovery service",
+    )
+    return all_urls
 
 
 def _get_mfe_base_url_from_discovery_service(

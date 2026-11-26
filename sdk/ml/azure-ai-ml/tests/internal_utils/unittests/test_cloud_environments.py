@@ -1,4 +1,5 @@
 import os
+
 import mock
 import pytest
 from mock import MagicMock, patch
@@ -13,9 +14,10 @@ from azure.ai.ml._azure_environments import (
     _get_default_cloud_name,
     _get_registry_discovery_endpoint_from_metadata,
     _get_storage_endpoint_from_metadata,
+    _is_trusted_aml_api_url,
     _set_cloud,
 )
-from azure.ai.ml.constants._common import ArmConstants, AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME, ArmConstants
 from azure.mgmt.core import ARMPipelineClient
 
 
@@ -158,3 +160,33 @@ class TestCloudEnvironments:
     def test_arm_misconfigured(self, mock_get):
         with pytest.raises(Exception) as e_info:
             _set_cloud("MISCONFIGURED")
+
+    @pytest.mark.parametrize(
+        "cloud_name, url, trusted",
+        [
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms/discovery", True),
+            (AzureEnvironments.ENV_DEFAULT, "https://0a1b2c3d.workspace.eastus.api.azureml.ms", True),
+            (AzureEnvironments.ENV_CHINA, "https://chinaeast2.api.ml.azure.cn/discovery", True),
+            (AzureEnvironments.ENV_US_GOVERNMENT, "https://usgovvirginia.api.ml.azure.us/discovery", True),
+            (AzureEnvironments.ENV_DEFAULT, "http://eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms.untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastusapi.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms@untrusted.invalid/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://untrusted.invalid\\@eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, "https://eastus.api.azureml.ms:8443/discovery", False),
+            (AzureEnvironments.ENV_CHINA, "https://eastus.api.azureml.ms/discovery", False),
+            (AzureEnvironments.ENV_DEFAULT, None, False),
+        ],
+    )
+    def test_is_trusted_aml_api_url(self, cloud_name, url, trusted):
+        assert _is_trusted_aml_api_url(url, cloud_name) is trusted
+
+    @mock.patch.dict(os.environ, {}, clear=True)
+    @mock.patch("azure.mgmt.core.ARMPipelineClient.send_request", side_effect=mocked_send_request_get)
+    def test_is_trusted_aml_api_url_for_custom_cloud(self, mock_get):
+        assert _is_trusted_aml_api_url("https://westus.api.ml.azure.windows.net/discovery", "TEST_ENV2")
+        assert not _is_trusted_aml_api_url("https://eastus.api.azureml.ms/discovery", "TEST_ENV2")
+
+        with mock.patch.dict(os.environ, {ArmConstants.REGISTRY_ENV_URL: "https://master.api.azureml-test.ms/"}):
+            assert _is_trusted_aml_api_url("https://master.api.azureml-test.ms/discovery", "TEST_ENV2")
