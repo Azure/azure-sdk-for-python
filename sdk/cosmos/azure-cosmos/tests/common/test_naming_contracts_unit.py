@@ -900,7 +900,10 @@ def test_type_stub_matches_the_installed_rust_module_rust():
         if isinstance(node, ast.FunctionDef):
             assert node.name != "__getattr__", "_rust.pyi must not hide undeclared exports"
             expected = _stub_parameters(node)
-            if is_test_build and node.name in ("create_item", "create_item_async", "read_item", "read_item_async"):
+            if is_test_build and node.name in (
+                "create_item", "create_item_async", "read_item", "read_item_async",
+                "upsert_item", "upsert_item_async",
+            ):
                 expected.append(("include_fault_diagnostics", inspect.Parameter.KEYWORD_ONLY, False))
             if is_test_build and node.name == "read_item_async":
                 expected.append(("_debug_lifecycle", inspect.Parameter.KEYWORD_ONLY, None))
