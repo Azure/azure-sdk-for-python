@@ -35,24 +35,24 @@ def main():
         resource_group_name="rgconfigurationmanager",
         context_name="testname",
         workflow_name="testname",
-        version_name="testname",
+        version_name="abcde",
         resource={
-            "extendedLocation": {"name": "szjrwimeqyiue", "type": "EdgeZone"},
+            "extendedLocation": {"name": "ggfwkwklvvkrmlysvvhcj", "type": "EdgeZone"},
             "properties": {
                 "specification": {},
                 "stageSpec": [
                     {
-                        "name": "amrbjd",
+                        "name": "jgldxxbuucvqlpstdbbql",
                         "specification": {},
                         "taskOption": {
-                            "concurrency": 3,
+                            "concurrency": 2,
                             "errorAction": {"maxToleratedFailures": 0, "mode": "stopOnAnyFailure"},
                         },
                         "tasks": [
                             {
-                                "name": "xxmeyvmgydbcwxqwjhadjxjod",
+                                "name": "hozvidsilycopddjfuebjglcourar",
                                 "specification": {},
-                                "targetId": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}",
+                                "targetId": "/subscriptions/612CB927-8AC8-42DD-B74E-C676C3960BA5/resourceGroups/rgconfigurationmanager/providers/Microsoft.Edge/targets/testTarget",
                             }
                         ],
                     }
@@ -64,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/WorkflowVersions_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-01-preview/WorkflowVersions_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

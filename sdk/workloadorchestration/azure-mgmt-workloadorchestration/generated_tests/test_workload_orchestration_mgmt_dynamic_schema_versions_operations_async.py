@@ -26,7 +26,7 @@ class TestWorkloadOrchestrationMgmtDynamicSchemaVersionsOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             schema_name="str",
             dynamic_schema_name="str",
-            schema_version_name="str",
+            dynamic_schema_version_name="str",
         )
 
         # please add some check logic here by yourself
@@ -40,7 +40,7 @@ class TestWorkloadOrchestrationMgmtDynamicSchemaVersionsOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 schema_name="str",
                 dynamic_schema_name="str",
-                schema_version_name="str",
+                dynamic_schema_version_name="str",
                 resource={
                     "eTag": "str",
                     "id": "str",
@@ -69,7 +69,7 @@ class TestWorkloadOrchestrationMgmtDynamicSchemaVersionsOperationsAsync(AzureMgm
             resource_group_name=resource_group.name,
             schema_name="str",
             dynamic_schema_name="str",
-            schema_version_name="str",
+            dynamic_schema_version_name="str",
             properties={
                 "eTag": "str",
                 "id": "str",
@@ -98,7 +98,7 @@ class TestWorkloadOrchestrationMgmtDynamicSchemaVersionsOperationsAsync(AzureMgm
                 resource_group_name=resource_group.name,
                 schema_name="str",
                 dynamic_schema_name="str",
-                schema_version_name="str",
+                dynamic_schema_version_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
