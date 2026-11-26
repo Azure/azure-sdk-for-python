@@ -209,7 +209,7 @@ def load_rotators(path, repo):
 
 def release_plan_links(body):
     links = []
-    for url in re.findall(r"https://[^\s<>\"']+", body or ""):
+    for url in re.findall(r"https://[^\s<>\"'\[\]()]+", body or ""):
         url = url.rstrip(").,|]")
         try:
             parsed = urlsplit(url)

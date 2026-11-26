@@ -678,6 +678,26 @@ class AdditionalQueueTests(unittest.TestCase):
         self.assertEqual(triage.release_plan_links(f"[Release plan]({PLAN_URL})"), [PLAN_URL])
         self.assertEqual(triage.release_plan_links(f"{PLAN_URL}\n{PLAN_URL}"), [PLAN_URL])
 
+    def test_release_plan_url_label_and_destination_are_separate_urls(self):
+        other_plan = PLAN_URL.replace("37904", "36087")
+        for body, expected in (
+            (f"**Release plan link:** [{PLAN_URL}]({PLAN_URL})", [PLAN_URL]),
+            (f"[{PLAN_URL}]({other_plan})", [PLAN_URL, other_plan]),
+            (f"[Release plan]({PLAN_URL})[Release plan]({other_plan})", [PLAN_URL, other_plan]),
+        ):
+            with self.subTest(body=body):
+                self.assertEqual(triage.release_plan_links(body), expected)
+
+    def test_url_labeled_release_plan_is_omitted_from_invalid_queue(self):
+        client = FakeGitHub()
+        client.details["body"] = f"**Release plan link:** [{PLAN_URL}]({PLAN_URL})"
+        item = triage.collect_pr(client, dict(SUMMARY, reviewDecision="APPROVED"))
+        triage.classify(item, client, 9, [], [])
+        self.assertEqual(item["release_plans"], [PLAN_URL])
+        self.assertNotIn(7, item["queues"])
+        report, _ = triage.render_report(REPO, [item], [])
+        self.assertNotIn("## 7. Invalid PRs without release-plan link", report)
+
     def test_missing_non_plan_and_malformed_links_are_invalid(self):
         for body in (
             None,
