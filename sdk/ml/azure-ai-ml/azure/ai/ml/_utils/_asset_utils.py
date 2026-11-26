@@ -146,6 +146,16 @@ class IgnoreFile(object):
             # 2 paths are on different drives
             return None
 
+    def _get_rel_paths(self, file_path: Union[str, os.PathLike]) -> List[Optional[str]]:
+        """Get the paths of file_path relative to the folders that the ignore rules are based on.
+
+        :param file_path: A file path
+        :type file_path: Union[str, os.PathLike]
+        :return: The relative paths. A path is None if it can't be computed.
+        :rtype: List[Optional[str]]
+        """
+        return [self._get_rel_path(file_path)]
+
     def is_file_excluded(self, file_path: Union[str, os.PathLike]) -> bool:
         """Checks if given file_path is excluded.
 
@@ -159,18 +169,20 @@ class IgnoreFile(object):
             self._path_spec = self._create_pathspec()
         if not self._path_spec:
             return False
-        file_path = self._get_rel_path(file_path)
-        if file_path is None:
-            return True
+        for rel_path in self._get_rel_paths(file_path):
+            if rel_path is None:
+                return True
 
-        norm_file = normalize_file(file_path)
-        matched = False
-        for pattern in self._path_spec:
-            if pattern.include is not None:
-                if pattern.match_file(norm_file) is not None:
-                    matched = pattern.include
+            norm_file = normalize_file(rel_path)
+            matched = False
+            for pattern in self._path_spec:
+                if pattern.include is not None:
+                    if pattern.match_file(norm_file) is not None:
+                        matched = pattern.include
+            if matched:
+                return True
 
-        return matched
+        return False
 
     @property
     def path(self) -> Union[Path, str]:
@@ -273,11 +285,21 @@ def create_catalog_files(path, json_stub):
         json.dump(json_stub, jsonFile2)
 
 
-def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
+def _get_dir_hash(
+    directory: Union[str, os.PathLike],
+    _hash: hash_type,
+    ignore_file: IgnoreFile,
+    in_tree_directory: Optional[Union[str, os.PathLike]] = None,
+) -> hash_type:
+    # directory is the resolved target of a symlinked folder, while in_tree_directory keeps the path inside the hashed
+    # folder. Like get_upload_files_from_folder, ignore rules are checked against both, so files in symlinked folders
+    # are hashed only if they're uploaded.
+    in_tree_directory_path = Path(directory if in_tree_directory is None else in_tree_directory)
     dir_contents = Path(directory).iterdir()
     sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
     for path in sorted_contents:
-        if ignore_file.is_file_excluded(path):
+        in_tree_path = in_tree_directory_path / path.name
+        if ignore_file.is_file_excluded(path) or ignore_file.is_file_excluded(in_tree_path):
             continue
         _hash.update(path.name.encode())
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
@@ -285,7 +307,7 @@ def _get_dir_hash(directory: Union[str, os.PathLike], _hash: hash_type, ignore_f
         if path.is_file():
             _hash = _get_file_hash(path, _hash)
         elif path.is_dir():
-            _hash = _get_dir_hash(path, _hash, ignore_file)
+            _hash = _get_dir_hash(path, _hash, ignore_file, in_tree_path)
     return _hash
 
 
@@ -321,7 +343,8 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 def get_object_hash(path: Union[str, os.PathLike], ignore_file: IgnoreFile = IgnoreFile()) -> str:
     _hash = hashlib.sha256(b"Initialize for october 2021 AML CLI version")  # nosec
     if Path(path).is_dir():
-        object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
+        # Resolve only the top folder, like get_upload_files_from_folder, so ignore rules match the uploaded files.
+        object_hash = _get_dir_hash(directory=Path(path).resolve(), _hash=_hash, ignore_file=ignore_file)
     else:
         if os.path.islink(path):  # ensure we're hashing the contents of the linked file
             path = _resolve_path(Path(path))

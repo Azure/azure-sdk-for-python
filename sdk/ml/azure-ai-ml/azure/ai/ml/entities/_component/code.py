@@ -41,6 +41,8 @@ class ComponentIgnoreFile(IgnoreFile):
         extra_ignore_list: Optional[List[IgnoreFile]] = None,
     ):
         self._base_path: Union[str, Path] = Path(directory_path)
+        # Upload paths are based on the resolved folder, so keep the resolved form of the base path as well.
+        self._resolved_base_path = Path(directory_path).resolve()
         self._extra_ignore_list: List[IgnoreFile] = extra_ignore_list or []
         # only the additional include file in root directory is ignored
         # additional include files in subdirectories are not processed so keep them
@@ -76,7 +78,28 @@ class ComponentIgnoreFile(IgnoreFile):
         :rtype: ComponentIgnoreFile
         """
         self._base_path = directory_path
+        self._resolved_base_path = Path(directory_path).resolve()
         return self
+
+    def _get_rel_paths(self, file_path: Union[str, os.PathLike]) -> List[Optional[str]]:
+        """Get the paths of file_path relative to the base path and to the resolved base path.
+
+        Uploaded files are enumerated from the resolved folder, so they don't match the base path when it is reached
+        through a symlinked parent folder.
+
+        :param file_path: The file path.
+        :type file_path: Union[str, os.PathLike]
+        :return: The relative paths. A path is None if it can't be computed.
+        :rtype: List[Optional[str]]
+        """
+        rel_paths = super(ComponentIgnoreFile, self)._get_rel_paths(file_path)
+        if self._resolved_base_path != Path(self.base_path).absolute():
+            try:
+                rel_paths.append(os.path.relpath(Path(file_path).absolute(), self._resolved_base_path))
+            except ValueError:
+                # the paths are on different drives
+                pass
+        return rel_paths
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Check if a file should be excluded based on the ignore file rules.
@@ -86,7 +109,9 @@ class ComponentIgnoreFile(IgnoreFile):
         :return: True if the file should be excluded, False otherwise.
         :rtype: bool
         """
-        if self._additional_includes_file_name and self._get_rel_path(file_path) == self._additional_includes_file_name:
+        if self._additional_includes_file_name and self._additional_includes_file_name in self._get_rel_paths(
+            file_path
+        ):
             return True
         for ignore_file in self._extra_ignore_list:
             if ignore_file.is_file_excluded(file_path):

@@ -1,15 +1,14 @@
+import json
 from typing import Callable
 from unittest.mock import Mock, patch
 
 import pytest
 
-from azure.ai.ml._restclient.arm_ml_service.models import (
-    ComponentContainer as ComponentContainerData,
-    ComponentContainerProperties as ComponentContainerDetails,
-    ComponentVersion as ComponentVersionData,
-    ComponentVersionProperties as ComponentVersionDetails,
-    SystemData,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentContainer as ComponentContainerData
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentContainerProperties as ComponentContainerDetails
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersion as ComponentVersionData
+from azure.ai.ml._restclient.arm_ml_service.models import ComponentVersionProperties as ComponentVersionDetails
+from azure.ai.ml._restclient.arm_ml_service.models import SystemData
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -201,3 +200,24 @@ class TestComponentOperation:
 
         latest_version_list = [item.latest_version for item in result]
         assert latest_version_list == ["1", "2", "3"]
+
+    def test_prepare_for_sign_skips_ignored_files(
+        self, mock_component_operation: ComponentOperations, tmp_path
+    ) -> None:
+        code_dir = tmp_path / "code"
+        code_dir.mkdir()
+        (code_dir / "main.py").write_text("print('hello')")
+        (code_dir / "ignored.txt").write_text("not uploaded")
+        (code_dir / ".amlignore").write_text("ignored.txt\n")
+        component = CommandComponent(
+            name="random_name",
+            version="1",
+            environment="azureml:AzureML-Minimal:1",
+            command="echo hello",
+            code=str(code_dir),
+        )
+
+        mock_component_operation.prepare_for_sign(component)
+
+        catalog = json.loads((code_dir / "catalog.json").read_text())
+        assert sorted(catalog["CatalogItems"]) == [".amlignore", "main.py"]

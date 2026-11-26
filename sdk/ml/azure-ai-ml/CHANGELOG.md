@@ -12,6 +12,7 @@
 - Fixed artifact cache path validation for component `additional_includes` on Python 3.15.
 - Fixed online and batch endpoint `invoke()` to build request headers for each call.
 - Fixed `.amlignore` and `.gitignore` rules not applying to files in symlinked folders when uploading local folders.
+- Fixed `ComponentOperations.prepare_for_sign()` listing files that ignore rules exclude from the uploaded code.
 
 ## 1.35.1 (2026-09-30)
 
