@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AdministratorProperties(_Model):
+class AdministratorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of an administrator.
 
     :ivar administrator_type: Type of the sever administrator. "ActiveDirectory"
@@ -115,7 +115,7 @@ class ProxyResource(Resource):
     """
 
 
-class AdvancedThreatProtection(ProxyResource):
+class AdvancedThreatProtection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A server's Advanced Threat Protection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -176,7 +176,7 @@ class AdvancedThreatProtection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AdvancedThreatProtectionForUpdate(_Model):
+class AdvancedThreatProtectionForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters allowed to update advanced threat protection for a server.
 
     :ivar properties: Resource update properties.
@@ -227,7 +227,7 @@ class AdvancedThreatProtectionForUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class AdvancedThreatProtectionProperties(_Model):
+class AdvancedThreatProtectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of an Advanced Threat Protection setting.
 
     :ivar creation_time: Specifies the UTC creation time of the policy.
@@ -274,7 +274,7 @@ class AdvancedThreatProtectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedThreatProtectionUpdateProperties(_Model):
+class AdvancedThreatProtectionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Advanced Threat Protection that can be updated.
 
     :ivar state: Specifies the state of the Advanced Threat Protection, whether it is enabled or
@@ -308,7 +308,7 @@ class AdvancedThreatProtectionUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureADAdministrator(ProxyResource):
+class AzureADAdministrator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Administrator.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -369,7 +369,7 @@ class AzureADAdministrator(ProxyResource):
             super().__setattr__(key, value)
 
 
-class Backup(_Model):
+class Backup(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Profile properties of a server.
 
     :ivar backup_retention_days: Backup retention days for the server.
@@ -420,7 +420,7 @@ class Backup(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupRequestBase(_Model):
+class BackupRequestBase(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupRequestBase is the base for all backup request.
 
     :ivar backup_settings: Backup Settings. Required.
@@ -450,7 +450,7 @@ class BackupRequestBase(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupAndExportRequest(BackupRequestBase):
+class BackupAndExportRequest(BackupRequestBase):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupAndExport API Request.
 
     :ivar backup_settings: Backup Settings. Required.
@@ -483,7 +483,7 @@ class BackupAndExportRequest(BackupRequestBase):
         super().__init__(*args, **kwargs)
 
 
-class BackupAndExportResponse(ProxyResource):
+class BackupAndExportResponse(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents BackupAndExportAPI Response.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -581,7 +581,7 @@ class BackupAndExportResponse(ProxyResource):
             super().__setattr__(key, value)
 
 
-class BackupAndExportResponseProperties(_Model):
+class BackupAndExportResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupAndExport Response Properties.
 
     :ivar datasource_size_in_bytes: Size of datasource in bytes.
@@ -626,7 +626,7 @@ class BackupAndExportResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProgressResponseType(_Model):
+class OperationProgressResponseType(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents the response properties specific to the operation.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -660,7 +660,9 @@ class OperationProgressResponseType(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupAndExportResponseType(OperationProgressResponseType, discriminator="BackupAndExportResponse"):
+class BackupAndExportResponseType(
+    OperationProgressResponseType, discriminator="BackupAndExportResponse"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BackupAndExport Response Properties.
 
     :ivar datasource_size_in_bytes: Size of datasource in bytes.
@@ -711,7 +713,7 @@ class BackupAndExportResponseType(OperationProgressResponseType, discriminator="
         self.object_type = ObjectType.BACKUP_AND_EXPORT_RESPONSE  # type: ignore
 
 
-class BackupSettings(_Model):
+class BackupSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Backup Settings.
 
     :ivar backup_name: The name of the backup. Required.
@@ -748,7 +750,7 @@ class BackupSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BackupStoreDetails(_Model):
+class BackupStoreDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the target where the backup content will be stored.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -781,7 +783,7 @@ class BackupStoreDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Capability(ProxyResource):
+class Capability(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a location capability set.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -908,7 +910,7 @@ class CapabilityPropertiesV2(_Model):
     """A list of supported features."""
 
 
-class Configuration(ProxyResource):
+class Configuration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Configuration.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -981,7 +983,7 @@ class Configuration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ConfigurationForBatchUpdate(_Model):
+class ConfigurationForBatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Configuration.
 
     :ivar name: Name of the configuration.
@@ -1037,7 +1039,7 @@ class ConfigurationForBatchUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ConfigurationForBatchUpdateProperties(_Model):
+class ConfigurationForBatchUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties can be updated for a configuration.
 
     :ivar value: Value of the configuration.
@@ -1070,7 +1072,7 @@ class ConfigurationForBatchUpdateProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationListForBatchUpdate(_Model):
+class ConfigurationListForBatchUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of server configurations to update.
 
     :ivar value: The list of server configurations.
@@ -1108,7 +1110,7 @@ class ConfigurationListForBatchUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationListResult(_Model):
+class ConfigurationListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a Configuration list operation.
 
     :ivar value: The Configuration items on this page.
@@ -1143,7 +1145,7 @@ class ConfigurationListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ConfigurationProperties(_Model):
+class ConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a configuration.
 
     :ivar value: Value of the configuration.
@@ -1224,7 +1226,7 @@ class ConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Database(ProxyResource):
+class Database(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a Database.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1285,7 +1287,7 @@ class Database(ProxyResource):
             super().__setattr__(key, value)
 
 
-class DatabaseProperties(_Model):
+class DatabaseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a database.
 
     :ivar charset: The charset of the database.
@@ -1318,7 +1320,7 @@ class DatabaseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataEncryption(_Model):
+class DataEncryption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The date encryption for cmk.
 
     :ivar primary_user_assigned_identity_id: Primary user identity resource id.
@@ -1440,7 +1442,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -1468,7 +1470,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricMirroringSetting(ProxyResource):
+class FabricMirroringSetting(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Fabric Mirroring settings proxy resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1509,7 +1511,7 @@ class FabricMirroringSetting(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class FabricMirroringSettingListResult(_Model):
+class FabricMirroringSettingListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a FabricMirroringSetting list operation.
 
     :ivar value: The FabricMirroringSetting items on this page. Required.
@@ -1544,7 +1546,7 @@ class FabricMirroringSettingListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FabricMirroringSettingsProperties(_Model):
+class FabricMirroringSettingsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the Fabric Mirroring settings resource.
 
     :ivar state: State of Fabric Mirroring (Enabled or Disabled). Known values are: "Enabled" and
@@ -1609,7 +1611,7 @@ class FeatureProperty(_Model):
     """feature value."""
 
 
-class FirewallRule(ProxyResource):
+class FirewallRule(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a server firewall rule.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1670,7 +1672,7 @@ class FirewallRule(ProxyResource):
             super().__setattr__(key, value)
 
 
-class FirewallRuleProperties(_Model):
+class FirewallRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server firewall rule.
 
     :ivar start_ip_address: The start IP address of the server firewall rule. Must be IPv4 format.
@@ -1707,7 +1709,9 @@ class FirewallRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FullBackupStoreDetails(BackupStoreDetails, discriminator="FullBackupStoreDetails"):
+class FullBackupStoreDetails(
+    BackupStoreDetails, discriminator="FullBackupStoreDetails"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FullBackupStoreDetails is used for scenarios where backup data is streamed/copied over to a
     storage destination.
 
@@ -1744,7 +1748,7 @@ class FullBackupStoreDetails(BackupStoreDetails, discriminator="FullBackupStoreD
         self.object_type = "FullBackupStoreDetails"  # type: ignore
 
 
-class GetPrivateDnsZoneSuffixResponse(_Model):
+class GetPrivateDnsZoneSuffixResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of get private dns zone suffix.
 
     :ivar private_dns_zone_suffix: Represents the private DNS zone suffix.
@@ -1774,7 +1778,7 @@ class GetPrivateDnsZoneSuffixResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HighAvailability(_Model):
+class HighAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """High availability properties of a server.
 
     :ivar mode: High availability mode for a server. Known values are: "Disabled", "ZoneRedundant",
@@ -1827,7 +1831,7 @@ class HighAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class HighAvailabilityValidationEstimation(_Model):
+class HighAvailabilityValidationEstimation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """High availability validation properties of a server.
 
     :ivar estimated_downtime: Estimated seconds of downtime for the deployment.
@@ -1867,7 +1871,9 @@ class HighAvailabilityValidationEstimation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportFromStorageResponseType(OperationProgressResponseType, discriminator="ImportFromStorageResponse"):
+class ImportFromStorageResponseType(
+    OperationProgressResponseType, discriminator="ImportFromStorageResponse"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImportFromStorage Response Properties.
 
     :ivar estimated_completion_time: The estimated time of operation completion.
@@ -1904,7 +1910,7 @@ class ImportFromStorageResponseType(OperationProgressResponseType, discriminator
         self.object_type = ObjectType.IMPORT_FROM_STORAGE_RESPONSE  # type: ignore
 
 
-class ImportSourceProperties(_Model):
+class ImportSourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Import source related properties.
 
     :ivar storage_type: Storage type of import source. "AzureBlob"
@@ -1950,7 +1956,7 @@ class ImportSourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LogFile(ProxyResource):
+class LogFile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a logFile.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2011,7 +2017,7 @@ class LogFile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LogFileProperties(_Model):
+class LogFileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a logFile.
 
     :ivar size_in_kb: The size in kb of the logFile.
@@ -2063,7 +2069,7 @@ class LogFileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Maintenance(ProxyResource):
+class Maintenance(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a maintenance.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2134,7 +2140,7 @@ class Maintenance(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MaintenancePolicy(_Model):
+class MaintenancePolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance policy of a server.
 
     :ivar patch_strategy: The patch strategy of this server. Known values are: "Regular" and
@@ -2165,7 +2171,7 @@ class MaintenancePolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceProperties(_Model):
+class MaintenanceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a maintenance resource.
 
     :ivar maintenance_type: A string defines maintenance type. Known values are:
@@ -2258,7 +2264,7 @@ class MaintenanceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenancePropertiesForUpdate(_Model):
+class MaintenancePropertiesForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a maintenance update parameter.
 
     :ivar maintenance_start_time: The start time for a maintenance.
@@ -2288,7 +2294,7 @@ class MaintenancePropertiesForUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceUpdate(_Model):
+class MaintenanceUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a maintenance update parameter.
 
     :ivar properties: The properties of a maintenance update parameter.
@@ -2338,7 +2344,7 @@ class MaintenanceUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window of a server.
 
     :ivar custom_window: indicates whether custom window is enabled or disabled.
@@ -2397,7 +2403,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MySQLServerIdentity(_Model):
+class MySQLServerIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties to configure Identity for Bring your Own Keys.
 
     :ivar principal_id: ObjectId from the KeyVault.
@@ -2443,7 +2449,7 @@ class MySQLServerIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MySQLServerSku(_Model):
+class MySQLServerSku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Billing information related properties of a server.
 
     :ivar name: The name of the sku, e.g. Standard_D32s_v3. Required.
@@ -2478,7 +2484,7 @@ class MySQLServerSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAvailability(_Model):
+class NameAvailability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a resource name availability.
 
     :ivar message: Error Message.
@@ -2518,7 +2524,7 @@ class NameAvailability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NameAvailabilityRequest(_Model):
+class NameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Request from client to check resource name availability.
 
     :ivar name: Resource name to verify. Required.
@@ -2551,7 +2557,7 @@ class NameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Network(_Model):
+class Network(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network related properties of a server.
 
     :ivar public_network_access: Whether or not public network access is allowed for this server.
@@ -2599,7 +2605,7 @@ class Network(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details of a REST API operation, returned from the Resource Provider Operations API.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -2680,7 +2686,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2756,7 +2762,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationProgressResult(OperationStatusResult):
+class OperationProgressResult(OperationStatusResult):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Operation Results API Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2813,7 +2819,9 @@ class OperationProgressResult(OperationStatusResult):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusExtendedResult(OperationStatusResult):
+class OperationStatusExtendedResult(
+    OperationStatusResult
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents Operation Results API Response.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -2879,7 +2887,7 @@ class PrivateEndpoint(_Model):
     """The resource identifier of the private endpoint."""
 
 
-class PrivateEndpointConnection(Resource):
+class PrivateEndpointConnection(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2941,7 +2949,7 @@ class PrivateEndpointConnection(Resource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionListResult(_Model):
+class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The response of a PrivateEndpointConnection list operation.
 
     :ivar value: The PrivateEndpointConnection items on this page. Required.
@@ -2976,7 +2984,7 @@ class PrivateEndpointConnectionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the private endpoint connection.
 
     :ivar group_ids: The group ids for the private endpoint resource.
@@ -3029,7 +3037,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(Resource):
+class PrivateLinkResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3070,7 +3078,7 @@ class PrivateLinkResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourceProperties(_Model):
+class PrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private link resource.
 
     :ivar group_id: The private link resource group id.
@@ -3108,7 +3116,7 @@ class PrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A collection of information about the state of the connection between service consumer and
     provider.
 
@@ -3155,7 +3163,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3199,7 +3207,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Server(TrackedResource):
+class Server(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a server.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3302,7 +3310,7 @@ class Server(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ServerBackup(ProxyResource):
+class ServerBackup(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server backup properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3363,7 +3371,7 @@ class ServerBackup(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerBackupProperties(_Model):
+class ServerBackupProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server backup.
 
     :ivar backup_type: Backup type.
@@ -3405,7 +3413,7 @@ class ServerBackupProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerBackupPropertiesV2(_Model):
+class ServerBackupPropertiesV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server backup.
 
     :ivar backup_name_v2: Backup name.
@@ -3462,7 +3470,7 @@ class ServerBackupPropertiesV2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerBackupV2(ProxyResource):
+class ServerBackupV2(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server backup properties.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3523,7 +3531,7 @@ class ServerBackupV2(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ServerDetachVNetParameter(_Model):
+class ServerDetachVNetParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters to detach Vnet.
 
     :ivar public_network_access: Whether or not public network access is allowed for this server.
@@ -3611,7 +3619,7 @@ class ServerEditionCapabilityV2(_Model):
     """A list of supported Skus."""
 
 
-class ServerForUpdate(_Model):
+class ServerForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Parameters allowed to update for a server.
 
     :ivar identity: The cmk identity for the server.
@@ -3689,7 +3697,7 @@ class ServerForUpdate(_Model):
             super().__setattr__(key, value)
 
 
-class ServerGtidSetParameter(_Model):
+class ServerGtidSetParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server Gtid set parameters: Replication with Global Transaction Identifiers.
 
     :ivar gtid_set: The Gtid set of server.
@@ -3717,7 +3725,7 @@ class ServerGtidSetParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerProperties(_Model):
+class ServerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of a server.
 
     :ivar administrator_login: The administrator's login name of a server. Can only be specified
@@ -3889,7 +3897,7 @@ class ServerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerPropertiesForUpdate(_Model):
+class ServerPropertiesForUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties that can be updated for a server.
 
     :ivar administrator_login_password: The password of the administrator login.
@@ -3977,7 +3985,7 @@ class ServerPropertiesForUpdate(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServerRestartParameter(_Model):
+class ServerRestartParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Server restart parameters.
 
     :ivar restart_with_failover: Whether or not failover to standby server when restarting a server
@@ -4096,7 +4104,7 @@ class SkuCapabilityV2(_Model):
     """Supported high availability mode."""
 
 
-class Storage(_Model):
+class Storage(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage Profile properties of a server.
 
     :ivar storage_size_gb: Max storage size allowed for a server.
@@ -4202,7 +4210,7 @@ class StorageEditionCapability(_Model):
     """Maximum backup interval hours."""
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -4284,7 +4292,7 @@ class UserAssignedIdentity(_Model):
     """Client Id of user assigned identity."""
 
 
-class ValidateBackupResponse(_Model):
+class ValidateBackupResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents ValidateBackup API Response.
 
     :ivar properties: The response properties of a pre backup operation.
@@ -4334,7 +4342,7 @@ class ValidateBackupResponse(_Model):
             super().__setattr__(key, value)
 
 
-class ValidateBackupResponseProperties(_Model):
+class ValidateBackupResponseProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ValidateBackup Response Properties.
 
     :ivar number_of_containers: Estimated no of storage containers required for resource data to be
@@ -4365,7 +4373,7 @@ class ValidateBackupResponseProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualNetworkSubnetUsageParameter(_Model):
+class VirtualNetworkSubnetUsageParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Virtual network subnet usage parameter.
 
     :ivar virtual_network_resource_id: Virtual network resource id.
