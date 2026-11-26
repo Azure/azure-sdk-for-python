@@ -170,6 +170,20 @@ class TestDataTransferMgmtPipelinesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_pipelines_begin_approve_transfer_flow(self, resource_group):
+        response = await (
+            await self.client.pipelines.begin_approve_transfer_flow(
+                resource_group_name=resource_group.name,
+                pipeline_name="str",
+                body={"id": ["str"], "statusReason": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_pipelines_begin_execute_action(self, resource_group):
         response = await (
             await self.client.pipelines.begin_execute_action(
@@ -190,6 +204,17 @@ class TestDataTransferMgmtPipelinesOperationsAsync(AzureMgmtRecordedTestCase):
             pipeline_name="str",
         )
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_pipelines_list_transfer_flows(self, resource_group):
+        response = self.client.pipelines.list_transfer_flows(
+            resource_group_name=resource_group.name,
+            pipeline_name="str",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -222,6 +247,20 @@ class TestDataTransferMgmtPipelinesOperationsAsync(AzureMgmtRecordedTestCase):
                 resource_group_name=resource_group.name,
                 pipeline_name="str",
                 connection={"id": "str", "statusReason": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_pipelines_begin_reject_transfer_flow(self, resource_group):
+        response = await (
+            await self.client.pipelines.begin_reject_transfer_flow(
+                resource_group_name=resource_group.name,
+                pipeline_name="str",
+                body={"id": ["str"], "statusReason": "str"},
             )
         ).result()  # call '.result()' to poll until service return final result
 

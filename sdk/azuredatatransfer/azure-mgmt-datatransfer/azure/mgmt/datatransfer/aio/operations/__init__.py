@@ -17,6 +17,8 @@ from ._operations import FlowProfilesOperations  # type: ignore
 from ._operations import PipelinesOperations  # type: ignore
 from ._operations import ConnectionsOperations  # type: ignore
 from ._operations import FlowsOperations  # type: ignore
+from ._operations import StorageTransferFlowsOperations  # type: ignore
+from ._operations import MessagingTransferFlowsOperations  # type: ignore
 from ._operations import AzureDataTransferOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
@@ -29,6 +31,8 @@ __all__ = [
     "PipelinesOperations",
     "ConnectionsOperations",
     "FlowsOperations",
+    "StorageTransferFlowsOperations",
+    "MessagingTransferFlowsOperations",
     "AzureDataTransferOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore

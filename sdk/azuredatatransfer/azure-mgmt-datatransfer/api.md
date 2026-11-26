@@ -6,8 +6,10 @@ namespace azure.mgmt.datatransfer
         connections: ConnectionsOperations
         flow_profiles: FlowProfilesOperations
         flows: FlowsOperations
+        messaging_transfer_flows: MessagingTransferFlowsOperations
         operations: Operations
         pipelines: PipelinesOperations
+        storage_transfer_flows: StorageTransferFlowsOperations
 
         def __init__(
                 self, 
@@ -39,8 +41,10 @@ namespace azure.mgmt.datatransfer.aio
         connections: ConnectionsOperations
         flow_profiles: FlowProfilesOperations
         flows: FlowsOperations
+        messaging_transfer_flows: MessagingTransferFlowsOperations
         operations: Operations
         pipelines: PipelinesOperations
+        storage_transfer_flows: StorageTransferFlowsOperations
 
         def __init__(
                 self, 
@@ -379,7 +383,7 @@ namespace azure.mgmt.datatransfer.aio.operations
             ) -> AsyncLROPoller[FlowProfile]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -425,7 +429,7 @@ namespace azure.mgmt.datatransfer.aio.operations
             ) -> AsyncLROPoller[FlowProfile]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -435,7 +439,7 @@ namespace azure.mgmt.datatransfer.aio.operations
             ) -> FlowProfile: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         def list_by_pipeline(
                 self, 
                 resource_group_name: str, 
@@ -794,6 +798,138 @@ namespace azure.mgmt.datatransfer.aio.operations
             ) -> AsyncItemPaged[Flow]: ...
 
 
+    class azure.mgmt.datatransfer.aio.operations.MessagingTransferFlowsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_disable_transfer(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_enable_transfer(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_link_remote_flow(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> MessagingTransferFlow: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[MessagingTransferFlow]: ...
+
+
     class azure.mgmt.datatransfer.aio.operations.Operations:
 
         def __init__(
@@ -846,6 +982,39 @@ namespace azure.mgmt.datatransfer.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[Connection]: ...
+
+        @overload
+        async def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        async def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        async def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
 
         @overload
         async def begin_create_or_update(
@@ -953,6 +1122,39 @@ namespace azure.mgmt.datatransfer.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[Connection]: ...
+
+        @overload
+        async def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        async def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        async def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[TransferFlowResponseBody]: ...
 
         @overload
         async def begin_update(
@@ -1070,6 +1272,171 @@ namespace azure.mgmt.datatransfer.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> SchemasListResult: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[ListTransferFlowsByPipelineRequestBody] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TransferFlowSummary]: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[ListTransferFlowsByPipelineRequestBody] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TransferFlowSummary]: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncItemPaged[TransferFlowSummary]: ...
+
+
+    class azure.mgmt.datatransfer.aio.operations.StorageTransferFlowsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_disable_transfer(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_enable_transfer(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def begin_link_remote_flow(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> StorageTransferFlow: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[StorageTransferFlow]: ...
 
 
 namespace azure.mgmt.datatransfer.models
@@ -1208,6 +1575,14 @@ namespace azure.mgmt.datatransfer.models
     class azure.mgmt.datatransfer.models.Casing(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         INSENSITIVE = "Insensitive"
         SENSITIVE = "Sensitive"
+
+
+    class azure.mgmt.datatransfer.models.CommonTransferFlowStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED_WAITING_TO_BE_LINKED = "ApprovedWaitingToBeLinked"
+        AWAITING_APPROVAL = "AwaitingApproval"
+        DISABLED = "Disabled"
+        ENABLED = "Enabled"
+        REJECTED = "Rejected"
 
 
     class azure.mgmt.datatransfer.models.Connection(TrackedResource):
@@ -1384,6 +1759,8 @@ namespace azure.mgmt.datatransfer.models
         flow_types_available: Optional[list[Union[str, FlowType]]]
         messaging_flow_type_schema_validation: Optional[Union[str, EnablementStatus]]
         messaging_flows_pricing_options: Optional[list[Union[str, FlowBillingTier]]]
+        messaging_location_mappings: Optional[list[LocationMapping]]
+        storage_location_mappings: Optional[list[LocationMapping]]
 
         @overload
         def __init__(
@@ -1395,7 +1772,9 @@ namespace azure.mgmt.datatransfer.models
                 flow_profile_data_classes_available: Optional[list[Union[str, DataClassType]]] = ..., 
                 flow_types_available: Optional[list[Union[str, FlowType]]] = ..., 
                 messaging_flow_type_schema_validation: Optional[Union[str, EnablementStatus]] = ..., 
-                messaging_flows_pricing_options: Optional[list[Union[str, FlowBillingTier]]] = ...
+                messaging_flows_pricing_options: Optional[list[Union[str, FlowBillingTier]]] = ..., 
+                messaging_location_mappings: Optional[list[LocationMapping]] = ..., 
+                storage_location_mappings: Optional[list[LocationMapping]] = ...
             ) -> None: ...
 
         @overload
@@ -1919,6 +2298,66 @@ namespace azure.mgmt.datatransfer.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.datatransfer.models.ListTransferFlowsByPipelineRequestBody(_Model):
+        flows: Optional[ListTransferFlowsRequestBody]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                flows: Optional[ListTransferFlowsRequestBody] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.ListTransferFlowsParameterBody(_Model):
+        body: Optional[ListTransferFlowsByPipelineRequestBody]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                body: Optional[ListTransferFlowsByPipelineRequestBody] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.ListTransferFlowsRequestBody(_Model):
+        data_class_types: Optional[list[Union[str, DataClassType]]]
+        status: Optional[Union[str, CommonTransferFlowStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_class_types: Optional[list[Union[str, DataClassType]]] = ..., 
+                status: Optional[Union[str, CommonTransferFlowStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.LocationMapping(_Model):
+        location: str
+        paired_location: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                location: str, 
+                paired_location: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.datatransfer.models.ManagedServiceIdentity(_Model):
         principal_id: Optional[str]
         tenant_id: Optional[str]
@@ -1959,6 +2398,76 @@ namespace azure.mgmt.datatransfer.models
                 *, 
                 billing_tier: Optional[Union[str, FlowBillingTier]] = ..., 
                 performance_priority: Optional[Union[str, EnablementStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.MessagingTransferFlow(TrackedResource):
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: str
+        name: str
+        properties: MessagingTransferFlowProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: str, 
+                properties: MessagingTransferFlowProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.MessagingTransferFlowProperties(_Model):
+        consumer_group: Optional[str]
+        flow_id: Optional[str]
+        flow_profile_name: str
+        force_disabled_status: Optional[list[Union[str, ForceDisabledStatus]]]
+        messaging_data_resource_id: str
+        messaging_options: Optional[MessagingOptions]
+        pipeline: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        remote_transfer_flow_resource_id: str
+        status: Optional[Union[str, CommonTransferFlowStatus]]
+        transfer_role: Union[str, TransferRole]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                consumer_group: Optional[str] = ..., 
+                flow_profile_name: str, 
+                messaging_data_resource_id: str, 
+                messaging_options: Optional[MessagingOptions] = ..., 
+                pipeline: str, 
+                remote_transfer_flow_resource_id: str, 
+                transfer_role: Union[str, TransferRole]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.MessagingTransferFlowsPatch(_Model):
+        identity: Optional[ManagedServiceIdentity]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                tags: Optional[dict[str, str]] = ...
             ) -> None: ...
 
         @overload
@@ -2496,6 +3005,72 @@ namespace azure.mgmt.datatransfer.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.datatransfer.models.StorageTransferFlow(TrackedResource):
+        id: str
+        identity: Optional[ManagedServiceIdentity]
+        location: str
+        name: str
+        properties: StorageTransferFlowProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                location: str, 
+                properties: StorageTransferFlowProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.StorageTransferFlowProperties(_Model):
+        flow_id: Optional[str]
+        flow_profile_name: str
+        force_disabled_status: Optional[list[Union[str, ForceDisabledStatus]]]
+        pipeline: str
+        provisioning_state: Optional[Union[str, ProvisioningState]]
+        remote_transfer_flow_resource_id: str
+        status: Optional[Union[str, CommonTransferFlowStatus]]
+        storage_data_resource_id: str
+        transfer_role: Union[str, TransferRole]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                flow_profile_name: str, 
+                pipeline: str, 
+                remote_transfer_flow_resource_id: str, 
+                storage_data_resource_id: str, 
+                transfer_role: Union[str, TransferRole]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.StorageTransferFlowsPatch(_Model):
+        identity: Optional[ManagedServiceIdentity]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                identity: Optional[ManagedServiceIdentity] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.datatransfer.models.StreamProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         RTP = "RTP"
         SRT = "SRT"
@@ -2560,7 +3135,9 @@ namespace azure.mgmt.datatransfer.models
         CONNECTION = "Connection"
         FLOW_PROFILE = "FlowProfile"
         FLOW_TYPE = "FlowType"
+        MESSAGING_TRANSFER_FLOW = "MessagingTransferFlow"
         PIPELINE = "Pipeline"
+        STORAGE_TRANSFER_FLOW = "StorageTransferFlow"
 
 
     class azure.mgmt.datatransfer.models.TextMatchingRuleset(_Model):
@@ -2613,6 +3190,89 @@ namespace azure.mgmt.datatransfer.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.TransferFlowIdBody(_Model):
+        id: str
+        status: Optional[Union[str, CommonTransferFlowStatus]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: str, 
+                status: Optional[Union[str, CommonTransferFlowStatus]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.TransferFlowRequestBody(_Model):
+        id: Optional[list[str]]
+        status_reason: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: Optional[list[str]] = ..., 
+                status_reason: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.TransferFlowResponseBody(_Model):
+        id: list[TransferFlowIdBody]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                id: list[TransferFlowIdBody]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.TransferFlowSummary(_Model):
+        data_class_type: Optional[Union[str, DataClassType]]
+        data_resource_id: Optional[str]
+        flow_profile_name: Optional[str]
+        id: str
+        pipeline: Optional[str]
+        remote_transfer_flow_resource_id: Optional[str]
+        requestor: Optional[str]
+        status: Optional[Union[str, CommonTransferFlowStatus]]
+        tenant_id: Optional[str]
+        transfer_role: Optional[Union[str, TransferRole]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                data_class_type: Optional[Union[str, DataClassType]] = ..., 
+                data_resource_id: Optional[str] = ..., 
+                flow_profile_name: Optional[str] = ..., 
+                id: str, 
+                pipeline: Optional[str] = ..., 
+                remote_transfer_flow_resource_id: Optional[str] = ..., 
+                requestor: Optional[str] = ..., 
+                status: Optional[Union[str, CommonTransferFlowStatus]] = ..., 
+                tenant_id: Optional[str] = ..., 
+                transfer_role: Optional[Union[str, TransferRole]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.datatransfer.models.TransferRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DESTINATION = "Destination"
+        SOURCE = "Source"
 
 
     class azure.mgmt.datatransfer.models.UserAssignedIdentity(_Model):
@@ -2977,7 +3637,7 @@ namespace azure.mgmt.datatransfer.operations
             ) -> LROPoller[FlowProfile]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -3023,7 +3683,7 @@ namespace azure.mgmt.datatransfer.operations
             ) -> LROPoller[FlowProfile]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'flow_profile_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -3033,7 +3693,7 @@ namespace azure.mgmt.datatransfer.operations
             ) -> FlowProfile: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview'])
+        @api_version_validation(method_added_on='2025-05-30-preview', params_added_on={'2025-05-30-preview': ['api_version', 'subscription_id', 'resource_group_name', 'pipeline_name', 'accept']}, api_versions_list=['2025-05-30-preview', '2025-10-10-preview', '2026-02-06-preview', '2026-06-29-preview'])
         def list_by_pipeline(
                 self, 
                 resource_group_name: str, 
@@ -3392,6 +4052,138 @@ namespace azure.mgmt.datatransfer.operations
             ) -> ItemPaged[Flow]: ...
 
 
+    class azure.mgmt.datatransfer.operations.MessagingTransferFlowsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name']}, api_versions_list=['2026-06-29-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_disable_transfer(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_enable_transfer(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_link_remote_flow(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: MessagingTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                messaging_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'messaging_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                messaging_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> MessagingTransferFlow: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[MessagingTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[MessagingTransferFlow]: ...
+
+
     class azure.mgmt.datatransfer.operations.Operations:
 
         def __init__(
@@ -3444,6 +4236,39 @@ namespace azure.mgmt.datatransfer.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[Connection]: ...
+
+        @overload
+        def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        def begin_approve_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
 
         @overload
         def begin_create_or_update(
@@ -3551,6 +4376,39 @@ namespace azure.mgmt.datatransfer.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[Connection]: ...
+
+        @overload
+        def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: TransferFlowRequestBody, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
+
+        @overload
+        def begin_reject_transfer_flow(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[TransferFlowResponseBody]: ...
 
         @overload
         def begin_update(
@@ -3668,6 +4526,171 @@ namespace azure.mgmt.datatransfer.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> SchemasListResult: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[ListTransferFlowsByPipelineRequestBody] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ItemPaged[TransferFlowSummary]: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[ListTransferFlowsByPipelineRequestBody] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ItemPaged[TransferFlowSummary]: ...
+
+        @overload
+        def list_transfer_flows(
+                self, 
+                resource_group_name: str, 
+                pipeline_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> ItemPaged[TransferFlowSummary]: ...
+
+
+    class azure.mgmt.datatransfer.operations.StorageTransferFlowsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlow, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name']}, api_versions_list=['2026-06-29-preview'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_disable_transfer(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_enable_transfer(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def begin_link_remote_flow(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: StorageTransferFlowsPatch, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                storage_transfer_flow: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'storage_transfer_flow_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                storage_transfer_flow_name: str, 
+                **kwargs: Any
+            ) -> StorageTransferFlow: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[StorageTransferFlow]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-06-29-preview', params_added_on={'2026-06-29-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-06-29-preview'])
+        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[StorageTransferFlow]: ...
 
 
 namespace azure.mgmt.datatransfer.types
@@ -4016,6 +5039,17 @@ namespace azure.mgmt.datatransfer.types
         pipeline: str
 
 
+    class azure.mgmt.datatransfer.types.ListTransferFlowsByPipelineRequestBody(TypedDict, total=False):
+        key "flows": ForwardRef('ListTransferFlowsRequestBody', module='types')
+        flows: ListTransferFlowsRequestBody
+
+
+    class azure.mgmt.datatransfer.types.ListTransferFlowsRequestBody(TypedDict, total=False):
+        key "status": Union[str, CommonTransferFlowStatus]
+        dataClassTypes: list[Union[str, DataClassType]]
+        status: Union[str, CommonTransferFlowStatus]
+
+
     class azure.mgmt.datatransfer.types.ManagedServiceIdentity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
@@ -4031,6 +5065,54 @@ namespace azure.mgmt.datatransfer.types
         key "performancePriority": Union[str, EnablementStatus]
         billingTier: Union[str, FlowBillingTier]
         performancePriority: Union[str, EnablementStatus]
+
+
+    class azure.mgmt.datatransfer.types.MessagingTransferFlow(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[MessagingTransferFlowProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: MessagingTransferFlowProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.datatransfer.types.MessagingTransferFlowProperties(TypedDict, total=False):
+        key "consumerGroup": str
+        key "flowId": str
+        key "flowProfileName": Required[str]
+        key "messagingDataResourceId": Required[str]
+        key "messagingOptions": ForwardRef('MessagingOptions', module='types')
+        key "pipeline": Required[str]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "remoteTransferFlowResourceId": Required[str]
+        key "status": Union[str, CommonTransferFlowStatus]
+        key "transferRole": Required[Union[str, TransferRole]]
+        consumerGroup: str
+        flowId: str
+        flowProfileName: str
+        forceDisabledStatus: list[Union[str, ForceDisabledStatus]]
+        messagingDataResourceId: str
+        messagingOptions: MessagingOptions
+        pipeline: str
+        provisioningState: Union[str, ProvisioningState]
+        remoteTransferFlowResourceId: str
+        status: Union[str, CommonTransferFlowStatus]
+        transferRole: Union[str, TransferRole]
+
+
+    class azure.mgmt.datatransfer.types.MessagingTransferFlowsPatch(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
 
 
     class azure.mgmt.datatransfer.types.MimeFilterRuleset(TypedDict, total=False):
@@ -4211,6 +5293,50 @@ namespace azure.mgmt.datatransfer.types
         value: str
 
 
+    class azure.mgmt.datatransfer.types.StorageTransferFlow(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[StorageTransferFlowProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: StorageTransferFlowProperties
+        systemData: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.datatransfer.types.StorageTransferFlowProperties(TypedDict, total=False):
+        key "flowId": str
+        key "flowProfileName": Required[str]
+        key "pipeline": Required[str]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "remoteTransferFlowResourceId": Required[str]
+        key "status": Union[str, CommonTransferFlowStatus]
+        key "storageDataResourceId": Required[str]
+        key "transferRole": Required[Union[str, TransferRole]]
+        flowId: str
+        flowProfileName: str
+        forceDisabledStatus: list[Union[str, ForceDisabledStatus]]
+        pipeline: str
+        provisioningState: Union[str, ProvisioningState]
+        remoteTransferFlowResourceId: str
+        status: Union[str, CommonTransferFlowStatus]
+        storageDataResourceId: str
+        transferRole: Union[str, TransferRole]
+
+
+    class azure.mgmt.datatransfer.types.StorageTransferFlowsPatch(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
+
+
     class azure.mgmt.datatransfer.types.StreamSourceAddresses(TypedDict, total=False):
         sourceAddresses: list[str]
 
@@ -4262,6 +5388,12 @@ namespace azure.mgmt.datatransfer.types
         systemData: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.datatransfer.types.TransferFlowRequestBody(TypedDict, total=False):
+        key "statusReason": str
+        id: list[str]
+        statusReason: str
 
 
     class azure.mgmt.datatransfer.types.UserAssignedIdentity(TypedDict, total=False):

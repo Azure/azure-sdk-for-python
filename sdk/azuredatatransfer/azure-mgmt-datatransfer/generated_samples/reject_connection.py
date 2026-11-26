@@ -42,6 +42,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-06-preview/rejectConnection.json
+# x-ms-original-file: 2026-06-29-preview/rejectConnection.json
 if __name__ == "__main__":
     main()

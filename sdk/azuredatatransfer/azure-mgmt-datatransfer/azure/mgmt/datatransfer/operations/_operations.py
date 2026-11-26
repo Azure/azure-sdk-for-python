@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_flow_profiles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +101,7 @@ def build_flow_profiles_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +133,7 @@ def build_flow_profiles_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -163,7 +163,7 @@ def build_flow_profiles_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/flowProfiles/{flowProfileName}"
     path_format_arguments = {
@@ -187,7 +187,7 @@ def build_flow_profiles_list_by_pipeline_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -215,7 +215,7 @@ def build_pipelines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -244,7 +244,7 @@ def build_pipelines_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -275,7 +275,7 @@ def build_pipelines_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +304,7 @@ def build_pipelines_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}"
     path_format_arguments = {
@@ -327,7 +327,7 @@ def build_pipelines_list_by_resource_group_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -354,7 +354,7 @@ def build_pipelines_list_by_subscription_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -381,11 +381,42 @@ def build_pipelines_approve_connection_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/approveConnection"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "pipelineName": _SERIALIZER.url("pipeline_name", pipeline_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_pipelines_approve_transfer_flow_request(  # pylint: disable=name-too-long
+    resource_group_name: str, pipeline_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/approveTransferFlow"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -412,7 +443,7 @@ def build_pipelines_execute_action_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -443,11 +474,42 @@ def build_pipelines_list_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/listFlows"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "pipelineName": _SERIALIZER.url("pipeline_name", pipeline_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_pipelines_list_transfer_flows_request(  # pylint: disable=name-too-long
+    resource_group_name: str, pipeline_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/listTransferFlows"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -474,7 +536,7 @@ def build_pipelines_list_schemas_list_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -505,11 +567,42 @@ def build_pipelines_reject_connection_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/rejectConnection"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "pipelineName": _SERIALIZER.url("pipeline_name", pipeline_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_pipelines_reject_transfer_flow_request(  # pylint: disable=name-too-long
+    resource_group_name: str, pipeline_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/pipelines/{pipelineName}/rejectTransferFlow"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -535,7 +628,7 @@ def build_connections_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -564,7 +657,7 @@ def build_connections_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -595,7 +688,7 @@ def build_connections_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -624,7 +717,7 @@ def build_connections_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/connections/{connectionName}"
     path_format_arguments = {
@@ -647,7 +740,7 @@ def build_connections_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -674,7 +767,7 @@ def build_connections_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -701,7 +794,7 @@ def build_connections_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -731,7 +824,7 @@ def build_connections_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -759,7 +852,7 @@ def build_connections_list_pending_flows_list_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -787,7 +880,7 @@ def build_flows_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -817,7 +910,7 @@ def build_flows_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -849,7 +942,7 @@ def build_flows_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -879,7 +972,7 @@ def build_flows_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/connections/{connectionName}/flows/{flowName}"
     path_format_arguments = {
@@ -903,7 +996,7 @@ def build_flows_list_by_connection_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -931,7 +1024,7 @@ def build_flows_disable_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -960,7 +1053,7 @@ def build_flows_enable_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -989,7 +1082,7 @@ def build_flows_generate_passphrase_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1018,7 +1111,7 @@ def build_flows_get_destination_endpoint_ports_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1047,7 +1140,7 @@ def build_flows_get_destination_endpoints_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1076,7 +1169,7 @@ def build_flows_get_source_addresses_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1105,7 +1198,7 @@ def build_flows_get_stream_connection_string_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1135,7 +1228,7 @@ def build_flows_link_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1167,7 +1260,7 @@ def build_flows_set_destination_endpoint_ports_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1199,7 +1292,7 @@ def build_flows_set_destination_endpoints_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1231,7 +1324,7 @@ def build_flows_set_passphrase_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1263,7 +1356,7 @@ def build_flows_set_source_addresses_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1288,6 +1381,518 @@ def build_flows_set_source_addresses_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_storage_transfer_flows_get_request(
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.AzureDataTransfer/storageTransferFlows"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_storage_transfer_flows_disable_transfer_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}/disableTransfer"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_enable_transfer_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}/enableTransfer"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_storage_transfer_flows_link_remote_flow_request(  # pylint: disable=name-too-long
+    resource_group_name: str, storage_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/storageTransferFlows/{storageTransferFlowName}/linkRemoteFlow"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "storageTransferFlowName": _SERIALIZER.url("storage_transfer_flow_name", storage_transfer_flow_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_get_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_delete_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+
+
+def build_messaging_transfer_flows_disable_transfer_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}/disableTransfer"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_enable_transfer_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}/enableTransfer"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_messaging_transfer_flows_link_remote_flow_request(  # pylint: disable=name-too-long
+    resource_group_name: str, messaging_transfer_flow_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureDataTransfer/messagingTransferFlows/{messagingTransferFlowName}/linkRemoteFlow"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "messagingTransferFlowName": _SERIALIZER.url(
+            "messaging_transfer_flow_name", messaging_transfer_flow_name, "str"
+        ),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_azure_data_transfer_list_approved_schemas_request(  # pylint: disable=name-too-long
     **kwargs: Any,
 ) -> HttpRequest:
@@ -1295,7 +1900,7 @@ def build_azure_data_transfer_list_approved_schemas_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1317,7 +1922,7 @@ def build_azure_data_transfer_list_flow_profiles_request(**kwargs: Any) -> HttpR
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1339,7 +1944,7 @@ def build_azure_data_transfer_validate_schema_request(**kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1363,7 +1968,7 @@ def build_azure_data_transfer_list_pipeline_metadata_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-06-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-29-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1520,7 +2125,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def get(
         self, resource_group_name: str, pipeline_name: str, flow_profile_name: str, **kwargs: Any
@@ -1610,7 +2215,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def _create_or_update_initial(
         self,
@@ -1801,7 +2406,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def begin_create_or_update(
         self,
@@ -1896,7 +2501,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def _update_initial(
         self,
@@ -2088,7 +2693,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "accept",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def begin_update(
         self,
@@ -2181,7 +2786,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "flow_profile_name",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, pipeline_name: str, flow_profile_name: str, **kwargs: Any
@@ -2257,7 +2862,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
                 "flow_profile_name",
             ]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, pipeline_name: str, flow_profile_name: str, **kwargs: Any
@@ -2327,7 +2932,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
         params_added_on={
             "2025-05-30-preview": ["api_version", "subscription_id", "resource_group_name", "pipeline_name", "accept"]
         },
-        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-05-30-preview", "2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def list_by_pipeline(
         self, resource_group_name: str, pipeline_name: str, **kwargs: Any
@@ -2431,7 +3036,7 @@ class FlowProfilesOperations:  # pylint: disable=docstring-missing-param
         return ItemPaged(get_next, extract_data)
 
 
-class PipelinesOperations:  # pylint: disable=docstring-missing-param
+class PipelinesOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3530,6 +4135,269 @@ class PipelinesOperations:  # pylint: disable=docstring-missing-param
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "pipeline_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _approve_transfer_flow_initial(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Union[_models.TransferFlowRequestBody, _types.TransferFlowRequestBody, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_pipelines_approve_transfer_flow_request(
+            resource_group_name=resource_group_name,
+            pipeline_name=pipeline_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_approve_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: _models.TransferFlowRequestBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Approves pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.datatransfer.models.TransferFlowRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_approve_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: _types.TransferFlowRequestBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Approves pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.datatransfer.types.TransferFlowRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_approve_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Approves pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "pipeline_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_approve_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Union[_models.TransferFlowRequestBody, _types.TransferFlowRequestBody, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Approves pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Is either a TransferFlowRequestBody type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.datatransfer.models.TransferFlowRequestBody or
+         ~azure.mgmt.datatransfer.types.TransferFlowRequestBody or IO[bytes]
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TransferFlowResponseBody] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._approve_transfer_flow_initial(
+                resource_group_name=resource_group_name,
+                pipeline_name=pipeline_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TransferFlowResponseBody, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TransferFlowResponseBody].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TransferFlowResponseBody](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
     def _execute_action_initial(
         self,
         resource_group_name: str,
@@ -3948,6 +4816,244 @@ class PipelinesOperations:  # pylint: disable=docstring-missing-param
         return deserialized  # type: ignore
 
     @overload
+    def list_transfer_flows(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Optional[_models.ListTransferFlowsByPipelineRequestBody] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> ItemPaged["_models.TransferFlowSummary"]:
+        """Lists the storage and messaging transfer flows that use the specified Pipeline, across all
+        subscriptions and tenants that use it. This is the pipeline approver view; it differs from the
+        subscription and resource group list operations, which only return the caller's own transfer
+        flows. Results do not cross clouds; the remote side of each flow is referenced only through
+        remoteTransferFlowResourceId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: Filters used to select the flow resources to be retrieved. Default value is None.
+        :type body: ~azure.mgmt.datatransfer.models.ListTransferFlowsByPipelineRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An iterator like instance of TransferFlowSummary
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.TransferFlowSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def list_transfer_flows(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Optional[_types.ListTransferFlowsByPipelineRequestBody] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> ItemPaged["_models.TransferFlowSummary"]:
+        """Lists the storage and messaging transfer flows that use the specified Pipeline, across all
+        subscriptions and tenants that use it. This is the pipeline approver view; it differs from the
+        subscription and resource group list operations, which only return the caller's own transfer
+        flows. Results do not cross clouds; the remote side of each flow is referenced only through
+        remoteTransferFlowResourceId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: Filters used to select the flow resources to be retrieved. Default value is None.
+        :type body: ~azure.mgmt.datatransfer.types.ListTransferFlowsByPipelineRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An iterator like instance of TransferFlowSummary
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.TransferFlowSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def list_transfer_flows(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> ItemPaged["_models.TransferFlowSummary"]:
+        """Lists the storage and messaging transfer flows that use the specified Pipeline, across all
+        subscriptions and tenants that use it. This is the pipeline approver view; it differs from the
+        subscription and resource group list operations, which only return the caller's own transfer
+        flows. Results do not cross clouds; the remote side of each flow is referenced only through
+        remoteTransferFlowResourceId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: Filters used to select the flow resources to be retrieved. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An iterator like instance of TransferFlowSummary
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.TransferFlowSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "pipeline_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def list_transfer_flows(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Optional[
+            Union[
+                _models.ListTransferFlowsByPipelineRequestBody, _types.ListTransferFlowsByPipelineRequestBody, IO[bytes]
+            ]
+        ] = None,
+        **kwargs: Any,
+    ) -> ItemPaged["_models.TransferFlowSummary"]:
+        """Lists the storage and messaging transfer flows that use the specified Pipeline, across all
+        subscriptions and tenants that use it. This is the pipeline approver view; it differs from the
+        subscription and resource group list operations, which only return the caller's own transfer
+        flows. Results do not cross clouds; the remote side of each flow is referenced only through
+        remoteTransferFlowResourceId.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: Filters used to select the flow resources to be retrieved. Is either a
+         ListTransferFlowsByPipelineRequestBody type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.datatransfer.models.ListTransferFlowsByPipelineRequestBody or
+         ~azure.mgmt.datatransfer.types.ListTransferFlowsByPipelineRequestBody or IO[bytes]
+        :return: An iterator like instance of TransferFlowSummary
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.TransferFlowSummary]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
+        cls: ClsType[List[_models.TransferFlowSummary]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_pipelines_list_transfer_flows_request(
+                    resource_group_name=resource_group_name,
+                    pipeline_name=pipeline_name,
+                    subscription_id=self._config.subscription_id,
+                    content_type=content_type,
+                    api_version=self._config.api_version,
+                    content=_content,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TransferFlowSummary],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @overload
     def list_schemas_list(
         self,
         resource_group_name: str,
@@ -4358,6 +5464,269 @@ class PipelinesOperations:  # pylint: disable=docstring-missing-param
                 deserialization_callback=get_long_running_output,
             )
         return LROPoller[_models.Connection](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "pipeline_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _reject_transfer_flow_initial(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Union[_models.TransferFlowRequestBody, _types.TransferFlowRequestBody, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_pipelines_reject_transfer_flow_request(
+            resource_group_name=resource_group_name,
+            pipeline_name=pipeline_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_reject_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: _models.TransferFlowRequestBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Rejects pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.datatransfer.models.TransferFlowRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_reject_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: _types.TransferFlowRequestBody,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Rejects pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.datatransfer.types.TransferFlowRequestBody
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_reject_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Rejects pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "pipeline_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_reject_transfer_flow(
+        self,
+        resource_group_name: str,
+        pipeline_name: str,
+        body: Union[_models.TransferFlowRequestBody, _types.TransferFlowRequestBody, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[_models.TransferFlowResponseBody]:
+        """Rejects pending flow request(s) associated with the specified Pipeline.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param pipeline_name: The name of the pipeline on which to operate. Required.
+        :type pipeline_name: str
+        :param body: The content of the action request. Is either a TransferFlowRequestBody type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.datatransfer.models.TransferFlowRequestBody or
+         ~azure.mgmt.datatransfer.types.TransferFlowRequestBody or IO[bytes]
+        :return: An instance of LROPoller that returns TransferFlowResponseBody. The
+         TransferFlowResponseBody is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.TransferFlowResponseBody]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TransferFlowResponseBody] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._reject_transfer_flow_initial(
+                resource_group_name=resource_group_name,
+                pipeline_name=pipeline_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.TransferFlowResponseBody, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.TransferFlowResponseBody].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.TransferFlowResponseBody](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -8387,6 +9756,2906 @@ class FlowsOperations:  # pylint: disable=docstring-missing-param,too-many-publi
         )
 
 
+class StorageTransferFlowsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
+        :attr:`storage_transfer_flows` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def get(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> _models.StorageTransferFlow:
+        """Gets StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :return: StorageTransferFlow. The StorageTransferFlow is compatible with MutableMapping
+        :rtype: ~azure.mgmt.datatransfer.models.StorageTransferFlow
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+
+        _request = build_storage_transfer_flows_get_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: Union[_models.StorageTransferFlow, _types.StorageTransferFlow, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(storage_transfer_flow, (IOBase, bytes)):
+            _content = storage_transfer_flow
+        else:
+            _content = json.dumps(storage_transfer_flow, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_storage_transfer_flows_create_or_update_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: _models.StorageTransferFlow,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Creates or updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.models.StorageTransferFlow
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: _types.StorageTransferFlow,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Creates or updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.types.StorageTransferFlow
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Creates or updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: Union[_models.StorageTransferFlow, _types.StorageTransferFlow, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Creates or updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Is either a StorageTransferFlow type or
+         a IO[bytes] type. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.models.StorageTransferFlow or
+         ~azure.mgmt.datatransfer.types.StorageTransferFlow or IO[bytes]
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                storage_transfer_flow=storage_transfer_flow,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.StorageTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.StorageTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: Union[_models.StorageTransferFlowsPatch, _types.StorageTransferFlowsPatch, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(storage_transfer_flow, (IOBase, bytes)):
+            _content = storage_transfer_flow
+        else:
+            _content = json.dumps(storage_transfer_flow, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_storage_transfer_flows_update_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: _models.StorageTransferFlowsPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.models.StorageTransferFlowsPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: _types.StorageTransferFlowsPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.types.StorageTransferFlowsPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Required.
+        :type storage_transfer_flow: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        storage_transfer_flow_name: str,
+        storage_transfer_flow: Union[_models.StorageTransferFlowsPatch, _types.StorageTransferFlowsPatch, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Updates the StorageTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :param storage_transfer_flow: StorageTransferFlow body. Is either a StorageTransferFlowsPatch
+         type or a IO[bytes] type. Required.
+        :type storage_transfer_flow: ~azure.mgmt.datatransfer.models.StorageTransferFlowsPatch or
+         ~azure.mgmt.datatransfer.types.StorageTransferFlowsPatch or IO[bytes]
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                storage_transfer_flow=storage_transfer_flow,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.StorageTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.StorageTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={"2026-06-29-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.StorageTransferFlow"]:
+        """Gets storage transfer flows in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of StorageTransferFlow
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.StorageTransferFlow]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_storage_transfer_flows_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.StorageTransferFlow],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={"2026-06-29-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.StorageTransferFlow"]:
+        """Gets storage transfer flows in a subscription.
+
+        :return: An iterator like instance of StorageTransferFlow
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.StorageTransferFlow]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_storage_transfer_flows_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.StorageTransferFlow],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_storage_transfer_flows_delete_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_delete(self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any) -> LROPoller[None]:
+        """Deletes the storage transfer flow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _disable_transfer_initial(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_storage_transfer_flows_disable_transfer_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_disable_transfer(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Stops data transfer through the specified storage transfer flow.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._disable_transfer_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.StorageTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.StorageTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _enable_transfer_initial(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_storage_transfer_flows_enable_transfer_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_enable_transfer(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Starts (or resumes) data transfer through the specified storage transfer flow. The transfer
+        flow must be approved and linked.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._enable_transfer_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.StorageTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.StorageTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _link_remote_flow_initial(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_storage_transfer_flows_link_remote_flow_request(
+            resource_group_name=resource_group_name,
+            storage_transfer_flow_name=storage_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "storage_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_link_remote_flow(
+        self, resource_group_name: str, storage_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.StorageTransferFlow]:
+        """Pairs this storage transfer flow with the storage transfer flow identified by its
+        remoteTransferFlowResourceId on the other side of the pipeline. Once both sides are linked and
+        approved, data can be transferred between them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param storage_transfer_flow_name: The name for the StorageTransferFlow to perform the
+         operation on. Required.
+        :type storage_transfer_flow_name: str
+        :return: An instance of LROPoller that returns StorageTransferFlow. The StorageTransferFlow is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.StorageTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.StorageTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._link_remote_flow_initial(
+                resource_group_name=resource_group_name,
+                storage_transfer_flow_name=storage_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.StorageTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.StorageTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.StorageTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class MessagingTransferFlowsOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.datatransfer.DataTransferMgmtClient`'s
+        :attr:`messaging_transfer_flows` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: DataTransferMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def get(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> _models.MessagingTransferFlow:
+        """Gets the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :return: MessagingTransferFlow. The MessagingTransferFlow is compatible with MutableMapping
+        :rtype: ~azure.mgmt.datatransfer.models.MessagingTransferFlow
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+
+        _request = build_messaging_transfer_flows_get_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: Union[_models.MessagingTransferFlow, _types.MessagingTransferFlow, IO[bytes]],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(messaging_transfer_flow, (IOBase, bytes)):
+            _content = messaging_transfer_flow
+        else:
+            _content = json.dumps(messaging_transfer_flow, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_messaging_transfer_flows_create_or_update_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: _models.MessagingTransferFlow,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Creates or updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.models.MessagingTransferFlow
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: _types.MessagingTransferFlow,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Creates or updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.types.MessagingTransferFlow
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Creates or updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: Union[_models.MessagingTransferFlow, _types.MessagingTransferFlow, IO[bytes]],
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Creates or updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Is either a MessagingTransferFlow
+         type or a IO[bytes] type. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.models.MessagingTransferFlow or
+         ~azure.mgmt.datatransfer.types.MessagingTransferFlow or IO[bytes]
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                messaging_transfer_flow=messaging_transfer_flow,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MessagingTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MessagingTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: Union[
+            _models.MessagingTransferFlowsPatch, _types.MessagingTransferFlowsPatch, IO[bytes]
+        ],
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(messaging_transfer_flow, (IOBase, bytes)):
+            _content = messaging_transfer_flow
+        else:
+            _content = json.dumps(messaging_transfer_flow, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_messaging_transfer_flows_update_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: _models.MessagingTransferFlowsPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.models.MessagingTransferFlowsPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: _types.MessagingTransferFlowsPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.types.MessagingTransferFlowsPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Required.
+        :type messaging_transfer_flow: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        messaging_transfer_flow_name: str,
+        messaging_transfer_flow: Union[
+            _models.MessagingTransferFlowsPatch, _types.MessagingTransferFlowsPatch, IO[bytes]
+        ],
+        **kwargs: Any,
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Updates the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :param messaging_transfer_flow: MessagingTransferFlow body. Is either a
+         MessagingTransferFlowsPatch type or a IO[bytes] type. Required.
+        :type messaging_transfer_flow: ~azure.mgmt.datatransfer.models.MessagingTransferFlowsPatch or
+         ~azure.mgmt.datatransfer.types.MessagingTransferFlowsPatch or IO[bytes]
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                messaging_transfer_flow=messaging_transfer_flow,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MessagingTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MessagingTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={"2026-06-29-preview": ["api_version", "subscription_id", "resource_group_name", "accept"]},
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, **kwargs: Any
+    ) -> ItemPaged["_models.MessagingTransferFlow"]:
+        """Gets messaging transfer flows in a resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :return: An iterator like instance of MessagingTransferFlow
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MessagingTransferFlow]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_messaging_transfer_flows_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MessagingTransferFlow],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={"2026-06-29-preview": ["api_version", "subscription_id", "accept"]},
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def list_by_subscription(self, **kwargs: Any) -> ItemPaged["_models.MessagingTransferFlow"]:
+        """Gets messaging transfer flows in a subscription.
+
+        :return: An iterator like instance of MessagingTransferFlow
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.MessagingTransferFlow]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_messaging_transfer_flows_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.MessagingTransferFlow],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _delete_initial(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_messaging_transfer_flows_delete_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_delete(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes the MessagingTransferFlow resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})  # type: ignore
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _disable_transfer_initial(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_messaging_transfer_flows_disable_transfer_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_disable_transfer(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Stops data transfer through the specified messaging transfer flow.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._disable_transfer_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MessagingTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MessagingTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _enable_transfer_initial(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_messaging_transfer_flows_enable_transfer_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_enable_transfer(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Starts (or resumes) data transfer through the specified messaging transfer flow. The transfer
+        flow must be approved and linked.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._enable_transfer_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MessagingTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MessagingTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def _link_remote_flow_initial(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_messaging_transfer_flows_link_remote_flow_request(
+            resource_group_name=resource_group_name,
+            messaging_transfer_flow_name=messaging_transfer_flow_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-06-29-preview",
+        params_added_on={
+            "2026-06-29-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "messaging_transfer_flow_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-06-29-preview"],
+    )
+    def begin_link_remote_flow(
+        self, resource_group_name: str, messaging_transfer_flow_name: str, **kwargs: Any
+    ) -> LROPoller[_models.MessagingTransferFlow]:
+        """Pairs this messaging transfer flow with the messaging transfer flow identified by its
+        remoteTransferFlowResourceId on the other side of the pipeline. Once both sides are linked and
+        approved, data can be transferred between them.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param messaging_transfer_flow_name: The name for the MessagingTransferFlow to perform the
+         operation on. Required.
+        :type messaging_transfer_flow_name: str
+        :return: An instance of LROPoller that returns MessagingTransferFlow. The MessagingTransferFlow
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.datatransfer.models.MessagingTransferFlow]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.MessagingTransferFlow] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._link_remote_flow_initial(
+                resource_group_name=resource_group_name,
+                messaging_transfer_flow_name=messaging_transfer_flow_name,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs,
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.MessagingTransferFlow, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.MessagingTransferFlow].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.MessagingTransferFlow](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
 class AzureDataTransferOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
@@ -8592,7 +12861,7 @@ class AzureDataTransferOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2025-10-10-preview",
         params_added_on={"2025-10-10-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2025-10-10-preview", "2026-02-06-preview"],
+        api_versions_list=["2025-10-10-preview", "2026-02-06-preview", "2026-06-29-preview"],
     )
     def list_flow_profiles(
         self, body: Union[_models.ListFlowProfilesRequest, _types.ListFlowProfilesRequest, IO[bytes]], **kwargs: Any
@@ -8859,7 +13128,7 @@ class AzureDataTransferOperations:  # pylint: disable=docstring-missing-param
     @api_version_validation(
         method_added_on="2026-02-06-preview",
         params_added_on={"2026-02-06-preview": ["api_version", "content_type", "accept"]},
-        api_versions_list=["2026-02-06-preview"],
+        api_versions_list=["2026-02-06-preview", "2026-06-29-preview"],
     )
     def list_pipeline_metadata(
         self,

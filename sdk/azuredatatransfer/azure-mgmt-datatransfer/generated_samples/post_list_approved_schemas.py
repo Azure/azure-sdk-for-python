@@ -36,6 +36,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-06-preview/postListApprovedSchemas.json
+# x-ms-original-file: 2026-06-29-preview/postListApprovedSchemas.json
 if __name__ == "__main__":
     main()
