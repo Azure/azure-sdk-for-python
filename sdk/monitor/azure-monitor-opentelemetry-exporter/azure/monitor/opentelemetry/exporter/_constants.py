@@ -392,6 +392,7 @@ _INSTRUMENTATION_SUPPORTING_METRICS_LIST = (
 # sampleRate
 
 _SAMPLE_RATE_KEY = "_MS.sampleRate"
+_LOG_SAMPLE_RATE_ATTR = "_azure_monitor_sample_rate"
 _SAMPLING_HASH = 5381
 _INT32_MAX: int = 2**31 - 1  # 2147483647
 _INT32_MIN: int = -(2**31)  # -2147483648

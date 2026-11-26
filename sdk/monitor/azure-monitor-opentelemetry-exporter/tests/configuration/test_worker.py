@@ -92,18 +92,18 @@ class TestConfigurationWorker(unittest.TestCase):
             finally:
                 worker.shutdown()
 
-    @patch("random.uniform")
+    @patch("random.uniform", return_value=7.5)
     def test_startup_delay_range(self, mock_random):
         """Test that startup delay is applied with correct range."""
-        mock_random.return_value = 7.5  # Middle of range
+        with patch.object(threading.Thread, "start"):
+            worker = _ConfigurationWorker(self.mock_configuration_manager)
 
-        worker = _ConfigurationWorker(self.mock_configuration_manager)
+        # Run the worker synchronously and simulate shutdown during the startup wait.
+        with patch.object(worker._shutdown_event, "wait", return_value=True) as wait:
+            worker._get_configuration()
 
-        try:
-            # Verify random.uniform was called with correct range
-            mock_random.assert_called_once_with(5.0, 15.0)
-        finally:
-            worker.shutdown()
+        mock_random.assert_called_once_with(5.0, 15.0)
+        wait.assert_called_once_with(7.5)
 
     def test_configuration_refresh_called(self):
         """Test that configuration refresh is called with correct parameters."""
