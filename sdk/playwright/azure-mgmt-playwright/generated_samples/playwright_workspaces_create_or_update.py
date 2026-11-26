@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,6 +41,7 @@ def main():
                 "regionalAffinity": "Enabled",
                 "reporting": "Enabled",
                 "storageUri": "https://examplestorageaccount.blob.core.windows.net",
+                "subnetId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummyrg/providers/Microsoft.Network/virtualNetworks/myVnet/subnets/mySubnet",
             },
             "tags": {"Team": "Dev Exp"},
         },
@@ -47,6 +49,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/PlaywrightWorkspaces_CreateOrUpdate.json
+# x-ms-original-file: 2026-08-01-preview/PlaywrightWorkspaces_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
