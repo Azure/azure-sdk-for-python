@@ -31,6 +31,7 @@ from devtools_testutils import add_header_regex_sanitizer, add_body_key_sanitize
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
