@@ -11,86 +11,10 @@
 import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
-from azure.core.exceptions import ODataV4Format
-
 from .._utils.model_base import Model as _Model, rest_field
 
 if TYPE_CHECKING:
     from .. import models as _models
-
-
-class AcknowledgeBulkOperationErrorsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The operations for which errors should be acknowledged.
-
-    :ivar operation_ids: The Bulk Action Operation Ids that identify operations for which errors
-     should be acknowledged. Required.
-    :vartype operation_ids: list[str]
-    """
-
-    operation_ids: list[str] = rest_field(
-        name="operationIds", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Bulk Action Operation Ids that identify operations for which errors should be acknowledged.
-     Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        operation_ids: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class AcknowledgeBulkOperationErrorsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The result of acknowledging errors for specified operations.
-
-    :ivar acknowledged: The Bulk Action Operation Ids that identify operations with acknowledged
-     errors. Required.
-    :vartype acknowledged: list[str]
-    :ivar not_found: The Bulk Action Operation Ids that were not found or are no longer available.
-     Required.
-    :vartype not_found: list[str]
-    :ivar skipped: The Bulk Action Operation Ids that identify operations with errors that could
-     not be acknowledged. Required.
-    :vartype skipped: list[str]
-    """
-
-    acknowledged: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Bulk Action Operation Ids that identify operations with acknowledged errors. Required."""
-    not_found: list[str] = rest_field(name="notFound", visibility=["read", "create", "update", "delete", "query"])
-    """The Bulk Action Operation Ids that were not found or are no longer available. Required."""
-    skipped: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Bulk Action Operation Ids that identify operations with errors that could not be
-     acknowledged. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        acknowledged: list[str],
-        not_found: list[str],
-        skipped: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class AdditionalCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -1057,36 +981,6 @@ class BulkCreateProperties(_Model):  # pylint: disable=docstring-keyword-should-
         super().__init__(*args, **kwargs)
 
 
-class CancelOccurrenceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for canceling a recurring bulk action occurrence.
-
-    :ivar resource_ids: The resources for which operations should be canceled. An empty array
-     cancels all operations for all resources for the occurrence. Required.
-    :vartype resource_ids: list[str]
-    """
-
-    resource_ids: list[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
-    """The resources for which operations should be canceled. An empty array cancels all operations
-     for all resources for the occurrence. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_ids: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class CancelOperationsContent(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The eligible operations to cancel.
 
@@ -1664,40 +1558,6 @@ class DeallocateResourceOperationResponse(_Model):  # pylint: disable=docstring-
         super().__init__(*args, **kwargs)
 
 
-class DelayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Request body for delaying a recurring bulk action occurrence.
-
-    :ivar delay: The new date and time for the occurrence, including the UTC offset. Required.
-    :vartype delay: ~datetime.datetime
-    :ivar resource_ids: The resources to delay. An empty array delays all resources in the
-     occurrence. Required.
-    :vartype resource_ids: list[str]
-    """
-
-    delay: datetime.datetime = rest_field(visibility=["read", "create", "update", "delete", "query"], format="rfc3339")
-    """The new date and time for the occurrence, including the UTC offset. Required."""
-    resource_ids: list[str] = rest_field(name="resourceIds", visibility=["read", "create", "update", "delete", "query"])
-    """The resources to delay. An empty array delays all resources in the occurrence. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        delay: datetime.datetime,
-        resource_ids: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class DeleteResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The result of a bulk delete action.
 
@@ -2070,32 +1930,23 @@ class ExecuteDeallocateContent(_Model):  # pylint: disable=docstring-keyword-sho
 
     :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
-    :ivar resources_with_context: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
     """
 
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution settings for the bulk action. Required."""
-    resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target virtual machines."""
-    resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
-        name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: "_models.Resources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target virtual machines. Required."""
 
     @overload
     def __init__(
         self,
         *,
         execution_parameters: "_models.ExecutionParameters",
-        resources: Optional["_models.Resources"] = None,
-        resources_with_context: Optional["_models.ResourcesWithContext"] = None,
+        resources: "_models.Resources",
     ) -> None: ...
 
     @overload
@@ -2114,11 +1965,8 @@ class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-
 
     :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
-    :ivar resources_with_context: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
     :ivar force_deletion: Indicates whether Bulk Actions uses forced deletion for the target
      virtual machines.
     :vartype force_deletion: bool
@@ -2128,13 +1976,8 @@ class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution settings for the bulk action. Required."""
-    resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target virtual machines."""
-    resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
-        name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: "_models.Resources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target virtual machines. Required."""
     force_deletion: Optional[bool] = rest_field(
         name="forceDeletion", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2145,8 +1988,7 @@ class ExecuteDeleteContent(_Model):  # pylint: disable=docstring-keyword-should-
         self,
         *,
         execution_parameters: "_models.ExecutionParameters",
-        resources: Optional["_models.Resources"] = None,
-        resources_with_context: Optional["_models.ResourcesWithContext"] = None,
+        resources: "_models.Resources",
         force_deletion: Optional[bool] = None,
     ) -> None: ...
 
@@ -2166,83 +2008,23 @@ class ExecuteHibernateContent(_Model):  # pylint: disable=docstring-keyword-shou
 
     :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
-    :ivar resources_with_context: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
     """
 
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution settings for the bulk action. Required."""
-    resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target virtual machines."""
-    resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
-        name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: "_models.Resources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target virtual machines. Required."""
 
     @overload
     def __init__(
         self,
         *,
         execution_parameters: "_models.ExecutionParameters",
-        resources: Optional["_models.Resources"] = None,
-        resources_with_context: Optional["_models.ResourcesWithContext"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ExecuteReimageRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The virtual machines and configuration for a bulk reimage action.
-
-    :ivar execution_parameters: The execution settings for the bulk action. Required.
-    :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The target virtual machines.
-    :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
-    :ivar resources_with_context: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
-    :ivar reimage_parameters: The shared and per-virtual-machine reimage configuration.
-    :vartype reimage_parameters: ~azure.mgmt.compute.bulkaction.models.ReimagePayload
-    """
-
-    execution_parameters: "_models.ExecutionParameters" = rest_field(
-        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The execution settings for the bulk action. Required."""
-    resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target virtual machines."""
-    resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
-        name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
-    reimage_parameters: Optional["_models.ReimagePayload"] = rest_field(
-        name="reimageParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The shared and per-virtual-machine reimage configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        execution_parameters: "_models.ExecutionParameters",
-        resources: Optional["_models.Resources"] = None,
-        resources_with_context: Optional["_models.ResourcesWithContext"] = None,
-        reimage_parameters: Optional["_models.ReimagePayload"] = None,
+        resources: "_models.Resources",
     ) -> None: ...
 
     @overload
@@ -2261,32 +2043,23 @@ class ExecuteStartContent(_Model):  # pylint: disable=docstring-keyword-should-m
 
     :ivar execution_parameters: The execution settings for the bulk action. Required.
     :vartype execution_parameters: ~azure.mgmt.compute.bulkaction.models.ExecutionParameters
-    :ivar resources: The target virtual machines.
+    :ivar resources: The target virtual machines. Required.
     :vartype resources: ~azure.mgmt.compute.bulkaction.models.Resources
-    :ivar resources_with_context: The resources for the request with resource context information.
-     Cannot be provided together with ``resources`` - exactly one must be specified.
-    :vartype resources_with_context: ~azure.mgmt.compute.bulkaction.models.ResourcesWithContext
     """
 
     execution_parameters: "_models.ExecutionParameters" = rest_field(
         name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
     )
     """The execution settings for the bulk action. Required."""
-    resources: Optional["_models.Resources"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The target virtual machines."""
-    resources_with_context: Optional["_models.ResourcesWithContext"] = rest_field(
-        name="resourcesWithContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources for the request with resource context information. Cannot be provided together
-     with ``resources`` - exactly one must be specified."""
+    resources: "_models.Resources" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target virtual machines. Required."""
 
     @overload
     def __init__(
         self,
         *,
         execution_parameters: "_models.ExecutionParameters",
-        resources: Optional["_models.Resources"] = None,
-        resources_with_context: Optional["_models.ResourcesWithContext"] = None,
+        resources: "_models.Resources",
     ) -> None: ...
 
     @overload
@@ -2396,51 +2169,6 @@ class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-matc
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ExtensionResource(Resource):
-    """The base extension resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    """
 
 
 class FallbackOperationInfo(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
@@ -3032,6 +2760,34 @@ class LinuxVMGuestPatchAutomaticByPlatformSettings(
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
 class ProxyResource(Resource):
     """Proxy Resource.
 
@@ -3073,8 +2829,6 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
     :ivar placement: The availability zone placement constraints applied to the virtual machines
      created by the BulkCreate operation.
     :vartype placement: ~azure.mgmt.compute.bulkaction.models.Placement
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.compute.bulkaction.models.ManagedServiceIdentity
     :ivar plan: Details of the resource plan.
@@ -3094,8 +2848,6 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
     placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create"])
     """The availability zone placement constraints applied to the virtual machines created by the
      BulkCreate operation."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3111,7 +2863,6 @@ class LocationBasedBulkCreate(ProxyResource):  # pylint: disable=docstring-keywo
         zones: Optional[list[str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         placement: Optional["_models.Placement"] = None,
-        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         plan: Optional["_models.Plan"] = None,
     ) -> None: ...
@@ -3151,8 +2902,6 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
     :ivar placement: The availability zone placement constraints applied to the virtual machines
      created by the BulkCreateCustom operation.
     :vartype placement: ~azure.mgmt.compute.bulkaction.models.Placement
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.compute.bulkaction.models.ManagedServiceIdentity
     :ivar plan: Details of the resource plan.
@@ -3172,8 +2921,6 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
     placement: Optional["_models.Placement"] = rest_field(visibility=["read", "create"])
     """The availability zone placement constraints applied to the virtual machines created by the
      BulkCreateCustom operation."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
     identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3189,7 +2936,6 @@ class LocationBasedBulkCreateCustom(ProxyResource):  # pylint: disable=docstring
         zones: Optional[list[str]] = None,
         extended_location: Optional["_models.ExtendedLocation"] = None,
         placement: Optional["_models.Placement"] = None,
-        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.ManagedServiceIdentity"] = None,
         plan: Optional["_models.Plan"] = None,
     ) -> None: ...
@@ -3424,326 +3170,6 @@ class NetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-
         network_interfaces: Optional[list["_models.NetworkInterfaceReference"]] = None,
         network_api_version: Optional[Union[str, "_models.NetworkApiVersion"]] = None,
         network_interface_configurations: Optional[list["_models.VirtualMachineNetworkInterfaceConfiguration"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class NotificationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Settings for notifications about upcoming recurring bulk action operations.
-
-    :ivar destination: The notification destination. For email notifications, specify a valid email
-     address. Required.
-    :vartype destination: str
-    :ivar type: The notification delivery method. Required. "Email"
-    :vartype type: str or ~azure.mgmt.compute.bulkaction.models.NotificationType
-    :ivar language: The language used for the notification. Required. "en-us"
-    :vartype language: str or ~azure.mgmt.compute.bulkaction.models.Language
-    :ivar disabled: If true, notifications to this destination are disabled.
-    :vartype disabled: bool
-    """
-
-    destination: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The notification destination. For email notifications, specify a valid email address. Required."""
-    type: Union[str, "_models.NotificationType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The notification delivery method. Required. \"Email\""""
-    language: Union[str, "_models.Language"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The language used for the notification. Required. \"en-us\""""
-    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """If true, notifications to this destination are disabled."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        destination: str,
-        type: Union[str, "_models.NotificationType"],
-        language: Union[str, "_models.Language"],
-        disabled: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class Occurrence(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """One scheduled execution of a recurring bulk action.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.compute.bulkaction.models.OccurrenceProperties
-    """
-
-    properties: Optional["_models.OccurrenceProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.OccurrenceProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OccurrenceExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """An occurrence associated with a specific compute resource.
-
-    :ivar resource_id: The Azure resource ID of the targeted virtual machine. Required.
-    :vartype resource_id: str
-    :ivar notification_settings: Notification settings that apply only to this resource.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    :ivar scheduled_time: Read-only. The UTC date and time when the operation is scheduled for this
-     resource. Required.
-    :vartype scheduled_time: ~datetime.datetime
-    :ivar provisioning_state: Read-only. The current state of the operation for this resource.
-     Known values are: "Succeeded", "Failed", "Canceled", "Created", "Scheduled", "Cancelling",
-     "Rescheduling", and "InvalidState".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState
-    :ivar error_details: Read-only. Error details when the operation fails for this resource.
-    :vartype error_details: ~azure.core.ODataV4Format
-    :ivar scheduled_action_id: The Azure resource ID of the recurring bulk action that owns the
-     occurrence. Required.
-    :vartype scheduled_action_id: str
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the targeted virtual machine. Required."""
-    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply only to this resource."""
-    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
-    """Read-only. The UTC date and time when the operation is scheduled for this resource. Required."""
-    provisioning_state: Optional[Union[str, "_models.OccurrenceResourceProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Read-only. The current state of the operation for this resource. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"Created\", \"Scheduled\", \"Cancelling\",
-     \"Rescheduling\", and \"InvalidState\"."""
-    error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
-    """Read-only. Error details when the operation fails for this resource."""
-    scheduled_action_id: str = rest_field(
-        name="scheduledActionId", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Azure resource ID of the recurring bulk action that owns the occurrence. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        scheduled_action_id: str,
-        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OccurrenceExtensionResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A recurring bulk action occurrence associated with a specific compute resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.compute.bulkaction.models.OccurrenceExtensionProperties
-    """
-
-    properties: Optional["_models.OccurrenceExtensionProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.OccurrenceExtensionProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OccurrenceProperties(_Model):
-    """Properties of a recurring bulk action occurrence.
-
-    :ivar scheduled_time: Read-only. The UTC date and time when the occurrence is scheduled to run.
-     Required.
-    :vartype scheduled_time: ~datetime.datetime
-    :ivar result_summary: Read-only. The result summary after the occurrence reaches a final state.
-     Required.
-    :vartype result_summary: ~azure.mgmt.compute.bulkaction.models.OccurrenceResultSummary
-    :ivar provisioning_state: Read-only. The current state of the occurrence. Known values are:
-     "Created", "Rescheduling", "Scheduled", "Succeeded", "Failed", "Cancelling", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.compute.bulkaction.models.OccurrenceState
-    """
-
-    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
-    """Read-only. The UTC date and time when the occurrence is scheduled to run. Required."""
-    result_summary: "_models.OccurrenceResultSummary" = rest_field(name="resultSummary", visibility=["read"])
-    """Read-only. The result summary after the occurrence reaches a final state. Required."""
-    provisioning_state: Optional[Union[str, "_models.OccurrenceState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Read-only. The current state of the occurrence. Known values are: \"Created\",
-     \"Rescheduling\", \"Scheduled\", \"Succeeded\", \"Failed\", \"Cancelling\", and \"Canceled\"."""
-
-
-class OccurrenceResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Scheduling and status details for a resource included in a recurring bulk action occurrence.
-
-    :ivar name: Read-only. The name of the association resource. Required.
-    :vartype name: str
-    :ivar id: Read-only. The Azure resource ID of the association resource. Required.
-    :vartype id: str
-    :ivar type: Read-only. The Azure resource type of the associated resource.
-    :vartype type: str
-    :ivar resource_id: The Azure resource ID of the targeted virtual machine. Required.
-    :vartype resource_id: str
-    :ivar notification_settings: Notification settings that apply only to this resource.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    :ivar scheduled_time: Read-only. The UTC date and time when the operation is scheduled for this
-     resource. Required.
-    :vartype scheduled_time: ~datetime.datetime
-    :ivar provisioning_state: Read-only. The current state of the operation for this resource.
-     Known values are: "Succeeded", "Failed", "Canceled", "Created", "Scheduled", "Cancelling",
-     "Rescheduling", and "InvalidState".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.OccurrenceResourceProvisioningState
-    :ivar error_details: Read-only. Error details when the operation fails for this resource.
-    :vartype error_details: ~azure.core.ODataV4Format
-    """
-
-    name: str = rest_field(visibility=["read"])
-    """Read-only. The name of the association resource. Required."""
-    id: str = rest_field(visibility=["read"])
-    """Read-only. The Azure resource ID of the association resource. Required."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Read-only. The Azure resource type of the associated resource."""
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the targeted virtual machine. Required."""
-    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply only to this resource."""
-    scheduled_time: datetime.datetime = rest_field(name="scheduledTime", visibility=["read"], format="rfc3339")
-    """Read-only. The UTC date and time when the operation is scheduled for this resource. Required."""
-    provisioning_state: Optional[Union[str, "_models.OccurrenceResourceProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Read-only. The current state of the operation for this resource. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"Created\", \"Scheduled\", \"Cancelling\",
-     \"Rescheduling\", and \"InvalidState\"."""
-    error_details: Optional[ODataV4Format] = rest_field(name="errorDetails", visibility=["read"])
-    """Read-only. Error details when the operation fails for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class OccurrenceResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Summary of results for a recurring bulk action occurrence.
-
-    :ivar total: The number of resources targeted by the occurrence. Required.
-    :vartype total: int
-    :ivar statuses: Resource counts grouped by result code. Required.
-    :vartype statuses: list[~azure.mgmt.compute.bulkaction.models.ResourceResultSummary]
-    """
-
-    total: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of resources targeted by the occurrence. Required."""
-    statuses: list["_models.ResourceResultSummary"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Resource counts grouped by result code. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        total: int,
-        statuses: list["_models.ResourceResultSummary"],
     ) -> None: ...
 
     @overload
@@ -4262,58 +3688,6 @@ class OSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
         super().__init__(*args, **kwargs)
 
 
-class OSProfileProvisioningData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Additional parameters for reimaging a virtual machine that does not use an ephemeral operating
-    system disk.
-
-    :ivar admin_password: The password for the virtual machine administrator account. The password
-     must be 8 to 123 characters long for Windows virtual machines or 6 to 72 characters long for
-     Linux virtual machines. It must contain characters from at least three of these categories:
-     lowercase letters, uppercase letters, digits, and special characters. The following values are
-     not allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
-     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
-     accepted only in the request and is not returned in responses.
-    :vartype admin_password: str
-    :ivar custom_data: Base64-encoded custom data provided to the virtual machine. The decoded data
-     can contain up to 65,535 bytes. Do not include secrets or passwords.
-    :vartype custom_data: str
-    """
-
-    admin_password: Optional[str] = rest_field(
-        name="adminPassword", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The password for the virtual machine administrator account. The password must be 8 to 123
-     characters long for Windows virtual machines or 6 to 72 characters long for Linux virtual
-     machines. It must contain characters from at least three of these categories: lowercase
-     letters, uppercase letters, digits, and special characters. The following values are not
-     allowed: ``abc@123``, ``P@$$w0rd``, ``P@ssw0rd``, ``P@ssword123``, ``Pa$$word``,
-     ``pass@word1``, ``Password!``, ``Password1``, ``Password22``, and ``iloveyou!``. This secret is
-     accepted only in the request and is not returned in responses."""
-    custom_data: Optional[str] = rest_field(
-        name="customData", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Base64-encoded custom data provided to the virtual machine. The decoded data can contain up to
-     65,535 bytes. Do not include secrets or passwords."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        admin_password: Optional[str] = None,
-        custom_data: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class PatchSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies settings related to VM Guest Patching on Windows.
 
@@ -4615,185 +3989,6 @@ class PublicIPAddressSku(_Model):  # pylint: disable=docstring-keyword-should-ma
         super().__init__(*args, **kwargs)
 
 
-class ReimagePayload(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The shared and per-virtual-machine configuration for a bulk reimage action.
-
-    :ivar base_profile: The reimage configuration applied to every virtual machine unless a
-     per-virtual-machine override is provided.
-    :vartype base_profile: ~azure.mgmt.compute.bulkaction.models.VirtualMachineReimageParameters
-    :ivar resource_overrides: The reimage configuration overrides for individual virtual machines.
-    :vartype resource_overrides:
-     list[~azure.mgmt.compute.bulkaction.models.ReimageResourceOverride]
-    """
-
-    base_profile: Optional["_models.VirtualMachineReimageParameters"] = rest_field(
-        name="baseProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reimage configuration applied to every virtual machine unless a per-virtual-machine
-     override is provided."""
-    resource_overrides: Optional[list["_models.ReimageResourceOverride"]] = rest_field(
-        name="resourceOverrides", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reimage configuration overrides for individual virtual machines."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        base_profile: Optional["_models.VirtualMachineReimageParameters"] = None,
-        resource_overrides: Optional[list["_models.ReimageResourceOverride"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ReimageResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The result of a bulk reimage action.
-
-    :ivar description: A description of the bulk action result. Required.
-    :vartype description: str
-    :ivar type: The type of resources targeted by the bulk action. Required.
-    :vartype type: str
-    :ivar location: The Azure region where Bulk Actions processes the request. Required.
-    :vartype location: str
-    :ivar results: The result for each virtual machine.
-    :vartype results: list[~azure.mgmt.compute.bulkaction.models.ResourceOperation]
-    """
-
-    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A description of the bulk action result. Required."""
-    type: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The type of resources targeted by the bulk action. Required."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The Azure region where Bulk Actions processes the request. Required."""
-    results: Optional[list["_models.ResourceOperation"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The result for each virtual machine."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        description: str,
-        type: str,
-        location: str,
-        results: Optional[list["_models.ResourceOperation"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ReimageResourceOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A reimage configuration override for one virtual machine.
-
-    :ivar resource_id: The Azure resource ID of the virtual machine to which the override applies.
-     Required.
-    :vartype resource_id: str
-    :ivar profile: The reimage configuration for this virtual machine. Required.
-    :vartype profile: ~azure.mgmt.compute.bulkaction.models.VirtualMachineReimageParameters
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the virtual machine to which the override applies. Required."""
-    profile: "_models.VirtualMachineReimageParameters" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The reimage configuration for this virtual machine. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        profile: "_models.VirtualMachineReimageParameters",
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceAttachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resources to attach to a recurring bulk action.
-
-    :ivar resources: The list of resources to attach to the recurring bulk action. Required.
-    :vartype resources: list[~azure.mgmt.compute.bulkaction.models.ScheduledActionResourceInput]
-    """
-
-    resources: list["_models.ScheduledActionResourceInput"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The list of resources to attach to the recurring bulk action. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resources: list["_models.ScheduledActionResourceInput"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceDetachRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resources to remove from a recurring bulk action.
-
-    :ivar resources: The Azure resource IDs of the resources to remove. Required.
-    :vartype resources: list[str]
-    """
-
-    resources: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource IDs of the resources to remove. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resources: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class ResourceNotificationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Caller-provided context associated with a virtual machine operation.
 
@@ -5044,114 +4239,6 @@ class ResourceOperationError(_Model):  # pylint: disable=docstring-keyword-shoul
         super().__init__(*args, **kwargs)
 
 
-class ResourceOperationResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Results of a recurring bulk action operation for targeted resources.
-
-    :ivar total_resources: The number of resources included in the operation. Required.
-    :vartype total_resources: int
-    :ivar resources_statuses: The operation result for each resource. Required.
-    :vartype resources_statuses: list[~azure.mgmt.compute.bulkaction.models.ResourceStatus]
-    """
-
-    total_resources: int = rest_field(name="totalResources", visibility=["read", "create", "update", "delete", "query"])
-    """The number of resources included in the operation. Required."""
-    resources_statuses: list["_models.ResourceStatus"] = rest_field(
-        name="resourcesStatuses", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operation result for each resource. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        total_resources: int,
-        resources_statuses: list["_models.ResourceStatus"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourcePatchRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Resource-specific settings to update in a recurring bulk action.
-
-    :ivar resources: The resources and notification settings to update. Required.
-    :vartype resources: list[~azure.mgmt.compute.bulkaction.models.ScheduledActionResourceInput]
-    """
-
-    resources: list["_models.ScheduledActionResourceInput"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resources and notification settings to update. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resources: list["_models.ScheduledActionResourceInput"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceResultSummary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Summary of operation results across targeted resources.
-
-    :ivar code: The result code shared by the resources in this group. A successful result uses
-     ``Success``. Required.
-    :vartype code: str
-    :ivar count: The number of resources with this result code. Required.
-    :vartype count: int
-    :ivar error_details: Error details for failed resources. This property is omitted for
-     successful results.
-    :vartype error_details: ~azure.core.ODataV4Format
-    """
-
-    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The result code shared by the resources in this group. A successful result uses ``Success``.
-     Required."""
-    count: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The number of resources with this result code. Required."""
-    error_details: Optional[ODataV4Format] = rest_field(
-        name="errorDetails", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Error details for failed resources. This property is omitted for successful results."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        count: int,
-        error_details: Optional[ODataV4Format] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Resources(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The virtual machines targeted by a bulk action.
 
@@ -5167,113 +4254,6 @@ class Resources(_Model):  # pylint: disable=docstring-keyword-should-match-keywo
         self,
         *,
         ids: list[str],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceStatus(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Current status for a targeted resource in a recurring bulk action occurrence.
-
-    :ivar resource_id: The Azure resource ID of the targeted resource. Required.
-    :vartype resource_id: str
-    :ivar status: The result of the operation for the resource. Required. Known values are:
-     "Succeeded" and "Failed".
-    :vartype status: str or ~azure.mgmt.compute.bulkaction.models.ResourceOperationStatus
-    :ivar error: Error details when the operation fails for the resource.
-    :vartype error: ~azure.core.ODataV4Format
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the targeted resource. Required."""
-    status: Union[str, "_models.ResourceOperationStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The result of the operation for the resource. Required. Known values are: \"Succeeded\" and
-     \"Failed\"."""
-    error: Optional[ODataV4Format] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Error details when the operation fails for the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        status: Union[str, "_models.ResourceOperationStatus"],
-        error: Optional[ODataV4Format] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourcesWithContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The resources needed for the user request with the context for tracking purposes.
-
-    :ivar resources: The resource ids used for the request. Required.
-    :vartype resources: list[~azure.mgmt.compute.bulkaction.models.ResourceWithContext]
-    """
-
-    resources: list["_models.ResourceWithContext"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource ids used for the request. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resources: list["_models.ResourceWithContext"],
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ResourceWithContext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The resources needed for the user request with the resourceContext.
-
-    :ivar resource_id: The resource ids used for the request. Required.
-    :vartype resource_id: str
-    :ivar resource_context: The operational context of the resourceId. Required.
-    :vartype resource_context: str
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The resource ids used for the request. Required."""
-    resource_context: str = rest_field(
-        name="resourceContext", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operational context of the resourceId. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        resource_context: str,
     ) -> None: ...
 
     @overload
@@ -5321,744 +4301,6 @@ class RetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-key
         retry_count: Optional[int] = None,
         retry_window_in_minutes: Optional[int] = None,
         on_failure_action: Optional[Union[str, "_models.ResourceOperationType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    location: str = rest_field(visibility=["read", "create"])
-    """The geo-location where the resource lives. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledAction(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A recurring bulk action that operates on specified compute resources.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionProperties
-    """
-
-    properties: Optional["_models.ScheduledActionProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.ScheduledActionProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Configuration and status of a recurring bulk action.
-
-    :ivar resource_type: The type of compute resource targeted by the action. Required. Known
-     values are: "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resource_type: str or ~azure.mgmt.compute.bulkaction.models.ResourceType
-    :ivar action_type: The operation performed on the targeted resources. Required. Known values
-     are: "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: str or ~azure.mgmt.compute.bulkaction.models.ScheduledActionType
-    :ivar start_time: The date and time, including UTC offset, when the schedule becomes active.
-     Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The date and time, including UTC offset, after which no new occurrences are
-     scheduled.
-    :vartype end_time: ~datetime.datetime
-    :ivar schedule: The recurring schedule. Required.
-    :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsSchedule
-    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
-     Required.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    :ivar disabled: Indicates whether new occurrences are disabled.
-    :vartype disabled: bool
-    :ivar provisioning_state: Read-only. The provisioning state of the recurring bulk action. Known
-     values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
-    """
-
-    resource_type: Union[str, "_models.ResourceType"] = rest_field(
-        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of compute resource targeted by the action. Required. Known values are:
-     \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
-    action_type: Union[str, "_models.ScheduledActionType"] = rest_field(
-        name="actionType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operation performed on the targeted resources. Required. Known values are: \"Start\",
-     \"Deallocate\", and \"Hibernate\"."""
-    start_time: datetime.datetime = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, when the schedule becomes active. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(
-        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, after which no new occurrences are scheduled."""
-    schedule: "_models.ScheduledActionsSchedule" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The recurring schedule. Required."""
-    notification_settings: list["_models.NotificationProperties"] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply to the recurring bulk action. Required."""
-    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates whether new occurrences are disabled."""
-    provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Read-only. The provisioning state of the recurring bulk action. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_type: Union[str, "_models.ResourceType"],
-        action_type: Union[str, "_models.ScheduledActionType"],
-        start_time: datetime.datetime,
-        schedule: "_models.ScheduledActionsSchedule",
-        notification_settings: list["_models.NotificationProperties"],
-        end_time: Optional[datetime.datetime] = None,
-        disabled: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A compute resource associated with a recurring bulk action.
-
-    :ivar name: Read-only. The name of the association resource. Required.
-    :vartype name: str
-    :ivar id: Read-only. The Azure resource ID of the association resource. Required.
-    :vartype id: str
-    :ivar type: Read-only. The Azure resource type of the associated resource.
-    :vartype type: str
-    :ivar resource_id: The Azure resource ID of the targeted virtual machine. Required.
-    :vartype resource_id: str
-    :ivar notification_settings: Notification settings that apply only to this resource.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    """
-
-    name: str = rest_field(visibility=["read"])
-    """Read-only. The name of the association resource. Required."""
-    id: str = rest_field(visibility=["read"])
-    """Read-only. The Azure resource ID of the association resource. Required."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """Read-only. The Azure resource type of the associated resource."""
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the targeted virtual machine. Required."""
-    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply only to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionResourceInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A compute resource to add to or update in a recurring bulk action.
-
-    :ivar resource_id: The Azure resource ID of the targeted virtual machine. Required.
-    :vartype resource_id: str
-    :ivar notification_settings: Notification settings that apply only to this resource.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    """
-
-    resource_id: str = rest_field(name="resourceId", visibility=["read", "create", "update", "delete", "query"])
-    """The Azure resource ID of the targeted virtual machine. Required."""
-    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply only to this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_id: str,
-        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionResources(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A recurring bulk action associated with a specific compute resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.compute.bulkaction.models.SystemData
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsExtensionProperties
-    """
-
-    properties: Optional["_models.ScheduledActionsExtensionProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        properties: Optional["_models.ScheduledActionsExtensionProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionsExecutionParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Settings that control how the recurring bulk action operation is executed.
-
-    :ivar retry_policy: The retry settings for failed resource operations.
-    :vartype retry_policy: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsRetryPolicy
-    """
-
-    retry_policy: Optional["_models.ScheduledActionsRetryPolicy"] = rest_field(
-        name="retryPolicy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The retry settings for failed resource operations."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        retry_policy: Optional["_models.ScheduledActionsRetryPolicy"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionsExtensionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A recurring bulk action associated with a specific compute resource.
-
-    :ivar resource_type: The type of compute resource targeted by the action. Required. Known
-     values are: "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resource_type: str or ~azure.mgmt.compute.bulkaction.models.ResourceType
-    :ivar action_type: The operation performed on the targeted resources. Required. Known values
-     are: "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: str or ~azure.mgmt.compute.bulkaction.models.ScheduledActionType
-    :ivar start_time: The date and time, including UTC offset, when the schedule becomes active.
-     Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The date and time, including UTC offset, after which no new occurrences are
-     scheduled.
-    :vartype end_time: ~datetime.datetime
-    :ivar schedule: The recurring schedule. Required.
-    :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsSchedule
-    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
-     Required.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    :ivar disabled: Indicates whether new occurrences are disabled.
-    :vartype disabled: bool
-    :ivar provisioning_state: Read-only. The provisioning state of the recurring bulk action. Known
-     values are: "Succeeded", "Failed", "Canceled", "Deleting", and "Updating".
-    :vartype provisioning_state: str or
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsProvisioningState
-    :ivar resource_notification_settings: Read-only. Notification settings that apply only to the
-     specified compute resource.
-    :vartype resource_notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    """
-
-    resource_type: Union[str, "_models.ResourceType"] = rest_field(
-        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of compute resource targeted by the action. Required. Known values are:
-     \"VirtualMachine\" and \"VirtualMachineScaleSet\"."""
-    action_type: Union[str, "_models.ScheduledActionType"] = rest_field(
-        name="actionType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operation performed on the targeted resources. Required. Known values are: \"Start\",
-     \"Deallocate\", and \"Hibernate\"."""
-    start_time: datetime.datetime = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, when the schedule becomes active. Required."""
-    end_time: Optional[datetime.datetime] = rest_field(
-        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, after which no new occurrences are scheduled."""
-    schedule: "_models.ScheduledActionsSchedule" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The recurring schedule. Required."""
-    notification_settings: list["_models.NotificationProperties"] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply to the recurring bulk action. Required."""
-    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates whether new occurrences are disabled."""
-    provisioning_state: Optional[Union[str, "_models.ScheduledActionsProvisioningState"]] = rest_field(
-        name="provisioningState", visibility=["read"]
-    )
-    """Read-only. The provisioning state of the recurring bulk action. Known values are:
-     \"Succeeded\", \"Failed\", \"Canceled\", \"Deleting\", and \"Updating\"."""
-    resource_notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="resourceNotificationSettings", visibility=["read"]
-    )
-    """Read-only. Notification settings that apply only to the specified compute resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_type: Union[str, "_models.ResourceType"],
-        action_type: Union[str, "_models.ScheduledActionType"],
-        start_time: datetime.datetime,
-        schedule: "_models.ScheduledActionsSchedule",
-        notification_settings: list["_models.NotificationProperties"],
-        end_time: Optional[datetime.datetime] = None,
-        disabled: Optional[bool] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionsRetryPolicy(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Retry settings for a recurring bulk action operation.
-
-    :ivar retry_count: The maximum number of retry attempts.
-    :vartype retry_count: int
-    :ivar retry_window_in_minutes: The time window, in minutes, during which retries can occur.
-    :vartype retry_window_in_minutes: int
-    :ivar on_failure_action: The resource operation to retry after a failure. Known values are:
-     "Start", "Deallocate", "Hibernate", "Create", and "Delete".
-    :vartype on_failure_action: str or
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsResourceOperationType
-    """
-
-    retry_count: Optional[int] = rest_field(
-        name="retryCount", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The maximum number of retry attempts."""
-    retry_window_in_minutes: Optional[int] = rest_field(
-        name="retryWindowInMinutes", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The time window, in minutes, during which retries can occur."""
-    on_failure_action: Optional[Union[str, "_models.ScheduledActionsResourceOperationType"]] = rest_field(
-        name="onFailureAction", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource operation to retry after a failure. Known values are: \"Start\", \"Deallocate\",
-     \"Hibernate\", \"Create\", and \"Delete\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        retry_count: Optional[int] = None,
-        retry_window_in_minutes: Optional[int] = None,
-        on_failure_action: Optional[Union[str, "_models.ScheduledActionsResourceOperationType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionsSchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The recurring schedule for a recurring bulk action.
-
-    :ivar scheduled_time: The local time of day when the recurring bulk action runs. Required.
-    :vartype scheduled_time: ~datetime.time
-    :ivar time_zone: The time zone used to interpret the scheduled time. Required.
-    :vartype time_zone: str
-    :ivar requested_week_days: The days of the week when the action runs. An empty array means
-     every day of the week.
-    :vartype requested_week_days: list[str or ~azure.mgmt.compute.bulkaction.models.WeekDay]
-    :ivar requested_months: The months when the action runs. An empty array means every month.
-    :vartype requested_months: list[str or ~azure.mgmt.compute.bulkaction.models.Month]
-    :ivar requested_days_of_the_month: The calendar days when the action runs. An empty array means
-     every day of the month.
-    :vartype requested_days_of_the_month: list[int]
-    :ivar execution_parameters: Settings that control operation execution and retries.
-    :vartype execution_parameters:
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsExecutionParameters
-    :ivar deadline_type: How the scheduled time is interpreted. The default is ``InitiateAt``.
-     Known values are: "InitiateAt" and "CompleteBy".
-    :vartype deadline_type: str or
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsDeadlineType
-    """
-
-    scheduled_time: datetime.time = rest_field(
-        name="scheduledTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The local time of day when the recurring bulk action runs. Required."""
-    time_zone: str = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """The time zone used to interpret the scheduled time. Required."""
-    requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = rest_field(
-        name="requestedWeekDays", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The days of the week when the action runs. An empty array means every day of the week."""
-    requested_months: Optional[list[Union[str, "_models.Month"]]] = rest_field(
-        name="requestedMonths", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The months when the action runs. An empty array means every month."""
-    requested_days_of_the_month: Optional[list[int]] = rest_field(
-        name="requestedDaysOfTheMonth", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The calendar days when the action runs. An empty array means every day of the month."""
-    execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = rest_field(
-        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Settings that control operation execution and retries."""
-    deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = rest_field(
-        name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """How the scheduled time is interpreted. The default is ``InitiateAt``. Known values are:
-     \"InitiateAt\" and \"CompleteBy\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scheduled_time: datetime.time,
-        time_zone: str,
-        requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = None,
-        requested_months: Optional[list[Union[str, "_models.Month"]]] = None,
-        requested_days_of_the_month: Optional[list[int]] = None,
-        execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = None,
-        deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionsScheduleUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """Schedule changes for a recurring bulk action. Omitted properties keep their current values.
-
-    :ivar scheduled_time: The local time of day when the recurring bulk action runs.
-    :vartype scheduled_time: ~datetime.time
-    :ivar time_zone: The time zone used to interpret the scheduled time.
-    :vartype time_zone: str
-    :ivar requested_week_days: The days of the week when the action runs. An empty array means
-     every day of the week.
-    :vartype requested_week_days: list[str or ~azure.mgmt.compute.bulkaction.models.WeekDay]
-    :ivar requested_months: The months when the action runs. An empty array means every month.
-    :vartype requested_months: list[str or ~azure.mgmt.compute.bulkaction.models.Month]
-    :ivar requested_days_of_the_month: The calendar days when the action runs. An empty array means
-     every day of the month.
-    :vartype requested_days_of_the_month: list[int]
-    :ivar execution_parameters: Settings that control operation execution and retries.
-    :vartype execution_parameters:
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsExecutionParameters
-    :ivar deadline_type: How the scheduled time is interpreted. The default is ``InitiateAt``.
-     Known values are: "InitiateAt" and "CompleteBy".
-    :vartype deadline_type: str or
-     ~azure.mgmt.compute.bulkaction.models.ScheduledActionsDeadlineType
-    """
-
-    scheduled_time: Optional[datetime.time] = rest_field(
-        name="scheduledTime", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The local time of day when the recurring bulk action runs."""
-    time_zone: Optional[str] = rest_field(name="timeZone", visibility=["read", "create", "update", "delete", "query"])
-    """The time zone used to interpret the scheduled time."""
-    requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = rest_field(
-        name="requestedWeekDays", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The days of the week when the action runs. An empty array means every day of the week."""
-    requested_months: Optional[list[Union[str, "_models.Month"]]] = rest_field(
-        name="requestedMonths", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The months when the action runs. An empty array means every month."""
-    requested_days_of_the_month: Optional[list[int]] = rest_field(
-        name="requestedDaysOfTheMonth", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The calendar days when the action runs. An empty array means every day of the month."""
-    execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = rest_field(
-        name="executionParameters", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Settings that control operation execution and retries."""
-    deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = rest_field(
-        name="deadlineType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """How the scheduled time is interpreted. The default is ``InitiateAt``. Known values are:
-     \"InitiateAt\" and \"CompleteBy\"."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scheduled_time: Optional[datetime.time] = None,
-        time_zone: Optional[str] = None,
-        requested_week_days: Optional[list[Union[str, "_models.WeekDay"]]] = None,
-        requested_months: Optional[list[Union[str, "_models.Month"]]] = None,
-        requested_days_of_the_month: Optional[list[int]] = None,
-        execution_parameters: Optional["_models.ScheduledActionsExecutionParameters"] = None,
-        deadline_type: Optional[Union[str, "_models.ScheduledActionsDeadlineType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionUpdate(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The type used for update operations of the ScheduledAction.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: ~azure.mgmt.compute.bulkaction.models.ScheduledActionUpdateProperties
-    """
-
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Resource tags."""
-    properties: Optional["_models.ScheduledActionUpdateProperties"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The resource-specific properties for this resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        properties: Optional["_models.ScheduledActionUpdateProperties"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ScheduledActionUpdateProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The updatable properties of the ScheduledAction.
-
-    :ivar resource_type: The type of compute resource targeted by the action. Known values are:
-     "VirtualMachine" and "VirtualMachineScaleSet".
-    :vartype resource_type: str or ~azure.mgmt.compute.bulkaction.models.ResourceType
-    :ivar action_type: The operation performed on the targeted resources. Known values are:
-     "Start", "Deallocate", and "Hibernate".
-    :vartype action_type: str or ~azure.mgmt.compute.bulkaction.models.ScheduledActionType
-    :ivar start_time: The date and time, including UTC offset, when the schedule becomes active.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: The date and time, including UTC offset, after which no new occurrences are
-     scheduled.
-    :vartype end_time: ~datetime.datetime
-    :ivar schedule: Changes to the recurring schedule.
-    :vartype schedule: ~azure.mgmt.compute.bulkaction.models.ScheduledActionsScheduleUpdate
-    :ivar notification_settings: Notification settings that apply to the recurring bulk action.
-    :vartype notification_settings:
-     list[~azure.mgmt.compute.bulkaction.models.NotificationProperties]
-    :ivar disabled: Indicates whether new occurrences are disabled.
-    :vartype disabled: bool
-    """
-
-    resource_type: Optional[Union[str, "_models.ResourceType"]] = rest_field(
-        name="resourceType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of compute resource targeted by the action. Known values are: \"VirtualMachine\" and
-     \"VirtualMachineScaleSet\"."""
-    action_type: Optional[Union[str, "_models.ScheduledActionType"]] = rest_field(
-        name="actionType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operation performed on the targeted resources. Known values are: \"Start\", \"Deallocate\",
-     and \"Hibernate\"."""
-    start_time: Optional[datetime.datetime] = rest_field(
-        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, when the schedule becomes active."""
-    end_time: Optional[datetime.datetime] = rest_field(
-        name="endTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The date and time, including UTC offset, after which no new occurrences are scheduled."""
-    schedule: Optional["_models.ScheduledActionsScheduleUpdate"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Changes to the recurring schedule."""
-    notification_settings: Optional[list["_models.NotificationProperties"]] = rest_field(
-        name="notificationSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Notification settings that apply to the recurring bulk action."""
-    disabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Indicates whether new occurrences are disabled."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        resource_type: Optional[Union[str, "_models.ResourceType"]] = None,
-        action_type: Optional[Union[str, "_models.ScheduledActionType"]] = None,
-        start_time: Optional[datetime.datetime] = None,
-        end_time: Optional[datetime.datetime] = None,
-        schedule: Optional["_models.ScheduledActionsScheduleUpdate"] = None,
-        notification_settings: Optional[list["_models.NotificationProperties"]] = None,
-        disabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -7485,55 +5727,6 @@ class VirtualMachinePublicIPAddressDnsSettingsConfiguration(
         *,
         domain_name_label: str,
         domain_name_label_scope: Optional[Union[str, "_models.DomainNameLabelScopeTypes"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class VirtualMachineReimageParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """The parameters for reimaging a virtual machine. The operating system disk is always reimaged.
-
-    :ivar temp_disk: Indicates whether to reimage the temporary disk. The default value is
-     ``false``. This option is supported only for virtual machines or virtual machine scale sets
-     that use an ephemeral operating system disk.
-    :vartype temp_disk: bool
-    :ivar exact_version: The exact image version to use when reimaging the operating system disk.
-     When omitted, the disk is reimaged to its current image version.
-    :vartype exact_version: str
-    :ivar os_profile: The operating system profile used when reimaging a non-ephemeral operating
-     system disk.
-    :vartype os_profile: ~azure.mgmt.compute.bulkaction.models.OSProfileProvisioningData
-    """
-
-    temp_disk: Optional[bool] = rest_field(name="tempDisk", visibility=["read", "create", "update", "delete", "query"])
-    """Indicates whether to reimage the temporary disk. The default value is ``false``. This option is
-     supported only for virtual machines or virtual machine scale sets that use an ephemeral
-     operating system disk."""
-    exact_version: Optional[str] = rest_field(
-        name="exactVersion", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The exact image version to use when reimaging the operating system disk. When omitted, the disk
-     is reimaged to its current image version."""
-    os_profile: Optional["_models.OSProfileProvisioningData"] = rest_field(
-        name="osProfile", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The operating system profile used when reimaging a non-ephemeral operating system disk."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        temp_disk: Optional[bool] = None,
-        exact_version: Optional[str] = None,
-        os_profile: Optional["_models.OSProfileProvisioningData"] = None,
     ) -> None: ...
 
     @overload

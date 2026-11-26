@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -39,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-10-06-preview/VirtualMachineBulkOperations_BulkGetOperationsStatus_OperationNotFoundError.json
+# x-ms-original-file: 2026-10-16/VirtualMachineBulkOperations_BulkGetOperationsStatus_OperationNotFoundError.json
 if __name__ == "__main__":
     main()

@@ -1,5 +1,95 @@
 # Release History
 
+## 1.0.0 (2026-11-25)
+
+### Features Added
+
+  - Operation group `BulkCreateCustomOperations` added method `begin_create`
+  - Operation group `BulkCreateOperations` added method `begin_create`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.occurrence_extension`
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.occurrences`
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.scheduled_action_extension`
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.scheduled_action_operation_status`
+  - Deleted or renamed client operation group `ComputeBulkActionsMgmtClient.scheduled_actions`
+  - Model `ExecuteDeallocateContent` deleted or renamed its instance variable `resources_with_context`
+  - `ExecuteDeallocateContent.resources` is now required.
+  - Model `ExecuteDeleteContent` deleted or renamed its instance variable `resources_with_context`
+  - `ExecuteDeleteContent.resources` is now required.
+  - Model `ExecuteHibernateContent` deleted or renamed its instance variable `resources_with_context`
+  - `ExecuteHibernateContent.resources` is now required.
+  - Model `ExecuteStartContent` deleted or renamed its instance variable `resources_with_context`
+  - `ExecuteStartContent.resources` is now required.
+  - Model `LocationBasedBulkCreate` deleted or renamed its instance variable `tags`
+  - Model `LocationBasedBulkCreateCustom` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `AcknowledgeBulkOperationErrorsRequest`
+  - Deleted or renamed model `AcknowledgeBulkOperationErrorsResponse`
+  - Deleted or renamed model `CancelOccurrenceRequest`
+  - Deleted or renamed model `DelayRequest`
+  - Deleted or renamed model `ExecuteReimageRequest`
+  - Deleted or renamed model `ExtensionResource`
+  - Deleted or renamed model `Language`
+  - Deleted or renamed model `Month`
+  - Deleted or renamed model `NotificationProperties`
+  - Deleted or renamed model `NotificationType`
+  - Deleted or renamed model `OSProfileProvisioningData`
+  - Deleted or renamed model `Occurrence`
+  - Deleted or renamed model `OccurrenceExtensionProperties`
+  - Deleted or renamed model `OccurrenceExtensionResource`
+  - Deleted or renamed model `OccurrenceProperties`
+  - Deleted or renamed model `OccurrenceResource`
+  - Deleted or renamed model `OccurrenceResourceProvisioningState`
+  - Deleted or renamed model `OccurrenceResultSummary`
+  - Deleted or renamed model `OccurrenceState`
+  - Deleted or renamed model `ReimagePayload`
+  - Deleted or renamed model `ReimageResourceOperationResponse`
+  - Deleted or renamed model `ReimageResourceOverride`
+  - Deleted or renamed model `ResourceAttachRequest`
+  - Deleted or renamed model `ResourceDetachRequest`
+  - Deleted or renamed model `ResourceOperationResponse`
+  - Deleted or renamed model `ResourceOperationStatus`
+  - Deleted or renamed model `ResourcePatchRequest`
+  - Deleted or renamed model `ResourceResultSummary`
+  - Deleted or renamed model `ResourceStatus`
+  - Deleted or renamed model `ResourceType`
+  - Deleted or renamed model `ResourceWithContext`
+  - Deleted or renamed model `ResourcesWithContext`
+  - Deleted or renamed model `ScheduledAction`
+  - Deleted or renamed model `ScheduledActionProperties`
+  - Deleted or renamed model `ScheduledActionResource`
+  - Deleted or renamed model `ScheduledActionResourceInput`
+  - Deleted or renamed model `ScheduledActionResources`
+  - Deleted or renamed model `ScheduledActionType`
+  - Deleted or renamed model `ScheduledActionUpdate`
+  - Deleted or renamed model `ScheduledActionUpdateProperties`
+  - Deleted or renamed model `ScheduledActionsDeadlineType`
+  - Deleted or renamed model `ScheduledActionsExecutionParameters`
+  - Deleted or renamed model `ScheduledActionsExtensionProperties`
+  - Deleted or renamed model `ScheduledActionsProvisioningState`
+  - Deleted or renamed model `ScheduledActionsResourceOperationType`
+  - Deleted or renamed model `ScheduledActionsRetryPolicy`
+  - Deleted or renamed model `ScheduledActionsSchedule`
+  - Deleted or renamed model `ScheduledActionsScheduleUpdate`
+  - Deleted or renamed model `TrackedResource`
+  - Deleted or renamed model `VirtualMachineReimageParameters`
+  - Deleted or renamed model `WeekDay`
+  - Deleted or renamed method `BulkCreateCustomOperations.begin_cancel`
+  - Deleted or renamed method `BulkCreateCustomOperations.begin_create_or_update`
+  - Deleted or renamed method `BulkCreateCustomOperations.begin_delete`
+  - Deleted or renamed method `BulkCreateOperations.begin_cancel`
+  - Deleted or renamed method `BulkCreateOperations.begin_create_or_update`
+  - Deleted or renamed method `BulkCreateOperations.begin_delete`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_acknowledge_operation_errors`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_list_operation_errors`
+  - Deleted or renamed method `VirtualMachineBulkOperationsOperations.bulk_reimage_operation`
+  - Deleted or renamed operation group `OccurrenceExtensionOperations`
+  - Deleted or renamed operation group `OccurrencesOperations`
+  - Deleted or renamed operation group `ScheduledActionExtensionOperations`
+  - Deleted or renamed operation group `ScheduledActionOperationStatusOperations`
+  - Deleted or renamed operation group `ScheduledActionsOperations`
+
 ## 1.0.0b6 (2026-10-13)
 
 ### Features Added

@@ -16,11 +16,6 @@ from ._operations import Operations  # type: ignore
 from ._operations import VirtualMachineBulkOperationsOperations  # type: ignore
 from ._operations import BulkCreateCustomOperations  # type: ignore
 from ._operations import BulkCreateOperations  # type: ignore
-from ._operations import ScheduledActionsOperations  # type: ignore
-from ._operations import ScheduledActionExtensionOperations  # type: ignore
-from ._operations import ScheduledActionOperationStatusOperations  # type: ignore
-from ._operations import OccurrencesOperations  # type: ignore
-from ._operations import OccurrenceExtensionOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -31,11 +26,6 @@ __all__ = [
     "VirtualMachineBulkOperationsOperations",
     "BulkCreateCustomOperations",
     "BulkCreateOperations",
-    "ScheduledActionsOperations",
-    "ScheduledActionExtensionOperations",
-    "ScheduledActionOperationStatusOperations",
-    "OccurrencesOperations",
-    "OccurrenceExtensionOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()
