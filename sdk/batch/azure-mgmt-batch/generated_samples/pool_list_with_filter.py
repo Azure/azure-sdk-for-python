@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-06-01/PoolListWithFilter.json
+# x-ms-original-file: 2026-10-01/PoolListWithFilter.json
 if __name__ == "__main__":
     main()

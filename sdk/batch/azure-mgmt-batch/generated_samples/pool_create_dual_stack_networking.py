@@ -72,6 +72,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01/PoolCreate_DualStackNetworking.json
+# x-ms-original-file: 2026-10-01/PoolCreate_DualStackNetworking.json
 if __name__ == "__main__":
     main()

@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-06-01/BatchAccountDelete.json
+# x-ms-original-file: 2026-10-01/BatchAccountDelete.json
 if __name__ == "__main__":
     main()

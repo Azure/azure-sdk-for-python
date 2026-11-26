@@ -1,5 +1,45 @@
 # Release History
 
+## 20.0.0 (2026-11-19)
+
+### Features Added
+
+  - Model `PoolProperties` added property `vm_sku_profile`
+  - Model `VirtualMachineConfiguration` added property `hardware_profile`
+  - Model `VirtualMachineConfiguration` added property `placement`
+  - Model `VirtualMachineConfiguration` added property `resiliency_policy`
+  - Added model `DeploymentConfigurationPatch`
+  - Added model `HardwareProfile`
+  - Added model `MaxInstancePercentPerZonePolicy`
+  - Added model `MaxInstancePercentPerZonePolicyPatch`
+  - Added model `Placement`
+  - Added model `PlacementPatch`
+  - Added model `PoolPatch`
+  - Added model `PoolPatchProperties`
+  - Added enum `RequestedComputeNodeDeallocationOption`
+  - Added model `ResiliencyPolicy`
+  - Added model `ResiliencyPolicyPatch`
+  - Added model `TrackedResource`
+  - Added model `VirtualMachineConfigurationPatch`
+  - Added enum `VirtualMachineSkuAllocationStrategy`
+  - Added model `VirtualMachineSkuProfile`
+  - Added model `VirtualMachineSkuProfileVmSize`
+  - Added model `VmSizeProperties`
+  - Added model `ZoneAllocationPolicy`
+  - Added model `ZoneAllocationPolicyPatch`
+  - Added enum `ZonePlacementPolicyType`
+
+### Breaking Changes
+
+  - Python 3.9 is no longer supported. Python 3.10 or later is required.
+  - `FixedScaleSettings.node_deallocation_option` now uses `RequestedComputeNodeDeallocationOption`, which no longer includes `RetainedData`. The service no longer accepts `RetainedData` in resize requests with API version `2026-10-01`.
+  - Deleted or renamed enum value `AuthenticationMode.TASK_AUTHENTICATION_TOKEN`
+  - Method `PoolOperations.update` changed type of its parameter `parameters` from `Pool` to `PoolPatch`
+
+### Other Changes
+
+  - Deleted model `AzureResource` which actually were not used by SDK users
+
 ## 19.0.0 (2026-02-27)
 
 ### Features Added
