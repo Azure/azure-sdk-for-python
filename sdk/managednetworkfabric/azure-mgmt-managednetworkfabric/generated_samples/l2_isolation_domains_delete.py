@@ -36,6 +36,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-07-15/L2IsolationDomains_Delete.json
+# x-ms-original-file: 2026-01-15-preview/L2IsolationDomains_Delete.json
 if __name__ == "__main__":
     main()

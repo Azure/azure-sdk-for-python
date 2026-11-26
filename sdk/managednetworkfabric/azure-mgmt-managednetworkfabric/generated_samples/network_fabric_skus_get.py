@@ -31,11 +31,11 @@ def main():
     )
 
     response = client.network_fabric_skus.get(
-        network_fabric_sku_name="example-fabricsku",
+        network_fabric_sku_name="wxample-fabricsku",
     )
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkFabricSkus_Get.json
+# x-ms-original-file: 2026-01-15-preview/NetworkFabricSkus_Get.json
 if __name__ == "__main__":
     main()

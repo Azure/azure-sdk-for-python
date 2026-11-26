@@ -46,6 +46,7 @@ class TestManagedNetworkFabricMgmtNetworkPacketBrokersOperations(AzureMgmtRecord
                     "networkTapIds": ["str"],
                     "provisioningState": "str",
                     "sourceInterfaceIds": ["str"],
+                    "sourceNetworkTapRuleId": "str",
                 },
                 "id": "str",
                 "identity": {
@@ -82,6 +83,7 @@ class TestManagedNetworkFabricMgmtNetworkPacketBrokersOperations(AzureMgmtRecord
                     "type": "str",
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
+                "properties": {"sourceNetworkTapRuleId": "str"},
                 "tags": {"str": "str"},
             },
         ).result()  # call '.result()' to poll until service return final result

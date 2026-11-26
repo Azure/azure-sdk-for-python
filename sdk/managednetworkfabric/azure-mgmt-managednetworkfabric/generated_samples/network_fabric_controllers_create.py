@@ -51,6 +51,7 @@ def main():
                 "isWorkloadManagementNetworkEnabled": "True",
                 "managedResourceGroupConfiguration": {"location": "eastus", "name": "managedResourceGroupName"},
                 "nfcSku": "Standard",
+                "vmProfile": {"vmSkuName": "Standard_D4s_v3"},
                 "workloadExpressRouteConnections": [
                     {
                         "expressRouteAuthorizationKey": "xxx-xxx-xxx",
@@ -65,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-15/NetworkFabricControllers_Create.json
+# x-ms-original-file: 2026-01-15-preview/NetworkFabricControllers_Create.json
 if __name__ == "__main__":
     main()

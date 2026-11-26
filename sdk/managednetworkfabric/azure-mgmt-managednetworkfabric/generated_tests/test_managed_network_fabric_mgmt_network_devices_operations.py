@@ -65,6 +65,7 @@ class TestManagedNetworkFabricMgmtNetworkDevicesOperations(AzureMgmtRecordedTest
                     "networkDeviceSku": "str",
                     "networkFabricId": "str",
                     "networkRackId": "str",
+                    "operationalState": "str",
                     "provisioningState": "str",
                     "rwDeviceConfig": "str",
                     "secretRotationStatus": [

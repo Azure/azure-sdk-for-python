@@ -140,11 +140,17 @@ class TestManagedNetworkFabricMgmtNetworkFabricsOperations(AzureMgmtRecordedTest
                     "l2IsolationDomains": ["str"],
                     "l3IsolationDomains": ["str"],
                     "lastOperation": {"details": "str"},
+                    "networkBootstrapDeviceId": "str",
+                    "operationalState": "str",
                     "provisioningState": "str",
                     "qosConfiguration": {"qosConfigurationState": "str"},
                     "rackCount": 0,
                     "racks": ["str"],
                     "routerIds": ["str"],
+                    "secretArchiveSettings": {
+                        "associatedIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
+                        "vaultUri": "str",
+                    },
                     "secretRotationSummary": {"activePasswordSetCount": 0},
                     "storageAccountConfiguration": {
                         "storageAccountId": "str",
@@ -157,6 +163,15 @@ class TestManagedNetworkFabricMgmtNetworkFabricsOperations(AzureMgmtRecordedTest
                         "uniqueRdConfigurationState": "str",
                         "uniqueRds": ["str"],
                     },
+                    "upgradeProfile": [
+                        {
+                            "postUpgradeProfile": {
+                                "maxExitingMaintenanceTimeoutInSeconds": 0,
+                                "mlagReloadDelayTimeoutInSeconds": 0,
+                            },
+                            "preUpgradeProfile": {"maxEnteringMaintenanceTimeoutInSeconds": 0},
+                        }
+                    ],
                 },
                 "id": "str",
                 "identity": {
@@ -262,6 +277,10 @@ class TestManagedNetworkFabricMgmtNetworkFabricsOperations(AzureMgmtRecordedTest
                     },
                     "qosConfiguration": {"qosConfigurationState": "str"},
                     "rackCount": 0,
+                    "secretArchiveSettings": {
+                        "associatedIdentity": {"identityType": "str", "userAssignedIdentityResourceId": "str"},
+                        "vaultUri": "str",
+                    },
                     "serverCountPerRack": 0,
                     "storageAccountConfiguration": {
                         "storageAccountId": "str",
@@ -281,6 +300,15 @@ class TestManagedNetworkFabricMgmtNetworkFabricsOperations(AzureMgmtRecordedTest
                         "nniDerivedUniqueRdConfigurationState": "str",
                         "uniqueRdConfigurationState": "str",
                     },
+                    "upgradeProfile": [
+                        {
+                            "postUpgradeProfile": {
+                                "maxExitingMaintenanceTimeoutInSeconds": 0,
+                                "mlagReloadDelayTimeoutInSeconds": 0,
+                            },
+                            "preUpgradeProfile": {"maxEnteringMaintenanceTimeoutInSeconds": 0},
+                        }
+                    ],
                 },
                 "tags": {"str": "str"},
             },

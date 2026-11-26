@@ -50,8 +50,10 @@ class TestManagedNetworkFabricMgmtNetworkFabricControllersOperations(AzureMgmtRe
                     "managedResourceGroupConfiguration": {"location": "str", "name": "str"},
                     "networkFabricIds": ["str"],
                     "nfcSku": "str",
+                    "operationalState": "str",
                     "provisioningState": "str",
                     "tenantInternetGatewayIds": ["str"],
+                    "vmProfile": {"vmSkuName": "str"},
                     "workloadExpressRouteConnections": [
                         {"expressRouteAuthorizationKey": "str", "expressRouteCircuitId": "str"}
                     ],
