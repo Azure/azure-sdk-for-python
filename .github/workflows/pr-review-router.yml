@@ -1,0 +1,39 @@
+name: PR Review Router
+
+on:
+  workflow_run:
+    workflows: [PR Review Intake]
+    types: [completed]
+
+permissions: {}
+
+concurrency:
+  group: pr-review-router-${{ github.event.workflow_run.id }}
+  cancel-in-progress: false
+
+jobs:
+  dispatch:
+    if: >-
+      github.repository == 'Azure/azure-sdk-for-python' &&
+      github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.repository.id == github.repository_id
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: write
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check out trusted routing code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          # workflow_run uses the default branch, never the PR head.
+          ref: ${{ github.workflow_sha }}
+          persist-credentials: false
+          sparse-checkout: .github/workflows/scripts
+      - name: Validate and dispatch the requested review
+        env:
+          GH_REPOSITORY: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+        run: python .github/workflows/scripts/mgmt_sdk_review_routing.py

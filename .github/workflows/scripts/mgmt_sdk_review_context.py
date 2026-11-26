@@ -19,6 +19,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
+from mgmt_sdk_review_routing import DEFAULT_REF, authorized_request
 from mgmt_sdk_review_evidence import (
     MAX_SNAPSHOT_BYTES,
     allowed_sdk_file,
@@ -507,13 +508,15 @@ def validated_source_reference(provenance):
 
 
 def authorize_manual_run(repository, event_name, actor, triggering_actor, ref):
-    if event_name == "workflow_dispatch":
-        if repository.casefold() != "azure/azure-sdk-for-python":
-            raise GitHubApiError("manual_repository_forbidden: Run manual reviews in Azure/azure-sdk-for-python.")
-        if actor.casefold() != "msyyc" or triggering_actor.casefold() != "msyyc":
-            raise GitHubApiError("manual_actor_forbidden: Only msyyc may dispatch or rerun a manual review.")
-        if not ref.startswith("refs/heads/") or not ref.removeprefix("refs/heads/"):
-            raise GitHubApiError("manual_ref_forbidden: Select a maintainer-controlled branch, not a tag.")
+    if event_name != "workflow_dispatch":
+        return
+    if repository.casefold() != "azure/azure-sdk-for-python":
+        raise GitHubApiError("manual_repository_forbidden: Run reviews in Azure/azure-sdk-for-python.")
+    automated = actor == "github-actions[bot]" and triggering_actor in ("github-actions[bot]", "msyyc")
+    if not automated and (actor.casefold() != "msyyc" or triggering_actor.casefold() != "msyyc"):
+        raise GitHubApiError("manual_actor_forbidden: Only msyyc may dispatch or rerun a manual review.")
+    if ref != DEFAULT_REF:
+        raise GitHubApiError("manual_ref_forbidden: Reviews must run from the upstream default branch.")
 
 
 def authorize_current_run():
@@ -529,21 +532,28 @@ def authorize_current_run():
 def resolve_review_target(client, event, event_name, actor, triggering_actor, ref):
     """Resolve a fixed review target before exposing any evidence to the agent."""
     repository = client.repository
+    if event_name != "workflow_dispatch":
+        raise GitHubApiError("invalid_trigger: Expected workflow_dispatch.")
     authorize_manual_run(repository, event_name, actor, triggering_actor, ref)
-    manual = event_name == "workflow_dispatch"
-    if manual:
-        number = event.get("inputs", {}).get("pr_number")
-        if not isinstance(number, str) or not re.fullmatch(r"[1-9][0-9]{0,9}", number):
-            raise GitHubApiError("invalid_pr_number: pr_number must be a positive decimal PR number.")
-        pr_number = int(number)
-    elif event_name == "pull_request_target" and event.get("action") == "labeled":
-        if event.get("label", {}).get("name") != "mgmt-review-needed":
-            raise GitHubApiError("invalid_trigger: Expected the mgmt-review-needed label.")
-        pr_number = event.get("pull_request", {}).get("number")
-        if type(pr_number) is not int or pr_number <= 0:
-            raise GitHubApiError("invalid_pr_number: The label event must identify a pull request.")
-    else:
-        raise GitHubApiError("invalid_trigger: Expected workflow_dispatch or a pull_request_target labeled event.")
+    inputs = event.get("inputs", {})
+    number = inputs.get("pr_number")
+    if not isinstance(number, str) or not re.fullmatch(r"[1-9][0-9]{0,9}", number):
+        raise GitHubApiError("invalid_pr_number: pr_number must be a positive decimal PR number.")
+    pr_number = int(number)
+    if actor == "github-actions[bot]":
+        try:
+            request = authorized_request(
+                client,
+                inputs.get("request_run_id"),
+                inputs.get("request_event_id"),
+                number,
+                inputs.get("head_sha"),
+            )
+        except (ValueError, KeyError, TypeError) as error:
+            raise GitHubApiError(f"invalid_review_request: {error}") from error
+        if not request or not inputs.get("request_event_id"):
+            raise GitHubApiError("invalid_review_request: The label request is missing, stale or withdrawn.")
+        return {"pr_number": request["pr_number"], "head_sha": request["head_sha"]}
 
     pull = client.get(f"/repos/{repository}/pulls/{pr_number}")
     if (
@@ -555,17 +565,14 @@ def resolve_review_target(client, event, event_name, actor, triggering_actor, re
     head_sha = head.get("sha")
     if not isinstance(head_sha, str) or not SHA_PATTERN.fullmatch(head_sha):
         raise GitHubApiError("invalid_head_revision: The PR must have an immutable head SHA.")
-    if manual:
-        head_repository = head.get("repo") or {}
-        owner = head_repository.get("owner") or {}
-        if (
-            owner.get("login", "").casefold() != "azure"
-            or owner.get("type") != "Organization"
-            or not head_repository.get("full_name", "").casefold().startswith("azure/")
-        ):
-            raise GitHubApiError("manual_source_forbidden: The SDK PR source repository must belong to Azure.")
-    elif head_sha != event.get("pull_request", {}).get("head", {}).get("sha"):
-        raise GitHubApiError("stale_event_head: The PR changed since the label event; trigger a fresh review.")
+    head_repository = head.get("repo") or {}
+    owner = head_repository.get("owner") or {}
+    if (
+        owner.get("login", "").casefold() != "azure"
+        or owner.get("type") != "Organization"
+        or not head_repository.get("full_name", "").casefold().startswith("azure/")
+    ):
+        raise GitHubApiError("manual_source_forbidden: The SDK PR source repository must belong to Azure.")
     return {"pr_number": str(pr_number), "head_sha": head_sha}
 
 
