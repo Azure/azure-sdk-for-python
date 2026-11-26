@@ -40,6 +40,7 @@ def main():
             },
             "properties": {
                 "createFromLocal": True,
+                "localVmName": "DemoVM_restored",
                 "networkProfile": {
                     "networkInterfaces": [
                         {
@@ -60,6 +61,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-06-01-preview/VirtualMachineInstances__CreateOrUpdate_CreateFromLocal.json
+# x-ms-original-file: 2026-07-01-preview/VirtualMachineInstances__CreateOrUpdate_CreateFromLocal.json
 if __name__ == "__main__":
     main()

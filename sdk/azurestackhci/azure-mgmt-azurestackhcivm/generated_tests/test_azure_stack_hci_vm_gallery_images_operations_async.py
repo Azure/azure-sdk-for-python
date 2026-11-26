@@ -59,7 +59,6 @@ class TestAzureStackHCIVmGalleryImagesOperationsAsync(AzureMgmtRecordedTestCase)
                             "provisioningStatus": {"operationId": "str", "status": "str"},
                         },
                         "version": {"name": "str", "properties": {"storageProfile": {"osDiskImage": {"sizeInMB": 0}}}},
-                        "vmImageRepositoryCredentials": {"password": "str", "username": "str"},
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
