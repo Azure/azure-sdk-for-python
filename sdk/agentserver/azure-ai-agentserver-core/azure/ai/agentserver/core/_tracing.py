@@ -34,8 +34,9 @@ OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
 import asyncio  # pylint: disable=do-not-import-asyncio
-from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
+from collections.abc import AsyncIterable, AsyncIterator, Iterator  # pylint: disable=import-error
 from contextlib import contextmanager, nullcontext
+from contextvars import ContextVar
 import logging
 import os
 import threading
@@ -109,6 +110,27 @@ _OTLP_ENV_VARS = (
 _DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
 _DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
 _DISABLED_INSTRUMENTATIONS = ("azure_sdk", "httpx", "requests", "urllib", "urllib3")
+_configured_sensitive_data_capture: Optional[bool] = None
+_sensitive_data_capture: ContextVar[Optional[bool]] = ContextVar("agentserver_sensitive_data_capture", default=None)
+
+
+def _is_sensitive_data_enabled() -> bool:
+    scoped = _sensitive_data_capture.get()
+    if scoped is not None:
+        return scoped
+    if _configured_sensitive_data_capture is not None:
+        return _configured_sensitive_data_capture
+    value = os.environ.get(Constants.OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT, "true")
+    return value.lower() not in ("false", "0")
+
+
+@contextmanager
+def _sensitive_data_capture_scope(enabled: bool) -> Iterator[None]:
+    token = _sensitive_data_capture.set(enabled)
+    try:
+        yield
+    finally:
+        _sensitive_data_capture.reset(token)
 
 
 # ======================================================================
@@ -150,7 +172,8 @@ def configure_observability(
     :paramtype log_level: str or None
     :keyword enable_sensitive_data: Enable sensitive data recording
         (prompts, tool arguments, results) for Agent Framework SDK
-        instrumentation. Defaults to False.
+        instrumentation and SDK exception spans. HTTP invocation error logs
+        follow the same policy. Defaults to False.
     :paramtype enable_sensitive_data: bool
     :keyword instrumentation_options: Per-library OpenTelemetry instrumentation
         options. Azure SDK, HTTPX, Requests, urllib, and urllib3 instrumentation
@@ -158,8 +181,14 @@ def configure_observability(
         to enable it.
     :paramtype instrumentation_options: dict[str, dict[str, Any]] or None
     """
-    # Console logging on the root logger so user logs are also visible.
+    global _configured_sensitive_data_capture  # pylint: disable=global-statement
     resolved_level = _config.resolve_log_level(log_level)
+    _configured_sensitive_data_capture = enable_sensitive_data
+    if _sensitive_data_capture.get() is not None:
+        # Capture explicit overrides made by a host's observability callback.
+        _sensitive_data_capture.set(enable_sensitive_data)
+
+    # Console logging on the root logger so user logs are also visible.
     root = logging.getLogger()
     root.setLevel(resolved_level)
     # Only add a console handler if root doesn't already have one.
@@ -708,8 +737,8 @@ def schedule_flush_spans(timeout_millis: int = 5000) -> None:
 def record_error(span: Any, exc: BaseException) -> None:
     """Record an exception and ERROR status on a span.
 
-    Sets ``error.type`` and ``otel.status.description`` per OTel
-    semantic conventions.
+    Always sets ``error.type``. Exception messages and tracebacks are recorded
+    only when sensitive-data capture is enabled.
 
     :param span: The OTel span, or ``None``.
     :type span: any
@@ -717,9 +746,12 @@ def record_error(span: Any, exc: BaseException) -> None:
     :type exc: BaseException
     """
     if span is not None:
-        span.set_status(trace.StatusCode.ERROR, str(exc))
+        if _is_sensitive_data_enabled():
+            span.set_status(trace.StatusCode.ERROR, str(exc))
+            span.record_exception(exc)
+        else:
+            span.set_status(trace.StatusCode.ERROR)
         span.set_attribute("error.type", type(exc).__name__)
-        span.record_exception(exc)
 
 
 def set_current_span(span: Any) -> Any:

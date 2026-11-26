@@ -3,15 +3,22 @@
 # ---------------------------------------------------------
 """Tests for OpenTelemetry tracing in the invocations protocol."""
 import os
+import logging
 import uuid
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 import pytest
+from httpx import ASGITransport, AsyncClient
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter, SimpleLogRecordProcessor
 from starlette.testclient import TestClient
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from azure.ai.agentserver.core import _tracing
+from azure.ai.agentserver.invocations import _invocation
 
 
 # ---------------------------------------------------------------------------
@@ -363,6 +370,189 @@ def test_streaming_iteration_exception_records_trace_error():
             mock_log_error.assert_called_once()
 
 
+class TestErrorTelemetry:
+    @pytest.fixture()
+    def telemetry(self, monkeypatch):
+        monkeypatch.setattr(_tracing, "_configured_sensitive_data_capture", None, raising=False)
+        span_exporter = InMemorySpanExporter()
+        span_provider = SdkTracerProvider()
+        span_provider.add_span_processor(SimpleSpanProcessor(span_exporter))
+        log_exporter = InMemoryLogRecordExporter()
+        log_provider = LoggerProvider()
+        log_provider.add_log_record_processor(SimpleLogRecordProcessor(log_exporter))
+        handler = LoggingHandler(level=logging.ERROR, logger_provider=log_provider)
+        sdk_logger = logging.getLogger("azure.ai.agentserver")
+        previous_level = sdk_logger.level
+        sdk_logger.setLevel(logging.ERROR)
+        sdk_logger.addHandler(handler)
+        try:
+            yield span_provider.get_tracer("test-error-capture"), span_exporter, log_exporter
+        finally:
+            sdk_logger.removeHandler(handler)
+            sdk_logger.setLevel(previous_level)
+            handler.close()
+            log_provider.shutdown()
+            span_provider.shutdown()
+
+    @staticmethod
+    def _assert_logs(log_exporter, enabled, exception_type):
+        records = [record.log_record for record in log_exporter.get_finished_logs()]
+        assert len(records) == 1
+        rendered = str(records[0].body) + str(dict(records[0].attributes))
+        if enabled:
+            assert "private-error-marker" in rendered
+        else:
+            assert "private-error-marker" not in rendered
+            assert exception_type in records[0].body
+            assert "exception.message" not in records[0].attributes
+            assert "exception.stacktrace" not in records[0].attributes
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("enabled", [False, True])
+    @pytest.mark.parametrize("setting", ["environment", "callback"])
+    async def test_streaming_error_capture_preserves_propagation(self, telemetry, monkeypatch, enabled, setting):
+        tracer, span_exporter, log_exporter = telemetry
+        environment_enabled = enabled if setting == "environment" else not enabled
+        monkeypatch.setenv(
+            "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT",
+            "true" if environment_enabled else "false",
+        )
+        # Older supported core releases expose only the environment-based fallback.
+        expected_capture = enabled if hasattr(_tracing, "_is_sensitive_data_enabled") else environment_enabled
+
+        def configure(**kwargs):
+            kwargs["enable_sensitive_data"] = enabled
+            _tracing.configure_observability(**kwargs)
+
+        app = InvocationAgentServerHost(
+            **({"configure_observability": configure} if setting == "callback" else {}),
+        )
+        error = RuntimeError("private-error-marker")
+
+        @app.invoke_handler
+        async def handle(request: Request) -> StreamingResponse:
+            async def chunks():
+                yield b"first\n"
+                raise error
+
+            return StreamingResponse(chunks(), media_type="text/plain")
+
+        # Agent Server propagates context; the application's instrumentation creates spans.
+        route = next(route for route in app.routes if getattr(route, "path", None) == "/invocations")
+        route_app = route.app
+
+        async def traced_route(scope, receive, send):
+            with tracer.start_as_current_span(
+                "request",
+                record_exception=False,
+                set_status_on_exception=False,
+            ):
+                await route_app(scope, receive, send)
+
+        route.app = traced_route
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
+            with pytest.raises(RuntimeError) as raised:
+                await client.post("/invocations", headers={"x-agent-invocation-id": "inv-safe"})
+        assert raised.value is error
+
+        exported = span_exporter.get_finished_spans()
+        assert len(exported) == 1
+        assert exported[0].status.status_code == trace.StatusCode.ERROR
+        assert exported[0].attributes["error.type"] == "RuntimeError"
+        if expected_capture:
+            assert exported[0].status.description == "private-error-marker"
+            assert exported[0].events[0].attributes["exception.message"] == "private-error-marker"
+        else:
+            assert exported[0].status.description is None
+            assert not exported[0].events
+            assert "private-error-marker" not in exported[0].to_json()
+        self._assert_logs(log_exporter, expected_capture, "RuntimeError")
+
+    @pytest.mark.asyncio
+    async def test_streaming_opt_out_supports_older_core(self, telemetry, monkeypatch):
+        tracer, span_exporter, log_exporter = telemetry
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
+        app = InvocationAgentServerHost(configure_observability=None)
+        old_core = SimpleNamespace(record_error=Mock())
+        monkeypatch.setattr(_invocation, "_tracing", old_core)
+        error = RuntimeError("private-error-marker")
+
+        async def chunks():
+            yield b"first"
+            raise error
+
+        response = app._wrap_streaming_response(StreamingResponse(chunks()), "inv-safe", "session-safe")
+        with tracer.start_as_current_span("stream", record_exception=False, set_status_on_exception=False):
+            with pytest.raises(RuntimeError) as raised:
+                async for _ in response.body_iterator:
+                    pass
+        assert raised.value is error
+        old_core.record_error.assert_not_called()
+        exported = span_exporter.get_finished_spans()[0]
+        assert exported.status.status_code == trace.StatusCode.ERROR
+        assert exported.attributes["error.type"] == "RuntimeError"
+        assert not exported.events
+        self._assert_logs(log_exporter, False, "RuntimeError")
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("enabled", [False, True])
+    async def test_skipped_setup_error_logging_follows_supported_core_policy(self, telemetry, monkeypatch, enabled):
+        _, _, log_exporter = telemetry
+        _tracing.configure_observability(enable_sensitive_data=enabled)
+        environment_enabled = not enabled
+        monkeypatch.setenv(
+            "OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true" if environment_enabled else "false"
+        )
+        expected_capture = enabled if hasattr(_tracing, "_is_sensitive_data_enabled") else environment_enabled
+        app = InvocationAgentServerHost(configure_observability=None)
+
+        @app.invoke_handler
+        async def handle(request: Request) -> Response:
+            raise ValueError("private-error-marker")
+
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
+            response = await client.post("/invocations")
+        assert response.status_code == 500
+        self._assert_logs(log_exporter, expected_capture, "ValueError")
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("enabled", [False, True])
+    @pytest.mark.parametrize("operation", ["invoke", "get", "cancel", "not_implemented"])
+    async def test_http_error_capture_preserves_responses(self, telemetry, monkeypatch, enabled, operation):
+        _, _, log_exporter = telemetry
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true" if enabled else "false")
+        app = InvocationAgentServerHost()
+
+        async def fail(request: Request) -> Response:
+            if operation == "not_implemented":
+                raise NotImplementedError("private-error-marker")
+            raise ValueError("private-error-marker")
+
+        app.invoke_handler(fail)
+        app.get_invocation_handler(fail)
+        app.cancel_invocation_handler(fail)
+        routes = {
+            "invoke": ("POST", "/invocations"),
+            "not_implemented": ("POST", "/invocations"),
+            "get": ("GET", "/invocations/inv-safe"),
+            "cancel": ("POST", "/invocations/inv-safe/cancel"),
+        }
+        method, path = routes[operation]
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://testserver") as client:
+            response = await client.request(method, path, headers={"x-agent-invocation-id": "inv-safe"})
+
+        assert response.headers["x-agent-invocation-id"] == "inv-safe"
+        if operation == "not_implemented":
+            assert response.status_code == 501
+            assert response.json()["error"] == {"code": "not_implemented", "message": "private-error-marker"}
+            exception_type = "NotImplementedError"
+        else:
+            assert response.status_code == 500
+            assert response.json()["error"] == {"code": "internal_error", "message": "Internal server error"}
+            exception_type = "ValueError"
+        self._assert_logs(log_exporter, enabled, exception_type)
+
+
 def test_streaming_wrapper_resets_contextvars():
     """Streaming wrapper resets the contextvar tokens it sets."""
     server = _make_streaming_tracing_server()
@@ -580,4 +770,3 @@ def test_incoming_baggage_stamped_on_handler_spans():
 
 def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
-

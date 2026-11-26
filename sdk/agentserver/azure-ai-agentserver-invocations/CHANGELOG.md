@@ -1,5 +1,13 @@
 # Release History
 
+## 1.4.0b1 (Unreleased)
+
+### Bugs Fixed
+
+- Omit exception details from streaming and HTTP invocation error telemetry when
+  sensitive-data capture is disabled. Use Core's configured capture policy when
+  available, with an environment-variable fallback for older Core versions.
+
 ## 1.3.0 (2026-10-29)
 
 ### Other Changes

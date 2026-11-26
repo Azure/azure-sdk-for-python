@@ -20,6 +20,9 @@
 
 ### Bugs Fixed
 
+- Honor configured sensitive-data capture settings for SDK exception telemetry,
+  omitting exception messages and stack traces when capture is disabled while
+  preserving error status and exception type.
 - Track task identity throughout inline start/run claims and positional active-
   run lookup, preventing recovery from dispatching work before claim registration.
 - Coordinate same-task producers across lease claims and worker registration,

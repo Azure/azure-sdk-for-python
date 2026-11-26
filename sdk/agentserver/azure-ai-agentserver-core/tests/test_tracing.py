@@ -13,6 +13,7 @@ from typing import Any, Optional
 from unittest import mock
 
 import pytest
+import httpx
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry._logs import LogRecord
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
@@ -20,6 +21,9 @@ from opentelemetry.sdk._logs.export import InMemoryLogRecordExporter, SimpleLogR
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Route
 
 from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import (
@@ -50,6 +54,148 @@ class _CollectorExporter(SpanExporter):
 
     def force_flush(self, timeout_millis=30000):
         return True
+
+
+class TestErrorCapture:
+    @pytest.fixture()
+    def telemetry(self, monkeypatch):
+        monkeypatch.setattr(_tracing, "_configured_sensitive_data_capture", None, raising=False)
+        collector = _CollectorExporter()
+        provider = TracerProvider(resource=Resource.create({}))
+        provider.add_span_processor(SimpleSpanProcessor(collector))
+        with mock.patch.object(_tracing, "_setup_distro_export"):
+            try:
+                yield provider.get_tracer("test-error-capture"), collector
+            finally:
+                provider.shutdown()
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("enabled", [False, True])
+    @pytest.mark.parametrize("entry_point", ["record_error", "end_span", "trace_stream"])
+    async def test_error_details_follow_explicit_capture_policy(self, telemetry, monkeypatch, enabled, entry_point):
+        tracer, collector = telemetry
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        _tracing.configure_observability(enable_sensitive_data=enabled)
+        error = ValueError("private-error-marker")
+        span = tracer.start_span("failed-operation", attributes={"correlation.id": "request-123"})
+
+        if entry_point == "record_error":
+            _tracing.record_error(span, error)
+            span.end()
+        elif entry_point == "end_span":
+            _tracing.end_span(span, error)
+        else:
+
+            async def chunks():
+                yield b"first"
+                raise error
+
+            received = []
+            with pytest.raises(ValueError) as raised:
+                async for chunk in _tracing.trace_stream(chunks(), span):
+                    received.append(chunk)
+            assert raised.value is error
+            assert received == [b"first"]
+
+        assert len(collector.spans) == 1
+        exported = collector.spans[0]
+        assert exported.status.status_code.name == "ERROR"
+        assert exported.attributes["error.type"] == "ValueError"
+        assert exported.attributes["correlation.id"] == "request-123"
+        if enabled:
+            assert exported.status.description == "private-error-marker"
+            assert len(exported.events) == 1
+            assert exported.events[0].attributes["exception.message"] == "private-error-marker"
+            assert "exception.stacktrace" in exported.events[0].attributes
+        else:
+            assert exported.status.description is None
+            assert not exported.events
+            assert "private-error-marker" not in exported.to_json()
+
+    def test_environment_opt_out_without_observability_setup(self, telemetry, monkeypatch):
+        tracer, collector = telemetry
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false")
+        span = tracer.start_span("failed-operation")
+        _tracing.end_span(span, ValueError("private-error-marker"))
+        assert collector.spans[0].status.status_code.name == "ERROR"
+        assert collector.spans[0].status.description is None
+        assert not collector.spans[0].events
+
+    def test_disabled_capture_never_formats_the_exception(self, telemetry):
+        class FormattingError(ValueError):
+            def __str__(self):
+                raise AssertionError("Exception text must not be evaluated")
+
+        tracer, collector = telemetry
+        _tracing.configure_observability(enable_sensitive_data=False)
+        span = tracer.start_span("failed-operation")
+        _tracing.end_span(span, FormattingError())
+        assert collector.spans[0].attributes["error.type"] == "FormattingError"
+        assert not collector.spans[0].events
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("enabled", [False, True])
+    async def test_host_without_setup_inherits_existing_capture_policy(self, telemetry, monkeypatch, enabled):
+        tracer, collector = telemetry
+        _tracing.configure_observability(enable_sensitive_data=enabled)
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "false" if enabled else "true")
+
+        async def handle(request: Request):
+            _tracing.end_span(tracer.start_span("failed-operation"), ValueError("private-error-marker"))
+            return JSONResponse({"ok": True})
+
+        host = AgentServerHost(routes=[Route("/", handle)], configure_observability=None)
+        async with httpx.AsyncClient(transport=httpx.ASGITransport(app=host), base_url="http://testserver") as client:
+            response = await client.get("/")
+        assert response.status_code == 200
+        assert collector.spans[0].status.status_code.name == "ERROR"
+        assert collector.spans[0].status.description == ("private-error-marker" if enabled else None)
+        assert bool(collector.spans[0].events) is enabled
+
+    @pytest.mark.asyncio
+    async def test_hosts_keep_capture_policy_isolated_during_overlapping_requests(self, telemetry, monkeypatch):
+        tracer, collector = telemetry
+        monkeypatch.setenv("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
+        disabled_entered = asyncio.Event()
+        enabled_finished = asyncio.Event()
+
+        def configure_disabled(**kwargs):
+            kwargs["enable_sensitive_data"] = False
+            _tracing.configure_observability(**kwargs)
+
+        async def disabled_handler(request: Request):
+            disabled_entered.set()
+            await enabled_finished.wait()
+            _tracing.end_span(tracer.start_span("disabled-host"), ValueError("private-error-marker"))
+            return JSONResponse({"ok": True})
+
+        async def enabled_handler(request: Request):
+            await disabled_entered.wait()
+            try:
+                _tracing.end_span(tracer.start_span("enabled-host"), ValueError("private-error-marker"))
+                return JSONResponse({"ok": True})
+            finally:
+                enabled_finished.set()
+
+        disabled_host = AgentServerHost(
+            routes=[Route("/", disabled_handler)],
+            configure_observability=configure_disabled,
+        )
+        enabled_host = AgentServerHost(routes=[Route("/", enabled_handler)])
+        async with (
+            httpx.AsyncClient(transport=httpx.ASGITransport(app=disabled_host), base_url="http://disabled") as disabled,
+            httpx.AsyncClient(transport=httpx.ASGITransport(app=enabled_host), base_url="http://enabled") as enabled,
+        ):
+            responses = await asyncio.gather(disabled.get("/"), enabled.get("/"))
+
+        assert all(response.status_code == 200 for response in responses)
+        spans = {span.name: span for span in collector.spans}
+        assert spans["disabled-host"].status.description is None
+        assert not spans["disabled-host"].events
+        assert spans["enabled-host"].status.description == "private-error-marker"
+        assert len(spans["enabled-host"].events) == 1
+        _tracing.end_span(tracer.start_span("outside-request"), ValueError("private-error-marker"))
+        assert collector.spans[-1].status.description == "private-error-marker"
 
 
 # ------------------------------------------------------------------ #

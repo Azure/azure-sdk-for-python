@@ -317,17 +317,24 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
         _env_val = os.environ.get("OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT", "true")
         _sensitive_data = _env_val.lower() not in ("false", "0")
-        if configure_observability is not None:
-            try:
-                configure_observability(
-                    connection_string=_conn_str,
-                    log_level=log_level,
-                    enable_sensitive_data=_sensitive_data,
-                )
-            except ValueError:
-                raise  # invalid log_level etc. — user should fix their config
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
+        if configure_observability is None:
+            _sensitive_data = _tracing._is_sensitive_data_enabled()
+        with _tracing._sensitive_data_capture_scope(_sensitive_data):
+            if configure_observability is not None:
+                try:
+                    configure_observability(
+                        connection_string=_conn_str,
+                        log_level=log_level,
+                        enable_sensitive_data=_sensitive_data,
+                    )
+                except ValueError:
+                    raise  # invalid log_level etc. — user should fix their config
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Failed to initialize observability; continuing without it.",
+                        exc_info=_tracing._is_sensitive_data_enabled(),
+                    )
+            self._enable_sensitive_data = _tracing._is_sensitive_data_enabled()
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = logger if access_log is _SENTINEL_ACCESS_LOG else access_log
@@ -505,6 +512,19 @@ class AgentServerHost(Starlette):  # pylint: disable=too-many-instance-attribute
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
 
         self.add_middleware(TraceContextMiddleware)
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        """Run an ASGI connection under this host's sensitive-data policy.
+
+        :param scope: ASGI connection scope.
+        :type scope: Scope
+        :param receive: ASGI receive callable.
+        :type receive: Receive
+        :param send: ASGI send callable.
+        :type send: Send
+        """
+        with _tracing._sensitive_data_capture_scope(self._enable_sensitive_data):
+            await super().__call__(scope, receive, send)
 
     def _register_task_callbacks(self, manager: "TaskManager") -> None:
         """Bind protocol recovery callbacks before the manager's startup scan.
