@@ -21,6 +21,17 @@ class DeleteJobPollingMethod(PollingMethod):
 
     This class is used to poll the status of a job deletion operation.
     It checks the status of the job until it is deleted or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_id: The ID of the job.
+    :type job_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -96,6 +107,17 @@ class DisableJobPollingMethod(PollingMethod):
 
     This class is used to poll the status of a job disable operation.
     It checks the status of the job until it is disabled or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_id: The ID of the job.
+    :type job_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -171,6 +193,17 @@ class EnableJobPollingMethod(PollingMethod):
 
     This class is used to poll the status of a job enable operation.
     It checks the status of the job until it is enabled or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_id: The ID of the job.
+    :type job_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -246,6 +279,17 @@ class DeleteJobSchedulePollingMethod(PollingMethod):
 
     This class is used to poll the status of a job schedule deletion operation.
     It checks the status of the job schedule until it is deleted or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_schedule_id: The ID of the job schedule.
+    :type job_schedule_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -315,6 +359,17 @@ class DeletePoolPollingMethod(PollingMethod):
     """Polling method for pool delete operation.
     This class is used to poll the status of a pool deletion operation.
     It checks the status of the pool until it is deleted or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -390,6 +445,19 @@ class DeallocateNodePollingMethod(PollingMethod):
 
     This class is used to poll the status of a node deallocation operation.
     It checks the status of the node until it is deallocated or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword node_id: The ID of the compute node.
+    :paramtype node_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -469,6 +537,19 @@ class RebootNodePollingMethod(PollingMethod):
 
     This class is used to poll the status of a node reboot operation.
     It checks the status of the node until it is rebooted or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword node_id: The ID of the compute node.
+    :paramtype node_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -546,6 +627,19 @@ class ReimageNodePollingMethod(PollingMethod):
 
     This class is used to poll the status of a node reimage operation.
     It checks the status of the node until it is reimaged or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword node_id: The ID of the compute node.
+    :paramtype node_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -623,6 +717,17 @@ class RemoveNodePollingMethod(PollingMethod):
 
     This class is used to poll the status of a node removal operation.
     It checks the status of the node until it is removed or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -700,6 +805,17 @@ class ResizePoolPollingMethod(PollingMethod):
 
     This class is used to poll the status of a pool resize operation.
     It checks the status of the pool until it is resized or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -777,6 +893,19 @@ class StartNodePollingMethod(PollingMethod):
 
     This class is used to poll the status of a node start operation.
     It checks the status of the node until it is started or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword node_id: The ID of the compute node.
+    :paramtype node_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -854,6 +983,17 @@ class StopPoolResizePollingMethod(PollingMethod):
 
     This class is used to poll the status of a pool stop resize operation.
     It checks the status of the pool until it is stopped or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param pool_id: The ID of the pool.
+    :type pool_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -931,6 +1071,17 @@ class TerminateJobPollingMethod(PollingMethod):
 
     This class is used to poll the status of a job termination operation.
     It checks the status of the job until it is terminated or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_id: The ID of the job.
+    :type job_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(
@@ -1006,6 +1157,17 @@ class TerminateJobSchedulePollingMethod(PollingMethod):
 
     This class is used to poll the status of a job schedule termination operation.
     It checks the status of the job schedule until it is terminated or an error occurs.
+
+    :param client: The Batch client used to poll operation status.
+    :type client: ~azure.batch.BatchClient
+    :param initial_response: The response that started the operation.
+    :type initial_response: ~azure.core.pipeline.PipelineResponse
+    :param deserialization_callback: The optional callback used to deserialize the final result.
+    :type deserialization_callback: typing.Callable
+    :param job_schedule_id: The ID of the job schedule.
+    :type job_schedule_id: str
+    :keyword polling_interval: The interval between polls, in seconds. Defaults to 5.
+    :paramtype polling_interval: int
     """
 
     def __init__(

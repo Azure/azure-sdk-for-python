@@ -5,8 +5,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-"""Snippets extracted from articles/batch/batch-automatic-scaling.md.
-"""
+"""Snippets extracted from articles/batch/batch-automatic-scaling.md."""
 
 import datetime
 
