@@ -163,7 +163,7 @@ def _text_training_body(text_only_input: Any, batch: Any, loss_fn: Any, loss_fn_
         if not finite:
             raise ValueError("Each sample reference requires one finite numeric advantage")
     data.setdefault("loss_fn", "importance_sampling")
-    if data["loss_fn"] not in ("importance_sampling", "ppo", "cispo", "sapo"):
+    if data["loss_fn"] not in ("importance_sampling", "tis", "ppo", "cispo", "sapo"):
         raise ValueError("Unsupported text-only loss function")
     if data.get("loss_fn_config") is not None and not isinstance(data["loss_fn_config"], Mapping):
         raise ValueError("loss_fn_config must be an object")

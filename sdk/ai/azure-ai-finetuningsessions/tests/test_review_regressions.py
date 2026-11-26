@@ -159,7 +159,11 @@ async def test_create_unknown_status_is_immediate_protocol_error(clock, asynchro
     responses = iter(
         [Response(body={"session_id": "session_test", "request_id": "r"}), Response(body={"status": "unexpected"})]
     )
-    client = SimpleNamespace(send_request=lambda _: next(responses))
+    client = SimpleNamespace(
+        send_request=lambda _: next(responses),
+        _session_resource_ids={},
+        _completion_feed_enabled={},
+    )
     if asynchronous:
         client.send_request = AsyncMock(side_effect=lambda _: next(responses))
     with pytest.raises(RuntimeError, match="Unexpected.*status"):
@@ -182,7 +186,11 @@ async def test_create_waits_are_deadline_bounded(clock, asynchronous):
             else Response(503, headers={"Retry-After": "7200"})
         )
 
-    client = SimpleNamespace(send_request=AsyncMock(side_effect=send) if asynchronous else send)
+    client = SimpleNamespace(
+        send_request=AsyncMock(side_effect=send) if asynchronous else send,
+        _session_resource_ids={},
+        _completion_feed_enabled={},
+    )
     with pytest.raises(RuntimeError, match="Timed out"):
         if asynchronous:
             await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16), timeout_sec=3)
@@ -207,7 +215,11 @@ async def test_create_404_grace_does_not_resubmit(clock, asynchronous):
         calls.append(request.method)
         return next(responses)
 
-    client = SimpleNamespace(send_request=AsyncMock(side_effect=send) if asynchronous else send)
+    client = SimpleNamespace(
+        send_request=AsyncMock(side_effect=send) if asynchronous else send,
+        _session_resource_ids={},
+        _completion_feed_enabled={},
+    )
     if asynchronous:
         assert await aio.create_session(client, base_model="m", lora_config=LoRAConfig(rank=16)) == "session_test"
     else:
@@ -229,7 +241,9 @@ async def test_create_default_logs_do_not_contain_payload(clock, caplog, asynchr
         ]
     )
     client = SimpleNamespace(
-        send_request=AsyncMock(side_effect=lambda _: next(responses)) if asynchronous else lambda _: next(responses)
+        send_request=AsyncMock(side_effect=lambda _: next(responses)) if asynchronous else lambda _: next(responses),
+        _session_resource_ids={},
+        _completion_feed_enabled={},
     )
     with caplog.at_level(logging.INFO):
         if asynchronous:

@@ -2,15 +2,22 @@
 # Licensed under the MIT License.
 """Default POST retry safety through real public sync and async client pipelines."""
 
+import asyncio
+import inspect
+import sys
 from contextlib import asynccontextmanager
 from copy import deepcopy
-import inspect
 
 import pytest
 from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import AsyncPipeline, Pipeline, policies
-from azure.core.pipeline.transport import AsyncHttpResponse, AsyncHttpTransport, HttpResponse, HttpTransport
+from azure.core.pipeline.transport import (
+    AsyncHttpResponse,
+    AsyncHttpTransport,
+    HttpResponse,
+    HttpTransport,
+)
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 
@@ -144,6 +151,117 @@ async def _send(client, request, **options):
     """Send through the public API, awaiting only the asynchronous client."""
     result = client.send_request(request, **options)
     return await result if inspect.isawaitable(result) else result
+
+
+@pytest.mark.parametrize("options", [{}, {"transport": None, "pipeline": None}])
+@pytest.mark.parametrize("use_env_settings", [True, False])
+@pytest.mark.parametrize("limit", [None, 1, 256])
+async def test_async_pool_is_lazy_bounded_and_closed(options, use_env_settings, limit):
+    import aiohttp
+    from azure.core.pipeline.transport import AioHttpTransport
+
+    if limit is not None:
+        options = {**options, "connection_pool_limit": limit}
+    client = await asyncio.to_thread(
+        AsyncClient,
+        _ENDPOINT,
+        AzureKeyCredential("fixture-api-key"),
+        use_env_settings=use_env_settings,
+        **options,
+    )
+    transport = client._client._pipeline._transport
+    assert (type(transport) is AioHttpTransport) is (limit is None)
+    assert transport.session is None
+    async with client:
+        session = transport.session
+        assert session.connector.limit == (100 if limit is None else limit)
+        assert isinstance(session.cookie_jar, aiohttp.DummyCookieJar)
+        assert session.auto_decompress is False
+        assert session.trust_env is use_env_settings
+        await transport.open()
+        assert transport.session is session
+    assert session.closed
+    with pytest.raises(ValueError, match="already been closed"):
+        await transport.open()
+
+
+@pytest.mark.parametrize(
+    "limit,error_type",
+    [
+        (True, TypeError),
+        (False, TypeError),
+        (None, TypeError),
+        ("256", TypeError),
+        (1.5, TypeError),
+        (0, ValueError),
+        (-1, ValueError),
+    ],
+)
+async def test_async_pool_limit_rejects_invalid_values(limit, error_type):
+    with pytest.raises(error_type, match="connection_pool_limit must be a positive integer"):
+        AsyncClient(_ENDPOINT, AzureKeyCredential("fixture-api-key"), connection_pool_limit=limit)
+
+
+@pytest.mark.parametrize("option", ["transport", "pipeline", "session"])
+async def test_async_pool_limit_rejects_caller_transport_pipeline_or_session(option):
+    import aiohttp
+
+    transport = _AsyncTransport([])
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=17)) as session:
+        supplied = {
+            "transport": transport,
+            "pipeline": AsyncPipeline(transport=transport, policies=[]),
+            "session": session,
+        }[option]
+        with pytest.raises(ValueError, match="cannot be combined with transport, pipeline or session"):
+            AsyncClient(
+                _ENDPOINT,
+                AzureKeyCredential("fixture-api-key"),
+                connection_pool_limit=256,
+                **{option: supplied},
+            )
+        assert not session.closed
+        assert session.connector.limit == 17
+    assert transport.requests == []
+
+
+async def test_sync_client_rejects_async_pool_option():
+    with pytest.raises(TypeError, match="connection_pool_limit is only supported by async clients"):
+        FineTuningSessionClient(
+            _ENDPOINT,
+            AzureKeyCredential("fixture-api-key"),
+            connection_pool_limit=256,
+        )
+
+
+@pytest.mark.parametrize("session_owner", [True, False])
+async def test_default_async_transport_preserves_supplied_session(session_owner):
+    import aiohttp
+
+    async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=17)) as session:
+        async with AsyncClient(
+            _ENDPOINT,
+            AzureKeyCredential("fixture-api-key"),
+            session=session,
+            session_owner=session_owner,
+        ) as client:
+            assert client._client._pipeline._transport.session is session
+            assert session.connector.limit == 17
+        assert session.closed is session_owner
+
+
+@pytest.mark.parametrize("use_pipeline", [False, True])
+async def test_custom_async_transport_or_pipeline_does_not_require_aiohttp(monkeypatch, use_pipeline):
+    transport = _AsyncTransport([_SUCCESS])
+    options = (
+        {"pipeline": AsyncPipeline(transport=transport, policies=[])} if use_pipeline else {"transport": transport}
+    )
+    monkeypatch.setitem(sys.modules, "aiohttp", None)
+    async with AsyncClient(_ENDPOINT, AzureKeyCredential("fixture-api-key"), **options) as client:
+        assert client._client._pipeline._transport is transport
+        response = await _send(client, HttpRequest("GET", _STATUS))
+        assert response.status_code == 200
+    assert len(transport.requests) == 1
 
 
 @pytest.mark.parametrize("options", _DEFAULT_OPTIONS)

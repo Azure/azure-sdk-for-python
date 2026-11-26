@@ -241,7 +241,16 @@ class TestAsyncEngineDead409NonRetryable:
         assert exc_info.value.error_code == "engine_dead"
 
     @pytest.mark.asyncio
-    async def test_post_unclassified_409_still_retries(self, mock_client):
+    @pytest.mark.parametrize(
+        "body",
+        [
+            {"reason": "lease_conflict", "message": "try again"},
+            None,
+            {},
+            [],
+        ],
+    )
+    async def test_post_unclassified_409_still_retries(self, mock_client, body):
         """An unclassified 409 keeps its existing retry behavior (not made terminal)."""
         from azure.ai.finetuningsessions.aio._patch import _post
 
@@ -249,7 +258,7 @@ class TestAsyncEngineDead409NonRetryable:
         resp.status_code = 409
         resp.headers = {"Retry-After": "0.01"}
         # No engine-dead markers → _classify_http_error returns None.
-        resp.json.return_value = {"reason": "lease_conflict", "message": "try again"}
+        resp.json.return_value = body
         mock_client.send_request = AsyncMock(return_value=resp)
 
         with patch(

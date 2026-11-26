@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 """Tests for the SDK sampling rate-limit handling.
 
-Covers the two behaviors added for Redis-based server rate limiting:
+Covers the two behaviors added for server rate limiting:
 
 1. A sample submit throttled with HTTP 429 is retried in place (honoring
    ``Retry-After`` + jitter) until a wall-clock throttle deadline, then raises

@@ -185,6 +185,13 @@ _TRAINING_RECOVERY_MESSAGE = (
     "restart the run from the base model. Progress after the checkpoint is not "
     "restored. Do not retry training operations on the interrupted session."
 )
+_TERMINAL_ENGINE_ERROR_CODES = ("engine_dead", "worker_crashed")
+_LEGACY_ENGINE_DEATH_PHRASES = (
+    "engine died",
+    "engine has died",
+    "engine is dead",
+    "engine crashed",
+)
 
 
 def _training_recovery_message(message: str, error_code: Optional[str]) -> str:
@@ -198,10 +205,8 @@ def _training_recovery_message(message: str, error_code: Optional[str]) -> str:
     normalized = " ".join(message.lower().split())
     if any(phrase in normalized for phrase in ("weights are lost", "weights lost", "weights are gone")):
         return _TRAINING_RECOVERY_MESSAGE
-    legacy_engine_death = error_code is None and any(
-        phrase in normalized for phrase in ("engine died", "engine has died", "engine is dead", "engine crashed")
-    )
-    if error_code not in ("engine_dead", "worker_crashed") and not legacy_engine_death:
+    legacy_engine_death = error_code is None and any(phrase in normalized for phrase in _LEGACY_ENGINE_DEATH_PHRASES)
+    if error_code not in _TERMINAL_ENGINE_ERROR_CODES and not legacy_engine_death:
         return message
     if "continual fine-tuning (CFT)" in message:
         return message
@@ -618,7 +623,7 @@ def _classify_http_error(
             )
         return None  # Unknown 500 — don't classify
 
-    # --- HTTP 409: Terminal engine-dead conflict (non-retryable) ---
+    # --- HTTP 409: Terminal training-engine conflict (non-retryable) ---
     # The server returns 409 (not 500) for a permanently engine-dead model so
     # the azure-core transport RetryPolicy does NOT retry it (409 is not in the
     # default retry-status set). The body mirrors the structured shape used
@@ -633,23 +638,32 @@ def _classify_http_error(
             effective.get("message")
             or (body.get("detail") if isinstance(body.get("detail"), str) else None)
             or effective.get("error")
-            or "The model's engine has died"
         )
         error_code = effective.get("error_code") or effective.get("code")
         debug_ref = effective.get("debug_ref")
-        if (
-            reason == "engine_dead"
-            or error_code == "engine_dead"
-            or (isinstance(msg, str) and any(kw in msg.lower() for kw in ("engine", "dead", "died", "crashed")))
+        if any(
+            effective.get(field) is not None and not isinstance(effective[field], str) for field in ("message", "error")
         ):
-            return TrainingEngineError(
-                msg,
-                session_id=session_id,
-                error_code=error_code or "engine_dead",
-                debug_ref=debug_ref,
-                response=response,
-            )
-        return None  # Unknown 409 — don't classify
+            return None
+        codes = [effective[field] for field in ("reason", "error_code", "code") if effective.get(field) is not None]
+        if codes:
+            # Explicit conflicts must not become engine death through their prose.
+            if any(code not in _TERMINAL_ENGINE_ERROR_CODES for code in codes):
+                return None
+            terminal_code = error_code or reason
+        elif isinstance(msg, str) and any(
+            phrase in " ".join(msg.lower().split()) for phrase in _LEGACY_ENGINE_DEATH_PHRASES
+        ):
+            terminal_code = "engine_dead"
+        else:
+            return None
+        return TrainingEngineError(
+            msg or "The model's engine has died",
+            session_id=session_id,
+            error_code=terminal_code,
+            debug_ref=debug_ref,
+            response=response,
+        )
 
     # --- HTTP 429: Rate limited / budget exhausted ---
     if status_code == 429:

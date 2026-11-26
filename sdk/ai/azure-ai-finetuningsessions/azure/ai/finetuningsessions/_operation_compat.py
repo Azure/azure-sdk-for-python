@@ -39,6 +39,7 @@ from azure.core.utils import case_insensitive_dict
 
 from . import models as _models
 from ._exceptions import _classify_http_error, _classify_poll_failure
+from ._experimental import _check_experimental_request
 from ._text_only import _operation_result
 from ._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ._utils.serialization import Serializer
@@ -111,6 +112,8 @@ def _request(
     """
     # The supported compatibility hook requires generated client, configuration, and serialization internals.
     # pylint: disable=protected-access
+    if builder.__name__ in ("build_training_forward_backward_request", "_build_sampling_request"):
+        _check_experimental_request(body, getattr(operation._config, "experimental_settings", None))
     headers = case_insensitive_dict(options.pop("headers", {}) or {})
     params = case_insensitive_dict(options.pop("params", {}) or {})
     # Preserve the preview query ordering after adopting the shared Foundry

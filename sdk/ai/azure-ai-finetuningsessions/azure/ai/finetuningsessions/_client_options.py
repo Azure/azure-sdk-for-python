@@ -24,6 +24,7 @@ from azure.core import __version__ as _CORE_VERSION
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import PipelineRequest, PipelineResponse, policies
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.core.pipeline.transport import AsyncHttpTransport
 
 from ._version import VERSION
 
@@ -65,6 +66,42 @@ class _AsyncNoPostRetryPolicy(policies.AsyncRetryPolicy):
         if request.http_request.method.upper() == "POST":
             request.context.options["retry_total"] = 0
         return await super().send(request)
+
+
+def _default_async_transport(connection_pool_limit: int, **kwargs: Any) -> AsyncHttpTransport:
+    """Create a sized transport without allocating an event-loop-bound session.
+
+    :param connection_pool_limit: Maximum connections in the default async pool.
+    :type connection_pool_limit: int
+    :return: A lazily opened default async transport.
+    :rtype: ~azure.core.pipeline.transport.AsyncHttpTransport
+    """
+    import aiohttp
+
+    # Opt-in pool sizing extends Azure Core's lazily exported default backend.
+    # pylint: disable-next=no-name-in-module,non-abstract-transport-import
+    from azure.core.pipeline.transport import AioHttpTransport
+
+    class _DefaultAioHttpTransport(AioHttpTransport):
+        session: aiohttp.ClientSession | None
+
+        def __init__(self, **options: Any) -> None:
+            super().__init__(**options)
+            self._preview_create_session = self.session is None
+            self._preview_trust_env = options.get("use_env_settings", True)
+
+        async def open(self) -> None:
+            if self._preview_create_session:
+                self.session = aiohttp.ClientSession(
+                    connector=aiohttp.TCPConnector(limit=connection_pool_limit),
+                    cookie_jar=aiohttp.DummyCookieJar(),
+                    auto_decompress=False,
+                    trust_env=self._preview_trust_env,
+                )
+                self._preview_create_session = False
+            await super().open()
+
+    return _DefaultAioHttpTransport(**kwargs)
 
 
 def _origin(url: str) -> tuple:
@@ -155,6 +192,7 @@ class _DirectContextPolicy(policies.SansIOHTTPPolicy):
             r"checkpoint|checkpoint_sample|sample|checkpoints(?:/[^/]+)?|request/[^/]+))?)?"
         )
         self._download_path = re.compile(canonical + r"/[^/]+/checkpoints/[^/]+/download(?:/files/[0-9a-f]{64})?")
+        self._completion_path = re.compile(canonical + r"/[^/]+/retrieve_futures")
         self._context_key = f"finetuning-direct-headers-{id(self)}"
 
     def on_request(self, request: Any) -> None:
@@ -164,6 +202,7 @@ class _DirectContextPolicy(policies.SansIOHTTPPolicy):
             or target.path.startswith(self._prefix + "/")
             or self._canonical_path.fullmatch(target.path) is not None
             or self._download_path.fullmatch(target.path) is not None
+            or self._completion_path.fullmatch(target.path) is not None
         )
         injected = request.context.get(self._context_key, {})
         # HttpRequest headers are case-insensitive, including a caller override
@@ -267,6 +306,8 @@ def _prepare_client_options(
     :return: Prepared constructor options, preserving caller-owned policies and pipelines.
     :rtype: dict[str, ~typing.Any]
     """
+    if not asynchronous and "connection_pool_limit" in options:
+        raise TypeError("connection_pool_limit is only supported by async clients.")
     if endpoint is None:
         raise ValueError("Parameter 'endpoint' must not be None.")
     if credential is None:
