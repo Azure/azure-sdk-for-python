@@ -39,23 +39,22 @@ def main():
                     {"effect": "Allow", "quotaId": "CSP_MG_2017-12-01"},
                 ],
                 "crossTenantTokenValidation": "EnsureSecureValidation",
+                "lifecycleInfo": {
+                    "allowedSubscriptions": ["00000000-0000-0000-0000-000000000000"],
+                    "isolationType": "Public",
+                    "lifecycleStage": "InDevelopment",
+                    "partnerCategory": "FirstParty",
+                },
                 "management": {
-                    "canaryManifestOwners": ["SPARTA-PlatformServiceAdmin"],
+                    "canaryManifestOwners": ["Contoso-PlatformServiceAdmin"],
                     "errorResponseMessageOptions": {"serverFailureResponseMessageType": "OutageReporting"},
                     "expeditedRolloutMetadata": {"enabled": False, "expeditedRolloutIntent": "Hotfix"},
-                    "expeditedRolloutSubmitters": ["SPARTA-PlatformServiceOperator"],
+                    "expeditedRolloutSubmitters": ["Contoso-PlatformServiceOperator"],
                     "incidentContactEmail": "helpme@contoso.com",
                     "incidentRoutingService": "Contoso Resource Provider",
                     "incidentRoutingTeam": "Contoso Triage",
                     "pcCode": "P1234",
                     "profitCenterProgramId": "1234",
-                    "serviceTreeInfos": [
-                        {
-                            "componentId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                            "readiness": "InDevelopment",
-                            "serviceId": "d1b7d8ba-05e2-48e6-90d6-d781b99c6e69",
-                        }
-                    ],
                 },
                 "providerType": "Internal",
                 "providerVersion": "2.0",
@@ -67,6 +66,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/ProviderRegistrations_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/ProviderRegistrations_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

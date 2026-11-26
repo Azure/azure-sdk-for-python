@@ -33,11 +33,11 @@ def main():
     response = client.manifests.create_or_update(
         provider_namespace="Microsoft.Contoso",
         environment="prod",
-        properties={"properties": {"manifest": "<<Core RP manifest>>"}},
+        properties={"properties": {"manifestUri": "https://contoso.example/manifests/provider-manifest.json"}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/Manifests_CreateOrUpdate.json
+# x-ms-original-file: 2026-10-01/Manifests_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

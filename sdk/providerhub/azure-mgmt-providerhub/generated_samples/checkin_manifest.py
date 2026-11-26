@@ -32,11 +32,16 @@ def main():
 
     response = client.checkin_manifest(
         provider_namespace="Microsoft.Contoso",
-        checkin_manifest_params={"baselineArmManifestLocation": "EastUS2EUAP", "environment": "Prod"},
+        checkin_manifest_params={
+            "baselineArmManifestLocation": "EastUS2EUAP",
+            "checkinComment": "Add endpoint registration support",
+            "environment": "Prod",
+            "swaggerUri": "https://github.com/Azure/azure-rest-api-specs/pull/123456",
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2025-10-01/CheckinManifest.json
+# x-ms-original-file: 2026-10-01/CheckinManifest.json
 if __name__ == "__main__":
     main()
