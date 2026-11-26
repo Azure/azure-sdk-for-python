@@ -43,18 +43,38 @@ class TestManagedOpsMgmtManagedOpsOperationsAsync(AzureMgmtRecordedTestCase):
                             "azureMonitorInsights": {"azureMonitorWorkspaceId": "str"},
                             "changeTrackingAndInventory": {"logAnalyticsWorkspaceId": "str"},
                             "userAssignedManagedIdentityId": "str",
-                            "defenderCspm": "Enable",
-                            "defenderForServers": "Enable",
+                            "defenderCspm": "str",
+                            "defenderForServers": "str",
                         },
                         "policyAssignmentProperties": {"policyInitiativeAssignmentId": "str"},
                         "provisioningState": "str",
                         "services": {
-                            "azureMonitorInsights": {"dcrId": "str", "enablementStatus": "Enabled"},
-                            "azurePolicyAndMachineConfiguration": {"enablementStatus": "Enabled"},
-                            "azureUpdateManager": {"enablementStatus": "Enabled"},
-                            "changeTrackingAndInventory": {"dcrId": "str", "enablementStatus": "Enabled"},
-                            "defenderCspm": {"enablementStatus": "Enabled"},
-                            "defenderForServers": {"enablementStatus": "Enabled"},
+                            "azureMonitorInsights": {
+                                "dcrId": "str",
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
+                            "azurePolicyAndMachineConfiguration": {
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
+                            "azureUpdateManager": {
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
+                            "changeTrackingAndInventory": {
+                                "dcrId": "str",
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
+                            "defenderCspm": {
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
+                            "defenderForServers": {
+                                "enablementStatus": "str",
+                                "errorDetails": {"code": "str", "message": "str"},
+                            },
                         },
                         "sku": {"name": "str", "tier": "str"},
                     },
@@ -89,7 +109,7 @@ class TestManagedOpsMgmtManagedOpsOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.managed_ops.begin_update(
                 managed_ops_name="str",
                 properties={
-                    "properties": {"desiredConfiguration": {"defenderCspm": "Enable", "defenderForServers": "Enable"}}
+                    "properties": {"desiredConfiguration": {"defenderCspm": "str", "defenderForServers": "str"}}
                 },
             )
         ).result()  # call '.result()' to poll until service return final result
