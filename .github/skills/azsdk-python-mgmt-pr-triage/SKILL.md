@@ -47,6 +47,27 @@ non-draft titles starting with `[AutoPR azure-mgmt-`. Include first releases.
 Package and version filters are exact matches. Unknown versions are shown as
 `unknown`; a version-filtered scan warns when it cannot classify a version.
 
+Workflow activity is limited to runs **created within the last 72 hours in UTC**.
+Older queued or running entries do not block automatic triggers. Recent failed
+reviews are reported, not automatically retried for the same head.
+
+Head updates are detected during each triage scan, not by a push-event workflow.
+For eligible automation-authored PRs, add or remove/reapply the label once for a
+head that has no current review, recent attempt, or recorded trigger. The PR's
+GitHub App author establishes automation eligibility; git commit author names
+do not establish which app pushed a commit. Any head update on an eligible
+automation PR is reevaluated, including a maintainer's update.
+
+The script records label requests by repository, PR number, and head SHA in
+`~/.cache/azsdk-python-mgmt-pr-triage/requests.sqlite3`. Use `--state-file <path>`
+to select another database. Atomic claims prevent repeat label writes across
+scans sharing this file, including before GitHub exposes a newly triggered run.
+Read-only scans do not create or update this file. Keep the same state file
+between scans; separate machines do not share these pending-request claims.
+Only PR identifiers, SHAs, and request status are stored; no credentials.
+Failed or interrupted requests remain recorded for manual investigation rather
+than an automatic retry.
+
 ## Rotation configuration
 
 Maintain authorized rotator GitHub user logins in
@@ -76,12 +97,14 @@ section numbers, omit empty sections, and sort each queue by most recently updat
    inline review comments, or submitted review bodies. Read and respond or
    route the request; a comment does not itself require re-approval.
 4. **Automated review needs triggering**: the bot review is missing or its
-   linked run targets an older head, and no active review was detected.
+   linked run targets an older head, and no review within the activity window
+   or recorded request prevents a new trigger for this head.
    Automatically add `mgmt-review-needed`, or remove/reapply it when present,
    in `--apply-labels` mode. Report verified actions, skips, and failures.
 5. **Automated review active**: link queued, requested, waiting, pending, or
-   in-progress management review runs. Wait; do not request a duplicate,
-   including when the active run targets an older revision.
+   in-progress management review runs created within the last 72 hours. Wait;
+   do not request a duplicate, including when a recent active run targets an
+   older revision. Runs outside this window are ignored.
 6. **HoldOn PRs**: PRs labeled `HoldOn` or `blocking-release` appear only here,
    with approval and release-plan evidence. The hold owner must clear the hold.
 7. **Invalid PRs without release-plan link**: show only PR links whose
@@ -115,14 +138,20 @@ Other team errors and API failures still produce verification warnings.
 - Query the management review workflow, not generic CI. Use its run's explicit
   `pull_requests` associations, not timestamps, title guesses, or `head_sha`
   alone (`pull_request_target` can use a base revision).
-- Fetch workflow runs with status-independent pagination and filter completed
-  runs locally, so transitions between active statuses do not hide a run.
+- Fetch workflow runs created within the last 72 hours using status-independent
+  pagination, so transitions between statuses do not hide a run. Recheck the
+  creation-time boundary locally; do not use PR update times as run age.
+  Keep completed runs in this window as per-head attempt evidence, excluding
+  `skipped` runs: unrelated label events can create entirely skipped workflows
+  that did not attempt a review. Report failures for the current head without
+  automatically retrying. A later successful attempt supersedes an earlier failure.
 - Compare the initial listing's `updatedAt` with the first PR read, then check
   for changes again after collecting evidence. Reject changed snapshots rather
   than combine an old review decision with newer reviews.
-- Active runs without a PR association make activity verification incomplete.
-  Show **Review activity unknown** and the run links; never trigger a review
-  while activity cannot be verified.
+- Active runs inside the activity window without a PR association make
+  activity verification incomplete. Show **Review activity unknown**, the run
+  status and link, and explain that automatic triggers were withheld to avoid
+  duplicates. Old unassociated queues do not cause this global block.
 - Identify the latest review comment by the GitHub Actions account, review
   heading, and workflow marker/footer. Check the linked run's workflow identity
   and associated PR head for freshness. An absent/unusable run link or head
@@ -132,9 +161,11 @@ Other team errors and API failures still produce verification warnings.
   `azure-sdk-automation[bot]` with an Azure-owned source repository. Other authors
   are reported but their labels are not changed.
 - Before each label write, collect a fresh PR snapshot, approval decision, and
-  workflow activity. Skip changed PRs, holds, current approvals, active reviews,
-  unknown evidence, or unknown workflow identity. Recheck after label removal
-  before reapplying. Activity is a point-in-time observation, not a lock.
+  workflow activity. Skip changed PRs, holds, current approvals, active reviews
+  within the activity window, previous attempts for this head, recorded label
+  requests, unknown evidence, or unknown workflow identity. Claim the head in
+  the local request database before writing. Recheck after label removal before
+  reapplying. Activity is a point-in-time observation, not a cross-machine lock.
 - Verify label presence after writing. Do not equate label presence with a
   successful review run. Failed or uncertain writes produce warnings and are
   never automatically retried; removal followed by failure can leave the label

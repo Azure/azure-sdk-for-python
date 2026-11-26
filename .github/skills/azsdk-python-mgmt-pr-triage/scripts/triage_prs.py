@@ -7,10 +7,12 @@ import argparse
 import base64
 import calendar
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from contextlib import closing
+from datetime import datetime, timedelta, timezone
 import json
 from pathlib import Path
 import re
+import sqlite3
 import subprocess
 import sys
 from threading import RLock
@@ -32,10 +34,56 @@ SECTIONS = (
 CONFIG = Path(__file__).resolve().parents[1] / "rotators.json"
 HOLD_LABELS = {"holdon", "blocking-release"}
 REVIEW_LABEL = "mgmt-review-needed"
+RUN_WINDOW = timedelta(days=3)
+STATE_FILE = Path.home() / ".cache" / "azsdk-python-mgmt-pr-triage" / "requests.sqlite3"
 
 
 class CollectionError(RuntimeError):
     """GitHub evidence could not be collected."""
+
+
+class ReviewRequests:
+    def __init__(self, path):
+        self.path = Path(path)
+
+    def status(self, repo, number, head):
+        if not self.path.exists():
+            return None
+        try:
+            with closing(sqlite3.connect(self.path.resolve().as_uri() + "?mode=ro", uri=True)) as connection:
+                row = connection.execute(
+                    "SELECT status FROM review_requests WHERE repo = ? AND number = ? AND head = ?",
+                    (repo.casefold(), number, head),
+                ).fetchone()
+            return row[0] if row else None
+        except (OSError, sqlite3.Error) as error:
+            raise CollectionError(f"Cannot read review request state {self.path}: {error}") from error
+
+    def claim(self, repo, number, head):
+        try:
+            self.path.parent.mkdir(parents=True, exist_ok=True)
+            with closing(sqlite3.connect(self.path)) as connection, connection:
+                connection.execute(
+                    "CREATE TABLE IF NOT EXISTS review_requests "
+                    "(repo TEXT, number INTEGER, head TEXT, status TEXT, PRIMARY KEY (repo, number, head))"
+                )
+                result = connection.execute(
+                    "INSERT OR IGNORE INTO review_requests VALUES (?, ?, ?, 'pending')",
+                    (repo.casefold(), number, head),
+                )
+                return result.rowcount == 1
+        except (OSError, sqlite3.Error) as error:
+            raise CollectionError(f"Cannot record review request state {self.path}: {error}") from error
+
+    def finish(self, repo, number, head, status):
+        try:
+            with closing(sqlite3.connect(self.path)) as connection, connection:
+                connection.execute(
+                    "UPDATE review_requests SET status = ? WHERE repo = ? AND number = ? AND head = ?",
+                    (status, repo.casefold(), number, head),
+                )
+        except sqlite3.Error as error:
+            raise CollectionError(f"Cannot update review request state {self.path}: {error}") from error
 
 
 def gh(*args):
@@ -58,9 +106,10 @@ def gh(*args):
 
 
 class GitHub:
-    def __init__(self, repo, rotators=()):
+    def __init__(self, repo, rotators=(), state_file=STATE_FILE):
         self.repo = repo
         self.rotators = set(rotators)
+        self.requests = ReviewRequests(state_file)
         self.cache = {}
         self.lock = RLock()
 
@@ -274,21 +323,31 @@ def run_pr(run, number):
     return next((pr for pr in run.get("pull_requests", []) if pr["number"] == number), None)
 
 
-def active_reviews(client):
+def recent_reviews(client, now=None):
     runs = {}
     issues = []
+    cutoff = (now or datetime.now(timezone.utc)) - RUN_WINDOW
+    created = quote(">=" + cutoff.isoformat(), safe="")
     try:
         for run in client.pages(
-            f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?per_page=100",
+            f"repos/{client.repo}/actions/workflows/{WORKFLOW}/runs?per_page=100&created={created}",
             "workflow_runs",
         ):
-            if run["status"] != "completed":
+            try:
+                recent = timestamp(run["created_at"]) >= cutoff
+            except (AttributeError, KeyError, TypeError, ValueError):
+                issues.append(f"Review activity unknown: run creation time unavailable: {run['html_url']}")
+                recent = True
+            if recent:
                 runs[run["id"]] = run
     except CollectionError as error:
         issues.append(f"Review activity unknown: {error}")
     for run in runs.values():
-        if not run.get("pull_requests"):
-            issues.append(f"Review activity unknown: active run has no PR association: {run['html_url']}")
+        if run["status"] != "completed" and not run.get("pull_requests"):
+            issues.append(
+                "Review activity unknown: automatic triggers blocked by a run created within the last 3 days "
+                f"with status `{run['status']}` and no PR association: {run['html_url']}"
+            )
     return list(runs.values()), issues
 
 
@@ -400,7 +459,7 @@ def collect_pr(client, summary):
     }
 
 
-def classify(row, client, workflow_id, runs, activity_issues, now=None):
+def classify(row, client, workflow_id, runs, activity_issues, now=None, ignore_request=False):
     pr = row["pr"]
     queues = row["queues"]
     if held(pr):
@@ -413,21 +472,63 @@ def classify(row, client, workflow_id, runs, activity_issues, now=None):
     if not row.get("release_plans"):
         queues[7] = ""
     approved = current_approval(row)
-    active = [run for run in runs if run_pr(run, pr["number"])]
+    associated = [
+        run
+        for run in runs
+        if run_pr(run, pr["number"]) and not (run["status"] == "completed" and run.get("conclusion") == "skipped")
+    ]
+    active = [run for run in associated if run["status"] != "completed"]
+    attempts = [
+        run for run in associated if (run_pr(run, pr["number"]).get("head") or {}).get("sha") == pr["head"]["sha"]
+    ]
     if approved:
         pass
     elif active:
         links = []
         for run in active:
-            head = run_pr(run, pr["number"]).get("head", {}).get("sha")
+            head = (run_pr(run, pr["number"]).get("head") or {}).get("sha")
             revision = "; older/different head" if head and head != pr["head"]["sha"] else ""
             links.append(f"[{run['status']}{revision}]({run['html_url']})")
         queues[2] = f"Review active: {', '.join(links)}. Wait; do not request a duplicate."
     elif activity_issues:
-        row["issues"].append("Review activity unknown; inspect workflow runs before changing any review label.")
+        row["issues"].append(
+            "Review activity unknown; automatic triggering withheld to avoid duplicate reviews. "
+            "Inspect the recent workflow runs before changing any review label."
+        )
     else:
         try:
+            latest = max(attempts, key=lambda run: (run.get("created_at", ""), run["id"]), default=None)
+            if latest and latest.get("conclusion") in {"failure", "timed_out", "action_required"}:
+                raise CollectionError(
+                    f"Review failed for the current head: [{latest['conclusion']}]({latest['html_url']}). "
+                    "Inspect the failure; no automatic retry."
+                )
             freshness = review_freshness(client, workflow_id, pr, row["bot_review"])
+            if freshness in {"missing", "outdated"}:
+                if any(not (run_pr(run, pr["number"]).get("head") or {}).get("sha") for run in associated):
+                    raise CollectionError(
+                        "Review activity unknown: an associated recent run has no PR head. "
+                        "Inspect workflow runs before changing the review label."
+                    )
+                if attempts:
+                    links = ", ".join(
+                        f"[{run.get('conclusion') or run['status']}]({run['html_url']})" for run in attempts
+                    )
+                    raise CollectionError(
+                        f"Review already attempted for the current head: {links}. "
+                        "Inspect the run for its result; no automatic retry."
+                    )
+                requests = getattr(client, "requests", None)
+                status = (
+                    requests.status(client.repo, pr["number"], pr["head"]["sha"])
+                    if requests and not ignore_request
+                    else None
+                )
+                if status:
+                    raise CollectionError(
+                        f"Review trigger already recorded for the current head ({status}); "
+                        "inspect the PR and workflow runs before recovery. No duplicate label update."
+                    )
         except CollectionError as error:
             row["issues"].append(str(error))
         else:
@@ -489,8 +590,8 @@ def refresh_trigger(client, row, workflow_id, after_removal=False):
         expected.discard(REVIEW_LABEL)
     if expected != {label["name"].casefold() for label in current["labels"]}:
         raise CollectionError("PR labels changed before label update.")
-    runs, issues = active_reviews(client)
-    classify(fresh, client, workflow_id, runs, issues)
+    runs, issues = recent_reviews(client)
+    classify(fresh, client, workflow_id, runs, issues, ignore_request=after_removal)
     if issues or fresh["issues"] or 1 not in fresh["queues"] or not automation_author(current):
         raise CollectionError("Trigger no longer verified as needed and safe; label update skipped.")
     return fresh
@@ -505,11 +606,16 @@ def apply_labels(client, rows, workflow_id):
             row["queues"][1] += " Skipped: not an Azure-owned-source azure-sdk-automation PR."
             continue
         attempted = False
+        claimed = False
         try:
             if workflow_id is None:
                 raise CollectionError("Management review workflow identity unknown.")
             fresh = refresh_trigger(client, row, workflow_id)
             labeled = any(label["name"].casefold() == REVIEW_LABEL for label in fresh["pr"]["labels"])
+            number, head = fresh["pr"]["number"], fresh["pr"]["head"]["sha"]
+            if not client.requests.claim(client.repo, number, head):
+                raise CollectionError("Review trigger already claimed for this head; no duplicate label update.")
+            claimed = True
             if labeled:
                 attempted = True
                 client.change_label(fresh["pr"]["number"], remove=True)
@@ -519,10 +625,16 @@ def apply_labels(client, rows, workflow_id):
             verified = client.get(f"repos/{client.repo}/pulls/{fresh['pr']['number']}")
             if not any(label["name"].casefold() == REVIEW_LABEL for label in verified["labels"]):
                 raise CollectionError("Label presence could not be verified after writing.")
+            client.requests.finish(client.repo, number, head, "requested")
             row["label_status"] = "succeeded"
             action = "Removed and reapplied" if labeled else "Added"
             row["queues"][1] = f"{action} `{REVIEW_LABEL}` automatically; label presence verified."
         except CollectionError as error:
+            if claimed:
+                try:
+                    client.requests.finish(client.repo, number, head, "uncertain")
+                except CollectionError as state_error:
+                    row["issues"].append(str(state_error))
             row["label_status"] = "failed/unknown" if attempted else "skipped"
             row["issues"].append(f"Automatic label action {row['label_status']}: {error}. No automatic retry.")
             row["queues"][1] = f"Automatic action {row['label_status']}; see verification warnings."
@@ -537,6 +649,7 @@ def render_report(repo, rows, issues, apply=False):
     output = [
         f"Scanned {len(rows)} open, non-draft management AutoPRs" + ("; verification incomplete." if warnings else "."),
         f"Mode: {'apply-labels' if apply else 'read-only'}.",
+        "Workflow activity window: runs created within the last 3 days (72 hours, UTC); older runs are ignored.",
         "",
         f"[Management review runs]({runs_url}). Point-in-time report; confirm activity before changing labels.",
     ]
@@ -576,6 +689,7 @@ def main(argv=None):
     parser.add_argument("--version", help="Exact SDK version (first releases included by default)")
     parser.add_argument("--limit", type=int, default=500, help="Maximum initial PR listing size")
     parser.add_argument("--config", type=Path, default=CONFIG, help="Repository-scoped rotator configuration")
+    parser.add_argument("--state-file", type=Path, default=STATE_FILE, help="Local per-head review request database")
     parser.add_argument(
         "--apply-labels", action="store_true", help="Automatically trigger verified automation PR reviews"
     )
@@ -588,7 +702,7 @@ def main(argv=None):
         parser.error("--package must be an azure-mgmt-* package name")
     issues = []
     try:
-        client = GitHub(args.repo, load_rotators(args.config, args.repo))
+        client = GitHub(args.repo, load_rotators(args.config, args.repo), state_file=args.state_file)
         prs = gh(
             "pr",
             "list",
@@ -628,7 +742,7 @@ def main(argv=None):
                     elif row["version"] == "unknown":
                         issues.append(f"PR #{row['pr']['number']}: unknown version; cannot apply --version filter.")
         # Refresh activity after collecting PR evidence, close to report generation.
-        runs, activity_issues = active_reviews(client) if rows else ([], [])
+        runs, activity_issues = recent_reviews(client) if rows else ([], [])
         issues.extend(activity_issues)
         try:
             workflow_id = client.cached(f"repos/{args.repo}/actions/workflows/{WORKFLOW}")["id"] if rows else None

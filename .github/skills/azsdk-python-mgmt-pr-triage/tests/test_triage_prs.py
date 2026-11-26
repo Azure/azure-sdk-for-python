@@ -5,6 +5,7 @@ from copy import deepcopy
 import importlib.util
 import io
 from pathlib import Path
+from tempfile import TemporaryDirectory
 import unittest
 from unittest.mock import patch
 
@@ -60,6 +61,8 @@ def run(status="completed", head=HEAD, associated=True):
         "id": 100,
         "workflow_id": 9,
         "status": status,
+        "conclusion": "success" if status == "completed" else None,
+        "created_at": triage.datetime.now(triage.timezone.utc).isoformat(),
         "html_url": RUN_URL,
         # Deliberately different from the associated PR head.
         "head_sha": OLD,
@@ -105,6 +108,23 @@ def row(approval=None, bot_comment=None):
     }
 
 
+class MemoryRequests:
+    def __init__(self):
+        self.records = {}
+
+    def status(self, repo, number, head):
+        return self.records.get((repo.casefold(), number, head))
+
+    def claim(self, repo, number, head):
+        if self.status(repo, number, head):
+            return False
+        self.finish(repo, number, head, "pending")
+        return True
+
+    def finish(self, repo, number, head, status):
+        self.records[repo.casefold(), number, head] = status
+
+
 class FakeGitHub:
     repo = REPO
 
@@ -121,6 +141,7 @@ class FakeGitHub:
         self.activity_error = False
         self.last_details = None
         self.get_count = 0
+        self.requests = MemoryRequests()
 
     def get(self, endpoint):
         self.get_count += 1
@@ -272,7 +293,7 @@ class ActivityTests(unittest.TestCase):
     def test_unassociated_run_prevents_trigger_recommendation(self):
         client = FakeGitHub()
         client.workflow_runs = [run("queued", associated=False)]
-        runs, issues = triage.active_reviews(client)
+        runs, issues = triage.recent_reviews(client)
         item = row()
         triage.classify(item, client, 9, runs, issues)
         self.assertNotIn(1, item["queues"])
@@ -282,7 +303,7 @@ class ActivityTests(unittest.TestCase):
     def test_activity_access_failure_is_unknown(self):
         client = FakeGitHub()
         client.activity_error = True
-        runs, issues = triage.active_reviews(client)
+        runs, issues = triage.recent_reviews(client)
         item = row()
         triage.classify(item, client, 9, runs, issues)
         self.assertNotIn(1, item["queues"])
@@ -304,15 +325,18 @@ class ActivityTests(unittest.TestCase):
                 triage.classify(item, FakeGitHub(), 9, [], [])
                 self.assertIn("Remove and reapply" if labeled else "Add", item["queues"][1])
 
-    def test_status_independent_request_filters_completed_runs(self):
+    def test_status_independent_request_retains_completed_attempts(self):
         client = FakeGitHub()
         client.workflow_runs = [run("in_progress"), dict(run(), id=101)]
         with patch.object(client, "pages", wraps=client.pages) as pages:
-            runs, issues = triage.active_reviews(client)
-            pages.assert_called_once_with(
-                f"repos/{REPO}/actions/workflows/{triage.WORKFLOW}/runs?per_page=100", "workflow_runs"
-            )
-        self.assertEqual(len(runs), 1)
+            runs, issues = triage.recent_reviews(client)
+            endpoint, key = pages.call_args.args
+            self.assertTrue(endpoint.startswith(f"repos/{REPO}/actions/workflows/{triage.WORKFLOW}/runs?"))
+            self.assertIn("created=", endpoint)
+            self.assertNotIn("status=", endpoint)
+            self.assertEqual(key, "workflow_runs")
+            pages.assert_called_once()
+        self.assertEqual(len(runs), 2)
         self.assertFalse(issues)
 
     def test_waiting_to_in_progress_transition_cannot_hide_active_run(self):
@@ -327,7 +351,7 @@ class ActivityTests(unittest.TestCase):
             return []
 
         with patch.object(client, "pages", side_effect=transition):
-            runs, issues = triage.active_reviews(client)
+            runs, issues = triage.recent_reviews(client)
         item = row()
         triage.classify(item, client, 9, runs, issues)
         self.assertFalse(issues)
@@ -339,12 +363,94 @@ class ActivityTests(unittest.TestCase):
         client = triage.GitHub(REPO)
         pages = [
             {"total_count": 2, "workflow_runs": [run()]},
-            {"total_count": 2, "workflow_runs": [run("queued")]},
+            {"total_count": 2, "workflow_runs": [dict(run("queued"), id=101)]},
         ]
         with patch.object(triage, "gh", return_value=pages):
-            runs, issues = triage.active_reviews(client)
+            runs, issues = triage.recent_reviews(client)
         self.assertFalse(issues)
-        self.assertEqual([item["status"] for item in runs], ["queued"])
+        self.assertEqual([item["status"] for item in runs], ["completed", "queued"])
+
+    def test_three_day_boundary_ignores_old_unassociated_queued_and_failed_runs(self):
+        now = triage.timestamp("2026-11-26T09:00:00Z")
+        for status in ("queued", "in_progress", "completed"):
+            for created, expected in (
+                ("2026-11-23T08:59:59Z", False),
+                ("2026-11-23T09:00:00Z", True),
+                ("2026-11-23T09:00:01Z", True),
+            ):
+                with self.subTest(status=status, created=created):
+                    client = FakeGitHub()
+                    client.workflow_runs = [
+                        dict(run(status, associated=False), created_at=created, conclusion="failure")
+                    ]
+                    runs, issues = triage.recent_reviews(client, now=now)
+                    self.assertEqual(bool(runs), expected)
+                    self.assertEqual(bool(issues), expected and status != "completed")
+
+    def test_old_queued_run_does_not_block_new_trigger(self):
+        client = FakeGitHub()
+        client.workflow_runs = [dict(run("queued", associated=False), created_at="2026-01-01T00:00:00Z")]
+        runs, issues = triage.recent_reviews(client)
+        item = row()
+        triage.classify(item, client, 9, runs, issues)
+        self.assertIn(1, item["queues"])
+        self.assertFalse(item["issues"])
+
+    def test_missing_run_timestamp_is_unknown_not_silently_ignored(self):
+        for value in (None, "invalid", "2026-11-26T09:00:00"):
+            with self.subTest(value=value):
+                client = FakeGitHub()
+                client.workflow_runs = [dict(run("queued"), created_at=value)]
+                _, issues = triage.recent_reviews(client)
+                self.assertIn("creation time unavailable", " ".join(issues))
+
+    def test_failed_current_head_is_reported_without_retry_even_with_current_comment(self):
+        for bot_comment in (None, bot()):
+            with self.subTest(bot_comment=bot_comment):
+                item = row(bot_comment=bot_comment)
+                failed = dict(run(), conclusion="failure")
+                triage.classify(item, FakeGitHub(), 9, [failed], [])
+                self.assertNotIn(1, item["queues"])
+                self.assertNotIn(2, item["queues"])
+                self.assertIn("Review failed for the current head", " ".join(item["issues"]))
+                self.assertIn(RUN_URL, " ".join(item["issues"]))
+
+    def test_completed_attempt_without_comment_does_not_trigger_duplicate(self):
+        for conclusion in ("success", "cancelled"):
+            with self.subTest(conclusion=conclusion):
+                item = row()
+                triage.classify(item, FakeGitHub(), 9, [dict(run(), conclusion=conclusion)], [])
+                self.assertNotIn(1, item["queues"])
+                self.assertNotIn(2, item["queues"])
+                self.assertIn("already attempted for the current head", " ".join(item["issues"]))
+
+    def test_skipped_workflow_does_not_count_as_review_attempt(self):
+        for head in (HEAD, None):
+            with self.subTest(head=head):
+                item = row()
+                triage.classify(item, FakeGitHub(), 9, [dict(run(head=head), conclusion="skipped")], [])
+                self.assertIn(1, item["queues"])
+                self.assertFalse(item["issues"])
+
+    def test_failed_older_head_allows_review_of_new_head(self):
+        item = row()
+        triage.classify(item, FakeGitHub(), 9, [dict(run(head=OLD), conclusion="failure")], [])
+        self.assertIn(1, item["queues"])
+        self.assertFalse(item["issues"])
+
+    def test_later_success_supersedes_failure_for_same_head(self):
+        item = row(bot_comment=bot())
+        failed = dict(run(), conclusion="failure", created_at=WHEN)
+        succeeded = dict(run(), id=101, created_at=LATER)
+        triage.classify(item, FakeGitHub(), 9, [failed, succeeded], [])
+        self.assertFalse(item["issues"])
+        self.assertNotIn(1, item["queues"])
+
+    def test_completed_attempt_with_unknown_pr_head_does_not_allow_duplicate(self):
+        item = row()
+        triage.classify(item, FakeGitHub(), 9, [run(head=None)], [])
+        self.assertNotIn(1, item["queues"])
+        self.assertIn("no PR head", " ".join(item["issues"]))
 
 
 class FreshnessTests(unittest.TestCase):
@@ -818,6 +924,59 @@ class AutomaticLabelTests(unittest.TestCase):
                 self.assertIn("1 succeeded", report)
                 self.assertFalse(incomplete)
 
+    def test_repeated_scan_does_not_repeat_label_write_before_run_appears(self):
+        client = LabelGitHub()
+        item = client.trigger_row()
+        triage.apply_labels(client, [item], 9)
+        again = client.trigger_row()
+        triage.apply_labels(client, [again], 9)
+        self.assertEqual(client.actions, [(42, False)])
+        self.assertNotIn(1, again["queues"])
+        self.assertIn("No duplicate label update", " ".join(again["issues"]))
+
+    def test_new_automation_head_is_retriggered_once_with_existing_label(self):
+        client = LabelGitHub()
+        triage.apply_labels(client, [client.trigger_row()], 9)
+        client.details["head"]["sha"] = OLD
+        client.details["updated_at"] = LATER
+        triage.apply_labels(client, [client.trigger_row()], 9)
+        triage.apply_labels(client, [client.trigger_row()], 9)
+        self.assertEqual(client.actions, [(42, False), (42, True), (42, False)])
+        self.assertEqual(client.requests.status(REPO, 42, HEAD), "requested")
+        self.assertEqual(client.requests.status(REPO, 42, OLD), "requested")
+
+    def test_existing_attempt_or_failure_prevents_writes_at_fresh_check(self):
+        for conclusion in ("success", "failure", "timed_out"):
+            with self.subTest(conclusion=conclusion):
+                client = LabelGitHub()
+                item = client.trigger_row()
+                client.workflow_runs = [dict(run(), conclusion=conclusion)]
+                triage.apply_labels(client, [item], 9)
+                self.assertEqual(client.actions, [])
+
+    def test_uncertain_write_is_not_retried_on_later_scan(self):
+        client = LabelGitHub()
+        with patch.object(client, "change_label", side_effect=triage.CollectionError("request timed out")):
+            triage.apply_labels(client, [client.trigger_row()], 9)
+        self.assertEqual(client.requests.status(REPO, 42, HEAD), "uncertain")
+        triage.apply_labels(client, [client.trigger_row()], 9)
+        self.assertEqual(client.actions, [])
+
+    def test_request_claimed_by_another_scan_prevents_writes(self):
+        client = LabelGitHub()
+        item = client.trigger_row()
+        with patch.object(client.requests, "claim", return_value=False):
+            triage.apply_labels(client, [item], 9)
+        self.assertEqual(client.actions, [])
+        self.assertEqual(item["label_status"], "skipped")
+
+    def test_request_state_failure_prevents_writes(self):
+        client = LabelGitHub()
+        item = client.trigger_row()
+        with patch.object(client.requests, "claim", side_effect=triage.CollectionError("Cannot record state")):
+            triage.apply_labels(client, [item], 9)
+        self.assertEqual(client.actions, [])
+
     def test_other_authors_and_non_azure_sources_are_not_modified(self):
         for change in ("author", "source"):
             with self.subTest(change=change):
@@ -939,6 +1098,35 @@ class AutomaticLabelTests(unittest.TestCase):
             command.assert_called_once_with(
                 "api", "--method", "POST", f"repos/{REPO}/issues/42/labels", "-f", "labels[]=mgmt-review-needed"
             )
+
+
+class ReviewRequestStateTests(unittest.TestCase):
+    def test_claim_survives_new_instance_and_is_scoped_to_repository_pr_and_head(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "state" / "requests.sqlite3"
+            first = triage.ReviewRequests(path)
+            self.assertIsNone(first.status(REPO, 42, HEAD))
+            self.assertFalse(path.exists())
+            self.assertTrue(first.claim(REPO, 42, HEAD))
+            second = triage.ReviewRequests(path)
+            self.assertEqual(second.status(REPO.lower(), 42, HEAD), "pending")
+            self.assertFalse(second.claim(REPO.lower(), 42, HEAD))
+            self.assertTrue(second.claim(REPO, 42, OLD))
+            self.assertTrue(second.claim(REPO, 43, HEAD))
+            self.assertTrue(second.claim("Azure/other", 42, HEAD))
+            first.finish(REPO, 42, HEAD, "requested")
+            self.assertEqual(second.status(REPO, 42, HEAD), "requested")
+
+    def test_invalid_state_is_reported_instead_of_reset(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "requests.sqlite3"
+            path.write_text("invalid database", encoding="utf-8")
+            state = triage.ReviewRequests(path)
+            with self.assertRaises(triage.CollectionError):
+                state.status(REPO, 42, HEAD)
+            with self.assertRaises(triage.CollectionError):
+                state.claim(REPO, 42, HEAD)
+            self.assertEqual(path.read_text(encoding="utf-8"), "invalid database")
 
 
 if __name__ == "__main__":
