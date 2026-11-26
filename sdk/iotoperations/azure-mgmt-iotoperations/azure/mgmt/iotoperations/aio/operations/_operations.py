@@ -101,7 +101,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -211,7 +211,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class InstanceOperations:
+class InstanceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1019,7 +1019,7 @@ class InstanceOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BrokerOperations:
+class BrokerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1591,7 +1591,7 @@ class BrokerOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BrokerListenerOperations:
+class BrokerListenerOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2192,7 +2192,7 @@ class BrokerListenerOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BrokerAuthenticationOperations:
+class BrokerAuthenticationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2794,7 +2794,7 @@ class BrokerAuthenticationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BrokerAuthorizationOperations:
+class BrokerAuthorizationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3396,7 +3396,7 @@ class BrokerAuthorizationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataflowProfileOperations:
+class DataflowProfileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3972,7 +3972,7 @@ class DataflowProfileOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataflowOperations:
+class DataflowOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4584,7 +4584,7 @@ class DataflowOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataflowEndpointOperations:
+class DataflowEndpointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5161,7 +5161,7 @@ class DataflowEndpointOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class DataflowGraphOperations:
+class DataflowGraphOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5192,7 +5192,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def get(
         self,
@@ -5290,7 +5290,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -5493,7 +5493,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_create_or_update(
         self,
@@ -5591,7 +5591,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _delete_initial(
         self,
@@ -5674,7 +5674,7 @@ class DataflowGraphOperations:
                 "dataflow_graph_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_delete(
         self,
@@ -5758,7 +5758,7 @@ class DataflowGraphOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_dataflow_profile(
         self, resource_group_name: str, instance_name: str, dataflow_profile_name: str, **kwargs: Any
@@ -5866,7 +5866,7 @@ class DataflowGraphOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class RegistryEndpointOperations:
+class RegistryEndpointOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5896,7 +5896,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -5986,7 +5986,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -6177,7 +6177,7 @@ class RegistryEndpointOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_create_or_update(
         self,
@@ -6270,7 +6270,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -6346,7 +6346,7 @@ class RegistryEndpointOperations:
                 "registry_endpoint_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, instance_name: str, registry_endpoint_name: str, **kwargs: Any
@@ -6415,7 +6415,7 @@ class RegistryEndpointOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -6520,7 +6520,7 @@ class RegistryEndpointOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AkriConnectorTemplateOperations:
+class AkriConnectorTemplateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6550,7 +6550,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -6640,7 +6640,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -6831,7 +6831,7 @@ class AkriConnectorTemplateOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_create_or_update(
         self,
@@ -6924,7 +6924,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -7000,7 +7000,7 @@ class AkriConnectorTemplateOperations:
                 "akri_connector_template_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -7069,7 +7069,7 @@ class AkriConnectorTemplateOperations:
         params_added_on={
             "2025-07-01-preview": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
@@ -7174,7 +7174,7 @@ class AkriConnectorTemplateOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AkriConnectorOperations:
+class AkriConnectorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7205,7 +7205,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def get(
         self,
@@ -7303,7 +7303,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -7506,7 +7506,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_create_or_update(
         self,
@@ -7604,7 +7604,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _delete_initial(
         self,
@@ -7687,7 +7687,7 @@ class AkriConnectorOperations:
                 "connector_name",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_delete(
         self,
@@ -7771,7 +7771,7 @@ class AkriConnectorOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01"],
+        api_versions_list=["2025-07-01-preview", "2025-10-01", "2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_template(
         self, resource_group_name: str, instance_name: str, akri_connector_template_name: str, **kwargs: Any
@@ -7879,7 +7879,7 @@ class AkriConnectorOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AkriServiceOperations:
+class AkriServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7909,7 +7909,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def get(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -7998,7 +7998,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _create_or_update_initial(
         self,
@@ -8189,7 +8189,7 @@ class AkriServiceOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_create_or_update(
         self,
@@ -8282,7 +8282,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def _delete_initial(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -8358,7 +8358,7 @@ class AkriServiceOperations:
                 "akri_service_name",
             ]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     async def begin_delete(
         self, resource_group_name: str, instance_name: str, akri_service_name: str, **kwargs: Any
@@ -8427,7 +8427,7 @@ class AkriServiceOperations:
         params_added_on={
             "2026-03-01": ["api_version", "subscription_id", "resource_group_name", "instance_name", "accept"]
         },
-        api_versions_list=["2026-03-01", "2026-07-01"],
+        api_versions_list=["2026-03-01", "2026-07-01", "2026-10-01"],
     )
     def list_by_instance_resource(
         self, resource_group_name: str, instance_name: str, **kwargs: Any
