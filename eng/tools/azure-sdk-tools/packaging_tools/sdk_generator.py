@@ -35,7 +35,7 @@ from .generate_utils import (
     sanitize_generated_docstrings,
 )
 from .package_utils import create_package, check_file
-from .sdk_changelog import main as sdk_changelog_generate
+from .sdk_changelog import main as sdk_changelog_generate, update_api_versions_in_changelog
 from .sdk_update_version import main as sdk_update_version
 from .sdk_update_metadata import main as sdk_update_metadata
 
@@ -311,6 +311,8 @@ def main(generate_input, generate_output):
 
             # Run optional post-emitter script provided by the service team
             run_post_emitter_script(sdk_code_path)
+
+            update_api_versions_in_changelog(Path(sdk_code_path).absolute(), result[package_name].get("version", ""))
 
             # Generate ApiView
             if data.get("runMode") in ["spec-pull-request", "release"]:

@@ -41,6 +41,61 @@ def is_arm_sdk(package_name: str) -> bool:
     return package_name.startswith("azure-mgmt-")
 
 
+def update_api_versions_in_changelog(package_path: Path, version: str) -> None:
+    """Put the generated service API versions first in the current release's features."""
+    metadata_path = package_path / "_metadata.json"
+    changelog_path = package_path / "CHANGELOG.md"
+    try:
+        metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+        api_versions = metadata.get("apiVersions") if isinstance(metadata, dict) else None
+        if not isinstance(api_versions, dict) or not api_versions:
+            _LOGGER.warning(f"Skip API-version disclosure: {metadata_path} has no valid apiVersions map.")
+            return
+        if any(
+            not isinstance(value, str) or not value.strip() or "\n" in value or "\r" in value
+            for pair in api_versions.items()
+            for value in pair
+        ):
+            _LOGGER.warning(f"Skip API-version disclosure: {metadata_path} has invalid service names or versions.")
+            return
+
+        original = changelog_path.read_text(encoding="utf-8")
+        lines = original.splitlines(keepends=True)
+        releases = [(i, match.group(1)) for i, line in enumerate(lines) if (match := re.match(r"^##\s+(\S+)", line))]
+        if not releases or releases[0][1] != version:
+            _LOGGER.warning(f"Skip API-version disclosure: {changelog_path} has no current release matching {version}.")
+            return
+
+        start = releases[0][0] + 1
+        end = releases[1][0] if len(releases) > 1 else len(lines)
+        release = [line for line in lines[start:end] if not re.match(r"^\s*[-*+]\s+Package API versions:", line)]
+        versions = ", ".join(f"{service}: `{api_versions[service]}`" for service in sorted(api_versions))
+        note = f"- Package API versions: {versions}.\n"
+        features = next((i for i, line in enumerate(release) if line.strip() == "### Features Added"), None)
+        if features is None:
+            insert_at = next((i for i, line in enumerate(release) if re.match(r"^###\s+", line)), len(release))
+            if insert_at and release[insert_at - 1].strip():
+                if not release[insert_at - 1].endswith("\n"):
+                    release[insert_at - 1] += "\n"
+                release.insert(insert_at, "\n")
+                insert_at += 1
+            release[insert_at:insert_at] = ["### Features Added\n", "\n", note, "\n"]
+        else:
+            insert_at = features + 1
+            if not release[features].endswith("\n"):
+                release[features] += "\n"
+            while insert_at < len(release) and not release[insert_at].strip():
+                insert_at += 1
+            release.insert(insert_at, note)
+
+        lines[start:end] = release
+        updated = "".join(lines)
+        if updated != original:
+            changelog_path.write_text(updated, encoding="utf-8")
+    except (OSError, ValueError) as e:
+        _LOGGER.warning(f"Skip API-version disclosure for {package_path.name}: {e}")
+
+
 def has_prior_ga_release(package_name: str) -> bool:
     """Determine review eligibility from published PyPI history, retaining review when history is unavailable."""
     from pypi_tools.pypi import PyPIClient

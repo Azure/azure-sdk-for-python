@@ -7,6 +7,117 @@ import shutil
 
 from packaging_tools.sdk_changelog import main as changelog_main
 from packaging_tools.sdk_changelog import trim_changelog_if_needed
+from packaging_tools.sdk_changelog import update_api_versions_in_changelog
+
+
+@pytest.mark.parametrize(
+    "api_versions, expected",
+    [
+        ({"Microsoft.Test": "2026-01-01-preview"}, "Microsoft.Test: `2026-01-01-preview`"),
+        (
+            {"Gallery": "2025-12-03", "Compute": "2026-03-01", "Disk": "2026-03-02"},
+            "Compute: `2026-03-01`, Disk: `2026-03-02`, Gallery: `2025-12-03`",
+        ),
+    ],
+)
+def test_api_versions_are_first_feature_and_preserve_history(tmp_path, api_versions, expected):
+    history = "## 1.0.0 (2026-01-01)\n\n### Features Added\n\n- Package API versions: Old: `2025-01-01`.\n"
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": api_versions, "apiVersion": "ignored"}))
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text(
+        "# Release History\n\n## 1.0.1 (Unreleased)\n\n"
+        "> Existing warning.\n\n### Bugs Fixed\n\n- Fixed a bug.\n\n"
+        "### Features Added\n\n- Existing feature.\n\n"
+        "- Package API versions: Stale: `2024-01-01`.\n\n" + history
+    )
+
+    update_api_versions_in_changelog(tmp_path, "1.0.1")
+    updated = changelog.read_text()
+    update_api_versions_in_changelog(tmp_path, "1.0.1")
+
+    assert changelog.read_text() == updated
+    assert f"### Features Added\n\n- Package API versions: {expected}.\n- Existing feature." in updated
+    assert "Stale:" not in updated
+    assert "> Existing warning.\n\n### Bugs Fixed\n\n- Fixed a bug." in updated
+    assert updated.endswith(history)
+
+
+@pytest.mark.parametrize(
+    "release",
+    [
+        "\n### Bugs Fixed\n\n- Fixed a bug.\n\n",
+        "\n### Other Changes\n\n- Initial version\n",
+        "\n> Existing warning.\n",
+        "",
+        "\n### Features Added",
+    ],
+)
+def test_api_versions_create_features_section(tmp_path, release):
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": {"Test": "v1"}}))
+    changelog = tmp_path / "CHANGELOG.md"
+    changelog.write_text("# Release History\n\n## 1.0.0b1 (Unreleased)\n" + release)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0b1")
+
+    updated = changelog.read_text()
+    features = updated.split("### Features Added", 1)[1]
+    assert features.lstrip().startswith("- Package API versions: Test: `v1`.\n")
+    assert updated.count("### Features Added") == 1
+    if "### Bugs Fixed" in release:
+        assert updated.index("### Features Added") < updated.index("### Bugs Fixed")
+        assert "- Fixed a bug." in updated
+    if "Initial version" in release:
+        assert "- Initial version" in updated
+    if "Existing warning" in release:
+        assert "> Existing warning." in updated
+
+
+@pytest.mark.parametrize(
+    "metadata",
+    [
+        None,
+        "{",
+        "[]",
+        '{"apiVersion": "2026-01-01"}',
+        '{"apiVersions": {}}',
+        '{"apiVersions": []}',
+        '{"apiVersions": {"Test": null}}',
+        '{"apiVersions": {"Test": ""}}',
+        '{"apiVersions": {"": "2026-01-01"}}',
+        '{"apiVersions": {"Test": "2026-01-01\\ninvalid"}}',
+    ],
+)
+def test_invalid_api_versions_leave_changelog_unchanged(tmp_path, metadata, caplog):
+    if metadata is not None:
+        (tmp_path / "_metadata.json").write_text(metadata)
+    changelog = tmp_path / "CHANGELOG.md"
+    original = "# Release History\n\n## 1.0.0 (Unreleased)\n\n### Features Added\n\n- Existing feature.\n"
+    changelog.write_text(original)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0")
+
+    assert changelog.read_text() == original
+    assert "Skip API-version disclosure" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        None,
+        "# Release History\n",
+        "## 2.0.0 (Unreleased)\n\n## 1.0.0 (2026-01-01)\n",
+    ],
+)
+def test_api_versions_do_not_update_missing_or_historical_release(tmp_path, content, caplog):
+    (tmp_path / "_metadata.json").write_text(json.dumps({"apiVersions": {"Test": "v1"}}))
+    changelog = tmp_path / "CHANGELOG.md"
+    if content is not None:
+        changelog.write_text(content)
+
+    update_api_versions_in_changelog(tmp_path, "1.0.0")
+
+    assert (changelog.read_text() if changelog.exists() else None) == content
+    assert "Skip API-version disclosure" in caplog.text
 
 
 @pytest.fixture
