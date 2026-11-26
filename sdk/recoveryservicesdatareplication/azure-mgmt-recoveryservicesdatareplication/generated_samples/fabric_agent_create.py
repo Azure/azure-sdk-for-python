@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python private_endpoint_connection_proxy_delete.py
+    python fabric_agent_create.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,35 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.private_endpoint_connection_proxies.begin_delete(
+    response = client.fabric_agent.begin_create(
         resource_group_name="rgswagger_2024-09-01",
-        vault_name="4",
-        private_endpoint_connection_proxy_name="d",
+        fabric_name="wPR",
+        fabric_agent_name="M",
+        body={
+            "properties": {
+                "authenticationIdentity": {
+                    "aadAuthority": "bubwwbowfhdmujrt",
+                    "applicationId": "cwktzrwajuvfyyymfstpey",
+                    "audience": "dkjobanyqgzenivyxhvavottpc",
+                    "objectId": "khsiaqfbpuhp",
+                    "tenantId": "joclkkdovixwapephhxaqtefubhhmq",
+                },
+                "customProperties": {"instanceType": "FabricAgentModelCustomProperties"},
+                "machineId": "envzcoijbqhtrpncbjbhk",
+                "machineName": "y",
+                "resourceAccessIdentity": {
+                    "aadAuthority": "bubwwbowfhdmujrt",
+                    "applicationId": "cwktzrwajuvfyyymfstpey",
+                    "audience": "dkjobanyqgzenivyxhvavottpc",
+                    "objectId": "khsiaqfbpuhp",
+                    "tenantId": "joclkkdovixwapephhxaqtefubhhmq",
+                },
+            }
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2024-09-01/PrivateEndpointConnectionProxy_Delete.json
+# x-ms-original-file: 2024-09-01/FabricAgent_Create.json
 if __name__ == "__main__":
     main()

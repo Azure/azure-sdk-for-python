@@ -21,7 +21,6 @@ from ._operations import FabricAgentOperations  # type: ignore
 from ._operations import JobOperations  # type: ignore
 from ._operations import PolicyOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
-from ._operations import PrivateEndpointConnectionProxiesOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ProtectedItemOperations  # type: ignore
 from ._operations import RecoveryPointOperations  # type: ignore
@@ -45,7 +44,6 @@ __all__ = [
     "JobOperations",
     "PolicyOperations",
     "PrivateEndpointConnectionsOperations",
-    "PrivateEndpointConnectionProxiesOperations",
     "PrivateLinkResourcesOperations",
     "ProtectedItemOperations",
     "RecoveryPointOperations",

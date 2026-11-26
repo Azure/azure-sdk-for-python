@@ -37,7 +37,7 @@ class TestRecoveryServicesDataReplicationMgmtVaultOperationsAsync(AzureMgmtRecor
             await self.client.vault.begin_create(
                 resource_group_name=resource_group.name,
                 vault_name="str",
-                resource={
+                body={
                     "location": "str",
                     "id": "str",
                     "identity": {
@@ -72,7 +72,7 @@ class TestRecoveryServicesDataReplicationMgmtVaultOperationsAsync(AzureMgmtRecor
             await self.client.vault.begin_update(
                 resource_group_name=resource_group.name,
                 vault_name="str",
-                properties={
+                body={
                     "id": "str",
                     "identity": {"type": "str", "principalId": "str", "tenantId": "str"},
                     "name": "str",

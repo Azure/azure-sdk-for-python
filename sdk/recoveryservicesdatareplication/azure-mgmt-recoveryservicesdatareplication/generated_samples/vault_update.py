@@ -15,7 +15,7 @@ from azure.mgmt.recoveryservicesdatareplication import RecoveryServicesDataRepli
     pip install azure-identity
     pip install azure-mgmt-recoveryservicesdatareplication
 # USAGE
-    python private_endpoint_connection_proxy_get.py
+    python vault_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.private_endpoint_connection_proxies.get(
-        resource_group_name="rgswagger_2024-09-01",
+    response = client.vault.begin_update(
+        resource_group_name="rgrecoveryservicesdatareplication",
         vault_name="4",
-        private_endpoint_connection_proxy_name="d",
-    )
+        body={"properties": {"vaultType": "DisasterRecovery"}, "tags": {"key8872": "pvtc"}},
+    ).result()
     print(response)
 
 
-# x-ms-original-file: 2024-09-01/PrivateEndpointConnectionProxy_Get.json
+# x-ms-original-file: 2024-09-01/Vault_Update.json
 if __name__ == "__main__":
     main()

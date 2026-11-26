@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2024-09-01",
+  "apiVersions": {
+    "Microsoft.DataReplication": "2024-09-01"
+  },
+  "commit": "cd21ef63566c496f296fa592a4eec742a2264515",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/recoveryservicesdatareplication/resource-manager/Microsoft.DataReplication/DataReplication",
+  "emitterVersion": "0.63.10",
+  "httpClientPythonVersion": "0.39.0"
+}
